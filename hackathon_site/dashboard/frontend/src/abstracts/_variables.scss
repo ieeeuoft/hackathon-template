@@ -1,0 +1,39 @@
+$colors: (
+    font: #000,
+    white: #fff,
+    primary: #2B7BBC,
+	secondary: #222944, 
+	light1: #E5EEF4, 
+	light2: #F9F5FF, 
+	background: #FAFAFA, 
+	green: #43A047,
+	greenLight: #97D497,
+	orange: #FFA000,
+	orangeLight: #FFD58E,
+	red: #B00020,
+	redLight: #EBBCBC 
+);
+
+$fonts: (
+    roboto: 'Roboto Condensed'
+);
+
+$font-sizes: (
+    xl: 5.5rem,
+    lg: 4rem,
+    md: 3rem,
+    sm: 2rem,
+    xs: 1.8rem,
+);
+
+@function color($color-name) {
+    @return map-get($colors, $color-name); //(name of map, key)
+}
+
+@function font($fonts-name) {
+    @return map-get($fonts, $fonts-name); //(name of map, key)
+}
+
+@function size($size) {
+    @return map-get($font-sizes, $size); //(name of map, key)
+}
