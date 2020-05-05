@@ -1,5 +1,5 @@
-@import './Assets/abstracts/mixins.scss';
-@import './Assets/abstracts/variables.scss';
+@import './assets/abstracts/mixins.scss';
+@import './assets/abstracts/variables.scss';
 
 * {
   box-sizing: border-box;
@@ -19,6 +19,11 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: rgba(0, 0, 0, 0.87);
+  font-size: size(md);
+
+  @include response(lg/md) {
+    font-size: size(sm); 
+  }
 }
 
 code {
@@ -26,17 +31,33 @@ code {
     monospace;
 }
 
-
 h1 {
-  font-size: 45px;
-  // font-size: size(lg);
+  font-size: size(xl);
   font-weight: bold;
   text-align: center;
+
+  @include response(lg/md) {
+    font-size: size(lg) + 2px; 
+  }
 }
 
 h2 {
-  font-size: 18px;
-  // font-size: size(md);
+  font-size: size(lg);
   font-weight: 500;
+
+  @include response(lg/md) {
+    font-size: size(sm); 
+  }
 }
+
+h3 {
+  font-size: size(md);
+  font-weight: 500;
+
+  @include response(lg/md) {
+    font-size: size(xs); 
+  }
+}
+
+
 

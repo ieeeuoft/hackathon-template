@@ -5,13 +5,14 @@ $colors: (
 	secondary: #222944, 
 	light1: #E5EEF4, 
 	light2: #F9F5FF, 
+    dark1: #11568E,
 	backgroundC: #FAFAFA, 
 	green: #43A047,
-	greenLight: #97D497,
+	greenLight: #C1EDC1,
 	orange: #FFA000,
-	orangeLight: #FFD58E,
+	orangeLight: #FFE3B4,
 	red: #B00020,
-	redLight: #EBBCBC 
+	redLight: #F9E0E0
 );
 
 $fonts: (
@@ -19,11 +20,11 @@ $fonts: (
 );
 
 $font-sizes: (
-    xl: 5.5rem,
-    lg: 4rem,
-    md: 3rem,
-    sm: 2rem,
-    xs: 1.8rem,
+    xl: 45px,
+    lg: 18px,
+    md: 16px,
+    sm: 14px,
+    xs: 12px,
 );
 
 @function color($color-name) {
