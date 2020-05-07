@@ -27,9 +27,9 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     team = models.ForeignKey(Team, on_delete=models.CASCADE, null=False)
     status = models.CharField(max_length=64, default=None, null=True)
-    id_provided = models.BooleanField(null=True)
-    attended = models.BooleanField(null=True)
-    acknowledge_rules = models.BooleanField(null=True)
+    id_provided = models.BooleanField(default=False, null=False)
+    attended = models.BooleanField(default=False, null=False)
+    acknowledge_rules = models.BooleanField(default=False, null=False)
     e_signature = models.TextField(null=True)
 
     created_at = models.DateTimeField(auto_now_add=True, null=False)

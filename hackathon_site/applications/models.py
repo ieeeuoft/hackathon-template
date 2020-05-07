@@ -36,8 +36,8 @@ class Application(models.Model):
     q1 = models.TextField(null=False)
     q2 = models.TextField(null=False)
     q3 = models.TextField(null=False)
-    mlh_conduct_agree = models.BooleanField()
-    mlh_data_agree = models.BooleanField()
+    mlh_conduct_agree = models.BooleanField(default=False, null=False)
+    mlh_data_agree = models.BooleanField(default=False, null=False)
 
     created_at = models.DateTimeField(auto_now_add=True, null=False)
     updated_at = models.DateTimeField(auto_now=True, null=False)
