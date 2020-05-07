@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 
 import uuid
 
+
 def _generate_team_code():
     team_code = uuid.uuid4().hex[:5].upper()
     while TeamEvent.objects.filter(team_code=team_code).exists():
@@ -11,9 +12,7 @@ def _generate_team_code():
 
 
 class TeamEvent(models.Model):
-    team_code = models.CharField(
-        max_length=5, default=_generate_team_code, null=False
-    )
+    team_code = models.CharField(max_length=5, default=_generate_team_code, null=False)
 
     created_at = models.DateTimeField(auto_now_add=True, null=False)
     updated_at = models.DateTimeField(auto_now=True, null=False)
@@ -22,7 +21,6 @@ class TeamEvent(models.Model):
 
     def __str__(self):
         return self.team_code
-
 
 
 class Profile(models.Model):

@@ -9,60 +9,109 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('event', '0001_initial'),
+        ("event", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Category',
+            name="Category",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255)),
-                ('max_per_category', models.IntegerField()),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255)),
+                ("max_per_category", models.IntegerField()),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
             ],
         ),
         migrations.CreateModel(
-            name='Hardware',
+            name="Hardware",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255)),
-                ('model_number', models.CharField(max_length=255)),
-                ('manufacturer', models.CharField(max_length=255)),
-                ('datasheet', models.TextField()),
-                ('quantity_available', models.IntegerField()),
-                ('notes', models.TextField()),
-                ('max_items_per_team', models.IntegerField()),
-                ('picture', models.TextField()),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('categories', models.ManyToManyField(to='hardware.Category')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255)),
+                ("model_number", models.CharField(max_length=255)),
+                ("manufacturer", models.CharField(max_length=255)),
+                ("datasheet", models.TextField()),
+                ("quantity_available", models.IntegerField()),
+                ("notes", models.TextField()),
+                ("max_items_per_team", models.IntegerField()),
+                ("picture", models.TextField()),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                ("categories", models.ManyToManyField(to="hardware.Category")),
             ],
         ),
         migrations.CreateModel(
-            name='Order',
+            name="Order",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('part_returned_health', models.CharField(max_length=64, null=True)),
-                ('status', models.CharField(max_length=64)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('hardware_id', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='hardware.Hardware')),
-                ('team_event_id', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='event.TeamEvent')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("part_returned_health", models.CharField(max_length=64, null=True)),
+                ("status", models.CharField(max_length=64)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "hardware_id",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="hardware.Hardware",
+                    ),
+                ),
+                (
+                    "team_event_id",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="event.TeamEvent",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Incident',
+            name="Incident",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('state', models.CharField(max_length=64)),
-                ('time_occurred', models.DateTimeField()),
-                ('location_occurred', models.CharField(max_length=255)),
-                ('description', models.TextField()),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('order_id', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='hardware.Order')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("state", models.CharField(max_length=64)),
+                ("time_occurred", models.DateTimeField()),
+                ("location_occurred", models.CharField(max_length=255)),
+                ("description", models.TextField()),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "order_id",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="hardware.Order"
+                    ),
+                ),
             ],
         ),
     ]

@@ -3,6 +3,7 @@ from event.models import TeamEvent
 
 # Create your models here.
 
+
 class Category(models.Model):
     name = models.CharField(max_length=255, null=False)
     max_per_category = models.IntegerField(null=False)
@@ -48,9 +49,7 @@ class Order(models.Model):
 class Incident(models.Model):
     order_id = models.ForeignKey(Order, on_delete=models.CASCADE, null=False)
     state = models.CharField(max_length=64, null=False)
-    time_occurred = models.DateTimeField(
-        auto_now=False, auto_now_add=False, null=False
-    )
+    time_occurred = models.DateTimeField(auto_now=False, auto_now_add=False, null=False)
     location_occurred = models.CharField(max_length=255, null=False)
     description = models.TextField(null=False)
 

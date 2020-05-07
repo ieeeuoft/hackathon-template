@@ -11,31 +11,58 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('auth', '0011_update_proxy_permissions'),
+        ("auth", "0011_update_proxy_permissions"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='TeamEvent',
+            name="TeamEvent",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('team_code', models.CharField(default=event.models._generate_team_code, max_length=5)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "team_code",
+                    models.CharField(
+                        default=event.models._generate_team_code, max_length=5
+                    ),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
             ],
         ),
         migrations.CreateModel(
-            name='Profile',
+            name="Profile",
             fields=[
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, primary_key=True, serialize=False, to=settings.AUTH_USER_MODEL)),
-                ('status', models.CharField(default=None, max_length=64, null=True)),
-                ('id_provided', models.BooleanField(null=True)),
-                ('attended', models.BooleanField(null=True)),
-                ('acknowledge_rules', models.BooleanField(null=True)),
-                ('e_signature', models.TextField(null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('team_event', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='event.TeamEvent')),
+                (
+                    "user",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        primary_key=True,
+                        serialize=False,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                ("status", models.CharField(default=None, max_length=64, null=True)),
+                ("id_provided", models.BooleanField(null=True)),
+                ("attended", models.BooleanField(null=True)),
+                ("acknowledge_rules", models.BooleanField(null=True)),
+                ("e_signature", models.TextField(null=True)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "team_event",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="event.TeamEvent",
+                    ),
+                ),
             ],
         ),
     ]
