@@ -1,5 +1,5 @@
 from django.db import models
-from event.models import TeamEvent
+from event.models import Team as TeamEvent
 
 # Create your models here.
 

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Application, TeamApplied
+from .models import Application, Team as TeamApplied
 
 # Register your models here.
 admin.site.register(Application)
