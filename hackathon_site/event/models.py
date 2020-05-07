@@ -24,7 +24,7 @@ class TeamEvent(models.Model):
 
 
 class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     team_event = models.ForeignKey(TeamEvent, on_delete=models.CASCADE, null=False)
     status = models.CharField(max_length=64, default=None, null=True)
     id_provided = models.BooleanField(null=True)
