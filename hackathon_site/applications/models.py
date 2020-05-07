@@ -32,7 +32,7 @@ class Application(models.Model):
     birthday = models.DateField(auto_now=False, auto_now_add=False)
     gender = models.CharField(max_length=50, null=False)
     phone_number = models.CharField(max_length=20, null=False)
-    resume_path = models.CharField(max_length=255, null=False)
+    resume_path = models.FileField(upload_to="applications/resumes/", null=False)
     q1 = models.TextField(null=False)
     q2 = models.TextField(null=False)
     q3 = models.TextField(null=False)
