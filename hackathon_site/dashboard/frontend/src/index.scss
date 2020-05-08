@@ -1,0 +1,63 @@
+@import './assets/abstracts/mixins.scss';
+@import './assets/abstracts/variables.scss';
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+button, a, input, select, textarea {
+  cursor: pointer;
+  outline: none;
+}
+
+body {
+  margin: 0;
+  font-family: font(body);
+  background-color: color(backgroundC);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: rgba(0, 0, 0, 0.87);
+  font-size: size(md);
+
+  @include responsive(lg/md) {
+    font-size: size(sm); 
+  }
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+h1 {
+  font-size: size(xl);
+  font-weight: bold;
+  text-align: center;
+
+  @include responsive(lg/md) {
+    font-size: size(lg) + 2px; 
+  }
+}
+
+h2 {
+  font-size: size(lg);
+  font-weight: 500;
+
+  @include responsive(lg/md) {
+    font-size: size(sm); 
+  }
+}
+
+h3 {
+  font-size: size(md);
+  font-weight: 500;
+
+  @include responsive(lg/md) {
+    font-size: size(xs); 
+  }
+}
+
+
+
