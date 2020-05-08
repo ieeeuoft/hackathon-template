@@ -1,4 +1,4 @@
-@mixin flexPosition ($jusCon: space-between, $alIte: center) {
+@mixin flexPosition($jusCon: space-between, $alIte: center) {
 	display: flex;
 	justify-content: $jusCon;
 	align-items: $alIte;
