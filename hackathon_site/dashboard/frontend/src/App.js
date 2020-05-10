@@ -8,14 +8,13 @@ function App() {
 return (
 	<div className="App">
 		<Router>
-			< NavBar />
+			< NavBar/>
+			<div className="App-header">
+				<p>IEEeeeeee</p>
+			</div>
 		</Router>
 		
-		{/* <header className="App-header">
-			<p>
-			IEEeeeeee
-			</p>
-		</header> */}
+		
 	</div>
 );
 }

@@ -10,9 +10,11 @@ export default class Navbar extends PureComponent {
 	render() {
 		return (
 			<AppBar className={styles.nav}>
-          		<Toolbar>
-					<Logo className={styles.navLogo}/>
-            		<Typography variant="h6">Hello??</Typography>
+          		<Toolbar className={styles.navToolbar}>
+					<div className={styles.navLogo}>
+						<Logo className={styles.navLogoImg}/>
+            			<Typography variant="h6">Hackathon Name</Typography>
+					</div>		
 
 					<div className={styles.navIcons}>
 						<Link to={'/orders'}>
@@ -48,6 +50,10 @@ export default class Navbar extends PureComponent {
 
 						<IconButton color="inherit" aria-label="Notifications">
 							<Notifications /> Notifications
+						</IconButton>
+
+						<IconButton color="inherit" aria-label="Logout">
+							Logout
 						</IconButton>
 
 						
