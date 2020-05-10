@@ -10,7 +10,7 @@ function App() {
 				< NavBar/>
 			</Router>
 			<div className="App-header">
-				<p>IEEeeeeee</p>
+				<p>IEEeeeeeee</p>
 			</div>
 		</div>
 	);
