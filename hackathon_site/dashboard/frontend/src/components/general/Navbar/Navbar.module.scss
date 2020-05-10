@@ -8,8 +8,10 @@
 	&Toolbar {
 		justify-content: space-between;
 	}
+
 	&Logo {
 		display: flex;
+
 		&Img {
 			height: 30px;
 		}
@@ -27,7 +29,6 @@
 		align-self: right;
 		color: color(white);
 		
-
 		span {
 			color: color(white);
 			font-size: size(md);
