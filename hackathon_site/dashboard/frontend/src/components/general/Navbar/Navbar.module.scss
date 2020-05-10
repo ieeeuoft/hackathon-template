@@ -1,0 +1,28 @@
+@import './../../../assets/abstracts/mixins';
+@import './../../../assets/abstracts/variables';
+
+.nav {
+	color: color(white);
+	// background-color: color(secondary) !important;
+	
+	&Logo {
+		height: 30px;
+	}
+
+	&Icons {
+		align-self: right;
+		color: color(white);
+		
+
+		span {
+			color: color(white);
+			font-size: size(md);
+			font-weight: 500;
+		}
+
+		svg {
+			color: color(white);
+			margin: 10px;
+		}
+	}
+}
