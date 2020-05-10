@@ -3,8 +3,6 @@
 name: Main Javascript Checks
 
 on:
-  pull_request:
-    branches: [ develop ]
   push:
     branches: '*'
 
