@@ -3,8 +3,6 @@
 name: Main Python checks
 
 on:
-  pull_request:
-    branches: [ develop ]
   push:
     branches: '*'
 
