@@ -1694,6 +1694,27 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@material-ui/lab@npm:^4.0.0-alpha.52":
+  version: 4.0.0-alpha.52
+  resolution: "@material-ui/lab@npm:4.0.0-alpha.52"
+  dependencies:
+    "@babel/runtime": ^7.4.4
+    "@material-ui/utils": ^4.9.6
+    clsx: ^1.0.4
+    prop-types: ^15.7.2
+    react-is: ^16.8.0
+  peerDependencies:
+    "@material-ui/core": ^4.9.10
+    "@types/react": ^16.8.6
+    react: ^16.8.0
+    react-dom: ^16.8.0
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+  checksum: 3/9e71eb41ec005cb2c904aa950d5febe2585478a3f29d57eb7e7fbfc325cb74f8e05b10165eb855b2e9f1ad9e2a21563a2edf1934339eb6c8c01c3a649498ca17
+  languageName: node
+  linkType: hard
+
 "@material-ui/react-transition-group@npm:^4.3.0":
   version: 4.3.0
   resolution: "@material-ui/react-transition-group@npm:4.3.0"
@@ -6343,6 +6364,7 @@ __metadata:
   dependencies:
     "@material-ui/core": ^4.9.13
     "@material-ui/icons": ^4.9.1
+    "@material-ui/lab": ^4.0.0-alpha.52
     "@testing-library/jest-dom": ^4.2.4
     "@testing-library/react": ^9.3.2
     "@testing-library/user-event": ^7.1.2
