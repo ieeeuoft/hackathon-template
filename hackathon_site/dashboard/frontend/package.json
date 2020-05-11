@@ -47,7 +47,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "prettier --check src/**/*.js"
+      "pre-commit": "prettier --check 'src/**/*.(scss||js)'"
     }
   }
 }
