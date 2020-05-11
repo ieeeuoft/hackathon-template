@@ -41,5 +41,13 @@
   "prettier": {
     "printWidth": 88,
     "tabWidth": 4
+  },
+  "devDependencies": {
+    "husky": "^4.2.5"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "prettier --check src/**/*.js"
+    }
   }
 }
