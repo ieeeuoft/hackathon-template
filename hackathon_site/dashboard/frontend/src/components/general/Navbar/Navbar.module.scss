@@ -1,40 +1,40 @@
-@import './../../../assets/abstracts/mixins';
-@import './../../../assets/abstracts/variables';
+@import "./../../../assets/abstracts/mixins";
+@import "./../../../assets/abstracts/variables";
 
 .nav {
-	color: color(white);
-	background-color: color(secondary) !important;
-	
-	&Toolbar {
-		justify-content: space-between;
-	}
+    color: color(white);
+    background-color: color(secondary) !important;
 
-	&Logo {
-		display: flex;
+    &Toolbar {
+        justify-content: space-between;
+    }
 
-		&Img {
-			height: 30px;
-		}
-	}
+    &Logo {
+        display: flex;
 
-	button {
-		border-radius: 0;
+        &Img {
+            height: 30px;
+        }
+    }
 
-		&:hover {
-			background-color: rgba(355, 355, 355, 0.2);
-		}
-	}
+    button {
+        border-radius: 0;
 
-	&Icons {
-		span {
-			color: color(white);
-			font-size: size(md);
-			font-weight: 500;
-		}
+        &:hover {
+            background-color: rgba(355, 355, 355, 0.2);
+        }
+    }
 
-		svg {
-			color: color(white);
-			margin: 10px;
-		}
-	}
+    &Icons {
+        span {
+            color: color(white);
+            font-size: size(md);
+            font-weight: 500;
+        }
+
+        svg {
+            color: color(white);
+            margin: 10px;
+        }
+    }
 }

@@ -1,41 +1,41 @@
 @mixin flexPosition($jusCon: space-between, $alIte: center) {
-	display: flex;
-	justify-content: $jusCon;
-	align-items: $alIte;
+    display: flex;
+    justify-content: $jusCon;
+    align-items: $alIte;
 }
 
 @mixin responsive($breakpoint) {
-	@if($breakpoint == xl) {
-		@media(max-width: 1200px) {
-			@content;
-		}
-	}
-	@if($breakpoint == lg) {
-		@media(max-width: 1000px) {
-			@content;
-		}
-	}
+    @if ($breakpoint == xl) {
+        @media (max-width: 1200px) {
+            @content;
+        }
+    }
+    @if ($breakpoint == lg) {
+        @media (max-width: 1000px) {
+            @content;
+        }
+    }
 
-	@if($breakpoint == lg/md) {
-		@media(max-width: 800px) {
-			@content;
-		}
-	}
+    @if ($breakpoint == lg/md) {
+        @media (max-width: 800px) {
+            @content;
+        }
+    }
 
-	@if($breakpoint == md) {
-		@media(max-width: 600px) {
-			@content;
-		}
-	}
+    @if ($breakpoint == md) {
+        @media (max-width: 600px) {
+            @content;
+        }
+    }
 
-	@if($breakpoint == sm) {
-		@media(max-width: 465px) {
-			@content;
-		}
-	}
-	@if($breakpoint == xs) {
-		@media(max-width: 350px) {
-			@content;
-		}
-	}
+    @if ($breakpoint == sm) {
+        @media (max-width: 465px) {
+            @content;
+        }
+    }
+    @if ($breakpoint == xs) {
+        @media (max-width: 350px) {
+            @content;
+        }
+    }
 }
