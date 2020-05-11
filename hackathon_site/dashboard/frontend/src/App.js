@@ -1,13 +1,20 @@
 import React from "react";
-import logo from "./logo.svg";
-import "./App.scss";
+import { HashRouter as Router, Route } from "react-router-dom";
+import { StylesProvider } from "@material-ui/core/styles";
+import NavBar from "components/general/Navbar/Navbar";
+import "App.scss";
 
 function App() {
     return (
         <div className="App">
-            <header className="App-header">
-                <p>IEEeeeeee</p>
-            </header>
+            <StylesProvider injectFirst>
+                <Router>
+                    <NavBar />
+                </Router>
+                <div className="App-header">
+                    <p>IEEeeeeeee</p>
+                </div>
+            </StylesProvider>
         </div>
     );
 }
