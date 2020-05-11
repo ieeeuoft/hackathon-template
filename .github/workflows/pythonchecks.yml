@@ -3,11 +3,11 @@
 name: Main Python checks
 
 on:
-  pull_request:
-    branches: [ develop ]
+  push:
+    branches: '*'
 
 jobs:
-  build:
+  main:
 
     runs-on: ubuntu-latest
 
