@@ -1,7 +1,7 @@
 import React from "react";
-import "./App.scss";
+import "App.scss";
 import { HashRouter as Router, Route } from "react-router-dom";
-import NavBar from "./components/general/Navbar/Navbar";
+import NavBar from "components/general/Navbar/Navbar";
 
 function App() {
     return (

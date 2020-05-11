@@ -1,7 +1,7 @@
 import React from "react";
 import styles from "./Navbar.module.scss";
 import { Link } from "react-router-dom";
-import { ReactComponent as Logo } from "./../../../logo.svg";
+import { ReactComponent as Logo } from "logo.svg";
 import {
     Home,
     ShoppingCart,
@@ -10,7 +10,7 @@ import {
     AccountCircle,
     InsertChartOutlined,
 } from "@material-ui/icons";
-import { ReactComponent as Inventory } from "./../../../assets/images/icons/Hardware.svg";
+import { ReactComponent as Inventory } from "assets/images/icons/Hardware.svg";
 import { IconButton, AppBar, Toolbar, Typography } from "@material-ui/core";
 
 const Navbar = () => (
