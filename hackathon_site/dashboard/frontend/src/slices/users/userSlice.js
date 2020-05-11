@@ -33,6 +33,11 @@ export const { actions, reducer } = userSlice;
 export const { getUser, getUserSuccess, getUserFailure } = userSlice.actions;
 export default reducer;
 
+// Selectors
+export const userSelector = (state) => state[userReducerName];
+export const userDataSelector = (state) => userSelector(state).userData;
+
+// Thunks
 export const fetchUserData = (id) => {
     return async (dispatch) => {
         dispatch(getUser());
