@@ -2,6 +2,7 @@ import React from "react";
 import { HashRouter as Router, Route } from "react-router-dom";
 import { StylesProvider } from "@material-ui/core/styles";
 import NavBar from "components/general/Navbar/Navbar";
+import Footer from "components/general/Footer/Footer";
 import "App.scss";
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
                     <p>IEEeeeeeee</p>
                 </div>
             </StylesProvider>
+            <Footer />
         </div>
     );
 }
