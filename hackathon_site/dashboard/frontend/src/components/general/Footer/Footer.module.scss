@@ -1,14 +1,11 @@
 @import "./../../../assets/abstracts/mixins";
 @import "./../../../assets/abstracts/variables";
 
-.footer{
+.footer {
     text-align: center;
-    background-color: color(secondary); 
+    background-color: color(secondary);
     color: color(white);
     height: 64px;
     padding-top: 10px;
     width: 100%;
 }
-
-
-
