@@ -31,10 +31,7 @@ const SponsorCard = () => (
             <Slider {...settings}>
                 {sponsorList.map((item) => (
                     <div className={styles.sponsorsImgdiv}>
-                        <img
-                            src={require("./../../../assets/images/sponsors/" +
-                                item.imgSrc)}
-                        />
+                        <img src={require("assets/images/sponsors/" + item.imgSrc)} />
                     </div>
                 ))}
             </Slider>
