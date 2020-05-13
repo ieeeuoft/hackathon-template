@@ -1,0 +1,31 @@
+@import "./../../../assets/abstracts/mixins";
+@import "./../../../assets/abstracts/variables";
+
+.sponsors {
+    h2 {
+        margin-bottom: 10px;
+    }
+
+    &Paper {
+        width: 400px;
+        height: 201px;
+        padding: 30px 0;
+    }
+
+    &Imgdiv {
+        height: 120px;
+        width: 100%;
+        display: flex !important;
+        @include flexPosition(center, center);
+        outline: none;
+        margin: 0px 15px 10px;
+
+        img {
+            display: block;
+            max-width: 170px;
+            max-height: 120px;
+            width: auto;
+            height: auto;
+        }
+    }
+}
