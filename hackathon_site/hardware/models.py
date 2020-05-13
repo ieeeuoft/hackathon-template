@@ -5,6 +5,9 @@ from event.models import Team as TeamEvent
 
 
 class Category(models.Model):
+    class Meta:
+        verbose_name_plural = "categories"
+
     name = models.CharField(max_length=255, null=False)
     max_per_team = models.IntegerField(null=False)
 
@@ -16,6 +19,9 @@ class Category(models.Model):
 
 
 class Hardware(models.Model):
+    class Meta:
+        verbose_name_plural = "hardware"
+
     name = models.CharField(max_length=255, null=False)
     model_number = models.CharField(max_length=255, null=False)
     manufacturer = models.CharField(max_length=255, null=False)
