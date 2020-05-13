@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Footer renders 1`] = `
+<DocumentFragment>
+  <div
+    class="MuiContainer-root MuiContainer-disableGutters"
+  >
+    <footer
+      class="footer"
+    />
+  </div>
+</DocumentFragment>
+`;
