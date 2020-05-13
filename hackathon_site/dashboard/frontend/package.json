@@ -52,6 +52,6 @@
     }
   },
   "lint-staged": {
-    "*.{js,scss,css}": "prettier --write"
+    "src/**/*.{js,scss,css}": "prettier --write"
   }
 }
