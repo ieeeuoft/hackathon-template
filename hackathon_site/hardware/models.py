@@ -6,7 +6,7 @@ from event.models import Team as TeamEvent
 
 class Category(models.Model):
     name = models.CharField(max_length=255, null=False)
-    max_per_category = models.IntegerField(null=False)
+    max_per_team = models.IntegerField(null=False)
 
     created_at = models.DateTimeField(auto_now_add=True, null=False)
     updated_at = models.DateTimeField(auto_now=True, null=False)
@@ -22,7 +22,7 @@ class Hardware(models.Model):
     datasheet = models.URLField(null=False)
     quantity_available = models.IntegerField(null=False)
     notes = models.TextField(null=False)
-    max_items_per_team = models.IntegerField(null=False)
+    max_per_team = models.IntegerField(null=False)
     picture = models.FileField(upload_to="hardware/pictures/", null=False)
     categories = models.ManyToManyField(Category)
 
@@ -34,10 +34,25 @@ class Hardware(models.Model):
 
 
 class Order(models.Model):
+    HEALTH_CHOICES = [
+        ("Healthy", "Healthy"),
+        ("Heavily Used", "Heavily Used"),
+        ("Broken", "Broken"),
+    ]
+    STATUS_CHOICES = [
+        ("Pending", "Pending"),
+        ("Ready for Pickup", "Ready for Pickup"),
+        ("Picked Up", "Picked Up"),
+        ("Returned", "Returned"),
+        ("Lost", "Lost"),
+    ]
+
     hardware = models.ForeignKey(Hardware, on_delete=models.CASCADE, null=False)
     team = models.ForeignKey(TeamEvent, on_delete=models.CASCADE, null=False)
-    part_returned_health = models.CharField(max_length=64, null=True)
-    status = models.CharField(max_length=64, null=False)
+    part_returned_health = models.CharField(
+        max_length=64, choices=HEALTH_CHOICES, null=True
+    )
+    status = models.CharField(max_length=64, choices=STATUS_CHOICES, default="Pending")
 
     created_at = models.DateTimeField(auto_now_add=True, null=False)
     updated_at = models.DateTimeField(auto_now=True, null=False)
@@ -47,10 +62,17 @@ class Order(models.Model):
 
 
 class Incident(models.Model):
+    STATE_CHOICES = [
+        ("Heavily Used", "Heavily Used"),
+        ("Broken", "Broken"),
+        ("Missing", "Missing"),
+        ("Minor Repair Required", "Minor Repair Required"),
+        ("Major Repair Required", "Major Repair Required"),
+        ("Not Sure If Works", "Not Sure If Works"),
+    ]
     order = models.ForeignKey(Order, on_delete=models.CASCADE, null=False)
-    state = models.CharField(max_length=64, null=False)
+    state = models.CharField(max_length=64, choices=STATE_CHOICES, null=False)
     time_occurred = models.DateTimeField(auto_now=False, auto_now_add=False, null=False)
-    location_occurred = models.CharField(max_length=255, null=False)
     description = models.TextField(null=False)
 
     created_at = models.DateTimeField(auto_now_add=True, null=False)
