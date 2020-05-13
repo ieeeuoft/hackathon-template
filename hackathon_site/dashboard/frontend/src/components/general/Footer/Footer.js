@@ -1,5 +1,4 @@
 import React from "react";
-// import "./Footer.module.scss";
 import Typography from "@material-ui/core/Typography";
 import Container from "@material-ui/core/Container";
 import styles from "./Footer.module.scss";
