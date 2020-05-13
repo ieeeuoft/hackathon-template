@@ -16,11 +16,11 @@ let settings = {
 
 let sponsorList = [
     { imgSrc: "AMD.svg" },
-    { imgSrc: "City of Brampton.svg" },
-    { imgSrc: "Cognitive Systems.svg" },
+    { imgSrc: "CityofBrampton.svg" },
+    { imgSrc: "CognitiveSystems.svg" },
     { imgSrc: "ECE.png" },
     { imgSrc: "ecobee.svg" },
-    { imgSrc: "Faculty of Applied Science and Engineering.png" },
+    { imgSrc: "FacultyofAppliedScienceandEngineering.png" },
     { imgSrc: "Huawei.svg" },
 ];
 
