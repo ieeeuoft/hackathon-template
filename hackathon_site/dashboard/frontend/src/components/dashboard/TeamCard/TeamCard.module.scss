@@ -1,29 +1,28 @@
 // do I have to import the index.scss
-.teamCard{
+.teamCard {
     width: 217px;
     height: 232px;
-    h2{
+    h2 {
         margin-bottom: 10px;
     }
-    .paper{
+    .paper {
         height: 201px;
         width: 217px;
         overflow-y: scroll;
         overflow-x: hidden;
-        table{
+        table {
             padding: 12px;
-            tbody{
-        
-                tr{
+            tbody {
+                tr {
                     width: 100%;
                     vertical-align: top;
-                    .name{
-                        p{
+                    .name {
+                        p {
                             text-align: left;
                         }
                         width: 90%;
                     }
-                    .icon{
+                    .icon {
                         width: auto;
                     }
                 }
@@ -32,10 +31,6 @@
     }
 }
 
-.paper::-webkit-scrollbar{
+.paper::-webkit-scrollbar {
     display: none;
 }
-
-
-
-
