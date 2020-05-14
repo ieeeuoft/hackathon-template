@@ -1,54 +1,50 @@
 import axios from "axios";
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 export const userReducerName = "user";
 export const initialState = {
     userData: {
         data: null,
         isLoading: false,
-        errors: null,
+        error: null,
     },
 };
 
+// Thunks
+export const fetchUserById = createAsyncThunk(
+    `${userReducerName}/getById`,
+    async (userId) => {
+        const response = await axios.get(
+            `https://jsonplaceholder.typicode.com/users/${userId}`
+        );
+        return response.data;
+    }
+);
+
+// Slice
 const userSlice = createSlice({
     name: "user",
     initialState,
-    reducers: {
-        getUser: (state) => {
+    reducers: {},
+    extraReducers: {
+        [fetchUserById.pending]: (state) => {
             state.userData.isLoading = true;
         },
-        getUserSuccess: (state, action) => {
+        [fetchUserById.fulfilled]: (state, action) => {
             state.userData.data = action.payload;
             state.userData.isLoading = false;
             state.userData.errors = null;
         },
-        getUserFailure: (state, action) => {
+        [fetchUserById.rejected]: (state, action) => {
             state.userData.isLoading = false;
-            state.userData.errors = action.payload.error;
+            state.userData.error = action.error;
         },
     },
 });
 
-export const { actions, reducer } = userSlice;
-export const { getUser, getUserSuccess, getUserFailure } = userSlice.actions;
+export const { reducer, actions } = userSlice;
 export default reducer;
 
 // Selectors
 export const userSelector = (state) => state[userReducerName];
 export const userDataSelector = (state) => userSelector(state).userData;
-
-// Thunks
-export const fetchUserData = (id) => {
-    return async (dispatch) => {
-        dispatch(getUser());
-
-        try {
-            const response = await axios.get(
-                `https://jsonplaceholder.typicode.com/users/${id}`
-            );
-            dispatch(getUserSuccess(response.data));
-        } catch (e) {
-            dispatch(getUserFailure(e));
-        }
-    };
-};

@@ -1,26 +1,26 @@
 import React from "react";
-import { render, act } from "@testing-library/react";
+import { render } from "@testing-library/react";
 
 import { UnconnectedGreeting, TEST_IDS } from "./Greeting";
 
 describe("<UnconnectedGreeting />", () => {
     const defaultProps = {
-        fetchUserData: () => {},
+        fetchUserById: () => {},
         isLoading: false,
         data: {
             name: "Foo Bar",
         },
-        errors: null,
+        error: null,
     };
 
     it("Calls fetchUserData on mount", async () => {
         const userID = 1;
-        const fetchUserDataMock = jest.fn();
+        const fetchUserByIdMock = jest.fn();
 
         render(
-            <UnconnectedGreeting fetchUserData={fetchUserDataMock} userID={userID} />
+            <UnconnectedGreeting fetchUserById={fetchUserByIdMock} userID={userID} />
         );
-        expect(fetchUserDataMock).toHaveBeenCalledWith(userID);
+        expect(fetchUserByIdMock).toHaveBeenCalledWith(userID);
     });
 
     it("Renders a loading wheel when loading", () => {
@@ -32,15 +32,13 @@ describe("<UnconnectedGreeting />", () => {
 
     it("Says so when there are errors", () => {
         const { getByText } = render(
-            <UnconnectedGreeting {...defaultProps} errors={{ sad: true }} />
+            <UnconnectedGreeting {...defaultProps} error={{ message: "It broke" }} />
         );
-        expect(getByText("Something went wrong.")).toBeTruthy();
+        expect(getByText("Something went wrong", { exact: false })).toBeTruthy();
     });
 
     it("Shows name when data is provided", () => {
-        const { getByTestId, debug } = render(
-            <UnconnectedGreeting {...defaultProps} />
-        );
+        const { getByTestId } = render(<UnconnectedGreeting {...defaultProps} />);
         expect(getByTestId(TEST_IDS.name).innerHTML).toEqual(
             `Hello, ${defaultProps.data.name}.`
         );
