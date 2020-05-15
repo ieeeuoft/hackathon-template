@@ -14,25 +14,18 @@ let settings = {
     pauseOnHover: false,
 };
 
-let sponsorList = [
-    { imgSrc: "AMD.svg" },
-    { imgSrc: "CityofBrampton.svg" },
-    { imgSrc: "CognitiveSystems.svg" },
-    { imgSrc: "ECE.png" },
-    { imgSrc: "ecobee.svg" },
-    { imgSrc: "FacultyofAppliedScienceandEngineering.png" },
-    { imgSrc: "Huawei.svg" },
-];
-
-const SponsorCard = () => (
-    <Container className={styles.sponsors}>
+const SponsorCard = ({ sponsors }) => (
+    <Container
+        className={!sponsors.length ? `${styles.noSponsors}` : `${styles.sponsors}`}
+    >
         <h2>Thanks to our sponsors!</h2>
         <Paper elevation={3} className={styles.sponsorsPaper}>
             <Slider {...settings}>
-                {sponsorList.map((item) => (
-                    <div className={styles.sponsorsImgdiv}>
-                        <img src={require("assets/images/sponsors/" + item.imgSrc)} />
-                    </div>
+                {sponsors.map((item) => (
+                    <img
+                        src={require("assets/images/sponsors/" + item.imgSrc)}
+                        alt={item.imgSrc}
+                    />
                 ))}
             </Slider>
         </Paper>

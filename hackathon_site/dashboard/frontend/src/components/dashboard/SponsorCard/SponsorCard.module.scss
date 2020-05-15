@@ -14,21 +14,8 @@
         flex-grow: 1;
         padding: 30px 0;
     }
+}
 
-    &Imgdiv {
-        height: calc(100% - 50px);
-        width: 100%;
-        display: flex !important;
-        @include flexPosition(center, center);
-        outline: none;
-        margin: 0px 15px 10px;
-
-        img {
-            display: block;
-            max-width: 170px;
-            max-height: calc(100% - 50px);
-            width: auto;
-            height: auto;
-        }
-    }
+.noSponsors {
+    display: none;
 }

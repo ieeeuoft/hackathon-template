@@ -14,3 +14,14 @@
     font-size: calc(10px + 2vmin);
     color: color(font);
 }
+
+// Need to overwrite some react-slick classes
+.slick {
+    &-slide {
+        margin: 10px 20px;
+    }
+    &-track {
+        display: flex;
+        align-items: center;
+    }
+}
