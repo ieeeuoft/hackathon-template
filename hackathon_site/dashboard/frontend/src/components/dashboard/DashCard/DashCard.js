@@ -22,16 +22,19 @@ const CardItem = (name, url, icon) => {
 
 const preventDefault = (event) => event.preventDefault();
 
-const DashCard = (title, list) => {
+const DashCard = (title, {list) => {
+    const createList = list;
+    const cardItem = list.map((listItem)=>
+        <Link href={listItem.url} onClick={preventDefault}>
+            <CardItem name={listItem.name} icon={listItem.icon} />
+        </Link>
+    );
+
     return (
         <Container className={styles.DashCard} maxWidth={false} disableGutters={true}>
             <h2>{title}</h2>
             <Paper elevation={3} className={styles.paper} square={true}>
-                {list.map((listItem) => (
-                    <Link href={listItem.url} onClick={preventDefault}>
-                        <CardItem name={listItem.name} icon={listItem.icon} />
-                    </Link>
-                ))}
+                {cardItem}
             </Paper>
         </Container>
     );
