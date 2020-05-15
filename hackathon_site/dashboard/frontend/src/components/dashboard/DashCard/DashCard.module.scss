@@ -8,13 +8,22 @@
     flex-direction: column;
     h2 {
         margin-bottom: 10px;
+        display: flex;
+        justify-content: left;
     }
     .paper {
         flex-grow: 1;
         padding: 8px 0px;
-        height: 201px;
         overflow-y: scroll;
         overflow-x: hidden;
+        .items {
+            display: flex;
+            flex-flow: row nowrap;
+            justify-content: space-between;
+            &:hover {
+                background-color: color(light2);
+            }
+        }
     }
 }
 
