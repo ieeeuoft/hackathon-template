@@ -1,0 +1,23 @@
+@import "./../../../assets/abstracts/mixins";
+@import "./../../../assets/abstracts/variables";
+@import "./../../../assets/abstracts/variables";
+
+.DashCard {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    h2 {
+        margin-bottom: 10px;
+    }
+    .paper {
+        flex-grow: 1;
+        padding: 8px 0px;
+        height: 201px;
+        overflow-y: scroll;
+        overflow-x: hidden;
+    }
+}
+
+.paper::-webkit-scrollbar {
+    display: none;
+}

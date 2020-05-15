@@ -3,6 +3,7 @@ import { HashRouter as Router, Route } from "react-router-dom";
 import { StylesProvider } from "@material-ui/core/styles";
 import NavBar from "components/general/Navbar/Navbar";
 import "App.scss";
+import DashCard from "components/dashboard/DashCard/DashCard.js";
 
 function App() {
     return (
@@ -13,6 +14,7 @@ function App() {
                 </Router>
                 <div className="App-header">
                     <p>IEEeeeeeee</p>
+                    <DashCard />
                 </div>
             </StylesProvider>
         </div>
