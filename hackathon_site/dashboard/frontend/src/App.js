@@ -2,6 +2,7 @@ import React from "react";
 import { HashRouter as Router, Route } from "react-router-dom";
 import { StylesProvider } from "@material-ui/core/styles";
 import NavBar from "components/general/Navbar/Navbar";
+import Dashboard from "pages/Dashboard/Dashboard";
 import "App.scss";
 
 function App() {
@@ -10,10 +11,8 @@ function App() {
             <StylesProvider injectFirst>
                 <Router>
                     <NavBar />
+                    <Route exact path="/" component={Dashboard} />
                 </Router>
-                <div className="App-header">
-                    <p>IEEeeeeeee</p>
-                </div>
             </StylesProvider>
         </div>
     );

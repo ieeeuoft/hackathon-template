@@ -3,6 +3,7 @@ import styles from "./SponsorCard.module.scss";
 import Slider from "react-slick";
 import Container from "@material-ui/core/Container";
 import Paper from "@material-ui/core/Paper";
+import Grid from "@material-ui/core/Grid";
 
 let settings = {
     dots: true,
@@ -14,22 +15,23 @@ let settings = {
     pauseOnHover: false,
 };
 
-const SponsorCard = ({ sponsors }) => (
-    <Container
-        className={!sponsors.length ? `${styles.noSponsors}` : `${styles.sponsors}`}
-    >
-        <h2>Thanks to our sponsors!</h2>
-        <Paper elevation={3} className={styles.sponsorsPaper}>
-            <Slider {...settings}>
-                {sponsors.map((item) => (
-                    <img
-                        src={require("./../../../assets/images/sponsors/" + item.imgSrc)}
-                        alt={item.imgSrc}
-                    />
-                ))}
-            </Slider>
-        </Paper>
-    </Container>
-);
+const SponsorCard = ({ sponsors }) => {
+    return !sponsors.length ? null : (
+        <Grid className={styles.sponsors} data-testid="sponsor-card" item>
+            <h2>Thanks to our sponsors!</h2>
+            <Paper elevation={3} className={styles.sponsorsPaper}>
+                <Slider {...settings}>
+                    {sponsors.map((item, i) => (
+                        <img
+                            src={require("assets/images/sponsors/" + item.imgSrc)}
+                            alt={item.imgSrc}
+                            key={i}
+                        />
+                    ))}
+                </Slider>
+            </Paper>
+        </Grid>
+    );
+};
 
 export default SponsorCard;
