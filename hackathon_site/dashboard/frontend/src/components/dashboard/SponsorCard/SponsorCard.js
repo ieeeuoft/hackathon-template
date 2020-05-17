@@ -23,7 +23,7 @@ const SponsorCard = ({ sponsors }) => (
             <Slider {...settings}>
                 {sponsors.map((item) => (
                     <img
-                        src={require("assets/images/sponsors/" + item.imgSrc)}
+                        src={require("./../../../assets/images/sponsors/" + item.imgSrc)}
                         alt={item.imgSrc}
                     />
                 ))}

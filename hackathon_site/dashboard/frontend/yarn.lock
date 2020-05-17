@@ -6409,6 +6409,7 @@ __metadata:
     "@testing-library/react": ^9.3.2
     "@testing-library/user-event": ^7.1.2
     husky: ^4.2.5
+    identity-obj-proxy: ^3.0.0
     node-sass: ^4.14.0
     prettier: ^2.0.5
     react: ^16.13.1
@@ -7232,7 +7233,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"identity-obj-proxy@npm:3.0.0":
+"identity-obj-proxy@npm:3.0.0, identity-obj-proxy@npm:^3.0.0":
   version: 3.0.0
   resolution: "identity-obj-proxy@npm:3.0.0"
   dependencies:
