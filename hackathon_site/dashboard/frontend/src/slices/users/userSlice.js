@@ -33,7 +33,7 @@ const userSlice = createSlice({
         [fetchUserById.fulfilled]: (state, action) => {
             state.userData.data = action.payload;
             state.userData.isLoading = false;
-            state.userData.errors = null;
+            state.userData.error = null;
         },
         [fetchUserById.rejected]: (state, action) => {
             state.userData.isLoading = false;

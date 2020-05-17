@@ -5,8 +5,10 @@ import thunk from "redux-thunk";
 import {
     userSelector,
     userDataSelector,
+    reducer,
     userReducerName,
     fetchUserById,
+    initialState,
 } from "./userSlice";
 
 jest.mock("axios");
@@ -23,6 +25,14 @@ const mockState = {
     },
 };
 
+// Action creator to mimic what thunks would dispatch internally
+const buildAction = (type, payload) => ({
+    type,
+    payload,
+});
+
+const buildErrorAction = (type, error) => ({ type, error });
+
 describe("Selectors", () => {
     it("userSelector returns the user store", () => {
         expect(userSelector(mockState)).toEqual(mockState[userReducerName]);
@@ -35,28 +45,46 @@ describe("Selectors", () => {
     });
 });
 
-describe("fetchByUserId thunk", () => {
+describe("userData Reducers", () => {
     let store;
 
     beforeEach(() => {
         store = mockStore(mockState);
     });
 
-    // it("Sets loading status while pending", () => {
-    //     // axios.get.mockImplementationOnce(() => new Promise(() => {}));
-    //     // console.log("here");
-    //     const type = fetchUserById.pending.type;
-    //     console.log(type);
-    //     store.dispatch({ type: type });
-    //     const actions = store.getActions();
-    //     console.log(actions);
-    // });
-    // it("Sets data when request succeeds", async (done) => {
-    //     const data = { name: "Foo Bar" };
-    //     axios.get.mockImplementationOnce(() => {
-    //         Promise.resolve(data);
-    //     });
-    //     await store.dispatch(fetchUserById(1));
-    //     console.log(store.getActions());
-    // });
+    it("Sets loading state on pending action", () => {
+        expect(
+            reducer(initialState, buildAction(fetchUserById.pending)).userData
+        ).toEqual({
+            ...initialState.userData,
+            isLoading: true,
+        });
+    });
+
+    it("Sets data on fulfilled action", () => {
+        const expectedData = {
+            name: "Foo Bar",
+        };
+        expect(
+            reducer(initialState, buildAction(fetchUserById.fulfilled, expectedData))
+                .userData
+        ).toEqual({
+            ...initialState.userData,
+            isLoading: false,
+            data: expectedData,
+        });
+    });
+
+    it("Sets error on rejected action", async () => {
+        // Per the docs, if the promise rejects without calling rejectWithValue,
+        // the serialized error will be in action.error: https://redux-toolkit.js.org/api/createAsyncThunk
+        const error = "Something went wrong";
+        expect(
+            reducer(initialState, buildErrorAction(fetchUserById.rejected, error))
+                .userData
+        ).toEqual({
+            ...initialState.userData,
+            error: error,
+        });
+    });
 });
