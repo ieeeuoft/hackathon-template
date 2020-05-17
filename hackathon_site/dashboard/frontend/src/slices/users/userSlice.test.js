@@ -1,4 +1,3 @@
-import axios from "axios";
 import configureStore from "redux-mock-store";
 import thunk from "redux-thunk";
 
@@ -10,8 +9,6 @@ import {
     fetchUserById,
     initialState,
 } from "./userSlice";
-
-jest.mock("axios");
 
 const mockStore = configureStore([thunk]);
 
