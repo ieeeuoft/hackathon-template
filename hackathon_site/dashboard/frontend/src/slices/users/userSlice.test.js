@@ -25,14 +25,6 @@ const mockState = {
     },
 };
 
-// Action creator to mimic what thunks would dispatch internally
-const buildAction = (type, payload) => ({
-    type,
-    payload,
-});
-
-const buildErrorAction = (type, error) => ({ type, error });
-
 describe("Selectors", () => {
     it("userSelector returns the user store", () => {
         expect(userSelector(mockState)).toEqual(mockState[userReducerName]);
@@ -52,10 +44,13 @@ describe("userData Reducers", () => {
         store = mockStore(mockState);
     });
 
+    // it("foo", () => {
+    //     const error = Error("Something went wrong");
+    //     console.log(fetchUserById.rejected(error));
+    // });
+
     it("Sets loading state on pending action", () => {
-        expect(
-            reducer(initialState, buildAction(fetchUserById.pending)).userData
-        ).toEqual({
+        expect(reducer(initialState, fetchUserById.pending()).userData).toEqual({
             ...initialState.userData,
             isLoading: true,
         });
@@ -66,8 +61,7 @@ describe("userData Reducers", () => {
             name: "Foo Bar",
         };
         expect(
-            reducer(initialState, buildAction(fetchUserById.fulfilled, expectedData))
-                .userData
+            reducer(initialState, fetchUserById.fulfilled(expectedData)).userData
         ).toEqual({
             ...initialState.userData,
             isLoading: false,
@@ -78,11 +72,11 @@ describe("userData Reducers", () => {
     it("Sets error on rejected action", async () => {
         // Per the docs, if the promise rejects without calling rejectWithValue,
         // the serialized error will be in action.error: https://redux-toolkit.js.org/api/createAsyncThunk
-        const error = "Something went wrong";
-        expect(
-            reducer(initialState, buildErrorAction(fetchUserById.rejected, error))
-                .userData
-        ).toEqual({
+
+        // The action creator actually expects a serialized error object with more fields than this
+        // so IDEs may throw a type warning, but passing in an Object works the same
+        const error = { message: "Something went wrong" };
+        expect(reducer(initialState, fetchUserById.rejected(error)).userData).toEqual({
             ...initialState.userData,
             error: error,
         });
