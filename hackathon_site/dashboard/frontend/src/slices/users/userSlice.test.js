@@ -44,11 +44,6 @@ describe("userData Reducers", () => {
         store = mockStore(mockState);
     });
 
-    // it("foo", () => {
-    //     const error = Error("Something went wrong");
-    //     console.log(fetchUserById.rejected(error));
-    // });
-
     it("Sets loading state on pending action", () => {
         expect(reducer(initialState, fetchUserById.pending()).userData).toEqual({
             ...initialState.userData,
