@@ -7,7 +7,18 @@ exports[`Footer renders 1`] = `
   >
     <footer
       class="footer"
-    />
+    >
+      <span
+        class="MuiTypography-root MuiTypography-caption MuiTypography-gutterBottom MuiTypography-displayBlock"
+      >
+        Hardware Signout
+      </span>
+      <span
+        class="MuiTypography-root MuiTypography-caption MuiTypography-gutterBottom MuiTypography-displayBlock"
+      >
+        © 2020 - built by the web team at MakeUofT (University of Toronto)
+      </span>
+    </footer>
   </div>
 </DocumentFragment>
 `;
