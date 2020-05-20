@@ -8,7 +8,6 @@ import store from "slices/store";
 import "App.scss";
 import NavBar from "components/general/Navbar/Navbar";
 import Greeting from "components/general/Greeting/Greeting";
-import NavBar from "components/general/Navbar/Navbar";
 import Dashboard from "pages/Dashboard/Dashboard";
 
 const UnconnectedApp = () => {
