@@ -17,7 +17,7 @@ const CardItem = ({ name, icon }) => {
 const DashCard = ({ title, content }) => {
     return (
         <Container className={styles.DashCard} maxWidth={false} disableGutters={true}>
-            <h2>{title}</h2>
+            <Typography variant="h2">{title}</Typography>
             <Paper elevation={3} className={styles.paper} square={true}>
                 {content.map((listItem) => (
                     <Link href={listItem.url} rel="noopener">
