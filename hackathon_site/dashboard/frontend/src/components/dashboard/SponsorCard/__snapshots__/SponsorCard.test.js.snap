@@ -31,6 +31,7 @@ exports[`renders correctly when there are images 1`] = `
             >
               <div>
                 <img
+                  alt="AMD.svg"
                   src="[object Object]"
                   style="width: 100%; display: inline-block;"
                   tabindex="-1"
@@ -46,6 +47,7 @@ exports[`renders correctly when there are images 1`] = `
             >
               <div>
                 <img
+                  alt="CityofBrampton.svg"
                   src="[object Object]"
                   style="width: 100%; display: inline-block;"
                   tabindex="-1"
