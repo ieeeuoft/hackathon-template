@@ -1,7 +1,7 @@
 import React from "react";
 import styles from "./SponsorCard.module.scss";
 import Slider from "react-slick";
-import Container from "@material-ui/core/Container";
+import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 
@@ -18,7 +18,7 @@ let settings = {
 const SponsorCard = ({ sponsors }) => {
     return !sponsors.length ? null : (
         <Grid className={styles.sponsors} data-testid="sponsor-card" item>
-            <h2>Thanks to our sponsors!</h2>
+            <Typography variant="h2">Thanks to our sponsors!</Typography>
             <Paper elevation={3} className={styles.sponsorsPaper}>
                 <Slider {...settings}>
                     {sponsors.map((item, i) => (
