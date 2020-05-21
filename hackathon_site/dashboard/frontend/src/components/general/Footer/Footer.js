@@ -4,12 +4,13 @@ import Container from "@material-ui/core/Container";
 import styles from "./Footer.module.scss";
 
 const Footer = () => {
-    let date = new Date();
-    const yearRange = date.getFullYear() === 2020 ? "" : " - " + date.getFullYear();
+    let fakeDate = new Date();
+    const yearRange =
+        fakeDate.getFullYear() === 2020 ? "" : " - " + fakeDate.getFullYear();
     const outputMessage =
-        "© 2020 " +
+        "© 2020" +
         yearRange +
-        "- built by the web team at MakeUofT (University of Toronto)";
+        ". Built by the web team at MakeUofT (University of Toronto)";
 
     return (
         <Container maxWidth={false} disableGutters={true}>
