@@ -5,16 +5,11 @@ import styles from "./Footer.module.scss";
 
 const Footer = () => {
     let date = new Date();
-
-    if (date.getFullYear() === 2020) {
-        var outputMessage =
-            "© 2020 - built by the web team at MakeUofT (University of Toronto)";
-    } else {
-        var outputMessage =
-            "© 2020 - " +
-            date.getFullYear() +
-            " built by the web team at MakeUofT (University of Toronto)";
-    }
+    const yearRange = date.getFullYear() === 2020 ? "" : " - " + date.getFullYear();
+    const outputMessage =
+        "© 2020 " +
+        yearRange +
+        "- built by the web team at MakeUofT (University of Toronto)";
 
     return (
         <Container maxWidth={false} disableGutters={true}>
