@@ -6,7 +6,9 @@ exports[`renders correctly when there are images 1`] = `
     class="MuiGrid-root sponsors MuiGrid-item"
     data-testid="sponsor-card"
   >
-    <h2>
+    <h2
+      class="MuiTypography-root MuiTypography-h2"
+    >
       Thanks to our sponsors!
     </h2>
     <div
