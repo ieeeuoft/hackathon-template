@@ -1,6 +1,5 @@
 @import "./../../../assets/abstracts/mixins";
 @import "./../../../assets/abstracts/variables";
-@import "./../../../assets/abstracts/variables";
 
 .DashCard {
     width: 100%;
@@ -8,8 +7,6 @@
     flex-direction: column;
     h2 {
         margin-bottom: 10px;
-        display: flex;
-        justify-content: left;
     }
     .paper {
         flex-grow: 1;
@@ -18,7 +15,6 @@
         overflow-x: hidden;
         .items {
             display: flex;
-            flex-flow: row nowrap;
             justify-content: space-between;
             &:hover {
                 background-color: color(light2);
