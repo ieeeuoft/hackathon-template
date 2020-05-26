@@ -4,17 +4,7 @@ import SponsorCard from "components/dashboard/SponsorCard/SponsorCard";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 
-const Dashboard = () => {
-    let sponsorsL = [
-        { imgSrc: "AMD.svg" },
-        { imgSrc: "CityofBrampton.svg" },
-        { imgSrc: "CognitiveSystems.svg" },
-        { imgSrc: "ECE.png" },
-        { imgSrc: "ecobee.svg" },
-        { imgSrc: "FacultyofAppliedScienceandEngineering.png" },
-        { imgSrc: "Huawei.svg" },
-    ];
-
+const Dashboard = ({sponsors}) => {
     return (
         <div className={styles.dashboard}>
             <Typography variant="h1">Hackathon Name Hardware Dashboard</Typography>
@@ -26,7 +16,7 @@ const Dashboard = () => {
                 spacing={2}
                 className={styles.dashboardGrid}
             >
-                <SponsorCard sponsors={sponsorsL} />
+                <SponsorCard sponsors={sponsors} />
             </Grid>
         </div>
     );

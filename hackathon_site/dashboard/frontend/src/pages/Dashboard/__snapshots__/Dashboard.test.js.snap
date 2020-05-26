@@ -1,0 +1,95 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly when the dashboard appears with no sponsor card 1`] = `
+<DocumentFragment>
+  <div
+    class="dashboard"
+  >
+    <h1
+      class="MuiTypography-root MuiTypography-h1"
+    >
+      Hackathon Name Hardware Dashboard
+    </h1>
+    <div
+      class="MuiGrid-root dashboardGrid MuiGrid-container MuiGrid-spacing-xs-2 MuiGrid-align-items-xs-flex-start"
+    />
+  </div>
+</DocumentFragment>
+`;
+
+exports[`renders correctly when the dashboard appears with the sponsor card 1`] = `
+<DocumentFragment>
+  <div
+    class="dashboard"
+  >
+    <h1
+      class="MuiTypography-root MuiTypography-h1"
+    >
+      Hackathon Name Hardware Dashboard
+    </h1>
+    <div
+      class="MuiGrid-root dashboardGrid MuiGrid-container MuiGrid-spacing-xs-2 MuiGrid-align-items-xs-flex-start"
+    >
+      <div
+        class="MuiGrid-root sponsors MuiGrid-item"
+        data-testid="sponsor-card"
+      >
+        <h2
+          class="MuiTypography-root MuiTypography-h2"
+        >
+          Thanks to our sponsors!
+        </h2>
+        <div
+          class="MuiPaper-root sponsorsPaper MuiPaper-elevation3 MuiPaper-rounded"
+        >
+          <div
+            class="slick-slider slick-initialized"
+          >
+            <div
+              class="slick-list"
+            >
+              <div
+                class="slick-track"
+                style="opacity: 1; transform: translate3d(0px, 0px, 0px);"
+              >
+                <div
+                  aria-hidden="false"
+                  class="slick-slide slick-active slick-current"
+                  data-index="0"
+                  style="outline: none; width: 0px;"
+                  tabindex="-1"
+                >
+                  <div>
+                    <img
+                      alt="AMD.svg"
+                      src="[object Object]"
+                      style="width: 100%; display: inline-block;"
+                      tabindex="-1"
+                    />
+                  </div>
+                </div>
+                <div
+                  aria-hidden="false"
+                  class="slick-slide slick-active"
+                  data-index="1"
+                  style="outline: none; width: 0px;"
+                  tabindex="-1"
+                >
+                  <div>
+                    <img
+                      alt="CityofBrampton.svg"
+                      src="[object Object]"
+                      style="width: 100%; display: inline-block;"
+                      tabindex="-1"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
