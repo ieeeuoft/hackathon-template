@@ -16,7 +16,7 @@ const UnconnectedApp = () => {
         <div className="App">
             <Router>
                 <NavBar />
-                <Route exact path="/" component={Dashboard} />
+                <Route exact path="/" component={<Dashboard sponsors={[]} />} />
             </Router>
             <div className="App-header">
                 <p>IEEeeeeeee</p>
