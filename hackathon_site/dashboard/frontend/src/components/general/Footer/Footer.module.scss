@@ -1,0 +1,10 @@
+@import "./../../../assets/abstracts/mixins";
+@import "./../../../assets/abstracts/variables";
+
+.footer {
+    text-align: center;
+    background-color: color(secondary);
+    color: color(white);
+    padding: 10px;
+    width: 100%;
+}
