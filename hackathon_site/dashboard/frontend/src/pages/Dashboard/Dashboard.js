@@ -4,7 +4,7 @@ import SponsorCard from "components/dashboard/SponsorCard/SponsorCard";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 
-const Dashboard = ({sponsors}) => {
+const Dashboard = ({ sponsors }) => {
     return (
         <div className={styles.dashboard}>
             <Typography variant="h1">Hackathon Name Hardware Dashboard</Typography>

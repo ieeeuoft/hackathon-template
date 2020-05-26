@@ -7,6 +7,7 @@ it("renders correctly when all icons appear", () => {
     const { asFragment } = render(
         <Router>
             <Navbar />
-        </Router>);
+        </Router>
+    );
     expect(asFragment()).toMatchSnapshot();
 });
