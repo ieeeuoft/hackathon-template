@@ -1,0 +1,24 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Footer renders 1`] = `
+<DocumentFragment>
+  <div
+    class="MuiContainer-root MuiContainer-disableGutters"
+  >
+    <footer
+      class="footer"
+    >
+      <span
+        class="MuiTypography-root MuiTypography-caption MuiTypography-gutterBottom MuiTypography-displayBlock"
+      >
+        Hardware Signout
+      </span>
+      <span
+        class="MuiTypography-root MuiTypography-caption MuiTypography-gutterBottom MuiTypography-displayBlock"
+      >
+        © 2020. Built by the web team at MakeUofT (University of Toronto)
+      </span>
+    </footer>
+  </div>
+</DocumentFragment>
+`;
