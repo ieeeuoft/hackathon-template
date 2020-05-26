@@ -8,6 +8,7 @@ import store from "slices/store";
 import "App.scss";
 import NavBar from "components/general/Navbar/Navbar";
 import Greeting from "components/general/Greeting/Greeting";
+import Footer from "components/general/Footer/Footer";
 
 const UnconnectedApp = () => {
     return (
@@ -19,6 +20,7 @@ const UnconnectedApp = () => {
                 <p>IEEeeeeeee</p>
                 <Greeting userID={1} />
             </div>
+            <Footer />
         </div>
     );
 };
