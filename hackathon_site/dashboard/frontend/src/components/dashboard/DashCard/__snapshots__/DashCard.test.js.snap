@@ -12,6 +12,9 @@ exports[`DashCard render 1`] = `
     </h2>
     <div
       class="MuiPaper-root paper MuiPaper-elevation3"
+      color="inherit"
+      target="_blank"
+      underline="none"
     >
       <a
         class="MuiTypography-root MuiLink-root MuiLink-underlineHover MuiTypography-colorPrimary"
