@@ -44,9 +44,6 @@ const UnconnectedSponsorCard = ({ sponsors }) => {
     );
 };
 
-
-const ConnectedSponsorCard = () => (
-    <UnconnectedSponsorCard sponsors={sponsorsList}/>
-);
+const ConnectedSponsorCard = () => <UnconnectedSponsorCard sponsors={sponsorsList} />;
 
 export default ConnectedSponsorCard;
