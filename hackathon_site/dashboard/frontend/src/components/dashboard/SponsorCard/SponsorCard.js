@@ -15,7 +15,17 @@ let settings = {
     pauseOnHover: false,
 };
 
-const SponsorCard = ({ sponsors }) => {
+let sponsorsList = [
+    { imgSrc: "AMD.svg" },
+    { imgSrc: "CityofBrampton.svg" },
+    { imgSrc: "CognitiveSystems.svg" },
+    { imgSrc: "ECE.png" },
+    { imgSrc: "ecobee.svg" },
+    { imgSrc: "FacultyofAppliedScienceandEngineering.png" },
+    { imgSrc: "Huawei.svg" },
+];
+
+const UnconnectedSponsorCard = ({ sponsors }) => {
     return !sponsors.length ? null : (
         <Grid className={styles.sponsors} data-testid="sponsor-card" item>
             <Typography variant="h2">Thanks to our sponsors!</Typography>
@@ -34,4 +44,9 @@ const SponsorCard = ({ sponsors }) => {
     );
 };
 
-export default SponsorCard;
+
+const ConnectedSponsorCard = () => (
+    <UnconnectedSponsorCard sponsors={sponsorsList}/>
+);
+
+export default ConnectedSponsorCard;
