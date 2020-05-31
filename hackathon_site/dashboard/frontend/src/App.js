@@ -8,6 +8,7 @@ import store from "slices/store";
 import "App.scss";
 import NavBar from "components/general/Navbar/Navbar";
 import Greeting from "components/general/Greeting/Greeting";
+import Dashboard from "pages/Dashboard/Dashboard";
 import Footer from "components/general/Footer/Footer";
 
 const UnconnectedApp = () => {
@@ -15,6 +16,7 @@ const UnconnectedApp = () => {
         <div className="App">
             <Router>
                 <NavBar />
+                <Route exact path="/" component={Dashboard} />
             </Router>
             <div className="App-header">
                 <p>IEEeeeeeee</p>
