@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`renders correctly when there are images 1`] = `
+exports[`renders correctly when there are 2 images 1`] = `
 <DocumentFragment>
   <div
     class="MuiGrid-root sponsors MuiGrid-item"
@@ -16,16 +16,7 @@ exports[`renders correctly when there are images 1`] = `
     >
       <div
         class="slick-slider slick-initialized"
-        dir="ltr"
       >
-        <button
-          class="slick-arrow slick-prev"
-          data-role="none"
-          style="display: block;"
-          type="button"
-        >
-           Previous
-        </button>
         <div
           class="slick-list"
         >
@@ -33,38 +24,6 @@ exports[`renders correctly when there are images 1`] = `
             class="slick-track"
             style="opacity: 1; transform: translate3d(0px, 0px, 0px);"
           >
-            <div
-              aria-hidden="true"
-              class="slick-slide slick-cloned"
-              data-index="-2"
-              style="width: 0px;"
-              tabindex="-1"
-            >
-              <div>
-                <img
-                  alt="FacultyofAppliedScienceandEngineering.png"
-                  src="FacultyofAppliedScienceandEngineering.png"
-                  style="width: 100%; display: inline-block;"
-                  tabindex="-1"
-                />
-              </div>
-            </div>
-            <div
-              aria-hidden="true"
-              class="slick-slide slick-cloned"
-              data-index="-1"
-              style="width: 0px;"
-              tabindex="-1"
-            >
-              <div>
-                <img
-                  alt="Huawei.svg"
-                  src="[object Object]"
-                  style="width: 100%; display: inline-block;"
-                  tabindex="-1"
-                />
-              </div>
-            </div>
             <div
               aria-hidden="false"
               class="slick-slide slick-active slick-current"
@@ -90,200 +49,8 @@ exports[`renders correctly when there are images 1`] = `
             >
               <div>
                 <img
-                  alt="CityofBrampton.svg"
-                  src="[object Object]"
-                  style="width: 100%; display: inline-block;"
-                  tabindex="-1"
-                />
-              </div>
-            </div>
-            <div
-              aria-hidden="true"
-              class="slick-slide"
-              data-index="2"
-              style="outline: none; width: 0px;"
-              tabindex="-1"
-            >
-              <div>
-                <img
-                  alt="CognitiveSystems.svg"
-                  src="[object Object]"
-                  style="width: 100%; display: inline-block;"
-                  tabindex="-1"
-                />
-              </div>
-            </div>
-            <div
-              aria-hidden="true"
-              class="slick-slide"
-              data-index="3"
-              style="outline: none; width: 0px;"
-              tabindex="-1"
-            >
-              <div>
-                <img
                   alt="ECE.png"
                   src="ECE.png"
-                  style="width: 100%; display: inline-block;"
-                  tabindex="-1"
-                />
-              </div>
-            </div>
-            <div
-              aria-hidden="true"
-              class="slick-slide"
-              data-index="4"
-              style="outline: none; width: 0px;"
-              tabindex="-1"
-            >
-              <div>
-                <img
-                  alt="ecobee.svg"
-                  src="[object Object]"
-                  style="width: 100%; display: inline-block;"
-                  tabindex="-1"
-                />
-              </div>
-            </div>
-            <div
-              aria-hidden="true"
-              class="slick-slide"
-              data-index="5"
-              style="outline: none; width: 0px;"
-              tabindex="-1"
-            >
-              <div>
-                <img
-                  alt="FacultyofAppliedScienceandEngineering.png"
-                  src="FacultyofAppliedScienceandEngineering.png"
-                  style="width: 100%; display: inline-block;"
-                  tabindex="-1"
-                />
-              </div>
-            </div>
-            <div
-              aria-hidden="true"
-              class="slick-slide"
-              data-index="6"
-              style="outline: none; width: 0px;"
-              tabindex="-1"
-            >
-              <div>
-                <img
-                  alt="Huawei.svg"
-                  src="[object Object]"
-                  style="width: 100%; display: inline-block;"
-                  tabindex="-1"
-                />
-              </div>
-            </div>
-            <div
-              aria-hidden="true"
-              class="slick-slide slick-cloned"
-              data-index="7"
-              style="width: 0px;"
-              tabindex="-1"
-            >
-              <div>
-                <img
-                  alt="AMD.svg"
-                  src="[object Object]"
-                  style="width: 100%; display: inline-block;"
-                  tabindex="-1"
-                />
-              </div>
-            </div>
-            <div
-              aria-hidden="true"
-              class="slick-slide slick-cloned"
-              data-index="8"
-              style="width: 0px;"
-              tabindex="-1"
-            >
-              <div>
-                <img
-                  alt="CityofBrampton.svg"
-                  src="[object Object]"
-                  style="width: 100%; display: inline-block;"
-                  tabindex="-1"
-                />
-              </div>
-            </div>
-            <div
-              aria-hidden="true"
-              class="slick-slide slick-cloned"
-              data-index="9"
-              style="width: 0px;"
-              tabindex="-1"
-            >
-              <div>
-                <img
-                  alt="CognitiveSystems.svg"
-                  src="[object Object]"
-                  style="width: 100%; display: inline-block;"
-                  tabindex="-1"
-                />
-              </div>
-            </div>
-            <div
-              aria-hidden="true"
-              class="slick-slide slick-cloned"
-              data-index="10"
-              style="width: 0px;"
-              tabindex="-1"
-            >
-              <div>
-                <img
-                  alt="ECE.png"
-                  src="ECE.png"
-                  style="width: 100%; display: inline-block;"
-                  tabindex="-1"
-                />
-              </div>
-            </div>
-            <div
-              aria-hidden="true"
-              class="slick-slide slick-cloned"
-              data-index="11"
-              style="width: 0px;"
-              tabindex="-1"
-            >
-              <div>
-                <img
-                  alt="ecobee.svg"
-                  src="[object Object]"
-                  style="width: 100%; display: inline-block;"
-                  tabindex="-1"
-                />
-              </div>
-            </div>
-            <div
-              aria-hidden="true"
-              class="slick-slide slick-cloned"
-              data-index="12"
-              style="width: 0px;"
-              tabindex="-1"
-            >
-              <div>
-                <img
-                  alt="FacultyofAppliedScienceandEngineering.png"
-                  src="FacultyofAppliedScienceandEngineering.png"
-                  style="width: 100%; display: inline-block;"
-                  tabindex="-1"
-                />
-              </div>
-            </div>
-            <div
-              aria-hidden="true"
-              class="slick-slide slick-cloned"
-              data-index="13"
-              style="width: 0px;"
-              tabindex="-1"
-            >
-              <div>
-                <img
-                  alt="Huawei.svg"
-                  src="[object Object]"
                   style="width: 100%; display: inline-block;"
                   tabindex="-1"
                 />
@@ -291,68 +58,6 @@ exports[`renders correctly when there are images 1`] = `
             </div>
           </div>
         </div>
-        <button
-          class="slick-arrow slick-next"
-          data-role="none"
-          style="display: block;"
-          type="button"
-        >
-           Next
-        </button>
-        <ul
-          class="slick-dots"
-          style="display: block;"
-        >
-          <li
-            class="slick-active"
-          >
-            <button>
-              1
-            </button>
-          </li>
-          <li
-            class=""
-          >
-            <button>
-              2
-            </button>
-          </li>
-          <li
-            class=""
-          >
-            <button>
-              3
-            </button>
-          </li>
-          <li
-            class=""
-          >
-            <button>
-              4
-            </button>
-          </li>
-          <li
-            class=""
-          >
-            <button>
-              5
-            </button>
-          </li>
-          <li
-            class=""
-          >
-            <button>
-              6
-            </button>
-          </li>
-          <li
-            class=""
-          >
-            <button>
-              7
-            </button>
-          </li>
-        </ul>
       </div>
     </div>
   </div>

@@ -7,10 +7,17 @@ import DashCard from "components/dashboard/DashCard/DashCard";
 import OpenInNew from "@material-ui/icons/OpenInNew";
 import GetApp from "@material-ui/icons/GetApp";
 
-let testTitle = "Hello";
-let testContent = [
-    { name: "Test", url: "www.facebook.com", icon: <GetApp /> },
-    { name: "Test", url: "www.facebook.com", icon: <OpenInNew /> },
+export const cardItems = [
+    {
+        title: "Hello",
+        content: [{ name: "Test", url: "https://www.facebook.com", icon: <GetApp /> }],
+    },
+    {
+        title: "Hi",
+        content: [
+            { name: "Test2", url: "https://www.youtube.com", icon: <OpenInNew /> },
+        ],
+    },
 ];
 
 const Dashboard = () => {
@@ -25,8 +32,9 @@ const Dashboard = () => {
                 spacing={2}
                 className={styles.dashboardGrid}
             >
-                <DashCard title={testTitle} content={testContent} />
-                <DashCard title={testTitle} content={testContent} />
+                {cardItems.map(({ title, content }, i) => (
+                    <DashCard title={title} content={content} key={i} />
+                ))}
                 <ConnectedSponsorCard />
             </Grid>
         </div>

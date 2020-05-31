@@ -1,8 +1,9 @@
 import React from "react";
 import { render } from "@testing-library/react";
-import ConnectedSponsorCard from "./SponsorCard";
+import { UnconnectedSponsorCard } from "./SponsorCard";
 
-it("renders correctly when there are images", () => {
-    const { asFragment } = render(<ConnectedSponsorCard />);
+it("renders correctly when there are 2 images", () => {
+    let testList = [{ imgSrc: "AMD.svg" }, { imgSrc: "ECE.png" }];
+    const { asFragment } = render(<UnconnectedSponsorCard sponsors={testList} />);
     expect(asFragment()).toMatchSnapshot();
 });

@@ -25,7 +25,7 @@ let sponsorsList = [
     { imgSrc: "Huawei.svg" },
 ];
 
-const UnconnectedSponsorCard = ({ sponsors }) => {
+export const UnconnectedSponsorCard = ({ sponsors }) => {
     return !sponsors.length ? null : (
         <Grid className={styles.sponsors} data-testid="sponsor-card" item>
             <Typography variant="h2">Thanks to our sponsors!</Typography>
