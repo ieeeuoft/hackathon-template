@@ -25,10 +25,6 @@ SECRET_KEY = os.environ["SECRET_KEY"]
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(int(os.environ.get("DEBUG", 0)))
 
-CORS_ORIGIN_REGEX_WHITELIST = [
-    r"^https://ieee\.utoronto.ca:?\d*$",
-]
-
 if DEBUG:
     ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
     INTERNAL_IPS = ["localhost", "127.0.0.1"]
