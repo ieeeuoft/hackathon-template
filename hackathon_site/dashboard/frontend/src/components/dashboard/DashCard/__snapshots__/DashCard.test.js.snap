@@ -3,7 +3,7 @@
 exports[`DashCard render 1`] = `
 <DocumentFragment>
   <div
-    class="MuiContainer-root DashCard MuiContainer-disableGutters"
+    class="MuiGrid-root DashCard MuiGrid-item"
   >
     <h2
       class="MuiTypography-root MuiTypography-h2"

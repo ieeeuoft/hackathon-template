@@ -36,5 +36,18 @@
             color: color(white);
             margin: 10px;
         }
+
+        &Disappear {
+            @include responsive(md) {
+                display: none;
+            }
+        }
+
+        &Reappear {
+            display: none;
+            @include responsive(md) {
+                display: inline;
+            }
+        }
     }
 }
