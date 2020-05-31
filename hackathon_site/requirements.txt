@@ -4,7 +4,10 @@ attrs==19.3.0
 black==19.10b0
 certifi==2020.4.5.1
 click==7.1.2
+dj-rest-auth==1.0.6
 Django==3.0.5
+django-cors-headers==3.3.0
+djangorestframework==3.11.0
 pathspec==0.8.0
 psycopg2==2.8.5
 pytz==2020.1
