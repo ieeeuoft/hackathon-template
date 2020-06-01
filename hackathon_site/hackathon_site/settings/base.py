@@ -28,8 +28,15 @@ DEBUG = bool(int(os.environ.get("DEBUG", 0)))
 if DEBUG:
     ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
     INTERNAL_IPS = ["localhost", "127.0.0.1"]
+    CORS_ORIGIN_REGEX_WHITELIST = [
+        r"^https?://localhost:?\d*$",
+    ]
 else:
-    ALLOWED_HOSTS = []
+    # NOTE: If you aren't ieee uoft, put your websites here
+    ALLOWED_HOSTS = ["ieee.utoronto.ca"]
+    CORS_ORIGIN_REGEX_WHITELIST = [
+        r"^https://ieee\.utoronto.ca:?\d*$",
+    ]
 
 
 # Application definition
@@ -41,6 +48,10 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "corsheaders",
+    "rest_framework",
+    "rest_framework.authtoken",
+    "dj_rest_auth",
     "dashboard",
     "applications",
     "event",
@@ -48,6 +59,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -105,6 +117,12 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.SessionAuthentication"
+    ]
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
