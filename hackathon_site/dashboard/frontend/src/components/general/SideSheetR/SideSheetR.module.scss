@@ -1,0 +1,13 @@
+@import "./../../../assets/abstracts/mixins";
+@import "./../../../assets/abstracts/variables";
+
+.topsheet {
+    background-color: color(grey);
+    display: flex;
+    padding: 23px 90px;
+    width: 100%;
+    justify-content: flex-start;
+    .backarrow {
+        margin: 0 15px;
+    }
+}

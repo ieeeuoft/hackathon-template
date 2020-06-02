@@ -11,6 +11,9 @@ import Greeting from "components/general/Greeting/Greeting";
 import Dashboard from "pages/Dashboard/Dashboard";
 import Footer from "components/general/Footer/Footer";
 
+//Testing my component
+import SideSheetR from "components/general/SideSheetR/SideSheetR";
+
 const UnconnectedApp = () => {
     return (
         <div className="App">
@@ -20,6 +23,7 @@ const UnconnectedApp = () => {
             </Router>
             <div className="App-header">
                 <p>IEEeeeeeee</p>
+                <SideSheetR />
                 <Greeting userID={1} />
             </div>
             <Footer />
