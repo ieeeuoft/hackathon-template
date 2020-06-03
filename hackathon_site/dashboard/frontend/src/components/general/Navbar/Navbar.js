@@ -10,6 +10,7 @@ import AccountCircle from "@material-ui/icons/AccountCircle";
 import InsertChartOutlined from "@material-ui/icons/InsertChartOutlined";
 import Menu from "@material-ui/icons/Menu";
 import { ReactComponent as Inventory } from "assets/images/icons/Hardware.svg";
+import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -35,54 +36,52 @@ const Navbar = () => (
 
             <div className={styles.navIcons}>
                 <Link to={"/"} className={styles.navIconsDisappear}>
-                    <IconButton color="inherit" aria-label="Dashboard">
-                        <Home /> Dashboard
-                    </IconButton>
+                    <Button color="inherit" aria-label="Dashboard" startIcon={<Home />}>
+                        Dashboard
+                    </Button>
                 </Link>
 
                 <Link to={"/orders"} className={styles.navIconsDisappear}>
-                    <IconButton color="inherit" aria-label="Orders">
-                        <ListAlt /> Orders
-                    </IconButton>
+                    <Button color="inherit" aria-label="Orders" startIcon={<ListAlt />}>
+                        Orders  
+                    </Button>
                 </Link>
 
                 <Link to={"/teams"} className={styles.navIconsDisappear}>
-                    <IconButton color="inherit" aria-label="Teams">
-                        <AccountCircle /> Teams
-                    </IconButton>
+                    <Button color="inherit" aria-label="Teams" startIcon={<AccountCircle />}>
+                        Teams
+                    </Button>
                 </Link>
 
                 <Link to={"/reports"} className={styles.navIconsDisappear}>
-                    <IconButton color="inherit" aria-label="Reports">
-                        <InsertChartOutlined /> Reports
-                    </IconButton>
+                    <Button color="inherit" aria-label="Reports" startIcon={<InsertChartOutlined />}>
+                         Reports
+                    </Button>
                 </Link>
 
                 <Link to={"/inventory"} className={styles.navIconsDisappear}>
-                    <IconButton color="inherit" aria-label="Inventory">
-                        <Inventory /> Inventory
-                    </IconButton>
+                    <Button color="inherit" aria-label="Inventory" startIcon={<Inventory className={styles.customIcon}/>}>
+                        Inventory
+                    </Button>
                 </Link>
 
                 <Link to={"/cart"}>
-                    <IconButton color="inherit" aria-label="Cart">
-                        <ShoppingCart />
+                    <Button color="inherit" aria-label="Cart" startIcon={<ShoppingCart />}>
                         <span className={styles.navIconsDisappear}>Cart</span>
-                    </IconButton>
+                    </Button>
                 </Link>
 
-                <IconButton color="inherit" aria-label="Notifications">
-                    <Notifications />
+                <Button color="inherit" aria-label="Notifications" startIcon={<Notifications />}>
                     <span className={styles.navIconsDisappear}>Notifications</span>
-                </IconButton>
+                </Button>
 
-                <IconButton
+                <Button
                     color="inherit"
                     aria-label="Logout"
                     className={styles.navIconsDisappear}
                 >
                     Logout
-                </IconButton>
+                </Button>
             </div>
         </Toolbar>
     </AppBar>
