@@ -6,7 +6,7 @@ exports[`renders correctly when all icons appear 1`] = `
     class="nav"
   >
     <div
-      class="navDisappear"
+      class="PrivateHiddenCss-smDown-6"
     >
       <a
         href="#/"
@@ -249,7 +249,7 @@ exports[`renders correctly when all icons appear 1`] = `
       </button>
     </div>
     <div
-      class="navReappear"
+      class="PrivateHiddenCss-mdUp-8"
     >
       <a
         href="#/cart"

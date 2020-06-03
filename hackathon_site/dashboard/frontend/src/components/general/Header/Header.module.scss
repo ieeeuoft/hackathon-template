@@ -15,25 +15,10 @@
         }
     }
 
-    &Icon {
-        &Disappear {
-            @include responsive(md) {
-                display: none;
-            }
-        }
-
-        &Reappear {
-            display: none;
-            @include responsive(md) {
-                display: inline;
-            }
-        }
-
-        &Btn {
-            color: color(white);
-            &:hover {
-                background-color: rgba(355, 355, 355, 0.2);
-            }
+    &IconBtn {
+        color: color(white);
+        &:hover {
+            background-color: rgba(355, 355, 355, 0.2);
         }
     }
 }

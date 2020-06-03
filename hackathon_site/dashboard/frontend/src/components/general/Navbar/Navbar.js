@@ -12,10 +12,11 @@ import { ReactComponent as Inventory } from "assets/images/icons/Hardware.svg";
 // Components
 import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
+import Hidden from "@material-ui/core/Hidden";
 
 const Navbar = () => (
     <nav className={styles.nav}>
-        <div className={styles.navDisappear}>
+        <Hidden implementation="css" smDown>
             <Link to={"/"}>
                 <Button
                     className={styles.navBtn}
@@ -87,8 +88,8 @@ const Navbar = () => (
             <Button aria-label="Logout" className={styles.navBtn}>
                 <b>Logout</b>
             </Button>
-        </div>
-        <div className={styles.navReappear}>
+        </Hidden>
+        <Hidden implementation="css" mdUp>
             <Link to={"/cart"}>
                 <IconButton className={styles.navIconBtn} aria-label="Cart">
                     <ShoppingCart />
@@ -98,7 +99,7 @@ const Navbar = () => (
             <IconButton className={styles.navIconBtn} aria-label="Notifications">
                 <Notifications />
             </IconButton>
-        </div>
+        </Hidden>
     </nav>
 );
 
