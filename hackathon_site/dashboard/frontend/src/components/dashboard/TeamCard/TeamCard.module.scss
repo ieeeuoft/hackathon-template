@@ -1,0 +1,33 @@
+@import "./../../../assets/abstracts/mixins";
+@import "./../../../assets/abstracts/variables";
+
+.TeamCard {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    h2 {
+        margin-bottom: 10px;
+    }
+    .paper {
+        flex-grow: 1;
+        padding: 8px 0px;
+        overflow-x: scroll;
+        overflow-y: scroll;
+        .name {
+            display: flex;
+            align-items: center;
+            &:hover {
+                background-color: color(light2);
+            }
+        }
+    }
+
+    .lastRow {
+        padding-left: 80%;
+    }
+
+    .Button {
+        align-items: center;
+        color: color(primary);
+    }
+}
