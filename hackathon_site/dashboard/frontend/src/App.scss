@@ -2,7 +2,6 @@
 @import "assets/abstracts/variables";
 
 .App {
-    text-align: center;
     background-color: color(backgroundC);
 }
 
@@ -14,4 +13,18 @@
     justify-content: center;
     font-size: calc(10px + 2vmin);
     color: color(font);
+}
+
+// Need to overwrite some react-slick classes
+.slick {
+    &-slide {
+        margin: 10px 20px;
+    }
+    &-track {
+        display: flex;
+        align-items: center;
+    }
+    &-arrow {
+        display: none !important;
+    }
 }

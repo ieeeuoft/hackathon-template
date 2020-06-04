@@ -1,0 +1,10 @@
+.dashboard {
+    width: 100%;
+    padding: 50px;
+    margin-top: 100px;
+
+    &Grid {
+        margin-top: 30px;
+        flex-wrap: nowrap;
+    }
+}

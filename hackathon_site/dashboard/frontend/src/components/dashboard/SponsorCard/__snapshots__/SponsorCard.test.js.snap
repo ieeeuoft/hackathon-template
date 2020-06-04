@@ -1,0 +1,65 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly when there are 2 images 1`] = `
+<DocumentFragment>
+  <div
+    class="MuiGrid-root sponsors MuiGrid-item"
+    data-testid="sponsor-card"
+  >
+    <h2
+      class="MuiTypography-root MuiTypography-h2"
+    >
+      Thanks to our sponsors!
+    </h2>
+    <div
+      class="MuiPaper-root sponsorsPaper MuiPaper-elevation3 MuiPaper-rounded"
+    >
+      <div
+        class="slick-slider slick-initialized"
+      >
+        <div
+          class="slick-list"
+        >
+          <div
+            class="slick-track"
+            style="opacity: 1; transform: translate3d(0px, 0px, 0px);"
+          >
+            <div
+              aria-hidden="false"
+              class="slick-slide slick-active slick-current"
+              data-index="0"
+              style="outline: none; width: 0px;"
+              tabindex="-1"
+            >
+              <div>
+                <img
+                  alt="AMD.svg"
+                  src="[object Object]"
+                  style="width: 100%; display: inline-block;"
+                  tabindex="-1"
+                />
+              </div>
+            </div>
+            <div
+              aria-hidden="false"
+              class="slick-slide slick-active"
+              data-index="1"
+              style="outline: none; width: 0px;"
+              tabindex="-1"
+            >
+              <div>
+                <img
+                  alt="ECE.png"
+                  src="ECE.png"
+                  style="width: 100%; display: inline-block;"
+                  tabindex="-1"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
