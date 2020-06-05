@@ -9,10 +9,10 @@ import Hidden from "@material-ui/core/Hidden";
 import Menu from "@material-ui/icons/Menu";
 import Navbar from "components/general/Navbar/Navbar";
 
-const Header = ({ showNavbar = false }) => (
+const Header = ({ showNavbar = true }) => (
     <AppBar className={styles.header} position="sticky">
         <Toolbar className={styles.headerToolbar}>
-            <Hidden implementation="css" smDown={showNavbar ? true : false}>
+            <Hidden implementation="css" smDown={!!showNavbar}>
                 <div className={styles.headerLogo}>
                     <Logo
                         className={styles.headerLogoImg}

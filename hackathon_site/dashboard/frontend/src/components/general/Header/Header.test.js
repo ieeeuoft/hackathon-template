@@ -15,12 +15,12 @@ test("renders header with navbar", () => {
 });
 
 test("renders header with no navbar", () => {
-    const { getByText, getByTestId } = render(
+    const { getByText, getByTestId, queryByText } = render(
         <Router>
             <Header showNavbar={false} />
         </Router>
     );
     expect(getByText(/Hackathon Name/i)).toBeInTheDocument();
     expect(getByTestId("headerLogo")).toBeInTheDocument();
-    expect(getByText("Dashboard")).not.toBeInTheDocument(); // Checking if navbar is not in header
+    expect(queryByText("Dashboard")).not.toBeInTheDocument(); // Checking if navbar is not in header
 });
