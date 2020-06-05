@@ -2,52 +2,25 @@
 @import "./../../../assets/abstracts/variables";
 
 .nav {
-    color: color(white);
-    background-color: color(secondary) !important;
+    &Btn,
+    &IconBtn {
+        color: color(white);
 
-    &Toolbar {
-        justify-content: space-between;
-    }
-
-    &Logo {
-        display: flex;
-
-        &Img {
-            height: 30px;
+        .customIcon {
+            width: 20px;
         }
-    }
-
-    button {
-        border-radius: 0;
 
         &:hover {
             background-color: rgba(355, 355, 355, 0.2);
         }
     }
 
-    &Icons {
-        span {
-            color: color(white);
-            font-size: size(md);
-            font-weight: 500;
-        }
+    &Btn {
+        border-radius: 0;
+        padding: 20px 15px;
+    }
 
-        svg {
-            color: color(white);
-            margin: 10px;
-        }
-
-        &Disappear {
-            @include responsive(md) {
-                display: none;
-            }
-        }
-
-        &Reappear {
-            display: none;
-            @include responsive(md) {
-                display: inline;
-            }
-        }
+    &IconBtn {
+        margin-left: 15px;
     }
 }
