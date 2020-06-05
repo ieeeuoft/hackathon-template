@@ -6,6 +6,7 @@ import Typography from "@material-ui/core/Typography";
 import DashCard from "components/dashboard/DashCard/DashCard";
 import OpenInNew from "@material-ui/icons/OpenInNew";
 import GetApp from "@material-ui/icons/GetApp";
+import ConnectedItemTable from "components/dashboard/ItemTable/ItemTable";
 
 export const cardItems = [
     {
@@ -37,6 +38,7 @@ const Dashboard = () => {
                 ))}
                 <ConnectedSponsorCard />
             </Grid>
+            <ConnectedItemTable />
         </div>
     );
 };

@@ -1,0 +1,31 @@
+@import "./../../../assets/abstracts/mixins";
+@import "./../../../assets/abstracts/variables";
+
+.itemImg {
+    height: 80px;
+    width: 80px;
+}
+
+svg {
+    color: #757575;
+    
+}
+
+.title {
+    display: flex;
+    justify-content: space-between;
+    
+    &Text {
+        margin-bottom: 10px;
+    }
+
+    &Btn {
+        color: color(primary);
+    }
+
+}
+
+.table {
+    min-width: 650;
+}
+
