@@ -6,15 +6,59 @@
     width: 80px;
 }
 
-svg {
-    color: #757575;
-    
+.tableContainer {
+    margin-top: 25px;
+
+    svg {
+        color: #757575;
+    }
 }
 
+.chip {
+    &Green {
+        background-color: color(greenLight);
+        margin-bottom: 4px;
+        svg {
+            color: color(green);
+        }
+    }
+
+    &Orange {
+        background-color: color(orangeLight);
+        margin-bottom: 4px;
+        svg {
+            color: color(orange);
+        }
+    }
+
+    &Red {
+        background-color: color(redLight);
+        margin-bottom: 4px;
+        svg {
+            color: color(red);
+        }
+    }
+}
+
+.width {
+    &Fixed {
+        width: 80px;
+    }
+    &Half {
+        width: 50%;
+    }
+    &Quarter {
+        width: 15%;
+    }
+    &Buffer {
+        width: 100%;
+    }
+}
 .title {
     display: flex;
     justify-content: space-between;
-    
+    align-items: flex-end;
+
     &Text {
         margin-bottom: 10px;
     }
@@ -22,10 +66,8 @@ svg {
     &Btn {
         color: color(primary);
     }
-
 }
 
 .table {
-    min-width: 650;
+    min-width: 700;
 }
-
