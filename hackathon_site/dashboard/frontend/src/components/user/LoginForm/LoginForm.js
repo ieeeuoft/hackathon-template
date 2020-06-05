@@ -1,5 +1,5 @@
 import React from "react";
-import { Form, withFormik } from "formik";
+import { Formik } from "formik";
 import Button from "@material-ui/core/Button";
 import styles from "./LoginForm.module.scss";
 import TextField from "@material-ui/core/TextField";
@@ -8,8 +8,8 @@ import * as Yup from "yup";
 
 export const ERROR_MESSAGES = {
     emailInvalid: "Invalid email address",
-    emailMissing: "Required",
-    passwordMissing: "Required",
+    emailMissing: "Email is required",
+    passwordMissing: "Password is required",
 };
 
 const loginFormSchema = Yup.object().shape({
@@ -19,14 +19,15 @@ const loginFormSchema = Yup.object().shape({
     password: Yup.string().required(ERROR_MESSAGES.passwordMissing),
 });
 
-const LoginForm = ({
+export const LoginForm = ({
     errors,
     handleChange,
+    handleReset,
     handleSubmit,
     values: { email, password },
 }) => {
     return (
-        <Form className={styles.form}>
+        <form className={styles.form} onReset={handleReset} onSubmit={handleSubmit}>
             <TextField
                 classes={{ root: styles.formTextField }}
                 error={"email" in errors}
@@ -53,18 +54,34 @@ const LoginForm = ({
             <Button type="submit" onClick={handleSubmit} variant="contained">
                 <Typography>Log In</Typography>
             </Button>
-        </Form>
+        </form>
     );
 };
 
-const EnhancedLoginForm = withFormik({
-    mapPropsToValues: (props) => ({ email: "", password: "" }),
-    handleSubmit: (values) => {
-        console.log(values);
-    },
-    validationSchema: loginFormSchema,
-    validateOnChange: false,
-    validateOnBlur: false,
-})(LoginForm);
+export const EnhancedLoginForm = ({ handleLogin }) => {
+    const onSubmit = (formikValues) => {
+        handleLogin({ email: formikValues.email, password: formikValues.password });
+    };
 
-export default EnhancedLoginForm;
+    return (
+        <Formik
+            initialValues={{ email: "", password: "" }}
+            onSubmit={onSubmit}
+            validateOnBlur={false}
+            validateOnChange={false}
+            validationSchema={loginFormSchema}
+        >
+            {(formikProps) => <LoginForm {...formikProps} />}
+        </Formik>
+    );
+};
+
+const ConnectedEnhancedLoginForm = () => {
+    // Placeholder for redux connect()ed component
+    const handleLogin = (props) => {
+        console.log(props);
+    };
+    return <EnhancedLoginForm handleLogin={handleLogin} />;
+};
+
+export default ConnectedEnhancedLoginForm;
