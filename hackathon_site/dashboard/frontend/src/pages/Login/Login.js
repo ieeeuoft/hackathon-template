@@ -8,14 +8,22 @@ import LoginForm from "components/user/LoginForm/LoginForm";
 
 export const LoginPage = () => {
     return (
-        <Container maxWidth="sm">
-            <Paper className={styles.Paper} variant="outlined">
-                <Typography className={styles.title} variant="h1">
-                    LOGIN
+        <>
+            <Container maxWidth="sm">
+                <Paper className={styles.paper} elevation={3}>
+                    <Typography className={styles.title} variant="h1">
+                        LOGIN
+                    </Typography>
+                    <LoginForm />
+                </Paper>
+            </Container>
+            <Container className={styles.cookieConsent}>
+                <Typography>
+                    We use cookies to provide and improve your experience. By using our
+                    site, you consent to using cookies.
                 </Typography>
-                <LoginForm />
-            </Paper>
-        </Container>
+            </Container>
+        </>
     );
 };
 
