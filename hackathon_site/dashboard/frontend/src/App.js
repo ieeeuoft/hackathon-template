@@ -1,5 +1,5 @@
 import React from "react";
-import { HashRouter as Router, Route } from "react-router-dom";
+import { BrowserRouter as Router, Route } from "react-router-dom";
 import { StylesProvider } from "@material-ui/core/styles";
 import { Provider as ReduxProvider } from "react-redux";
 
@@ -10,18 +10,14 @@ import Header from "components/general/Header/Header";
 import Greeting from "components/general/Greeting/Greeting";
 import Dashboard from "pages/Dashboard/Dashboard";
 import Footer from "components/general/Footer/Footer";
+import Login from "pages/Login/Login";
 
 const UnconnectedApp = () => {
     return (
         <div className="App">
-            <Router>
-                <Header />
-                <Route exact path="/" component={Dashboard} />
-            </Router>
-            <div className="App-header">
-                <p>IEEeeeeeee</p>
-                <Greeting userID={1} />
-            </div>
+            <Header />
+            <Route exact path="/" component={Dashboard} />
+            <Route exact path="/login" component={Login} />
             <Footer />
         </div>
     );
@@ -30,7 +26,9 @@ const UnconnectedApp = () => {
 const ConnectedApp = () => (
     <ReduxProvider store={store}>
         <StylesProvider injectFirst>
-            <UnconnectedApp />
+            <Router>
+                <UnconnectedApp />
+            </Router>
         </StylesProvider>
     </ReduxProvider>
 );
