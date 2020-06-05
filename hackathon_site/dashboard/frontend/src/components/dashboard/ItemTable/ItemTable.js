@@ -67,7 +67,7 @@ const HeadNames = ({ name } ) => {
                     <TableCell align="right">blah</TableCell>
                 </TableRow>
             )
-        case "Checked out items":
+        case "Returned items":
             return (
                 <TableRow>
                     <TableCell> </TableCell>
@@ -90,6 +90,66 @@ const HeadNames = ({ name } ) => {
         default:
             return;
     }
+}
+
+const BodyContent = ({name, items}) => {
+    switch (name) {
+        case "Checked out items":
+            return (
+                <TableBody>
+                {items.map((row) => (
+                    <TableRow key={row.name}>
+                    <TableCell align="left"><img className={styles.itemImg} src={row.url} /></TableCell>
+                    <TableCell align="left">{row.name}</TableCell>
+                    <TableCell align="left">
+                        <IconButton
+                            color="inherit"
+                            aria-label="Info"
+                        >
+                            {row.info}
+                        </IconButton>
+                    </TableCell>
+                    <TableCell align="right">{row.qty}</TableCell>
+                    <TableCell align="right">{row.btn}</TableCell>
+                    </TableRow>
+                ))}
+                </TableBody>
+            )
+        case "Returned items":
+            return (
+                <TableBody>
+                {items.map((row) => (
+                    <TableRow key={row.name}>
+                    <TableCell align="left"><img className={styles.itemImg} src={row.url} /></TableCell>
+                    <TableCell align="left">{row.name}</TableCell>
+                    <TableCell align="left">
+                        <IconButton
+                            color="inherit"
+                            aria-label="Info"
+                        >
+                            {row.info}
+                        </IconButton>
+                    </TableCell>
+                    <TableCell align="right">{row.qty}</TableCell>
+                    <TableCell align="right">{row.btn}</TableCell>
+                    </TableRow>
+                ))}
+                </TableBody>
+            )
+        case "Order pending":
+            return (
+                <TableRow>
+                    <TableCell> </TableCell>
+                    <TableCell align="left">Name</TableCell>
+                    <TableCell align="center">Info</TableCell>
+                    <TableCell align="right">Requested Qty</TableCell>
+                    <TableCell align="right">Granted Qty</TableCell>
+                </TableRow>
+            )
+        default:
+            return;
+    }
+    
 }
 
 export const UnconnectedItemTable = ({ title, items } ) => (
