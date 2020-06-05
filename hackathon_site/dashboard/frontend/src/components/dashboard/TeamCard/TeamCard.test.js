@@ -4,12 +4,7 @@ import { render } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
 
 describe("TeamCard", () => {
-    const members = [
-        { member: "Aki" },
-        { member: "Graham" },
-        { member: "Alex" },
-        { member: "Raymond" },
-    ];
+    const members = ["Aki", "Graham", "Alex", "Raymond"];
     const teamCode = "PAS3NLQ3";
 
     test("render", () => {
