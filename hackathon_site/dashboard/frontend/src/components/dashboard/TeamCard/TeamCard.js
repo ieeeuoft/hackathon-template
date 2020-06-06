@@ -5,12 +5,13 @@ import Link from "@material-ui/core/Link";
 import Container from "@material-ui/core/Container";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
+import Grid from "@material-ui/core/Grid";
 
-const TeamCard = ({ members, teamCode, EditButton }) => {
+const TeamCard = ({ members, teamCode, handleEditTeam }) => {
     const title = teamCode === "" ? "Team" : "Team " + teamCode;
 
     return (
-        <Container className={styles.TeamCard} maxWidth={false} disableGutters={true}>
+        <Grid className={styles.TeamCard} item>
             <Typography variant="h2">{title}</Typography>
             <Paper elevation={3} className={styles.paper} square={true}>
                 {members.map((member, i) => (
@@ -20,13 +21,13 @@ const TeamCard = ({ members, teamCode, EditButton }) => {
                 ))}
 
                 <Container className={styles.lastRow}>
-                    <Button className={styles.Button} onClick={EditButton}>
+                    <Button className={styles.Button} onClick={handleEditTeam}>
                         {" "}
                         Edit{" "}
                     </Button>
                 </Container>
             </Paper>
-        </Container>
+        </Grid>
     );
 };
 

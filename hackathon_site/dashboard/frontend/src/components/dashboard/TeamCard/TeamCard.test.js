@@ -13,4 +13,18 @@ describe("TeamCard", () => {
         );
         expect(asFragment()).toMatchSnapshot();
     });
+
+    test("Calls handleEditTeam when the edit button is clicked", () => {
+        const handleEditTeamSpy = jest.fn();
+        const { getByText } = render(
+            <TeamCard
+                members={members}
+                teamCode={teamCode}
+                handleEditTeam={handleEditTeamSpy}
+            />
+        );
+        const button = getByText("Edit");
+        fireEvent.click(button);
+        expect(handleEditTeamSpy).toHaveBeenCalled();
+    });
 });

@@ -3,7 +3,7 @@
 exports[`TeamCard render 1`] = `
 <DocumentFragment>
   <div
-    class="MuiContainer-root TeamCard MuiContainer-disableGutters"
+    class="MuiGrid-root TeamCard MuiGrid-item"
   >
     <h2
       class="MuiTypography-root MuiTypography-h2"
