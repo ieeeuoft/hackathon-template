@@ -2,6 +2,7 @@ import React from "react";
 import TeamCard from "./TeamCard";
 import { render } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
+import { fireEvent } from "@testing-library/react";
 
 describe("TeamCard", () => {
     const members = ["Aki", "Graham", "Alex", "Raymond"];
@@ -23,8 +24,8 @@ describe("TeamCard", () => {
                 handleEditTeam={handleEditTeamSpy}
             />
         );
-        const button = getByText("Edit");
-        fireEvent.click(button);
+        const thebutton = getByText("Edit");
+        fireEvent.click(thebutton);
         expect(handleEditTeamSpy).toHaveBeenCalled();
     });
 });
