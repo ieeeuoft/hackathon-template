@@ -10,8 +10,6 @@ import NavBar from "components/general/Navbar/Navbar";
 import Greeting from "components/general/Greeting/Greeting";
 import Dashboard from "pages/Dashboard/Dashboard";
 import Footer from "components/general/Footer/Footer";
-
-//Testing my component
 import SideSheetR from "components/general/SideSheetR/SideSheetR";
 
 const UnconnectedApp = () => {

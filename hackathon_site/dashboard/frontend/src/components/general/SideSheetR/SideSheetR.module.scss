@@ -2,12 +2,54 @@
 @import "./../../../assets/abstracts/variables";
 
 .topsheet {
-    background-color: color(grey);
+    background-color: color(light2);
     display: flex;
-    padding: 23px 90px;
+    padding: 24px 50px;
     width: 100%;
-    justify-content: flex-start;
+    position: fixed;
     .backarrow {
         margin: 0 15px;
+    }
+}
+
+.headersheet {
+    display: flex;
+    margin: 108px 50px 0 50px;
+    .title {
+        display: flex;
+    }
+    .available {
+        margin: 9px 151px 0 0;
+    }
+    .tags {
+        margin: 64px 0 8px 0;
+    }
+    & img {
+        margin: 0 11px;
+    }
+}
+
+.bodysheet {
+    margin: 10px 50px 0 50px;
+    .bodyinfo {
+        display: flex;
+        flex-direction: column;
+        h3 {
+            margin: 5px 0;
+        }
+        margin-bottom: 20px;
+    }
+}
+
+.cart {
+    display: flex;
+    flex-direction: column;
+    .form {
+        margin: 20px 50px;
+    }
+    .cartButton {
+        color: color(white);
+        background-color: color(primary);
+        margin: 30px 50px;
     }
 }

@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SideSheetR render 1`] = `
+<DocumentFragment>
+  <div>
+    <div>
+      click me
+    </div>
+  </div>
+</DocumentFragment>
+`;
