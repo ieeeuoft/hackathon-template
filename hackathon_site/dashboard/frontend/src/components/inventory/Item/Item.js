@@ -6,4 +6,4 @@ import Typography from "@material-ui/core/Typography";
 import styles from "./DashCard.module.scss";
 import Link from "@material-ui/core/Link";
 
-const ComponentCard = () => {};
+const ComponentCard = ({ title, status, colorStatus, stock }) => {};
