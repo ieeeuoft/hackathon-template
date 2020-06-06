@@ -22,8 +22,7 @@ const TeamCard = ({ members, teamCode, handleEditTeam }) => {
 
                 <Container className={styles.lastRow}>
                     <Button className={styles.Button} onClick={handleEditTeam}>
-                        {" "}
-                        Edit{" "}
+                        Edit
                     </Button>
                 </Container>
             </Paper>
