@@ -68,10 +68,10 @@
 
     @include responsive(md) {
         &Half {
-            width: 60%;
+            width: 50%;
         }
         &Quarter {
-            width: 40%;
+            width: 25%;
         }
         &Buffer {
             width: 0px;

@@ -36,7 +36,7 @@ const ColWidth = ({ title }) => {
                     <col className={styles.widthHalf} />
                     <col className={styles.widthFixed} />
                     <col className={styles.widthQuarter} />
-                    <col className={styles.widthFixed} />
+                    <col className={styles.widthQuarter} />
                     <col className={styles.widthBuffer} />
                 </colgroup>
             );
@@ -132,7 +132,7 @@ const BodyContent = ({ title, items }) => {
                                 />
                             </TableCell>
                             <TableCell align="left">{row.name}</TableCell>
-                            <TableCell align="left">{row.qty}</TableCell>
+                            <TableCell align="right">{row.qty}</TableCell>
                             <TableCell align="right">{row.time}</TableCell>
                             <TableCell align="left">{row.condition}</TableCell>
                             <TableCell className={styles.widthBuffer} />
