@@ -6,35 +6,29 @@
 
 @mixin responsive($breakpoint) {
     @if ($breakpoint == xl) {
-        @media (max-width: 1200px) {
+        @media (max-width: 1920px) {
             @content;
         }
     }
     @if ($breakpoint == lg) {
-        @media (max-width: 1000px) {
-            @content;
-        }
-    }
-
-    @if ($breakpoint == lg/md) {
-        @media (max-width: 800px) {
+        @media (max-width: 1280px) {
             @content;
         }
     }
 
     @if ($breakpoint == md) {
-        @media (max-width: 600px) {
+        @media (max-width: 960px) {
             @content;
         }
     }
 
     @if ($breakpoint == sm) {
-        @media (max-width: 465px) {
+        @media (max-width: 600px) {
             @content;
         }
     }
     @if ($breakpoint == xs) {
-        @media (max-width: 350px) {
+        @media (max-width: 0px) {
             @content;
         }
     }

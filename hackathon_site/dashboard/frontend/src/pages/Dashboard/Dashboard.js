@@ -69,7 +69,8 @@ export const itemsP = [
     },
 ];
 
-const orderStatus = "pending";
+// Order status can be null, "ready", "pending", or "error"
+const orderStatus = "ready";
 
 const Dashboard = () => {
     return (
@@ -88,7 +89,9 @@ const Dashboard = () => {
                 ))}
                 <ConnectedSponsorCard />
             </Grid>
-            <ItemTable title="Order pending" items={itemsP} status={orderStatus} />
+            {orderStatus !== null && (
+                <ItemTable title="Order pending" items={itemsP} status={orderStatus} />
+            )}
             <ItemTable title="Checked out items" items={itemsC} status={orderStatus} />
             <ItemTable title="Returned items" items={itemsR} status={orderStatus} />
         </div>

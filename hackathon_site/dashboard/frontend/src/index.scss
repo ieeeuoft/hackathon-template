@@ -41,8 +41,8 @@ h1,
     font-weight: bold;
     text-align: center;
 
-    @include responsive(lg/md) {
-        font-size: size(lg) + 2px;
+    @include responsive(md) {
+        font-size: size(lg) + 15px;
     }
 }
 
@@ -51,8 +51,8 @@ h2,
     font-size: size(lg);
     font-weight: 500;
 
-    @include responsive(lg/md) {
-        font-size: size(sm);
+    @include responsive(md) {
+        font-size: size(md);
     }
 }
 
@@ -61,7 +61,7 @@ h3,
     font-size: size(md);
     font-weight: 500;
 
-    @include responsive(lg/md) {
+    @include responsive(md) {
         font-size: size(xs);
     }
 }

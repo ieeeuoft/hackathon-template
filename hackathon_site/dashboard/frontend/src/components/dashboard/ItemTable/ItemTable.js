@@ -51,7 +51,7 @@ const ColWidth = ({ title }) => {
                 </colgroup>
             );
         default:
-            return;
+            return null;
     }
 };
 
@@ -64,7 +64,7 @@ const HeadNames = ({ title }) => {
                     <TableCell align="left">Name</TableCell>
                     <TableCell align="center">Info</TableCell>
                     <TableCell align="right">Qty</TableCell>
-                    <TableCell />
+                    <TableCell className={styles.widthBuffer} />
                 </TableRow>
             );
         case "Returned items":
@@ -74,8 +74,8 @@ const HeadNames = ({ title }) => {
                     <TableCell align="left">Name</TableCell>
                     <TableCell align="left">Qty</TableCell>
                     <TableCell align="right">Time</TableCell>
-                    <TableCell align="right">Condition</TableCell>
-                    <TableCell />
+                    <TableCell align="left">Condition</TableCell>
+                    <TableCell className={styles.widthBuffer} />
                 </TableRow>
             );
         case "Order pending":
@@ -85,11 +85,11 @@ const HeadNames = ({ title }) => {
                     <TableCell align="left">Name</TableCell>
                     <TableCell align="right">Requested Qty</TableCell>
                     <TableCell align="right">Granted Qty</TableCell>
-                    <TableCell />
+                    <TableCell className={styles.widthBuffer} />
                 </TableRow>
             );
         default:
-            return;
+            return null;
     }
 };
 
@@ -114,7 +114,7 @@ const BodyContent = ({ title, items }) => {
                                 </IconButton>
                             </TableCell>
                             <TableCell align="right">{row.qty}</TableCell>
-                            <TableCell />
+                            <TableCell className={styles.widthBuffer} />
                         </TableRow>
                     ))}
                 </TableBody>
@@ -134,8 +134,8 @@ const BodyContent = ({ title, items }) => {
                             <TableCell align="left">{row.name}</TableCell>
                             <TableCell align="left">{row.qty}</TableCell>
                             <TableCell align="right">{row.time}</TableCell>
-                            <TableCell align="right">{row.condition}</TableCell>
-                            <TableCell />
+                            <TableCell align="left">{row.condition}</TableCell>
+                            <TableCell className={styles.widthBuffer} />
                         </TableRow>
                     ))}
                 </TableBody>
@@ -156,34 +156,32 @@ const BodyContent = ({ title, items }) => {
                             <TableCell align="left">{row.name}</TableCell>
                             <TableCell align="right">{row.reqQty}</TableCell>
                             <TableCell align="right">{row.grantQty}</TableCell>
-                            <TableCell />
+                            <TableCell className={styles.widthBuffer} />
                         </TableRow>
                     ))}
                 </TableBody>
             );
         default:
-            return;
+            return null;
     }
 };
 const EmptyTable = ({ title }) => {
     switch (title) {
         case "Checked out items":
             return (
-                <Paper elevation={3} className={styles.sponsorsPaper} square={true}>
+                <Paper elevation={3} className={styles.empty} square={true}>
                     You have no items checked out yet. View our inventory.
                 </Paper>
             );
         case "Returned items":
             return (
-                <Paper elevation={3} className={styles.sponsorsPaper} square={true}>
+                <Paper elevation={3} className={styles.empty} square={true}>
                     Please bring items to the tech table and a tech team member will
                     assist you.
                 </Paper>
             );
-        case "Order pending":
-            return;
         default:
-            return;
+            return null;
     }
 };
 
@@ -210,11 +208,11 @@ const ChipStatus = ({ status }) => {
                 <Chip
                     icon={<Error />}
                     label="Please visit the tech station"
-                    className={styles.chipred}
+                    className={styles.chipRed}
                 />
             );
         default:
-            return;
+            return null;
     }
 };
 

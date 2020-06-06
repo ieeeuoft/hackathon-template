@@ -1,17 +1,31 @@
 @import "./../../../assets/abstracts/mixins";
 @import "./../../../assets/abstracts/variables";
 
+.table {
+    min-width: 700;
+    &Container {
+        margin-top: 25px;
+        svg {
+            color: #757575;
+        }
+    }
+}
+
+.title {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    &Text {
+        margin-bottom: 10px;
+    }
+    &Btn {
+        color: color(primary);
+    }
+}
+
 .itemImg {
     height: 80px;
     width: 80px;
-}
-
-.tableContainer {
-    margin-top: 25px;
-
-    svg {
-        color: #757575;
-    }
 }
 
 .chip {
@@ -22,7 +36,6 @@
             color: color(green);
         }
     }
-
     &Orange {
         background-color: color(orangeLight);
         margin-bottom: 4px;
@@ -30,7 +43,6 @@
             color: color(orange);
         }
     }
-
     &Red {
         background-color: color(redLight);
         margin-bottom: 4px;
@@ -53,21 +65,22 @@
     &Buffer {
         width: 100%;
     }
-}
-.title {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
 
-    &Text {
-        margin-bottom: 10px;
+    @include responsive(md) {
+        &Half {
+            width: 60%;
+        }
+        &Quarter {
+            width: 40%;
+        }
+        &Buffer {
+            width: 0px;
+            padding: 0px !important;
+        }
     }
-
-    &Btn {
-        color: color(primary);
-    }
 }
 
-.table {
-    min-width: 700;
+.empty {
+    padding: 20px 30px;
+    font-size: size(sm);
 }
