@@ -60,7 +60,7 @@ exports[`TeamCard render 1`] = `
           <span
             class="MuiButton-label"
           >
-             Edit 
+            Edit
           </span>
           <span
             class="MuiTouchRipple-root"
