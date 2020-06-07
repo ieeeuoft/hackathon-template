@@ -7,6 +7,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import LaunchIcon from "@material-ui/icons/Launch";
+import Grid from "@material-ui/core/Grid";
 
 import styles from "./SideSheetR.module.scss";
 import { ReactComponent as BackArrow } from "../../../assets/images/icons/BackArrow.svg";
