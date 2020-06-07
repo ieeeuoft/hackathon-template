@@ -12,6 +12,10 @@
         font-size: font(sm);
         margin-top: 15px;
         padding: 10px 25px;
+
+        &:hover {
+            background-color: color(dark1);
+        }
     }
 
     &TextField {
