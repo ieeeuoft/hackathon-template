@@ -15,15 +15,17 @@ import Dashboard from "pages/Dashboard/Dashboard";
 import Footer from "components/general/Footer/Footer";
 import Login from "pages/Login/Login";
 
+export const makePalette = () => {
+    // In testing, the scss exports don't work so styles is an
+    // empty object. This gets around that.
+    let palette = {};
+    if (styles.primary) palette.primary = { main: styles.primary };
+    if (styles.secondary) palette.secondary = { main: styles.secondary };
+    return palette;
+};
+
 const theme = createMuiTheme({
-    palette: {
-        primary: {
-            main: styles.primary,
-        },
-        secondary: {
-            main: styles.secondary,
-        },
-    },
+    palette: makePalette(),
 });
 
 const UnconnectedApp = () => {

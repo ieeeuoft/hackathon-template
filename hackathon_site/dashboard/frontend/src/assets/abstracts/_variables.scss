@@ -38,7 +38,3 @@ $font-sizes: (
 @function size($size) {
     @return map-get($font-sizes, $size); //(name of map, key)
 }
-
-:export {
-    white: #000;
-}
