@@ -2,11 +2,12 @@
 @import "./../../assets/abstracts/variables";
 
 .paper {
-    padding: 30px 50px;
-    margin-top: 130px;
+    margin-top: 30px;
+    padding: 30px 15px;
 
-    @include responsive(sm-down) {
-        margin-top: 30px;
+    @include responsive(sm-up) {
+        padding: 30px 50px;
+        margin-top: 130px;
     }
 }
 
