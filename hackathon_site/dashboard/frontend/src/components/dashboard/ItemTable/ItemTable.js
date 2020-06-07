@@ -100,9 +100,12 @@ export const CheckedOutTable = ({ items }) => (
                                     />
                                 </TableCell>
                                 <TableCell align="left">{row.name}</TableCell>
+                                <TableCell align="left">
+                                    <IconButton color="inherit" aria-label="Info">
+                                        <Info />
+                                    </IconButton>
+                                </TableCell>
                                 <TableCell align="right">{row.qty}</TableCell>
-                                <TableCell align="right">{row.time}</TableCell>
-                                <TableCell align="left">{row.condition}</TableCell>
                                 <TableCell className={styles.widthBuffer} />
                             </TableRow>
                         ))}
@@ -168,12 +171,9 @@ export const ReturnedTable = ({ items }) => (
                                     />
                                 </TableCell>
                                 <TableCell align="left">{row.name}</TableCell>
-                                <TableCell align="left">
-                                    <IconButton color="inherit" aria-label="Info">
-                                        <Info />
-                                    </IconButton>
-                                </TableCell>
                                 <TableCell align="right">{row.qty}</TableCell>
+                                <TableCell align="right">{row.time}</TableCell>
+                                <TableCell align="left">{row.condition}</TableCell>
                                 <TableCell className={styles.widthBuffer} />
                             </TableRow>
                         ))}
@@ -193,7 +193,7 @@ export const PendingTable = ({ items, status }) => {
         >
             <div className={styles.titleChip}>
                 <Typography variant="h2" className={styles.titleText}>
-                    Order pending
+                    Orders pending
                 </Typography>
                 <ChipStatus status={status} />
             </div>
