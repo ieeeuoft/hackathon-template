@@ -5,10 +5,12 @@ import Typography from "@material-ui/core/Typography";
 
 import styles from "./Login.module.scss";
 import LoginForm from "components/user/LoginForm/LoginForm";
+import Header from "../../components/general/Header/Header";
 
 export const LoginPage = () => {
     return (
         <>
+            <Header showNavbar={false} />
             <Container maxWidth="sm">
                 <Paper className={styles.paper} elevation={3}>
                     <Typography className={styles.title} variant="h1">

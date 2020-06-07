@@ -6,8 +6,6 @@ import { Provider as ReduxProvider } from "react-redux";
 import store from "slices/store";
 
 import "App.scss";
-import Header from "components/general/Header/Header";
-import Greeting from "components/general/Greeting/Greeting";
 import Dashboard from "pages/Dashboard/Dashboard";
 import Footer from "components/general/Footer/Footer";
 import Login from "pages/Login/Login";
@@ -15,7 +13,6 @@ import Login from "pages/Login/Login";
 const UnconnectedApp = () => {
     return (
         <div className="App">
-            <Header />
             <Route exact path="/" component={Dashboard} />
             <Route exact path="/login" component={Login} />
             <Footer />
