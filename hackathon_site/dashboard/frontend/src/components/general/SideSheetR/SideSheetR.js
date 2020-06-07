@@ -132,7 +132,7 @@ const SideSheetR = ({ detail, cart }) => {
     };
 
     return (
-        <div>
+        <Grid>
             <div
                 onClick={() => {
                     handleChange(true);
@@ -157,7 +157,7 @@ const SideSheetR = ({ detail, cart }) => {
                 <BodySheet detail={detail} />
                 <CartSheet cart={cart} detail={detail} />
             </Drawer>
-        </div>
+        </Grid>
     );
 };
 
