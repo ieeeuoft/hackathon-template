@@ -6,7 +6,11 @@ import Typography from "@material-ui/core/Typography";
 import DashCard from "components/dashboard/DashCard/DashCard";
 import OpenInNew from "@material-ui/icons/OpenInNew";
 import GetApp from "@material-ui/icons/GetApp";
-import ItemTable from "components/dashboard/ItemTable/ItemTable";
+import {
+    PendingTable,
+    ReturnedTable,
+    CheckedOutTable,
+} from "components/dashboard/ItemTable/ItemTable";
 
 export const cardItems = [
     {
@@ -20,10 +24,6 @@ export const cardItems = [
         ],
     },
 ];
-
-// order pending: name, url, requested qty, granted qty
-// checked out: url, name, info, qty
-// returned: url, name, time, condition
 
 export const itemsC = [
     { url: "https://i.imgur.com/bxd6PNO.jpeg", name: "Arduino", qty: 6 },
@@ -69,8 +69,7 @@ export const itemsP = [
     },
 ];
 
-// Order status can be null, "ready", "pending", or "error"
-const orderStatus = "ready";
+const orderStatus = "pending";
 
 const Dashboard = () => {
     return (
@@ -89,11 +88,9 @@ const Dashboard = () => {
                 ))}
                 <ConnectedSponsorCard />
             </Grid>
-            {orderStatus !== null && (
-                <ItemTable title="Order pending" items={itemsP} status={orderStatus} />
-            )}
-            <ItemTable title="Checked out items" items={itemsC} status={orderStatus} />
-            <ItemTable title="Returned items" items={itemsR} status={orderStatus} />
+            <PendingTable items={itemsP} status={orderStatus} />
+            <CheckedOutTable items={itemsC} />
+            <ReturnedTable items={itemsR} />
         </div>
     );
 };

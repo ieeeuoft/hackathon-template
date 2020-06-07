@@ -17,174 +17,6 @@ import Error from "@material-ui/icons/Error";
 import WatchLater from "@material-ui/icons/WatchLater";
 import CheckCircle from "@material-ui/icons/CheckCircle";
 
-const ColWidth = ({ title }) => {
-    switch (title) {
-        case "Checked out items":
-            return (
-                <colgroup>
-                    <col className={styles.widthFixed} />
-                    <col className={styles.widthHalf} />
-                    <col className={styles.widthFixed} />
-                    <col className={styles.widthFixed} />
-                    <col className={styles.widthBuffer} />
-                </colgroup>
-            );
-        case "Returned items":
-            return (
-                <colgroup>
-                    <col className={styles.widthFixed} />
-                    <col className={styles.widthHalf} />
-                    <col className={styles.widthFixed} />
-                    <col className={styles.widthQuarter} />
-                    <col className={styles.widthQuarter} />
-                    <col className={styles.widthBuffer} />
-                </colgroup>
-            );
-        case "Order pending":
-            return (
-                <colgroup>
-                    <col className={styles.widthFixed} />
-                    <col className={styles.widthHalf} />
-                    <col className={styles.widthQuarter} />
-                    <col className={styles.widthQuarter} />
-                    <col className={styles.widthBuffer} />
-                </colgroup>
-            );
-        default:
-            return null;
-    }
-};
-
-const HeadNames = ({ title }) => {
-    switch (title) {
-        case "Checked out items":
-            return (
-                <TableRow>
-                    <TableCell />
-                    <TableCell align="left">Name</TableCell>
-                    <TableCell align="center">Info</TableCell>
-                    <TableCell align="right">Qty</TableCell>
-                    <TableCell className={styles.widthBuffer} />
-                </TableRow>
-            );
-        case "Returned items":
-            return (
-                <TableRow>
-                    <TableCell />
-                    <TableCell align="left">Name</TableCell>
-                    <TableCell align="left">Qty</TableCell>
-                    <TableCell align="right">Time</TableCell>
-                    <TableCell align="left">Condition</TableCell>
-                    <TableCell className={styles.widthBuffer} />
-                </TableRow>
-            );
-        case "Order pending":
-            return (
-                <TableRow>
-                    <TableCell />
-                    <TableCell align="left">Name</TableCell>
-                    <TableCell align="right">Requested Qty</TableCell>
-                    <TableCell align="right">Granted Qty</TableCell>
-                    <TableCell className={styles.widthBuffer} />
-                </TableRow>
-            );
-        default:
-            return null;
-    }
-};
-
-const BodyContent = ({ title, items }) => {
-    switch (title) {
-        case "Checked out items":
-            return (
-                <TableBody>
-                    {items.map((row) => (
-                        <TableRow key={row.name}>
-                            <TableCell align="left">
-                                <img
-                                    className={styles.itemImg}
-                                    src={row.url}
-                                    alt={row.name}
-                                />
-                            </TableCell>
-                            <TableCell align="left">{row.name}</TableCell>
-                            <TableCell align="left">
-                                <IconButton color="inherit" aria-label="Info">
-                                    <Info />
-                                </IconButton>
-                            </TableCell>
-                            <TableCell align="right">{row.qty}</TableCell>
-                            <TableCell className={styles.widthBuffer} />
-                        </TableRow>
-                    ))}
-                </TableBody>
-            );
-        case "Returned items":
-            return (
-                <TableBody>
-                    {items.map((row) => (
-                        <TableRow key={row.name}>
-                            <TableCell align="left">
-                                <img
-                                    className={styles.itemImg}
-                                    src={row.url}
-                                    alt={row.name}
-                                />
-                            </TableCell>
-                            <TableCell align="left">{row.name}</TableCell>
-                            <TableCell align="right">{row.qty}</TableCell>
-                            <TableCell align="right">{row.time}</TableCell>
-                            <TableCell align="left">{row.condition}</TableCell>
-                            <TableCell className={styles.widthBuffer} />
-                        </TableRow>
-                    ))}
-                </TableBody>
-            );
-
-        case "Order pending":
-            return (
-                <TableBody>
-                    {items.map((row) => (
-                        <TableRow key={row.name}>
-                            <TableCell align="left">
-                                <img
-                                    className={styles.itemImg}
-                                    src={row.url}
-                                    alt={row.name}
-                                />
-                            </TableCell>
-                            <TableCell align="left">{row.name}</TableCell>
-                            <TableCell align="right">{row.reqQty}</TableCell>
-                            <TableCell align="right">{row.grantQty}</TableCell>
-                            <TableCell className={styles.widthBuffer} />
-                        </TableRow>
-                    ))}
-                </TableBody>
-            );
-        default:
-            return null;
-    }
-};
-const EmptyTable = ({ title }) => {
-    switch (title) {
-        case "Checked out items":
-            return (
-                <Paper elevation={3} className={styles.empty} square={true}>
-                    You have no items checked out yet. View our inventory.
-                </Paper>
-            );
-        case "Returned items":
-            return (
-                <Paper elevation={3} className={styles.empty} square={true}>
-                    Please bring items to the tech table and a tech team member will
-                    assist you.
-                </Paper>
-            );
-        default:
-            return null;
-    }
-};
-
 const ChipStatus = ({ status }) => {
     switch (status) {
         case "ready":
@@ -192,7 +24,7 @@ const ChipStatus = ({ status }) => {
                 <Chip
                     icon={<CheckCircle />}
                     label="Ready for pickup"
-                    className={styles.chipGreen}
+                    className={`${styles.chipGreen} ${styles.chip}`}
                 />
             );
         case "pending":
@@ -200,7 +32,7 @@ const ChipStatus = ({ status }) => {
                 <Chip
                     icon={<WatchLater />}
                     label="In progress"
-                    className={styles.chipOrange}
+                    className={`${styles.chipOrange} ${styles.chip}`}
                 />
             );
         case "error":
@@ -208,7 +40,7 @@ const ChipStatus = ({ status }) => {
                 <Chip
                     icon={<Error />}
                     label="Please visit the tech station"
-                    className={styles.chipRed}
+                    className={`${styles.chipRed} ${styles.chip}`}
                 />
             );
         default:
@@ -216,41 +48,192 @@ const ChipStatus = ({ status }) => {
     }
 };
 
-export const ItemTable = ({ items, title, status }) => (
+export const CheckedOutTable = ({ items }) => (
     <Container className={styles.tableContainer} maxWidth={false} disableGutters={true}>
         <div className={styles.title}>
             <Typography variant="h2" className={styles.titleText}>
-                {title}
+                Checked out items
             </Typography>
-
-            {title === "Order pending" ? (
-                <ChipStatus status={status} />
-            ) : (
-                <Button
-                    className={styles.titleBtn}
-                    onClick={() => {
-                        alert("bye bish");
-                    }}
-                >
-                    Hide all
-                </Button>
-            )}
+            <Button
+                className={styles.titleBtn}
+                onClick={() => {
+                    alert(
+                        "this would hide the table and switch the button to 'show all'"
+                    );
+                }}
+            >
+                Hide all
+            </Button>
         </div>
 
         {!items.length ? (
-            <EmptyTable title={title} />
+            <Paper elevation={3} className={styles.empty} square={true}>
+                You have no items checked out yet. View our inventory.
+            </Paper>
         ) : (
             <TableContainer component={Paper} elevation={3} square={true}>
                 <Table className={styles.table} size="small" aria-label="item table">
-                    <ColWidth title={title} />
+                    <colgroup>
+                        <col className={styles.widthFixed} />
+                        <col className={styles.widthHalf} />
+                        <col className={styles.widthFixed} />
+                        <col className={styles.widthFixed} />
+                        <col className={styles.widthBuffer} />
+                    </colgroup>
                     <TableHead>
-                        <HeadNames title={title} />
+                        <TableRow>
+                            <TableCell />
+                            <TableCell align="left">Name</TableCell>
+                            <TableCell align="center">Info</TableCell>
+                            <TableCell align="right">Qty</TableCell>
+                            <TableCell className={styles.widthBuffer} />
+                        </TableRow>
                     </TableHead>
-                    <BodyContent title={title} items={items} />
+                    <TableBody>
+                        {items.map((row) => (
+                            <TableRow key={row.name}>
+                                <TableCell align="left">
+                                    <img
+                                        className={styles.itemImg}
+                                        src={row.url}
+                                        alt={row.name}
+                                    />
+                                </TableCell>
+                                <TableCell align="left">{row.name}</TableCell>
+                                <TableCell align="right">{row.qty}</TableCell>
+                                <TableCell align="right">{row.time}</TableCell>
+                                <TableCell align="left">{row.condition}</TableCell>
+                                <TableCell className={styles.widthBuffer} />
+                            </TableRow>
+                        ))}
+                    </TableBody>
                 </Table>
             </TableContainer>
         )}
     </Container>
 );
 
-export default ItemTable;
+export const ReturnedTable = ({ items }) => (
+    <Container className={styles.tableContainer} maxWidth={false} disableGutters={true}>
+        <div className={styles.title}>
+            <Typography variant="h2" className={styles.titleText}>
+                Returned items
+            </Typography>
+            <Button
+                className={styles.titleBtn}
+                onClick={() => {
+                    alert(
+                        "this would hide the table and switch the button to 'show all'"
+                    );
+                }}
+            >
+                Hide all
+            </Button>
+        </div>
+
+        {!items.length ? (
+            <Paper elevation={3} className={styles.empty} square={true}>
+                Please bring items to the tech table and a tech team member will assist
+                you.
+            </Paper>
+        ) : (
+            <TableContainer component={Paper} elevation={3} square={true}>
+                <Table className={styles.table} size="small" aria-label="item table">
+                    <colgroup>
+                        <col className={styles.widthFixed} />
+                        <col className={styles.widthHalf} />
+                        <col className={styles.widthFixed} />
+                        <col className={styles.widthQuarter} />
+                        <col className={styles.widthQuarter} />
+                        <col className={styles.widthBuffer} />
+                    </colgroup>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell />
+                            <TableCell align="left">Name</TableCell>
+                            <TableCell align="left">Qty</TableCell>
+                            <TableCell align="right">Time</TableCell>
+                            <TableCell align="left">Condition</TableCell>
+                            <TableCell className={styles.widthBuffer} />
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {items.map((row) => (
+                            <TableRow key={row.name}>
+                                <TableCell align="left">
+                                    <img
+                                        className={styles.itemImg}
+                                        src={row.url}
+                                        alt={row.name}
+                                    />
+                                </TableCell>
+                                <TableCell align="left">{row.name}</TableCell>
+                                <TableCell align="left">
+                                    <IconButton color="inherit" aria-label="Info">
+                                        <Info />
+                                    </IconButton>
+                                </TableCell>
+                                <TableCell align="right">{row.qty}</TableCell>
+                                <TableCell className={styles.widthBuffer} />
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+        )}
+    </Container>
+);
+
+export const PendingTable = ({ items, status }) => {
+    return !status ? null : (
+        <Container
+            className={styles.tableContainer}
+            maxWidth={false}
+            disableGutters={true}
+        >
+            <div className={styles.titleChip}>
+                <Typography variant="h2" className={styles.titleText}>
+                    Order pending
+                </Typography>
+                <ChipStatus status={status} />
+            </div>
+            <TableContainer component={Paper} elevation={3} square={true}>
+                <Table className={styles.table} size="small" aria-label="item table">
+                    <colgroup>
+                        <col className={styles.widthFixed} />
+                        <col className={styles.widthHalf} />
+                        <col className={styles.widthQuarter} />
+                        <col className={styles.widthQuarter} />
+                        <col className={styles.widthBuffer} />
+                    </colgroup>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell />
+                            <TableCell align="left">Name</TableCell>
+                            <TableCell align="right">Requested Qty</TableCell>
+                            <TableCell align="right">Granted Qty</TableCell>
+                            <TableCell className={styles.widthBuffer} />
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {items.map((row) => (
+                            <TableRow key={row.name}>
+                                <TableCell align="left">
+                                    <img
+                                        className={styles.itemImg}
+                                        src={row.url}
+                                        alt={row.name}
+                                    />
+                                </TableCell>
+                                <TableCell align="left">{row.name}</TableCell>
+                                <TableCell align="right">{row.reqQty}</TableCell>
+                                <TableCell align="right">{row.grantQty}</TableCell>
+                                <TableCell className={styles.widthBuffer} />
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+        </Container>
+    );
+};

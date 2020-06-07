@@ -23,29 +23,33 @@
     }
 }
 
+.titleChip {
+    display: flex;
+    align-items: flex-end;
+}
+
 .itemImg {
     height: 80px;
     width: 80px;
 }
 
 .chip {
+    margin-bottom: 4px;
+    margin-left: 15px;
     &Green {
         background-color: color(greenLight);
-        margin-bottom: 4px;
         svg {
             color: color(green);
         }
     }
     &Orange {
         background-color: color(orangeLight);
-        margin-bottom: 4px;
         svg {
             color: color(orange);
         }
     }
     &Red {
         background-color: color(redLight);
-        margin-bottom: 4px;
         svg {
             color: color(red);
         }
