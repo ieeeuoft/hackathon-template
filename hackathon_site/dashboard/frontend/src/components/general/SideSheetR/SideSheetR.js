@@ -23,17 +23,23 @@ const createQuantityList = (number) => {
 };
 
 const CartSheet = ({ cart, detail }) => {
+    const [item, setItem] = React.useState("");
+
     const handleChange = (value) => {
-        alert(value);
+        setItem(value);
     };
 
     if (cart) {
         return (
             <div className={styles.cart}>
                 <FormControl className={styles.form}>
-                    <Select>
+                    <Select value={item} role="selected">
                         {createQuantityList(detail.quantity).map((val, i) => (
-                            <MenuItem onClick={() => handleChange(val)} key={i}>
+                            <MenuItem
+                                onClick={() => handleChange(val)}
+                                key={i}
+                                role="quantity"
+                            >
                                 {val}
                             </MenuItem>
                         ))}
@@ -59,11 +65,11 @@ const BodySheet = ({ detail }) => {
         <div className={styles.bodysheet}>
             <div className={styles.bodyinfo}>
                 <Typography variant="h3">Manufacturer</Typography>
-                <Typography variant="p">{detail.manufacturer}</Typography>
+                <Typography>{detail.manufacturer}</Typography>
             </div>
             <div className={styles.bodyinfo}>
                 <Typography variant="h3">Model Number</Typography>
-                <Typography variant="p">{detail.model_num}</Typography>
+                <Typography>{detail.model_num}</Typography>
             </div>
             <div className={styles.bodyinfo}>
                 <Typography variant="h3">Datasheet</Typography>
@@ -76,23 +82,19 @@ const BodySheet = ({ detail }) => {
                     style={{ display: "flex" }}
                 >
                     <LaunchIcon></LaunchIcon>
-                    <Typography variant="p">Link</Typography>
+                    <Typography>Link</Typography>
                 </Link>
             </div>
             <div className={styles.bodyinfo}>
                 <Typography variant="h3">Notes</Typography>
                 {detail.notes.map((note, i) => (
-                    <Typography variant="p" key={i}>
-                        {note}
-                    </Typography>
+                    <Typography key={i}>{note}</Typography>
                 ))}
             </div>
             <div className={styles.bodyinfo}>
                 <Typography variant="h3">Constraints</Typography>
                 {detail.constraints.map((constraint, i) => (
-                    <Typography variant="p" key={i}>
-                        {constraint}
-                    </Typography>
+                    <Typography key={i}>{constraint}</Typography>
                 ))}
             </div>
         </div>
@@ -114,7 +116,7 @@ const HeaderSheet = ({ detail }) => {
                 </Typography>
                 <div className={styles.tags}>
                     <Typography variant="h3">Tags</Typography>
-                    <Typography variant="p">{detail.tags}</Typography>
+                    <Typography>{detail.tags}</Typography>
                 </div>
             </div>
             <img src={detail.img} alt="product" />
@@ -145,6 +147,7 @@ const SideSheetR = ({ detail, cart }) => {
                         onClick={() => {
                             handleChange(false);
                         }}
+                        role="close"
                     />
                     <Typography variant="h2" className={styles.title}>
                         Product Overview

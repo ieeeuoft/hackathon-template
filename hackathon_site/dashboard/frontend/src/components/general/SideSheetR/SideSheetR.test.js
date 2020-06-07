@@ -1,13 +1,10 @@
 import React from "react";
 import SideSheetR from "./SideSheetR";
-import { render } from "@testing-library/react";
+import { render, fireEvent, waitForElementToBeRemoved } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
 
 /**
- * Test the Add Cart function
  * Test the quantity log thing
- * Test the back button
- * Test with snapshot
  */
 
 describe("SideSheetR", () => {
@@ -36,5 +33,45 @@ describe("SideSheetR", () => {
         expect(asFragment()).toMatchSnapshot();
     });
 
-    // I will write more tests after I get feedback for the component
+    test("click me opens the drawer", () => {
+        const { getByText, queryByText } = render(
+            <SideSheetR detail={testDetail} cart={addCartMock} />
+        );
+
+        //Open Drawer
+        const openDrawer = getByText("click me");
+        fireEvent.click(openDrawer);
+
+        // Confirm open drawer
+        expect(queryByText("Product Overview")).not.toBeNull();
+    });
+
+    test("close the drawer works", async () => {
+        const { getByText, getByRole, queryByText } = render(
+            <SideSheetR detail={testDetail} cart={addCartMock} />
+        );
+        //Open Drawer
+        const openDrawer = getByText("click me");
+        fireEvent.click(openDrawer);
+
+        const returnArrow = getByRole("close");
+        fireEvent.click(returnArrow);
+
+        await waitForElementToBeRemoved(() => getByText("Product Overview"));
+    });
+
+    test("add to cart button calls the correct function", () => {
+        const { getByText } = render(
+            <SideSheetR detail={testDetail} cart={addCartMock} />
+        );
+
+        // open the drawer
+        const openDrawer = getByText("click me");
+        fireEvent.click(openDrawer);
+
+        const button = getByText("ADD TO CART");
+
+        fireEvent.click(button);
+        expect(addCartMock).toHaveBeenCalledTimes(1);
+    });
 });
