@@ -1,0 +1,7 @@
+@import "_variables.scss";
+
+:export {
+    //  Exports to plug into MUI's theming system
+    primary: color(primary);
+    secondary: color(secondary);
+}

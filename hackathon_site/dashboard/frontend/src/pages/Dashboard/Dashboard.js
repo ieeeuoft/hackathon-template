@@ -11,6 +11,7 @@ import {
     ReturnedTable,
     CheckedOutTable,
 } from "components/dashboard/ItemTable/ItemTable";
+import Header from "../../components/general/Header/Header";
 
 export const cardItems = [
     {
@@ -73,25 +74,28 @@ const orderStatus = "pending";
 
 const Dashboard = () => {
     return (
-        <div className={styles.dashboard}>
-            <Typography variant="h1">Hackathon Name Hardware Dashboard</Typography>
-            <Grid
-                container
-                direction="row"
-                justify="flex-start"
-                alignItems="flex-start"
-                spacing={2}
-                className={styles.dashboardGrid}
-            >
-                {cardItems.map(({ title, content }, i) => (
-                    <DashCard title={title} content={content} key={i} />
-                ))}
-                <ConnectedSponsorCard />
-            </Grid>
-            <PendingTable items={itemsP} status={orderStatus} />
-            <CheckedOutTable items={itemsC} />
-            <ReturnedTable items={itemsR} />
-        </div>
+        <>
+            <Header />
+            <div className={styles.dashboard}>
+                <Typography variant="h1">Hackathon Name Hardware Dashboard</Typography>
+                <Grid
+                    container
+                    direction="row"
+                    justify="flex-start"
+                    alignItems="flex-start"
+                    spacing={2}
+                    className={styles.dashboardGrid}
+                >
+                    {cardItems.map(({ title, content }, i) => (
+                        <DashCard title={title} content={content} key={i} />
+                    ))}
+                    <ConnectedSponsorCard />
+                </Grid>
+                <PendingTable items={itemsP} status={orderStatus} />
+                <CheckedOutTable items={itemsC} />
+                <ReturnedTable items={itemsR} />
+            </div>
+        </>
     );
 };
 
