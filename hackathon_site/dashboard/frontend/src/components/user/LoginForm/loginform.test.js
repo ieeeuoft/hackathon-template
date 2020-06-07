@@ -5,17 +5,19 @@ import { LoginForm, EnhancedLoginForm, ERROR_MESSAGES } from "./LoginForm";
 
 describe("<LoginForm />", () => {
     it("Has the expected fields", () => {
-        const { getByLabelText } = render(
+        const { getByLabelText, queryByTestId } = render(
             <LoginForm
                 errors={{}}
                 handleChange={() => {}}
                 handleSubmit={() => {}}
                 handleReset={() => {}}
+                isLoading={false}
                 values={{ email: "", password: "" }}
             />
         );
         expect(getByLabelText("Email")).toBeInTheDocument();
         expect(getByLabelText("Password")).toBeInTheDocument();
+        expect(queryByTestId("circular-progress")).toBeNull();
     });
 });
 
@@ -75,5 +77,16 @@ describe("<EnhancedLoginForm />", () => {
             expect(handleLoginSpy).not.toHaveBeenCalled();
             expect(getByText(ERROR_MESSAGES.emailInvalid)).toBeTruthy();
         });
+    });
+
+    it("Renders a loading spinner and disables the log in button when submitting", async () => {
+        const { getByText, getByTestId } = render(
+            <EnhancedLoginForm handleLogin={() => {}} isLoading={true} />
+        );
+
+        const button = getByText("Log In");
+
+        expect(button.closest("button")).toBeDisabled();
+        expect(getByTestId("circular-progress")).toBeTruthy();
     });
 });
