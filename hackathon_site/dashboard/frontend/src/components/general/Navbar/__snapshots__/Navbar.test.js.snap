@@ -9,7 +9,7 @@ exports[`renders correctly when all icons appear 1`] = `
       class="PrivateHiddenCss-smDown-6"
     >
       <a
-        href="#/"
+        href="/"
       >
         <button
           aria-label="Dashboard"
@@ -42,7 +42,7 @@ exports[`renders correctly when all icons appear 1`] = `
         </button>
       </a>
       <a
-        href="#/orders"
+        href="/orders"
       >
         <button
           aria-label="Orders"
@@ -75,7 +75,7 @@ exports[`renders correctly when all icons appear 1`] = `
         </button>
       </a>
       <a
-        href="#/teams"
+        href="/teams"
       >
         <button
           aria-label="Teams"
@@ -108,7 +108,7 @@ exports[`renders correctly when all icons appear 1`] = `
         </button>
       </a>
       <a
-        href="#/reports"
+        href="/reports"
       >
         <button
           aria-label="Reports"
@@ -141,7 +141,7 @@ exports[`renders correctly when all icons appear 1`] = `
         </button>
       </a>
       <a
-        href="#/inventory"
+        href="/inventory"
       >
         <button
           aria-label="Inventory"
@@ -169,7 +169,7 @@ exports[`renders correctly when all icons appear 1`] = `
         </button>
       </a>
       <a
-        href="#/cart"
+        href="/cart"
       >
         <button
           aria-label="Cart"
@@ -252,7 +252,7 @@ exports[`renders correctly when all icons appear 1`] = `
       class="PrivateHiddenCss-mdUp-8"
     >
       <a
-        href="#/cart"
+        href="/cart"
       >
         <button
           aria-label="Cart"
