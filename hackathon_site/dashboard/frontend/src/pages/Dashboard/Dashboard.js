@@ -6,6 +6,7 @@ import Typography from "@material-ui/core/Typography";
 import DashCard from "components/dashboard/DashCard/DashCard";
 import OpenInNew from "@material-ui/icons/OpenInNew";
 import GetApp from "@material-ui/icons/GetApp";
+import Header from "../../components/general/Header/Header";
 
 export const cardItems = [
     {
@@ -22,22 +23,25 @@ export const cardItems = [
 
 const Dashboard = () => {
     return (
-        <div className={styles.dashboard}>
-            <Typography variant="h1">Hackathon Name Hardware Dashboard</Typography>
-            <Grid
-                container
-                direction="row"
-                justify="flex-start"
-                alignItems="flex-start"
-                spacing={2}
-                className={styles.dashboardGrid}
-            >
-                {cardItems.map(({ title, content }, i) => (
-                    <DashCard title={title} content={content} key={i} />
-                ))}
-                <ConnectedSponsorCard />
-            </Grid>
-        </div>
+        <>
+            <Header />
+            <div className={styles.dashboard}>
+                <Typography variant="h1">Hackathon Name Hardware Dashboard</Typography>
+                <Grid
+                    container
+                    direction="row"
+                    justify="flex-start"
+                    alignItems="flex-start"
+                    spacing={2}
+                    className={styles.dashboardGrid}
+                >
+                    {cardItems.map(({ title, content }, i) => (
+                        <DashCard title={title} content={content} key={i} />
+                    ))}
+                    <ConnectedSponsorCard />
+                </Grid>
+            </div>
+        </>
     );
 };
 

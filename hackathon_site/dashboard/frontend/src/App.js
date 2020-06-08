@@ -1,48 +1,38 @@
 import React from "react";
-import { HashRouter as Router, Route } from "react-router-dom";
-import { StylesProvider } from "@material-ui/core/styles";
+import { BrowserRouter as Router, Route } from "react-router-dom";
+import {
+    createMuiTheme,
+    StylesProvider,
+    ThemeProvider,
+} from "@material-ui/core/styles";
 import { Provider as ReduxProvider } from "react-redux";
+import styles from "assets/abstracts/_exports.scss";
 
 import store from "slices/store";
 
 import "App.scss";
-import NavBar from "components/general/Navbar/Navbar";
-import Greeting from "components/general/Greeting/Greeting";
 import Dashboard from "pages/Dashboard/Dashboard";
 import Footer from "components/general/Footer/Footer";
-import SideSheetRight from "components/general/SideSheetRight/SideSheetRight";
+import Login from "pages/Login/Login";
 
-const testDetail = {
-    name: "Arduino",
-    type: "red",
-    total: 30,
-    available: 29,
-    img: "https://www.filterforge.com/more/help/images/size200.jpg",
-    tags: "MCU, FPGA",
-    manufacturer: "Canakit",
-    model_num: "Model 3B+",
-    datasheet: "link",
-    notes: ["- For micropython ask for image", "- randomnerdtutorials.com"],
-    constraints: ["- Max 1 of this item", "- Max 3 microcontroller labelled red"],
-    quantity: 3,
+export const makePalette = () => {
+    // In testing, the scss exports don't work so styles is an
+    // empty object. This gets around that.
+    let palette = {};
+    if (styles.primary) palette.primary = { main: styles.primary };
+    if (styles.secondary) palette.secondary = { main: styles.secondary };
+    return palette;
 };
 
-const testFunc = () => {
-    alert(3);
-};
+const theme = createMuiTheme({
+    palette: makePalette(),
+});
 
 const UnconnectedApp = () => {
     return (
         <div className="App">
-            <Router>
-                <NavBar />
-                <Route exact path="/" component={Dashboard} />
-            </Router>
-            <div className="App-header">
-                <p>IEEeeeeeee</p>
-                <SideSheetRight detail={testDetail} addCartFunction={testFunc} />
-                <Greeting userID={1} />
-            </div>
+            <Route exact path="/" component={Dashboard} />
+            <Route exact path="/login" component={Login} />
             <Footer />
         </div>
     );
@@ -51,7 +41,11 @@ const UnconnectedApp = () => {
 const ConnectedApp = () => (
     <ReduxProvider store={store}>
         <StylesProvider injectFirst>
-            <UnconnectedApp />
+            <ThemeProvider theme={theme}>
+                <Router>
+                    <UnconnectedApp />
+                </Router>
+            </ThemeProvider>
         </StylesProvider>
     </ReduxProvider>
 );
