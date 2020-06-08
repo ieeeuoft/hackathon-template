@@ -1,13 +1,18 @@
 import React from "react";
-import SideSheetR from "./SideSheetR";
-import { render, fireEvent, waitForElementToBeRemoved } from "@testing-library/react";
+import SideSheetRight from "./SideSheetRight";
+import {
+    render,
+    fireEvent,
+    waitForElementToBeRemoved,
+    waitFor,
+} from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
 
 /**
  * Test the quantity log thing
  */
 
-describe("SideSheetR", () => {
+describe("SideSheetRight", () => {
     const testDetail = {
         name: "Arduino",
         type: "red",
@@ -27,7 +32,7 @@ describe("SideSheetR", () => {
 
     test("render", () => {
         const { asFragment } = render(
-            <SideSheetR detail={testDetail} cart={addCartMock} />
+            <SideSheetRight detail={testDetail} addCartFunction={addCartMock} />
         );
 
         expect(asFragment()).toMatchSnapshot();
@@ -35,7 +40,7 @@ describe("SideSheetR", () => {
 
     test("click me opens the drawer", () => {
         const { getByText, queryByText } = render(
-            <SideSheetR detail={testDetail} cart={addCartMock} />
+            <SideSheetRight detail={testDetail} addCartFunction={addCartMock} />
         );
 
         //Open Drawer
@@ -47,12 +52,16 @@ describe("SideSheetR", () => {
     });
 
     test("close the drawer works", async () => {
-        const { getByText, getByRole, queryByText } = render(
-            <SideSheetR detail={testDetail} cart={addCartMock} />
+        const { getByText, getByRole } = render(
+            <SideSheetRight detail={testDetail} addCartFunction={addCartMock} />
         );
         //Open Drawer
         const openDrawer = getByText("click me");
         fireEvent.click(openDrawer);
+
+        await waitFor(() => {
+            expect(getByRole("close")).toBeInTheDocument();
+        });
 
         const returnArrow = getByRole("close");
         fireEvent.click(returnArrow);
@@ -62,7 +71,7 @@ describe("SideSheetR", () => {
 
     test("add to cart button calls the correct function", () => {
         const { getByText } = render(
-            <SideSheetR detail={testDetail} cart={addCartMock} />
+            <SideSheetRight detail={testDetail} addCartFunction={addCartMock} />
         );
 
         // open the drawer

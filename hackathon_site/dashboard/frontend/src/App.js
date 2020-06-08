@@ -10,7 +10,7 @@ import NavBar from "components/general/Navbar/Navbar";
 import Greeting from "components/general/Greeting/Greeting";
 import Dashboard from "pages/Dashboard/Dashboard";
 import Footer from "components/general/Footer/Footer";
-import SideSheetR from "components/general/SideSheetR/SideSheetR";
+import SideSheetRight from "components/general/SideSheetRight/SideSheetRight";
 
 const testDetail = {
     name: "Arduino",
@@ -27,6 +27,10 @@ const testDetail = {
     quantity: 3,
 };
 
+const testFunc = () => {
+    alert(3);
+};
+
 const UnconnectedApp = () => {
     return (
         <div className="App">
@@ -36,7 +40,7 @@ const UnconnectedApp = () => {
             </Router>
             <div className="App-header">
                 <p>IEEeeeeeee</p>
-                <SideSheetR detail={testDetail} />
+                <SideSheetRight detail={testDetail} addCartFunction={testFunc} />
                 <Greeting userID={1} />
             </div>
             <Footer />

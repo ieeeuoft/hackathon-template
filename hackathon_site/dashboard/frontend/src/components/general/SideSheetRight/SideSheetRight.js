@@ -7,80 +7,73 @@ import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import LaunchIcon from "@material-ui/icons/Launch";
-import Grid from "@material-ui/core/Grid";
+import ArrowBackIcon from "@material-ui/icons/ArrowBack";
+import FiberManualRecordIcon from "@material-ui/icons/FiberManualRecord";
 
-import styles from "./SideSheetR.module.scss";
-import { ReactComponent as BackArrow } from "../../../assets/images/icons/BackArrow.svg";
-import { ReactComponent as CircleType } from "../../../assets/images/icons/redtype.svg";
+import styles from "./SideSheetRight.module.scss";
 
-const createQuantityList = (number) => {
-    var entry = [];
+const createQuantityList = (number, handleChange) => {
+    let entry = [];
 
-    for (var i = 0; i < number; i++) {
-        entry.push(i + 1);
+    for (let i = 1; i <= number; i++) {
+        entry.push(
+            <MenuItem onClick={() => handleChange(i)} key={i} role="quantity">
+                {i}
+            </MenuItem>
+        );
     }
 
     return entry;
 };
 
-const CartSheet = ({ cart, detail }) => {
+const CartSheet = ({ addCartFunction, quantity }) => {
     const [item, setItem] = React.useState("");
 
     const handleChange = (value) => {
         setItem(value);
     };
 
-    if (cart) {
-        return (
+    return (
+        addCartFunction && (
             <div className={styles.cart}>
                 <FormControl className={styles.form}>
                     <Select value={item} role="selected">
-                        {createQuantityList(detail.quantity).map((val, i) => (
-                            <MenuItem
-                                onClick={() => handleChange(val)}
-                                key={i}
-                                role="quantity"
-                            >
-                                {val}
-                            </MenuItem>
-                        ))}
+                        {createQuantityList(quantity, handleChange)}
                     </Select>
                 </FormControl>
                 <Button
                     variant="contained"
                     className={styles.cartButton}
-                    onClick={cart}
+                    onClick={addCartFunction}
                     disableElevation
                 >
                     ADD TO CART
                 </Button>
             </div>
-        );
-    } else {
-        return null;
-    }
+        )
+    );
 };
 
-const BodySheet = ({ detail }) => {
+const BodySheet = ({ manufacturer, model_num, datasheet, notes, constraints }) => {
     return (
         <div className={styles.bodysheet}>
             <div className={styles.bodyinfo}>
                 <Typography variant="h3">Manufacturer</Typography>
-                <Typography>{detail.manufacturer}</Typography>
+                <Typography>{manufacturer}</Typography>
             </div>
             <div className={styles.bodyinfo}>
                 <Typography variant="h3">Model Number</Typography>
-                <Typography>{detail.model_num}</Typography>
+                <Typography>{model_num}</Typography>
             </div>
             <div className={styles.bodyinfo}>
                 <Typography variant="h3">Datasheet</Typography>
                 <Link
-                    href={detail.datasheet}
+                    href={datasheet}
                     rel="noopener"
                     color="inherit"
                     underline="none"
                     target="_blank"
-                    style={{ display: "flex" }}
+                    className={styles.bodyinfoDataSheet}
                 >
                     <LaunchIcon></LaunchIcon>
                     <Typography>Link</Typography>
@@ -88,13 +81,13 @@ const BodySheet = ({ detail }) => {
             </div>
             <div className={styles.bodyinfo}>
                 <Typography variant="h3">Notes</Typography>
-                {detail.notes.map((note, i) => (
+                {notes.map((note, i) => (
                     <Typography key={i}>{note}</Typography>
                 ))}
             </div>
             <div className={styles.bodyinfo}>
                 <Typography variant="h3">Constraints</Typography>
-                {detail.constraints.map((constraint, i) => (
+                {constraints.map((constraint, i) => (
                     <Typography key={i}>{constraint}</Typography>
                 ))}
             </div>
@@ -102,51 +95,49 @@ const BodySheet = ({ detail }) => {
     );
 };
 
-const HeaderSheet = ({ detail }) => {
+const HeaderSheet = ({ type, name, total, available, tags, img }) => {
     return (
         <div className={styles.headersheet}>
             <div>
                 <div className={styles.title}>
-                    <CircleType
-                        style={{ color: detail.type, margin: "0 5px" }}
-                    ></CircleType>
-                    <Typography variant="h2">{detail.name}</Typography>
+                    <FiberManualRecordIcon style={{ color: type, margin: "0 5px" }} />
+                    <Typography variant="h2">{name}</Typography>
                 </div>
                 <Typography className={styles.available}>
-                    {detail.available} OF {detail.total} IN STOCK
+                    {available} OF {total} IN STOCK
                 </Typography>
                 <div className={styles.tags}>
                     <Typography variant="h3">Tags</Typography>
-                    <Typography>{detail.tags}</Typography>
+                    <Typography>{tags}</Typography>
                 </div>
             </div>
-            <img src={detail.img} alt="product" />
+            <img src={img} alt="product" />
         </div>
     );
 };
 
-const SideSheetR = ({ detail, cart }) => {
+const SideSheetRight = ({ detail, addCartFunction }) => {
     const [toggle, setToggle] = React.useState(false);
 
-    const handleChange = (change) => {
+    const toggleSheet = (change) => {
         setToggle(change);
     };
 
     return (
-        <Grid>
+        <div>
             <div
                 onClick={() => {
-                    handleChange(true);
+                    toggleSheet(true);
                 }}
             >
                 click me
             </div>
             <Drawer anchor="right" open={toggle}>
                 <div className={styles.topsheet}>
-                    <BackArrow
+                    <ArrowBackIcon
                         className={styles.backarrow}
                         onClick={() => {
-                            handleChange(false);
+                            toggleSheet(false);
                         }}
                         role="close"
                     />
@@ -154,12 +145,28 @@ const SideSheetR = ({ detail, cart }) => {
                         Product Overview
                     </Typography>
                 </div>
-                <HeaderSheet detail={detail} />
-                <BodySheet detail={detail} />
-                <CartSheet cart={cart} detail={detail} />
+                <HeaderSheet
+                    type={detail.type}
+                    name={detail.name}
+                    total={detail.total}
+                    available={detail.available}
+                    tags={detail.tags}
+                    img={detail.img}
+                />
+                <BodySheet
+                    manufacturer={detail.manufacturer}
+                    model_num={detail.model_num}
+                    datasheet={detail.datasheet}
+                    notes={detail.notes}
+                    constraints={detail.constraints}
+                />
+                <CartSheet
+                    addCartFunction={addCartFunction}
+                    quantity={detail.quantity}
+                />
             </Drawer>
-        </Grid>
+        </div>
     );
 };
 
-export default SideSheetR;
+export default SideSheetRight;
