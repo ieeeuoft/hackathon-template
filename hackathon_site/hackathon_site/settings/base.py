@@ -38,6 +38,7 @@ else:
         r"^https://ieee\.utoronto.ca:?\d*$",
     ]
 
+CORS_ALLOW_CREDENTIALS = True
 
 # Application definition
 
