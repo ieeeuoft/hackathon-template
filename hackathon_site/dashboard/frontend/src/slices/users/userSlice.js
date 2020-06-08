@@ -1,5 +1,6 @@
 import axios from "axios";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { push } from "connected-react-router";
 
 import { post } from "api/api";
 
@@ -30,9 +31,10 @@ export const fetchUserById = createAsyncThunk(
 
 export const logIn = createAsyncThunk(
     `${userReducerName}/logIn`,
-    async ({ username, password }, { rejectWithValue }) => {
+    async ({ username, password }, { dispatch, rejectWithValue }) => {
         try {
             const response = await post("/api/auth/login/", { username, password });
+            dispatch(push("/"));
             return response.data;
         } catch (e) {
             if (e.response.status === 400) {
