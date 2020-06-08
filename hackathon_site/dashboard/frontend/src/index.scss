@@ -26,7 +26,7 @@ body {
     color: rgba(0, 0, 0, 0.87);
     font-size: size(md);
 
-    @include responsive(lg/md) {
+    @include responsive(sm-down) {
         font-size: size(sm);
     }
 }
@@ -41,7 +41,7 @@ h1,
     font-weight: bold;
     text-align: center;
 
-    @include responsive(lg/md) {
+    @include responsive(sm-down) {
         font-size: size(lg) + 2px;
     }
 }
@@ -51,7 +51,7 @@ h2,
     font-size: size(lg);
     font-weight: 500;
 
-    @include responsive(lg/md) {
+    @include responsive(sm-down) {
         font-size: size(sm);
     }
 }
@@ -61,7 +61,11 @@ h3,
     font-size: size(md);
     font-weight: 500;
 
-    @include responsive(lg/md) {
+    @include responsive(sm-down) {
         font-size: size(xs);
     }
+}
+
+.MuiOutlinedInput-root {
+    border-radius: 0;
 }
