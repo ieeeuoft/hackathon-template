@@ -1,2 +1,53 @@
 @import "./../../../assets/abstracts/mixins";
 @import "./../../../assets/abstracts/variables";
+
+.Item {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding-bottom: 10px;
+
+    &Pic {
+        height: 210px;
+        z-index: -1;
+        &Box {
+            height: 210px;
+            width: 100%;
+            background-color: rgba(196, 196, 196, 0.6);
+            z-index: 2000;
+        }
+    }
+
+    &Limit {
+        &1 {
+            color: #98e733;
+        }
+        &2 {
+            color: #dc1c1c;
+        }
+        &3 {
+            color: #ffa456;
+        }
+        &4 {
+            color: #6c36c7;
+        }
+        &5 {
+            color: #c816a1;
+        }
+    }
+
+    &Name {
+        display: flex;
+        padding-top: 8px;
+    }
+
+    &TextBox {
+        padding-left: 10px;
+    }
+
+    .outOfStock {
+        color: color(red);
+    }
+}
