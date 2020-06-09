@@ -40,9 +40,8 @@ h1,
     font-size: size(xl);
     font-weight: bold;
     text-align: center;
-
     @include responsive(sm-down) {
-        font-size: size(lg) + 2px;
+        font-size: size(lg) + 15px;
     }
 }
 
@@ -50,9 +49,8 @@ h2,
 .MuiTypography-h2 {
     font-size: size(lg);
     font-weight: 500;
-
     @include responsive(sm-down) {
-        font-size: size(sm);
+        font-size: size(md);
     }
 }
 
@@ -60,7 +58,6 @@ h3,
 .MuiTypography-h3 {
     font-size: size(md);
     font-weight: 500;
-
     @include responsive(sm-down) {
         font-size: size(xs);
     }
