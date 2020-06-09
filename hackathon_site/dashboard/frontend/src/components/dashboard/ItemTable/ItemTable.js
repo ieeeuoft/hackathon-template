@@ -101,7 +101,13 @@ export const CheckedOutTable = ({ items }) => (
                                 </TableCell>
                                 <TableCell align="left">{row.name}</TableCell>
                                 <TableCell align="left">
-                                    <IconButton color="inherit" aria-label="Info">
+                                    <IconButton
+                                        color="inherit"
+                                        aria-label="Info"
+                                        onClick={() => {
+                                            alert("this would open the drawer");
+                                        }}
+                                    >
                                         <Info />
                                     </IconButton>
                                 </TableCell>

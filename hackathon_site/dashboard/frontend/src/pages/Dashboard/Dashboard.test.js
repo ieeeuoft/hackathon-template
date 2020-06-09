@@ -1,6 +1,7 @@
 import React from "react";
 import { render } from "@testing-library/react";
-import Dashboard, { cardItems } from "./Dashboard";
+import Dashboard from "./Dashboard";
+import { cardItems } from "testing/mockData";
 import { withRouter } from "testing";
 
 it("renders correctly when the dashboard appears with 2 dash cards and 1 sponsor card", () => {
