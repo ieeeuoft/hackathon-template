@@ -5,7 +5,6 @@ import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import styles from "./DashCard.module.scss";
 import Link from "@material-ui/core/Link";
-import TeamCard from "../TeamCard/TeamCard";
 
 const CardItem = ({ name, icon }) => {
     return (

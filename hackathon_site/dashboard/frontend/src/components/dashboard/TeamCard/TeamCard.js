@@ -1,7 +1,6 @@
 import React from "react";
 import styles from "./TeamCard.module.scss";
 import Paper from "@material-ui/core/Paper";
-import Link from "@material-ui/core/Link";
 import Container from "@material-ui/core/Container";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
