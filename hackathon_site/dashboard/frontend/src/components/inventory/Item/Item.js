@@ -9,6 +9,7 @@ import Grid from "@material-ui/core/Grid";
 const ColorCircle = ({ limit }) => {
     // not sure how the limit would work for now
     let endStyle = "";
+
     switch (limit) {
         case 1:
             endStyle = styles.ItemLimit1;
@@ -26,7 +27,7 @@ const ColorCircle = ({ limit }) => {
             endStyle = styles.ItemLimit5;
             break;
         default:
-            endStyle = styles.ItemLimit;
+            return null;
     }
     return <FiberManualRecordIcon className={endStyle} />;
 };
@@ -36,11 +37,12 @@ const Item = ({ image, title, total, limit, currentStock }) => {
         currentStock === null
             ? "OUT OF STOCK"
             : currentStock + " OF " + total + " IN STOCK";
-    const stockStyle = stock === "OUT OF STOCK" ? styles.outOfStock : styles.inStock;
+    const stockStyle = currentStock === null ? styles.outOfStock : styles.inStock;
+    const coverStyle = currentStock === null ? styles.ItemPicBox : "";
 
     return (
         <Grid className={styles.Item} item>
-            <Card className={styles.ItemPicBox} variant="outlined" square={true}>
+            <Card className={coverStyle} variant="outlined" square={true}>
                 <CardMedia
                     className={styles.ItemPic}
                     component="img"

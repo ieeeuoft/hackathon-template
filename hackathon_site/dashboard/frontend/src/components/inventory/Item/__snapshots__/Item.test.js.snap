@@ -1,0 +1,313 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`InventoryItem Has stock with no limit 1`] = `
+<DocumentFragment>
+  <div
+    class="MuiGrid-root Item MuiGrid-item"
+  >
+    <div
+      class="MuiPaper-root MuiCard-root MuiPaper-outlined"
+    >
+      <img
+        alt="Some Hardware"
+        class="MuiCardMedia-root ItemPic MuiCardMedia-media MuiCardMedia-img"
+        src="https://i.pinimg.com/originals/58/1f/23/581f232c3462392f63d57be5649649de.jpg"
+      />
+    </div>
+    <div
+      class="ItemTextBox"
+    >
+      <div
+        class="ItemName"
+      >
+        <p
+          class="MuiTypography-root MuiTypography-body2"
+        >
+          Some Hardware
+        </p>
+      </div>
+      <span
+        class="MuiTypography-root inStock MuiTypography-caption"
+      >
+        4 OF 6 IN STOCK
+      </span>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`InventoryItem Out of Stock 1`] = `
+<DocumentFragment>
+  <div
+    class="MuiGrid-root Item MuiGrid-item"
+  >
+    <div
+      class="MuiPaper-root MuiCard-root ItemPicBox MuiPaper-outlined"
+    >
+      <img
+        alt="Some Hardware"
+        class="MuiCardMedia-root ItemPic MuiCardMedia-media MuiCardMedia-img"
+        src="https://i.pinimg.com/originals/58/1f/23/581f232c3462392f63d57be5649649de.jpg"
+      />
+    </div>
+    <div
+      class="ItemTextBox"
+    >
+      <div
+        class="ItemName"
+      >
+        <p
+          class="MuiTypography-root MuiTypography-body2"
+        >
+          Some Hardware
+        </p>
+      </div>
+      <span
+        class="MuiTypography-root outOfStock MuiTypography-caption"
+      >
+        OUT OF STOCK
+      </span>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`InventoryItem limit 1 1`] = `
+<DocumentFragment>
+  <div
+    class="MuiGrid-root Item MuiGrid-item"
+  >
+    <div
+      class="MuiPaper-root MuiCard-root MuiPaper-outlined"
+    >
+      <img
+        alt="Some Hardware"
+        class="MuiCardMedia-root ItemPic MuiCardMedia-media MuiCardMedia-img"
+        src="https://i.pinimg.com/originals/58/1f/23/581f232c3462392f63d57be5649649de.jpg"
+      />
+    </div>
+    <div
+      class="ItemTextBox"
+    >
+      <div
+        class="ItemName"
+      >
+        <svg
+          aria-hidden="true"
+          class="MuiSvgIcon-root ItemLimit1"
+          focusable="false"
+          viewBox="0 0 24 24"
+        >
+          <circle
+            cx="12"
+            cy="12"
+            r="8"
+          />
+        </svg>
+        <p
+          class="MuiTypography-root MuiTypography-body2"
+        >
+          Some Hardware
+        </p>
+      </div>
+      <span
+        class="MuiTypography-root inStock MuiTypography-caption"
+      >
+        4 OF 6 IN STOCK
+      </span>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`InventoryItem limit 2 1`] = `
+<DocumentFragment>
+  <div
+    class="MuiGrid-root Item MuiGrid-item"
+  >
+    <div
+      class="MuiPaper-root MuiCard-root MuiPaper-outlined"
+    >
+      <img
+        alt="Some Hardware"
+        class="MuiCardMedia-root ItemPic MuiCardMedia-media MuiCardMedia-img"
+        src="https://i.pinimg.com/originals/58/1f/23/581f232c3462392f63d57be5649649de.jpg"
+      />
+    </div>
+    <div
+      class="ItemTextBox"
+    >
+      <div
+        class="ItemName"
+      >
+        <svg
+          aria-hidden="true"
+          class="MuiSvgIcon-root ItemLimit2"
+          focusable="false"
+          viewBox="0 0 24 24"
+        >
+          <circle
+            cx="12"
+            cy="12"
+            r="8"
+          />
+        </svg>
+        <p
+          class="MuiTypography-root MuiTypography-body2"
+        >
+          Some Hardware
+        </p>
+      </div>
+      <span
+        class="MuiTypography-root inStock MuiTypography-caption"
+      >
+        4 OF 6 IN STOCK
+      </span>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`InventoryItem limit 3 1`] = `
+<DocumentFragment>
+  <div
+    class="MuiGrid-root Item MuiGrid-item"
+  >
+    <div
+      class="MuiPaper-root MuiCard-root MuiPaper-outlined"
+    >
+      <img
+        alt="Some Hardware"
+        class="MuiCardMedia-root ItemPic MuiCardMedia-media MuiCardMedia-img"
+        src="https://i.pinimg.com/originals/58/1f/23/581f232c3462392f63d57be5649649de.jpg"
+      />
+    </div>
+    <div
+      class="ItemTextBox"
+    >
+      <div
+        class="ItemName"
+      >
+        <svg
+          aria-hidden="true"
+          class="MuiSvgIcon-root ItemLimit3"
+          focusable="false"
+          viewBox="0 0 24 24"
+        >
+          <circle
+            cx="12"
+            cy="12"
+            r="8"
+          />
+        </svg>
+        <p
+          class="MuiTypography-root MuiTypography-body2"
+        >
+          Some Hardware
+        </p>
+      </div>
+      <span
+        class="MuiTypography-root inStock MuiTypography-caption"
+      >
+        4 OF 6 IN STOCK
+      </span>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`InventoryItem limit 4 1`] = `
+<DocumentFragment>
+  <div
+    class="MuiGrid-root Item MuiGrid-item"
+  >
+    <div
+      class="MuiPaper-root MuiCard-root MuiPaper-outlined"
+    >
+      <img
+        alt="Some Hardware"
+        class="MuiCardMedia-root ItemPic MuiCardMedia-media MuiCardMedia-img"
+        src="https://i.pinimg.com/originals/58/1f/23/581f232c3462392f63d57be5649649de.jpg"
+      />
+    </div>
+    <div
+      class="ItemTextBox"
+    >
+      <div
+        class="ItemName"
+      >
+        <svg
+          aria-hidden="true"
+          class="MuiSvgIcon-root ItemLimit4"
+          focusable="false"
+          viewBox="0 0 24 24"
+        >
+          <circle
+            cx="12"
+            cy="12"
+            r="8"
+          />
+        </svg>
+        <p
+          class="MuiTypography-root MuiTypography-body2"
+        >
+          Some Hardware
+        </p>
+      </div>
+      <span
+        class="MuiTypography-root inStock MuiTypography-caption"
+      >
+        4 OF 6 IN STOCK
+      </span>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`InventoryItem limit 5 1`] = `
+<DocumentFragment>
+  <div
+    class="MuiGrid-root Item MuiGrid-item"
+  >
+    <div
+      class="MuiPaper-root MuiCard-root MuiPaper-outlined"
+    >
+      <img
+        alt="Some Hardware"
+        class="MuiCardMedia-root ItemPic MuiCardMedia-media MuiCardMedia-img"
+        src="https://i.pinimg.com/originals/58/1f/23/581f232c3462392f63d57be5649649de.jpg"
+      />
+    </div>
+    <div
+      class="ItemTextBox"
+    >
+      <div
+        class="ItemName"
+      >
+        <svg
+          aria-hidden="true"
+          class="MuiSvgIcon-root ItemLimit5"
+          focusable="false"
+          viewBox="0 0 24 24"
+        >
+          <circle
+            cx="12"
+            cy="12"
+            r="8"
+          />
+        </svg>
+        <p
+          class="MuiTypography-root MuiTypography-body2"
+        >
+          Some Hardware
+        </p>
+      </div>
+      <span
+        class="MuiTypography-root inStock MuiTypography-caption"
+      >
+        4 OF 6 IN STOCK
+      </span>
+    </div>
+  </div>
+</DocumentFragment>
+`;
