@@ -5,12 +5,12 @@ import {
     ReturnedTable,
     CheckedOutTable,
 } from "components/dashboard/ItemTable/ItemTable";
-import { itemsC, itemsP, itemsR } from "testing/mockData";
+import { itemsCheckedOut, itemsPending, itemsReturned } from "testing/mockData";
 
 describe("<PendingTable />", () => {
     it("renders correctly when there's an order pending and orange chip", () => {
         const { getByText, queryByText } = render(
-            <PendingTable items={itemsP} status="pending" />
+            <PendingTable items={itemsPending} status="pending" />
         );
         expect(getByText("Name")).toBeInTheDocument();
         expect(queryByText("In progress")).toBeInTheDocument();
@@ -18,7 +18,7 @@ describe("<PendingTable />", () => {
 
     it("renders correctly when there's an order pending and green chip", () => {
         const { getByText, queryByText } = render(
-            <PendingTable items={itemsP} status="ready" />
+            <PendingTable items={itemsPending} status="ready" />
         );
         expect(getByText("Name")).toBeInTheDocument();
         expect(queryByText("Ready for pickup")).toBeInTheDocument();
@@ -26,7 +26,7 @@ describe("<PendingTable />", () => {
 
     it("renders correctly when there's an order pending and red chip", () => {
         const { getByText, queryByText } = render(
-            <PendingTable items={itemsP} status="error" />
+            <PendingTable items={itemsPending} status="error" />
         );
         expect(getByText("Name")).toBeInTheDocument();
         expect(queryByText("Please visit the tech station")).toBeInTheDocument();
@@ -48,7 +48,7 @@ describe("<CheckedOutTable />", () => {
     });
 
     it("renders correctly when there are checked out items", () => {
-        const { getByText } = render(<CheckedOutTable items={itemsC} />);
+        const { getByText } = render(<CheckedOutTable items={itemsCheckedOut} />);
         expect(getByText("Name")).toBeInTheDocument();
         expect(getByText("Hide all")).toBeInTheDocument();
     });
@@ -66,7 +66,7 @@ describe("<ReturnedTable, />", () => {
     });
 
     it("renders correctly when there are returned items", () => {
-        const { getByText } = render(<ReturnedTable items={itemsR} />);
+        const { getByText } = render(<ReturnedTable items={itemsReturned} />);
         expect(getByText("Name")).toBeInTheDocument();
         expect(getByText("Hide all")).toBeInTheDocument();
     });

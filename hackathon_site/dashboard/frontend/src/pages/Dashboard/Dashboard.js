@@ -10,7 +10,13 @@ import {
     CheckedOutTable,
 } from "components/dashboard/ItemTable/ItemTable";
 import Header from "components/general/Header/Header";
-import { cardItems, itemsC, itemsP, itemsR, orderStatus } from "testing/mockData";
+import {
+    cardItems,
+    itemsCheckedOut,
+    itemsPending,
+    itemsReturned,
+    orderStatus,
+} from "testing/mockData";
 
 const Dashboard = () => {
     return (
@@ -31,9 +37,9 @@ const Dashboard = () => {
                     ))}
                     <ConnectedSponsorCard />
                 </Grid>
-                <PendingTable items={itemsP} status={orderStatus} />
-                <CheckedOutTable items={itemsC} />
-                <ReturnedTable items={itemsR} />
+                <PendingTable items={itemsPending} status={orderStatus} />
+                <CheckedOutTable items={itemsCheckedOut} />
+                <ReturnedTable items={itemsReturned} />
             </div>
         </>
     );

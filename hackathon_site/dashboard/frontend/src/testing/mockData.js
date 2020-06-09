@@ -17,7 +17,7 @@ export const cardItems = [
 ];
 
 // For ItemTable on Dashboard
-export const itemsC = [
+export const itemsCheckedOut = [
     { url: "https://i.imgur.com/IO6e5a6.jpg", name: "Arduino", qty: 6 },
     { url: "https://i.imgur.com/kOlrXto.jpg", name: "Raspi", qty: 9 },
     {
@@ -28,7 +28,7 @@ export const itemsC = [
     { url: "https://i.imgur.com/kOlrXto.jpg", name: "Blah", qty: 7 },
 ];
 
-export const itemsR = [
+export const itemsReturned = [
     {
         url: "https://i.imgur.com/IO6e5a6.jpg",
         name: "Arduino",
@@ -52,7 +52,7 @@ export const itemsR = [
     },
 ];
 
-export const itemsP = [
+export const itemsPending = [
     {
         url: "https://i.imgur.com/iUpI1hC.jpg",
         name: "Arduino",
