@@ -9,19 +9,22 @@
     align-items: flex-start;
     padding-bottom: 10px;
 
+    &:hover {
+        background-color: color(light2);
+    }
+
     &Pic {
         height: 210px;
-        z-index: -1;
-        background-color: color(orange);
+
         &Box {
-            height: 210px;
-            width: 100%;
-            background-color: rgba(196, 196, 196, 0.6);
-            z-index: 2000;
+            object-fit: cover;
+            opacity: 0.2;
         }
     }
 
     &Limit {
+        font-size: small;
+        margin: -1px 0px 0px -5px;
         &1 {
             color: #98e733;
         }
@@ -50,5 +53,9 @@
 
     .outOfStock {
         color: color(red);
+    }
+
+    .inStock {
+        color: #757575;
     }
 }

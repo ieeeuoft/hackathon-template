@@ -5,53 +5,53 @@ import Card from "@material-ui/core/Card";
 import CardMedia from "@material-ui/core/CardMedia";
 import FiberManualRecordIcon from "@material-ui/icons/FiberManualRecord";
 import Grid from "@material-ui/core/Grid";
-import Container from "@material-ui/core/Container";
-import Paper from "@material-ui/core/Paper";
 
-const colorCircle = ({ limit, currentStock }) => {
-    if (currentStock === "") {
-        return "";
-    } else {
-        // not sure how the limit would work for now
-        let endStyle = "";
-        if (limit === "1") {
+const ColorCircle = ({ limit }) => {
+    // not sure how the limit would work for now
+    let endStyle = "";
+    switch (limit) {
+        case 1:
             endStyle = styles.ItemLimit1;
-        } else if (limit === "2") {
+            break;
+        case 2:
             endStyle = styles.ItemLimit2;
-        } else if (limit === "3") {
+            break;
+        case 3:
             endStyle = styles.ItemLimit3;
-        } else if (limit === "4") {
+            break;
+        case 4:
             endStyle = styles.ItemLimit4;
-        } else if (limit === "5") {
+            break;
+        case 5:
             endStyle = styles.ItemLimit5;
-        }
-        return <FiberManualRecordIcon className={endStyle} />;
+            break;
+        default:
+            endStyle = styles.ItemLimit;
     }
+    return <FiberManualRecordIcon className={endStyle} />;
 };
 
 const Item = ({ image, title, total, limit, currentStock }) => {
     const stock =
-        currentStock === ""
+        currentStock === null
             ? "OUT OF STOCK"
             : currentStock + " OF " + total + " IN STOCK";
-    const stockStyle = stock === "OUT OF STOCK" ? styles.outOfStock : "";
+    const stockStyle = stock === "OUT OF STOCK" ? styles.outOfStock : styles.inStock;
 
     return (
         <Grid className={styles.Item} item>
-            <Card className={styles.ItemPicBox} variant="outlined">
+            <Card className={styles.ItemPicBox} variant="outlined" square={true}>
                 <CardMedia
                     className={styles.ItemPic}
                     component="img"
                     alt={title}
                     image={image}
-                    title={title}
-                    src={image}
                 />
             </Card>
             <div className={styles.ItemTextBox}>
                 <div className={styles.ItemName}>
-                    <colorCircle limit={limit} currentStock={currentStock} />
-                    <Typography vairant="caption">{title}</Typography>
+                    <ColorCircle limit={limit} />
+                    <Typography variant="body2">{title}</Typography>
                 </div>
                 <Typography variant="caption" className={stockStyle}>
                     {stock}
