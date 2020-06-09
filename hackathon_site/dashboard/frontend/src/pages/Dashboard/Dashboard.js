@@ -4,22 +4,19 @@ import ConnectedSponsorCard from "components/dashboard/SponsorCard/SponsorCard";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import DashCard from "components/dashboard/DashCard/DashCard";
-import OpenInNew from "@material-ui/icons/OpenInNew";
-import GetApp from "@material-ui/icons/GetApp";
-import Header from "../../components/general/Header/Header";
-
-export const cardItems = [
-    {
-        title: "Hello",
-        content: [{ name: "Test", url: "https://www.facebook.com", icon: <GetApp /> }],
-    },
-    {
-        title: "Hi",
-        content: [
-            { name: "Test2", url: "https://www.youtube.com", icon: <OpenInNew /> },
-        ],
-    },
-];
+import {
+    PendingTable,
+    ReturnedTable,
+    CheckedOutTable,
+} from "components/dashboard/ItemTable/ItemTable";
+import Header from "components/general/Header/Header";
+import {
+    cardItems,
+    itemsCheckedOut,
+    itemsPending,
+    itemsReturned,
+    orderStatus,
+} from "testing/mockData";
 
 const Dashboard = () => {
     return (
@@ -40,6 +37,9 @@ const Dashboard = () => {
                     ))}
                     <ConnectedSponsorCard />
                 </Grid>
+                <PendingTable items={itemsPending} status={orderStatus} />
+                <CheckedOutTable items={itemsCheckedOut} />
+                <ReturnedTable items={itemsReturned} />
             </div>
         </>
     );
