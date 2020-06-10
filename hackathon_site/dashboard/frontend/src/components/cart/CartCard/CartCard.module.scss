@@ -1,0 +1,38 @@
+@import "./../../../assets/abstracts/mixins";
+@import "./../../../assets/abstracts/variables";
+
+.Cart {
+    display: flex;
+
+    &Pic {
+        height: 90px;
+        width: 90px;
+    }
+
+    &Name {
+        padding-top: 18px;
+        padding-bottom: 11px;
+    }
+
+    &Parts {
+        display: flex;
+        flex-direction: column;
+        height: 90px;
+        width: 95%;
+        padding-left: 30px;
+    }
+
+    &FormSelect {
+        height: 54%;
+        width: 98px;
+        outline: hidden;
+
+        // border: 1px solid rgb(146, 168, 179);
+        // box-sizing: border-box;
+        // border-radius: 4px;
+    }
+
+    &Close {
+        align-self: baseline;
+    }
+}
