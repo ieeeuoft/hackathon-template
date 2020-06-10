@@ -7,8 +7,10 @@
     padding: 24px 50px;
     width: 100%;
     position: fixed;
+    align-items: center;
     .backarrow {
         margin: 0 15px;
+        padding: 0;
     }
 }
 
@@ -54,5 +56,9 @@
         color: color(white);
         background-color: color(primary);
         margin: 30px 50px;
+        padding: 10px 25px;
+        &:hover {
+            background-color: color(dark1);
+        }
     }
 }

@@ -7,17 +7,20 @@ import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import LaunchIcon from "@material-ui/icons/Launch";
+import IconButton from "@material-ui/core/IconButton";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
+import InputLabel from "@material-ui/core/InputLabel";
 import FiberManualRecordIcon from "@material-ui/icons/FiberManualRecord";
 
 import styles from "./SideSheetRight.module.scss";
 
-const createQuantityList = (number, handleChange) => {
+const createQuantityList = (number) => {
     let entry = [];
 
     for (let i = 1; i <= number; i++) {
+        let valueInString = i + "";
         entry.push(
-            <MenuItem onClick={() => handleChange(i)} key={i} role="quantity">
+            <MenuItem key={i} role="quantity" value={valueInString}>
                 {i}
             </MenuItem>
         );
@@ -27,24 +30,33 @@ const createQuantityList = (number, handleChange) => {
 };
 
 const CartSheet = ({ addCartFunction, quantity }) => {
-    const [item, setItem] = React.useState("");
+    const [qty, setQty] = React.useState("1");
 
-    const handleChange = (value) => {
-        setItem(value);
+    const changeQuantity = (event) => {
+        setQty(event.target.value);
     };
 
     return (
         addCartFunction && (
             <div className={styles.cart}>
-                <FormControl className={styles.form}>
-                    <Select value={item} role="selected">
-                        {createQuantityList(quantity, handleChange)}
+                <FormControl variant="outlined" className={styles.form}>
+                    <InputLabel>Qty</InputLabel>
+                    <Select
+                        value={qty}
+                        role="selecter"
+                        onChange={changeQuantity}
+                        label="Qty"
+                        inputProps={{
+                            "data-testid": "content-input",
+                        }}
+                    >
+                        {createQuantityList(quantity)}
                     </Select>
                 </FormControl>
                 <Button
                     variant="contained"
                     className={styles.cartButton}
-                    onClick={addCartFunction}
+                    onClick={() => addCartFunction(qty)}
                     disableElevation
                 >
                     ADD TO CART
@@ -58,15 +70,15 @@ const BodySheet = ({ manufacturer, model_num, datasheet, notes, constraints }) =
     return (
         <div className={styles.bodysheet}>
             <div className={styles.bodyinfo}>
-                <Typography variant="h3">Manufacturer</Typography>
+                <Typography variant="body2">Manufacturer</Typography>
                 <Typography>{manufacturer}</Typography>
             </div>
             <div className={styles.bodyinfo}>
-                <Typography variant="h3">Model Number</Typography>
+                <Typography variant="body2">Model Number</Typography>
                 <Typography>{model_num}</Typography>
             </div>
             <div className={styles.bodyinfo}>
-                <Typography variant="h3">Datasheet</Typography>
+                <Typography variant="body2">Datasheet</Typography>
                 <Link
                     href={datasheet}
                     rel="noopener"
@@ -80,13 +92,13 @@ const BodySheet = ({ manufacturer, model_num, datasheet, notes, constraints }) =
                 </Link>
             </div>
             <div className={styles.bodyinfo}>
-                <Typography variant="h3">Notes</Typography>
+                <Typography variant="body2">Notes</Typography>
                 {notes.map((note, i) => (
                     <Typography key={i}>{note}</Typography>
                 ))}
             </div>
             <div className={styles.bodyinfo}>
-                <Typography variant="h3">Constraints</Typography>
+                <Typography variant="body2">Constraints</Typography>
                 {constraints.map((constraint, i) => (
                     <Typography key={i}>{constraint}</Typography>
                 ))}
@@ -107,7 +119,7 @@ const HeaderSheet = ({ type, name, total, available, tags, img }) => {
                     {available} OF {total} IN STOCK
                 </Typography>
                 <div className={styles.tags}>
-                    <Typography variant="h3">Tags</Typography>
+                    <Typography variant="body2">Tags</Typography>
                     <Typography>{tags}</Typography>
                 </div>
             </div>
@@ -134,13 +146,15 @@ const SideSheetRight = ({ detail, addCartFunction }) => {
             </div>
             <Drawer anchor="right" open={toggle}>
                 <div className={styles.topsheet}>
-                    <ArrowBackIcon
+                    <IconButton
                         className={styles.backarrow}
                         onClick={() => {
                             toggleSheet(false);
                         }}
                         role="close"
-                    />
+                    >
+                        <ArrowBackIcon />
+                    </IconButton>
                     <Typography variant="h2" className={styles.title}>
                         Product Overview
                     </Typography>

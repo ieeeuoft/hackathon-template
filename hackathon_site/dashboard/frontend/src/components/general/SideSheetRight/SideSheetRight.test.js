@@ -5,12 +5,9 @@ import {
     fireEvent,
     waitForElementToBeRemoved,
     waitFor,
+    waitForElement,
 } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
-
-/**
- * Test the quantity log thing
- */
 
 describe("SideSheetRight", () => {
     const testDetail = {
@@ -38,14 +35,18 @@ describe("SideSheetRight", () => {
         expect(asFragment()).toMatchSnapshot();
     });
 
-    test("click me opens the drawer", () => {
-        const { getByText, queryByText } = render(
+    test("click me opens the drawer", async () => {
+        const { getByText, getByRole, queryByText } = render(
             <SideSheetRight detail={testDetail} addCartFunction={addCartMock} />
         );
 
         //Open Drawer
         const openDrawer = getByText("click me");
         fireEvent.click(openDrawer);
+
+        await waitFor(() => {
+            expect(getByRole("close")).toBeInTheDocument();
+        });
 
         // Confirm open drawer
         expect(queryByText("Product Overview")).not.toBeNull();
@@ -69,8 +70,8 @@ describe("SideSheetRight", () => {
         await waitForElementToBeRemoved(() => getByText("Product Overview"));
     });
 
-    test("add to cart button calls the correct function", () => {
-        const { getByText } = render(
+    test("add to cart button calls the correct function", async () => {
+        const { getByText, getByRole } = render(
             <SideSheetRight detail={testDetail} addCartFunction={addCartMock} />
         );
 
@@ -78,9 +79,42 @@ describe("SideSheetRight", () => {
         const openDrawer = getByText("click me");
         fireEvent.click(openDrawer);
 
+        await waitFor(() => {
+            expect(getByRole("close")).toBeInTheDocument();
+        });
+
         const button = getByText("ADD TO CART");
 
         fireEvent.click(button);
         expect(addCartMock).toHaveBeenCalledTimes(1);
+    });
+
+    test("confirm that the correct value has been logged", async () => {
+        const cartTest = jest.fn();
+
+        const { getByText, getByRole, getByTestId } = render(
+            <SideSheetRight detail={testDetail} addCartFunction={cartTest} />
+        );
+
+        // open the drawer
+        const openDrawer = getByText("click me");
+        fireEvent.click(openDrawer);
+        await waitFor(() => {
+            expect(getByText("Product Overview")).toBeInTheDocument();
+        });
+
+        // open the selector
+
+        const contentInput = getByTestId("content-input");
+        fireEvent.change(contentInput, {
+            target: { value: "1" },
+        });
+
+        const button = getByText("ADD TO CART");
+        fireEvent.click(button);
+
+        await waitFor(() => {
+            expect(cartTest).toHaveBeenCalledWith("1");
+        });
     });
 });
