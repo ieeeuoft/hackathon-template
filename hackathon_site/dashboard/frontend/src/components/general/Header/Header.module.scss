@@ -3,6 +3,11 @@
 
 .header {
     background-color: color(secondary) !important;
+    width: 100vw;
+    margin: -50px 0 50px -50px;
+    @include responsive(sm-down) {
+        margin: -25px 0 25px -25px;
+    }
 
     &Toolbar {
         justify-content: space-between;

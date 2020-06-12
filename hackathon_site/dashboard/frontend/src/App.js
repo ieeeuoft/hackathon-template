@@ -14,6 +14,11 @@ import "App.scss";
 import Dashboard from "pages/Dashboard/Dashboard";
 import Footer from "components/general/Footer/Footer";
 import Login from "pages/Login/Login";
+import Orders from "pages/Orders/Orders";
+import Teams from "pages/Teams/Teams";
+import Reports from "pages/Reports/Reports";
+import Inventory from "pages/Inventory/Inventory";
+import Cart from "pages/Cart/Cart";
 
 export const makePalette = () => {
     // In testing, the scss exports don't work so styles is an
@@ -31,8 +36,15 @@ const theme = createMuiTheme({
 const UnconnectedApp = () => {
     return (
         <div className="App">
-            <Route exact path="/" component={Dashboard} />
-            <Route exact path="/login" component={Login} />
+            <div className="AppPadding">
+                <Route exact path="/" component={Dashboard} />
+                <Route exact path="/login" component={Login} />
+                <Route exact path="/orders" component={Orders} />
+                <Route exact path="/teams" component={Teams} />
+                <Route exact path="/reports" component={Reports} />
+                <Route exact path="/inventory" component={Inventory} />
+                <Route exact path="/cart" component={Cart} />
+            </div>
             <Footer />
         </div>
     );

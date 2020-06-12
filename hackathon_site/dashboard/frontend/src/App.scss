@@ -3,6 +3,17 @@
 
 .App {
     background-color: color(backgroundC);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 100vh;
+    &Padding {
+        padding: 50px;
+        @include responsive(sm-down) {
+            font-size: size(xs);
+            padding: 25px;
+        }
+    }
 }
 
 .App-header {
