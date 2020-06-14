@@ -1,17 +1,31 @@
 import React from "react";
 import OpenInNew from "@material-ui/icons/OpenInNew";
 import GetApp from "@material-ui/icons/GetApp";
+import PinDrop from "@material-ui/icons/PinDrop";
 
 // For DashCard on Dashboard
 export const cardItems = [
     {
-        title: "Hello",
-        content: [{ name: "Test", url: "https://www.facebook.com", icon: <GetApp /> }],
+        title: "Important Links",
+        content: [
+            { name: "Test", url: "https://www.facebook.com", icon: <OpenInNew /> },
+        ],
     },
     {
-        title: "Hi",
+        title: "General electronics aid",
         content: [
+            { name: "Test1", url: "https://www.youtube.com", icon: <OpenInNew /> },
             { name: "Test2", url: "https://www.youtube.com", icon: <OpenInNew /> },
+            { name: "Test3", url: "https://www.youtube.com", icon: <OpenInNew /> },
+            { name: "Test4", url: "https://www.youtube.com", icon: <GetApp /> },
+            { name: "Test5", url: "https://www.youtube.com", icon: <GetApp /> },
+        ],
+    },
+    {
+        title: "Stores nearby",
+        content: [
+            { name: "Test1", url: "https://www.facebook.com", icon: <PinDrop /> },
+            { name: "Test2", url: "https://www.facebook.com", icon: <PinDrop /> },
         ],
     },
 ];
@@ -62,3 +76,18 @@ export const itemsPending = [
 ];
 
 export const orderStatus = "pending";
+
+// Sponsor card
+export const sponsorsList = [
+    { imgSrc: "AMD.svg" },
+    { imgSrc: "CityofBrampton.svg" },
+    { imgSrc: "CognitiveSystems.svg" },
+    { imgSrc: "ECE.png" },
+    { imgSrc: "ecobee.svg" },
+    { imgSrc: "FacultyofAppliedScienceandEngineering.png" },
+    { imgSrc: "Huawei.svg" },
+];
+
+// Team card
+export const members = ["Aki", "Graham", "Alex", "Raymond"];
+export const teamCode = "PAS3NLQ3";

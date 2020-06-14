@@ -17,8 +17,10 @@ const CardItem = ({ name, icon }) => {
 
 const DashCard = ({ title, content }) => {
     return (
-        <Grid className={styles.DashCard} item>
-            <Typography variant="h2">{title}</Typography>
+        <Grid className={styles.DashCard} item zeroMinWidth>
+            <Typography variant="h2" noWrap>
+                {title}
+            </Typography>
             <Paper elevation={3} className={styles.paper} square={true}>
                 {content.map((listItem, i) => (
                     <Link

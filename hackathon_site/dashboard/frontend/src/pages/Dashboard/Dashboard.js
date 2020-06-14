@@ -4,6 +4,7 @@ import ConnectedSponsorCard from "components/dashboard/SponsorCard/SponsorCard";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import DashCard from "components/dashboard/DashCard/DashCard";
+import TeamCard from "components/dashboard/TeamCard/TeamCard";
 import {
     PendingTable,
     ReturnedTable,
@@ -16,6 +17,8 @@ import {
     itemsPending,
     itemsReturned,
     orderStatus,
+    members,
+    teamCode,
 } from "testing/mockData";
 
 const Dashboard = () => {
@@ -32,6 +35,7 @@ const Dashboard = () => {
                     spacing={2}
                     className={styles.dashboardGrid}
                 >
+                    <TeamCard members={members} teamCode={teamCode} />
                     {cardItems.map(({ title, content }, i) => (
                         <DashCard title={title} content={content} key={i} />
                     ))}

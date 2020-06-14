@@ -10,8 +10,10 @@ const TeamCard = ({ members, teamCode, handleEditTeam }) => {
     const title = teamCode === "" ? "Team" : "Team " + teamCode;
 
     return (
-        <Grid className={styles.TeamCard} item>
-            <Typography variant="h2">{title}</Typography>
+        <Grid className={styles.TeamCard} item zeroMinWidth>
+            <Typography variant="h2" noWrap>
+                {title}
+            </Typography>
             <Paper elevation={3} className={styles.paper} square={true}>
                 {members.map((member, i) => (
                     <Container className={styles.name} key={i}>
