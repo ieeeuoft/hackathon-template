@@ -9,7 +9,9 @@ import Link from "@material-ui/core/Link";
 const CardItem = ({ name, icon }) => {
     return (
         <Container className={styles.items}>
-            <Typography variant="body2">{name}</Typography>
+            <Typography variant="body2" noWrap>
+                {name}
+            </Typography>
             {icon}
         </Container>
     );
@@ -17,7 +19,7 @@ const CardItem = ({ name, icon }) => {
 
 const DashCard = ({ title, content }) => {
     return (
-        <Grid className={styles.DashCard} item zeroMinWidth>
+        <Grid className={styles.DashCard} item>
             <Typography variant="h2" noWrap>
                 {title}
             </Typography>

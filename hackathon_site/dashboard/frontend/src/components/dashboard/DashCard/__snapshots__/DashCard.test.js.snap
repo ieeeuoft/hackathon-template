@@ -3,7 +3,7 @@
 exports[`DashCard render 1`] = `
 <DocumentFragment>
   <div
-    class="MuiGrid-root DashCard MuiGrid-item MuiGrid-zeroMinWidth"
+    class="MuiGrid-root DashCard MuiGrid-item"
   >
     <h2
       class="MuiTypography-root MuiTypography-h2 MuiTypography-noWrap"
@@ -23,7 +23,7 @@ exports[`DashCard render 1`] = `
           class="MuiContainer-root items MuiContainer-maxWidthLg"
         >
           <p
-            class="MuiTypography-root MuiTypography-body2"
+            class="MuiTypography-root MuiTypography-body2 MuiTypography-noWrap"
           >
             testing
           </p>
@@ -39,7 +39,7 @@ exports[`DashCard render 1`] = `
           class="MuiContainer-root items MuiContainer-maxWidthLg"
         >
           <p
-            class="MuiTypography-root MuiTypography-body2"
+            class="MuiTypography-root MuiTypography-body2 MuiTypography-noWrap"
           >
             testing
           </p>

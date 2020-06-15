@@ -6,26 +6,19 @@
     width: 100%;
     display: flex;
     flex-direction: column;
-    h2 {
-        margin-bottom: 10px;
-    }
     .paper {
         flex-grow: 1;
         padding: 8px 0px;
         overflow-x: hidden;
         .name {
-            padding-top: 12px;
-            padding-bottom: 12px;
+            padding: 12px 50px 12px 20px;
         }
     }
-
     .lastRow {
         display: flex;
         justify-content: flex-end;
-        padding-top: 4px;
-        padding-bottom: 4px;
+        padding-top: 8px;
     }
-
     .ButtonColor {
         color: color(primary);
     }

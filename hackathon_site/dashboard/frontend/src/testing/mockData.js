@@ -8,23 +8,39 @@ export const cardItems = [
     {
         title: "Important Links",
         content: [
-            { name: "Test", url: "https://www.facebook.com", icon: <OpenInNew /> },
+            {
+                name: "Hackathon main site",
+                url: "https://www.facebook.com",
+                icon: <OpenInNew />,
+            },
         ],
     },
     {
         title: "General electronics aid",
         content: [
-            { name: "Test1", url: "https://www.youtube.com", icon: <OpenInNew /> },
+            {
+                name: "Test1 asdajslkd",
+                url: "https://www.youtube.com",
+                icon: <OpenInNew />,
+            },
             { name: "Test2", url: "https://www.youtube.com", icon: <OpenInNew /> },
-            { name: "Test3", url: "https://www.youtube.com", icon: <OpenInNew /> },
-            { name: "Test4", url: "https://www.youtube.com", icon: <GetApp /> },
+            {
+                name: "Test3 asknd",
+                url: "https://www.youtube.com",
+                icon: <OpenInNew />,
+            },
+            { name: "Test4 blah", url: "https://www.youtube.com", icon: <GetApp /> },
             { name: "Test5", url: "https://www.youtube.com", icon: <GetApp /> },
         ],
     },
     {
         title: "Stores nearby",
         content: [
-            { name: "Test1", url: "https://www.facebook.com", icon: <PinDrop /> },
+            {
+                name: "Home Hardware",
+                url: "https://www.facebook.com",
+                icon: <PinDrop />,
+            },
             { name: "Test2", url: "https://www.facebook.com", icon: <PinDrop /> },
         ],
     },
@@ -89,5 +105,10 @@ export const sponsorsList = [
 ];
 
 // Team card
-export const members = ["Aki", "Graham", "Alex", "Raymond"];
+export const members = [
+    "Aki Kimura",
+    "Graham Hoyes",
+    "Alex Bogdan",
+    "Raymond Aksjdkjah",
+];
 export const teamCode = "PAS3NLQ3";

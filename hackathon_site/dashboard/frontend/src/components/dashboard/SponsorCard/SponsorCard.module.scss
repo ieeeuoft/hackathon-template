@@ -2,16 +2,10 @@
 @import "./../../../assets/abstracts/variables";
 
 .sponsors {
+    height: 100%;
+    width: 400px;
     display: flex;
     flex-direction: column;
-    width: 400px;
-    padding: 0px;
-    height: 100%;
-
-    h2 {
-        margin-bottom: 10px;
-    }
-
     &Paper {
         flex-grow: 1;
         padding: 28px 0;

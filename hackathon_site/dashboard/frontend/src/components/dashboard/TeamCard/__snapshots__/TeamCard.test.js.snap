@@ -3,7 +3,7 @@
 exports[`TeamCard render 1`] = `
 <DocumentFragment>
   <div
-    class="MuiGrid-root TeamCard MuiGrid-item MuiGrid-zeroMinWidth"
+    class="MuiGrid-root TeamCard MuiGrid-item"
   >
     <h2
       class="MuiTypography-root MuiTypography-h2 MuiTypography-noWrap"
@@ -17,7 +17,7 @@ exports[`TeamCard render 1`] = `
         class="MuiContainer-root name MuiContainer-maxWidthLg"
       >
         <p
-          class="MuiTypography-root MuiTypography-body2"
+          class="MuiTypography-root MuiTypography-body2 MuiTypography-noWrap"
         >
           Aki
         </p>
@@ -26,7 +26,7 @@ exports[`TeamCard render 1`] = `
         class="MuiContainer-root name MuiContainer-maxWidthLg"
       >
         <p
-          class="MuiTypography-root MuiTypography-body2"
+          class="MuiTypography-root MuiTypography-body2 MuiTypography-noWrap"
         >
           Graham
         </p>
@@ -35,7 +35,7 @@ exports[`TeamCard render 1`] = `
         class="MuiContainer-root name MuiContainer-maxWidthLg"
       >
         <p
-          class="MuiTypography-root MuiTypography-body2"
+          class="MuiTypography-root MuiTypography-body2 MuiTypography-noWrap"
         >
           Alex
         </p>
@@ -44,7 +44,7 @@ exports[`TeamCard render 1`] = `
         class="MuiContainer-root name MuiContainer-maxWidthLg"
       >
         <p
-          class="MuiTypography-root MuiTypography-body2"
+          class="MuiTypography-root MuiTypography-body2 MuiTypography-noWrap"
         >
           Raymond
         </p>
