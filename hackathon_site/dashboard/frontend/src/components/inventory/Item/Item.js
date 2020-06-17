@@ -13,19 +13,14 @@ const ColorCircle = ({ limit }) => {
     switch (limit) {
         case 1:
             endStyle = styles.ItemLimit1;
-            break;
         case 2:
             endStyle = styles.ItemLimit2;
-            break;
         case 3:
             endStyle = styles.ItemLimit3;
-            break;
         case 4:
             endStyle = styles.ItemLimit4;
-            break;
         case 5:
             endStyle = styles.ItemLimit5;
-            break;
         default:
             return null;
     }
@@ -34,7 +29,7 @@ const ColorCircle = ({ limit }) => {
 
 const Item = ({ image, title, total, limit, currentStock }) => {
     const stock =
-        currentStock === null
+        !currentStock 
             ? "OUT OF STOCK"
             : currentStock + " OF " + total + " IN STOCK";
     const stockStyle = currentStock === null ? styles.outOfStock : styles.inStock;
