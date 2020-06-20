@@ -11,8 +11,21 @@ import Menu from "@material-ui/icons/Menu";
 import { Navbar, NavbarDrawer } from "components/general/Navbar/Navbar";
 import { userEmail } from "testing/mockData";
 
+const HackathonTitle = () => (
+    <>
+        <Logo
+            className={styles.headerLogoImg}
+            alt="Hackathon logo"
+            data-testid="headerLogo"
+        />
+        <Typography variant="h6" data-testid="hackathonName">
+            Hackathon Name
+        </Typography>
+    </>
+);
+
 const Header = ({ showNavbar = true }) => {
-    const [mobileOpen, setMobileOpen] = React.useState(false);
+    const [mobileOpen, setMobileOpen] = React.useState(true);
 
     const toggleMenu = () => {
         setMobileOpen(!mobileOpen);
@@ -23,14 +36,7 @@ const Header = ({ showNavbar = true }) => {
             <Toolbar className={styles.headerToolbar}>
                 <Hidden implementation="css" smDown={!!showNavbar}>
                     <div className={styles.headerLogo}>
-                        <Logo
-                            className={styles.headerLogoImg}
-                            alt="Hackathon logo"
-                            data-testid="headerLogo"
-                        />
-                        <Typography variant="h6" data-testid="hackathonName">
-                            Hackathon Name
-                        </Typography>
+                        <HackathonTitle />
                     </div>
                 </Hidden>
                 <Hidden implementation="css" mdUp>
@@ -48,18 +54,14 @@ const Header = ({ showNavbar = true }) => {
                 {showNavbar && <Navbar />}
 
                 <Drawer
-                    anchor={"left"}
+                    anchor="left"
                     open={mobileOpen}
                     onClose={toggleMenu}
                     className={styles.headerDrawer}
                 >
                     <div className={styles.headerDrawerTop}></div>
                     <div className={styles.headerDrawerHackathon}>
-                        <Logo
-                            className={styles.headerDrawerHackathonImg}
-                            alt="Hackathon logo"
-                        />
-                        <Typography variant="h6">Hackathon Name</Typography>
+                        <HackathonTitle />
                         <Typography variant="body2">{userEmail}</Typography>
                     </div>
                     <div className={styles.headerDrawerDivider}></div>

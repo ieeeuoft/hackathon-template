@@ -26,7 +26,6 @@ export const Navbar = () => (
                     Dashboard
                 </Button>
             </Link>
-
             <Link to={"/orders"}>
                 <Button
                     className={styles.navBtn}
@@ -36,7 +35,6 @@ export const Navbar = () => (
                     Orders
                 </Button>
             </Link>
-
             <Link to={"/teams"}>
                 <Button
                     className={styles.navBtn}
@@ -46,7 +44,6 @@ export const Navbar = () => (
                     Teams
                 </Button>
             </Link>
-
             <Link to={"/reports"}>
                 <Button
                     className={styles.navBtn}
@@ -66,7 +63,6 @@ export const Navbar = () => (
                     Inventory
                 </Button>
             </Link>
-
             <Link to={"/cart"}>
                 <Button
                     className={styles.navBtn}
@@ -76,7 +72,6 @@ export const Navbar = () => (
                     Cart
                 </Button>
             </Link>
-
             <Button
                 className={styles.navBtn}
                 aria-label="Notifications"
@@ -84,7 +79,6 @@ export const Navbar = () => (
             >
                 Notifications
             </Button>
-
             <Button aria-label="Logout" className={styles.navBtn}>
                 <b>Logout</b>
             </Button>
@@ -105,60 +99,58 @@ export const Navbar = () => (
 
 export const NavbarDrawer = () => (
     <nav className={styles.navMobile}>
-        <Link to={"/"}>
-            <Button
-                className={styles.navMobileBtn}
-                aria-label="Dashboard"
-                startIcon={<Home />}
-            >
-                Dashboard
-            </Button>
-        </Link>
-
-        <Link to={"/orders"}>
-            <Button
-                className={styles.navMobileBtn}
-                aria-label="Orders"
-                startIcon={<ListAlt />}
-            >
-                Orders
-            </Button>
-        </Link>
-
-        <Link to={"/teams"}>
-            <Button
-                className={styles.navMobileBtn}
-                aria-label="Teams"
-                startIcon={<AccountCircle />}
-            >
-                Teams
-            </Button>
-        </Link>
-
-        <Link to={"/reports"}>
-            <Button
-                className={styles.navMobileBtn}
-                aria-label="Reports"
-                startIcon={<InsertChartOutlined />}
-            >
-                Reports
-            </Button>
-        </Link>
-
-        <Link to={"/inventory"}>
-            <Button
-                className={styles.navMobileBtn}
-                aria-label="Inventory"
-                startIcon={<Inventory className={styles.customIcon} />}
-            >
-                Inventory
-            </Button>
-        </Link>
-
-        <Button aria-label="Logout" className={styles.navMobileBtn}>
+        <div>
+            <Link to={"/"}>
+                <Button
+                    className={styles.navMobileBtn}
+                    aria-label="Dashboard"
+                    startIcon={<Home />}
+                >
+                    Dashboard
+                </Button>
+            </Link>
+            <Link to={"/orders"}>
+                <Button
+                    className={styles.navMobileBtn}
+                    aria-label="Orders"
+                    startIcon={<ListAlt />}
+                >
+                    Orders
+                </Button>
+            </Link>
+            <Link to={"/teams"}>
+                <Button
+                    className={styles.navMobileBtn}
+                    aria-label="Teams"
+                    startIcon={<AccountCircle />}
+                >
+                    Teams
+                </Button>
+            </Link>
+            <Link to={"/reports"}>
+                <Button
+                    className={styles.navMobileBtn}
+                    aria-label="Reports"
+                    startIcon={<InsertChartOutlined />}
+                >
+                    Reports
+                </Button>
+            </Link>
+            <Link to={"/inventory"}>
+                <Button
+                    className={styles.navMobileBtn}
+                    aria-label="Inventory"
+                    startIcon={<Inventory className={styles.customIcon} />}
+                >
+                    Inventory
+                </Button>
+            </Link>
+        </div>
+        <Button
+            aria-label="Logout"
+            className={`${styles.navMobileBtn} ${styles.navMobileBtnLogout}`}
+        >
             <b>Logout</b>
         </Button>
     </nav>
-)
-
-// export default Navbar;
+);

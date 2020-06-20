@@ -36,8 +36,6 @@
             width: 300px;
         }
         &Hackathon {
-            // display: flex;
-            // flex-direction: column;
             padding: 30px 15px 20px;
             &Img {
                 height: 48px;
@@ -48,6 +46,7 @@
             height: 1px;
             display: block;
             background-color: color(light1);
+            margin-bottom: 20px;
         }
     }
 }
