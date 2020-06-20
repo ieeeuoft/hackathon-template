@@ -36,7 +36,8 @@ const Dashboard = () => {
                 >
                     <Grid
                         item
-                        sm={3}
+                        md={3}
+                        sm={4}
                         xs={6}
                         className={styles.dashboardGridItem}
                         key={0}
@@ -46,7 +47,8 @@ const Dashboard = () => {
                     {cardItems.map(({ title, content }, i) => (
                         <Grid
                             item
-                            sm={3}
+                            md={3}
+                            sm={4}
                             xs={6}
                             className={styles.dashboardGridItem}
                             key={i + 1}
