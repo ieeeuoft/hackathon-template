@@ -95,7 +95,7 @@ describe("<EnhancedLoginForm />", () => {
             status: 500,
             message: "Something went horribly wrong",
         };
-        const { getByTestId } = render(
+        const { getByText, getByTestId } = render(
             <EnhancedLoginForm
                 handleLogin={() => {}}
                 isLoading={false}
@@ -103,8 +103,7 @@ describe("<EnhancedLoginForm />", () => {
             />
         );
 
-        expect(getByTestId(TEST_IDS.alert)).toBeInTheDocument();
-        expect(getByTestId(TEST_IDS.alert).innerText).toEqual(requestFailure.message);
+        expect(getByTestId(TEST_IDS.alert).innerHTML).toContain(requestFailure.message);
     });
 
     it("Displays field error states for invalid credentials", () => {
@@ -112,7 +111,7 @@ describe("<EnhancedLoginForm />", () => {
             status: 400,
             message: "Invalid credentials",
         };
-        const { findByTestId, getAllByText } = render(
+        const { queryByTestId, getAllByText } = render(
             <EnhancedLoginForm
                 handleLogin={() => {}}
                 isLoading={false}
@@ -120,7 +119,7 @@ describe("<EnhancedLoginForm />", () => {
             />
         );
 
-        expect(findByTestId(TEST_IDS.alert)).not.toBeInTheDocument();
+        expect(queryByTestId(TEST_IDS.alert)).toBeNull();
         expect(getAllByText(ERROR_MESSAGES.credentialsInvalid).length).toEqual(2);
     });
 });
