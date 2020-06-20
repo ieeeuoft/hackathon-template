@@ -8,7 +8,6 @@
     margin-bottom: 50px;
 
     @include responsive(sm-down) {
-        transform: translateY(-25px);
         width: calc(100% + 50px);
         margin-top: -25px;
         margin-bottom: 25px;
