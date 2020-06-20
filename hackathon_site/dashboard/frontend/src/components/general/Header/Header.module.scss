@@ -26,4 +26,28 @@
             background-color: rgba(355, 355, 355, 0.2);
         }
     }
+
+    &Drawer {
+        &Top {
+            width: 100%;
+            height: 56px;
+            display: block;
+            background-color: color(light1);
+            width: 300px;
+        }
+        &Hackathon {
+            // display: flex;
+            // flex-direction: column;
+            padding: 30px 15px 20px;
+            &Img {
+                height: 48px;
+            }
+        }
+        &Divider {
+            width: 100%;
+            height: 1px;
+            display: block;
+            background-color: color(light1);
+        }
+    }
 }

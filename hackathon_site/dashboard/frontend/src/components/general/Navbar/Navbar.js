@@ -14,7 +14,7 @@ import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
 import Hidden from "@material-ui/core/Hidden";
 
-const Navbar = () => (
+export const Navbar = () => (
     <nav className={styles.nav}>
         <Hidden implementation="css" smDown>
             <Link to={"/"}>
@@ -103,4 +103,62 @@ const Navbar = () => (
     </nav>
 );
 
-export default Navbar;
+export const NavbarDrawer = () => (
+    <nav className={styles.navMobile}>
+        <Link to={"/"}>
+            <Button
+                className={styles.navMobileBtn}
+                aria-label="Dashboard"
+                startIcon={<Home />}
+            >
+                Dashboard
+            </Button>
+        </Link>
+
+        <Link to={"/orders"}>
+            <Button
+                className={styles.navMobileBtn}
+                aria-label="Orders"
+                startIcon={<ListAlt />}
+            >
+                Orders
+            </Button>
+        </Link>
+
+        <Link to={"/teams"}>
+            <Button
+                className={styles.navMobileBtn}
+                aria-label="Teams"
+                startIcon={<AccountCircle />}
+            >
+                Teams
+            </Button>
+        </Link>
+
+        <Link to={"/reports"}>
+            <Button
+                className={styles.navMobileBtn}
+                aria-label="Reports"
+                startIcon={<InsertChartOutlined />}
+            >
+                Reports
+            </Button>
+        </Link>
+
+        <Link to={"/inventory"}>
+            <Button
+                className={styles.navMobileBtn}
+                aria-label="Inventory"
+                startIcon={<Inventory className={styles.customIcon} />}
+            >
+                Inventory
+            </Button>
+        </Link>
+
+        <Button aria-label="Logout" className={styles.navMobileBtn}>
+            <b>Logout</b>
+        </Button>
+    </nav>
+)
+
+// export default Navbar;

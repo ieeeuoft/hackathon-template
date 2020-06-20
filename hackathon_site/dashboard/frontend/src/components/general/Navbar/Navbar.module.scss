@@ -24,3 +24,30 @@
         margin-left: 15px;
     }
 }
+
+.navMobile {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+
+    &Btn {
+        height: 50px;
+        width: 100%;
+        color: #000;
+        display: flex;
+        justify-content: left;
+        padding: 0px 15px;
+        border-radius: 0;
+
+        svg {
+            margin-right: 30px;
+        }
+        
+
+        .customIcon {
+            width: 20px;
+        }
+    }
+
+    
+}

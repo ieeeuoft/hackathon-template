@@ -62,3 +62,5 @@ export const itemsPending = [
 ];
 
 export const orderStatus = "pending";
+
+export const userEmail = "graham@email.com";
