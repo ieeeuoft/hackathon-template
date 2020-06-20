@@ -3,11 +3,15 @@
 
 .header {
     background-color: color(secondary) !important;
-    width: 100vw;
-    transform: translateY(-50px);
+    width: calc(100% + 100px);
+    margin-top: -50px;
+    margin-bottom: 50px;
 
     @include responsive(sm-down) {
         transform: translateY(-25px);
+        width: calc(100% + 50px);
+        margin-top: -25px;
+        margin-bottom: 25px;
     }
 
     &Toolbar {
