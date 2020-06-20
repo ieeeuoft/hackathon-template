@@ -3,10 +3,14 @@
 
 .header {
     background-color: color(secondary) !important;
-    width: 100vw;
-    margin: -50px 0 50px -50px;
+    width: calc(100% + 100px);
+    margin-top: -50px;
+    margin-bottom: 50px;
+
     @include responsive(sm-down) {
-        margin: -25px 0 25px -25px;
+        width: calc(100% + 50px);
+        margin-top: -25px;
+        margin-bottom: 25px;
     }
 
     &Toolbar {
