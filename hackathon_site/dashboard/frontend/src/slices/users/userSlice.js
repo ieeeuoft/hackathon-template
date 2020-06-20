@@ -31,9 +31,9 @@ export const fetchUserById = createAsyncThunk(
 
 export const logIn = createAsyncThunk(
     `${userReducerName}/logIn`,
-    async ({ username, password }, { dispatch, rejectWithValue }) => {
+    async ({ email, password }, { dispatch, rejectWithValue }) => {
         try {
-            const response = await post("/api/auth/login/", { username, password });
+            const response = await post("/api/auth/login/", { email, password });
             dispatch(push("/"));
             return response.data;
         } catch (e) {

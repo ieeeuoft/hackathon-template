@@ -1,7 +1,7 @@
 import React from "react";
 import { render, fireEvent, waitFor } from "@testing-library/react";
 
-import { LoginForm, EnhancedLoginForm, ERROR_MESSAGES } from "./LoginForm";
+import { LoginForm, EnhancedLoginForm, ERROR_MESSAGES, TEST_IDS } from "./LoginForm";
 
 describe("<LoginForm />", () => {
     it("Has the expected fields", () => {
@@ -87,6 +87,40 @@ describe("<EnhancedLoginForm />", () => {
         const button = getByText("Log In");
 
         expect(button.closest("button")).toBeDisabled();
-        expect(getByTestId("circular-progress")).toBeTruthy();
+        expect(getByTestId(TEST_IDS.circularProgress)).toBeTruthy();
+    });
+
+    it("Displays an alert when the rest failed for non-credentials reasons", () => {
+        const requestFailure = {
+            status: 500,
+            message: "Something went horribly wrong",
+        };
+        const { getByTestId } = render(
+            <EnhancedLoginForm
+                handleLogin={() => {}}
+                isLoading={false}
+                requestFailure={requestFailure}
+            />
+        );
+
+        expect(getByTestId(TEST_IDS.alert)).toBeInTheDocument();
+        expect(getByTestId(TEST_IDS.alert).innerText).toEqual(requestFailure.message);
+    });
+
+    it("Displays field error states for invalid credentials", () => {
+        const requestFailure = {
+            status: 400,
+            message: "Invalid credentials",
+        };
+        const { findByTestId, getAllByText } = render(
+            <EnhancedLoginForm
+                handleLogin={() => {}}
+                isLoading={false}
+                requestFailure={requestFailure}
+            />
+        );
+
+        expect(findByTestId(TEST_IDS.alert)).not.toBeInTheDocument();
+        expect(getAllByText(ERROR_MESSAGES.credentialsInvalid).length).toEqual(2);
     });
 });

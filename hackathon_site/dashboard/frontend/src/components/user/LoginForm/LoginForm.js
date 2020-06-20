@@ -25,6 +25,11 @@ const loginFormSchema = Yup.object().shape({
     password: Yup.string().required(ERROR_MESSAGES.passwordMissing),
 });
 
+export const TEST_IDS = {
+    circularProgress: "circular-progress",
+    alert: "alert",
+};
+
 export const LoginForm = ({
     errors,
     handleChange,
@@ -42,7 +47,12 @@ export const LoginForm = ({
     return (
         <>
             {requestFailure && !isInvalidCredentials && (
-                <Alert className={styles.alert} variant="filled" severity="error">
+                <Alert
+                    className={styles.alert}
+                    variant="filled"
+                    severity="error"
+                    data-testid={TEST_IDS.alert}
+                >
                     {requestFailure.message}
                 </Alert>
             )}
@@ -81,7 +91,7 @@ export const LoginForm = ({
                         <CircularProgress
                             className={styles.formCircularProgress}
                             size={20}
-                            data-testid="circular-progress"
+                            data-testid={TEST_IDS.circularProgress}
                         />
                     )}
                 </Button>
@@ -92,8 +102,7 @@ export const LoginForm = ({
 
 export const EnhancedLoginForm = ({ handleLogin, isLoading, requestFailure }) => {
     const onSubmit = (formikValues) => {
-        // By convention we set everyone's username to be their email
-        handleLogin({ username: formikValues.email, password: formikValues.password });
+        handleLogin({ email: formikValues.email, password: formikValues.password });
     };
 
     return (

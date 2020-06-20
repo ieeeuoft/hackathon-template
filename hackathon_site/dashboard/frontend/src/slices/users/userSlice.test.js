@@ -1,24 +1,26 @@
 import configureStore from "redux-mock-store";
 import thunk from "redux-thunk";
+import { push } from "connected-react-router";
+
+import { post } from "api/api.js";
 
 import {
     userSelector,
     userDataSelector,
+    loginSelector,
     reducer,
     userReducerName,
     fetchUserById,
     initialState,
+    logIn,
 } from "./userSlice";
 
 const mockStore = configureStore([thunk]);
+jest.mock("api/api");
 
 const mockState = {
     [userReducerName]: {
-        userData: {
-            isLoading: false,
-            data: null,
-            error: null,
-        },
+        ...initialState,
     },
 };
 
@@ -32,15 +34,13 @@ describe("Selectors", () => {
             mockState[userReducerName].userData
         );
     });
+
+    it("loginSelector pulls out the login object", () => {
+        expect(loginSelector(mockState)).toEqual(mockState[userReducerName].login);
+    });
 });
 
 describe("userData Reducers", () => {
-    let store;
-
-    beforeEach(() => {
-        store = mockStore(mockState);
-    });
-
     it("Sets loading state on pending action", () => {
         expect(reducer(initialState, fetchUserById.pending()).userData).toEqual({
             ...initialState.userData,
@@ -71,6 +71,148 @@ describe("userData Reducers", () => {
         expect(reducer(initialState, fetchUserById.rejected(error)).userData).toEqual({
             ...initialState.userData,
             error: error,
+        });
+    });
+});
+
+describe("logIn Thunk and Reducer", () => {
+    const body = { email: "foo@bar.com", password: "foobar123" };
+    let store;
+
+    beforeEach(() => {
+        store = mockStore(mockState);
+    });
+
+    describe("Reducers", () => {
+        test("Pending", () => {
+            expect(reducer(initialState, logIn.pending()).login.isLoading).toBe(true);
+        });
+
+        test("Fulfilled", () => {
+            expect(reducer(initialState, logIn.fulfilled())).toEqual(
+                expect.objectContaining({
+                    isAuthenticated: true,
+                    login: { isLoading: false, failure: null },
+                })
+            );
+        });
+
+        test("Rejected", () => {
+            const failureResponse = { status: 999, message: "Some message" };
+            const action = logIn.rejected(
+                "Rejected", // createAsyncThunk will always have {message: "Rejected"} for rejections
+                "some-id",
+                body,
+                failureResponse // This becomes action.payload
+            );
+            expect(reducer(initialState, action)).toEqual(
+                expect.objectContaining({
+                    isAuthenticated: false,
+                    login: { isLoading: false, failure: failureResponse },
+                })
+            );
+        });
+    });
+
+    test("Successful login", async () => {
+        const response = { data: { key: "abc123" } };
+        post.mockImplementation(() => Promise.resolve(response));
+
+        const {
+            meta: { requestId },
+        } = await store.dispatch(logIn(body));
+
+        const actions = store.getActions();
+
+        const expectedAction = logIn.fulfilled(response.data, requestId, body);
+        expect(actions).toContainEqual(expectedAction);
+        expect(actions).toContainEqual(push("/"));
+    });
+
+    describe("Failed login", () => {
+        test("Invalid credentials failure", async () => {
+            const error = {
+                response: {
+                    data: {
+                        non_field_errors: [
+                            "Unable to log in with provided credentials.",
+                        ],
+                    },
+                    status: 400,
+                },
+            };
+
+            post.mockImplementation(() => Promise.reject(error));
+
+            const {
+                meta: { requestId },
+            } = await store.dispatch(logIn(body));
+
+            const actions = store.getActions();
+
+            const failureResponse = { status: 400, message: "Invalid credentials" };
+            const expectedAction = logIn.rejected(
+                "Rejected", // createAsyncThunk will always have this for rejections
+                requestId,
+                body,
+                failureResponse
+            );
+
+            expect(actions).toContainEqual(expectedAction);
+        });
+
+        test("CSRF Failure", async () => {
+            const error = {
+                response: {
+                    data: { detail: "CSRF Failed: CSRF token missing or incorrect." },
+                    status: 403,
+                },
+            };
+
+            post.mockImplementation(() => Promise.reject(error));
+
+            const {
+                meta: { requestId },
+            } = await store.dispatch(logIn(body));
+
+            const actions = store.getActions();
+
+            const failureResponse = { status: 403, message: "Invalid CSRF Token" };
+            const expectedAction = logIn.rejected(
+                "Rejected",
+                requestId,
+                body,
+                failureResponse
+            );
+
+            expect(actions).toContainEqual(expectedAction);
+        });
+
+        test("Other API error", async () => {
+            const error = {
+                response: {
+                    data: "Uh oh",
+                    status: 500,
+                },
+            };
+
+            post.mockImplementation(() => Promise.reject(error));
+
+            const {
+                meta: { requestId },
+            } = await store.dispatch(logIn(body));
+
+            const actions = store.getActions();
+
+            const failureResponse = { status: 500, message: error.response.data };
+            const expectedAction = logIn.rejected(
+                "Rejected",
+                requestId,
+                body,
+                failureResponse
+            );
+
+            expect(actions).toContainEqual(expectedAction);
         });
     });
 });
