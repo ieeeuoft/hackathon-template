@@ -34,12 +34,24 @@ const Dashboard = () => {
                     spacing={2}
                     className={styles.dashboardGrid}
                 >
-                    <Grid item sm={3} xs={6} className={styles.dashboardGridItem} key={0}>
+                    <Grid
+                        item
+                        sm={3}
+                        xs={6}
+                        className={styles.dashboardGridItem}
+                        key={0}
+                    >
                         <TeamCard members={members} teamCode={teamCode} />
                     </Grid>
                     {cardItems.map(({ title, content }, i) => (
-                        <Grid item sm={3} xs={6} className={styles.dashboardGridItem} key={i+1}>
-                            <DashCard title={title} content={content}  />
+                        <Grid
+                            item
+                            sm={3}
+                            xs={6}
+                            className={styles.dashboardGridItem}
+                            key={i + 1}
+                        >
+                            <DashCard title={title} content={content} />
                         </Grid>
                     ))}
                 </Grid>
