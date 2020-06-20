@@ -4,10 +4,10 @@
 .header {
     background-color: color(secondary) !important;
     width: 100vw;
-    transform: translateX(-50px) translateY(-50px);
+    transform: translateY(-50px);
 
     @include responsive(sm-down) {
-        transform: translateX(-25px) translateY(-25px);
+        transform: translateY(-25px);
     }
 
     &Toolbar {

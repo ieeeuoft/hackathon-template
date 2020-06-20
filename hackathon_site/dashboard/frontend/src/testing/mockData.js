@@ -93,17 +93,6 @@ export const itemsPending = [
 
 export const orderStatus = "pending";
 
-// Sponsor card
-export const sponsorsList = [
-    { imgSrc: "AMD.svg" },
-    { imgSrc: "CityofBrampton.svg" },
-    { imgSrc: "CognitiveSystems.svg" },
-    { imgSrc: "ECE.png" },
-    { imgSrc: "ecobee.svg" },
-    { imgSrc: "FacultyofAppliedScienceandEngineering.png" },
-    { imgSrc: "Huawei.svg" },
-];
-
 // Team card
 export const members = [
     "Aki Kimura",

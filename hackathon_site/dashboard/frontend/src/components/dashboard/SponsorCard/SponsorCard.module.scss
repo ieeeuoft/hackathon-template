@@ -9,5 +9,8 @@
     &Paper {
         flex-grow: 1;
         padding: 28px 0;
+        img {
+            height: 100%;
+        }
     }
 }

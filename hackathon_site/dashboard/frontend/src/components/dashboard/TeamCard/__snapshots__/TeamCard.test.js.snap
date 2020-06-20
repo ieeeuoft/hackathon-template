@@ -2,71 +2,67 @@
 
 exports[`TeamCard render 1`] = `
 <DocumentFragment>
-  <div
-    class="MuiGrid-root TeamCard MuiGrid-item"
+  <h2
+    class="MuiTypography-root MuiTypography-h2 MuiTypography-noWrap"
   >
-    <h2
-      class="MuiTypography-root MuiTypography-h2 MuiTypography-noWrap"
-    >
-      Team PAS3NLQ3
-    </h2>
+    Team PAS3NLQ3
+  </h2>
+  <div
+    class="MuiPaper-root paper MuiPaper-elevation3"
+  >
     <div
-      class="MuiPaper-root paper MuiPaper-elevation3"
+      class="MuiContainer-root name MuiContainer-maxWidthLg"
     >
-      <div
-        class="MuiContainer-root name MuiContainer-maxWidthLg"
+      <p
+        class="MuiTypography-root MuiTypography-body2 MuiTypography-noWrap"
       >
-        <p
-          class="MuiTypography-root MuiTypography-body2 MuiTypography-noWrap"
-        >
-          Aki
-        </p>
-      </div>
-      <div
-        class="MuiContainer-root name MuiContainer-maxWidthLg"
+        Aki
+      </p>
+    </div>
+    <div
+      class="MuiContainer-root name MuiContainer-maxWidthLg"
+    >
+      <p
+        class="MuiTypography-root MuiTypography-body2 MuiTypography-noWrap"
       >
-        <p
-          class="MuiTypography-root MuiTypography-body2 MuiTypography-noWrap"
-        >
-          Graham
-        </p>
-      </div>
-      <div
-        class="MuiContainer-root name MuiContainer-maxWidthLg"
+        Graham
+      </p>
+    </div>
+    <div
+      class="MuiContainer-root name MuiContainer-maxWidthLg"
+    >
+      <p
+        class="MuiTypography-root MuiTypography-body2 MuiTypography-noWrap"
       >
-        <p
-          class="MuiTypography-root MuiTypography-body2 MuiTypography-noWrap"
-        >
-          Alex
-        </p>
-      </div>
-      <div
-        class="MuiContainer-root name MuiContainer-maxWidthLg"
+        Alex
+      </p>
+    </div>
+    <div
+      class="MuiContainer-root name MuiContainer-maxWidthLg"
+    >
+      <p
+        class="MuiTypography-root MuiTypography-body2 MuiTypography-noWrap"
       >
-        <p
-          class="MuiTypography-root MuiTypography-body2 MuiTypography-noWrap"
-        >
-          Raymond
-        </p>
-      </div>
-      <div
-        class="MuiContainer-root lastRow MuiContainer-maxWidthLg"
+        Raymond
+      </p>
+    </div>
+    <div
+      class="MuiContainer-root lastRow MuiContainer-maxWidthLg"
+    >
+      <button
+        class="MuiButtonBase-root MuiButton-root MuiButton-text ButtonColor"
+        tabindex="0"
+        type="button"
       >
-        <button
-          class="MuiButtonBase-root MuiButton-root MuiButton-text ButtonColor"
-          tabindex="0"
-          type="button"
+        <span
+          class="MuiButton-label"
         >
-          <span
-            class="MuiButton-label"
-          >
-            Edit
-          </span>
-          <span
-            class="MuiTouchRipple-root"
-          />
-        </button>
-      </div>
+          Edit
+        </span>
+        <span
+          class="MuiTouchRipple-root"
+        />
+      </button>
     </div>
   </div>
 </DocumentFragment>

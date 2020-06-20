@@ -3,22 +3,21 @@
 
 .dashboard {
     width: 100%;
+    max-width: 1400px;
     h2 {
         margin-bottom: 10px;
     }
     &Grid {
-        width: 100vw;
         margin-top: 30px;
-        height: 283px;
-        flex-wrap: nowrap;
-        overflow-x: scroll;
-        transform: translateX(-50px);
-        padding: 0 50px;
-
         @include responsive(sm-down) {
             margin-top: 20px;
-            transform: translateX(-25px);
-            padding: 0 25px;
+        }
+        &Item {
+            height: 100%;
+            min-height: 283px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
         }
     }
 }

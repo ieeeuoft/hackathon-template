@@ -1,25 +1,18 @@
 @import "./../../../assets/abstracts/mixins";
-@import "./../../../assets/abstracts/variables";
 
-.TeamCard {
-    height: 100%;
-    width: 100%;
+.paper {
+    flex-grow: 1;
+    padding: 8px 0px;
+    overflow-x: hidden;
+    .name {
+        padding: 12px 50px 12px 20px;
+    }
+}
+.lastRow {
     display: flex;
-    flex-direction: column;
-    .paper {
-        flex-grow: 1;
-        padding: 8px 0px;
-        overflow-x: hidden;
-        .name {
-            padding: 12px 50px 12px 20px;
-        }
-    }
-    .lastRow {
-        display: flex;
-        justify-content: flex-end;
-        padding-top: 8px;
-    }
-    .ButtonColor {
-        color: color(primary);
-    }
+    justify-content: flex-end;
+    padding-top: 6px;
+}
+.ButtonColor {
+    color: color(primary);
 }
