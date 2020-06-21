@@ -1,9 +1,24 @@
 import React from "react";
 import { render } from "@testing-library/react";
-import Navbar from "./Navbar";
+import { Navbar, NavbarDrawer } from "./Navbar";
 import { withRouter } from "testing";
 
-it("renders correctly when all icons appear", () => {
-    const { asFragment } = render(withRouter(<Navbar />));
-    expect(asFragment()).toMatchSnapshot();
+describe("<Navbar />", () => {
+    it("renders correctly when all icons appear", () => {
+        const { getByText } = render(withRouter(<Navbar />));
+        expect(getByText("Dashboard")).toBeInTheDocument(); 
+        expect(getByText("Logout")).toBeInTheDocument(); 
+        expect(getByText("Cart")).toBeInTheDocument(); 
+        expect(getByText("Notifications")).toBeInTheDocument(); 
+    });
+});
+
+describe("<NavbarDrawer />", () => {
+    it("renders correctly when cart and notification don't appear", () => {
+        const { getByText, queryByText } = render(withRouter(<NavbarDrawer />));
+        expect(getByText("Dashboard")).toBeInTheDocument(); 
+        expect(getByText("Logout")).toBeInTheDocument(); 
+        expect(queryByText("Cart")).not.toBeInTheDocument(); 
+        expect(queryByText("Notifications")).not.toBeInTheDocument(); 
+    });
 });

@@ -46,6 +46,7 @@ const Header = ({ showNavbar = true }) => {
                             aria-label="Menu"
                             className={styles.headerIconBtn}
                             onClick={toggleMenu}
+                            data-testid="menuBtn"
                         >
                             <Menu />
                         </IconButton>
