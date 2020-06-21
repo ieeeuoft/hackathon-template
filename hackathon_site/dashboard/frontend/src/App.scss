@@ -13,9 +13,11 @@
         flex-direction: column;
         align-items: center;
         padding: 50px;
+        @include responsive(md-down) {
+            padding: 25px;
+        }
         @include responsive(sm-down) {
             font-size: size(xs);
-            padding: 25px;
         }
     }
 }

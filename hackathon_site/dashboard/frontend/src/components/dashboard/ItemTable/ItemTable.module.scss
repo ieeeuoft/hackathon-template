@@ -70,7 +70,7 @@
         width: 100%;
     }
 
-    @include responsive(md) {
+    @include responsive(md-down) {
         &Half {
             width: 50%;
         }
