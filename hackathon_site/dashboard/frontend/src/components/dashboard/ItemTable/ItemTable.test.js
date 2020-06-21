@@ -2,8 +2,8 @@ import React from "react";
 import { render } from "@testing-library/react";
 import {
     PendingTable,
-    ReturnedTable,
-    CheckedOutTable,
+    UnconnectedReturnedTable,
+    UnconnectedCheckedOutTable,
 } from "components/dashboard/ItemTable/ItemTable";
 import { itemsCheckedOut, itemsPending, itemsReturned } from "testing/mockData";
 
@@ -38,9 +38,9 @@ describe("<PendingTable />", () => {
     });
 });
 
-describe("<CheckedOutTable />", () => {
+describe("<UnconnectedCheckedOutTable />", () => {
     it("renders correctly when there's no checked out items", () => {
-        const { getByText } = render(<CheckedOutTable items={[]} />);
+        const { getByText } = render(<UnconnectedCheckedOutTable items={[]} />);
         expect(
             getByText("You have no items checked out yet. View our inventory.")
         ).toBeInTheDocument();
@@ -48,15 +48,17 @@ describe("<CheckedOutTable />", () => {
     });
 
     it("renders correctly when there are checked out items", () => {
-        const { getByText } = render(<CheckedOutTable items={itemsCheckedOut} />);
+        const { getByText } = render(
+            <UnconnectedCheckedOutTable items={itemsCheckedOut} />
+        );
         expect(getByText("Name")).toBeInTheDocument();
         expect(getByText("Hide all")).toBeInTheDocument();
     });
 });
 
-describe("<ReturnedTable, />", () => {
+describe("<UnconnectedReturnedTable, />", () => {
     it("renders correctly when there's no returned items", () => {
-        const { getByText } = render(<ReturnedTable items={[]} />);
+        const { getByText } = render(<UnconnectedReturnedTable items={[]} />);
         expect(
             getByText(
                 "Please bring items to the tech table and a tech team member will assist you."
@@ -66,7 +68,9 @@ describe("<ReturnedTable, />", () => {
     });
 
     it("renders correctly when there are returned items", () => {
-        const { getByText } = render(<ReturnedTable items={itemsReturned} />);
+        const { getByText } = render(
+            <UnconnectedReturnedTable items={itemsReturned} />
+        );
         expect(getByText("Name")).toBeInTheDocument();
         expect(getByText("Hide all")).toBeInTheDocument();
     });
