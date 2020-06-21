@@ -5,21 +5,18 @@
     &Btn,
     &IconBtn {
         color: color(white);
-
         .customIcon {
             width: 20px;
+            fill: color(white);
         }
-
         &:hover {
             background-color: rgba(355, 355, 355, 0.2);
         }
     }
-
     &Btn {
         border-radius: 0;
         padding: 20px 15px;
     }
-
     &IconBtn {
         margin-left: 15px;
     }
@@ -47,6 +44,6 @@
     }
     .customIcon {
         width: 20px;
-        color: color(light2) !important;
+        fill: color(font);
     }
 }

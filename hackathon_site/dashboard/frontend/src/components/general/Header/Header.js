@@ -25,7 +25,7 @@ const HackathonTitle = () => (
 );
 
 const Header = ({ showNavbar = true }) => {
-    const [mobileOpen, setMobileOpen] = React.useState(true);
+    const [mobileOpen, setMobileOpen] = React.useState(false);
 
     const toggleMenu = () => {
         setMobileOpen(!mobileOpen);
