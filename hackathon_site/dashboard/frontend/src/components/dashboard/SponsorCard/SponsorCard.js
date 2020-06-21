@@ -4,6 +4,7 @@ import Slider from "react-slick";
 import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
+import { sponsorsList } from "testing/mockData.js";
 
 let settings = {
     dots: true,
@@ -15,21 +16,11 @@ let settings = {
     pauseOnHover: false,
 };
 
-let sponsorsList = [
-    { imgSrc: "AMD.svg" },
-    { imgSrc: "CityofBrampton.svg" },
-    { imgSrc: "CognitiveSystems.svg" },
-    { imgSrc: "ECE.png" },
-    { imgSrc: "ecobee.svg" },
-    { imgSrc: "FacultyofAppliedScienceandEngineering.png" },
-    { imgSrc: "Huawei.svg" },
-];
-
 export const UnconnectedSponsorCard = ({ sponsors }) => {
     return !sponsors.length ? null : (
         <Grid className={styles.sponsors} data-testid="sponsor-card" item>
             <Typography variant="h2">Thanks to our sponsors!</Typography>
-            <Paper elevation={3} className={styles.sponsorsPaper}>
+            <Paper elevation={3} className={styles.sponsorsPaper} square={true}>
                 <Slider {...settings}>
                     {sponsors.map((item, i) => (
                         <img
