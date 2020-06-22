@@ -9,7 +9,7 @@ import Drawer from "@material-ui/core/Drawer";
 import Hidden from "@material-ui/core/Hidden";
 import Menu from "@material-ui/icons/Menu";
 import { Navbar, NavbarDrawer } from "components/general/Navbar/Navbar";
-import { userEmail } from "testing/mockData";
+import { userEmail, cartQuantity } from "testing/mockData";
 
 const HackathonTitle = () => (
     <>
@@ -52,7 +52,7 @@ const Header = ({ showNavbar = true }) => {
                         </IconButton>
                     )}
                 </Hidden>
-                {showNavbar && <Navbar />}
+                {showNavbar && <Navbar cartQuantity={cartQuantity} />}
 
                 <Drawer
                     anchor="left"

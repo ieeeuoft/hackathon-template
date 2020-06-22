@@ -104,3 +104,6 @@ export const members = [
     "Raymond Aksjdkjah",
 ];
 export const teamCode = "PAS3NLQ3";
+
+// Navbar
+export const cartQuantity = 2;

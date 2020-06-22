@@ -47,3 +47,14 @@
         fill: color(font);
     }
 }
+
+.quantityIcon {
+    position: absolute;
+    color: color(secondary);
+    background-color: color(white);
+    margin-top: 2px;
+    padding: 1px 1.25px 1px;
+    border-radius: 1px;
+    font-size: size(xs);
+    font-weight: 600;
+}

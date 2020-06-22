@@ -2,11 +2,11 @@ import React from "react";
 import styles from "./Navbar.module.scss";
 import { Link } from "react-router-dom";
 // Images and logos
-import Home from "@material-ui/icons/Home";
-import ShoppingCart from "@material-ui/icons/ShoppingCart";
+import DashboardIcon from "@material-ui/icons/Dashboard";
+import LocalMallIcon from "@material-ui/icons/LocalMall";
 import Notifications from "@material-ui/icons/Notifications";
 import ListAlt from "@material-ui/icons/ListAlt";
-import AccountCircle from "@material-ui/icons/AccountCircle";
+import AccountBoxIcon from "@material-ui/icons/AccountBox";
 import InsertChartOutlined from "@material-ui/icons/InsertChartOutlined";
 import { ReactComponent as Inventory } from "assets/images/icons/Hardware.svg";
 // Components
@@ -14,14 +14,14 @@ import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
 import Hidden from "@material-ui/core/Hidden";
 
-export const Navbar = () => (
+export const Navbar = ({ cartQuantity }) => (
     <nav className={styles.nav}>
         <Hidden implementation="css" smDown>
             <Link to={"/"}>
                 <Button
                     className={styles.navBtn}
                     aria-label="Dashboard"
-                    startIcon={<Home />}
+                    startIcon={<DashboardIcon />}
                 >
                     Dashboard
                 </Button>
@@ -39,7 +39,7 @@ export const Navbar = () => (
                 <Button
                     className={styles.navBtn}
                     aria-label="Teams"
-                    startIcon={<AccountCircle />}
+                    startIcon={<AccountBoxIcon />}
                 >
                     Teams
                 </Button>
@@ -67,9 +67,9 @@ export const Navbar = () => (
                 <Button
                     className={styles.navBtn}
                     aria-label="Cart"
-                    startIcon={<ShoppingCart />}
+                    startIcon={<LocalMallIcon />}
                 >
-                    Cart
+                    Cart ({cartQuantity})
                 </Button>
             </Link>
             <Button
@@ -86,7 +86,8 @@ export const Navbar = () => (
         <Hidden implementation="css" mdUp>
             <Link to={"/cart"}>
                 <IconButton className={styles.navIconBtn} aria-label="Cart">
-                    <ShoppingCart />
+                    <div className={styles.quantityIcon}>{cartQuantity}</div>
+                    <LocalMallIcon />
                 </IconButton>
             </Link>
 
@@ -104,7 +105,7 @@ export const NavbarDrawer = () => (
                 <Button
                     className={styles.navMobileBtn}
                     aria-label="Dashboard"
-                    startIcon={<Home />}
+                    startIcon={<DashboardIcon />}
                 >
                     Dashboard
                 </Button>
@@ -122,7 +123,7 @@ export const NavbarDrawer = () => (
                 <Button
                     className={styles.navMobileBtn}
                     aria-label="Teams"
-                    startIcon={<AccountCircle />}
+                    startIcon={<AccountBoxIcon />}
                 >
                     Teams
                 </Button>

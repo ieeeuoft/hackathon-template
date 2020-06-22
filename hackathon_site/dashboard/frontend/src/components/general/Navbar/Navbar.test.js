@@ -5,10 +5,10 @@ import { withRouter } from "testing";
 
 describe("<Navbar />", () => {
     it("renders correctly when all icons appear", () => {
-        const { getByText } = render(withRouter(<Navbar />));
+        const { getByText } = render(withRouter(<Navbar cartQuantity={1}/>));
         expect(getByText("Dashboard")).toBeInTheDocument();
         expect(getByText("Logout")).toBeInTheDocument();
-        expect(getByText("Cart")).toBeInTheDocument();
+        expect(getByText("Cart (1)")).toBeInTheDocument();
         expect(getByText("Notifications")).toBeInTheDocument();
     });
 });
@@ -18,7 +18,7 @@ describe("<NavbarDrawer />", () => {
         const { getByText, queryByText } = render(withRouter(<NavbarDrawer />));
         expect(getByText("Dashboard")).toBeInTheDocument();
         expect(getByText("Logout")).toBeInTheDocument();
-        expect(queryByText("Cart")).not.toBeInTheDocument();
+        expect(queryByText("Cart ()")).not.toBeInTheDocument();
         expect(queryByText("Notifications")).not.toBeInTheDocument();
     });
 });
