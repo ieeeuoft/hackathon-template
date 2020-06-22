@@ -28,15 +28,11 @@ DEBUG = bool(int(os.environ.get("DEBUG", 0)))
 if DEBUG:
     ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
     INTERNAL_IPS = ["localhost", "127.0.0.1"]
-    CORS_ORIGIN_REGEX_WHITELIST = [
-        r"^https?://localhost:?\d*$",
-    ]
+    CORS_ORIGIN_REGEX_WHITELIST = [r"^https?://localhost:?\d*$"]
 else:
     # NOTE: If you aren't ieee uoft, put your websites here
     ALLOWED_HOSTS = ["ieee.utoronto.ca"]
-    CORS_ORIGIN_REGEX_WHITELIST = [
-        r"^https://ieee\.utoronto.ca:?\d*$",
-    ]
+    CORS_ORIGIN_REGEX_WHITELIST = [r"^https://ieee\.utoronto.ca:?\d*$"]
 
 
 # Application definition
@@ -52,6 +48,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
     "dj_rest_auth",
+    "colorfield",
     "dashboard",
     "applications",
     "event",

@@ -1,4 +1,5 @@
 from django.db import models
+from colorfield.fields import ColorField
 from event.models import Team as TeamEvent
 
 # Create your models here.
@@ -10,6 +11,7 @@ class Category(models.Model):
 
     name = models.CharField(max_length=255, null=False)
     max_per_team = models.IntegerField(null=True)
+    color = ColorField(null=False)
 
     created_at = models.DateTimeField(auto_now_add=True, null=False)
     updated_at = models.DateTimeField(auto_now=True, null=False)
@@ -46,7 +48,8 @@ class Order(models.Model):
         ("Broken", "Broken"),
     ]
     STATUS_CHOICES = [
-        ("Pending", "Pending"),
+        ("In Cart", "In Cart"),
+        ("Submitted", "Submitted"),
         ("Ready for Pickup", "Ready for Pickup"),
         ("Picked Up", "Picked Up"),
         ("Returned", "Returned"),
@@ -58,7 +61,9 @@ class Order(models.Model):
     part_returned_health = models.CharField(
         max_length=64, choices=HEALTH_CHOICES, null=True
     )
-    status = models.CharField(max_length=64, choices=STATUS_CHOICES, default="Pending")
+    status = models.CharField(
+        max_length=64, choices=STATUS_CHOICES, default="Submitted"
+    )
 
     created_at = models.DateTimeField(auto_now_add=True, null=False)
     updated_at = models.DateTimeField(auto_now=True, null=False)
