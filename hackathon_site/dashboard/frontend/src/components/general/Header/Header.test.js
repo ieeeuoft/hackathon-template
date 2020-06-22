@@ -1,11 +1,5 @@
 import React from "react";
-import {
-    render,
-    fireEvent,
-    waitForElementToBeRemoved,
-    waitFor,
-    waitForElement,
-} from "@testing-library/react";
+import { render } from "@testing-library/react";
 import Header from "./Header";
 import { withRouter } from "testing";
 
