@@ -7,35 +7,17 @@
     flex-direction: column;
     justify-content: space-between;
     min-height: 100vh;
+    width: 100%;
     &Padding {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
         padding: 50px;
-        @include responsive(sm-down) {
-            font-size: size(xs);
+        @include responsive(md-down) {
             padding: 25px;
         }
-    }
-}
-
-.App-header {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: calc(10px + 2vmin);
-    color: color(font);
-}
-
-// Need to overwrite some react-slick classes
-.slick {
-    &-slide {
-        margin: 10px 20px;
-    }
-    &-track {
-        display: flex;
-        align-items: center;
-    }
-    &-arrow {
-        display: none !important;
+        @include responsive(sm-down) {
+            font-size: size(xs);
+        }
     }
 }

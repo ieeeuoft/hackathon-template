@@ -1,9 +1,9 @@
 import React from "react";
 import styles from "./Dashboard.module.scss";
-import ConnectedSponsorCard from "components/dashboard/SponsorCard/SponsorCard";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import DashCard from "components/dashboard/DashCard/DashCard";
+import TeamCard from "components/dashboard/TeamCard/TeamCard";
 import {
     PendingTable,
     ReturnedTable,
@@ -16,6 +16,8 @@ import {
     itemsPending,
     itemsReturned,
     orderStatus,
+    members,
+    teamCode,
 } from "testing/mockData";
 
 const Dashboard = () => {
@@ -32,10 +34,28 @@ const Dashboard = () => {
                     spacing={2}
                     className={styles.dashboardGrid}
                 >
+                    <Grid
+                        item
+                        md={3}
+                        sm={4}
+                        xs={6}
+                        className={styles.dashboardGridItem}
+                        key={0}
+                    >
+                        <TeamCard members={members} teamCode={teamCode} />
+                    </Grid>
                     {cardItems.map(({ title, content }, i) => (
-                        <DashCard title={title} content={content} key={i} />
+                        <Grid
+                            item
+                            md={3}
+                            sm={4}
+                            xs={6}
+                            className={styles.dashboardGridItem}
+                            key={i + 1}
+                        >
+                            <DashCard title={title} content={content} />
+                        </Grid>
                     ))}
-                    <ConnectedSponsorCard />
                 </Grid>
                 <PendingTable items={itemsPending} status={orderStatus} />
                 <CheckedOutTable items={itemsCheckedOut} />
