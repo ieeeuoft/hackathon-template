@@ -5,7 +5,7 @@ import { withRouter } from "testing";
 
 describe("<Navbar />", () => {
     it("renders correctly when all icons appear", () => {
-        const { getByText } = render(withRouter(<Navbar cartQuantity={1}/>));
+        const { getByText } = render(withRouter(<Navbar cartQuantity={1} />));
         expect(getByText("Dashboard")).toBeInTheDocument();
         expect(getByText("Logout")).toBeInTheDocument();
         expect(getByText("Cart (1)")).toBeInTheDocument();
