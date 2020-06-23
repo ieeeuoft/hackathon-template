@@ -62,7 +62,7 @@ class Order(models.Model):
         max_length=64, choices=HEALTH_CHOICES, null=True
     )
     status = models.CharField(
-        max_length=64, choices=STATUS_CHOICES, default="Submitted"
+        max_length=64, choices=STATUS_CHOICES, default="In Cart"
     )
 
     created_at = models.DateTimeField(auto_now_add=True, null=False)

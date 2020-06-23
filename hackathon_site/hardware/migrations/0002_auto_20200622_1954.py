@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
                     ("Returned", "Returned"),
                     ("Lost", "Lost"),
                 ],
-                default="Submitted",
+                default="In Cart",
                 max_length=64,
             ),
         ),
