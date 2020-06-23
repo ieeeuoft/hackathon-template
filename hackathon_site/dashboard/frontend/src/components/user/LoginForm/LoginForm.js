@@ -28,6 +28,8 @@ const loginFormSchema = Yup.object().shape({
 export const TEST_IDS = {
     circularProgress: "circular-progress",
     alert: "alert",
+    emailHelperText: "email-helper-text",
+    passwordHelperText: "password-helper-text",
 };
 
 export const LoginForm = ({
@@ -61,6 +63,7 @@ export const LoginForm = ({
                     classes={{ root: styles.formTextField }}
                     error={"email" in errors || isInvalidCredentials}
                     helperText={errors.email || INVALID_CREDENTIALS_MESSAGE}
+                    FormHelperTextProps={{ ["data-testid"]: TEST_IDS.emailHelperText }}
                     id="email-input"
                     label="Email"
                     onChange={handleChange}
@@ -72,6 +75,9 @@ export const LoginForm = ({
                     className={styles.formTextField}
                     error={"password" in errors || isInvalidCredentials}
                     helperText={errors.password || INVALID_CREDENTIALS_MESSAGE}
+                    FormHelperTextProps={{
+                        ["data-testid"]: TEST_IDS.passwordHelperText,
+                    }}
                     id="password-input"
                     label="Password"
                     onChange={handleChange}

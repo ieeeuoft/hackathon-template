@@ -95,7 +95,7 @@ describe("<EnhancedLoginForm />", () => {
             status: 500,
             message: "Something went horribly wrong",
         };
-        const { getByText, getByTestId } = render(
+        const { getByTestId } = render(
             <EnhancedLoginForm
                 handleLogin={() => {}}
                 isLoading={false}
@@ -111,7 +111,7 @@ describe("<EnhancedLoginForm />", () => {
             status: 400,
             message: "Invalid credentials",
         };
-        const { queryByTestId, getAllByText } = render(
+        const { queryByTestId } = render(
             <EnhancedLoginForm
                 handleLogin={() => {}}
                 isLoading={false}
@@ -120,6 +120,11 @@ describe("<EnhancedLoginForm />", () => {
         );
 
         expect(queryByTestId(TEST_IDS.alert)).toBeNull();
-        expect(getAllByText(ERROR_MESSAGES.credentialsInvalid).length).toEqual(2);
+        expect(queryByTestId(TEST_IDS.emailHelperText).innerHTML).toBe(
+            ERROR_MESSAGES.credentialsInvalid
+        );
+        expect(queryByTestId(TEST_IDS.passwordHelperText).innerHTML).toBe(
+            ERROR_MESSAGES.credentialsInvalid
+        );
     });
 });
