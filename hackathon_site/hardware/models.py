@@ -61,9 +61,7 @@ class Order(models.Model):
     part_returned_health = models.CharField(
         max_length=64, choices=HEALTH_CHOICES, null=True
     )
-    status = models.CharField(
-        max_length=64, choices=STATUS_CHOICES, default="In Cart"
-    )
+    status = models.CharField(max_length=64, choices=STATUS_CHOICES, default="In Cart")
 
     created_at = models.DateTimeField(auto_now_add=True, null=False)
     updated_at = models.DateTimeField(auto_now=True, null=False)
