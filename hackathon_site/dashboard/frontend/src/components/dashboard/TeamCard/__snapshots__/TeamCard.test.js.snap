@@ -1,0 +1,69 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TeamCard render 1`] = `
+<DocumentFragment>
+  <h2
+    class="MuiTypography-root MuiTypography-h2 MuiTypography-noWrap"
+  >
+    Team PAS3NLQ3
+  </h2>
+  <div
+    class="MuiPaper-root paper MuiPaper-elevation3"
+  >
+    <div
+      class="MuiContainer-root name MuiContainer-maxWidthLg"
+    >
+      <p
+        class="MuiTypography-root MuiTypography-body2 MuiTypography-noWrap"
+      >
+        Aki
+      </p>
+    </div>
+    <div
+      class="MuiContainer-root name MuiContainer-maxWidthLg"
+    >
+      <p
+        class="MuiTypography-root MuiTypography-body2 MuiTypography-noWrap"
+      >
+        Graham
+      </p>
+    </div>
+    <div
+      class="MuiContainer-root name MuiContainer-maxWidthLg"
+    >
+      <p
+        class="MuiTypography-root MuiTypography-body2 MuiTypography-noWrap"
+      >
+        Alex
+      </p>
+    </div>
+    <div
+      class="MuiContainer-root name MuiContainer-maxWidthLg"
+    >
+      <p
+        class="MuiTypography-root MuiTypography-body2 MuiTypography-noWrap"
+      >
+        Raymond
+      </p>
+    </div>
+    <div
+      class="MuiContainer-root lastRow MuiContainer-maxWidthLg"
+    >
+      <button
+        class="MuiButtonBase-root MuiButton-root MuiButton-text ButtonColor"
+        tabindex="0"
+        type="button"
+      >
+        <span
+          class="MuiButton-label"
+        >
+          Edit
+        </span>
+        <span
+          class="MuiTouchRipple-root"
+        />
+      </button>
+    </div>
+  </div>
+</DocumentFragment>
+`;

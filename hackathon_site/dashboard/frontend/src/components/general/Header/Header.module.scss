@@ -1,0 +1,33 @@
+@import "./../../../assets/abstracts/mixins";
+@import "./../../../assets/abstracts/variables";
+
+.header {
+    background-color: color(secondary) !important;
+    width: calc(100% + 100px);
+    margin-top: -50px;
+    margin-bottom: 50px;
+
+    @include responsive(md-down) {
+        width: calc(100% + 50px);
+        margin-top: -25px;
+        margin-bottom: 25px;
+    }
+
+    &Toolbar {
+        justify-content: space-between;
+    }
+
+    &Logo {
+        display: flex;
+        &Img {
+            height: 30px;
+        }
+    }
+
+    &IconBtn {
+        color: color(white);
+        &:hover {
+            background-color: rgba(355, 355, 355, 0.2);
+        }
+    }
+}
