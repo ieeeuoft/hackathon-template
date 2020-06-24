@@ -10,7 +10,9 @@ django-cors-headers==3.3.0
 djangorestframework==3.11.0
 pathspec==0.8.0
 psycopg2==2.8.5
+psycopg2-binary==2.8.5
 pytz==2020.1
+PyYAML==5.3.1
 regex==2020.4.4
 sqlparse==0.3.1
 toml==0.10.0
