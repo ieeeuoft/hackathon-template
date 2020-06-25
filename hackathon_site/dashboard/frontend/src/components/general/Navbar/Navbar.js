@@ -51,7 +51,6 @@ const Navbar = ({ cartQuantity }) => {
                         Reports
                     </Button>
                 </Link>
-
                 <Link to={"/inventory"}>
                     <Button
                         className={styles.navBtn}
@@ -80,4 +79,5 @@ const Navbar = ({ cartQuantity }) => {
         </nav>
     );
 };
+
 export default Navbar;

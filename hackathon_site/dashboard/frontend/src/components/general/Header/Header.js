@@ -36,8 +36,8 @@ const Header = ({ showNavbar = true }) => {
     return (
         <AppBar className={styles.header} position="sticky">
             <Toolbar className={styles.headerToolbar}>
-                <Hidden mdUp>
-                    {showNavbar && (
+                {showNavbar && (
+                    <Hidden mdUp>
                         <IconButton
                             color="inherit"
                             aria-label="Menu"
@@ -47,8 +47,8 @@ const Header = ({ showNavbar = true }) => {
                         >
                             <Menu />
                         </IconButton>
-                    )}
-                </Hidden>
+                    </Hidden>
+                )}
                 <div className={styles.headerLogo}>
                     <HackathonTitle />
                 </div>
