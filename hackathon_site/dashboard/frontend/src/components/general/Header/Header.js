@@ -8,8 +8,10 @@ import IconButton from "@material-ui/core/IconButton";
 import Drawer from "@material-ui/core/Drawer";
 import Hidden from "@material-ui/core/Hidden";
 import Menu from "@material-ui/icons/Menu";
+import CloseIcon from '@material-ui/icons/Close';
 import { Navbar, NavbarDrawer } from "components/general/Navbar/Navbar";
-import { userEmail, cartQuantity } from "testing/mockData";
+import { userEmail, cartQuantity, unreadNotificationQuantity } from "testing/mockData";
+import { hackathonName } from "constants.js";
 
 const HackathonTitle = () => (
     <>
@@ -19,7 +21,7 @@ const HackathonTitle = () => (
             data-testid="headerLogo"
         />
         <Typography variant="h6" data-testid="hackathonName">
-            Hackathon Name
+            { hackathonName }
         </Typography>
     </>
 );
@@ -52,22 +54,34 @@ const Header = ({ showNavbar = true }) => {
                         </IconButton>
                     )}
                 </Hidden>
-                {showNavbar && <Navbar cartQuantity={cartQuantity} />}
-
-                <Drawer
-                    anchor="left"
-                    open={mobileOpen}
-                    onClose={toggleMenu}
-                    className={styles.headerDrawer}
-                >
-                    <div className={styles.headerDrawerTop}></div>
-                    <div className={styles.headerDrawerHackathon}>
-                        <HackathonTitle />
-                        <Typography variant="body2">{userEmail}</Typography>
-                    </div>
-                    <div className={styles.headerDrawerDivider}></div>
-                    <NavbarDrawer />
-                </Drawer>
+                {showNavbar && 
+                    <>
+                        <Navbar cartQuantity={cartQuantity} unreadNotificationQuantity={unreadNotificationQuantity}/>
+                        <Drawer
+                            anchor="left"
+                            open={mobileOpen}
+                            onClose={toggleMenu}
+                            className={styles.headerDrawer}
+                        >
+                            <div className={styles.headerDrawerTop}>
+                                <IconButton
+                                    color="inherit"
+                                    aria-label="CloseMenu"
+                                    className={styles.headerIconBtn}
+                                    onClick={toggleMenu}
+                                >
+                                    <CloseIcon />
+                                </IconButton>
+                            
+                            </div>
+                            <div className={styles.headerDrawerHackathon}>
+                                <HackathonTitle />
+                                <Typography variant="body2">{userEmail}</Typography>
+                            </div>
+                            <NavbarDrawer />
+                        </Drawer>
+                    </>
+                }
             </Toolbar>
         </AppBar>
     );

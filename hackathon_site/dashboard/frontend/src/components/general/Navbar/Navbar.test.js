@@ -5,20 +5,19 @@ import { withRouter } from "testing";
 
 describe("<Navbar />", () => {
     it("renders correctly when all icons appear", () => {
-        const { getByText } = render(withRouter(<Navbar cartQuantity={1} />));
-        expect(getByText("Dashboard")).toBeInTheDocument();
-        expect(getByText("Logout")).toBeInTheDocument();
-        expect(getByText("Cart (1)")).toBeInTheDocument();
-        expect(getByText("Notifications")).toBeInTheDocument();
+        const { asFragment } = render(withRouter(<Navbar cartQuantity={1} unreadNotificationQuantity={1}/>));
+        expect(asFragment()).toMatchSnapshot();
+    });
+
+    it("renders correctly when all icons appear but no badge on notification iconon mobile", () => {
+        const { asFragment } = render(withRouter(<Navbar cartQuantity={0} unreadNotificationQuantity={0}/>));
+        expect(asFragment()).toMatchSnapshot();
     });
 });
 
 describe("<NavbarDrawer />", () => {
     it("renders correctly when cart and notification don't appear", () => {
-        const { getByText, queryByText } = render(withRouter(<NavbarDrawer />));
-        expect(getByText("Dashboard")).toBeInTheDocument();
-        expect(getByText("Logout")).toBeInTheDocument();
-        expect(queryByText("Cart ()")).not.toBeInTheDocument();
-        expect(queryByText("Notifications")).not.toBeInTheDocument();
+        const { asFragment } = render(withRouter(<NavbarDrawer />));
+        expect(asFragment()).toMatchSnapshot();
     });
 });

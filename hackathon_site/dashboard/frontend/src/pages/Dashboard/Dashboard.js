@@ -18,6 +18,7 @@ import {
     orderStatus,
     members,
     teamCode,
+    hackathonName,
 } from "testing/mockData";
 
 const Dashboard = () => {
@@ -25,7 +26,7 @@ const Dashboard = () => {
         <>
             <Header />
             <div className={styles.dashboard}>
-                <Typography variant="h1">Hackathon Name Hardware Dashboard</Typography>
+                <Typography variant="h1">{ hackathonName} Hardware Dashboard</Typography>
                 <Grid
                     container
                     direction="row"
