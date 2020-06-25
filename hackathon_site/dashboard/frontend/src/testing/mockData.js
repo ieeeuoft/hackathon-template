@@ -93,9 +93,6 @@ export const itemsPending = [
 
 export const orderStatus = "pending";
 
-// User email for nav drawer
-export const userEmail = "graham@email.com";
-
 // Team card
 export const members = [
     "Aki Kimura",
@@ -107,43 +104,4 @@ export const teamCode = "PAS3NLQ3";
 
 // Navbar
 export const cartQuantity = 0;
-export const unreadNotificationQuantity = 1;
-export const hackathonName = "Hackathon Name";
-export const notifications = [
-    {
-        message: "Beep beep boop boop. Boop boop beep beep boop. Beep beep boop boop. Boop boop beep beep boop.",
-        unread: true,
-    },
-    {
-        message: "Tech team has requested you see them at the tech station asap.",
-        unread: true,
-    },
-    {
-        message: "If you own a red Toyota Camery, your car is being towed.",
-        unread: false,
-    },
-    {
-        message: "Beep beep boop boop. Boop boop beep beep boop. Beep beep boop boop. Boop boop beep beep boop.",
-        unread: false,
-    },
-    {
-        message: "Tech team has requested you see them at the tech station asap.",
-        unread: false,
-    },
-    {
-        message: "If you own a red Toyota Camery, your car is being towed.",
-        unread: false,
-    },
-    {
-        message: "Beep beep boop boop. Boop boop beep beep boop. Beep beep boop boop. Boop boop beep beep boop.",
-        unread: false,
-    },
-    {
-        message: "Tech team has requested you see them at the tech station asap.",
-        unread: false,
-    },
-    {
-        message: "If you own a red Toyota Camery, your car is being towed.",
-        unread: false,
-    },
-];
+export const userEmail = "graham@email.com";

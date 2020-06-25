@@ -8,9 +8,9 @@ import IconButton from "@material-ui/core/IconButton";
 import Drawer from "@material-ui/core/Drawer";
 import Hidden from "@material-ui/core/Hidden";
 import Menu from "@material-ui/icons/Menu";
-import CloseIcon from '@material-ui/icons/Close';
-import { Navbar, NavbarDrawer } from "components/general/Navbar/Navbar";
-import { userEmail, cartQuantity, unreadNotificationQuantity } from "testing/mockData";
+import CloseIcon from "@material-ui/icons/Close";
+import Navbar from "components/general/Navbar/Navbar";
+import { userEmail, cartQuantity } from "testing/mockData";
 import { hackathonName } from "constants.js";
 
 const HackathonTitle = () => (
@@ -21,7 +21,7 @@ const HackathonTitle = () => (
             data-testid="headerLogo"
         />
         <Typography variant="h6" data-testid="hackathonName">
-            { hackathonName }
+            {hackathonName}
         </Typography>
     </>
 );
@@ -36,12 +36,7 @@ const Header = ({ showNavbar = true }) => {
     return (
         <AppBar className={styles.header} position="sticky">
             <Toolbar className={styles.headerToolbar}>
-                <Hidden implementation="css" smDown={!!showNavbar}>
-                    <div className={styles.headerLogo}>
-                        <HackathonTitle />
-                    </div>
-                </Hidden>
-                <Hidden implementation="css" mdUp>
+                <Hidden mdUp>
                     {showNavbar && (
                         <IconButton
                             color="inherit"
@@ -54,9 +49,14 @@ const Header = ({ showNavbar = true }) => {
                         </IconButton>
                     )}
                 </Hidden>
-                {showNavbar && 
+                <div className={styles.headerLogo}>
+                    <HackathonTitle />
+                </div>
+                {showNavbar && (
                     <>
-                        <Navbar cartQuantity={cartQuantity} unreadNotificationQuantity={unreadNotificationQuantity}/>
+                        <Hidden implementation="css" smDown>
+                            <Navbar cartQuantity={cartQuantity} />
+                        </Hidden>
                         <Drawer
                             anchor="left"
                             open={mobileOpen}
@@ -72,16 +72,15 @@ const Header = ({ showNavbar = true }) => {
                                 >
                                     <CloseIcon />
                                 </IconButton>
-                            
                             </div>
                             <div className={styles.headerDrawerHackathon}>
                                 <HackathonTitle />
                                 <Typography variant="body2">{userEmail}</Typography>
                             </div>
-                            <NavbarDrawer />
+                            <Navbar cartQuantity={cartQuantity} />
                         </Drawer>
                     </>
-                }
+                )}
             </Toolbar>
         </AppBar>
     );

@@ -2,91 +2,53 @@
 @import "./../../../assets/abstracts/variables";
 
 .nav {
-    &Btn,
-    &IconBtn {
-        color: color(white);
+    @include responsive(md-up) {
+        &FlexDiv {
+            display: inline-block;
+        }
+        &Btn,
+        &IconBtn {
+            color: color(white);
+            .customIcon {
+                width: 20px;
+                fill: color(white);
+            }
+            &:hover {
+                background-color: rgba(355, 355, 355, 0.2);
+            }
+        }
+        &Btn {
+            border-radius: 0;
+            padding: 20px 15px;
+        }
+        &IconBtn {
+            margin-left: 15px;
+        }
+    }
+
+    @include responsive(md-down) {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        &Btn {
+            height: 50px;
+            width: 100%;
+            display: flex;
+            justify-content: left;
+            padding: 0px 120px 0px 15px;
+            border-radius: 0;
+            svg {
+                margin-right: 30px;
+            }
+            &Logout {
+                padding-left: 70px;
+            }
+        }
         .customIcon {
             width: 20px;
-            fill: color(white);
-        }
-        &:hover {
-            background-color: rgba(355, 355, 355, 0.2);
+            fill: color(font);
         }
     }
-    &Btn {
-        border-radius: 0;
-        padding: 20px 15px;
-    }
-    &IconBtn {
-        margin-left: 15px;
-    }
-}
-
-.navMobile {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    &Btn {
-        height: 50px;
-        width: 100%;
-        display: flex;
-        justify-content: left;
-        padding: 0px 120px 0px 15px;
-        border-radius: 0;
-        svg {
-            margin-right: 30px;
-        }
-        &Logout {
-            padding-left: 70px;
-        }
-    }
-    .customIcon {
-        width: 20px;
-        fill: color(font);
-    }
-}
-
-.quantityIcon {
-    position: absolute;
-    color: color(secondary);
-    background-color: color(white);
-    margin-top: 2px;
-    padding: 1px 1.25px 1px;
-    border-radius: 1px;
-    font-size: size(xs);
-    font-weight: 600;
-}
-
-.quantityDot {
-    position: absolute;
-    color: color(white);
-    background-color: color(red);
-    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.24);
-    margin-top: -7px;
-    margin-left: 10px;
-    padding: 1px 1.25px 1px;
-    border-radius: 100%;
-    font-size: size(xs);
-    font-weight: 600;
-    height: 20px;
-    width: 20px;
-    border: none;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-}
-
-.notificationCard {
-    width: 80%;
-    max-width: 650px;
-    max-height: 400px;
-    position: absolute;
-    right: 0;
-    overflow-y: scroll;
-    .unread {
-        background-color: color(light2);
-    } 
 }

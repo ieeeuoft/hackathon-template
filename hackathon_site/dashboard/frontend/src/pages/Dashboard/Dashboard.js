@@ -18,15 +18,15 @@ import {
     orderStatus,
     members,
     teamCode,
-    hackathonName,
 } from "testing/mockData";
+import { hackathonName } from "constants.js";
 
 const Dashboard = () => {
     return (
         <>
             <Header />
             <div className={styles.dashboard}>
-                <Typography variant="h1">{ hackathonName} Hardware Dashboard</Typography>
+                <Typography variant="h1">{hackathonName} Hardware Dashboard</Typography>
                 <Grid
                     container
                     direction="row"
