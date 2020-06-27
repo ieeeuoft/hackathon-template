@@ -25,3 +25,5 @@ jobs:
       run: |
         # Stop the build if there are any formatting issues picked up by Black
         black --check .
+    - name: Tests
+      run: python manage.py test --settings=hackathon_site.settings.ci
