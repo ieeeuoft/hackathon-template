@@ -97,18 +97,18 @@ describe("logIn Thunk and Reducer", () => {
             );
         });
 
-        test("Rejected", () => {
-            const failureResponse = { status: 999, message: "Some message" };
+        test("Rejected with known issue", () => {
+            const expectedFailureResponse = { status: 999, message: "Some message" };
             const action = logIn.rejected(
-                "Rejected", // createAsyncThunk will always have {message: "Rejected"} for rejections
+                "Rejected", // createAsyncThunk will always have {message: "Rejected"} for rejectWithValue
                 "some-id",
                 body,
-                failureResponse // This becomes action.payload
+                expectedFailureResponse // This becomes action.payload
             );
             expect(reducer(initialState, action)).toEqual(
                 expect.objectContaining({
                     isAuthenticated: false,
-                    login: { isLoading: false, failure: failureResponse },
+                    login: { isLoading: false, failure: expectedFailureResponse },
                 })
             );
         });
@@ -118,14 +118,16 @@ describe("logIn Thunk and Reducer", () => {
         const response = { data: { key: "abc123" } };
         post.mockImplementation(() => Promise.resolve(response));
 
-        const {
-            meta: { requestId },
-        } = await store.dispatch(logIn(body));
+        await store.dispatch(logIn(body));
 
         const actions = store.getActions();
 
-        const expectedAction = logIn.fulfilled(response.data, requestId, body);
-        expect(actions).toContainEqual(expectedAction);
+        expect(actions).toContainEqual(
+            expect.objectContaining({
+                type: logIn.fulfilled.type,
+                payload: response.data,
+            })
+        );
         expect(actions).toContainEqual(push("/"));
     });
 
@@ -141,24 +143,23 @@ describe("logIn Thunk and Reducer", () => {
                     status: 400,
                 },
             };
+            const expectedFailureResponse = {
+                status: 400,
+                message: "Invalid credentials",
+            };
 
             post.mockImplementation(() => Promise.reject(error));
 
-            const {
-                meta: { requestId },
-            } = await store.dispatch(logIn(body));
+            await store.dispatch(logIn(body));
 
             const actions = store.getActions();
 
-            const failureResponse = { status: 400, message: "Invalid credentials" };
-            const expectedAction = logIn.rejected(
-                "Rejected", // createAsyncThunk will always have this for rejections
-                requestId,
-                body,
-                failureResponse
+            expect(actions).toContainEqual(
+                expect.objectContaining({
+                    type: logIn.rejected.type,
+                    payload: expectedFailureResponse,
+                })
             );
-
-            expect(actions).toContainEqual(expectedAction);
         });
 
         test("CSRF Failure", async () => {
@@ -168,24 +169,23 @@ describe("logIn Thunk and Reducer", () => {
                     status: 403,
                 },
             };
+            const expectedFailureResponse = {
+                status: 403,
+                message: "Invalid CSRF Token",
+            };
 
             post.mockImplementation(() => Promise.reject(error));
 
-            const {
-                meta: { requestId },
-            } = await store.dispatch(logIn(body));
+            await store.dispatch(logIn(body));
 
             const actions = store.getActions();
 
-            const failureResponse = { status: 403, message: "Invalid CSRF Token" };
-            const expectedAction = logIn.rejected(
-                "Rejected",
-                requestId,
-                body,
-                failureResponse
+            expect(actions).toContainEqual(
+                expect.objectContaining({
+                    type: logIn.rejected.type,
+                    payload: expectedFailureResponse,
+                })
             );
-
-            expect(actions).toContainEqual(expectedAction);
         });
 
         test("Other API error", async () => {
@@ -195,24 +195,23 @@ describe("logIn Thunk and Reducer", () => {
                     status: 500,
                 },
             };
+            const expectedFailureResponse = {
+                status: 500,
+                message: error.response.data,
+            };
 
             post.mockImplementation(() => Promise.reject(error));
 
-            const {
-                meta: { requestId },
-            } = await store.dispatch(logIn(body));
+            await store.dispatch(logIn(body));
 
             const actions = store.getActions();
 
-            const failureResponse = { status: 500, message: error.response.data };
-            const expectedAction = logIn.rejected(
-                "Rejected",
-                requestId,
-                body,
-                failureResponse
+            expect(actions).toContainEqual(
+                expect.objectContaining({
+                    type: logIn.rejected.type,
+                    payload: expectedFailureResponse,
+                })
             );
-
-            expect(actions).toContainEqual(expectedAction);
         });
     });
 });
