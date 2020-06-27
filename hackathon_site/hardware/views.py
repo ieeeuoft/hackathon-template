@@ -15,9 +15,6 @@ class HardwareListView(
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
 
-    def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
-
 
 class CategoryListView(
     mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView
@@ -27,6 +24,3 @@ class CategoryListView(
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
