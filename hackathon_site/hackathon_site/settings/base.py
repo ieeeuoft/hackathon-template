@@ -53,11 +53,11 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
     "dj_rest_auth",
+    "drf_yasg",
     "dashboard",
     "applications",
     "event",
     "hardware",
-    "drf_yasg",
 ]
 
 MIDDLEWARE = [
@@ -139,6 +139,9 @@ USE_L10N = True
 
 USE_TZ = True
 
+# Swagger
+# https://drf-yasg.readthedocs.io/en/stable/settings.html
+SWAGGER_SETTINGS = {"DEFAULT_MODEL_RENDERING": "example", "DEEP_LINKING": True}
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
