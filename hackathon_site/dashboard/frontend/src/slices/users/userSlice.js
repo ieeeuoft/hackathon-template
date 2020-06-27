@@ -1,5 +1,8 @@
 import axios from "axios";
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { push } from "connected-react-router";
+
+import { post } from "api/api";
 
 export const userReducerName = "user";
 export const initialState = {
@@ -8,6 +11,11 @@ export const initialState = {
         isLoading: false,
         error: null,
     },
+    login: {
+        isLoading: false,
+        failure: null,
+    },
+    isAuthenticated: false,
 };
 
 // Thunks
@@ -18,6 +26,35 @@ export const fetchUserById = createAsyncThunk(
             `https://jsonplaceholder.typicode.com/users/${userId}`
         );
         return response.data;
+    }
+);
+
+export const logIn = createAsyncThunk(
+    `${userReducerName}/logIn`,
+    async ({ email, password }, { dispatch, rejectWithValue }) => {
+        try {
+            const response = await post("/api/auth/login/", { email, password });
+            dispatch(push("/"));
+            return response.data;
+        } catch (e) {
+            if (e.response.status === 400) {
+                // Invalid credentials
+                return rejectWithValue({ status: 400, message: "Invalid credentials" });
+            } else if (
+                e.response.status === 403 &&
+                e.response.data &&
+                e.response.data.detail.includes("CSRF")
+            ) {
+                return rejectWithValue({
+                    status: e.response.status,
+                    message: "Invalid CSRF Token",
+                });
+            }
+            return rejectWithValue({
+                status: e.response.status,
+                message: e.response.data,
+            });
+        }
     }
 );
 
@@ -39,6 +76,19 @@ const userSlice = createSlice({
             state.userData.isLoading = false;
             state.userData.error = action.error;
         },
+        [logIn.pending]: (state) => {
+            state.login.isLoading = true;
+        },
+        [logIn.fulfilled]: (state) => {
+            state.isAuthenticated = true;
+            state.login.isLoading = false;
+            state.login.failure = null;
+        },
+        [logIn.rejected]: (state, action) => {
+            state.login.failure = action.payload || { message: action.error.message };
+            state.login.isLoading = false;
+            state.isAuthenticated = false;
+        },
     },
 });
 
@@ -48,3 +98,4 @@ export default reducer;
 // Selectors
 export const userSelector = (state) => state[userReducerName];
 export const userDataSelector = (state) => userSelector(state).userData;
+export const loginSelector = (state) => userSelector(state).login;
