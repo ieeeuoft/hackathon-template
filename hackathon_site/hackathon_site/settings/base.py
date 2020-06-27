@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     "applications",
     "event",
     "hardware",
+    "drf_yasg",
 ]
 
 MIDDLEWARE = [
