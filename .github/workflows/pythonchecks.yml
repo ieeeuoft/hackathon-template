@@ -6,6 +6,10 @@ on:
   push:
     branches: '*'
 
+defaults:
+  run:
+    working-directory: hackathon_site
+
 jobs:
   main:
 
