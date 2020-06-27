@@ -30,4 +30,7 @@ jobs:
         # Stop the build if there are any formatting issues picked up by Black
         black --check .
     - name: Tests
+      env:
+        SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
+        DEBUG: 1
       run: python manage.py test --settings=hackathon_site.settings.ci
