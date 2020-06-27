@@ -32,5 +32,5 @@ jobs:
     - name: Tests
       env:
         SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
-        DEBUG: 1
+        DEBUG: 0
       run: python manage.py test --settings=hackathon_site.settings.ci
