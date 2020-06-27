@@ -1,5 +1,6 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Redirect, Switch } from "react-router-dom";
+import { ConnectedRouter } from "connected-react-router";
+import { Route, Redirect, Switch } from "react-router-dom";
 import {
     createMuiTheme,
     StylesProvider,
@@ -8,7 +9,7 @@ import {
 import { Provider as ReduxProvider } from "react-redux";
 import styles from "assets/abstracts/_exports.scss";
 
-import store from "slices/store";
+import store, { history } from "slices/store";
 
 import "App.scss";
 import Dashboard from "pages/Dashboard/Dashboard";
@@ -59,9 +60,9 @@ const ConnectedApp = () => (
     <ReduxProvider store={store}>
         <StylesProvider injectFirst>
             <ThemeProvider theme={theme}>
-                <Router>
+                <ConnectedRouter history={history}>
                     <UnconnectedApp />
-                </Router>
+                </ConnectedRouter>
             </ThemeProvider>
         </StylesProvider>
     </ReduxProvider>
