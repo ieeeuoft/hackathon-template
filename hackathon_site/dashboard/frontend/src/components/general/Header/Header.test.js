@@ -1,7 +1,7 @@
 import React from "react";
 import { render } from "@testing-library/react";
 import Header from "./Header";
-import { withRouter } from "testing";
+import { withRouter } from "testing/helpers";
 
 describe("<Header />", () => {
     test("renders header with navbar", () => {
