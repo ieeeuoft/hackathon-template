@@ -38,17 +38,23 @@ $ pip install -r requirements.txt
 ```
 
 ### Environment Variables
-In order to run the development server locally, the following environment variables are used. Those in **bold** are required.
+In order to run the django and react development servers locally (or run tests), the following environment variables are used. Those in **bold** are required.
 
 | **Variable**   | **Required value**                | **Default**    | **Description**                                                                   |
 |----------------|-----------------------------------|----------------|-----------------------------------------------------------------------------------|
-| **debug**      | 1                                 | 0              | Run Django in debug mode. Required to run locally.                                |
+| **DEBUG**      | 1                                 | 0              | Run Django in debug mode. Required to run locally.                                |
 | **SECRET_KEY** | Something secret, create your own | None           | Secret key for cryptographic signing. Must not be shared. Required.               |
 | DB_HOST        |                                   | 127.0.0.1      | Postgres database host.                                                           |
 | DB_USER        |                                   | postgres       | User on the postgres database. Must have permissions to create and modify tables. |
 | DB_PASSWORD    |                                   |                | Password for the postgres user.                                                   |
 | DB_PORT        |                                   | 5432           | Port the postgres server is open on.                                              |
 | DB_NAME        |                                   | hackathon_site | Postgres database name.                                                           |
+| REACT_APP_DEV_SERVER_URL |                  | http://localhost:8000 | Path to the django development server, used by React.                             |
+
+#### Testing
+Specifying `SECRET_KEY` is still required to run tests, because the settings file expects it to be set. `DEBUG` is forced to `False` by Django.
+
+In the [GitHub action for Python tests](.github/workflows/pythonchecks.yml), `DEBUG` is set to be `1`. `SECRET_KEY` is taken from the `DJANGO_SECRET_KEY` repository secret. In order to run tests on a fork of this repo, you will need to [create this secret yourself](https://help.github.com/en/actions/configuring-and-managing-workflows/creating-and-storing-encrypted-secrets).
 
 ### Running the development server
 #### Database
@@ -82,3 +88,21 @@ $ python manage.py runserver
 ```
 
 If you would like to run on a port other than 8000, specify a port number after `runserver`.
+
+### Tests
+#### Django
+Django tests are run using [Django's test system](https://docs.djangoproject.com/en/3.0/topics/testing/overview/), based on the standard python `unittest` module.
+
+A custom settings settings module is available for testing, which tells Django to use an in-memory sqlite3 database instead of the postgresql database for testing. To run the full test suite locally:
+
+```bash
+$ cd hackathon_site
+$ python manage.py test --settings=hackathon_site.settings.ci
+``` 
+
+#### React
+React tests are handled by [Jest](https://jestjs.io/). To run the full suite of React tests:
+```bash
+$ cd hackathon_site/dashboard/frontend
+$ yarn test
+```
