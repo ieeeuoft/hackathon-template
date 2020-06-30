@@ -12,7 +12,7 @@ import { ReactComponent as Inventory } from "assets/images/icons/Hardware.svg";
 // Components
 import Button from "@material-ui/core/Button";
 
-const Navbar = ({ cartQuantity, pathname }) => (
+const UnconnectedNavbar = ({ cartQuantity, pathname }) => (
     <nav className={styles.nav}>
         <div className={styles.navFlexDiv}>
             <Link to={"/"}>
@@ -89,4 +89,4 @@ const mapStateToProps = (state) => ({
     pathname: state.router.location.pathname,
 });
 
-export default connect(mapStateToProps)(Navbar);
+export default connect(mapStateToProps)(UnconnectedNavbar);

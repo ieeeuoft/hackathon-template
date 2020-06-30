@@ -13,7 +13,7 @@ exports[`<Navbar /> renders correctly when all icons appear 1`] = `
       >
         <button
           aria-label="Dashboard"
-          class="MuiButtonBase-root MuiButton-root MuiButton-text navBtn"
+          class="MuiButtonBase-root MuiButton-root MuiButton-text navActive"
           tabindex="0"
           type="button"
         >
@@ -156,7 +156,8 @@ exports[`<Navbar /> renders correctly when all icons appear 1`] = `
               class="MuiButton-startIcon MuiButton-iconSizeMedium"
             >
               <svg
-                class="customIcon"
+                fill="currentColor"
+                width="20px"
               >
                 Hardware.svg
               </svg>

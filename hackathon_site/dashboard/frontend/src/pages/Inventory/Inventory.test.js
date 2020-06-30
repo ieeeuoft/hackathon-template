@@ -1,9 +1,9 @@
 import React from "react";
 import { render } from "@testing-library/react";
 import Inventory from "./Inventory";
-import { withRouter } from "testing/helpers";
+import { withRouter, withStore } from "testing/helpers";
 
 test("renders without crashing", () => {
-    const { getByText } = render(withRouter(<Inventory />));
+    const { getByText } = render(withStore(withRouter(<Inventory />)));
     expect(getByText("IEEEEEE")).toBeInTheDocument();
 });
