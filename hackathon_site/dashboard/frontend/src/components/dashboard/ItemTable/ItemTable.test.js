@@ -119,22 +119,6 @@ describe("<UnconnectedReturnedTable, />", () => {
             expect(queryByText(name)).toBeNull();
         });
     });
-
-    // it("Calls toggleVisibility when show/hide button is clicked", async () => {
-    //     const toggleVisibilitySpy = jest.fn();
-    //     const { getByText } = render(
-    //         <UnconnectedReturnedTable
-    //             items={itemsReturned}
-    //             isVisible={true}
-    //             toggleVisibility={toggleVisibilitySpy}
-    //         />
-    //     );
-    //     const button = getByText(/hide all/i);
-    //
-    //     await fireEvent.click(button);
-    //
-    //     expect(toggleVisibilitySpy).toHaveBeenCalled();
-    // });
 });
 
 describe("Connected tables", () => {
