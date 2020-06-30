@@ -15,7 +15,7 @@ const rootReducer = (history) =>
 
 export const history = createBrowserHistory();
 
-const store = configureStore({
+export const store = configureStore({
     reducer: rootReducer(history),
     middleware: [...getDefaultMiddleware(), routerMiddleware(history)],
 });

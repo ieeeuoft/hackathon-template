@@ -1,12 +1,23 @@
 import React from "react";
-import { render } from "@testing-library/react";
+import configureStore from "redux-mock-store";
+import { fireEvent, render } from "@testing-library/react";
 import {
     ChipStatus,
     PendingTable,
     UnconnectedReturnedTable,
     UnconnectedCheckedOutTable,
+    ReturnedTable,
+    CheckedOutTable,
 } from "components/dashboard/ItemTable/ItemTable";
+import {
+    uiReducerName,
+    initialState as uiInitialState,
+    actions as uiActions,
+} from "slices/ui/uiSlice";
 import { itemsCheckedOut, itemsPending, itemsReturned } from "testing/mockData";
+import { withStore } from "testing/helpers";
+
+const mockStore = configureStore();
 
 describe("<ChipStatus />", () => {
     test("Ready status", () => {
@@ -30,11 +41,11 @@ describe("<PendingTable />", () => {
         const { getByText, queryByText } = render(
             <PendingTable items={itemsPending} status="pending" />
         );
-        expect(getByText("Name")).toBeInTheDocument();
+        expect(getByText(/orders pending/i)).toBeInTheDocument();
+        expect(queryByText("In progress")).toBeInTheDocument();
         itemsPending.map(({ name }) => {
             expect(getByText(name)).toBeInTheDocument();
         });
-        expect(queryByText("In progress")).toBeInTheDocument();
     });
 
     it("Doesn't show when there are no pending orders", () => {
@@ -57,9 +68,21 @@ describe("<UnconnectedCheckedOutTable />", () => {
         const { getByText } = render(
             <UnconnectedCheckedOutTable items={itemsCheckedOut} isVisible={true} />
         );
-        expect(getByText("Name")).toBeInTheDocument();
+        expect(getByText(/checked out items/i)).toBeInTheDocument();
+        expect(getByText(/hide all/i)).toBeInTheDocument();
         itemsCheckedOut.map(({ name }) => {
             expect(getByText(name)).toBeInTheDocument();
+        });
+    });
+
+    it("Hides the table when isVisible is false", () => {
+        const { getByText, queryByText } = render(
+            <UnconnectedCheckedOutTable items={itemsCheckedOut} isVisible={false} />
+        );
+        expect(getByText(/checked out items/i)).toBeInTheDocument();
+        expect(getByText(/show all/i)).toBeInTheDocument();
+        itemsCheckedOut.map(({ name }) => {
+            expect(queryByText(name)).toBeNull();
         });
     });
 });
@@ -80,9 +103,70 @@ describe("<UnconnectedReturnedTable, />", () => {
         const { getByText } = render(
             <UnconnectedReturnedTable items={itemsReturned} isVisible={true} />
         );
-        expect(getByText("Name")).toBeInTheDocument();
+        expect(getByText(/returned items/i)).toBeInTheDocument();
         itemsReturned.map(({ name }) => {
             expect(getByText(name)).toBeInTheDocument();
         });
+    });
+
+    it("Hides the table when isVisible is false", () => {
+        const { getByText, queryByText } = render(
+            <UnconnectedReturnedTable items={itemsReturned} isVisible={false} />
+        );
+        expect(getByText(/returned items/i)).toBeInTheDocument();
+        expect(getByText(/show all/i)).toBeInTheDocument();
+        itemsReturned.map(({ name }) => {
+            expect(queryByText(name)).toBeNull();
+        });
+    });
+
+    // it("Calls toggleVisibility when show/hide button is clicked", async () => {
+    //     const toggleVisibilitySpy = jest.fn();
+    //     const { getByText } = render(
+    //         <UnconnectedReturnedTable
+    //             items={itemsReturned}
+    //             isVisible={true}
+    //             toggleVisibility={toggleVisibilitySpy}
+    //         />
+    //     );
+    //     const button = getByText(/hide all/i);
+    //
+    //     await fireEvent.click(button);
+    //
+    //     expect(toggleVisibilitySpy).toHaveBeenCalled();
+    // });
+});
+
+describe("Connected tables", () => {
+    let store;
+
+    beforeEach(() => {
+        store = mockStore({
+            [uiReducerName]: uiInitialState,
+        });
+    });
+
+    it("CheckedOutTable dispatches an action to toggle visibility when button clicked", async () => {
+        const { getByText } = render(
+            withStore(<CheckedOutTable items={itemsCheckedOut} />, store)
+        );
+        const button = getByText(/hide all/i);
+
+        await fireEvent.click(button);
+        expect(store.getActions()).toContainEqual(
+            expect.objectContaining({ type: uiActions.toggleCheckedOutTable.type })
+        );
+    });
+
+    it("ReturnedTable dispatches an action to toggle visibility when button clicked", async () => {
+        const { getByText } = render(
+            withStore(<ReturnedTable items={itemsReturned} />, store)
+        );
+        const button = getByText(/hide all/i);
+
+        await fireEvent.click(button);
+        expect(store.getActions()).toContainEqual(
+            expect.objectContaining({ type: uiActions.toggleReturnedTable.type })
+        );
     });
 });
