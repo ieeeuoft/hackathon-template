@@ -22,6 +22,7 @@ const dashboardSlice = createSlice({
 });
 
 export const { reducer, actions } = dashboardSlice;
+export default reducer;
 
 // Selectors
 export const dashboardSelector = (state) => state[dashboardReducerName];
