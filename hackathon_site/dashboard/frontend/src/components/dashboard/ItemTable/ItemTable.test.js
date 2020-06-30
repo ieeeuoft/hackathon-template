@@ -1,77 +1,88 @@
 import React from "react";
 import { render } from "@testing-library/react";
 import {
+    ChipStatus,
     PendingTable,
     UnconnectedReturnedTable,
     UnconnectedCheckedOutTable,
 } from "components/dashboard/ItemTable/ItemTable";
 import { itemsCheckedOut, itemsPending, itemsReturned } from "testing/mockData";
 
+describe("<ChipStatus />", () => {
+    test("Ready status", () => {
+        const { getByText } = render(<ChipStatus status="ready" />);
+        expect(getByText("Ready for pickup")).toBeInTheDocument();
+    });
+
+    test("Pending status", () => {
+        const { getByText } = render(<ChipStatus status="pending" />);
+        expect(getByText("In progress")).toBeInTheDocument();
+    });
+
+    test("Error status", () => {
+        const { getByText } = render(<ChipStatus status="error" />);
+        expect(getByText("Please visit the tech station")).toBeInTheDocument();
+    });
+});
+
 describe("<PendingTable />", () => {
-    it("renders correctly when there's an order pending and orange chip", () => {
+    it("Shows pending items and status chip", () => {
         const { getByText, queryByText } = render(
             <PendingTable items={itemsPending} status="pending" />
         );
         expect(getByText("Name")).toBeInTheDocument();
+        itemsPending.map(({ name }) => {
+            expect(getByText(name)).toBeInTheDocument();
+        });
         expect(queryByText("In progress")).toBeInTheDocument();
     });
 
-    it("renders correctly when there's an order pending and green chip", () => {
-        const { getByText, queryByText } = render(
-            <PendingTable items={itemsPending} status="ready" />
-        );
-        expect(getByText("Name")).toBeInTheDocument();
-        expect(queryByText("Ready for pickup")).toBeInTheDocument();
-    });
-
-    it("renders correctly when there's an order pending and red chip", () => {
-        const { getByText, queryByText } = render(
-            <PendingTable items={itemsPending} status="error" />
-        );
-        expect(getByText("Name")).toBeInTheDocument();
-        expect(queryByText("Please visit the tech station")).toBeInTheDocument();
-    });
-
-    it("renders correctly when it's null", () => {
+    it("Doesn't show when there are no pending orders", () => {
         const { queryByText } = render(<PendingTable items={[]} status={null} />);
         expect(queryByText("Orders pending")).toBeNull();
     });
 });
 
 describe("<UnconnectedCheckedOutTable />", () => {
-    it("renders correctly when there's no checked out items", () => {
-        const { getByText } = render(<UnconnectedCheckedOutTable items={[]} />);
+    it("Shows a message when there's no checked out items", () => {
+        const { getByText } = render(
+            <UnconnectedCheckedOutTable items={[]} isVisible={true} />
+        );
         expect(
             getByText("You have no items checked out yet. View our inventory.")
         ).toBeInTheDocument();
-        expect(getByText("Hide all")).toBeInTheDocument();
     });
 
-    it("renders correctly when there are checked out items", () => {
+    it("Shows checked out items", () => {
         const { getByText } = render(
-            <UnconnectedCheckedOutTable items={itemsCheckedOut} />
+            <UnconnectedCheckedOutTable items={itemsCheckedOut} isVisible={true} />
         );
         expect(getByText("Name")).toBeInTheDocument();
-        expect(getByText("Hide all")).toBeInTheDocument();
+        itemsCheckedOut.map(({ name }) => {
+            expect(getByText(name)).toBeInTheDocument();
+        });
     });
 });
 
 describe("<UnconnectedReturnedTable, />", () => {
-    it("renders correctly when there's no returned items", () => {
-        const { getByText } = render(<UnconnectedReturnedTable items={[]} />);
+    it("Shows a message when there's no returned items", () => {
+        const { getByText } = render(
+            <UnconnectedReturnedTable items={[]} isVisible={true} />
+        );
         expect(
             getByText(
                 "Please bring items to the tech table and a tech team member will assist you."
             )
         ).toBeInTheDocument();
-        expect(getByText("Hide all")).toBeInTheDocument();
     });
 
-    it("renders correctly when there are returned items", () => {
+    it("Shows returned items", () => {
         const { getByText } = render(
-            <UnconnectedReturnedTable items={itemsReturned} />
+            <UnconnectedReturnedTable items={itemsReturned} isVisible={true} />
         );
         expect(getByText("Name")).toBeInTheDocument();
-        expect(getByText("Hide all")).toBeInTheDocument();
+        itemsReturned.map(({ name }) => {
+            expect(getByText(name)).toBeInTheDocument();
+        });
     });
 });

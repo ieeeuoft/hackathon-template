@@ -24,7 +24,7 @@ import {
     actions as uiActions,
 } from "slices/ui/uiSlice";
 
-const ChipStatus = ({ status }) => {
+export const ChipStatus = ({ status }) => {
     switch (status) {
         case "ready":
             return (
