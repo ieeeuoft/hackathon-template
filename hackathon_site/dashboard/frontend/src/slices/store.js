@@ -4,14 +4,12 @@ import { connectRouter, routerMiddleware } from "connected-react-router";
 import { createBrowserHistory } from "history";
 
 import userReducer, { userReducerName } from "slices/users/userSlice";
-import dashboardReducer, {
-    dashboardReducerName,
-} from "slices/dashboard/dashboardSlice";
+import uiReducer, { uiReducerName } from "slices/ui/uiSlice";
 
 const rootReducer = (history) =>
     combineReducers({
         [userReducerName]: userReducer,
-        [dashboardReducerName]: dashboardReducer,
+        [uiReducerName]: uiReducer,
         router: connectRouter(history),
     });
 

@@ -21,8 +21,8 @@ import { connect } from "react-redux";
 import {
     isCheckedOutTableVisibleSelector,
     isReturnedTableVisibleSelector,
-    actions as dashboardActions,
-} from "slices/dashboard/dashboardSlice";
+    actions as uiActions,
+} from "slices/ui/uiSlice";
 
 const ChipStatus = ({ status }) => {
     switch (status) {
@@ -132,7 +132,7 @@ const checkedOutMapStateToProps = (state) => ({
 });
 
 export const CheckedOutTable = connect(checkedOutMapStateToProps, {
-    toggleVisibility: dashboardActions.toggleCheckedOutTable,
+    toggleVisibility: uiActions.toggleCheckedOutTable,
 })(UnconnectedCheckedOutTable);
 
 export const UnconnectedReturnedTable = ({ items, isVisible, toggleVisibility }) => (
@@ -206,7 +206,7 @@ const returnedTableMapStateToProps = (state) => ({
 });
 
 export const ReturnedTable = connect(returnedTableMapStateToProps, {
-    toggleVisibility: dashboardActions.toggleReturnedTable,
+    toggleVisibility: uiActions.toggleReturnedTable,
 })(UnconnectedReturnedTable);
 
 export const PendingTable = ({ items, status }) => {
