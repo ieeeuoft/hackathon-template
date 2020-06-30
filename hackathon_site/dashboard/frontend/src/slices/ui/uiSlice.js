@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 // Slice
 export const uiReducerName = "ui";
-export const uiInitialState = {
+export const initialState = {
     dashboard: {
         isCheckedOutTableVisible: true,
         isReturnedTableVisible: true,
@@ -10,7 +10,7 @@ export const uiInitialState = {
 };
 const uiSlice = createSlice({
     name: uiReducerName,
-    initialState: uiInitialState,
+    initialState: initialState,
     reducers: {
         toggleCheckedOutTable: (state) => {
             state.dashboard.isCheckedOutTableVisible = !state.dashboard
