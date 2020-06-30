@@ -1,5 +1,6 @@
 import React from "react";
 import styles from "./ItemTable.module.scss";
+import { Link } from "react-router-dom";
 import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
 import Container from "@material-ui/core/Container";
@@ -55,7 +56,7 @@ export const CheckedOutTable = ({ items }) => (
                 Checked out items
             </Typography>
             <Button
-                className={styles.titleBtn}
+                color="primary"
                 onClick={() => {
                     alert(
                         "this would hide the table and switch the button to 'show all'"
@@ -78,15 +79,17 @@ export const CheckedOutTable = ({ items }) => (
                         <col className={styles.widthHalf} />
                         <col className={styles.widthFixed} />
                         <col className={styles.widthFixed} />
-                        <col className={styles.widthBuffer} />
+                        <col className={styles.widthButton} />
                     </colgroup>
                     <TableHead>
                         <TableRow>
                             <TableCell />
-                            <TableCell align="left">Name</TableCell>
+                            <TableCell align="left" className={styles.widthHalf}>
+                                Name
+                            </TableCell>
                             <TableCell align="center">Info</TableCell>
                             <TableCell align="right">Qty</TableCell>
-                            <TableCell className={styles.widthBuffer} />
+                            <TableCell className={styles.widthButton} />
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -112,7 +115,13 @@ export const CheckedOutTable = ({ items }) => (
                                     </IconButton>
                                 </TableCell>
                                 <TableCell align="right">{row.qty}</TableCell>
-                                <TableCell className={styles.widthBuffer} />
+                                <TableCell align="right" className={styles.widthButton}>
+                                    <Link to={"/IncidentForm"}>
+                                        <Button color="secondary">
+                                            Report broken/lost
+                                        </Button>
+                                    </Link>
+                                </TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
@@ -129,7 +138,7 @@ export const ReturnedTable = ({ items }) => (
                 Returned items
             </Typography>
             <Button
-                className={styles.titleBtn}
+                color="primary"
                 onClick={() => {
                     alert(
                         "this would hide the table and switch the button to 'show all'"
@@ -159,7 +168,9 @@ export const ReturnedTable = ({ items }) => (
                     <TableHead>
                         <TableRow>
                             <TableCell />
-                            <TableCell align="left">Name</TableCell>
+                            <TableCell align="left" className={styles.widthHalf}>
+                                Name
+                            </TableCell>
                             <TableCell align="left">Qty</TableCell>
                             <TableCell align="right">Time</TableCell>
                             <TableCell align="left">Condition</TableCell>
@@ -215,7 +226,9 @@ export const PendingTable = ({ items, status }) => {
                     <TableHead>
                         <TableRow>
                             <TableCell />
-                            <TableCell align="left">Name</TableCell>
+                            <TableCell align="left" className={styles.widthHalf}>
+                                Name
+                            </TableCell>
                             <TableCell align="right">Requested Qty</TableCell>
                             <TableCell align="right">Granted Qty</TableCell>
                             <TableCell className={styles.widthBuffer} />

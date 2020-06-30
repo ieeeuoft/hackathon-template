@@ -1,5 +1,6 @@
 import React from "react";
 import { render } from "@testing-library/react";
+import { withRouter } from "testing/helpers";
 import {
     PendingTable,
     ReturnedTable,
@@ -48,7 +49,9 @@ describe("<CheckedOutTable />", () => {
     });
 
     it("renders correctly when there are checked out items", () => {
-        const { getByText } = render(<CheckedOutTable items={itemsCheckedOut} />);
+        const { getByText } = render(
+            withRouter(<CheckedOutTable items={itemsCheckedOut} />)
+        );
         expect(getByText("Name")).toBeInTheDocument();
         expect(getByText("Hide all")).toBeInTheDocument();
     });

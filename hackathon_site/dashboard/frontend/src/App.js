@@ -20,6 +20,7 @@ import Teams from "pages/Teams/Teams";
 import Reports from "pages/Reports/Reports";
 import Inventory from "pages/Inventory/Inventory";
 import Cart from "pages/Cart/Cart";
+import IncidentForm from "pages/IncidentForm/IncidentForm";
 import NotFound from "pages/NotFound/NotFound";
 
 export const makePalette = () => {
@@ -47,6 +48,7 @@ const UnconnectedApp = () => {
                     <Route exact path="/reports" component={Reports} />
                     <Route exact path="/inventory" component={Inventory} />
                     <Route exact path="/cart" component={Cart} />
+                    <Route exact path="/Incidentform" component={IncidentForm} />
                     <Route exact path="/404" component={NotFound} />
                     <Redirect to="/404" />
                 </Switch>
