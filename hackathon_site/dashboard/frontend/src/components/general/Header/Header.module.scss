@@ -3,6 +3,15 @@
 
 .header {
     background-color: color(secondary) !important;
+    width: calc(100% + 100px);
+    margin-top: -50px;
+    margin-bottom: 50px;
+
+    @include responsive(md-down) {
+        width: calc(100% + 50px);
+        margin-top: -25px;
+        margin-bottom: 25px;
+    }
 
     &Toolbar {
         justify-content: space-between;
@@ -19,6 +28,30 @@
         color: color(white);
         &:hover {
             background-color: rgba(355, 355, 355, 0.2);
+        }
+    }
+
+    &Drawer {
+        &Top {
+            width: 100%;
+            display: flex;
+            justify-content: flex-end;
+            background-color: color(light1);
+            padding: 8px 15px;
+            svg {
+                fill: color(grey);
+            }
+            @include responsive(sm-down) {
+                padding: 4px 15px;
+            }
+        }
+        &Hackathon {
+            padding: 30px 15px 20px;
+            border-bottom: 1px solid color(light2);
+            margin-bottom: 20px;
+            &Img {
+                height: 48px;
+            }
         }
     }
 }
