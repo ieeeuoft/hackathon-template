@@ -15,6 +15,7 @@
 
     &Pic {
         height: 210px;
+        width: 210px;
         &Box {
             object-fit: cover;
             opacity: 0.2;
@@ -24,21 +25,6 @@
     &Limit {
         font-size: small;
         margin: -1px 0px 0px -5px;
-        &1 {
-            color: #98e733;
-        }
-        &2 {
-            color: #dc1c1c;
-        }
-        &3 {
-            color: #ffa456;
-        }
-        &4 {
-            color: #6c36c7;
-        }
-        &5 {
-            color: #c816a1;
-        }
     }
 
     &Name {

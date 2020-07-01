@@ -6,32 +6,10 @@ import CardMedia from "@material-ui/core/CardMedia";
 import FiberManualRecordIcon from "@material-ui/icons/FiberManualRecord";
 import Grid from "@material-ui/core/Grid";
 
-const ColorCircle = ({ limit }) => {
-    // not sure how the limit would work for now
-    let endStyle = "";
-
-    switch (limit) {
-        case 1:
-            endStyle = styles.ItemLimit1;
-        case 2:
-            endStyle = styles.ItemLimit2;
-        case 3:
-            endStyle = styles.ItemLimit3;
-        case 4:
-            endStyle = styles.ItemLimit4;
-        case 5:
-            endStyle = styles.ItemLimit5;
-        default:
-            return null;
-    }
-    return <FiberManualRecordIcon className={endStyle} />;
-};
-
 const Item = ({ image, title, total, limit, currentStock }) => {
-    const stock =
-        !currentStock 
-            ? "OUT OF STOCK"
-            : currentStock + " OF " + total + " IN STOCK";
+    const stock = !currentStock
+        ? "OUT OF STOCK"
+        : currentStock + " OF " + total + " IN STOCK";
     const stockStyle = currentStock === null ? styles.outOfStock : styles.inStock;
     const coverStyle = currentStock === null ? styles.ItemPicBox : "";
 
@@ -47,7 +25,6 @@ const Item = ({ image, title, total, limit, currentStock }) => {
             </Card>
             <div className={styles.ItemTextBox}>
                 <div className={styles.ItemName}>
-                    <ColorCircle limit={limit} />
                     <Typography variant="body2">{title}</Typography>
                 </div>
                 <Typography variant="caption" className={stockStyle}>
