@@ -1,13 +1,38 @@
 import React from "react";
 import { render } from "@testing-library/react";
 import Navbar from "./Navbar";
-import { withRouter, withStore } from "testing/helpers";
+import { styles } from "./Navbar.module.scss";
+import { withStoreAndRouter } from "testing/helpers";
+import { cartQuantity } from "testing/mockData";
 
 describe("<Navbar />", () => {
     it("renders correctly when all icons appear", () => {
-        const { asFragment } = render(
-            withStore(withRouter(<Navbar cartQuantity={1} />))
-        );
+        const { asFragment } = render(withStoreAndRouter(<Navbar cartQuantity={1} />));
         expect(asFragment()).toMatchSnapshot();
+    });
+
+    it("Adds the active class to only the active page", () => {
+        const pagesAndPaths = [
+            ["Dashboard", "/"],
+            ["Orders", "/orders"],
+            ["Teams", "/teams"],
+            ["Reports", "/reports"],
+            ["Inventory", "/inventory"],
+            [`Cart (${cartQuantity})`, "/cart"],
+        ];
+
+        pagesAndPaths.map(([label, path]) => {
+            const { getByText, container } = render(
+                withStoreAndRouter(
+                    <Navbar cartQuantity={cartQuantity} pathname={path} />
+                )
+            );
+
+            expect(getByText(label).closest("button").className).toMatch(
+                new RegExp(styles.navActive)
+            );
+
+            expect(container.querySelectorAll(".navActive").length).toBe(1);
+        });
     });
 });

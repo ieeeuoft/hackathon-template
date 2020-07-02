@@ -7,3 +7,7 @@ import store from "slices/store";
 export const withRouter = (component) => <BrowserRouter>{component}</BrowserRouter>;
 
 export const withStore = (component) => <Provider store={store}>{component}</Provider>;
+
+export const withStoreAndRouter = (component) => (
+    <BrowserRouter><Provider store={store}>{component}</Provider></BrowserRouter>
+);

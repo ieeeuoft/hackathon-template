@@ -2,10 +2,10 @@ import React from "react";
 import { render } from "@testing-library/react";
 import Dashboard from "./Dashboard";
 import { cardItems } from "testing/mockData";
-import { withRouter, withStore } from "testing/helpers";
+import { withStoreAndRouter } from "testing/helpers";
 
 it("renders correctly when the dashboard appears 4 cards and 3 tables", () => {
-    const { queryByText, getByText } = render(withStore(withRouter(<Dashboard />)));
+    const { queryByText, getByText } = render(withStoreAndRouter(<Dashboard />));
     for (let e of cardItems) {
         expect(queryByText(e.title)).toBeTruthy();
     }
