@@ -9,5 +9,7 @@ export const withRouter = (component) => <BrowserRouter>{component}</BrowserRout
 export const withStore = (component) => <Provider store={store}>{component}</Provider>;
 
 export const withStoreAndRouter = (component) => (
-    <BrowserRouter><Provider store={store}>{component}</Provider></BrowserRouter>
+    <BrowserRouter>
+        <Provider store={store}>{component}</Provider>
+    </BrowserRouter>
 );
