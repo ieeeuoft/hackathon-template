@@ -21,7 +21,7 @@ describe("<Navbar />", () => {
     ];
 
     pagesAndPaths.map(([label, path]) => {
-        it("Adds the active class to only the active page", () => {
+        it(`Adds the active class to ${label} when on ${path}`, () => {
             const { getByText, container } = render(
                 withStoreAndRouter(
                     <Navbar cartQuantity={cartQuantity} pathname={path} />
