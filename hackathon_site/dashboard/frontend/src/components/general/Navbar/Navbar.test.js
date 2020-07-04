@@ -11,17 +11,17 @@ describe("<Navbar />", () => {
         expect(asFragment()).toMatchSnapshot();
     });
 
-    it("Adds the active class to only the active page", () => {
-        const pagesAndPaths = [
-            ["Dashboard", "/"],
-            ["Orders", "/orders"],
-            ["Teams", "/teams"],
-            ["Reports", "/reports"],
-            ["Inventory", "/inventory"],
-            [`Cart (${cartQuantity})`, "/cart"],
-        ];
+    const pagesAndPaths = [
+        ["Dashboard", "/"],
+        ["Orders", "/orders"],
+        ["Teams", "/teams"],
+        ["Reports", "/reports"],
+        ["Inventory", "/inventory"],
+        [`Cart (${cartQuantity})`, "/cart"],
+    ];
 
-        pagesAndPaths.map(([label, path]) => {
+    pagesAndPaths.map(([label, path]) => {
+        it("Adds the active class to only the active page", () => {
             const { getByText, container } = render(
                 withStoreAndRouter(
                     <Navbar cartQuantity={cartQuantity} pathname={path} />
