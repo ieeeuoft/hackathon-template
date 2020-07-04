@@ -1,7 +1,7 @@
 # API
 This app is largely a wrapper to coordinate the API endpoints for the various other apps.
 
-Generally speaking, each app will implement it's own serializers, views, and URL routes for the API. Views may be in `views.py`, or a dedicated `api_views.py` to differentiated them from regular user-facing views. API url routes should be put in a standard url config file named `api_urls.py`. These are included by `api.urls` with the appropriate namespaces, which itself is included in the base urlconf `hackathon_site.urls` with the `api` namespace.
+Generally speaking, each app will implement it's own serializers, views, and URL routes for the API. Views may be in `views.py`, or a dedicated `api_views.py` to differentiate them from regular user-facing views. API url routes should be put in a standard url config file named `api_urls.py`. These are included by `api.urls` with the appropriate namespaces, which itself is included in the base urlconf `hackathon_site.urls` with the `api` namespace.
 
 ## Authentication
 Two authentication schemes are enabled by default: [Token Authentication](https://www.django-rest-framework.org/api-guide/authentication/#tokenauthentication) and [Session Authentication](https://www.django-rest-framework.org/api-guide/authentication/#sessionauthentication), in that order.
