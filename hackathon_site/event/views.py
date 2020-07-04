@@ -1,4 +1,4 @@
-from rest_framework import generics, mixins
+from rest_framework import generics, mixins, exceptions
 
 from event.models import Profile
 from event.serializers import ProfileSerializer
@@ -12,7 +12,10 @@ class CurrentUserAPIView(generics.GenericAPIView, mixins.RetrieveModelMixin):
     serializer_class = ProfileSerializer
 
     def get_object(self):
-        return Profile.objects.get(user=self.request.user)
+        if self.request.user.is_anonymous:
+            raise exceptions.NotAuthenticated()
+
+        return generics.get_object_or_404(Profile.objects.all(), user=self.request.user)
 
     def get(self, request, *args, **kwargs):
         """
