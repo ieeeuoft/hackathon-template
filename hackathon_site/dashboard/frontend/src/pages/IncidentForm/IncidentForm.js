@@ -7,7 +7,7 @@ const Cart = () => {
     return (
         <div>
             <Header />
-            <Typography variant="h1">Broken/Lost item incident</Typography>
+            <Typography variant="h1">Broken/Lost Item Incident</Typography>
             <p>IEEEEEE</p>
         </div>
     );
