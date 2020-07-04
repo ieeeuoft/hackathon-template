@@ -1,4 +1,4 @@
-from rest_framework import generics, mixins, permissions
+from rest_framework import generics, mixins
 
 from event.models import Profile
 from event.serializers import ProfileSerializer
@@ -10,7 +10,6 @@ class CurrentUserAPIView(generics.GenericAPIView, mixins.RetrieveModelMixin):
     """
 
     serializer_class = ProfileSerializer
-    permission_classes = (permissions.IsAuthenticated,)
 
     def get_object(self):
         return generics.get_object_or_404(Profile.objects.all(), user=self.request.user)
