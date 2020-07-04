@@ -9,3 +9,5 @@ export const withRouter = (component) => <BrowserRouter>{component}</BrowserRout
 export const withStore = (component, store = ourStore) => (
     <Provider store={store}>{component}</Provider>
 );
+
+export const withStoreAndRouter = (component) => withStore(withRouter(component));
