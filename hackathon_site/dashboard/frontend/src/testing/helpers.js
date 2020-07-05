@@ -10,4 +10,5 @@ export const withStore = (component, store = ourStore) => (
     <Provider store={store}>{component}</Provider>
 );
 
-export const withStoreAndRouter = (component) => withStore(withRouter(component));
+export const withStoreAndRouter = (component, store = ourStore) =>
+    withStore(withRouter(component), store);

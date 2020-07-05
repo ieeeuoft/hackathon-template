@@ -56,18 +56,20 @@ describe("<PendingTable />", () => {
 
 describe("<UnconnectedCheckedOutTable />", () => {
     it("Shows a message when there's no checked out items", () => {
-        const { getByText } = render(withRouter(
-            <UnconnectedCheckedOutTable items={[]} isVisible={true} />
-        ));
+        const { getByText } = render(
+            withRouter(<UnconnectedCheckedOutTable items={[]} isVisible={true} />)
+        );
         expect(
             getByText("You have no items checked out yet. View our inventory.")
         ).toBeInTheDocument();
     });
 
     it("Shows checked out items", () => {
-        const { getByText } = render(withRouter(
-            <UnconnectedCheckedOutTable items={itemsCheckedOut} isVisible={true} />
-        ));
+        const { getByText } = render(
+            withRouter(
+                <UnconnectedCheckedOutTable items={itemsCheckedOut} isVisible={true} />
+            )
+        );
         expect(getByText(/checked out items/i)).toBeInTheDocument();
         expect(getByText(/hide all/i)).toBeInTheDocument();
         itemsCheckedOut.map(({ name }) => {
@@ -76,9 +78,11 @@ describe("<UnconnectedCheckedOutTable />", () => {
     });
 
     it("Hides the table when isVisible is false", () => {
-        const { getByText, queryByText } = render(withRouter(
-            <UnconnectedCheckedOutTable items={itemsCheckedOut} isVisible={false} />
-        ));
+        const { getByText, queryByText } = render(
+            withRouter(
+                <UnconnectedCheckedOutTable items={itemsCheckedOut} isVisible={false} />
+            )
+        );
         expect(getByText(/checked out items/i)).toBeInTheDocument();
         expect(getByText(/show all/i)).toBeInTheDocument();
         itemsCheckedOut.map(({ name }) => {
@@ -89,10 +93,11 @@ describe("<UnconnectedCheckedOutTable />", () => {
         const { getAllByText } = render(
             withRouter(
                 <UnconnectedCheckedOutTable items={itemsCheckedOut} isVisible={true} />
-        ));
+            )
+        );
         const numItems = itemsCheckedOut.length;
         expect(getAllByText(/report broken\/lost/i).length).toBe(numItems);
-    })
+    });
 });
 
 describe("<UnconnectedReturnedTable, />", () => {
@@ -138,17 +143,17 @@ describe("Connected tables", () => {
         });
     });
 
-    // it("CheckedOutTable dispatches an action to toggle visibility when button clicked", async () => {
-    //     const { getByText } = render(
-    //         withStoreAndRouter(<CheckedOutTable items={itemsCheckedOut} />, store)
-    //     );
-    //     const button = getByText(/hide all/i);
+    it("CheckedOutTable dispatches an action to toggle visibility when button clicked", async () => {
+        const { getByText } = render(
+            withStoreAndRouter(<CheckedOutTable items={itemsCheckedOut} />, store)
+        );
+        const button = getByText(/hide all/i);
 
-    //     await fireEvent.click(button);
-    //     expect(store.getActions()).toContainEqual(
-    //         expect.objectContaining({ type: uiActions.toggleCheckedOutTable.type })
-    //     );
-    // });
+        await fireEvent.click(button);
+        expect(store.getActions()).toContainEqual(
+            expect.objectContaining({ type: uiActions.toggleCheckedOutTable.type })
+        );
+    });
 
     it("ReturnedTable dispatches an action to toggle visibility when button clicked", async () => {
         const { getByText } = render(

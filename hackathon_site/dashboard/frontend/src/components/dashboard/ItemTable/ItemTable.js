@@ -62,10 +62,7 @@ export const UnconnectedCheckedOutTable = ({ items, isVisible, toggleVisibility 
             <Typography variant="h2" className={styles.titleText}>
                 Checked out items
             </Typography>
-            <Button
-                onClick={toggleVisibility}
-                color="primary"
-            >
+            <Button onClick={toggleVisibility} color="primary">
                 {isVisible ? "Hide all" : "Show all"}
             </Button>
         </div>
@@ -153,10 +150,7 @@ export const UnconnectedReturnedTable = ({ items, isVisible, toggleVisibility })
             <Typography variant="h2" className={styles.titleText}>
                 Returned items
             </Typography>
-            <Button
-                onClick={toggleVisibility}
-                color="primary"
-            >
+            <Button onClick={toggleVisibility} color="primary">
                 {isVisible ? "Hide all" : "Show all"}
             </Button>
         </div>
@@ -245,10 +239,7 @@ export const PendingTable = ({ items, status }) => {
                     <TableHead>
                         <TableRow>
                             <TableCell className={styles.widthFixed} />
-                            <TableCell
-                                className={styles.widthHalf}
-                                align="left"
-                            >
+                            <TableCell className={styles.widthHalf} align="left">
                                 Name
                             </TableCell>
                             <TableCell className={styles.widthQuarter} align="right">
