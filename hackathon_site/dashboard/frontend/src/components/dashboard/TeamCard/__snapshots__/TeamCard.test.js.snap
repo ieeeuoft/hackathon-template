@@ -50,7 +50,7 @@ exports[`TeamCard render 1`] = `
       class="MuiContainer-root lastRow MuiContainer-maxWidthLg"
     >
       <button
-        class="MuiButtonBase-root MuiButton-root MuiButton-text ButtonColor"
+        class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary"
         tabindex="0"
         type="button"
       >
