@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./Header.module.scss";
 import { ReactComponent as Logo } from "logo.svg";
 import AppBar from "@material-ui/core/AppBar";
@@ -9,8 +9,11 @@ import Drawer from "@material-ui/core/Drawer";
 import Hidden from "@material-ui/core/Hidden";
 import Menu from "@material-ui/icons/Menu";
 import CloseIcon from "@material-ui/icons/Close";
+import { connect } from "react-redux";
+
 import Navbar from "components/general/Navbar/Navbar";
-import { userEmail, cartQuantity } from "testing/mockData";
+import { fetchUserData, userDataSelector } from "slices/users/userSlice";
+import { cartQuantity } from "testing/mockData";
 import { hackathonName } from "constants.js";
 
 const HackathonTitle = () => (
@@ -26,8 +29,14 @@ const HackathonTitle = () => (
     </>
 );
 
-const Header = ({ showNavbar = true }) => {
-    const [mobileOpen, setMobileOpen] = React.useState(false);
+const UnconnectedHeader = ({ email, fetchUserData, showNavbar = true }) => {
+    const [mobileOpen, setMobileOpen] = useState(false);
+
+    useEffect(() => {
+        if (showNavbar && !email) {
+            fetchUserData();
+        }
+    }, [fetchUserData, email, showNavbar]);
 
     const toggleMenu = () => {
         setMobileOpen(!mobileOpen);
@@ -75,7 +84,7 @@ const Header = ({ showNavbar = true }) => {
                             </div>
                             <div className={styles.headerDrawerHackathon}>
                                 <HackathonTitle />
-                                <Typography variant="body2">{userEmail}</Typography>
+                                <Typography variant="body2">{email}</Typography>
                             </div>
                             <Navbar cartQuantity={cartQuantity} />
                         </Drawer>
@@ -85,4 +94,15 @@ const Header = ({ showNavbar = true }) => {
         </AppBar>
     );
 };
+
+const mapStateToProps = (state) => {
+    const userData = userDataSelector(state).data;
+
+    return {
+        email: userData ? userData.user.email : null,
+    };
+};
+
+const Header = connect(mapStateToProps, { fetchUserData })(UnconnectedHeader);
+
 export default Header;

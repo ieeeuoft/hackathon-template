@@ -1,8 +1,7 @@
-import axios from "axios";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { push } from "connected-react-router";
 
-import { post } from "api/api";
+import { get, post } from "api/api";
 
 export const userReducerName = "user";
 export const initialState = {
@@ -19,13 +18,26 @@ export const initialState = {
 };
 
 // Thunks
-export const fetchUserById = createAsyncThunk(
-    `${userReducerName}/getById`,
-    async (userId) => {
-        const response = await axios.get(
-            `https://jsonplaceholder.typicode.com/users/${userId}`
-        );
-        return response.data;
+
+export const fetchUserData = createAsyncThunk(
+    `${userReducerName}/fetchUserData`,
+    async (arg, { dispatch, rejectWithValue }) => {
+        try {
+            const response = await get("/api/event/users/user/");
+            return response.data;
+        } catch (e) {
+            if (e.response.status === 401) {
+                // Unauthenticated
+                dispatch(push("/login"));
+                return rejectWithValue({
+                    status: 401,
+                    message: e.response.data.detail,
+                });
+            } else if (e.response.status === 404) {
+                // No profile, so shouldn't have access to the dashboard
+                alert("Get out");
+            }
+        }
     }
 );
 
@@ -64,17 +76,17 @@ const userSlice = createSlice({
     initialState,
     reducers: {},
     extraReducers: {
-        [fetchUserById.pending]: (state) => {
+        [fetchUserData.pending]: (state) => {
             state.userData.isLoading = true;
         },
-        [fetchUserById.fulfilled]: (state, action) => {
+        [fetchUserData.fulfilled]: (state, action) => {
             state.userData.data = action.payload;
             state.userData.isLoading = false;
             state.userData.error = null;
         },
-        [fetchUserById.rejected]: (state, action) => {
+        [fetchUserData.rejected]: (state, action) => {
             state.userData.isLoading = false;
-            state.userData.error = action.error;
+            state.userData.error = action.payload || { message: action.error.message };
         },
         [logIn.pending]: (state) => {
             state.login.isLoading = true;
@@ -96,6 +108,6 @@ export const { reducer, actions } = userSlice;
 export default reducer;
 
 // Selectors
-export const userSelector = (state) => state[userReducerName];
-export const userDataSelector = (state) => userSelector(state).userData;
-export const loginSelector = (state) => userSelector(state).login;
+export const userSliceSelector = (state) => state[userReducerName];
+export const userDataSelector = (state) => userSliceSelector(state).userData;
+export const loginSelector = (state) => userSliceSelector(state).login;
