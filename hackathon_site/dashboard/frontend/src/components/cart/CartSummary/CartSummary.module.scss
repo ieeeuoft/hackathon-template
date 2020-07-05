@@ -1,0 +1,23 @@
+@import "./../../../assets/abstracts/mixins";
+@import "./../../../assets/abstracts/variables";
+
+.card {
+    display: flex;
+    flex-direction: column;
+    width: 250px;
+
+    h2 {
+        margin-bottom: 10px;
+    }
+    &Paper {
+        padding: 8px 12px;
+        &Qty {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+        }
+        &Msg {
+            padding: 20px 0;
+        }
+    }
+}
