@@ -1,6 +1,5 @@
 import React from "react";
 import styles from "./ItemTable.module.scss";
-import { Link } from "react-router-dom";
 import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
 import Container from "@material-ui/core/Container";
@@ -18,7 +17,7 @@ import Error from "@material-ui/icons/Error";
 import WatchLater from "@material-ui/icons/WatchLater";
 import CheckCircle from "@material-ui/icons/CheckCircle";
 import { connect } from "react-redux";
-
+import { push } from "connected-react-router";
 import {
     isCheckedOutTableVisibleSelector,
     isReturnedTableVisibleSelector,
@@ -56,7 +55,13 @@ export const ChipStatus = ({ status }) => {
     }
 };
 
-export const UnconnectedCheckedOutTable = ({ items, isVisible, toggleVisibility }) => (
+export const UnconnectedCheckedOutTable = ({
+    items,
+    isVisible,
+    toggleVisibility,
+    push,
+    reportIncident,
+}) => (
     <Container className={styles.tableContainer} maxWidth={false} disableGutters={true}>
         <div className={styles.title}>
             <Typography variant="h2" className={styles.titleText}>
@@ -121,11 +126,15 @@ export const UnconnectedCheckedOutTable = ({ items, isVisible, toggleVisibility 
                                         align="right"
                                         className={styles.widthButton}
                                     >
-                                        <Link to={"/IncidentForm"}>
-                                            <Button color="secondary">
-                                                Report broken/lost
-                                            </Button>
-                                        </Link>
+                                        <Button
+                                            color="secondary"
+                                            onClick={() => {
+                                                reportIncident(row.id);
+                                                push("/incident-form");
+                                            }}
+                                        >
+                                            Report broken/lost
+                                        </Button>
                                     </TableCell>
                                 </TableRow>
                             ))}
@@ -142,6 +151,7 @@ const checkedOutMapStateToProps = (state) => ({
 
 export const CheckedOutTable = connect(checkedOutMapStateToProps, {
     toggleVisibility: uiActions.toggleCheckedOutTable,
+    push,
 })(UnconnectedCheckedOutTable);
 
 export const UnconnectedReturnedTable = ({ items, isVisible, toggleVisibility }) => (

@@ -48,7 +48,7 @@ const UnconnectedApp = () => {
                     <Route exact path="/reports" component={Reports} />
                     <Route exact path="/inventory" component={Inventory} />
                     <Route exact path="/cart" component={Cart} />
-                    <Route exact path="/Incidentform" component={IncidentForm} />
+                    <Route exact path="/incident-form" component={IncidentForm} />
                     <Route exact path="/404" component={NotFound} />
                     <Redirect to="/404" />
                 </Switch>

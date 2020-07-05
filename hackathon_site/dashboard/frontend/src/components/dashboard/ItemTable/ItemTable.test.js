@@ -15,7 +15,7 @@ import {
     actions as uiActions,
 } from "slices/ui/uiSlice";
 import { itemsCheckedOut, itemsPending, itemsReturned } from "testing/mockData";
-import { withStore, withRouter, withStoreAndRouter } from "testing/helpers";
+import { withStore } from "testing/helpers";
 
 const mockStore = configureStore();
 
@@ -57,7 +57,7 @@ describe("<PendingTable />", () => {
 describe("<UnconnectedCheckedOutTable />", () => {
     it("Shows a message when there's no checked out items", () => {
         const { getByText } = render(
-            withRouter(<UnconnectedCheckedOutTable items={[]} isVisible={true} />)
+            <UnconnectedCheckedOutTable items={[]} isVisible={true} />
         );
         expect(
             getByText("You have no items checked out yet. View our inventory.")
@@ -66,9 +66,7 @@ describe("<UnconnectedCheckedOutTable />", () => {
 
     it("Shows checked out items", () => {
         const { getByText } = render(
-            withRouter(
-                <UnconnectedCheckedOutTable items={itemsCheckedOut} isVisible={true} />
-            )
+            <UnconnectedCheckedOutTable items={itemsCheckedOut} isVisible={true} />
         );
         expect(getByText(/checked out items/i)).toBeInTheDocument();
         expect(getByText(/hide all/i)).toBeInTheDocument();
@@ -79,9 +77,7 @@ describe("<UnconnectedCheckedOutTable />", () => {
 
     it("Hides the table when isVisible is false", () => {
         const { getByText, queryByText } = render(
-            withRouter(
-                <UnconnectedCheckedOutTable items={itemsCheckedOut} isVisible={false} />
-            )
+            <UnconnectedCheckedOutTable items={itemsCheckedOut} isVisible={false} />
         );
         expect(getByText(/checked out items/i)).toBeInTheDocument();
         expect(getByText(/show all/i)).toBeInTheDocument();
@@ -89,18 +85,17 @@ describe("<UnconnectedCheckedOutTable />", () => {
             expect(queryByText(name)).toBeNull();
         });
     });
-    it("Goes to the incident form when you click the 'Report broken/lost' button", () => {
+
+    it("Makes sure there's the same number of buttons as rows", () => {
         const { getAllByText } = render(
-            withRouter(
-                <UnconnectedCheckedOutTable items={itemsCheckedOut} isVisible={true} />
-            )
+            <UnconnectedCheckedOutTable items={itemsCheckedOut} isVisible={true} />
         );
         const numItems = itemsCheckedOut.length;
         expect(getAllByText(/report broken\/lost/i).length).toBe(numItems);
     });
 });
 
-describe("<UnconnectedReturnedTable, />", () => {
+describe("<UnconnectedReturnedTable />", () => {
     it("Shows a message when there's no returned items", () => {
         const { getByText } = render(
             <UnconnectedReturnedTable items={[]} isVisible={true} />
@@ -145,7 +140,7 @@ describe("Connected tables", () => {
 
     it("CheckedOutTable dispatches an action to toggle visibility when button clicked", async () => {
         const { getByText } = render(
-            withStoreAndRouter(<CheckedOutTable items={itemsCheckedOut} />, store)
+            withStore(<CheckedOutTable items={itemsCheckedOut} />, store)
         );
         const button = getByText(/hide all/i);
 
@@ -153,6 +148,21 @@ describe("Connected tables", () => {
         expect(store.getActions()).toContainEqual(
             expect.objectContaining({ type: uiActions.toggleCheckedOutTable.type })
         );
+    });
+
+    it("Calls reportIncident when the 'Report broken/lost' button is clicked", () => {
+        const oneRow = [
+            { id: 1, url: "https://i.imgur.com/IO6e5a6.jpg", name: "Arduino", qty: 6 },
+        ];
+        const reportIncidentSpy = jest.fn();
+        const { getByText } = render(
+            withStore(
+                <CheckedOutTable items={oneRow} reportIncident={reportIncidentSpy} />
+            )
+        );
+        const button = getByText("Report broken/lost");
+        fireEvent.click(button);
+        expect(reportIncidentSpy).toHaveBeenCalled();
     });
 
     it("ReturnedTable dispatches an action to toggle visibility when button clicked", async () => {
