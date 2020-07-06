@@ -12,14 +12,11 @@ import {
 } from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
 
-const Selections = ({ currentStock, limit }) => {
-    currentStock = currentStock === null ? 0 : currentStock;
-    let stock = currentStock;
-    stock = limit > currentStock ? currentStock : limit;
+const Selections = ({ currentStock }) => {
     const items = [];
     let i = 0;
 
-    for (i = 2; i < stock + 1; i++) {
+    for (i = 2; i < currentStock + 1; i++) {
         items.push(i);
     }
 
@@ -31,7 +28,7 @@ const Selections = ({ currentStock, limit }) => {
     ));
 };
 
-const CartCard = ({ image, title, limit, total, currentStock }) => {
+const CartCard = ({ image, title, currentStock }) => {
     const [item, setItem] = React.useState("1");
 
     const handleChange = (event) => {
@@ -60,7 +57,7 @@ const CartCard = ({ image, title, limit, total, currentStock }) => {
                     >
                         <Select size="small" value={item} onChange={handleChange}>
                             <MenuItem value={1}>1</MenuItem>
-                            <Selections currentStock={currentStock} limit={limit} />
+                            <Selections currentStock={currentStock} />
                         </Select>
                     </FormControl>
                 </div>
