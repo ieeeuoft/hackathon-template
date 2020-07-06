@@ -11,7 +11,7 @@ exports[`Renders correctly when it reads the number 0 1`] = `
     class="MuiPaper-root paper MuiPaper-elevation3"
   >
     <div
-      class="MuiContainer-root cardPaperQty MuiContainer-maxWidthLg"
+      class="MuiContainer-root qty MuiContainer-maxWidthLg"
     >
       <p
         class="MuiTypography-root MuiTypography-body2"
@@ -25,12 +25,12 @@ exports[`Renders correctly when it reads the number 0 1`] = `
       </p>
     </div>
     <p
-      class="MuiTypography-root cardPaperMsg MuiTypography-body2"
+      class="MuiTypography-root msg MuiTypography-body2"
     >
       Your entire team’s order is here. Before you submit, refresh the page if someone added something new.
     </p>
     <button
-      class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-fullWidth"
+      class="MuiButtonBase-root MuiButton-root MuiButton-contained btn MuiButton-containedPrimary"
       tabindex="0"
       type="button"
     >
