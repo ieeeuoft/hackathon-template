@@ -8,57 +8,9 @@
     width: 100%;
     position: fixed;
     align-items: center;
+    z-index: 5;
     .backarrow {
         margin: 0 15px;
         padding: 0;
-    }
-}
-
-.headersheet {
-    display: flex;
-    margin: 108px 50px 0 50px;
-    .title {
-        display: flex;
-    }
-    .available {
-        margin: 9px 151px 0 0;
-    }
-    .tags {
-        margin: 64px 0 8px 0;
-    }
-    & img {
-        margin: 0 11px;
-    }
-}
-
-.bodysheet {
-    margin: 10px 50px 0 50px;
-    .bodyinfo {
-        display: flex;
-        flex-direction: column;
-        h3 {
-            margin: 5px 0;
-        }
-        margin-bottom: 20px;
-        &DataSheet {
-            display: flex;
-        }
-    }
-}
-
-.cart {
-    display: flex;
-    flex-direction: column;
-    .form {
-        margin: 20px 50px;
-    }
-    .cartButton {
-        color: color(white);
-        background-color: color(primary);
-        margin: 30px 50px;
-        padding: 10px 25px;
-        &:hover {
-            background-color: color(dark1);
-        }
     }
 }

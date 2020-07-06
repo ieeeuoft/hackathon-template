@@ -16,7 +16,7 @@ describe("SideSheetRight", () => {
         total: 30,
         available: 29,
         img: "https://www.filterforge.com/more/help/images/size200.jpg",
-        tags: "MCU, FPGA",
+        category: ["MCU", "FPGA"],
         manufacturer: "Canakit",
         model_num: "Model 3B+",
         datasheet: "link",

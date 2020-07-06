@@ -1,5 +1,6 @@
 import React from "react";
-import { BrowserRouter as Router, Route } from "react-router-dom";
+import { ConnectedRouter } from "connected-react-router";
+import { Route, Redirect, Switch } from "react-router-dom";
 import {
     createMuiTheme,
     StylesProvider,
@@ -8,32 +9,18 @@ import {
 import { Provider as ReduxProvider } from "react-redux";
 import styles from "assets/abstracts/_exports.scss";
 
-import store from "slices/store";
+import store, { history } from "slices/store";
 
 import "App.scss";
 import Dashboard from "pages/Dashboard/Dashboard";
 import Footer from "components/general/Footer/Footer";
-import Login from "pages/login/Login";
-import SideSheetRight from "components/general/SideSheetRight/SideSheetRight";
-
-const testD = {
-    name: "Arduino",
-    type: "red",
-    total: 30,
-    available: 29,
-    img: "https://www.filterforge.com/more/help/images/size200.jpg",
-    tags: "MCU, FPGA",
-    manufacturer: "Canakit",
-    model_num: "Model 3B+",
-    datasheet: "link",
-    notes: ["- For micropython ask for image", "- randomnerdtutorials.com"],
-    constraints: ["- Max 1 of this item", "- Max 3 microcontroller labelled red"],
-    quantity: 3,
-};
-
-const testF = (qty) => {
-    alert(qty);
-};
+import Login from "pages/Login/Login";
+import Orders from "pages/Orders/Orders";
+import Teams from "pages/Teams/Teams";
+import Reports from "pages/Reports/Reports";
+import Inventory from "pages/Inventory/Inventory";
+import Cart from "pages/Cart/Cart";
+import NotFound from "pages/NotFound/NotFound";
 
 export const makePalette = () => {
     // In testing, the scss exports don't work so styles is an
@@ -51,9 +38,19 @@ const theme = createMuiTheme({
 const UnconnectedApp = () => {
     return (
         <div className="App">
-            <Route exact path="/" component={Dashboard} />
-            <Route exact path="/login" component={Login} />
-            <SideSheetRight detail={testD} addCartFunction={testF} />
+            <div className="AppPadding">
+                <Switch>
+                    <Route exact path="/" component={Dashboard} />
+                    <Route exact path="/login" component={Login} />
+                    <Route exact path="/orders" component={Orders} />
+                    <Route exact path="/teams" component={Teams} />
+                    <Route exact path="/reports" component={Reports} />
+                    <Route exact path="/inventory" component={Inventory} />
+                    <Route exact path="/cart" component={Cart} />
+                    <Route exact path="/404" component={NotFound} />
+                    <Redirect to="/404" />
+                </Switch>
+            </div>
             <Footer />
         </div>
     );
@@ -63,9 +60,9 @@ const ConnectedApp = () => (
     <ReduxProvider store={store}>
         <StylesProvider injectFirst>
             <ThemeProvider theme={theme}>
-                <Router>
+                <ConnectedRouter history={history}>
                     <UnconnectedApp />
-                </Router>
+                </ConnectedRouter>
             </ThemeProvider>
         </StylesProvider>
     </ReduxProvider>

@@ -12,7 +12,7 @@ exports[`renders correctly when there are 2 images 1`] = `
       Thanks to our sponsors!
     </h2>
     <div
-      class="MuiPaper-root sponsorsPaper MuiPaper-elevation3 MuiPaper-rounded"
+      class="MuiPaper-root sponsorsPaper MuiPaper-elevation3"
     >
       <div
         class="slick-slider slick-initialized"

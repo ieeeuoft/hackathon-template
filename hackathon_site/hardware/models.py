@@ -1,8 +1,6 @@
 from django.db import models
 from event.models import Team as TeamEvent
 
-# Create your models here.
-
 
 class Category(models.Model):
     class Meta:
@@ -39,26 +37,35 @@ class Hardware(models.Model):
         return self.name
 
 
-class Order(models.Model):
+class OrderItem(models.Model):
     HEALTH_CHOICES = [
         ("Healthy", "Healthy"),
         ("Heavily Used", "Heavily Used"),
         ("Broken", "Broken"),
-    ]
-    STATUS_CHOICES = [
-        ("Pending", "Pending"),
-        ("Ready for Pickup", "Ready for Pickup"),
-        ("Picked Up", "Picked Up"),
-        ("Returned", "Returned"),
         ("Lost", "Lost"),
     ]
-
-    hardware = models.ForeignKey(Hardware, on_delete=models.CASCADE, null=False)
-    team = models.ForeignKey(TeamEvent, on_delete=models.CASCADE, null=False)
+    order = models.ForeignKey(
+        "Order", null=False, on_delete=models.CASCADE, related_name="items"
+    )
+    hardware = models.ForeignKey(
+        Hardware, null=False, on_delete=models.CASCADE, related_name="order_items"
+    )
     part_returned_health = models.CharField(
         max_length=64, choices=HEALTH_CHOICES, null=True
     )
-    status = models.CharField(max_length=64, choices=STATUS_CHOICES, default="Pending")
+
+
+class Order(models.Model):
+    STATUS_CHOICES = [
+        ("Cart", "Cart"),
+        ("Submitted", "Submitted"),
+        ("Ready for Pickup", "Ready for Pickup"),
+        ("Picked Up", "Picked Up"),
+    ]
+
+    hardware_set = models.ManyToManyField(Hardware, through=OrderItem)
+    team = models.ForeignKey(TeamEvent, on_delete=models.CASCADE, null=False)
+    status = models.CharField(max_length=64, choices=STATUS_CHOICES, default="Cart")
 
     created_at = models.DateTimeField(auto_now_add=True, null=False)
     updated_at = models.DateTimeField(auto_now=True, null=False)
@@ -76,10 +83,12 @@ class Incident(models.Model):
         ("Major Repair Required", "Major Repair Required"),
         ("Not Sure If Works", "Not Sure If Works"),
     ]
-    order = models.ForeignKey(Order, on_delete=models.CASCADE, null=False)
     state = models.CharField(max_length=64, choices=STATE_CHOICES, null=False)
     time_occurred = models.DateTimeField(auto_now=False, auto_now_add=False, null=False)
     description = models.TextField(null=False)
+    order_item = models.OneToOneField(
+        OrderItem, related_name="incident", null=False, on_delete=models.CASCADE
+    )
 
     created_at = models.DateTimeField(auto_now_add=True, null=False)
     updated_at = models.DateTimeField(auto_now=True, null=False)

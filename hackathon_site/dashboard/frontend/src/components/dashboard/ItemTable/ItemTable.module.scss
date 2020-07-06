@@ -6,7 +6,7 @@
     &Container {
         margin-top: 25px;
         svg {
-            color: #757575;
+            color: color(grey);
         }
     }
 }
@@ -70,7 +70,7 @@
         width: 100%;
     }
 
-    @include responsive(md) {
+    @include responsive(md-down) {
         &Half {
             width: 50%;
         }

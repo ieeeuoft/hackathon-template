@@ -1,17 +1,47 @@
 import React from "react";
 import OpenInNew from "@material-ui/icons/OpenInNew";
 import GetApp from "@material-ui/icons/GetApp";
+import PinDrop from "@material-ui/icons/PinDrop";
 
 // For DashCard on Dashboard
 export const cardItems = [
     {
-        title: "Hello",
-        content: [{ name: "Test", url: "https://www.facebook.com", icon: <GetApp /> }],
+        title: "Important Links",
+        content: [
+            {
+                name: "Hackathon main site",
+                url: "https://www.facebook.com",
+                icon: <OpenInNew />,
+            },
+        ],
     },
     {
-        title: "Hi",
+        title: "General electronics aid",
         content: [
+            {
+                name: "Test1 asdajslkd",
+                url: "https://www.youtube.com",
+                icon: <OpenInNew />,
+            },
             { name: "Test2", url: "https://www.youtube.com", icon: <OpenInNew /> },
+            {
+                name: "Test3 asknd",
+                url: "https://www.youtube.com",
+                icon: <OpenInNew />,
+            },
+            { name: "Test4 blah", url: "https://www.youtube.com", icon: <GetApp /> },
+            { name: "Test5", url: "https://www.youtube.com", icon: <GetApp /> },
+        ],
+    },
+    {
+        title: "Stores nearby",
+        content: [
+            {
+                name: "Home Hardware",
+                url: "https://www.facebook.com",
+                icon: <PinDrop />,
+            },
+            { name: "Test2", url: "https://www.facebook.com", icon: <PinDrop /> },
         ],
     },
 ];
@@ -62,3 +92,16 @@ export const itemsPending = [
 ];
 
 export const orderStatus = "pending";
+
+// Team card
+export const members = [
+    "Aki Kimura",
+    "Graham Hoyes",
+    "Alex Bogdan",
+    "Raymond Aksjdkjah",
+];
+export const teamCode = "PAS3NLQ3";
+
+// Navbar
+export const cartQuantity = 0;
+export const userEmail = "graham@email.com";

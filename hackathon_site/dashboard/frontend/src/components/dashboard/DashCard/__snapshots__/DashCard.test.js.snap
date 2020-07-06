@@ -2,50 +2,46 @@
 
 exports[`DashCard render 1`] = `
 <DocumentFragment>
-  <div
-    class="MuiGrid-root DashCard MuiGrid-item"
+  <h2
+    class="MuiTypography-root MuiTypography-h2 MuiTypography-noWrap"
   >
-    <h2
-      class="MuiTypography-root MuiTypography-h2"
+    any string
+  </h2>
+  <div
+    class="MuiPaper-root paper MuiPaper-elevation3"
+  >
+    <a
+      class="MuiTypography-root MuiLink-root MuiLink-underlineNone MuiTypography-colorInherit"
+      href="https://jestjs.io/docs/en/getting-started"
+      rel="noopener"
+      target="_blank"
     >
-      any string
-    </h2>
-    <div
-      class="MuiPaper-root paper MuiPaper-elevation3"
+      <div
+        class="MuiContainer-root items MuiContainer-maxWidthLg"
+      >
+        <p
+          class="MuiTypography-root MuiTypography-body2 MuiTypography-noWrap"
+        >
+          testing
+        </p>
+      </div>
+    </a>
+    <a
+      class="MuiTypography-root MuiLink-root MuiLink-underlineNone MuiTypography-colorInherit"
+      href="youtube"
+      rel="noopener"
+      target="_blank"
     >
-      <a
-        class="MuiTypography-root MuiLink-root MuiLink-underlineNone MuiTypography-colorInherit"
-        href="https://jestjs.io/docs/en/getting-started"
-        rel="noopener"
-        target="_blank"
+      <div
+        class="MuiContainer-root items MuiContainer-maxWidthLg"
       >
-        <div
-          class="MuiContainer-root items MuiContainer-maxWidthLg"
+        <p
+          class="MuiTypography-root MuiTypography-body2 MuiTypography-noWrap"
         >
-          <p
-            class="MuiTypography-root MuiTypography-body2"
-          >
-            testing
-          </p>
-        </div>
-      </a>
-      <a
-        class="MuiTypography-root MuiLink-root MuiLink-underlineNone MuiTypography-colorInherit"
-        href="youtube"
-        rel="noopener"
-        target="_blank"
-      >
-        <div
-          class="MuiContainer-root items MuiContainer-maxWidthLg"
-        >
-          <p
-            class="MuiTypography-root MuiTypography-body2"
-          >
-            testing
-          </p>
-        </div>
-      </a>
-    </div>
+          testing
+        </p>
+      </div>
+    </a>
   </div>
 </DocumentFragment>
 `;
