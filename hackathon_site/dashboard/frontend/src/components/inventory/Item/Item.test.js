@@ -11,8 +11,8 @@ describe("InventoryItem", () => {
     let limit = null;
     let currentStock = 4;
 
-    test("Has stock with no limit", () => {
-        const { asFragment } = render(
+    test("Has stock", () => {
+        const { getByText } = render(
             <Item
                 image={image}
                 title={title}
@@ -21,12 +21,13 @@ describe("InventoryItem", () => {
                 currentStock={currentStock}
             />
         );
-        expect(asFragment()).toMatchSnapshot();
+        expect(getByText("Some Hardware")).toBeInTheDocument();
+        expect(getByText("4 OF 6 IN STOCK")).toBeInTheDocument();
     });
 
     test("Out of Stock", () => {
-        let currentStock = null;
-        const { asFragment } = render(
+        let currentStock = 0;
+        const { getByText } = render(
             <Item
                 image={image}
                 title={title}
@@ -35,6 +36,7 @@ describe("InventoryItem", () => {
                 currentStock={currentStock}
             />
         );
-        expect(asFragment()).toMatchSnapshot();
+        expect(getByText("Some Hardware")).toBeInTheDocument();
+        expect(getByText("OUT OF STOCK")).toBeInTheDocument();
     });
 });
