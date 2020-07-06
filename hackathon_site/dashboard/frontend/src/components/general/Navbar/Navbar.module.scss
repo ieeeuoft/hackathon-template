@@ -7,19 +7,22 @@
             display: inline-block;
         }
         &Btn,
-        &IconBtn {
+        &IconBtn,
+        &Active {
             color: color(white);
-            .customIcon {
-                width: 20px;
-                fill: color(white);
-            }
             &:hover {
                 background-color: rgba(355, 355, 355, 0.2);
             }
         }
-        &Btn {
+        &Btn,
+        &Active {
             border-radius: 0;
             padding: 20px 15px;
+        }
+        &Active {
+            color: color(blueLight);
+            border-bottom: 3px solid color(blueLight);
+            padding: 20px 15px 17px;
         }
         &IconBtn {
             margin-left: 15px;
@@ -32,7 +35,8 @@
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        &Btn {
+        &Btn,
+        &Active {
             height: 50px;
             width: 100%;
             display: flex;
@@ -46,9 +50,8 @@
                 padding-left: 70px;
             }
         }
-        .customIcon {
-            width: 20px;
-            fill: color(font);
+        &Active {
+            background-color: color(light1);
         }
     }
 }

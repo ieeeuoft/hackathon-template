@@ -19,9 +19,7 @@ const mockStore = configureStore([thunk]);
 jest.mock("api/api");
 
 const mockState = {
-    [userReducerName]: {
-        ...initialState,
-    },
+    [userReducerName]: initialState,
 };
 
 describe("Selectors", () => {
