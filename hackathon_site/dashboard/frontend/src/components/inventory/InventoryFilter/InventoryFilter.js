@@ -67,18 +67,20 @@ const InventoryFilter = ({ categories, applyFilter, removeFilter, elevation = 3 
                 ))}
             </form>
         </Paper>
-        <Button
-            color="primary"
-            variant="contained"
-            fullWidth={true}
-            onClick={applyFilter}
-            className={styles.filterBtn}
-        >
-            Apply
-        </Button>
-        <Button color="secondary" onClick={removeFilter}>
-            Clear all
-        </Button>
+        <div className={styles.filterBtns}>
+            <Button
+                color="primary"
+                variant="contained"
+                onClick={applyFilter}
+                fullWidth={true}
+                className={styles.filterBtnsApply}
+            >
+                Apply
+            </Button>
+            <Button color="secondary" onClick={removeFilter}>
+                Clear all
+            </Button>
+        </div>
     </div>
 );
 

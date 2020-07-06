@@ -1,4 +1,5 @@
 @import "./../../../assets/abstracts/variables";
+@import "./../../../assets/abstracts/mixins";
 
 .filter {
     width: 100%;
@@ -24,7 +25,23 @@
             font-weight: 500;
         }
     }
-    &Btn {
-        margin: 15px 0;
+    &Btns {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        margin-top: 15px;
+        @include responsive(sm-down) {
+            flex-direction: row;
+            flex-direction: row-reverse;
+            justify-content: space-between;
+            position: sticky;
+            bottom: 0;
+            padding: 15px 10px;
+            background-color: color(light1);
+            &Apply {
+                width: auto;
+            }
+        }
     }
 }
