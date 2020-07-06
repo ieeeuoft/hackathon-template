@@ -1,11 +1,7 @@
-@import "./../../../assets/abstracts/mixins";
-@import "./../../../assets/abstracts/variables";
-
 .card {
     display: flex;
     flex-direction: column;
-    width: 250px;
-
+    width: 100%;
     h2 {
         margin-bottom: 10px;
     }
