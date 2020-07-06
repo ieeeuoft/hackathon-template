@@ -5,14 +5,11 @@
     padding: 8px 0px;
     overflow-x: hidden;
     .name {
-        padding: 12px 50px 12px 20px;
+        padding: 12px 20px;
     }
 }
 .lastRow {
     display: flex;
     justify-content: flex-end;
     padding-top: 6px;
-}
-.ButtonColor {
-    color: color(primary);
 }
