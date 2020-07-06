@@ -1,22 +1,16 @@
 @import "./../../../assets/abstracts/variables";
 
-.paper {
-    flex-grow: 1;
-    padding: 8px 0px;
-    overflow-x: hidden;
-    .items {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding-top: 10px;
-        padding-bottom: 10px;
-        &:hover {
-            background-color: color(light2);
-        }
-        svg {
-            color: color(grey);
-            margin-left: 25px;
-        }
+.items {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    &:hover {
+        background-color: color(light2);
+    }
+    svg {
+        margin-left: 25px;
     }
 }
 

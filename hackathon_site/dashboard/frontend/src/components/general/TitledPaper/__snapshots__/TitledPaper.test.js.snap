@@ -1,0 +1,16 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TeamCard matches snapshot 1`] = `
+<DocumentFragment>
+  <h2
+    class="MuiTypography-root title MuiTypography-h2 MuiTypography-noWrap"
+  >
+    Test title
+  </h2>
+  <div
+    class="MuiPaper-root paper MuiPaper-elevation3"
+  >
+    Test child
+  </div>
+</DocumentFragment>
+`;

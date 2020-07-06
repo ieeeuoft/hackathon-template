@@ -2,51 +2,47 @@
 
 exports[`Renders correctly when it reads the number 0 1`] = `
 <DocumentFragment>
-  <div
-    class="card"
+  <h2
+    class="MuiTypography-root title MuiTypography-h2 MuiTypography-noWrap"
   >
-    <h2
-      class="MuiTypography-root MuiTypography-h2"
-    >
-      Cart Summary
-    </h2>
+    Cart Summary
+  </h2>
+  <div
+    class="MuiPaper-root paper MuiPaper-elevation3"
+  >
     <div
-      class="MuiPaper-root cardPaper MuiPaper-elevation3"
+      class="MuiContainer-root cardPaperQty MuiContainer-maxWidthLg"
     >
-      <div
-        class="MuiContainer-root cardPaperQty MuiContainer-maxWidthLg"
-      >
-        <p
-          class="MuiTypography-root MuiTypography-body2"
-        >
-          Quantity
-        </p>
-        <p
-          class="MuiTypography-root MuiTypography-body2"
-        >
-          0
-        </p>
-      </div>
       <p
-        class="MuiTypography-root cardPaperMsg MuiTypography-body2"
+        class="MuiTypography-root MuiTypography-body2"
       >
-        Your entire team’s order is here. Before you submit, refresh the page if someone added something new.
+        Quantity
       </p>
-      <button
-        class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-fullWidth"
-        tabindex="0"
-        type="button"
+      <p
+        class="MuiTypography-root MuiTypography-body2"
       >
-        <span
-          class="MuiButton-label"
-        >
-          Submit order
-        </span>
-        <span
-          class="MuiTouchRipple-root"
-        />
-      </button>
+        0
+      </p>
     </div>
+    <p
+      class="MuiTypography-root cardPaperMsg MuiTypography-body2"
+    >
+      Your entire team’s order is here. Before you submit, refresh the page if someone added something new.
+    </p>
+    <button
+      class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-fullWidth"
+      tabindex="0"
+      type="button"
+    >
+      <span
+        class="MuiButton-label"
+      >
+        Submit order
+      </span>
+      <span
+        class="MuiTouchRipple-root"
+      />
+    </button>
   </div>
 </DocumentFragment>
 `;

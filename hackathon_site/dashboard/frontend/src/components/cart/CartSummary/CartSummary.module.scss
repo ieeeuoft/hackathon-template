@@ -1,19 +1,12 @@
-.card {
+.qty {
     display: flex;
-    flex-direction: column;
-    width: 100%;
-    h2 {
-        margin-bottom: 10px;
-    }
-    &Paper {
-        padding: 8px 20px;
-        &Qty {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px 0;
-        }
-        &Msg {
-            padding: 20px 0;
-        }
-    }
+    justify-content: space-between;
+    padding: 10px 20px;
+}
+.msg {
+    padding: 20px;
+}
+.btn {
+    width: calc(100% - 40px);
+    margin: 0 20px;
 }
