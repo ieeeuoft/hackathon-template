@@ -2,7 +2,7 @@ import React from "react";
 import { render } from "@testing-library/react";
 import TitledPaper from "./TitledPaper";
 
-describe("TeamCard", () => {
+describe("<TitledPaper />", () => {
     const titleTest = "Test title";
     const childTest = "Test child";
     it("matches snapshot", () => {
