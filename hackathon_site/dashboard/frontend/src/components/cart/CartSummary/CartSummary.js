@@ -5,14 +5,14 @@ import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import styles from "./CartSummary.module.scss";
 
-const CartSummary = ({ cartTotal = 0 }) => {
+const CartSummary = ({ cartQuantity }) => {
     return (
         <div className={styles.card}>
             <Typography variant="h2">Cart Summary</Typography>
             <Paper elevation={3} className={styles.cardPaper} square={true}>
                 <Container className={styles.cardPaperQty}>
                     <Typography variant="body2">Quantity</Typography>
-                    <Typography variant="body2">{cartTotal}</Typography>
+                    <Typography variant="body2">{cartQuantity}</Typography>
                 </Container>
                 <Typography variant="body2" className={styles.cardPaperMsg}>
                     Your entire team’s order is here. Before you submit, refresh the
