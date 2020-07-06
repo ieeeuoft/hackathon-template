@@ -10,9 +10,9 @@ import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 
-const InventoryFilter = ({ categories, applyFilter, removeFilter }) => (
+const InventoryFilter = ({ categories, applyFilter, removeFilter, elevation = 3 }) => (
     <div className={styles.filter}>
-        <Paper className={styles.filterPaper}>
+        <Paper className={styles.filterPaper} square={true} elevation={elevation}>
             <form>
                 <Typography variant="h2" noWrap>
                     Order by
