@@ -19,7 +19,7 @@ const TeamCard = ({ members, teamCode, handleEditTeam }) => {
             ))}
 
             <Container className={styles.lastRow}>
-                <Button className={styles.ButtonColor} onClick={handleEditTeam}>
+                <Button color="primary" onClick={handleEditTeam}>
                     Edit
                 </Button>
             </Container>
