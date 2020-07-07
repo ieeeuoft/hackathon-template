@@ -9,6 +9,9 @@ import LaunchIcon from "@material-ui/icons/Launch";
 import InputLabel from "@material-ui/core/InputLabel";
 import Chip from "@material-ui/core/Chip";
 import styles from "./ProductOverview.module.scss";
+import Alert from "@material-ui/lab/Alert";
+
+import { Formik } from "formik";
 
 const createQuantityList = (number) => {
     let entry = [];
@@ -25,39 +28,77 @@ const createQuantityList = (number) => {
     return entry;
 };
 
-const CartSheet = ({ addCartFunction, quantity }) => {
-    const [qty, setQty] = React.useState("1");
+export const CartForm = ({
+    availableQuantity,
+    handleSubmit,
+    handleChange,
+    requestFailure,
+    values: { quantity },
+}) => {
+    if (!handleSubmit) {
+        return false;
+    }
 
-    const changeQuantity = (event) => {
-        setQty(event.target.value);
+    return (
+        handleSubmit && (
+            <>
+                {requestFailure && (
+                    <Alert className={styles.alert} variant="filled" severity="error">
+                        {requestFailure.message}
+                    </Alert>
+                )}
+                <form className={styles.form} onSubmit={handleSubmit}>
+                    <FormControl variant="outlined" className={styles.formControl}>
+                        <InputLabel>Qty</InputLabel>
+                        <Select
+                            value={quantity}
+                            role="selecter"
+                            onChange={handleChange}
+                            label="Qty"
+                            name="quantity"
+                        >
+                            {createQuantityList(availableQuantity)}
+                        </Select>
+                    </FormControl>
+                    <Button
+                        variant="contained"
+                        className={styles.cartButton}
+                        type="submit"
+                        onClick={handleSubmit}
+                        disableElevation
+                    >
+                        ADD TO CART
+                    </Button>
+                </form>
+            </>
+        )
+    );
+};
+
+export const EnhancedCartForm = ({ handleCart, requestFailure, availableQuantity }) => {
+    const onSubmit = (formikValues) => {
+        handleCart(formikValues.quantity);
     };
 
     return (
-        addCartFunction && (
-            <div className={styles.cart}>
-                <FormControl variant="outlined" className={styles.form}>
-                    <InputLabel>Qty</InputLabel>
-                    <Select
-                        value={qty}
-                        role="selecter"
-                        onChange={changeQuantity}
-                        label="Qty"
-                        inputProps={{
-                            "data-testid": "content-input",
-                        }}
-                    >
-                        {createQuantityList(quantity)}
-                    </Select>
-                </FormControl>
-                <Button
-                    variant="contained"
-                    className={styles.cartButton}
-                    onClick={() => addCartFunction(qty)}
-                    disableElevation
-                >
-                    ADD TO CART
-                </Button>
-            </div>
+        handleCart && (
+            <Formik
+                initialValues={{ quantity: "1" }}
+                onSubmit={onSubmit}
+                validateOnBlur={false}
+                validationOnChange={false}
+                validationSchema={false}
+            >
+                {(formikProps) => (
+                    <CartForm
+                        availableQuantity={availableQuantity}
+                        handleSubmit={formikProps.handleSubmit}
+                        handleChange={formikProps.handleChange}
+                        requestFailure={requestFailure}
+                        values={formikProps.values}
+                    />
+                )}
+            </Formik>
         )
     );
 };
@@ -147,7 +188,7 @@ const ProductOverview = ({ detail, addCartFunction }) => {
                 notes={detail.notes}
                 constraints={detail.constraints}
             />
-            <CartSheet addCartFunction={addCartFunction} quantity={detail.quantity} />
+            <CartForm values={{}} />
         </div>
     );
 };

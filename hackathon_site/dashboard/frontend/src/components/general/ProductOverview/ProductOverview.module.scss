@@ -14,7 +14,7 @@
         margin-top: 59px;
         &Item {
             color: color(primary);
-            background-color: #c3e1ef;
+            background-color: color(blueLight);
             margin: 8px 2.5px;
         }
     }
@@ -38,10 +38,10 @@
     }
 }
 
-.cart {
+.form {
     display: flex;
     flex-direction: column;
-    .form {
+    &Control {
         margin: 20px 50px;
     }
     .cartButton {
