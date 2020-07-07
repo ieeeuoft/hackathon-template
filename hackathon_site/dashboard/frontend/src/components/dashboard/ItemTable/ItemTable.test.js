@@ -86,6 +86,23 @@ describe("<UnconnectedCheckedOutTable />", () => {
         });
     });
 
+    it("Calls 'push' when 'Report broken/lost' is clicked ", () => {
+        const push = jest.fn();
+        const reportIncident = jest.fn();
+        const oneRow = [itemsCheckedOut[0]];
+        const { getByText } = render(
+            <UnconnectedCheckedOutTable
+                items={oneRow}
+                isVisible={true}
+                push={push}
+                reportIncident={reportIncident}
+            />
+        );
+        const button = getByText(/report broken\/lost/i);
+        fireEvent.click(button);
+        expect(push).toHaveBeenCalled();
+    });
+
     it("Makes sure there's the same number of buttons as rows", () => {
         const { getAllByText } = render(
             <UnconnectedCheckedOutTable items={itemsCheckedOut} isVisible={true} />
@@ -151,9 +168,7 @@ describe("Connected tables", () => {
     });
 
     it("Calls reportIncident when the 'Report broken/lost' button is clicked", () => {
-        const oneRow = [
-            { id: 1, url: "https://i.imgur.com/IO6e5a6.jpg", name: "Arduino", qty: 6 },
-        ];
+        const oneRow = [itemsCheckedOut[0]];
         const reportIncidentSpy = jest.fn();
         const { getByText } = render(
             withStore(
