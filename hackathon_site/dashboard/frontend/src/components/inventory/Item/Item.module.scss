@@ -8,6 +8,7 @@
     justify-content: space-between;
     align-items: flex-start;
     padding-bottom: 10px;
+    cursor: pointer;
 
     &:hover {
         background-color: color(light2);
@@ -20,11 +21,6 @@
             object-fit: cover;
             opacity: 0.2;
         }
-    }
-
-    &Limit {
-        font-size: small;
-        margin: -1px 0px 0px -5px;
     }
 
     &Name {
@@ -41,6 +37,6 @@
     }
 
     .inStock {
-        color: #color(grey);
+        color: color(grey);
     }
 }
