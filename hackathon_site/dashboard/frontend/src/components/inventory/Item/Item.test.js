@@ -10,37 +10,8 @@ describe("InventoryItem", () => {
     const total = 6;
     let currentStock = 4;
 
-    test("Has stock with no limit", () => {
-        const { getByText } = render(
-            <Item
-                image={image}
-                title={title}
-                total={total}
-                currentStock={currentStock}
-            />
-        );
-        expect(getByText("Some Hardware")).toBeInTheDocument();
-        expect(getByText(`${currentStock} OF ${total} IN STOCK`)).toBeInTheDocument();
-        expect(getByText(title)).toBeInTheDocument();
-    });
-
-    test("Out of Stock", () => {
-        let currentStock = null;
-        const { getByText } = render(
-            <Item
-                image={image}
-                title={title}
-                total={total}
-                currentStock={currentStock}
-            />
-        );
-        expect(getByText("Some Hardware")).toBeInTheDocument();
-        expect(getByText("OUT OF STOCK")).toBeInTheDocument();
-        expect(getByText(title)).toBeInTheDocument();
-    });
-
-    test("For the image", () => {
-        const { getByAltText } = render(
+    test("Has stock", () => {
+        const { getByText, getByAltText } = render(
             <Item
                 image={image}
                 title={title}
@@ -50,5 +21,23 @@ describe("InventoryItem", () => {
         );
 
         expect(getByAltText(title)).toBeInTheDocument();
+        expect(getByText(`${currentStock} OF ${total} IN STOCK`)).toBeInTheDocument();
+        expect(getByText(title)).toBeInTheDocument();
+    });
+
+    test("Out of Stock", () => {
+        let currentStock = 0;
+        const { getByText, getByAltText } = render(
+            <Item
+                image={image}
+                title={title}
+                total={total}
+                currentStock={currentStock}
+            />
+        );
+
+        expect(getByAltText(title)).toBeInTheDocument();
+        expect(getByText("OUT OF STOCK")).toBeInTheDocument();
+        expect(getByText(title)).toBeInTheDocument();
     });
 });
