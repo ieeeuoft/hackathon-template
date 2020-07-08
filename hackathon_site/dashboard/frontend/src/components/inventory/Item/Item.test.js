@@ -8,6 +8,7 @@ describe("InventoryItem", () => {
         "hackathon_site/dashboard/frontend/src/assets/images/testImages/IO6e5a6.jpg";
     const title = "Some Hardware";
     const total = 6;
+    let limit = null;
     let currentStock = 4;
 
     test("Has stock", () => {
@@ -16,12 +17,12 @@ describe("InventoryItem", () => {
                 image={image}
                 title={title}
                 total={total}
+                limit={limit}
                 currentStock={currentStock}
             />
         );
         expect(getByText("Some Hardware")).toBeInTheDocument();
-        expect(getByText(`${currentStock} OF ${total} IN STOCK`)).toBeInTheDocument();
-        expect(getByText(title)).toBeInTheDocument();
+        expect(getByText("4 OF 6 IN STOCK")).toBeInTheDocument();
     });
 
     test("Out of Stock", () => {
@@ -31,24 +32,11 @@ describe("InventoryItem", () => {
                 image={image}
                 title={title}
                 total={total}
+                limit={limit}
                 currentStock={currentStock}
             />
         );
         expect(getByText("Some Hardware")).toBeInTheDocument();
         expect(getByText("OUT OF STOCK")).toBeInTheDocument();
-        expect(getByText(title)).toBeInTheDocument();
-    });
-
-    test("For the image", () => {
-        const { getByAltText } = render(
-            <Item
-                image={image}
-                title={title}
-                total={total}
-                currentStock={currentStock}
-            />
-        );
-
-        expect(getByAltText(title)).toBeInTheDocument();
     });
 });
