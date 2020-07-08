@@ -1,0 +1,17 @@
+@import "./../../../assets/abstracts/variables";
+@import "./../../../assets/abstracts/mixins";
+
+.drawer {
+    &Top {
+        width: 100%;
+        @include flexPosition;
+        background-color: color(light1);
+        padding: 8px 15px;
+        svg {
+            fill: color(grey);
+        }
+        @include responsive(sm-down) {
+            padding: 4px 15px;
+        }
+    }
+}

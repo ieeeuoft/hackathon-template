@@ -5,11 +5,10 @@ import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
-import Drawer from "@material-ui/core/Drawer";
 import Hidden from "@material-ui/core/Hidden";
 import Menu from "@material-ui/icons/Menu";
-import CloseIcon from "@material-ui/icons/Close";
 import Navbar from "components/general/Navbar/Navbar";
+import SideSheetLeft from "components/general/SideSheetLeft/SideSheetLeft";
 import { userEmail, cartQuantity } from "testing/mockData";
 import { hackathonName } from "constants.js";
 
@@ -57,28 +56,13 @@ const Header = ({ showNavbar = true }) => {
                         <Hidden implementation="css" smDown>
                             <Navbar cartQuantity={cartQuantity} />
                         </Hidden>
-                        <Drawer
-                            anchor="left"
-                            open={mobileOpen}
-                            onClose={toggleMenu}
-                            className={styles.headerDrawer}
-                        >
-                            <div className={styles.headerDrawerTop}>
-                                <IconButton
-                                    color="inherit"
-                                    aria-label="CloseMenu"
-                                    className={styles.headerIconBtn}
-                                    onClick={toggleMenu}
-                                >
-                                    <CloseIcon />
-                                </IconButton>
-                            </div>
+                        <SideSheetLeft title="Menu" toggleState={mobileOpen} toggleFunc={toggleMenu}>
                             <div className={styles.headerDrawerHackathon}>
                                 <HackathonTitle />
                                 <Typography variant="body2">{userEmail}</Typography>
                             </div>
                             <Navbar cartQuantity={cartQuantity} />
-                        </Drawer>
+                        </SideSheetLeft>
                     </>
                 )}
             </Toolbar>

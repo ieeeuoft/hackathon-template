@@ -5,14 +5,14 @@ import Typography from "@material-ui/core/Typography";
 import InventoryFilter from "components/inventory/InventoryFilter/InventoryFilter";
 import IconButton from "@material-ui/core/IconButton";
 import Button from "@material-ui/core/Button";
-import Drawer from "@material-ui/core/Drawer";
 import Divider from "@material-ui/core/Divider";
 import Hidden from "@material-ui/core/Hidden";
-import CloseIcon from "@material-ui/icons/Close";
 import RefreshIcon from '@material-ui/icons/Refresh';
 import SearchIcon from '@material-ui/icons/Search';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import TextField from "@material-ui/core/TextField";
+import SideSheetLeft from "components/general/SideSheetLeft/SideSheetLeft";
+import Grid from "@material-ui/core/Grid";
 import { categories } from "testing/mockData";
 
 const applyFilter = () => alert("Applies the filter");
@@ -27,41 +27,62 @@ const Inventory = () => {
     };
 
     return (
-        <div>
+        <>
             <Header />
             <Typography variant="h1">Hardware Inventory</Typography>
-            <p>IEEEEEE</p>
-
-            <div className={styles.itemHeader}>
-                <div className={styles.itemHeaderSearch}>
-                    <TextField
-                        className={styles.itemHeaderSearchInput}
-                        id="searc-input"
-                        label="Search items"
-                        variant="outlined"
-                    />
-                    <IconButton
-                        color="primary"
-                        aria-label="Search"
-                        variant="contained"
-                    >
-                        <SearchIcon />
-                    </IconButton>
-                </div>
+            {/* <p>IEEEEEE</p> */}
+            <div className={styles.inventory}>
                 <Hidden implementation="css" smDown>
-                    <Divider orientation="vertical" className={styles.itemHeaderDivider} flexItem/>
+                    <InventoryFilter
+                        categories={categories}
+                        applyFilter={applyFilter}
+                        removeFilter={removeFilter}
+                    />
                 </Hidden>
-                <div className={styles.itemHeaderBtns}>
-                    <Hidden implementation="css" smUp>
-                        <Button
-                                aria-label="Orders"
-                                startIcon={<FilterListIcon />}
-                                onClick={toggleMenu}
-                            >
-                            Filter
-                        </Button>
-                    </Hidden>
-                    <div className={styles.itemHeaderBtnsRefresh}>
+                <div>
+            {/* <div className={styles.itemHeader}> */}
+                <Grid
+                    container
+                    direction="row"
+                    justify="flex-end"
+                    alignItems="center"
+                    spacing={2}
+                    className={styles.itemHeader}
+                >
+                    {/* <div className={styles.itemHeaderSearch}> */}
+                    <Grid item style={{display: "flex"}} xs={12} sm={6}>
+                        <TextField
+                            className={styles.itemHeaderSearchInput}
+                            id="searc-input"
+                            label="Search items"
+                            variant="outlined"
+                        />
+                        <IconButton
+                            color="primary"
+                            aria-label="Search"
+                            variant="contained"
+                        >
+                            <SearchIcon />
+                        </IconButton>
+                    </Grid>
+                    
+                    <Divider orientation="vertical" sm={0} className={styles.itemHeaderDivider} flexItem/>{/*  */}
+                    {/* <div className={styles.itemHeaderBtns}> */}
+                    
+                    {/* <div className={styles.itemHeaderBtnsRefresh}> */}
+                    <Grid item style={{display: "flex", alignItems: "center"}} md={4}>
+                        <Hidden implementation="css" smUp>
+                            <Grid md={4} item>
+                                <Button
+                                        aria-label="Orders"
+                                        startIcon={<FilterListIcon />}
+                                        onClick={toggleMenu}
+                                    >
+                                    Filter
+                                </Button>
+                            </Grid>
+                        </Hidden>
+
                         <Typography variant="body2">123 items.</Typography>
                         <IconButton
                             color="primary"
@@ -70,41 +91,26 @@ const Inventory = () => {
                         >
                             <RefreshIcon />
                         </IconButton>
-                    </div>    
-                </div>
-            </div>
+                    </Grid>
+                </Grid>
 
-            {/* <Hidden implementation="css" smDown> */}
                 <InventoryFilter
                     categories={categories}
                     applyFilter={applyFilter}
                     removeFilter={removeFilter}
                 />
-            {/* </Hidden> */}
             
-            <Drawer
-                anchor="left"
-                open={mobileOpen}
-                onClose={toggleMenu}
-            >
-                <div>
-                    {/* <Typography variant="h2">Filter</Typography> */}
-                    <IconButton
-                        color="inherit"
-                        aria-label="CloseMenu"
-                        onClick={toggleMenu}
-                    >
-                        <CloseIcon />
-                    </IconButton>
                 </div>
+            </div>
+            <SideSheetLeft title="Filter" toggleState={mobileOpen} toggleFunc={toggleMenu}>
                 <InventoryFilter
                     categories={categories}
                     applyFilter={applyFilter}
                     removeFilter={removeFilter}
                     elevation={0}
                 />
-            </Drawer>
-        </div>    
+            </SideSheetLeft>
+        </>    
     );
 };
 

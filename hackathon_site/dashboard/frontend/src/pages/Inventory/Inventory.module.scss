@@ -1,18 +1,24 @@
 @import "./../../assets/abstracts/variables";
 @import "./../../assets/abstracts/mixins";
 
-.itemHeader {
+.inventory {
     display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    width: 100%;
-    padding: 15px 50px;
+    justify-content: space-between;
+    width: 100vw;
+    max-width: 1400px;
+    padding: 50px
+}
+
+.itemHeader {
+    // width: 100vw;
+    padding: 10px 50px;
     position: sticky;
     top: 64px;
-    right: 0;
+    // right: 0;
     background-color: color(backgroundC);
     z-index: 1;
-    box-shadow: 7px 2px 8px rgba(0, 0, 0, 0.25);
+    box-shadow: 6px 4px 6px -2px rgba(0, 0, 0, 0.25);
+    margin-left: 15px;
     
     &Divider {
         margin: 0 25px;
@@ -21,6 +27,7 @@
         @include flexPosition();
         &Input {
             background-color: color(white);
+            width: 100%;
         }
     }  
     &Btns {
@@ -32,7 +39,7 @@
     }   
     @include responsive(sm-down) {
         flex-direction: column; 
-        width: 100%;
+        width: 100vw;
         padding: 12px 12px 10px;
         top: 56px;
         // position: relative;
