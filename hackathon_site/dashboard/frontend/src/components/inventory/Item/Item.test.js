@@ -11,7 +11,7 @@ describe("InventoryItem", () => {
     let currentStock = 4;
 
     test("Has stock with no limit", () => {
-        const { asFragment } = render(
+        const { getByText } = render(
             <Item
                 image={image}
                 title={title}
@@ -26,7 +26,7 @@ describe("InventoryItem", () => {
 
     test("Out of Stock", () => {
         let currentStock = null;
-        const { asFragment } = render(
+        const { getByText } = render(
             <Item
                 image={image}
                 title={title}
