@@ -22,11 +22,6 @@
         }
     }
 
-    &Limit {
-        font-size: small;
-        margin: -1px 0px 0px -5px;
-    }
-
     &Name {
         display: flex;
         padding-top: 8px;
@@ -41,6 +36,6 @@
     }
 
     .inStock {
-        color: #color(grey);
+        color: color(grey);
     }
 }
