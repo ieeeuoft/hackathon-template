@@ -1,6 +1,7 @@
 @import "./../../assets/abstracts/variables";
 @import "./../../assets/abstracts/mixins";
 
+
 .inventory {
     display: flex;
     justify-content: space-between;
@@ -8,6 +9,20 @@
     max-width: 1400px;
     padding: 50px
 }
+
+.Item {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding-bottom: 10px;
+    cursor: pointer;
+
+    &:hover {
+        background-color: color(light2);
+    }
+}
+
 
 .itemHeader {
     // width: 100vw;
@@ -24,10 +39,11 @@
         margin: 0 25px;
     }
     &Search {
-        @include flexPosition();
+        @include flexPosition;
         &Input {
             background-color: color(white);
             width: 100%;
+            margin-right: 8px;
         }
     }  
     &Btns {

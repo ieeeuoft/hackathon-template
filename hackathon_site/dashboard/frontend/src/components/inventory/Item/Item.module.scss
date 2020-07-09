@@ -2,34 +2,26 @@
 @import "./../../../assets/abstracts/variables";
 
 .Item {
-    display: flex;
-    width: 100%;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: flex-start;
-    padding-bottom: 10px;
-    cursor: pointer;
-
-    &:hover {
-        background-color: color(light2);
-    }
+    &Box,
+    &Black {
+        width: 100%;
+     }
 
     &Pic {
-        height: 210px;
-        width: 210px;
+        width: 100%;
         &Box {
             object-fit: cover;
             opacity: 0.2;
         }
     }
 
-    &Name {
-        display: flex;
-        padding-top: 8px;
+    &Black {
+        object-fit: cover;
+        opacity: 0.2;
     }
 
     &TextBox {
-        padding-left: 10px;
+        padding: 10px;
     }
 
     .outOfStock {

@@ -119,3 +119,65 @@ export const categories = [
     { name: "Grove_style_boards", qty: 12 },
     { name: "Grove_style_modules", qty: 10 },
 ];
+
+export const items = [
+    {
+        image: "https://i.imgur.com/iUpI1hC.jpg",
+        title: "Some Hardware",
+        total: 6,
+        currentStock: 1,
+    },
+    {
+        image: "https://i.imgur.com/iUpI1hC.jpg",
+        title: "Some Hardware",
+        total: 6,
+        currentStock: 0,
+    },
+    {
+        image: "https://i.imgur.com/iUpI1hC.jpg",
+        title: "Some Hardware",
+        total: 6,
+        currentStock: 1,
+    },
+    {
+        image: "https://i.imgur.com/iUpI1hC.jpg",
+        title: "Some Hardware",
+        total: 6,
+        currentStock: 2,
+    },
+    {
+        image: "https://i.imgur.com/iUpI1hC.jpg",
+        title: "Some Hardware",
+        total: 6,
+        currentStock: 1,
+    },{
+        image: "https://i.imgur.com/iUpI1hC.jpg",
+        title: "Some Hardware",
+        total: 6,
+        currentStock: 1,
+    },
+    {
+        image: "https://i.imgur.com/iUpI1hC.jpg",
+        title: "Some Hardware",
+        total: 6,
+        currentStock: 0,
+    },
+    {
+        image: "https://i.imgur.com/iUpI1hC.jpg",
+        title: "Some Hardware",
+        total: 6,
+        currentStock: 1,
+    },
+    {
+        image: "https://i.imgur.com/iUpI1hC.jpg",
+        title: "Some Hardware",
+        total: 6,
+        currentStock: 2,
+    },
+    {
+        image: "https://i.imgur.com/iUpI1hC.jpg",
+        title: "Some Hardware",
+        total: 6,
+        currentStock: 1,
+    },
+];

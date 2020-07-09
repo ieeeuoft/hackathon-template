@@ -10,10 +10,11 @@ const Item = ({ image, title, total, currentStock }) => {
         ? "OUT OF STOCK"
         : currentStock + " OF " + total + " IN STOCK";
     const stockStyle = !currentStock ? styles.outOfStock : styles.inStock;
-    const coverStyle = !currentStock ? styles.ItemPicBox : "";
+    const coverStyle = !currentStock ? styles.ItemBlack : styles.ItemBox;
+
 
     return (
-        <Grid className={styles.Item} item>
+        <>
             <Card className={coverStyle} variant="outlined" square={true}>
                 <CardMedia
                     className={styles.ItemPic}
@@ -23,14 +24,12 @@ const Item = ({ image, title, total, currentStock }) => {
                 />
             </Card>
             <div className={styles.ItemTextBox}>
-                <div className={styles.ItemName}>
-                    <Typography variant="body2">{title}</Typography>
-                </div>
+                <Typography variant="body2">{title}</Typography>
                 <Typography variant="caption" className={stockStyle}>
                     {stock}
                 </Typography>
             </div>
-        </Grid>
+        </>
     );
 };
 

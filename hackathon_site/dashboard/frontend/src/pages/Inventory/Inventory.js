@@ -3,6 +3,7 @@ import styles from "./Inventory.module.scss";
 import Header from "components/general/Header/Header";
 import Typography from "@material-ui/core/Typography";
 import InventoryFilter from "components/inventory/InventoryFilter/InventoryFilter";
+import Item from "components/inventory/Item/Item";
 import IconButton from "@material-ui/core/IconButton";
 import Button from "@material-ui/core/Button";
 import Divider from "@material-ui/core/Divider";
@@ -13,7 +14,7 @@ import FilterListIcon from '@material-ui/icons/FilterList';
 import TextField from "@material-ui/core/TextField";
 import SideSheetLeft from "components/general/SideSheetLeft/SideSheetLeft";
 import Grid from "@material-ui/core/Grid";
-import { categories } from "testing/mockData";
+import { categories, items } from "testing/mockData";
 
 const applyFilter = () => alert("Applies the filter");
 
@@ -94,11 +95,18 @@ const Inventory = () => {
                     </Grid>
                 </Grid>
 
-                <InventoryFilter
-                    categories={categories}
-                    applyFilter={applyFilter}
-                    removeFilter={removeFilter}
-                />
+                <Grid
+                    container
+                    direction="row"
+                    spacing={2}
+                    className={styles.itemGrid}
+                    >
+                    {items.map((itemH, i) => (
+                        <Grid xs={6} sm={4} md={3} lg={2} className={styles.Item} item>
+                            <Item image={itemH.image} title={itemH.title} total={itemH.total} currentStock={itemH.currentStock} />
+                        </Grid>
+                    ))}
+                </Grid>   
             
                 </div>
             </div>
