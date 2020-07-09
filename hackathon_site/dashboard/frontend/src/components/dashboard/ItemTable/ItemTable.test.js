@@ -86,7 +86,7 @@ describe("<UnconnectedCheckedOutTable />", () => {
         });
     });
 
-    it("Calls 'push' when 'Report broken/lost' is clicked ", () => {
+    it("Calls 'push' and 'reportIncident' when 'Report broken/lost' is clicked", () => {
         const push = jest.fn();
         const reportIncident = jest.fn();
         const oneRow = [itemsCheckedOut[0]];
@@ -101,6 +101,7 @@ describe("<UnconnectedCheckedOutTable />", () => {
         const button = getByText(/report broken\/lost/i);
         fireEvent.click(button);
         expect(push).toHaveBeenCalled();
+        expect(reportIncident).toHaveBeenCalled();
     });
 
     it("Makes sure there's the same number of buttons as rows", () => {
@@ -165,19 +166,6 @@ describe("Connected tables", () => {
         expect(store.getActions()).toContainEqual(
             expect.objectContaining({ type: uiActions.toggleCheckedOutTable.type })
         );
-    });
-
-    it("Calls reportIncident when the 'Report broken/lost' button is clicked", () => {
-        const oneRow = [itemsCheckedOut[0]];
-        const reportIncidentSpy = jest.fn();
-        const { getByText } = render(
-            withStore(
-                <CheckedOutTable items={oneRow} reportIncident={reportIncidentSpy} />
-            )
-        );
-        const button = getByText("Report broken/lost");
-        fireEvent.click(button);
-        expect(reportIncidentSpy).toHaveBeenCalled();
     });
 
     it("ReturnedTable dispatches an action to toggle visibility when button clicked", async () => {
