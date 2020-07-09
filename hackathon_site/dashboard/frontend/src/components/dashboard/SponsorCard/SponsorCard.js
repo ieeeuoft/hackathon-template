@@ -26,7 +26,7 @@ export const UnconnectedSponsorCard = ({ sponsors }) => {
                         <img
                             src={require("assets/images/sponsors/" + item.imgSrc)}
                             alt={item.imgSrc}
-                            key={i}
+                            key={`sponsor-${i}`}
                         />
                     ))}
                 </Slider>

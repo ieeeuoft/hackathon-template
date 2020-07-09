@@ -11,7 +11,7 @@ const TeamCard = ({ members, teamCode, handleEditTeam }) => {
     return (
         <TitledPaper title={title}>
             {members.map((member, i) => (
-                <Container className={styles.name} key={i}>
+                <Container className={styles.name} key={`member-${i}`}>
                     <Typography variant="body2" noWrap>
                         {member}
                     </Typography>

@@ -4,9 +4,6 @@ import CartSummary from "./CartSummary";
 import { cartQuantity } from "testing/mockData";
 
 it(`Renders correctly when it reads the number ${cartQuantity}`, () => {
-    const { asFragment, getByText } = render(
-        <CartSummary cartQuantity={cartQuantity} />
-    );
-    expect(asFragment()).toMatchSnapshot();
+    const { getByText } = render(<CartSummary cartQuantity={cartQuantity} />);
     expect(getByText(cartQuantity.toString())).toBeInTheDocument();
 });

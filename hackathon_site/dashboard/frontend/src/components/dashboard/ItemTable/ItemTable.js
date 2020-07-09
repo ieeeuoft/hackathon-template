@@ -96,7 +96,7 @@ export const UnconnectedCheckedOutTable = ({ items, isVisible, toggleVisibility 
                         </TableHead>
                         <TableBody>
                             {items.map((row) => (
-                                <TableRow key={row.name}>
+                                <TableRow key={`checked-out-${row.name}`}>
                                     <TableCell align="left">
                                         <img
                                             className={styles.itemImg}
@@ -179,7 +179,7 @@ export const UnconnectedReturnedTable = ({ items, isVisible, toggleVisibility })
                         </TableHead>
                         <TableBody>
                             {items.map((row) => (
-                                <TableRow key={row.name}>
+                                <TableRow key={`returned-${row.name}`}>
                                     <TableCell align="left">
                                         <img
                                             className={styles.itemImg}
@@ -242,7 +242,7 @@ export const PendingTable = ({ items, status }) => {
                     </TableHead>
                     <TableBody>
                         {items.map((row) => (
-                            <TableRow key={row.name}>
+                            <TableRow key={`pending-${row.name}`}>
                                 <TableCell align="left">
                                     <img
                                         className={styles.itemImg}

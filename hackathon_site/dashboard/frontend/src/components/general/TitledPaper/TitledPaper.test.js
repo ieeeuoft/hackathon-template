@@ -5,22 +5,17 @@ import TitledPaper from "./TitledPaper";
 describe("<TitledPaper />", () => {
     const titleTest = "Test title";
     const childTest = "Test child";
-    it("matches snapshot", () => {
-        const { asFragment } = render(
+
+    it("renders text given to it and title appears", () => {
+        const { getByText, getByTestId } = render(
             <TitledPaper title={titleTest}>{childTest}</TitledPaper>
         );
-        expect(asFragment()).toMatchSnapshot();
-    });
-    it("renders text given to it", () => {
-        const { getByText } = render(
-            <TitledPaper title={titleTest}>{childTest}</TitledPaper>
-        );
+        expect(getByTestId("titledPaperTitle")).toBeInTheDocument();
         expect(getByText(titleTest)).toBeInTheDocument();
         expect(getByText(childTest)).toBeInTheDocument();
     });
-    it("renders no text if not given anything", () => {
-        const { queryByText } = render(<TitledPaper />);
-        expect(queryByText(titleTest)).not.toBeInTheDocument();
-        expect(queryByText(childTest)).not.toBeInTheDocument();
+    it("does not render title if not given anything", () => {
+        const { queryByTestId } = render(<TitledPaper />);
+        expect(queryByTestId("titledPaperTitle")).not.toBeInTheDocument();
     });
 });

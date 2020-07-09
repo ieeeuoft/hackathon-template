@@ -6,7 +6,12 @@ import Paper from "@material-ui/core/Paper";
 const TitledPaper = ({ title, children }) => (
     <>
         {title && (
-            <Typography variant="h2" noWrap className={styles.title}>
+            <Typography
+                variant="h2"
+                className={styles.title}
+                data-testid="titledPaperTitle"
+                noWrap
+            >
                 {title}
             </Typography>
         )}

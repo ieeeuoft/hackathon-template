@@ -4,6 +4,7 @@ exports[`DashCard render 1`] = `
 <DocumentFragment>
   <h2
     class="MuiTypography-root title MuiTypography-h2 MuiTypography-noWrap"
+    data-testid="titledPaperTitle"
   >
     any string
   </h2>

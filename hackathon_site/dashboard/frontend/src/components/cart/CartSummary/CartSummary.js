@@ -12,7 +12,7 @@ const CartSummary = ({ cartQuantity }) => (
             <Typography variant="body2">{cartQuantity}</Typography>
         </Container>
         <Typography variant="body2" className={styles.msg}>
-            Your entire team’s order is here. Before you submit, refresh the page if
+            Your entire team's order is here. Before you submit, refresh the page if
             someone added something new.
         </Typography>
         <Button

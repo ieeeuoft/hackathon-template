@@ -23,7 +23,7 @@ const DashCard = ({ title, content }) => (
                 color="inherit"
                 underline="none"
                 target="_blank"
-                key={i}
+                key={`team-card-${i}`}
             >
                 <CardItem name={listItem.name} icon={listItem.icon} />
             </Link>

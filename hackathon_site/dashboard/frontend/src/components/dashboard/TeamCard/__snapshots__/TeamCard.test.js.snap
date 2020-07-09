@@ -4,6 +4,7 @@ exports[`TeamCard render 1`] = `
 <DocumentFragment>
   <h2
     class="MuiTypography-root title MuiTypography-h2 MuiTypography-noWrap"
+    data-testid="titledPaperTitle"
   >
     Team PAS3NLQ3
   </h2>
