@@ -22,6 +22,9 @@ import {
 import { hackathonName } from "constants.js";
 
 const Dashboard = () => {
+    const reportIncident = (id) => {
+        alert("Reports incident for component of id " + id);
+    };
     return (
         <>
             <Header />
@@ -59,7 +62,10 @@ const Dashboard = () => {
                     ))}
                 </Grid>
                 <PendingTable items={itemsPending} status={orderStatus} />
-                <CheckedOutTable items={itemsCheckedOut} />
+                <CheckedOutTable
+                    items={itemsCheckedOut}
+                    reportIncident={reportIncident}
+                />
                 <ReturnedTable items={itemsReturned} />
             </div>
         </>
