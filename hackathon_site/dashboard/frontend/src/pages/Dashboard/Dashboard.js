@@ -44,7 +44,7 @@ const Dashboard = () => {
                         sm={4}
                         xs={6}
                         className={styles.dashboardGridItem}
-                        key="dashboard-card-0"
+                        key={0}
                     >
                         <TeamCard members={members} teamCode={teamCode} />
                     </Grid>
@@ -55,7 +55,7 @@ const Dashboard = () => {
                             sm={4}
                             xs={6}
                             className={styles.dashboardGridItem}
-                            key={`dashboard-card-${i + 1}`}
+                            key={i + 1}
                         >
                             <DashCard title={title} content={content} />
                         </Grid>
