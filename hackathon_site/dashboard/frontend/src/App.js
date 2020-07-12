@@ -25,32 +25,6 @@ import IncidentForm from "pages/IncidentForm/IncidentForm";
 import NotFound from "pages/NotFound/NotFound";
 import SnackbarNotifier from "components/general/SnackbarNotifier/SnackbarNotifier";
 
-import { displaySnackbar as displaySnackbarAction } from "slices/ui/uiSlice";
-import { useDispatch } from "react-redux";
-
-const SnackButton = () => {
-    const dispatch = useDispatch();
-
-    const displaySnackbar = (...args) => {
-        dispatch(displaySnackbarAction(...args));
-    };
-
-    return (
-        <button
-            onClick={() => {
-                displaySnackbar({
-                    message: "Hello there! ",
-                    options: {
-                        variant: "success",
-                    },
-                });
-            }}
-        >
-            Dispatch a snackbar
-        </button>
-    );
-};
-
 export const makePalette = () => {
     // In testing, the scss exports don't work so styles is an
     // empty object. This gets around that.
@@ -80,7 +54,6 @@ const UnconnectedApp = () => {
                     <Route exact path="/404" component={NotFound} />
                     <Redirect to="/404" />
                 </Switch>
-                <SnackButton />
             </div>
             <Footer />
         </div>
