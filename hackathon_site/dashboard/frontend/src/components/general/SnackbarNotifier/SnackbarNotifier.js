@@ -4,6 +4,7 @@ import { withSnackbar } from "notistack";
 import IconButton from "@material-ui/core/IconButton";
 import Close from "@material-ui/icons/Close";
 
+import styles from "./SnackbarNotifier.module.scss";
 import { snackbarSelector, dismissSnackbar, removeSnackbar } from "slices/ui/uiSlice";
 
 export const UnconnectedSnackbarNotifier = ({
@@ -55,7 +56,7 @@ export const UnconnectedSnackbarNotifier = ({
                             dismissSnackbar({ key: myKey });
                         }}
                     >
-                        <Close />
+                        <Close className={styles.close} />
                     </IconButton>
                 ),
             });
