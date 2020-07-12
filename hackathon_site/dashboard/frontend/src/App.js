@@ -7,8 +7,9 @@ import {
     ThemeProvider,
 } from "@material-ui/core/styles";
 import { Provider as ReduxProvider } from "react-redux";
-import styles from "assets/abstracts/_exports.scss";
+import { SnackbarProvider } from "notistack";
 
+import styles from "assets/abstracts/_exports.scss";
 import store, { history } from "slices/store";
 
 import "App.scss";
@@ -22,6 +23,48 @@ import Inventory from "pages/Inventory/Inventory";
 import Cart from "pages/Cart/Cart";
 import IncidentForm from "pages/IncidentForm/IncidentForm";
 import NotFound from "pages/NotFound/NotFound";
+import SnackbarNotifier from "components/general/SnackbarNotifier/SnackbarNotifier";
+
+import { actions as uiActions } from "slices/ui/uiSlice";
+import { useDispatch } from "react-redux";
+
+const SnackButton = () => {
+    const dispatch = useDispatch();
+
+    const displaySnackbar = (...args) => {
+        dispatch(uiActions.displaySnackbar(...args));
+    };
+    const closeSnackbar = (...args) => {
+        dispatch(uiActions.closeSnackbar(...args));
+    };
+
+    return (
+        <button
+            onClick={() => {
+                const key = Math.random();
+
+                displaySnackbar({
+                    message: "Hello there! " + key,
+                    options: {
+                        variant: "success",
+                        key,
+                        action: (key) => (
+                            <button
+                                onClick={() => {
+                                    closeSnackbar({ key });
+                                }}
+                            >
+                                Close
+                            </button>
+                        ),
+                    },
+                });
+            }}
+        >
+            Dispatch a snackbar
+        </button>
+    );
+};
 
 export const makePalette = () => {
     // In testing, the scss exports don't work so styles is an
@@ -52,6 +95,7 @@ const UnconnectedApp = () => {
                     <Route exact path="/404" component={NotFound} />
                     <Redirect to="/404" />
                 </Switch>
+                <SnackButton />
             </div>
             <Footer />
         </div>
@@ -62,9 +106,12 @@ const ConnectedApp = () => (
     <ReduxProvider store={store}>
         <StylesProvider injectFirst>
             <ThemeProvider theme={theme}>
-                <ConnectedRouter history={history}>
-                    <UnconnectedApp />
-                </ConnectedRouter>
+                <SnackbarProvider>
+                    <SnackbarNotifier />
+                    <ConnectedRouter history={history}>
+                        <UnconnectedApp />
+                    </ConnectedRouter>
+                </SnackbarProvider>
             </ThemeProvider>
         </StylesProvider>
     </ReduxProvider>
