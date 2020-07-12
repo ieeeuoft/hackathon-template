@@ -1,14 +1,17 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { withSnackbar } from "notistack";
+import IconButton from "@material-ui/core/IconButton";
+import Close from "@material-ui/icons/Close";
 
-import { snackbarSelector, actions as uiActions } from "slices/ui/uiSlice";
+import { snackbarSelector, dismissSnackbar, removeSnackbar } from "slices/ui/uiSlice";
 
 export const UnconnectedSnackbarNotifier = ({
     snackbars,
+    dismissSnackbar,
+    removeSnackbar,
     enqueueSnackbar,
     closeSnackbar,
-    removeSnackbar,
 }) => {
     const [displayedSnackbars, setDisplayedSnackbars] = useState(new Set());
 
@@ -23,21 +26,18 @@ export const UnconnectedSnackbarNotifier = ({
             setDisplayedSnackbars(displayedSnackbars);
         };
 
-        snackbars.forEach(({ message, options, key, dismissed }) => {
+        snackbars.forEach(({ message, options, dismissed }) => {
             if (dismissed) {
-                closeSnackbar(key);
+                closeSnackbar(options.key);
                 return;
             }
 
-            if (displayedSnackbars[key]) return;
+            if (displayedSnackbars.has(options.key)) return;
 
             enqueueSnackbar(message, {
                 ...options,
-                key,
                 onClose: (event, reason, myKey) => {
-                    console.log("I was called");
                     if (options.onClose) {
-                        console.log("I got here");
                         options.onClose(event, reason, myKey);
                     }
                 },
@@ -46,11 +46,30 @@ export const UnconnectedSnackbarNotifier = ({
                     removeSnackbar({ key: myKey });
                     removeDisplayed(myKey);
                 },
+                action: (myKey) => (
+                    // Actions shouldn't be stored in redux, since as functions
+                    // they aren't serializable. This gives us a default close
+                    // action on all snackbars.
+                    <IconButton
+                        onClick={() => {
+                            dismissSnackbar({ key: myKey });
+                        }}
+                    >
+                        <Close />
+                    </IconButton>
+                ),
             });
 
-            storeDisplayed(key);
+            storeDisplayed(options.key);
         });
-    }, [snackbars, displayedSnackbars, enqueueSnackbar, closeSnackbar, removeSnackbar]);
+    }, [
+        snackbars,
+        displayedSnackbars,
+        dismissSnackbar,
+        removeSnackbar,
+        enqueueSnackbar,
+        closeSnackbar,
+    ]);
 
     return null;
 };
@@ -60,7 +79,8 @@ const mapStateToProps = (state) => ({
 });
 
 export const ConnectedSnackbarNotifier = connect(mapStateToProps, {
-    removeSnackbar: uiActions.removeSnackbar,
+    dismissSnackbar,
+    removeSnackbar,
 })(withSnackbar(UnconnectedSnackbarNotifier));
 
 export default ConnectedSnackbarNotifier;

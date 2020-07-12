@@ -7,7 +7,8 @@ import {
     initialState,
     uiReducerName,
     reducer,
-    actions,
+    toggleReturnedTable,
+    toggleCheckedOutTable,
 } from "./uiSlice";
 
 const mockState = {
@@ -39,31 +40,22 @@ describe("Reducers", () => {
 
     it("Toggles the checked out table visibility", () => {
         const initialVisibility = checkedOutVisibility(initialState);
-        const toggledState = reducer(
-            initialState,
-            actions.toggleCheckedOutTable(undefined)
-        );
+        const toggledState = reducer(initialState, toggleCheckedOutTable(undefined));
         expect(checkedOutVisibility(toggledState)).toEqual(!initialVisibility);
 
         const toggledAgainState = reducer(
             toggledState,
-            actions.toggleCheckedOutTable(undefined)
+            toggleCheckedOutTable(undefined)
         );
         expect(checkedOutVisibility(toggledAgainState)).toEqual(initialVisibility);
     });
 
     it("Toggles the returned table visibility", () => {
         const initialVisibility = returnedVisibility(initialState);
-        const toggledState = reducer(
-            initialState,
-            actions.toggleReturnedTable(undefined)
-        );
+        const toggledState = reducer(initialState, toggleReturnedTable(undefined));
         expect(returnedVisibility(toggledState)).toEqual(!initialVisibility);
 
-        const toggledAgainState = reducer(
-            toggledState,
-            actions.toggleReturnedTable(undefined)
-        );
+        const toggledAgainState = reducer(toggledState, toggleReturnedTable(undefined));
         expect(returnedVisibility(toggledAgainState)).toEqual(initialVisibility);
     });
 });

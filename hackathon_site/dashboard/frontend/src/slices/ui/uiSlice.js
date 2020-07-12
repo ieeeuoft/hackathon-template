@@ -21,20 +21,22 @@ const uiSlice = createSlice({
             state.dashboard.isReturnedTableVisible = !state.dashboard
                 .isReturnedTableVisible;
         },
-        displaySnackbar: (state, { payload: { message, options = {}, key } }) => {
-            key = key || Math.random();
+        displaySnackbar: (state, { payload: { message, options = {} } }) => {
+            if (!options.key) {
+                options.key = Math.random();
+            }
 
             state.snackbars = [
                 ...state.snackbars,
-                { message, options, key, dismissed: false },
+                { message, options, dismissed: false },
             ];
         },
-        closeSnackbar: (state, { payload: { key } }) => {
+        dismissSnackbar: (state, { payload: { key } }) => {
             /* Mark an individual snackbar as dismissed by providing a key, or
              * dismiss all snackbars by not providing a key */
             const dismissAll = !key;
             state.snackbars = state.snackbars.map((snackbar) =>
-                dismissAll || snackbar.key === key
+                dismissAll || snackbar.options.key === key
                     ? { ...snackbar, dismissed: true }
                     : { ...snackbar }
             );
@@ -42,13 +44,20 @@ const uiSlice = createSlice({
         removeSnackbar: (state, { payload: { key } }) => {
             /* Once closed, remove a snackbar from the store */
             state.snackbars = state.snackbars.filter(
-                (snackbar) => snackbar.key !== key
+                (snackbar) => snackbar.options.key !== key
             );
         },
     },
 });
 
-export const { reducer, actions } = uiSlice;
+export const { actions, reducer } = uiSlice;
+export const {
+    toggleCheckedOutTable,
+    toggleReturnedTable,
+    displaySnackbar,
+    dismissSnackbar,
+    removeSnackbar,
+} = actions;
 export default reducer;
 
 // Selectors

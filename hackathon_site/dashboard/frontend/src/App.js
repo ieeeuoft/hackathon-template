@@ -25,38 +25,23 @@ import IncidentForm from "pages/IncidentForm/IncidentForm";
 import NotFound from "pages/NotFound/NotFound";
 import SnackbarNotifier from "components/general/SnackbarNotifier/SnackbarNotifier";
 
-import { actions as uiActions } from "slices/ui/uiSlice";
+import { displaySnackbar as displaySnackbarAction } from "slices/ui/uiSlice";
 import { useDispatch } from "react-redux";
 
 const SnackButton = () => {
     const dispatch = useDispatch();
 
     const displaySnackbar = (...args) => {
-        dispatch(uiActions.displaySnackbar(...args));
-    };
-    const closeSnackbar = (...args) => {
-        dispatch(uiActions.closeSnackbar(...args));
+        dispatch(displaySnackbarAction(...args));
     };
 
     return (
         <button
             onClick={() => {
-                const key = Math.random();
-
                 displaySnackbar({
-                    message: "Hello there! " + key,
+                    message: "Hello there! ",
                     options: {
                         variant: "success",
-                        key,
-                        action: (key) => (
-                            <button
-                                onClick={() => {
-                                    closeSnackbar({ key });
-                                }}
-                            >
-                                Close
-                            </button>
-                        ),
                     },
                 });
             }}
