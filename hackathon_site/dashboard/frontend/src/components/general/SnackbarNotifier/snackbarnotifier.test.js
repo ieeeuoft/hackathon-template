@@ -56,7 +56,7 @@ describe("<UnconnectedSnackbarNotifier />", () => {
             />
         );
 
-        enqueueSnackbarSpy.mockClear(); // Reset the spy after it's first call
+        enqueueSnackbarSpy.mockClear(); // Reset the spy after its first call
         rerender(
             <UnconnectedSnackbarNotifier
                 snackbars={[snackbar1, snackbar2]}
