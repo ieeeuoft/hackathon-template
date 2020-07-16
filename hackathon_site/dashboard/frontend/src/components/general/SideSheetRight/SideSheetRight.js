@@ -6,34 +6,34 @@ import IconButton from "@material-ui/core/IconButton";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import styles from "./SideSheetRight.module.scss";
 
-const SideSheetRight = ({ children, title }) => {
-    const [toggle, setToggle] = React.useState(false);
+const SideSheetRight = ({ children, title, isVisible, handleClose }) => {
+    // const [isVisible, setIsVisible] = React.useState(false);
 
-    const toggleSheet = (change) => {
-        setToggle(change);
-    };
+    // const changeVisibleSheet = (change) => {
+    //     setIsVisible(change);
+    // };
 
     return (
         <div>
-            <Button
+            {/* <Button
                 onClick={() => {
-                    toggleSheet(true);
+                    changeVisibleSheet(true);
                 }}
             >
                 open SideSheetRight
-            </Button>
-            <Drawer anchor="right" open={toggle}>
+            </Button> */}
+            <Drawer anchor="right" open={isVisible}>
                 <div className={styles.topsheet}>
                     <IconButton
                         className={styles.backarrow}
-                        onClick={() => {
-                            toggleSheet(false);
-                        }}
+                        // onClick={() => {
+                        //     changeVisibleSheet(false);
+                        // }}
                         role="close"
                     >
                         <ArrowBackIcon />
                     </IconButton>
-                    <Typography variant="h2" className={styles.title}>
+                    <Typography variant="h2" className={styles.title} role="title">
                         {title}
                     </Typography>
                 </div>
