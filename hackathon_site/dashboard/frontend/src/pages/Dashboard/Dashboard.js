@@ -26,6 +26,9 @@ import { ProductOverview } from "components/general/ProductOverview/ProductOverv
 import { productInformation, addCartTest } from "testing/mockData";
 
 const Dashboard = () => {
+    const reportIncident = (id) => {
+        alert("Reports incident for component of id " + id);
+    };
     return (
         <>
             <Header />
@@ -63,7 +66,10 @@ const Dashboard = () => {
                     ))}
                 </Grid>
                 <PendingTable items={itemsPending} status={orderStatus} />
-                <CheckedOutTable items={itemsCheckedOut} />
+                <CheckedOutTable
+                    items={itemsCheckedOut}
+                    reportIncident={reportIncident}
+                />
                 <ReturnedTable items={itemsReturned} />
                 <SideSheetRight title="ProductOverview" isVisible={true}>
                     <ProductOverview
