@@ -22,26 +22,8 @@ import {
 import { hackathonName } from "constants.js";
 
 import SideSheetRight from "components/general/SideSheetRight/SideSheetRight";
-import ProductOverview from "components/general/ProductOverview/ProductOverview";
-
-const testD = {
-    name: "Arduino",
-    type: "red",
-    total: 30,
-    available: 29,
-    img: "https://www.filterforge.com/more/help/images/size200.jpg",
-    category: ["MCU", "FPGA"],
-    manufacturer: "Canakit",
-    model_num: "Model 3B+",
-    datasheet: "link",
-    notes: ["- For micropython ask for image", "- randomnerdtutorials.com"],
-    constraints: ["- Max 1 of this item", "- Max 3 microcontroller labelled red"],
-    quantity: 3,
-};
-
-const testF = (qty) => {
-    alert(qty);
-};
+import { ProductOverview } from "components/general/ProductOverview/ProductOverview";
+import { productInformation, addCartTest } from "testing/mockData";
 
 const Dashboard = () => {
     return (
@@ -83,8 +65,11 @@ const Dashboard = () => {
                 <PendingTable items={itemsPending} status={orderStatus} />
                 <CheckedOutTable items={itemsCheckedOut} />
                 <ReturnedTable items={itemsReturned} />
-                <SideSheetRight title="ProductOverview">
-                    <ProductOverview detail={testD} addCartFunction={testF} />
+                <SideSheetRight title="ProductOverview" isVisible={true}>
+                    <ProductOverview
+                        detail={productInformation}
+                        addCartFunction={addCartTest}
+                    />
                 </SideSheetRight>
             </div>
         </>

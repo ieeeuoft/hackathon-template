@@ -1,17 +1,24 @@
 @import "./../../../assets/abstracts/mixins";
 @import "./../../../assets/abstracts/variables";
 
-.headersheet {
+.mainsection {
     display: flex;
     margin: 108px 50px 0 50px;
     .title {
         display: flex;
+        font-weight: 500;
     }
     .available {
         margin: 9px 151px 0 0;
+        color: color(grey);
+    }
+    .notAvailable {
+        margin: 9px 151px 0 0;
+        color: red;
     }
     .category {
         margin-top: 59px;
+        font-weight: 500;
         &Item {
             color: color(primary);
             background-color: color(blueLight);
@@ -23,13 +30,14 @@
     }
 }
 
-.bodysheet {
+.detailinfosection {
     margin: 10px 50px 0 50px;
     .bodyinfo {
         display: flex;
         flex-direction: column;
-        h3 {
+        .heading {
             margin: 5px 0;
+            font-weight: 500;
         }
         margin-bottom: 20px;
         &DataSheet {

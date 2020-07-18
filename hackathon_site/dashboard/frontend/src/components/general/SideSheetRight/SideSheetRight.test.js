@@ -1,16 +1,8 @@
 import React from "react";
 import SideSheetRight from "./SideSheetRight";
-import {
-    render,
-    fireEvent,
-    waitForElementToBeRemoved,
-    waitFor,
-    waitForElement,
-} from "@testing-library/react";
+import { render, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
 
-// test uf tge cgukdreb us displayed
-// test if the tile is displayed
 // test for visibility after react is connected to redux store
 
 describe("SideSheetRight", () => {
@@ -33,5 +25,23 @@ describe("SideSheetRight", () => {
         );
 
         expect(getByText("children")).toBeInTheDocument();
+    });
+    test("handleClose function is called when the return allow is clicked", () => {
+        const handleCloseMock = jest.fn();
+
+        const { getByRole } = render(
+            <SideSheetRight
+                title="title"
+                isVisible={true}
+                handleClose={handleCloseMock}
+            />
+        );
+
+        // close the sidesheetright
+        const backArrow = getByRole("close");
+        fireEvent.click(backArrow);
+
+        // confirm the mock handler function was called
+        expect(handleCloseMock.mock.calls.length).toBe(1);
     });
 });

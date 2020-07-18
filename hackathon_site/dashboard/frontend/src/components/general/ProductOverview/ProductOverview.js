@@ -17,9 +17,8 @@ const createQuantityList = (number) => {
     let entry = [];
 
     for (let i = 1; i <= number; i++) {
-        let valueInString = i + "";
         entry.push(
-            <MenuItem key={i} role="quantity" value={valueInString}>
+            <MenuItem key={i} role="quantity" value={i.toString()}>
                 {i}
             </MenuItem>
         );
@@ -35,53 +34,51 @@ export const CartForm = ({
     requestFailure,
     values: { quantity },
 }) => {
-    if (!handleSubmit) {
-        return false;
-    }
-
     return (
-        handleSubmit && (
-            <>
-                {requestFailure && (
-                    <Alert className={styles.alert} variant="filled" severity="error">
-                        {requestFailure.message}
-                    </Alert>
-                )}
-                <form className={styles.form} onSubmit={handleSubmit}>
-                    <FormControl variant="outlined" className={styles.formControl}>
-                        <InputLabel>Qty</InputLabel>
-                        <Select
-                            value={quantity}
-                            role="selecter"
-                            onChange={handleChange}
-                            label="Qty"
-                            name="quantity"
-                        >
-                            {createQuantityList(availableQuantity)}
-                        </Select>
-                    </FormControl>
-                    <Button
-                        variant="contained"
-                        className={styles.cartButton}
-                        type="submit"
-                        onClick={handleSubmit}
-                        disableElevation
+        <>
+            {requestFailure && (
+                <Alert className={styles.alert} variant="filled" severity="error">
+                    {requestFailure.message}
+                </Alert>
+            )}
+            <form className={styles.form} onSubmit={handleSubmit}>
+                <FormControl variant="outlined" className={styles.formControl}>
+                    <InputLabel>Qty</InputLabel>
+                    <Select
+                        value={quantity}
+                        role="selecter"
+                        onChange={handleChange}
+                        label="Qty"
+                        name="quantity"
                     >
-                        ADD TO CART
-                    </Button>
-                </form>
-            </>
-        )
+                        {createQuantityList(availableQuantity)}
+                    </Select>
+                </FormControl>
+                <Button
+                    variant="contained"
+                    className={styles.cartButton}
+                    type="submit"
+                    onClick={handleSubmit}
+                    disableElevation
+                >
+                    ADD TO CART
+                </Button>
+            </form>
+        </>
     );
 };
 
-export const EnhancedCartForm = ({ handleCart, requestFailure, availableQuantity }) => {
+export const EnhancedCartForm = ({
+    handleSubmit,
+    requestFailure,
+    availableQuantity,
+}) => {
     const onSubmit = (formikValues) => {
-        handleCart(formikValues.quantity);
+        handleSubmit(formikValues.quantity);
     };
 
     return (
-        handleCart && (
+        handleSubmit && (
             <Formik
                 initialValues={{ quantity: "1" }}
                 onSubmit={onSubmit}
@@ -103,19 +100,41 @@ export const EnhancedCartForm = ({ handleCart, requestFailure, availableQuantity
     );
 };
 
-const BodySheet = ({ manufacturer, model_num, datasheet, notes, constraints }) => {
+const DetailInfoSection = ({
+    manufacturer,
+    model_num,
+    datasheet,
+    notes,
+    constraints,
+}) => {
     return (
-        <div className={styles.bodysheet}>
+        <div className={styles.detailinfosection}>
             <div className={styles.bodyinfo}>
-                <Typography variant="body2">Manufacturer</Typography>
+                <Typography variant="body2" className={styles.heading}>
+                    Constraints
+                </Typography>
+                {constraints.map((constraint, i) => (
+                    <Typography key={i} variant="body2">
+                        {constraint}
+                    </Typography>
+                ))}
+            </div>
+            <div className={styles.bodyinfo}>
+                <Typography variant="body2" className={styles.heading}>
+                    Manufacturer
+                </Typography>
                 <Typography>{manufacturer}</Typography>
             </div>
             <div className={styles.bodyinfo}>
-                <Typography variant="body2">Model Number</Typography>
+                <Typography variant="body2" className={styles.heading}>
+                    Model Number
+                </Typography>
                 <Typography>{model_num}</Typography>
             </div>
             <div className={styles.bodyinfo}>
-                <Typography variant="body2">Datasheet</Typography>
+                <Typography variant="body2" className={styles.heading}>
+                    Datasheet
+                </Typography>
                 <Link
                     href={datasheet}
                     rel="noopener"
@@ -129,38 +148,48 @@ const BodySheet = ({ manufacturer, model_num, datasheet, notes, constraints }) =
                 </Link>
             </div>
             <div className={styles.bodyinfo}>
-                <Typography variant="body2">Notes</Typography>
+                <Typography variant="body2" className={styles.heading}>
+                    Notes
+                </Typography>
                 {notes.map((note, i) => (
-                    <Typography key={i}>{note}</Typography>
-                ))}
-            </div>
-            <div className={styles.bodyinfo}>
-                <Typography variant="body2">Constraints</Typography>
-                {constraints.map((constraint, i) => (
-                    <Typography key={i}>{constraint}</Typography>
+                    <Typography key={i} variant="body2">
+                        {note}
+                    </Typography>
                 ))}
             </div>
         </div>
     );
 };
 
-const HeaderSheet = ({ type, name, total, available, categories, img }) => {
+const MainSection = ({ type, name, total, available, categories, img }) => {
+    let availability;
+    if (available === 0) {
+        availability = (
+            <Typography className={styles.notAvailable}>OUT OF STOCK</Typography>
+        );
+    } else {
+        availability = (
+            <Typography className={styles.available}>
+                {available} OF {total} IN STOCK
+            </Typography>
+        );
+    }
+
     return (
-        <div className={styles.headersheet}>
+        <div className={styles.mainsection}>
             <div>
                 <div className={styles.title}>
                     <Typography variant="h2">{name}</Typography>
                 </div>
-                <Typography className={styles.available}>
-                    {available} OF {total} IN STOCK
-                </Typography>
+                {availability}
                 <div className={styles.category}>
                     <Typography variant="h2">Category</Typography>
-                    {categories.map((category) => (
+                    {categories.map((category, i) => (
                         <Chip
                             label={category}
                             size="small"
                             className={styles.categoryItem}
+                            key={i}
                         />
                     ))}
                 </div>
@@ -170,10 +199,10 @@ const HeaderSheet = ({ type, name, total, available, categories, img }) => {
     );
 };
 
-const ProductOverview = ({ detail, addCartFunction }) => {
+export const ProductOverview = ({ detail, addToCart }) => {
     return (
         <div>
-            <HeaderSheet
+            <MainSection
                 type={detail.type}
                 name={detail.name}
                 total={detail.total}
@@ -181,16 +210,19 @@ const ProductOverview = ({ detail, addCartFunction }) => {
                 categories={detail.category}
                 img={detail.img}
             />
-            <BodySheet
+            <DetailInfoSection
                 manufacturer={detail.manufacturer}
                 model_num={detail.model_num}
                 datasheet={detail.datasheet}
                 notes={detail.notes}
                 constraints={detail.constraints}
             />
-            <CartForm values={{}} />
+            <CartForm
+                handleSubmit={addToCart}
+                requestFailure={false}
+                values={{}}
+                availableQuantity={3}
+            />
         </div>
     );
 };
-
-export default ProductOverview;

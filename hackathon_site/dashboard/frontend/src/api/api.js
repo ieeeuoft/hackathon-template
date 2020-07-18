@@ -1,7 +1,9 @@
 import axios from "axios";
 
 export const SERVER_URL =
-    process.env.NODE_ENV === "development" ? process.env.REACT_APP_DEV_SERVER_URL : "";
+    process.env.NODE_ENV === "development"
+        ? process.env.REACT_APP_DEV_SERVER_URL.replace(/\/$/, "")
+        : "";
 
 export const getCsrfToken = () => {
     // When Django serves the react template (and also from some API responses),
