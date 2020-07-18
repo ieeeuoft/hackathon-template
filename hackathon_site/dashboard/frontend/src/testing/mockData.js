@@ -48,18 +48,20 @@ export const cardItems = [
 
 // For ItemTable on Dashboard
 export const itemsCheckedOut = [
-    { url: "https://i.imgur.com/IO6e5a6.jpg", name: "Arduino", qty: 6 },
-    { url: "https://i.imgur.com/kOlrXto.jpg", name: "Raspi", qty: 9 },
+    { id: 1, url: "https://i.imgur.com/IO6e5a6.jpg", name: "Arduino", qty: 6 },
+    { id: 9, url: "https://i.imgur.com/kOlrXto.jpg", name: "Raspi", qty: 9 },
     {
+        id: 4,
         url: "https://i.imgur.com/iUpI1hC.jpg",
         name: "Grove temperature and humidity sensor pro",
         qty: 16,
     },
-    { url: "https://i.imgur.com/kOlrXto.jpg", name: "Blah", qty: 7 },
+    { id: 22, url: "https://i.imgur.com/kOlrXto.jpg", name: "Blah", qty: 7 },
 ];
 
 export const itemsReturned = [
     {
+        id: 1,
         url: "https://i.imgur.com/IO6e5a6.jpg",
         name: "Arduino",
         qty: 1,
@@ -67,6 +69,7 @@ export const itemsReturned = [
         condition: "Good",
     },
     {
+        id: 9,
         url: "https://i.imgur.com/kOlrXto.jpg",
         name: "Raspi",
         qty: 1,
@@ -74,6 +77,7 @@ export const itemsReturned = [
         condition: "Good",
     },
     {
+        id: 4,
         url: "https://i.imgur.com/IO6e5a6.jpg",
         name: "Grove temperature and humidity sensor pro",
         qty: 1,
@@ -84,6 +88,7 @@ export const itemsReturned = [
 
 export const itemsPending = [
     {
+        id: 1,
         url: "https://i.imgur.com/iUpI1hC.jpg",
         name: "Arduino",
         reqQty: 1,

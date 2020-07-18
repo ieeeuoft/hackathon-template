@@ -85,9 +85,35 @@ describe("<UnconnectedCheckedOutTable />", () => {
             expect(queryByText(name)).toBeNull();
         });
     });
+
+    it("Calls 'push' and 'reportIncident' when 'Report broken/lost' is clicked", () => {
+        const push = jest.fn();
+        const reportIncident = jest.fn();
+        const oneRow = [itemsCheckedOut[0]];
+        const { getByText } = render(
+            <UnconnectedCheckedOutTable
+                items={oneRow}
+                isVisible={true}
+                push={push}
+                reportIncident={reportIncident}
+            />
+        );
+        const button = getByText(/report broken\/lost/i);
+        fireEvent.click(button);
+        expect(push).toHaveBeenCalled();
+        expect(reportIncident).toHaveBeenCalled();
+    });
+
+    it("Makes sure there's the same number of buttons as rows", () => {
+        const { getAllByText } = render(
+            <UnconnectedCheckedOutTable items={itemsCheckedOut} isVisible={true} />
+        );
+        const numItems = itemsCheckedOut.length;
+        expect(getAllByText(/report broken\/lost/i).length).toBe(numItems);
+    });
 });
 
-describe("<UnconnectedReturnedTable, />", () => {
+describe("<UnconnectedReturnedTable />", () => {
     it("Shows a message when there's no returned items", () => {
         const { getByText } = render(
             <UnconnectedReturnedTable items={[]} isVisible={true} />
