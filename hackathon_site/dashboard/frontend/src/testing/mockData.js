@@ -112,7 +112,7 @@ export const cartQuantity = 0;
 export const userEmail = "graham@email.com";
 
 // Inventory
-export const categories = [
+export const inventoryCategories = [
     { name: "MCU", qty: 12 },
     { name: "MCU_limit_3", qty: 6 },
     { name: "FPGA", qty: 9 },

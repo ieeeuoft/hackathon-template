@@ -3,7 +3,7 @@ import React from "react";
 import Header from "components/general/Header/Header";
 import Typography from "@material-ui/core/Typography";
 import InventoryFilter from "components/inventory/InventoryFilter/InventoryFilter";
-import { categories } from "testing/mockData";
+import { inventoryCategories } from "testing/mockData";
 
 const applyFilter = () => alert("Applies the filter");
 
@@ -16,7 +16,7 @@ const Inventory = () => {
             <Typography variant="h1">Hardware Inventory</Typography>
             <p>IEEEEEE</p>
             <InventoryFilter
-                categories={categories}
+                categories={inventoryCategories}
                 applyFilter={applyFilter}
                 removeFilter={removeFilter}
             />
