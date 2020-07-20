@@ -1,7 +1,5 @@
 import React from "react";
 import styles from "./InventoryFilter.module.scss";
-import { Formik } from "formik";
-
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
@@ -12,126 +10,97 @@ import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 
-const InventoryFilter = ({ 
-    errors,
-    handleChange,
-    handleReset,
-    handleSubmit,
-    isLoading,
-    categories, 
-    applyFilter, 
-    removeFilter, 
-    elevation = 3 
-}) => (
+const InventoryFilter = ({ categories, applyFilter, removeFilter }) => (
     <div className={styles.filter}>
-        <Paper className={styles.filterPaper} square={true} elevation={elevation}>
+        <Paper className={styles.filterPaper} square={true} elevation={3}>
             <form>
                 <fieldset>
                     <legend>
-                        <Typography variant="h2">
-                            Order by
-                        </Typography>
+                        <Typography variant="h2">Order by</Typography>
                     </legend>
-                    <RadioGroup aria-label="order by" name="order by">
+                    <RadioGroup aria-label="order by" name="orderBy">
                         <FormControlLabel
+                            name="orderBy"
                             value="all"
-                            control={<Radio color="primary" />}
                             label="All"
+                            control={<Radio color="primary" />}
                         />
                         <FormControlLabel
+                            name="orderBy"
                             value="a-z"
-                            control={<Radio color="primary" />}
                             label="A-Z"
+                            control={<Radio color="primary" />}
                         />
                         <FormControlLabel
+                            name="orderBy"
                             value="z-a"
-                            control={<Radio color="primary" />}
                             label="Z-A"
+                            control={<Radio color="primary" />}
                         />
                         <FormControlLabel
+                            name="orderBy"
                             value="stock-high-low"
-                            control={<Radio color="primary" />}
                             label="Stock remaining: high to low"
+                            control={<Radio color="primary" />}
                         />
                         <FormControlLabel
+                            name="orderBy"
                             value="stock-low-high"
-                            control={<Radio color="primary" />}
                             label="Stock remaining: low to high"
+                            control={<Radio color="primary" />}
                         />
                     </RadioGroup>
                 </fieldset>
                 <Divider className={styles.filterDivider} />
                 <fieldset>
                     <legend>
-                        <Typography variant="h2">
-                            Availability
-                        </Typography>
+                        <Typography variant="h2">Availability</Typography>
                     </legend>
                     <FormControlLabel
+                        name="inStock"
                         value="in-stock"
-                        control={<Checkbox color="primary" />}
                         label="In stock"
+                        control={<Checkbox color="primary" />}
                     />
                 </fieldset>
                 <Divider className={styles.filterDivider} />
                 <fieldset>
                     <legend>
-                        <Typography variant="h2">
-                            Categories
-                        </Typography>
+                        <Typography variant="h2">Categories</Typography>
                     </legend>
                     {categories.map((item, i) => (
                         <div className={styles.filterCategory} key={i}>
                             <FormControlLabel
-                                control={<Checkbox color="primary" />}
+                                name="inventoryFilter"
+                                value={`category-${item.id}`}
                                 label={item.name}
-                                name={`category-${item.id}`}
+                                control={<Checkbox color="primary" />}
                             />
-                            <Chip label={item.qty} className={styles.filterCategoryChip} />
+                            <Chip
+                                label={item.qty}
+                                className={styles.filterCategoryChip}
+                            />
                         </div>
                     ))}
                 </fieldset>
             </form>
         </Paper>
-        <Button
-            color="primary"
-            variant="contained"
-            fullWidth={true}
-            onClick={applyFilter}
-            className={styles.filterBtn}
-        >
-            Apply
-        </Button>
-        <Button color="secondary" onClick={removeFilter}>
-            Clear all
-        </Button>
+        <div className={styles.filterBtns}>
+            <Button
+                type="submit"
+                onClick={applyFilter}
+                color="primary"
+                variant="contained"
+                fullWidth={true}
+                className={styles.filterBtnsApply}
+            >
+                Apply
+            </Button>
+            <Button type="reset" color="secondary" onClick={removeFilter}>
+                Clear all
+            </Button>
+        </div>
     </div>
 );
 
-
-export const EnhancedInventoryFilter = ({ handleLogin, isLoading, requestFailure }) => {
-    const onSubmit = (formikValues) => {
-        handleLogin({ email: formikValues.email, password: formikValues.password });
-    };
-
-    return (
-        <Formik
-            initialValues={{ email: "", password: "" }}
-            onSubmit={onSubmit}
-            validateOnBlur={false}
-            validateOnChange={false}
-            // validationSchema={InventoryFormSchema}
-        >
-            {(formikProps) => (
-                <InventoryFilter
-                    {...formikProps}
-                    isLoading={isLoading}
-                    requestFailure={requestFailure}
-                />
-            )}
-        </Formik>
-    );
-};
-
-
-export default EnhancedInventoryFilter;
+export default InventoryFilter;

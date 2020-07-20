@@ -2,7 +2,7 @@ import React from "react";
 import InventoryFilter from "./InventoryFilter";
 import { render } from "@testing-library/react";
 import { fireEvent } from "@testing-library/react";
-import { categories } from "testing/mockData";
+import { inventoryCategories } from "testing/mockData";
 
 describe("<InventoryFilter />", () => {
     const applyFilter = jest.fn();
@@ -11,7 +11,7 @@ describe("<InventoryFilter />", () => {
     it("Calls applyFilter when the 'Apply' button is clicked", () => {
         const { getByText } = render(
             <InventoryFilter
-                categories={categories}
+                categories={inventoryCategories}
                 applyFilter={applyFilter}
                 removeFilter={removeFilter}
             />
@@ -23,7 +23,7 @@ describe("<InventoryFilter />", () => {
     it("Calls removeFilter when the 'Clear all' button is clicked", () => {
         const { getByText } = render(
             <InventoryFilter
-                categories={categories}
+                categories={inventoryCategories}
                 applyFilter={applyFilter}
                 removeFilter={removeFilter}
             />
@@ -42,12 +42,12 @@ describe("<InventoryFilter />", () => {
         ];
         const { queryByText, getByText } = render(
             <InventoryFilter
-                categories={categories}
+                categories={inventoryCategories}
                 applyFilter={applyFilter}
                 removeFilter={removeFilter}
             />
         );
-        for (let c of categories) {
+        for (let c of inventoryCategories) {
             expect(queryByText(c.name)).toBeTruthy();
         }
         for (let o of orderBy) {
