@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "./InventoryFilter.module.scss";
-import { Formik } from "formik";
+import { Formik, Field, Form } from "formik";
 
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
@@ -11,52 +11,56 @@ import Checkbox from "@material-ui/core/Checkbox";
 import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
+import { inventoryCategories } from "testing/mockData";
 
-const InventoryFilter = ({ 
-    errors,
-    handleChange,
+export const InventoryFilter = ({ 
+    // errors,
+    // handleChange,
     handleReset,
     handleSubmit,
-    isLoading,
     categories, 
-    applyFilter, 
-    removeFilter, 
-    elevation = 3 
+    // applyFilter, 
+    // removeFilter, 
 }) => (
     <div className={styles.filter}>
-        <Paper className={styles.filterPaper} square={true} elevation={elevation}>
-            <form>
+        <Paper className={styles.filterPaper} square={true} elevation={3}>
+            <Form onReset={handleReset} onSubmit={handleSubmit}> 
                 <fieldset>
                     <legend>
                         <Typography variant="h2">
                             Order by
                         </Typography>
                     </legend>
-                    <RadioGroup aria-label="order by" name="order by">
+                    <RadioGroup aria-label="order by" name="orderBy">
                         <FormControlLabel
+                            name="all"
                             value="all"
-                            control={<Radio color="primary" />}
                             label="All"
+                            control={<Radio color="primary" />}
                         />
                         <FormControlLabel
+                            name="a-z"
                             value="a-z"
-                            control={<Radio color="primary" />}
                             label="A-Z"
+                            control={<Radio color="primary" />}
                         />
                         <FormControlLabel
+                            name="z-a"
                             value="z-a"
-                            control={<Radio color="primary" />}
                             label="Z-A"
+                            control={<Radio color="primary" />}
                         />
                         <FormControlLabel
+                            name="stock-high-low"
                             value="stock-high-low"
-                            control={<Radio color="primary" />}
                             label="Stock remaining: high to low"
+                            control={<Radio color="primary" />}
                         />
                         <FormControlLabel
+                            name="stock-low-high"
                             value="stock-low-high"
-                            control={<Radio color="primary" />}
                             label="Stock remaining: low to high"
+                            control={<Radio color="primary" />}
                         />
                     </RadioGroup>
                 </fieldset>
@@ -67,7 +71,9 @@ const InventoryFilter = ({
                             Availability
                         </Typography>
                     </legend>
+                    {/* <Field name="inStock" type="checkbox" /> */}
                     <FormControlLabel
+                        name="inStock"
                         value="in-stock"
                         control={<Checkbox color="primary" />}
                         label="In stock"
@@ -83,50 +89,58 @@ const InventoryFilter = ({
                     {categories.map((item, i) => (
                         <div className={styles.filterCategory} key={i}>
                             <FormControlLabel
+                                name="inventoryCategories"
+                                value={`category-${item.id}`}
                                 control={<Checkbox color="primary" />}
                                 label={item.name}
-                                name={`category-${item.id}`}
                             />
                             <Chip label={item.qty} className={styles.filterCategoryChip} />
                         </div>
                     ))}
                 </fieldset>
-            </form>
+            </Form>
         </Paper>
-        <Button
-            color="primary"
-            variant="contained"
-            fullWidth={true}
-            onClick={applyFilter}
-            className={styles.filterBtn}
-        >
-            Apply
-        </Button>
-        <Button color="secondary" onClick={removeFilter}>
-            Clear all
-        </Button>
+        <div className={styles.filterBtns}>
+            <Button
+                type="submit"
+                onClick={handleSubmit}
+                // onClick={applyFilter}
+                color="primary"
+                variant="contained"
+                fullWidth={true}
+                className={styles.filterBtnsApply}
+            >
+                Apply
+            </Button>
+            <Button type="reset" color="secondary" onClick={handleReset}>
+                Clear all
+            </Button>
+        </div>
     </div>
 );
 
+const applyFilter = () => alert("Applies the filter");
 
-export const EnhancedInventoryFilter = ({ handleLogin, isLoading, requestFailure }) => {
-    const onSubmit = (formikValues) => {
-        handleLogin({ email: formikValues.email, password: formikValues.password });
-    };
+const removeFilter = () => alert("Removes all filters and resets form");
 
+
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+export const EnhancedInventoryFilter = () => {
     return (
         <Formik
-            initialValues={{ email: "", password: "" }}
-            onSubmit={onSubmit}
-            validateOnBlur={false}
-            validateOnChange={false}
-            // validationSchema={InventoryFormSchema}
+            initialValues={{ orderBy: "", inStock: false, inventoryCategories: [] }}
+            onSubmit={async values => {
+                await sleep(500);
+                alert(JSON.stringify(values, null, 2));
+            }}
         >
             {(formikProps) => (
                 <InventoryFilter
                     {...formikProps}
-                    isLoading={isLoading}
-                    requestFailure={requestFailure}
+                    categories={inventoryCategories}
+                    // applyFilter={applyFilter}
+                    // removeFilter={removeFilter}
                 />
             )}
         </Formik>
@@ -135,3 +149,4 @@ export const EnhancedInventoryFilter = ({ handleLogin, isLoading, requestFailure
 
 
 export default EnhancedInventoryFilter;
+// export default InventoryFilter;
