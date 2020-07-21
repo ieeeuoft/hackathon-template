@@ -14,27 +14,34 @@ import {
 } from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
 
-const Selections = ({ currentStock }) => {
+const Selections = (currentStock) => {
+    const items = [];
+    let i = 0;
+
+    for (i = 1; i < currentStock + 1; i++) {
+        items.push(
+            <MenuItem key={i} role="quantity" value={i.toString()}>
+                {i}
+            </MenuItem>
+        );
+    }
+    return items;
+};
+
+export const CartCard = ({
+    image,
+    title,
+    currentStock,
+    closeChange,
+    handleChange,
+    item,
+}) => {
     const items = [];
     let i = 0;
 
     for (i = 2; i < currentStock + 1; i++) {
         items.push(i);
     }
-
-    return items.map((item, k) => (
-        <MenuItem val={item} key={k}>
-            {item}
-        </MenuItem>
-    ));
-};
-
-const CartCard = ({ image, title, currentStock, OnClickChange }) => {
-    const [item, setItem] = React.useState("1");
-
-    const handleChange = (event) => {
-        setItem(event.target.value);
-    };
 
     return (
         <Grid className={styles.Cart} item>
@@ -55,17 +62,18 @@ const CartCard = ({ image, title, currentStock, OnClickChange }) => {
                         {" "}
                         Qty{" "}
                     </InputLabel>
-                    <Select labelId="Qty" value={item} onChange={handleChange}>
-                        <MenuItem value={1}>1</MenuItem>
-                        <Selections currentStock={currentStock} />
+                    <Select
+                        labelId="Qty"
+                        value={item}
+                        onChange={handleChange}
+                        role="selecter"
+                        name="quantity"
+                    >
+                        {Selections(currentStock)}
                     </Select>
                 </FormControl>
             </Card>
-            <IconButton
-                size="small"
-                className={styles.CartClose}
-                onClick={OnClickChange}
-            >
+            <IconButton size="small" className={styles.CartClose} onClick={closeChange}>
                 <CloseIcon className={styles.CartClose} />
             </IconButton>
         </Grid>
