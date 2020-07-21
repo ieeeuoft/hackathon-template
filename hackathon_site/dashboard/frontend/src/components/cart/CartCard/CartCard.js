@@ -9,6 +9,8 @@ import {
     FormControl,
     MenuItem,
     IconButton,
+    Paper,
+    InputLabel,
 } from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
 
@@ -22,13 +24,12 @@ const Selections = ({ currentStock }) => {
 
     return items.map((item, k) => (
         <MenuItem val={item} key={k}>
-            {" "}
-            {item}{" "}
+            {item}
         </MenuItem>
     ));
 };
 
-const CartCard = ({ image, title, currentStock }) => {
+const CartCard = ({ image, title, currentStock, OnClickChange }) => {
     const [item, setItem] = React.useState("1");
 
     const handleChange = (event) => {
@@ -36,35 +37,37 @@ const CartCard = ({ image, title, currentStock }) => {
     };
 
     return (
-        <Grid item>
-            <Card className={styles.Cart} outline="outlined">
-                <Card className={styles.CartPic} outline="outlined">
-                    <CardMedia
-                        className={styles.CartPic}
-                        component="img"
-                        image={image}
-                        title={title}
-                    />
-                </Card>
-                <div className={styles.CartParts}>
-                    <Typography variant="body2" className={styles.CartName}>
-                        {title}
-                    </Typography>
-                    <FormControl
-                        className={styles.CartFormSelect}
-                        size="small"
-                        variant="outlined"
-                    >
-                        <Select size="small" value={item} onChange={handleChange}>
-                            <MenuItem value={1}>1</MenuItem>
-                            <Selections currentStock={currentStock} />
-                        </Select>
-                    </FormControl>
-                </div>
-                <IconButton size="small" className={styles.CartClose}>
-                    <CloseIcon />
-                </IconButton>
+        <Grid className={styles.Cart} item>
+            <Paper className={styles.Cart} elevation={0}>
+                <CardMedia className={styles.CartPic} image={image} title={title} />
+            </Paper>
+            <Card className={styles.CartParts} elevation={0}>
+                <Typography variant="body2" className={styles.CartName}>
+                    {" "}
+                    {title}{" "}
+                </Typography>
+                <FormControl
+                    variant="outlined"
+                    size="small"
+                    className={styles.CartFormControl}
+                >
+                    <InputLabel shrink={true} id="Qty">
+                        {" "}
+                        Qty{" "}
+                    </InputLabel>
+                    <Select labelId="Qty" value={item} onChange={handleChange}>
+                        <MenuItem value={1}>1</MenuItem>
+                        <Selections currentStock={currentStock} />
+                    </Select>
+                </FormControl>
             </Card>
+            <IconButton
+                size="small"
+                className={styles.CartClose}
+                onClick={OnClickChange}
+            >
+                <CloseIcon className={styles.CartClose} />
+            </IconButton>
         </Grid>
     );
 };

@@ -3,6 +3,7 @@
 
 .Cart {
     display: flex;
+    color: color(backgroundC);
 
     &Pic {
         height: 90px;
@@ -10,8 +11,9 @@
     }
 
     &Name {
-        padding-top: 18px;
-        padding-bottom: 11px;
+        color: color(font);
+        padding-top: 11px;
+        padding-bottom: 17px;
     }
 
     &Parts {
@@ -20,19 +22,18 @@
         height: 90px;
         width: 95%;
         padding-left: 30px;
+        background-color: color(backgroundC);
     }
 
-    &FormSelect {
-        height: 54%;
+    &FormControl {
         width: 98px;
-        outline: hidden;
-
-        // border: 1px solid rgb(146, 168, 179);
-        // box-sizing: border-box;
-        // border-radius: 4px;
+        background-color: color(white);
     }
 
     &Close {
-        align-self: baseline;
+        height: 24px;
+        width: 24px;
+        vertical-align: top;
+        color: color(grey);
     }
 }
