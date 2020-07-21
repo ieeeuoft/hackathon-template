@@ -16,6 +16,7 @@
     "history": "^4.10.1",
     "lint-staged": "^10.2.2",
     "node-sass": "^4.14.0",
+    "notistack": "^0.9.17",
     "prettier": "^2.0.5",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",

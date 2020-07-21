@@ -5,21 +5,13 @@ import Typography from "@material-ui/core/Typography";
 import EnhancedInventoryFilter from "components/inventory/InventoryFilter/InventoryFilter";
 import { inventoryCategories } from "testing/mockData";
 
-const applyFilter = () => alert("Applies the filter");
-
-const removeFilter = () => alert("Removes all filters and resets form");
-
 const Inventory = () => {
     return (
         <div>
             <Header />
             <Typography variant="h1">Hardware Inventory</Typography>
             <p>IEEEEEE</p>
-            <EnhancedInventoryFilter
-                categories={inventoryCategories}
-                applyFilter={applyFilter}
-                removeFilter={removeFilter}
-            />
+            <EnhancedInventoryFilter />
         </div>
     );
 };

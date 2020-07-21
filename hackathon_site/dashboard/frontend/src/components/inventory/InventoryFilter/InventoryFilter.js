@@ -14,7 +14,6 @@ import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { inventoryCategories } from "testing/mockData";
-import { TRUE } from "node-sass";
 
 const FormikRadioGroup = ({ field, options, ...props }) => (
     <RadioGroup {...field} {...props} name={field.name}>
@@ -68,7 +67,12 @@ export const orderByOptions = [
     { value: "Stock remaining: low to high", label: "Stock remaining: low to high" },
 ];
 
-export const InventoryFilter = ({ handleReset, handleSubmit, isLoadingApply=true, isLoadingClear=true }) => (
+export const InventoryFilter = ({
+    handleReset,
+    handleSubmit,
+    isLoadingApply = true,
+    isLoadingClear = true,
+}) => (
     <div className={styles.filter}>
         <Paper className={styles.filterPaper} square={true} elevation={3}>
             <Form onReset={handleReset} onSubmit={handleSubmit}>
@@ -120,9 +124,13 @@ export const InventoryFilter = ({ handleReset, handleSubmit, isLoadingApply=true
                         // data-testid={TEST_IDS.circularProgress}
                     />
                 )}
-                
             </Button>
-            <Button type="reset" color="secondary" onClick={handleReset} disabled={isLoadingApply || isLoadingClear}>
+            <Button
+                type="reset"
+                color="secondary"
+                onClick={handleReset}
+                disabled={isLoadingApply || isLoadingClear}
+            >
                 <Typography>Clear all</Typography>
                 {isLoadingClear && (
                     <CircularProgress
@@ -131,7 +139,6 @@ export const InventoryFilter = ({ handleReset, handleSubmit, isLoadingApply=true
                         // data-testid={TEST_IDS.circularProgress}
                     />
                 )}
-                
             </Button>
         </div>
     </div>

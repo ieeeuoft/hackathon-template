@@ -1,5 +1,8 @@
 import React from "react";
-import EnhancedInventoryFilter, { InventoryFilter, orderByOptions} from "./InventoryFilter";
+import EnhancedInventoryFilter, {
+    InventoryFilter,
+    orderByOptions,
+} from "./InventoryFilter";
 import { render } from "@testing-library/react";
 import { fireEvent } from "@testing-library/react";
 import { inventoryCategories } from "testing/mockData";
@@ -52,6 +55,4 @@ describe("<InventoryFilter />", () => {
     });
 });
 
-describe("<EnhancedInventoryFilter />", () => {
-
-});
+describe("<EnhancedInventoryFilter />", () => {});

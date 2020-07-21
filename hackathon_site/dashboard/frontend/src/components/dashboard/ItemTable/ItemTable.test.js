@@ -12,7 +12,8 @@ import {
 import {
     uiReducerName,
     initialState as uiInitialState,
-    actions as uiActions,
+    toggleCheckedOutTable,
+    toggleReturnedTable,
 } from "slices/ui/uiSlice";
 import { itemsCheckedOut, itemsPending, itemsReturned } from "testing/mockData";
 import { withStore } from "testing/helpers";
@@ -164,7 +165,7 @@ describe("Connected tables", () => {
 
         await fireEvent.click(button);
         expect(store.getActions()).toContainEqual(
-            expect.objectContaining({ type: uiActions.toggleCheckedOutTable.type })
+            expect.objectContaining({ type: toggleCheckedOutTable.type })
         );
     });
 
@@ -176,7 +177,7 @@ describe("Connected tables", () => {
 
         await fireEvent.click(button);
         expect(store.getActions()).toContainEqual(
-            expect.objectContaining({ type: uiActions.toggleReturnedTable.type })
+            expect.objectContaining({ type: toggleReturnedTable.type })
         );
     });
 });
