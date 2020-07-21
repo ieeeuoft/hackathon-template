@@ -10,93 +10,95 @@ import Divider from "@material-ui/core/Divider";
 import Checkbox from "@material-ui/core/Checkbox";
 import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
+import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
+import CircularProgress from "@material-ui/core/CircularProgress";
 import { inventoryCategories } from "testing/mockData";
+import { TRUE } from "node-sass";
 
-export const InventoryFilter = ({ 
-    // errors,
-    // handleChange,
-    handleReset,
-    handleSubmit,
-    categories, 
-    // applyFilter, 
-    // removeFilter, 
-}) => (
+const FormikRadioGroup = ({ field, options, ...props }) => (
+    <RadioGroup {...field} {...props} name={field.name}>
+        {options.map((item, i) => (
+            <FormControlLabel
+                name={field.name}
+                value={item.value}
+                label={item.label}
+                control={<Radio color="primary" />}
+                checked={field.value === item.value}
+                key={i}
+            />
+        ))}
+    </RadioGroup>
+);
+
+const FormikCategoryGroup = ({ field, options, ...props }) => (
+    <FormGroup {...field} {...props} name={field.name}>
+        {options.map((item, i) => (
+            <div className={styles.filterCategory} key={i}>
+                <FormControlLabel
+                    name={field.name}
+                    value={item.name}
+                    control={<Checkbox color="primary" />}
+                    label={item.name}
+                    checked={field.value.includes(item.name)}
+                />
+                <Chip label={item.qty} className={styles.filterCategoryChip} />
+            </div>
+        ))}
+    </FormGroup>
+);
+
+const FormikAvailabilityGroup = ({ field, name, ...props }) => (
+    <FormGroup {...field} {...props} name={field.name}>
+        <FormControlLabel
+            label="In stock"
+            name={field.name}
+            value="In stock"
+            control={<Checkbox color="primary" />}
+            checked={field.value}
+        />
+    </FormGroup>
+);
+
+export const orderByOptions = [
+    { value: "Default", label: "Default" },
+    { value: "A-Z", label: "A-Z" },
+    { value: "Z-A", label: "Z-A" },
+    { value: "Stock remaining: high to low", label: "Stock remaining: high to low" },
+    { value: "Stock remaining: low to high", label: "Stock remaining: low to high" },
+];
+
+export const InventoryFilter = ({ handleReset, handleSubmit, isLoadingApply=true, isLoadingClear=true }) => (
     <div className={styles.filter}>
         <Paper className={styles.filterPaper} square={true} elevation={3}>
-            <Form onReset={handleReset} onSubmit={handleSubmit}> 
+            <Form onReset={handleReset} onSubmit={handleSubmit}>
                 <fieldset>
                     <legend>
-                        <Typography variant="h2">
-                            Order by
-                        </Typography>
+                        <Typography variant="h2">Order by</Typography>
                     </legend>
-                    <RadioGroup aria-label="order by" name="orderBy">
-                        <FormControlLabel
-                            name="all"
-                            value="all"
-                            label="All"
-                            control={<Radio color="primary" />}
-                        />
-                        <FormControlLabel
-                            name="a-z"
-                            value="a-z"
-                            label="A-Z"
-                            control={<Radio color="primary" />}
-                        />
-                        <FormControlLabel
-                            name="z-a"
-                            value="z-a"
-                            label="Z-A"
-                            control={<Radio color="primary" />}
-                        />
-                        <FormControlLabel
-                            name="stock-high-low"
-                            value="stock-high-low"
-                            label="Stock remaining: high to low"
-                            control={<Radio color="primary" />}
-                        />
-                        <FormControlLabel
-                            name="stock-low-high"
-                            value="stock-low-high"
-                            label="Stock remaining: low to high"
-                            control={<Radio color="primary" />}
-                        />
-                    </RadioGroup>
-                </fieldset>
-                <Divider className={styles.filterDivider} />
-                <fieldset>
-                    <legend>
-                        <Typography variant="h2">
-                            Availability
-                        </Typography>
-                    </legend>
-                    {/* <Field name="inStock" type="checkbox" /> */}
-                    <FormControlLabel
-                        name="inStock"
-                        value="in-stock"
-                        control={<Checkbox color="primary" />}
-                        label="In stock"
+                    <Field
+                        name="orderBy"
+                        component={FormikRadioGroup}
+                        options={orderByOptions}
                     />
                 </fieldset>
                 <Divider className={styles.filterDivider} />
                 <fieldset>
                     <legend>
-                        <Typography variant="h2">
-                            Categories
-                        </Typography>
+                        <Typography variant="h2">Availability</Typography>
                     </legend>
-                    {categories.map((item, i) => (
-                        <div className={styles.filterCategory} key={i}>
-                            <FormControlLabel
-                                name="inventoryCategories"
-                                value={`category-${item.id}`}
-                                control={<Checkbox color="primary" />}
-                                label={item.name}
-                            />
-                            <Chip label={item.qty} className={styles.filterCategoryChip} />
-                        </div>
-                    ))}
+                    <Field name="inStock" component={FormikAvailabilityGroup} />
+                </fieldset>
+                <Divider className={styles.filterDivider} />
+                <fieldset>
+                    <legend>
+                        <Typography variant="h2">Categories</Typography>
+                    </legend>
+                    <Field
+                        name="inventoryCategories"
+                        component={FormikCategoryGroup}
+                        options={inventoryCategories}
+                    />
                 </fieldset>
             </Form>
         </Paper>
@@ -104,49 +106,57 @@ export const InventoryFilter = ({
             <Button
                 type="submit"
                 onClick={handleSubmit}
-                // onClick={applyFilter}
                 color="primary"
                 variant="contained"
                 fullWidth={true}
                 className={styles.filterBtnsApply}
+                disabled={isLoadingApply || isLoadingClear}
             >
-                Apply
+                <Typography>Apply</Typography>
+                {isLoadingApply && (
+                    <CircularProgress
+                        className={styles.formCircularProgress}
+                        size={20}
+                        // data-testid={TEST_IDS.circularProgress}
+                    />
+                )}
+                
             </Button>
-            <Button type="reset" color="secondary" onClick={handleReset}>
-                Clear all
+            <Button type="reset" color="secondary" onClick={handleReset} disabled={isLoadingApply || isLoadingClear}>
+                <Typography>Clear all</Typography>
+                {isLoadingClear && (
+                    <CircularProgress
+                        className={styles.formCircularProgress}
+                        size={20}
+                        // data-testid={TEST_IDS.circularProgress}
+                    />
+                )}
+                
             </Button>
         </div>
     </div>
 );
 
-const applyFilter = () => alert("Applies the filter");
-
-const removeFilter = () => alert("Removes all filters and resets form");
-
-
-const sleep = ms => new Promise(r => setTimeout(r, ms));
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 export const EnhancedInventoryFilter = () => {
     return (
         <Formik
-            initialValues={{ orderBy: "", inStock: false, inventoryCategories: [] }}
-            onSubmit={async values => {
+            initialValues={{
+                orderBy: "Default",
+                inStock: false,
+                inventoryCategories: [],
+            }}
+            onSubmit={async (values) => {
                 await sleep(500);
                 alert(JSON.stringify(values, null, 2));
             }}
         >
             {(formikProps) => (
-                <InventoryFilter
-                    {...formikProps}
-                    categories={inventoryCategories}
-                    // applyFilter={applyFilter}
-                    // removeFilter={removeFilter}
-                />
+                <InventoryFilter {...formikProps} categories={inventoryCategories} />
             )}
         </Formik>
     );
 };
 
-
 export default EnhancedInventoryFilter;
-// export default InventoryFilter;
