@@ -1,7 +1,7 @@
 from rest_framework import generics, mixins
 
-from event.models import Profile
-from event.serializers import ProfileSerializer
+from event.models import User
+from event.serializers import UserSerializer
 
 
 class CurrentUserAPIView(generics.GenericAPIView, mixins.RetrieveModelMixin):
@@ -9,10 +9,13 @@ class CurrentUserAPIView(generics.GenericAPIView, mixins.RetrieveModelMixin):
     View to handle API interaction with the current user's Profile
     """
 
-    serializer_class = ProfileSerializer
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
 
     def get_object(self):
-        return generics.get_object_or_404(Profile.objects.all(), user=self.request.user)
+        queryset = self.get_queryset()
+
+        return generics.get_object_or_404(queryset, id=self.request.user.id)
 
     def get(self, request, *args, **kwargs):
         """

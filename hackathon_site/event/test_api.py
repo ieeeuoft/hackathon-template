@@ -32,22 +32,29 @@ class CurrentUserTestCase(APITestCase):
     def test_user_has_no_profile(self):
         self.profile.delete()
         self._login()
-        response = self.client.get(self.view)
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-
-    def test_correct_response(self):
         expected_response = {
-            "id": self.profile.id,
-            "user": {
-                **{
-                    attr: getattr(self.user, attr)
-                    for attr in ("id", "first_name", "last_name", "email")
-                },
-                "groups": [{"id": self.group.id, "name": self.group.name,}],
-            },
             **{
+                attr: getattr(self.user, attr)
+                for attr in ("id", "first_name", "last_name", "email")
+            },
+            "profile": None,
+            "groups": [{"id": self.group.id, "name": self.group.name}],
+        }
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.json()
+        self.assertEqual(expected_response, data)
+
+    def test_user_has_profile(self):
+        expected_response = {
+            **{
+                attr: getattr(self.user, attr)
+                for attr in ("id", "first_name", "last_name", "email")
+            },
+            "profile": {
                 attr: getattr(self.profile, attr)
                 for attr in (
+                    "id",
                     "status",
                     "id_provided",
                     "attended",
@@ -55,6 +62,7 @@ class CurrentUserTestCase(APITestCase):
                     "e_signature",
                 )
             },
+            "groups": [{"id": self.group.id, "name": self.group.name}],
         }
         self._login()
         response = self.client.get(self.view)
