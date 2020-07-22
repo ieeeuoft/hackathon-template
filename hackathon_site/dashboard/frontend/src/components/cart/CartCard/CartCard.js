@@ -36,17 +36,15 @@ export const CartCard = ({
     handleChange,
     item,
 }) => {
-    const items = [];
-    let i = 0;
-
-    for (i = 2; i < currentStock + 1; i++) {
-        items.push(i);
-    }
-
     return (
         <Grid className={styles.Cart} item>
             <Paper className={styles.Cart} elevation={0}>
-                <CardMedia className={styles.CartPic} image={image} title={title} />
+                <CardMedia
+                    className={styles.CartPic}
+                    image={image}
+                    alt={title}
+                    component="img"
+                />
             </Paper>
             <Card className={styles.CartParts} elevation={0}>
                 <Typography variant="body2" className={styles.CartName}>
@@ -73,7 +71,12 @@ export const CartCard = ({
                     </Select>
                 </FormControl>
             </Card>
-            <IconButton size="small" className={styles.CartClose} onClick={closeChange}>
+            <IconButton
+                size="small"
+                className={styles.CartClose}
+                onClick={closeChange}
+                role="close"
+            >
                 <CloseIcon className={styles.CartClose} />
             </IconButton>
         </Grid>
