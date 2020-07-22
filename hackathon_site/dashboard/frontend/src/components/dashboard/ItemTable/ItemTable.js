@@ -21,7 +21,8 @@ import { push } from "connected-react-router";
 import {
     isCheckedOutTableVisibleSelector,
     isReturnedTableVisibleSelector,
-    actions as uiActions,
+    toggleCheckedOutTable,
+    toggleReturnedTable,
 } from "slices/ui/uiSlice";
 
 export const ChipStatus = ({ status }) => {
@@ -101,7 +102,7 @@ export const UnconnectedCheckedOutTable = ({
                         </TableHead>
                         <TableBody>
                             {items.map((row) => (
-                                <TableRow key={row.name}>
+                                <TableRow key={row.id}>
                                     <TableCell align="left">
                                         <img
                                             className={styles.itemImg}
@@ -150,7 +151,7 @@ const checkedOutMapStateToProps = (state) => ({
 });
 
 export const CheckedOutTable = connect(checkedOutMapStateToProps, {
-    toggleVisibility: uiActions.toggleCheckedOutTable,
+    toggleVisibility: toggleCheckedOutTable,
     push,
 })(UnconnectedCheckedOutTable);
 
@@ -201,7 +202,7 @@ export const UnconnectedReturnedTable = ({ items, isVisible, toggleVisibility })
                         </TableHead>
                         <TableBody>
                             {items.map((row) => (
-                                <TableRow key={row.name}>
+                                <TableRow key={row.id}>
                                     <TableCell align="left">
                                         <img
                                             className={styles.itemImg}
@@ -228,7 +229,7 @@ const returnedTableMapStateToProps = (state) => ({
 });
 
 export const ReturnedTable = connect(returnedTableMapStateToProps, {
-    toggleVisibility: uiActions.toggleReturnedTable,
+    toggleVisibility: toggleReturnedTable,
 })(UnconnectedReturnedTable);
 
 export const PendingTable = ({ items, status }) => {
@@ -263,7 +264,7 @@ export const PendingTable = ({ items, status }) => {
                     </TableHead>
                     <TableBody>
                         {items.map((row) => (
-                            <TableRow key={row.name}>
+                            <TableRow key={row.id}>
                                 <TableCell align="left">
                                     <img
                                         className={styles.itemImg}

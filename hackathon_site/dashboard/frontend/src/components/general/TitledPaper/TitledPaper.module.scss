@@ -1,0 +1,13 @@
+@import "./../../../assets/abstracts/variables";
+
+.title {
+    margin-bottom: 10px;
+}
+
+.paper {
+    flex-grow: 1;
+    padding: 8px 0px;
+    svg {
+        color: color(grey);
+    }
+}

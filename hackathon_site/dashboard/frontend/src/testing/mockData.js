@@ -110,3 +110,17 @@ export const teamCode = "PAS3NLQ3";
 // Navbar
 export const cartQuantity = 0;
 export const userEmail = "graham@email.com";
+
+// Inventory
+export const inventoryCategories = [
+    { name: "MCU", qty: 12 },
+    { name: "MCU_limit_3", qty: 6 },
+    { name: "FPGA", qty: 9 },
+    { name: "Sensors", qty: 21 },
+    { name: "Sensors_limit_2", qty: 3 },
+    { name: "Peripherals", qty: 389 },
+    { name: "1080p_cameras", qty: 4 },
+    { name: "Grove", qty: 22 },
+    { name: "Grove_style_boards", qty: 12 },
+    { name: "Grove_style_modules", qty: 10 },
+];

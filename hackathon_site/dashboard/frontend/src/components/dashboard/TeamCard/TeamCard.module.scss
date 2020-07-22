@@ -1,13 +1,9 @@
 @import "./../../../assets/abstracts/variables";
 
-.paper {
-    flex-grow: 1;
-    padding: 8px 0px;
-    overflow-x: hidden;
-    .name {
-        padding: 12px 20px;
-    }
+.name {
+    padding: 12px 20px;
 }
+
 .lastRow {
     display: flex;
     justify-content: flex-end;
