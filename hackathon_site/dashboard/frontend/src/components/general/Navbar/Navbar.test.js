@@ -6,11 +6,6 @@ import { withStoreAndRouter } from "testing/helpers";
 import { cartQuantity } from "testing/mockData";
 
 describe("<Navbar />", () => {
-    it("renders correctly when all icons appear", () => {
-        const { asFragment } = render(withStoreAndRouter(<Navbar cartQuantity={1} />));
-        expect(asFragment()).toMatchSnapshot();
-    });
-
     const pagesAndPaths = [
         ["Dashboard", "/"],
         ["Orders", "/orders"],
