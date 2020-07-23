@@ -9,7 +9,7 @@ class CurrentUserAPIView(generics.GenericAPIView, mixins.RetrieveModelMixin):
     View to handle API interaction with the current user's Profile
     """
 
-    queryset = User.objects.all()
+    queryset = User.objects.select_related("profile")
     serializer_class = UserSerializer
 
     def get_object(self):
