@@ -15,9 +15,11 @@
     h2 {
         margin-bottom: 5px;
     }
+
     &Divider {
         margin: 15px 0;
     }
+
     &Category {
         display: flex;
         justify-content: space-between;
@@ -47,6 +49,10 @@
                 width: auto;
             }
         }
+    }
+
+    &CircularProgress {
+        margin-left: 1em;
     }
 
     fieldset {

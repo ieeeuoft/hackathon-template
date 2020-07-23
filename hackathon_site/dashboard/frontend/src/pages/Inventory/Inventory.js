@@ -3,7 +3,6 @@ import React from "react";
 import Header from "components/general/Header/Header";
 import Typography from "@material-ui/core/Typography";
 import EnhancedInventoryFilter from "components/inventory/InventoryFilter/InventoryFilter";
-import { inventoryCategories } from "testing/mockData";
 
 const Inventory = () => {
     return (

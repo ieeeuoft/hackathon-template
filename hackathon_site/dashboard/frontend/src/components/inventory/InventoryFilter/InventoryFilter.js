@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "./InventoryFilter.module.scss";
-import { Formik, Field, Form } from "formik";
+import { Formik, Field } from "formik";
 
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
@@ -15,7 +15,7 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { inventoryCategories } from "testing/mockData";
 
-const FormikRadioGroup = ({ field, options, ...props }) => (
+const RadioOrderBy = ({ field, options, ...props }) => (
     <RadioGroup {...field} {...props} name={field.name}>
         {options.map((item, i) => (
             <FormControlLabel
@@ -30,7 +30,7 @@ const FormikRadioGroup = ({ field, options, ...props }) => (
     </RadioGroup>
 );
 
-const FormikCategoryGroup = ({ field, options, ...props }) => (
+const CheckboxCategory = ({ field, options, ...props }) => (
     <FormGroup {...field} {...props} name={field.name}>
         {options.map((item, i) => (
             <div className={styles.filterCategory} key={i}>
@@ -47,7 +47,7 @@ const FormikCategoryGroup = ({ field, options, ...props }) => (
     </FormGroup>
 );
 
-const FormikAvailabilityGroup = ({ field, name, ...props }) => (
+const CheckboxAvailability = ({ field, name, ...props }) => (
     <FormGroup {...field} {...props} name={field.name}>
         <FormControlLabel
             label="In stock"
@@ -70,19 +70,20 @@ export const orderByOptions = [
 export const InventoryFilter = ({
     handleReset,
     handleSubmit,
-    isLoadingApply = true,
-    isLoadingClear = true,
+    categories,
+    isLoadingApply,
+    isLoadingClear,
 }) => (
     <div className={styles.filter}>
         <Paper className={styles.filterPaper} square={true} elevation={3}>
-            <Form onReset={handleReset} onSubmit={handleSubmit}>
+            <form onReset={handleReset} onSubmit={handleSubmit}>
                 <fieldset>
                     <legend>
                         <Typography variant="h2">Order by</Typography>
                     </legend>
                     <Field
                         name="orderBy"
-                        component={FormikRadioGroup}
+                        component={RadioOrderBy}
                         options={orderByOptions}
                     />
                 </fieldset>
@@ -91,7 +92,7 @@ export const InventoryFilter = ({
                     <legend>
                         <Typography variant="h2">Availability</Typography>
                     </legend>
-                    <Field name="inStock" component={FormikAvailabilityGroup} />
+                    <Field name="inStock" component={CheckboxAvailability} />
                 </fieldset>
                 <Divider className={styles.filterDivider} />
                 <fieldset>
@@ -100,11 +101,11 @@ export const InventoryFilter = ({
                     </legend>
                     <Field
                         name="inventoryCategories"
-                        component={FormikCategoryGroup}
-                        options={inventoryCategories}
+                        component={CheckboxCategory}
+                        options={categories}
                     />
                 </fieldset>
-            </Form>
+            </form>
         </Paper>
         <div className={styles.filterBtns}>
             <Button
@@ -116,10 +117,10 @@ export const InventoryFilter = ({
                 className={styles.filterBtnsApply}
                 disabled={isLoadingApply || isLoadingClear}
             >
-                <Typography>Apply</Typography>
+                Apply
                 {isLoadingApply && (
                     <CircularProgress
-                        className={styles.formCircularProgress}
+                        className={styles.filterCircularProgress}
                         size={20}
                         // data-testid={TEST_IDS.circularProgress}
                     />
@@ -131,10 +132,10 @@ export const InventoryFilter = ({
                 onClick={handleReset}
                 disabled={isLoadingApply || isLoadingClear}
             >
-                <Typography>Clear all</Typography>
+                Clear all
                 {isLoadingClear && (
                     <CircularProgress
-                        className={styles.formCircularProgress}
+                        className={styles.filterCircularProgress}
                         size={20}
                         // data-testid={TEST_IDS.circularProgress}
                     />
@@ -146,7 +147,12 @@ export const InventoryFilter = ({
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-export const EnhancedInventoryFilter = () => {
+const onSubmitTemp = async (formikValues) => {
+    await sleep(300);
+    alert(JSON.stringify(formikValues, null, 2));
+};
+
+export const EnhancedInventoryFilter = ({ handleSubmit = onSubmitTemp }) => {
     return (
         <Formik
             initialValues={{
@@ -154,13 +160,15 @@ export const EnhancedInventoryFilter = () => {
                 inStock: false,
                 inventoryCategories: [],
             }}
-            onSubmit={async (values) => {
-                await sleep(500);
-                alert(JSON.stringify(values, null, 2));
-            }}
+            onSubmit={handleSubmit}
         >
             {(formikProps) => (
-                <InventoryFilter {...formikProps} categories={inventoryCategories} />
+                <InventoryFilter
+                    {...formikProps}
+                    categories={inventoryCategories}
+                    isLoadingApply={false}
+                    isLoadingClear={false}
+                />
             )}
         </Formik>
     );
