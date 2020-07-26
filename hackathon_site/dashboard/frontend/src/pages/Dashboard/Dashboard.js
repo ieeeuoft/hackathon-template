@@ -22,7 +22,7 @@ import {
 import { hackathonName } from "constants.js";
 
 import SideSheetRight from "components/general/SideSheetRight/SideSheetRight";
-import { ProductOverview } from "components/general/ProductOverview/ProductOverview";
+import { ProductOverview } from "components/inventory/ProductOverview/ProductOverview";
 import { productInformation, addCartTest } from "testing/mockData";
 
 const Dashboard = () => {

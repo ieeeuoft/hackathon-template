@@ -10,7 +10,7 @@ describe("SideSheetRight", () => {
         const titleTest = "random";
 
         const { getByText } = render(
-            <SideSheetRight title={titleTest} isVisible={true}></SideSheetRight>
+            <SideSheetRight title={titleTest} isVisible={true} />
         );
 
         expect(getByText(titleTest)).toBeInTheDocument();
@@ -42,6 +42,6 @@ describe("SideSheetRight", () => {
         fireEvent.click(backArrow);
 
         // confirm the mock handler function was called
-        expect(handleCloseMock.mock.calls.length).toBe(1);
+        expect(handleCloseMock).toHaveBeenCalledTimes(1);
     });
 });

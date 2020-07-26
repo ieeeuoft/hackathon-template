@@ -7,23 +7,21 @@ import styles from "./SideSheetRight.module.scss";
 
 const SideSheetRight = ({ children, title, isVisible, handleClose }) => {
     return (
-        <div>
-            <Drawer anchor="right" open={isVisible}>
-                <div className={styles.topsheet}>
-                    <IconButton
-                        className={styles.backarrow}
-                        onClick={handleClose}
-                        role="close"
-                    >
-                        <ArrowBackIcon />
-                    </IconButton>
-                    <Typography variant="h2" className={styles.title} role="title">
-                        {title}
-                    </Typography>
-                </div>
-                {children}
-            </Drawer>
-        </div>
+        <Drawer anchor="right" open={isVisible}>
+            <div className={styles.topsheet}>
+                <IconButton
+                    className={styles.backarrow}
+                    onClick={handleClose}
+                    role="close"
+                >
+                    <ArrowBackIcon />
+                </IconButton>
+                <Typography variant="h2" className={styles.title} role="title">
+                    {title}
+                </Typography>
+            </div>
+            {children}
+        </Drawer>
     );
 };
 
