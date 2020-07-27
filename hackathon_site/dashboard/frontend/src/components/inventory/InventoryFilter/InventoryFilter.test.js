@@ -14,29 +14,6 @@ describe("<InventoryFilter />", () => {
         inventoryCategories: [],
     };
 
-    it("Calls handleSubmitSpy when the 'Apply' button is clicked", async () => {
-        const handleSubmitSpy = jest.fn();
-
-        const { getByText } = render(
-            <Formik initialValues={initValues} onSubmit={handleSubmitSpy}>
-                {(formikProps) => (
-                    <InventoryFilter
-                        {...formikProps}
-                        categories={inventoryCategories}
-                        isLoadingApply={false}
-                        isLoadingClear={false}
-                    />
-                )}
-            </Formik>
-        );
-        const button = getByText("Apply");
-        fireEvent.click(button);
-
-        await waitFor(() => {
-            expect(handleSubmitSpy).toHaveBeenCalled();
-        });
-    });
-
     it("Calls handleResetSpy when the 'Clear all' button is clicked", () => {
         const handleResetSpy = jest.fn();
 
@@ -60,19 +37,28 @@ describe("<InventoryFilter />", () => {
         fireEvent.click(button);
         expect(handleResetSpy).toHaveBeenCalled();
     });
+});
+
+describe("<EnhancedInventoryFilter />", () => {
+    it("Calls handleSubmitSpy when the 'Apply' button is clicked", async () => {
+        const handleSubmitSpy = jest.fn();
+
+        const { getByText } = render(
+            <EnhancedInventoryFilter handleSubmit={handleSubmitSpy} />
+        );
+        const button = getByText("Apply");
+        fireEvent.click(button);
+
+        await waitFor(() => {
+            expect(handleSubmitSpy).toHaveBeenCalled();
+        });
+    });
 
     it("Checks that all labels of form are in there", () => {
+        const handleSubmitSpy = jest.fn();
+
         const { queryByText, getByText } = render(
-            <Formik initialValues={initValues} onSubmit={() => {}}>
-                {(formikProps) => (
-                    <InventoryFilter
-                        {...formikProps}
-                        categories={inventoryCategories}
-                        isLoadingApply={false}
-                        isLoadingClear={false}
-                    />
-                )}
-            </Formik>
+            <EnhancedInventoryFilter handleSubmit={handleSubmitSpy} />
         );
         for (let c of inventoryCategories) {
             expect(queryByText(c.name)).toBeTruthy();
@@ -84,9 +70,7 @@ describe("<InventoryFilter />", () => {
         expect(getByText("Availability")).toBeInTheDocument();
         expect(getByText("Categories")).toBeInTheDocument();
     });
-});
 
-describe("<EnhancedInventoryFilter />", () => {
     it("Submits the form and recieves the expected values", async () => {
         const handleSubmitSpy = jest.fn();
         const orderBy = "A-Z";
@@ -108,9 +92,7 @@ describe("<EnhancedInventoryFilter />", () => {
         fireEvent.click(button);
 
         await waitFor(() => {
-            expect(handleSubmitSpy).toHaveBeenCalledWith(
-                expect.objectContaining({ orderBy, inStock, inventoryCategories })
-            );
+            expect(handleSubmitSpy).toHaveBeenCalledWith({ orderBy, inStock, inventoryCategories });
         });
     });
 });
