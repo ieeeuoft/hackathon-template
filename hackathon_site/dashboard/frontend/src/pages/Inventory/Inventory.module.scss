@@ -1,7 +1,10 @@
 @import "./../../assets/abstracts/variables";
 @import "./../../assets/abstracts/mixins";
 
-
+.drawer {
+    display: flex;
+    flex-shrink: 0;
+}
 .inventory {
     display: flex;
     justify-content: space-between;
@@ -13,8 +16,6 @@
 .Item {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    align-items: flex-start;
     padding-bottom: 10px;
     cursor: pointer;
 

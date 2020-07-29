@@ -9,6 +9,7 @@ import Checkbox from "@material-ui/core/Checkbox";
 import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
+import FormControl from "@material-ui/core/FormControl";
 
 const InventoryFilter = ({ categories, applyFilter, removeFilter, elevation = 3 }) => (
     <div className={styles.filter}>
@@ -56,15 +57,17 @@ const InventoryFilter = ({ categories, applyFilter, removeFilter, elevation = 3 
                 <Typography variant="h2" noWrap>
                     Categories
                 </Typography>
-                {categories.map((item, i) => (
-                    <div className={styles.filterCategory} key={i}>
-                        <FormControlLabel
-                            control={<Checkbox color="primary" />}
-                            label={item.name}
-                        />
-                        <Chip label={item.qty} className={styles.filterCategoryChip} />
-                    </div>
-                ))}
+                <FormControl size="small">
+                    {categories.map((item, i) => (
+                        <div className={styles.filterCategory} key={i}>
+                            <FormControlLabel
+                                control={<Checkbox color="primary" />}
+                                label={item.name}
+                            />
+                            <Chip label={item.qty} className={styles.filterCategoryChip} />
+                        </div>
+                    ))}
+                </FormControl>
             </form>
         </Paper>
         <div className={styles.filterBtns}>
