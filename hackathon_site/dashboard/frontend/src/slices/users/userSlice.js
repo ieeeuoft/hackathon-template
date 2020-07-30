@@ -1,12 +1,13 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, createSelector } from "@reduxjs/toolkit";
 import { push } from "connected-react-router";
 
 import { get, post } from "api/api";
+import { displaySnackbar } from "slices/ui/uiSlice";
 
 export const userReducerName = "user";
 export const initialState = {
     userData: {
-        data: null,
+        user: null,
         isLoading: false,
         error: null,
     },
@@ -33,10 +34,17 @@ export const fetchUserData = createAsyncThunk(
                     status: 401,
                     message: e.response.data.detail,
                 });
-            } else if (e.response.status === 404) {
-                // No profile, so shouldn't have access to the dashboard
-                alert("Get out");
             }
+            dispatch(
+                displaySnackbar({
+                    message: `Failed to fetch user data: error ${e.response.status}`,
+                    options: { variant: "error" },
+                })
+            );
+            return rejectWithValue({
+                status: e.response.status,
+                message: e.response.data,
+            });
         }
     }
 );
@@ -80,7 +88,7 @@ const userSlice = createSlice({
             state.userData.isLoading = true;
         },
         [fetchUserData.fulfilled]: (state, action) => {
-            state.userData.data = action.payload;
+            state.userData.user = action.payload;
             state.userData.isLoading = false;
             state.userData.error = null;
         },
@@ -109,5 +117,18 @@ export default reducer;
 
 // Selectors
 export const userSliceSelector = (state) => state[userReducerName];
-export const userDataSelector = (state) => userSliceSelector(state).userData;
-export const loginSelector = (state) => userSliceSelector(state).login;
+
+export const userDataSelector = createSelector(
+    [userSliceSelector],
+    (userSlice) => userSlice.userData
+);
+
+export const userSelector = createSelector(
+    [userDataSelector],
+    (userData) => userData.user
+);
+
+export const loginSelector = createSelector(
+    [userSliceSelector],
+    (userSlice) => userSlice.login
+);

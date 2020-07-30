@@ -126,7 +126,7 @@ export const inventoryCategories = [
 ];
 
 // User details
-export const user = {
+export const mockUser = {
     id: 1,
     first_name: "Foo",
     last_name: "Bar",

@@ -7,7 +7,7 @@ import { push } from "connected-react-router";
 import { userReducerName, fetchUserData } from "slices/users/userSlice";
 import { displaySnackbar } from "slices/ui/uiSlice";
 import { withStore } from "testing/helpers";
-import { user } from "testing/mockData";
+import { mockUser } from "testing/mockData";
 import withParticipantCheck from "./withParticipantCheck";
 
 jest.mock("api/api"); // To make sure that fetchUserData() doesn't actually do anything
@@ -50,7 +50,7 @@ describe("withAuthenticationCheck", () => {
             [userReducerName]: {
                 userData: {
                     user: {
-                        ...user,
+                        ...mockUser,
                         profile: null,
                     },
                 },
@@ -77,7 +77,7 @@ describe("withAuthenticationCheck", () => {
         const mockState = {
             [userReducerName]: {
                 userData: {
-                    user: user,
+                    user: mockUser,
                 },
             },
         };
