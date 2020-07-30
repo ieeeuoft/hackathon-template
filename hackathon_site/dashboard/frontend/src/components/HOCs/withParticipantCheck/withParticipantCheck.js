@@ -1,5 +1,6 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
+import { push } from "connected-react-router";
 
 import { userSelector, fetchUserData } from "slices/users/userSlice";
 import { displaySnackbar } from "slices/ui/uiSlice";
@@ -10,7 +11,10 @@ export const UnconnectedParticipantCheck = ({
     push,
     displaySnackbar,
     WrappedComponent,
+    ...passThroughProps
 }) => {
+    const [isVisible, setIsVisible] = useState(false);
+
     useEffect(() => {
         if (!user) {
             fetchUserData();
@@ -23,10 +27,15 @@ export const UnconnectedParticipantCheck = ({
                 options: { variant: "error" },
             });
             push("/404");
+            return;
         }
+
+        // This is an extra precaution that the component isn't rendered,
+        // even though they should be sent to another page
+        setIsVisible(true);
     }, [user, fetchUserData, displaySnackbar, push]);
 
-    return WrappedComponent;
+    return isVisible && <WrappedComponent {...passThroughProps} />;
 };
 
 export const withParticipantCheck = (WrappedComponent) => {
@@ -38,6 +47,7 @@ export const withParticipantCheck = (WrappedComponent) => {
     return connect(mapStateToProps, {
         fetchUserData,
         displaySnackbar,
+        push,
     })(UnconnectedParticipantCheck);
 };
 
