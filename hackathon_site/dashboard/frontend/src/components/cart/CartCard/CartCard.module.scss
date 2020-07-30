@@ -12,17 +12,27 @@
 
     &Name {
         color: color(font);
-        padding-top: 11px;
         padding-bottom: 17px;
+    }
+
+    &ErrorName {
+        color: color(font);
+    }
+
+    &Error {
+        color: color(secondary);
+        padding-top: 0px;
+        padding-bottom: 1px;
     }
 
     &Parts {
         display: flex;
         flex-direction: column;
         height: 90px;
-        width: 95%;
+        width: 100%;
         padding-left: 30px;
         background-color: color(backgroundC);
+        padding-top: 10px;
     }
 
     &FormControl {
@@ -30,10 +40,14 @@
         background-color: color(white);
     }
 
+    &Action {
+        background-color: color(backgroundC);
+        display: inline;
+    }
+
     &Close {
         height: 24px;
         width: 24px;
-        vertical-align: top;
         color: color(grey);
     }
 }
