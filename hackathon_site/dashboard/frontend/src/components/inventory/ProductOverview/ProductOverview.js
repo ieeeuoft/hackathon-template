@@ -10,9 +10,10 @@ import InputLabel from "@material-ui/core/InputLabel";
 import Chip from "@material-ui/core/Chip";
 import Alert from "@material-ui/lab/Alert";
 
-import styles from "./ProductOverview.module.scss";
 import * as Yup from "yup";
 import { Formik } from "formik";
+
+import styles from "./ProductOverview.module.scss";
 
 export const ERROR_MESSAGES = {
     quantityMissing: "Quantity is required",
@@ -76,7 +77,7 @@ export const AddToCartForm = ({
     );
 };
 
-export const EnhancedCartForm = ({
+export const EnhancedAddToCartForm = ({
     handleSubmit,
     requestFailure,
     availableQuantity,
@@ -219,7 +220,7 @@ export const ProductOverview = ({ detail, addToCart }) => (
             constraints={detail.constraints}
         />
         {addToCart && (
-            <EnhancedCartForm
+            <EnhancedAddToCartForm
                 handleSubmit={addToCart}
                 requestFailure={false}
                 availableQuantity={3}

@@ -1,7 +1,7 @@
 import React from "react";
-import { ProductOverview, EnhancedCartForm } from "./ProductOverview";
+import { ProductOverview, EnhancedAddToCartForm } from "./ProductOverview";
 import { render, fireEvent, waitFor } from "@testing-library/react";
-import { productInformation } from "../../../testing/mockData";
+import { productInformation } from "testing/mockData";
 
 describe("<ProductOverview />", () => {
     test("all 3 parts of the product overview is there", () => {
@@ -18,12 +18,12 @@ describe("<ProductOverview />", () => {
     });
 });
 
-describe("<EnhancedCartForm />", () => {
+describe("<EnhancedAddToCartForm />", () => {
     test("add to cart button calls the correct function", async () => {
         const addCartMock = jest.fn();
 
         const { getByText } = render(
-            <EnhancedCartForm handleSubmit={addCartMock} availableQuantity={3} />
+            <EnhancedAddToCartForm handleSubmit={addCartMock} availableQuantity={3} />
         );
 
         const button = getByText("ADD TO CART");
@@ -41,7 +41,7 @@ describe("<EnhancedCartForm />", () => {
         const quantityToBeSelected = "2";
 
         const { getByRole, getByText } = render(
-            <EnhancedCartForm
+            <EnhancedAddToCartForm
                 handleSubmit={handleSubmit}
                 availableQuantity={quantityAvailable}
             />
@@ -68,7 +68,7 @@ describe("<EnhancedCartForm />", () => {
         const availableQuantity = "4";
 
         const { getByText } = render(
-            <EnhancedCartForm
+            <EnhancedAddToCartForm
                 requestFailure={requestFailure}
                 availableQuantity={availableQuantity}
             />
