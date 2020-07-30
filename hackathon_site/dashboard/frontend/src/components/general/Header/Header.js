@@ -12,7 +12,7 @@ import CloseIcon from "@material-ui/icons/Close";
 import { connect } from "react-redux";
 
 import Navbar from "components/general/Navbar/Navbar";
-import { userDataSelector } from "slices/users/userSlice";
+import { userSelector } from "slices/users/userSlice";
 import { cartQuantity } from "testing/mockData";
 import { hackathonName } from "constants.js";
 
@@ -90,10 +90,10 @@ const UnconnectedHeader = ({ email, showNavbar = true }) => {
 };
 
 const mapStateToProps = (state) => {
-    const userData = userDataSelector(state).data;
+    const user = userSelector(state);
 
     return {
-        email: userData ? userData.user.email : null,
+        email: user ? user.email : null,
     };
 };
 
