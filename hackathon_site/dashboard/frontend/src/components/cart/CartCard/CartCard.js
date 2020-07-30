@@ -30,8 +30,7 @@ const Stock = ({ currentStock, handleChange, item }) => {
     if (currentStock === 0) {
         return (
             <Typography variant="caption" className={styles.CartError}>
-                {" "}
-                Currently unavailable{" "}
+                Currently unavailable
             </Typography>
         );
     } else {
