@@ -3,8 +3,6 @@ import SideSheetRight from "./SideSheetRight";
 import { render, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
 
-// test for visibility after react is connected to redux store
-
 describe("SideSheetRight", () => {
     test("title is displayed", () => {
         const titleTest = "random";

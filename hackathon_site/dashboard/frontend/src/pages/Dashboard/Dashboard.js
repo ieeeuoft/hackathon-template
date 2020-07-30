@@ -21,10 +21,6 @@ import {
 } from "testing/mockData";
 import { hackathonName } from "constants.js";
 
-import SideSheetRight from "components/general/SideSheetRight/SideSheetRight";
-import { ProductOverview } from "components/inventory/ProductOverview/ProductOverview";
-import { productInformation, addCartTest } from "testing/mockData";
-
 const Dashboard = () => {
     const reportIncident = (id) => {
         alert("Reports incident for component of id " + id);
@@ -71,12 +67,6 @@ const Dashboard = () => {
                     reportIncident={reportIncident}
                 />
                 <ReturnedTable items={itemsReturned} />
-                <SideSheetRight title="ProductOverview" isVisible={true}>
-                    <ProductOverview
-                        detail={productInformation}
-                        addCartFunction={addCartTest}
-                    />
-                </SideSheetRight>
             </div>
         </>
     );

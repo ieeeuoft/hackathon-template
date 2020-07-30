@@ -8,10 +8,10 @@ import Select from "@material-ui/core/Select";
 import LaunchIcon from "@material-ui/icons/Launch";
 import InputLabel from "@material-ui/core/InputLabel";
 import Chip from "@material-ui/core/Chip";
-import styles from "./ProductOverview.module.scss";
 import Alert from "@material-ui/lab/Alert";
-import * as Yup from "yup";
 
+import styles from "./ProductOverview.module.scss";
+import * as Yup from "yup";
 import { Formik } from "formik";
 
 export const ERROR_MESSAGES = {
@@ -55,7 +55,6 @@ export const AddToCartForm = ({
                     <InputLabel>Qty</InputLabel>
                     <Select
                         value={quantity}
-                        role="selecter"
                         onChange={handleChange}
                         label="Qty"
                         name="quantity"
@@ -202,31 +201,29 @@ const MainSection = ({ name, total, quantityAvailable, categories, img }) => {
     );
 };
 
-export const ProductOverview = ({ detail, addToCart }) => {
-    return (
-        <div>
-            <MainSection
-                type={detail.type}
-                name={detail.name}
-                total={detail.total}
-                quantityAvailable={detail.quantityAvailable}
-                categories={detail.category}
-                img={detail.img}
+export const ProductOverview = ({ detail, addToCart }) => (
+    <>
+        <MainSection
+            type={detail.type}
+            name={detail.name}
+            total={detail.total}
+            quantityAvailable={detail.quantityAvailable}
+            categories={detail.category}
+            img={detail.img}
+        />
+        <DetailInfoSection
+            manufacturer={detail.manufacturer}
+            model_num={detail.model_num}
+            datasheet={detail.datasheet}
+            notes={detail.notes}
+            constraints={detail.constraints}
+        />
+        {addToCart && (
+            <EnhancedCartForm
+                handleSubmit={addToCart}
+                requestFailure={false}
+                availableQuantity={3}
             />
-            <DetailInfoSection
-                manufacturer={detail.manufacturer}
-                model_num={detail.model_num}
-                datasheet={detail.datasheet}
-                notes={detail.notes}
-                constraints={detail.constraints}
-            />
-            {addToCart && (
-                <EnhancedCartForm
-                    handleSubmit={addToCart}
-                    requestFailure={false}
-                    availableQuantity={3}
-                />
-            )}
-        </div>
-    );
-};
+        )}
+    </>
+);

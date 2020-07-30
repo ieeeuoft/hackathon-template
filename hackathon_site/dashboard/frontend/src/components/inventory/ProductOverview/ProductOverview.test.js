@@ -1,6 +1,22 @@
 import React from "react";
 import { ProductOverview, EnhancedCartForm } from "./ProductOverview";
 import { render, fireEvent, waitFor } from "@testing-library/react";
+import { productInformation } from "../../../testing/mockData";
+
+describe("<ProductOverview />", () => {
+    test("all 3 parts of the product overview is there", () => {
+        const addCartMock = jest.fn();
+
+        const { getByText } = render(
+            <ProductOverview detail={productInformation} addToCart={addCartMock} />
+        );
+
+        // Check if the main section, detailInfoSection, and add to cart section works
+        expect(getByText("Category")).toBeInTheDocument();
+        expect(getByText("Datasheet")).toBeInTheDocument();
+        expect(getByText("ADD TO CART")).toBeInTheDocument();
+    });
+});
 
 describe("<EnhancedCartForm />", () => {
     test("add to cart button calls the correct function", async () => {
@@ -45,5 +61,19 @@ describe("<EnhancedCartForm />", () => {
         });
 
         expect(handleSubmit).toHaveBeenCalledWith(quantityToBeSelected);
+    });
+
+    test("requestFailure is passed in and rendered properly", () => {
+        const requestFailure = { message: "Failed" };
+        const availableQuantity = "4";
+
+        const { getByText } = render(
+            <EnhancedCartForm
+                requestFailure={requestFailure}
+                availableQuantity={availableQuantity}
+            />
+        );
+
+        expect(getByText(requestFailure.message)).toBeInTheDocument();
     });
 });
