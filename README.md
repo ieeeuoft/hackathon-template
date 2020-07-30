@@ -89,6 +89,24 @@ $ python manage.py runserver
 
 If you would like to run on a port other than 8000, specify a port number after `runserver`.
 
+### Creating users locally
+In order to access most of the functionality of the site (the React dashboard or otherwise), you will need to have user accounts to test with. 
+
+To start, create an admin user. This will give you access to the admin site, and will bypass all Django permissions checks:
+
+```bash
+$ python manage.py createsuperuser 
+```
+
+Once a superuser is created (and the Django dev server is running), you can log in to the admin site at `http://localhost:8000/admin`.
+
+#### Adding additional users
+The easiest way to add new users is via the admin site, through the "Users" link of the "Authentication and Authorization" panel. When adding a user, you will be prompted for only a username and a password. The react site uses email to log in, so *make sure* to click "Save and continue editing" and add a first name, last name, and email address.
+
+#### Giving a user a profile
+Profiles are used by participants who have either been accepted or waitlisted. Some features of the React dashboard require the user to have a profile. This can be done through the "Profiles" link of the "Event" panel on the admin site. Click "Add profile", select a user from the dropdown, either add them to an existing team (if you have any) or click the green "+" to create a team, pick a status, fill out any other required fields, and click save.
+
+
 ### Tests
 #### Django
 Django tests are run using [Django's test system](https://docs.djangoproject.com/en/3.0/topics/testing/overview/), based on the standard python `unittest` module.
