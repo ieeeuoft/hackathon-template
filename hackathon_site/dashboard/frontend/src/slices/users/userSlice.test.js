@@ -131,7 +131,7 @@ describe("fetchUserData Thunk and Reducer", () => {
             ]);
         });
 
-        test("Failed for some other reason", async () => {
+        test("Failed for some other reason with a response", async () => {
             // Used by displaySnackbar
             jest.spyOn(global.Math, "random").mockReturnValue(0.45526621894095487);
 
@@ -149,12 +149,40 @@ describe("fetchUserData Thunk and Reducer", () => {
                     type: fetchUserData.pending.type,
                 }),
                 displaySnackbar({
-                    message: `Failed to fetch user data: error ${error.response.status}`,
+                    message: `Failed to fetch user data: Error ${error.response.status}`,
                     options: { variant: "error" },
                 }),
                 expect.objectContaining({
                     type: fetchUserData.rejected.type,
                     payload: { status: 999, message: error.response.data },
+                }),
+            ]);
+        });
+
+        test("Failed without a response", async () => {
+            // Used by displaySnackbar
+            jest.spyOn(global.Math, "random").mockReturnValue(0.45526621894095487);
+
+            const error = {
+                message: "Something really went wrong",
+            };
+            get.mockImplementationOnce(() => Promise.reject(error));
+
+            await store.dispatch(fetchUserData());
+
+            const actions = store.getActions();
+
+            expect(actions).toEqual([
+                expect.objectContaining({
+                    type: fetchUserData.pending.type,
+                }),
+                displaySnackbar({
+                    message: `Failed to fetch user data: ${error.message}`,
+                    options: { variant: "error" },
+                }),
+                expect.objectContaining({
+                    type: fetchUserData.rejected.type,
+                    payload: { status: null, message: error.message },
                 }),
             ]);
         });

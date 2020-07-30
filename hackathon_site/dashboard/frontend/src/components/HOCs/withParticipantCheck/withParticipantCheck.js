@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import { push } from "connected-react-router";
 
@@ -13,8 +13,6 @@ export const UnconnectedParticipantCheck = ({
     WrappedComponent,
     ...passThroughProps
 }) => {
-    const [isVisible, setIsVisible] = useState(false);
-
     useEffect(() => {
         if (!user) {
             fetchUserData();
@@ -27,15 +25,10 @@ export const UnconnectedParticipantCheck = ({
                 options: { variant: "error" },
             });
             push("/404");
-            return;
         }
-
-        // This is an extra precaution that the component isn't rendered,
-        // even though they should be sent to another page
-        setIsVisible(true);
     }, [user, fetchUserData, displaySnackbar, push]);
 
-    return isVisible && <WrappedComponent {...passThroughProps} />;
+    return !!user && !!user.profile && <WrappedComponent {...passThroughProps} />;
 };
 
 export const withParticipantCheck = (WrappedComponent) => {

@@ -27,24 +27,38 @@ export const fetchUserData = createAsyncThunk(
             const response = await get("/api/event/users/user/");
             return response.data;
         } catch (e) {
-            if (e.response.status === 401) {
+            if (!e.response) {
+                // This should almost never happen in production, and is likely due to a
+                // network error. Mostly here as a sanity check when running locally
+                dispatch(
+                    displaySnackbar({
+                        message: `Failed to fetch user data: ${e.message}`,
+                        options: { variant: "error" },
+                    })
+                );
+                return rejectWithValue({
+                    status: null,
+                    message: e.message,
+                });
+            } else if (e.response.status === 401) {
                 // Unauthenticated
                 dispatch(push("/login"));
                 return rejectWithValue({
                     status: 401,
                     message: e.response.data.detail,
                 });
+            } else {
+                dispatch(
+                    displaySnackbar({
+                        message: `Failed to fetch user data: Error ${e.response.status}`,
+                        options: { variant: "error" },
+                    })
+                );
+                return rejectWithValue({
+                    status: e.response.status,
+                    message: e.response.data,
+                });
             }
-            dispatch(
-                displaySnackbar({
-                    message: `Failed to fetch user data: error ${e.response.status}`,
-                    options: { variant: "error" },
-                })
-            );
-            return rejectWithValue({
-                status: e.response.status,
-                message: e.response.data,
-            });
         }
     }
 );

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import styles from "./Header.module.scss";
 import { ReactComponent as Logo } from "logo.svg";
 import AppBar from "@material-ui/core/AppBar";
@@ -12,7 +12,7 @@ import CloseIcon from "@material-ui/icons/Close";
 import { connect } from "react-redux";
 
 import Navbar from "components/general/Navbar/Navbar";
-import { fetchUserData, userDataSelector } from "slices/users/userSlice";
+import { userDataSelector } from "slices/users/userSlice";
 import { cartQuantity } from "testing/mockData";
 import { hackathonName } from "constants.js";
 
@@ -29,14 +29,8 @@ const HackathonTitle = () => (
     </>
 );
 
-const UnconnectedHeader = ({ email, fetchUserData, showNavbar = true }) => {
+const UnconnectedHeader = ({ email, showNavbar = true }) => {
     const [mobileOpen, setMobileOpen] = useState(false);
-
-    useEffect(() => {
-        if (showNavbar && !email) {
-            fetchUserData();
-        }
-    }, [fetchUserData, email, showNavbar]);
 
     const toggleMenu = () => {
         setMobileOpen(!mobileOpen);
@@ -103,6 +97,6 @@ const mapStateToProps = (state) => {
     };
 };
 
-const Header = connect(mapStateToProps, { fetchUserData })(UnconnectedHeader);
+const Header = connect(mapStateToProps, {})(UnconnectedHeader);
 
 export default Header;
