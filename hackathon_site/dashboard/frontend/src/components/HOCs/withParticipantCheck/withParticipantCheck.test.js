@@ -19,7 +19,7 @@ describe("withAuthenticationCheck", () => {
     const ComponentToWrap = ({ children }) => <div>{children}</div>;
     const WrappedComponent = withParticipantCheck(ComponentToWrap);
 
-    it("calls fetchUserData() if the user is missing", () => {
+    it("calls fetchUserData() if the user is missing and displays a loading bar", () => {
         const mockState = {
             [userReducerName]: {
                 userData: {
@@ -30,10 +30,11 @@ describe("withAuthenticationCheck", () => {
 
         const store = mockStore(mockState);
 
-        const { queryByText } = render(
+        const { queryByText, getByTestId } = render(
             withStore(<WrappedComponent>{content}</WrappedComponent>, store)
         );
 
+        expect(getByTestId("linear-progress")).toBeInTheDocument();
         expect(queryByText(content)).not.toBeInTheDocument();
         expect(store.getActions()).toEqual([
             expect.objectContaining({

@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import { push } from "connected-react-router";
+import LinearProgress from "@material-ui/core/LinearProgress";
 
 import { userSelector, fetchUserData } from "slices/users/userSlice";
 import { displaySnackbar } from "slices/ui/uiSlice";
@@ -28,7 +29,11 @@ export const UnconnectedParticipantCheck = ({
         }
     }, [user, fetchUserData, displaySnackbar, push]);
 
-    return !!user && !!user.profile && <WrappedComponent {...passThroughProps} />;
+    return user && user.profile ? (
+        <WrappedComponent {...passThroughProps} />
+    ) : (
+        <LinearProgress style={{ width: "100%" }} data-testid="linear-progress" />
+    );
 };
 
 export const withParticipantCheck = (WrappedComponent) => {
