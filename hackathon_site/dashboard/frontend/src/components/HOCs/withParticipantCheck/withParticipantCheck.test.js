@@ -72,6 +72,8 @@ describe("withAuthenticationCheck", () => {
             }),
             push("/404"),
         ]);
+
+        global.Math.random.mockRestore();
     });
 
     it("Renders the component with passed through props when the profile is set", () => {

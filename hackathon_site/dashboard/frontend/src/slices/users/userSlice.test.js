@@ -104,6 +104,15 @@ describe("fetchUserData Thunk and Reducer", () => {
     });
 
     describe("Failed to fetch user data", () => {
+        beforeAll(() => {
+            // Used by displaySnackbar
+            jest.spyOn(global.Math, "random").mockReturnValue(0.45526621894095487);
+        });
+
+        afterAll(() => {
+            global.Math.random.mockRestore();
+        });
+
         test("Failed because the user was unauthenticated", async () => {
             const error = {
                 response: {
@@ -132,9 +141,6 @@ describe("fetchUserData Thunk and Reducer", () => {
         });
 
         test("Failed for some other reason with a response", async () => {
-            // Used by displaySnackbar
-            jest.spyOn(global.Math, "random").mockReturnValue(0.45526621894095487);
-
             const error = {
                 response: { status: 999, data: "Something went wrong" },
             };
@@ -160,9 +166,6 @@ describe("fetchUserData Thunk and Reducer", () => {
         });
 
         test("Failed without a response", async () => {
-            // Used by displaySnackbar
-            jest.spyOn(global.Math, "random").mockReturnValue(0.45526621894095487);
-
             const error = {
                 message: "Something really went wrong",
             };
