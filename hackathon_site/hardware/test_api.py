@@ -1,21 +1,15 @@
 from rest_framework.test import APITestCase
 from django.urls import reverse
 from rest_framework import status
-from event.models import User
 from hardware.models import Hardware, Category
 from hardware.serializers import HardwareSerializer, CategorySerializer
+from hackathon_site.tests import SetupUserMixin
 
 
-class HardwareListViewTestCase(APITestCase):
+class HardwareListViewTestCase(SetupUserMixin, APITestCase):
     def setUp(self):
-        self.password = "foobar123"
-        self.user = User.objects.create_user(
-            username="foo@bar.com",
-            password="foobar123",
-            first_name="Test",
-            last_name="Bar",
-            email="foo@bar.com",
-        )
+        super().setUp()
+
         self.hardware = Hardware.objects.create(
             name="name",
             model_number="model",
@@ -27,9 +21,6 @@ class HardwareListViewTestCase(APITestCase):
         )
         self.hardware_serializer = HardwareSerializer(self.hardware)
         self.view = reverse("api:hardware:hardware-list")
-
-    def _login(self):
-        self.client.login(username=self.user.username, password=self.password)
 
     def test_user_not_logged_in(self):
         response = self.client.get(self.view)
@@ -58,23 +49,12 @@ class HardwareListViewTestCase(APITestCase):
         self.assertEqual(expected_response, data["results"][0])
 
 
-class CategoryListViewTestCase(APITestCase):
+class CategoryListViewTestCase(SetupUserMixin, APITestCase):
     def setUp(self):
-        self.password = "foobar123"
-        self.user = User.objects.create_user(
-            username="foo@bar.com",
-            password="foobar123",
-            first_name="Test",
-            last_name="Bar",
-            email="foo@bar.com",
-        )
-
+        super().setUp()
         self.category = Category.objects.create(name="category", max_per_team=4)
         self.category_serializer = CategorySerializer(self.category)
         self.view = reverse("api:hardware:category-list")
-
-    def _login(self):
-        self.client.login(username=self.user.username, password=self.password)
 
     def test_user_not_logged_in(self):
         response = self.client.get(self.view)
