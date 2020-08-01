@@ -145,14 +145,7 @@ export const InventoryFilter = ({
     </div>
 );
 
-const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-
-const onSubmitTemp = async (formikValues) => {
-    await sleep(300);
-    alert(JSON.stringify(formikValues, null, 2));
-};
-
-export const EnhancedInventoryFilter = ({ handleSubmit = onSubmitTemp }) => {
+export const EnhancedInventoryFilter = ({ handleSubmit, handleReset }) => {
     return (
         <Formik
             initialValues={{
@@ -161,6 +154,9 @@ export const EnhancedInventoryFilter = ({ handleSubmit = onSubmitTemp }) => {
                 inventoryCategories: [],
             }}
             onSubmit={handleSubmit}
+            onReset={handleReset}
+            validateOnBlur={false}
+            validationOnChange={false}
         >
             {(formikProps) => (
                 <InventoryFilter

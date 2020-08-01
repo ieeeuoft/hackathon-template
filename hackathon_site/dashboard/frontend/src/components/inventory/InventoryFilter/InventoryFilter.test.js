@@ -7,38 +7,6 @@ import { render, fireEvent, waitFor } from "@testing-library/react";
 import { Formik } from "formik";
 import { inventoryCategories } from "testing/mockData";
 
-describe("<InventoryFilter />", () => {
-    const initValues = {
-        orderBy: "Default",
-        inStock: false,
-        inventoryCategories: [],
-    };
-
-    it("Calls handleResetSpy when the 'Clear all' button is clicked", () => {
-        const handleResetSpy = jest.fn();
-
-        const { getByText } = render(
-            <Formik
-                initialValues={initValues}
-                onSubmit={() => {}}
-                onReset={handleResetSpy}
-            >
-                {(formikProps) => (
-                    <InventoryFilter
-                        {...formikProps}
-                        categories={inventoryCategories}
-                        isLoadingApply={false}
-                        isLoadingClear={false}
-                    />
-                )}
-            </Formik>
-        );
-        const button = getByText("Clear all");
-        fireEvent.click(button);
-        expect(handleResetSpy).toHaveBeenCalled();
-    });
-});
-
 describe("<EnhancedInventoryFilter />", () => {
     it("Calls handleSubmitSpy when the 'Apply' button is clicked", async () => {
         const handleSubmitSpy = jest.fn();
@@ -52,6 +20,18 @@ describe("<EnhancedInventoryFilter />", () => {
         await waitFor(() => {
             expect(handleSubmitSpy).toHaveBeenCalled();
         });
+    });
+
+    it("Calls handleResetSpy when the 'Clear all' button is clicked", () => {
+        const handleResetSpy = jest.fn();
+
+        const { getByText } = render(
+            <EnhancedInventoryFilter handleReset={handleResetSpy} />
+        );
+
+        const button = getByText("Clear all");
+        fireEvent.click(button);
+        expect(handleResetSpy).toHaveBeenCalled();
     });
 
     it("Checks that all labels of form are in there", () => {
@@ -71,28 +51,53 @@ describe("<EnhancedInventoryFilter />", () => {
         expect(getByText("Categories")).toBeInTheDocument();
     });
 
-    it("Submits the form and recieves the expected values", async () => {
+    it("Submits the form, the clears it, and recieves the expected values", async () => {
         const handleSubmitSpy = jest.fn();
-        const orderBy = "A-Z";
-        const inStock = true;
-        const inventoryCategories = ["MCU"];
+        const handleResetSpy = jest.fn();
+        let orderBy = "A-Z";
+        let inStock = true;
+        let inventoryCategories = ["MCU"];
 
         const { findByLabelText, findByText } = render(
-            <EnhancedInventoryFilter handleSubmit={handleSubmitSpy} />
+            <EnhancedInventoryFilter
+                handleSubmit={handleSubmitSpy}
+                handleReset={handleResetSpy}
+            />
         );
 
         const orderByInput = await findByLabelText("A-Z");
         const inStockInput = await findByLabelText("In stock");
         const inventoryCategoriesInput = await findByLabelText("MCU");
-        const button = await findByText("Apply");
+        const buttonSubmit = await findByText("Apply");
+        const buttonClear = await findByText("Clear all");
 
+        // Select checkboxes/radio buttons and submit
         fireEvent.click(orderByInput);
         fireEvent.click(inStockInput);
         fireEvent.click(inventoryCategoriesInput);
-        fireEvent.click(button);
+        fireEvent.click(buttonSubmit);
 
         await waitFor(() => {
-            expect(handleSubmitSpy).toHaveBeenCalledWith({ orderBy, inStock, inventoryCategories });
+            expect(handleSubmitSpy).toHaveBeenCalledWith({
+                orderBy,
+                inStock,
+                inventoryCategories,
+            });
+        });
+
+        orderBy = "Default";
+        inStock = false;
+        inventoryCategories = [];
+
+        // Clear form
+        fireEvent.click(buttonClear);
+
+        await waitFor(() => {
+            expect(handleResetSpy).toHaveBeenCalledWith({
+                orderBy,
+                inStock,
+                inventoryCategories,
+            });
         });
     });
 });
