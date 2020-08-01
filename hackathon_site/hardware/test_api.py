@@ -26,7 +26,7 @@ class HardwareListViewTestCase(SetupUserMixin, APITestCase):
         response = self.client.get(self.view)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
-    def test_category_success(self):
+    def test_hardware_get_success(self):
         self._login()
         expected_response = {
             "id": 1,
@@ -60,7 +60,7 @@ class CategoryListViewTestCase(SetupUserMixin, APITestCase):
         response = self.client.get(self.view)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
-    def test_category_success(self):
+    def test_category_get_success(self):
         self._login()
 
         expected_response = {
