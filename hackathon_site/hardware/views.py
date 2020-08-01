@@ -2,8 +2,6 @@ from hardware.models import Hardware, Category
 from rest_framework import generics, mixins
 from hardware.serializers import HardwareSerializer, CategorySerializer
 
-# TODO TESTS FOR THIS AND MAKE SURE RETURNS PROPER SERIALIZATION
-
 
 class HardwareListView(mixins.ListModelMixin, generics.GenericAPIView):
     queryset = Hardware.objects.all()
