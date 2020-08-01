@@ -10,25 +10,23 @@ class GroupSerializer(serializers.ModelSerializer):
         fields = ("id", "name")
 
 
-class UserSerializer(serializers.ModelSerializer):
-    groups = GroupSerializer(many=True, read_only=True)
-
-    class Meta:
-        model = User
-        fields = ("id", "first_name", "last_name", "email", "groups")
-
-
 class ProfileSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True)
-
     class Meta:
         model = Profile
         fields = (
             "id",
-            "user",
             "status",
             "id_provided",
             "attended",
             "acknowledge_rules",
             "e_signature",
         )
+
+
+class UserSerializer(serializers.ModelSerializer):
+    profile = ProfileSerializer(read_only=True)
+    groups = GroupSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = User
+        fields = ("id", "first_name", "last_name", "email", "profile", "groups")
