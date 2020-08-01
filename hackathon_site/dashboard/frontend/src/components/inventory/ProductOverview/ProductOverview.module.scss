@@ -1,0 +1,64 @@
+@import "./../../../assets/abstracts/mixins";
+@import "./../../../assets/abstracts/variables";
+
+.mainsection {
+    display: flex;
+    margin: 108px 50px 0 50px;
+    .title {
+        display: flex;
+        font-weight: 500;
+    }
+    .quantityAvailable {
+        margin: 9px 151px 0 0;
+        color: color(grey);
+    }
+    .notAvailable {
+        margin: 9px 151px 0 0;
+        color: red;
+    }
+    .category {
+        margin-top: 59px;
+        font-weight: 500;
+        &Item {
+            color: color(primary);
+            background-color: color(blueLight);
+            margin: 8px 2.5px;
+        }
+    }
+    & img {
+        margin: 0 11px;
+    }
+}
+
+.detailInfoSection {
+    margin: 10px 50px 0 50px;
+    .bodyinfo {
+        display: flex;
+        flex-direction: column;
+        .heading {
+            margin: 5px 0;
+            font-weight: 500;
+        }
+        margin-bottom: 20px;
+        &DataSheet {
+            display: flex;
+        }
+    }
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    &Control {
+        margin: 20px 50px;
+    }
+    .cartButton {
+        color: color(white);
+        background-color: color(primary);
+        margin: 30px 50px;
+        padding: 10px 25px;
+        &:hover {
+            background-color: color(dark1);
+        }
+    }
+}
