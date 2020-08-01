@@ -27,7 +27,7 @@ const Selections = (currentStock) => {
 };
 
 const Stock = ({ currentStock, handleChange, item }) => {
-    if (currentStock === 0) {
+    if (!currentStock) {
         return (
             <Typography variant="caption" className={styles.CartError}>
                 Currently unavailable
@@ -69,9 +69,8 @@ export const CartCard = ({
     const handleChange = (event) => {
         setItem(event.target.value);
     };
-    const errorMessage = isError === true ? "some error message" : "";
-    var nameStyle = isError === true ? styles.CartErrorName : styles.CartName;
-    nameStyle = currentStock === 0 ? styles.CartErrorName : nameStyle;
+
+    const errorMessage = "some error message";
 
     return (
         <Card className={styles.Cart} elevation={0}>
@@ -82,12 +81,14 @@ export const CartCard = ({
                 component="img"
             />
             <CardContent className={styles.CartParts} elevation={0}>
-                <Typography variant="body2" className={nameStyle}>
+                <Typography variant="body2" className={styles.CartName}>
                     {title}
                 </Typography>
-                <Typography variant="caption" className={styles.CartError}>
-                    {errorMessage}
-                </Typography>
+                {isError && (
+                    <Typography variant="caption" className={styles.CartError}>
+                        {errorMessage}
+                    </Typography>
+                )}
                 <Stock
                     currentStock={currentStock}
                     handleChange={handleChange}

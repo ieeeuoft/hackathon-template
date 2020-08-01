@@ -3,7 +3,7 @@
 
 .Cart {
     display: flex;
-    color: color(backgroundC);
+    background-color: color(backgroundC);
 
     &Pic {
         height: 90px;
@@ -12,42 +12,32 @@
 
     &Name {
         color: color(font);
-        padding-bottom: 17px;
-    }
-
-    &ErrorName {
-        color: color(font);
     }
 
     &Error {
         color: color(secondary);
         padding-top: 0px;
-        padding-bottom: 1px;
     }
 
     &Parts {
         display: flex;
         flex-direction: column;
-        height: 90px;
         width: 100%;
         padding-left: 30px;
-        background-color: color(backgroundC);
         padding-top: 10px;
     }
 
     &FormControl {
         width: 98px;
         background-color: color(white);
+        margin-top: 10px;
     }
 
     &Action {
-        background-color: color(backgroundC);
         display: inline;
     }
 
     &Close {
-        height: 24px;
-        width: 24px;
         color: color(grey);
     }
 }
