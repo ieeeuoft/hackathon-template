@@ -51,6 +51,7 @@ export const AddToCartForm = ({
     } else {
         dropdownNum = Math.min(quantityAvailable, constraintMax);
     }
+
     return (
         <>
             {requestFailure && (
@@ -76,9 +77,11 @@ export const AddToCartForm = ({
                         variant="contained"
                         color="primary"
                         fullWidth={true}
+                        size="large"
                         type="submit"
                         onClick={handleSubmit}
                         disabled={dropdownNum === 0}
+                        data-testid="qtySelect"
                     >
                         Add to cart
                     </Button>
@@ -128,14 +131,12 @@ const DetailInfoSection = ({
     constraints,
 }) => {
     return (
-        <div className={styles.detailInfoSection}>
+        <>
             <Typography variant="body2" color="secondary" className={styles.heading}>
                 Constraints
             </Typography>
             {constraints.map((constraint, i) => (
-                <Typography key={i} variant="body2">
-                    {constraint}
-                </Typography>
+                <Typography key={i}>{constraint}</Typography>
             ))}
             <Typography variant="body2" className={styles.heading}>
                 Manufacturer
@@ -159,10 +160,8 @@ const DetailInfoSection = ({
             <Typography variant="body2" className={styles.heading}>
                 Notes
             </Typography>
-            {notes.map((note, i) => (
-                <Typography key={i}>{note}</Typography>
-            ))}
-        </div>
+            <Typography>{notes}</Typography>
+        </>
     );
 };
 

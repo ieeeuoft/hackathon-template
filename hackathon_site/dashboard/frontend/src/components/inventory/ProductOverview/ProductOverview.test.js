@@ -80,4 +80,26 @@ describe("<EnhancedAddToCartForm />", () => {
 
         expect(getByText(requestFailure.message)).toBeInTheDocument();
     });
+
+    test("button and select are disabled if quantityAvailable is 0", () => {
+        const { getByText, getByTestId } = render(
+            <EnhancedAddToCartForm quantityAvailable={0} />
+        );
+
+        const button = getByText("Add to cart");
+        const select = getByTestId("qtySelect");
+
+        expect(button).toBeDisabled();
+        expect(select).toBeDisabled();
+    });
+
+    test("dropdown values are minimum between quantityAvailable and maxConstraint", () => {
+        const { queryByText, getByRole } = render(
+            <EnhancedAddToCartForm quantityAvailable={3} constraintMax={2} />
+        );
+
+        fireEvent.mouseDown(getByRole("button", { name: "1" }));
+
+        expect(queryByText("3")).not.toBeInTheDocument();
+    });
 });
