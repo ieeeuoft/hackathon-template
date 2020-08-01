@@ -16,8 +16,16 @@ import Info from "@material-ui/icons/Info";
 import Error from "@material-ui/icons/Error";
 import WatchLater from "@material-ui/icons/WatchLater";
 import CheckCircle from "@material-ui/icons/CheckCircle";
+import { connect } from "react-redux";
+import { push } from "connected-react-router";
+import {
+    isCheckedOutTableVisibleSelector,
+    isReturnedTableVisibleSelector,
+    toggleCheckedOutTable,
+    toggleReturnedTable,
+} from "slices/ui/uiSlice";
 
-const ChipStatus = ({ status }) => {
+export const ChipStatus = ({ status }) => {
     switch (status) {
         case "ready":
             return (
@@ -48,147 +56,181 @@ const ChipStatus = ({ status }) => {
     }
 };
 
-export const CheckedOutTable = ({ items }) => (
+export const UnconnectedCheckedOutTable = ({
+    items,
+    isVisible,
+    toggleVisibility,
+    push,
+    reportIncident,
+}) => (
     <Container className={styles.tableContainer} maxWidth={false} disableGutters={true}>
         <div className={styles.title}>
             <Typography variant="h2" className={styles.titleText}>
                 Checked out items
             </Typography>
-            <Button
-                className={styles.titleBtn}
-                onClick={() => {
-                    alert(
-                        "this would hide the table and switch the button to 'show all'"
-                    );
-                }}
-            >
-                Hide all
+            <Button onClick={toggleVisibility} color="primary">
+                {isVisible ? "Hide all" : "Show all"}
             </Button>
         </div>
 
-        {!items.length ? (
-            <Paper elevation={3} className={styles.empty} square={true}>
-                You have no items checked out yet. View our inventory.
-            </Paper>
-        ) : (
-            <TableContainer component={Paper} elevation={3} square={true}>
-                <Table className={styles.table} size="small" aria-label="item table">
-                    <colgroup>
-                        <col className={styles.widthFixed} />
-                        <col className={styles.widthHalf} />
-                        <col className={styles.widthFixed} />
-                        <col className={styles.widthFixed} />
-                        <col className={styles.widthBuffer} />
-                    </colgroup>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell />
-                            <TableCell align="left">Name</TableCell>
-                            <TableCell align="center">Info</TableCell>
-                            <TableCell align="right">Qty</TableCell>
-                            <TableCell className={styles.widthBuffer} />
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {items.map((row) => (
-                            <TableRow key={row.name}>
-                                <TableCell align="left">
-                                    <img
-                                        className={styles.itemImg}
-                                        src={row.url}
-                                        alt={row.name}
-                                    />
+        {isVisible &&
+            (!items.length ? (
+                <Paper elevation={3} className={styles.empty} square={true}>
+                    You have no items checked out yet. View our inventory.
+                </Paper>
+            ) : (
+                <TableContainer component={Paper} elevation={3} square={true}>
+                    <Table
+                        className={styles.table}
+                        size="small"
+                        aria-label="checkout table"
+                    >
+                        <TableHead>
+                            <TableRow>
+                                <TableCell className={styles.widthFixed} />
+                                <TableCell className={styles.widthHalf} align="left">
+                                    Name
                                 </TableCell>
-                                <TableCell align="left">{row.name}</TableCell>
-                                <TableCell align="left">
-                                    <IconButton
-                                        color="inherit"
-                                        aria-label="Info"
-                                        onClick={() => {
-                                            alert("this would open the drawer");
-                                        }}
-                                    >
-                                        <Info />
-                                    </IconButton>
+                                <TableCell className={styles.widthFixed} align="center">
+                                    Info
                                 </TableCell>
-                                <TableCell align="right">{row.qty}</TableCell>
-                                <TableCell className={styles.widthBuffer} />
+                                <TableCell className={styles.widthFixed} align="right">
+                                    Qty
+                                </TableCell>
+                                <TableCell className={styles.widthButton} />
                             </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
-        )}
+                        </TableHead>
+                        <TableBody>
+                            {items.map((row) => (
+                                <TableRow key={row.id}>
+                                    <TableCell align="left">
+                                        <img
+                                            className={styles.itemImg}
+                                            src={row.url}
+                                            alt={row.name}
+                                        />
+                                    </TableCell>
+                                    <TableCell align="left">{row.name}</TableCell>
+                                    <TableCell align="left">
+                                        <IconButton
+                                            color="inherit"
+                                            aria-label="Info"
+                                            onClick={() => {
+                                                alert("this would open the drawer");
+                                            }}
+                                        >
+                                            <Info />
+                                        </IconButton>
+                                    </TableCell>
+                                    <TableCell align="right">{row.qty}</TableCell>
+                                    <TableCell
+                                        align="right"
+                                        className={styles.widthButton}
+                                    >
+                                        <Button
+                                            color="secondary"
+                                            onClick={() => {
+                                                reportIncident(row.id);
+                                                push("/incident-form");
+                                            }}
+                                        >
+                                            Report broken/lost
+                                        </Button>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            ))}
     </Container>
 );
 
-export const ReturnedTable = ({ items }) => (
+const checkedOutMapStateToProps = (state) => ({
+    isVisible: isCheckedOutTableVisibleSelector(state),
+});
+
+export const CheckedOutTable = connect(checkedOutMapStateToProps, {
+    toggleVisibility: toggleCheckedOutTable,
+    push,
+})(UnconnectedCheckedOutTable);
+
+export const UnconnectedReturnedTable = ({ items, isVisible, toggleVisibility }) => (
     <Container className={styles.tableContainer} maxWidth={false} disableGutters={true}>
         <div className={styles.title}>
             <Typography variant="h2" className={styles.titleText}>
                 Returned items
             </Typography>
-            <Button
-                className={styles.titleBtn}
-                onClick={() => {
-                    alert(
-                        "this would hide the table and switch the button to 'show all'"
-                    );
-                }}
-            >
-                Hide all
+            <Button onClick={toggleVisibility} color="primary">
+                {isVisible ? "Hide all" : "Show all"}
             </Button>
         </div>
 
-        {!items.length ? (
-            <Paper elevation={3} className={styles.empty} square={true}>
-                Please bring items to the tech table and a tech team member will assist
-                you.
-            </Paper>
-        ) : (
-            <TableContainer component={Paper} elevation={3} square={true}>
-                <Table className={styles.table} size="small" aria-label="item table">
-                    <colgroup>
-                        <col className={styles.widthFixed} />
-                        <col className={styles.widthHalf} />
-                        <col className={styles.widthFixed} />
-                        <col className={styles.widthQuarter} />
-                        <col className={styles.widthQuarter} />
-                        <col className={styles.widthBuffer} />
-                    </colgroup>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell />
-                            <TableCell align="left">Name</TableCell>
-                            <TableCell align="left">Qty</TableCell>
-                            <TableCell align="right">Time</TableCell>
-                            <TableCell align="left">Condition</TableCell>
-                            <TableCell className={styles.widthBuffer} />
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {items.map((row) => (
-                            <TableRow key={row.name}>
-                                <TableCell align="left">
-                                    <img
-                                        className={styles.itemImg}
-                                        src={row.url}
-                                        alt={row.name}
-                                    />
+        {isVisible &&
+            (!items.length ? (
+                <Paper elevation={3} className={styles.empty} square={true}>
+                    Please bring items to the tech table and a tech team member will
+                    assist you.
+                </Paper>
+            ) : (
+                <TableContainer component={Paper} elevation={3} square={true}>
+                    <Table
+                        className={styles.table}
+                        size="small"
+                        aria-label="returned table"
+                    >
+                        <TableHead>
+                            <TableRow>
+                                <TableCell className={styles.widthFixed} />
+                                <TableCell className={styles.widthHalf} align="left">
+                                    Name
                                 </TableCell>
-                                <TableCell align="left">{row.name}</TableCell>
-                                <TableCell align="right">{row.qty}</TableCell>
-                                <TableCell align="right">{row.time}</TableCell>
-                                <TableCell align="left">{row.condition}</TableCell>
+                                <TableCell className={styles.widthFixed} align="left">
+                                    Qty
+                                </TableCell>
+                                <TableCell
+                                    className={styles.widthQuarter}
+                                    align="right"
+                                >
+                                    Time
+                                </TableCell>
+                                <TableCell className={styles.widthQuarter} align="left">
+                                    Condition
+                                </TableCell>
                                 <TableCell className={styles.widthBuffer} />
                             </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
-        )}
+                        </TableHead>
+                        <TableBody>
+                            {items.map((row) => (
+                                <TableRow key={row.id}>
+                                    <TableCell align="left">
+                                        <img
+                                            className={styles.itemImg}
+                                            src={row.url}
+                                            alt={row.name}
+                                        />
+                                    </TableCell>
+                                    <TableCell align="left">{row.name}</TableCell>
+                                    <TableCell align="right">{row.qty}</TableCell>
+                                    <TableCell align="right">{row.time}</TableCell>
+                                    <TableCell align="left">{row.condition}</TableCell>
+                                    <TableCell className={styles.widthBuffer} />
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            ))}
     </Container>
 );
+
+const returnedTableMapStateToProps = (state) => ({
+    isVisible: isReturnedTableVisibleSelector(state),
+});
+
+export const ReturnedTable = connect(returnedTableMapStateToProps, {
+    toggleVisibility: toggleReturnedTable,
+})(UnconnectedReturnedTable);
 
 export const PendingTable = ({ items, status }) => {
     return !status ? null : (
@@ -204,26 +246,25 @@ export const PendingTable = ({ items, status }) => {
                 <ChipStatus status={status} />
             </div>
             <TableContainer component={Paper} elevation={3} square={true}>
-                <Table className={styles.table} size="small" aria-label="item table">
-                    <colgroup>
-                        <col className={styles.widthFixed} />
-                        <col className={styles.widthHalf} />
-                        <col className={styles.widthQuarter} />
-                        <col className={styles.widthQuarter} />
-                        <col className={styles.widthBuffer} />
-                    </colgroup>
+                <Table className={styles.table} size="small" aria-label="pending table">
                     <TableHead>
                         <TableRow>
-                            <TableCell />
-                            <TableCell align="left">Name</TableCell>
-                            <TableCell align="right">Requested Qty</TableCell>
-                            <TableCell align="right">Granted Qty</TableCell>
+                            <TableCell className={styles.widthFixed} />
+                            <TableCell className={styles.widthHalf} align="left">
+                                Name
+                            </TableCell>
+                            <TableCell className={styles.widthQuarter} align="right">
+                                Requested Qty
+                            </TableCell>
+                            <TableCell className={styles.widthQuarter} align="right">
+                                Granted Qty
+                            </TableCell>
                             <TableCell className={styles.widthBuffer} />
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {items.map((row) => (
-                            <TableRow key={row.name}>
+                            <TableRow key={row.id}>
                                 <TableCell align="left">
                                     <img
                                         className={styles.itemImg}

@@ -19,13 +19,17 @@ import {
     members,
     teamCode,
 } from "testing/mockData";
+import { hackathonName } from "constants.js";
 
 const Dashboard = () => {
+    const reportIncident = (id) => {
+        alert("Reports incident for component of id " + id);
+    };
     return (
         <>
             <Header />
             <div className={styles.dashboard}>
-                <Typography variant="h1">Hackathon Name Hardware Dashboard</Typography>
+                <Typography variant="h1">{hackathonName} Hardware Dashboard</Typography>
                 <Grid
                     container
                     direction="row"
@@ -58,7 +62,10 @@ const Dashboard = () => {
                     ))}
                 </Grid>
                 <PendingTable items={itemsPending} status={orderStatus} />
-                <CheckedOutTable items={itemsCheckedOut} />
+                <CheckedOutTable
+                    items={itemsCheckedOut}
+                    reportIncident={reportIncident}
+                />
                 <ReturnedTable items={itemsReturned} />
             </div>
         </>

@@ -4,16 +4,18 @@ import { connectRouter, routerMiddleware } from "connected-react-router";
 import { createBrowserHistory } from "history";
 
 import userReducer, { userReducerName } from "slices/users/userSlice";
+import uiReducer, { uiReducerName } from "slices/ui/uiSlice";
 
 const rootReducer = (history) =>
     combineReducers({
         [userReducerName]: userReducer,
+        [uiReducerName]: uiReducer,
         router: connectRouter(history),
     });
 
 export const history = createBrowserHistory();
 
-const store = configureStore({
+export const store = configureStore({
     reducer: rootReducer(history),
     middleware: [...getDefaultMiddleware(), routerMiddleware(history)],
 });

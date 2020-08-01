@@ -63,7 +63,7 @@ export const LoginForm = ({
                     classes={{ root: styles.formTextField }}
                     error={"email" in errors || isInvalidCredentials}
                     helperText={errors.email || INVALID_CREDENTIALS_MESSAGE}
-                    FormHelperTextProps={{ ["data-testid"]: TEST_IDS.emailHelperText }}
+                    FormHelperTextProps={{ "data-testid": TEST_IDS.emailHelperText }}
                     id="email-input"
                     label="Email"
                     onChange={handleChange}
@@ -76,7 +76,7 @@ export const LoginForm = ({
                     error={"password" in errors || isInvalidCredentials}
                     helperText={errors.password || INVALID_CREDENTIALS_MESSAGE}
                     FormHelperTextProps={{
-                        ["data-testid"]: TEST_IDS.passwordHelperText,
+                        "data-testid": TEST_IDS.passwordHelperText,
                     }}
                     id="password-input"
                     label="Password"

@@ -18,9 +18,6 @@
     &Text {
         margin-bottom: 10px;
     }
-    &Btn {
-        color: color(primary);
-    }
 }
 
 .titleChip {
@@ -69,10 +66,13 @@
     &Buffer {
         width: 100%;
     }
-
+    &Button {
+        width: 30%;
+    }
     @include responsive(md-down) {
         &Half {
             width: 50%;
+            min-width: 180px;
         }
         &Quarter {
             width: 25%;
@@ -80,6 +80,9 @@
         &Buffer {
             width: 0px;
             padding: 0px !important;
+        }
+        &Button {
+            width: 10%;
         }
     }
 }

@@ -4,9 +4,6 @@
 .dashboard {
     width: 100%;
     max-width: 1400px;
-    h2 {
-        margin-bottom: 10px;
-    }
     &Grid {
         margin-top: 30px;
         @include responsive(sm-down) {

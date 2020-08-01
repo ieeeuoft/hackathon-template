@@ -3,7 +3,8 @@
 exports[`TeamCard render 1`] = `
 <DocumentFragment>
   <h2
-    class="MuiTypography-root MuiTypography-h2 MuiTypography-noWrap"
+    class="MuiTypography-root title MuiTypography-h2 MuiTypography-noWrap"
+    data-testid="titledPaperTitle"
   >
     Team PAS3NLQ3
   </h2>
@@ -50,7 +51,7 @@ exports[`TeamCard render 1`] = `
       class="MuiContainer-root lastRow MuiContainer-maxWidthLg"
     >
       <button
-        class="MuiButtonBase-root MuiButton-root MuiButton-text ButtonColor"
+        class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary"
         tabindex="0"
         type="button"
       >

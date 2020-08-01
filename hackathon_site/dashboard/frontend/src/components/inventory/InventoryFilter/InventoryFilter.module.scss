@@ -1,0 +1,60 @@
+@import "./../../../assets/abstracts/variables";
+@import "./../../../assets/abstracts/mixins";
+
+.filter {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    &Paper {
+        padding: 15px;
+        @include responsive(sm-down) {
+            box-shadow: none;
+        }
+    }
+
+    h2 {
+        margin-bottom: 5px;
+    }
+
+    &Divider {
+        margin: 15px 0;
+    }
+
+    &Category {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        &Chip {
+            color: color(primary);
+            background-color: color(blueLight);
+            font-weight: 500;
+        }
+    }
+
+    &Btns {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        margin-top: 15px;
+        @include responsive(sm-down) {
+            flex-direction: row;
+            flex-direction: row-reverse;
+            justify-content: space-between;
+            margin-top: 0;
+            position: sticky;
+            bottom: 0;
+            padding: 15px 10px;
+            background-color: color(light1);
+            &Apply {
+                width: auto;
+            }
+        }
+    }
+
+    fieldset {
+        border: none;
+    }
+}
