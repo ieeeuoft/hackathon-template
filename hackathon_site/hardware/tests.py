@@ -33,22 +33,6 @@ class HardwareSerializerTestCase(TestCase):
         }
 
         data = hardware_serializer.data
-        self.assertCountEqual(
-            data.keys(),
-            (
-                "id",
-                "name",
-                "model_number",
-                "manufacturer",
-                "datasheet",
-                "quantity_available",
-                "notes",
-                "max_per_team",
-                "picture",
-                "categories",
-                "quantity_remaining",
-            ),
-        )
         self.assertEqual(expected_response, data)
 
 
@@ -59,9 +43,6 @@ class CategorySerializerTestCase(TestCase):
     def test_category_serializer(self):
         category_serializer = CategorySerializer(self.category)
         data = category_serializer.data
-        self.assertCountEqual(
-            data.keys(), ("id", "name", "max_per_team", "unique_hardware_count")
-        )
         expected_response = {
             "id": 1,
             "name": "category",
