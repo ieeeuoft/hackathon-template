@@ -9,6 +9,7 @@ import {
     ReturnedTable,
     CheckedOutTable,
 } from "components/dashboard/ItemTable/ItemTable";
+import ProductOverview from "components/inventory/ProductOverview/ProductOverview";
 import Header from "components/general/Header/Header";
 import {
     cardItems,
@@ -18,6 +19,7 @@ import {
     orderStatus,
     members,
     teamCode,
+    productInformation,
 } from "testing/mockData";
 import { hackathonName } from "constants.js";
 
@@ -25,9 +27,26 @@ const Dashboard = () => {
     const reportIncident = (id) => {
         alert("Reports incident for component of id " + id);
     };
+
+    const addToCart = () => {
+        alert("add to cart");
+    };
+
+    const [mobileOpen, setMobileOpen] = React.useState(true);
+
+    const toggleMenu = () => {
+        setMobileOpen(!mobileOpen);
+    };
+
     return (
         <>
             <Header />
+            <ProductOverview
+                detail={productInformation}
+                addToCart={addToCart}
+                isVisible={mobileOpen}
+                handleClose={toggleMenu}
+            />
             <div className={styles.dashboard}>
                 <Typography variant="h1">{hackathonName} Hardware Dashboard</Typography>
                 <Grid
@@ -67,6 +86,8 @@ const Dashboard = () => {
                     reportIncident={reportIncident}
                 />
                 <ReturnedTable items={itemsReturned} />
+
+                <button onClick={toggleMenu}>Open product overview</button>
             </div>
         </>
     );

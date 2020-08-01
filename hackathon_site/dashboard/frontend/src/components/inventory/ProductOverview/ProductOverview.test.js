@@ -1,5 +1,5 @@
 import React from "react";
-import { ProductOverview, EnhancedAddToCartForm } from "./ProductOverview";
+import ProductOverview, { EnhancedAddToCartForm } from "./ProductOverview";
 import { render, fireEvent, waitFor } from "@testing-library/react";
 import { productInformation } from "testing/mockData";
 
@@ -8,13 +8,17 @@ describe("<ProductOverview />", () => {
         const addCartMock = jest.fn();
 
         const { getByText } = render(
-            <ProductOverview detail={productInformation} addToCart={addCartMock} />
+            <ProductOverview
+                detail={productInformation}
+                addToCart={addCartMock}
+                isVisible={true}
+            />
         );
 
         // Check if the main section, detailInfoSection, and add to cart section works
         expect(getByText("Category")).toBeInTheDocument();
         expect(getByText("Datasheet")).toBeInTheDocument();
-        expect(getByText("ADD TO CART")).toBeInTheDocument();
+        expect(getByText("Add to cart")).toBeInTheDocument();
     });
 });
 
@@ -23,10 +27,10 @@ describe("<EnhancedAddToCartForm />", () => {
         const addCartMock = jest.fn();
 
         const { getByText } = render(
-            <EnhancedAddToCartForm handleSubmit={addCartMock} availableQuantity={3} />
+            <EnhancedAddToCartForm handleSubmit={addCartMock} quantityAvailable={3} />
         );
 
-        const button = getByText("ADD TO CART");
+        const button = getByText("Add to cart");
 
         await waitFor(() => {
             fireEvent.click(button);
@@ -37,13 +41,13 @@ describe("<EnhancedAddToCartForm />", () => {
 
     test("handleSubmit called with the correct values", async () => {
         const handleSubmit = jest.fn();
-        const quantityAvailable = "3";
+        const quantityAvailable = 3;
         const quantityToBeSelected = "2";
 
         const { getByRole, getByText } = render(
             <EnhancedAddToCartForm
                 handleSubmit={handleSubmit}
-                availableQuantity={quantityAvailable}
+                quantityAvailable={quantityAvailable}
             />
         );
 
@@ -55,7 +59,7 @@ describe("<EnhancedAddToCartForm />", () => {
         fireEvent.click(quantitySelected);
 
         // wait for the click button to have been done
-        const button = getByText("ADD TO CART");
+        const button = getByText("Add to cart");
         await waitFor(() => {
             fireEvent.click(button);
         });
@@ -65,12 +69,12 @@ describe("<EnhancedAddToCartForm />", () => {
 
     test("requestFailure is passed in and rendered properly", () => {
         const requestFailure = { message: "Failed" };
-        const availableQuantity = "4";
+        const quantityAvailable = 4;
 
         const { getByText } = render(
             <EnhancedAddToCartForm
                 requestFailure={requestFailure}
-                availableQuantity={availableQuantity}
+                quantityAvailable={quantityAvailable}
             />
         );
 

@@ -8,19 +8,19 @@ import styles from "./SideSheetRight.module.scss";
 const SideSheetRight = ({ children, title, isVisible, handleClose }) => {
     return (
         <Drawer anchor="right" open={isVisible}>
-            <div className={styles.topsheet}>
+            <div className={styles.header}>
                 <IconButton
-                    className={styles.backarrow}
+                    className={styles.headerBackArrow}
                     onClick={handleClose}
                     role="close"
                 >
                     <ArrowBackIcon />
                 </IconButton>
-                <Typography variant="h2" className={styles.title} role="title">
+                <Typography variant="h2" role="title">
                     {title}
                 </Typography>
             </div>
-            {children}
+            <div className={styles.body}>{children}</div>
         </Drawer>
     );
 };
