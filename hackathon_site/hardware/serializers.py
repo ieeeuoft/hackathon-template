@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from hardware.models import Hardware, Category, Order
+from hardware.models import Hardware, Category, OrderItem
 
 
 class HardwareSerializer(serializers.ModelSerializer):
@@ -21,21 +21,26 @@ class HardwareSerializer(serializers.ModelSerializer):
             "quantity_remaining",
         )
 
-    def get_quantity_remaining(self, obj):
+    @staticmethod
+    def get_quantity_remaining(obj: Hardware):
         return (
+            # Get all OrderItems with that HardwareId
             obj.quantity_available
-            - Order.objects.filter(items__hardware__id=obj.id).count()
+            - OrderItem.objects.filter(items__hardware__id=obj.id)
+            # Get all the ones where they have null returned health
+            .filter(part_returned_health__isnull=True)
+            # Exclude the ones with status of cart
+            .exclude(order__status="Cart").count()
         )
 
 
 class CategorySerializer(serializers.ModelSerializer):
-    hardware = HardwareSerializer(many=True, read_only=True)
-
     unique_hardware_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Category
         fields = ("id", "name", "max_per_team", "hardware", "unique_hardware_count")
 
-    def get_unique_hardware_count(self, obj):
+    @staticmethod
+    def get_unique_hardware_count(obj: Category):
         return Hardware.objects.filter(categories__id=obj.id).count()

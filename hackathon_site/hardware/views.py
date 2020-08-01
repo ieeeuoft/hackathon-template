@@ -1,14 +1,11 @@
-from django.shortcuts import render
-
 from hardware.models import Hardware, Category
 from rest_framework import generics, mixins
 from hardware.serializers import HardwareSerializer, CategorySerializer
 
+# TODO TESTS FOR THIS AND MAKE SURE RETURNS PROPER SERIALIZATION
 
-# Create your views here.
-class HardwareListView(
-    mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView
-):
+
+class HardwareListView(mixins.ListModelMixin, generics.GenericAPIView):
     queryset = Hardware.objects.all()
     serializer_class = HardwareSerializer
 
@@ -16,9 +13,7 @@ class HardwareListView(
         return self.list(request, *args, **kwargs)
 
 
-class CategoryListView(
-    mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView
-):
+class CategoryListView(mixins.ListModelMixin, generics.GenericAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
 
