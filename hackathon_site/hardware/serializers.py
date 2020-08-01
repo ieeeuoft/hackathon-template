@@ -26,7 +26,7 @@ class HardwareSerializer(serializers.ModelSerializer):
         return (
             # Get all OrderItems with that HardwareId
             obj.quantity_available
-            - OrderItem.objects.filter(items__hardware__id=obj.id)
+            - OrderItem.objects.filter(hardware__id=obj.id)
             # Get all the ones where they have null returned health
             .filter(part_returned_health__isnull=True)
             # Exclude the ones with status of cart
@@ -39,7 +39,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Category
-        fields = ("id", "name", "max_per_team", "hardware", "unique_hardware_count")
+        fields = ("id", "name", "max_per_team", "unique_hardware_count")
 
     @staticmethod
     def get_unique_hardware_count(obj: Category):
