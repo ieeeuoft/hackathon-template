@@ -18,11 +18,8 @@ from django.urls import path, include
 from django.conf.urls import url
 from django.conf import settings
 
-from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
-
-PUBLIC = bool(settings.DEBUG)
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -30,7 +27,7 @@ schema_view = get_schema_view(
         default_version="v1",
         description="API Endpoint Visualization for Hardware Hackathon",
     ),
-    public=PUBLIC,
+    public=bool(settings.DEBUG),
 )
 
 urlpatterns = [
@@ -42,3 +39,9 @@ urlpatterns = [
         name="schema-swagger-ui",
     ),
 ]
+
+
+if settings.DEBUG:
+    import debug_toolbar
+
+    urlpatterns = [path("__debug__/", include(debug_toolbar.urls))] + urlpatterns
