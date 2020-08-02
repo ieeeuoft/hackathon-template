@@ -77,7 +77,6 @@ if DEBUG:
 
 ROOT_URLCONF = "hackathon_site.urls"
 
-print(BASE_DIR)
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.jinja2.Jinja2",

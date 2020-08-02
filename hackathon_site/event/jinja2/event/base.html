@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        {% block head %}
+        <title>{% block title %}Hackathon Site{% endblock %}</title>
+        <link rel="stylesheet" type="text/css" href="{{ static("event/styles/styles.css") }}" />
+        {% endblock %}
+    </head>
+    <body>
+        {% block body %}
+        Hello there
+        {% endblock %}
+    </body>
+</html>
