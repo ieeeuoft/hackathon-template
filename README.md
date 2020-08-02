@@ -99,6 +99,13 @@ A custom settings settings module is available for testing, which tells Django t
 $ cd hackathon_site
 $ python manage.py test --settings=hackathon_site.settings.ci
 ``` 
+##### Fixtures
+Django has fixtures which are hardcoded files (YAML/JSON) that provide initial data for models. They are placed in a fixtures folder under each app.
+
+More information at [this link](https://docs.djangoproject.com/en/3.0/howto/initial-data/).
+
+To load fixtures into the database, use the command `python manage.py loaddata <fixturename>` where `<fixturename>` is the name of the fixture file you’ve created. Each time you run loaddata, the data will be read from the fixture and re-loaded into the database. Note this means that if you change one of the rows created by a fixture and then run loaddata again, you’ll wipe out any changes you’ve made.
+
 
 #### React
 React tests are handled by [Jest](https://jestjs.io/). To run the full suite of React tests:
