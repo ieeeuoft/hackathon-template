@@ -4,7 +4,7 @@ name: Main Python checks
 
 on:
   push:
-    branches: '*'
+    branches: '**'
 
 defaults:
   run:
