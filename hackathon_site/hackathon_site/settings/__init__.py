@@ -79,6 +79,12 @@ ROOT_URLCONF = "hackathon_site.urls"
 
 TEMPLATES = [
     {
+        "BACKEND": "django.template.backends.jinja2.Jinja2",
+        "DIRS": [],
+        "APP_DIRS": True,
+        "OPTIONS": {"environment": "hackathon_site.jinja2.environment"},
+    },
+    {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": [],
         "APP_DIRS": True,
@@ -90,7 +96,7 @@ TEMPLATES = [
                 "django.contrib.messages.context_processors.messages",
             ]
         },
-    }
+    },
 ]
 
 WSGI_APPLICATION = "hackathon_site.wsgi.application"

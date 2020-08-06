@@ -1,7 +1,12 @@
+from django.views.generic import TemplateView
 from rest_framework import generics, mixins
 
 from event.models import User
 from event.serializers import UserSerializer
+
+
+class IndexView(TemplateView):
+    template_name = "event/base.html"
 
 
 class CurrentUserAPIView(generics.GenericAPIView, mixins.RetrieveModelMixin):
