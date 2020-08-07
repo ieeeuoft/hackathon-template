@@ -1,4 +1,6 @@
 from django.test import TestCase
+from django.urls import reverse
+from rest_framework import status
 
 from event.models import Profile, Team, User
 
@@ -22,3 +24,10 @@ class ProfileTestCase(TestCase):
         profile = Profile.objects.create(user=self.user, status="Accepted")
         self.assertEqual(Team.objects.count(), 1)
         self.assertEqual(Team.objects.first(), profile.team)
+
+
+class IndexViewTestCase(TestCase):
+    def test_index_view(self):
+        url = reverse("event:index")
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)

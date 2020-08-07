@@ -51,7 +51,7 @@ class OrderItem(models.Model):
         Hardware, null=False, on_delete=models.CASCADE, related_name="order_items"
     )
     part_returned_health = models.CharField(
-        max_length=64, choices=HEALTH_CHOICES, null=True
+        max_length=64, choices=HEALTH_CHOICES, null=True, blank=True
     )
 
 
