@@ -55,7 +55,7 @@ INSTALLED_APPS = [
     "dj_rest_auth",
     "drf_yasg",
     "dashboard",
-    "applications",
+    "registration",
     "event",
     "hardware",
 ]
