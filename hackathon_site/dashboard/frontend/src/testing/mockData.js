@@ -144,3 +144,29 @@ export const inventoryCategories = [
     { name: "Grove_style_boards", qty: 12 },
     { name: "Grove_style_modules", qty: 10 },
 ];
+
+// User details
+export const mockUser = {
+    id: 1,
+    first_name: "Foo",
+    last_name: "Bar",
+    email: "foo@bar.com",
+    profile: {
+        id: 1,
+        status: "Accepted",
+        id_provided: false,
+        attended: false,
+        acknowledge_rules: false,
+        e_signature: null,
+    },
+    groups: [
+        {
+            id: 1,
+            name: "Tech Team",
+        },
+        {
+            id: 2,
+            name: "Admins",
+        },
+    ],
+};

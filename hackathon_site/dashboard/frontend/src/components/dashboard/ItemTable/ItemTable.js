@@ -68,7 +68,12 @@ export const UnconnectedCheckedOutTable = ({
             <Typography variant="h2" className={styles.titleText}>
                 Checked out items
             </Typography>
-            <Button onClick={toggleVisibility} color="primary">
+            <Button
+                onClick={() => {
+                    toggleVisibility();
+                }}
+                color="primary"
+            >
                 {isVisible ? "Hide all" : "Show all"}
             </Button>
         </div>
@@ -161,7 +166,12 @@ export const UnconnectedReturnedTable = ({ items, isVisible, toggleVisibility })
             <Typography variant="h2" className={styles.titleText}>
                 Returned items
             </Typography>
-            <Button onClick={toggleVisibility} color="primary">
+            <Button
+                onClick={() => {
+                    toggleVisibility();
+                }}
+                color="primary"
+            >
                 {isVisible ? "Hide all" : "Show all"}
             </Button>
         </div>
