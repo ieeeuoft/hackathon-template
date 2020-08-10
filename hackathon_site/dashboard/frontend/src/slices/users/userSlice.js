@@ -1,13 +1,13 @@
-import axios from "axios";
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, createSelector } from "@reduxjs/toolkit";
 import { push } from "connected-react-router";
 
-import { post } from "api/api";
+import { get, post } from "api/api";
+import { displaySnackbar } from "slices/ui/uiSlice";
 
 export const userReducerName = "user";
 export const initialState = {
     userData: {
-        data: null,
+        user: null,
         isLoading: false,
         error: null,
     },
@@ -19,13 +19,47 @@ export const initialState = {
 };
 
 // Thunks
-export const fetchUserById = createAsyncThunk(
-    `${userReducerName}/getById`,
-    async (userId) => {
-        const response = await axios.get(
-            `https://jsonplaceholder.typicode.com/users/${userId}`
-        );
-        return response.data;
+
+export const fetchUserData = createAsyncThunk(
+    `${userReducerName}/fetchUserData`,
+    async (arg, { dispatch, rejectWithValue }) => {
+        try {
+            const response = await get("/api/event/users/user/");
+            return response.data;
+        } catch (e) {
+            if (!e.response) {
+                // This should almost never happen in production, and is likely due to a
+                // network error. Mostly here as a sanity check when running locally
+                dispatch(
+                    displaySnackbar({
+                        message: `Failed to fetch user data: ${e.message}`,
+                        options: { variant: "error" },
+                    })
+                );
+                return rejectWithValue({
+                    status: null,
+                    message: e.message,
+                });
+            } else if (e.response.status === 401) {
+                // Unauthenticated
+                dispatch(push("/login"));
+                return rejectWithValue({
+                    status: 401,
+                    message: e.response.data.detail,
+                });
+            } else {
+                dispatch(
+                    displaySnackbar({
+                        message: `Failed to fetch user data: Error ${e.response.status}`,
+                        options: { variant: "error" },
+                    })
+                );
+                return rejectWithValue({
+                    status: e.response.status,
+                    message: e.response.data,
+                });
+            }
+        }
     }
 );
 
@@ -64,17 +98,17 @@ const userSlice = createSlice({
     initialState,
     reducers: {},
     extraReducers: {
-        [fetchUserById.pending]: (state) => {
+        [fetchUserData.pending]: (state) => {
             state.userData.isLoading = true;
         },
-        [fetchUserById.fulfilled]: (state, action) => {
-            state.userData.data = action.payload;
+        [fetchUserData.fulfilled]: (state, action) => {
+            state.userData.user = action.payload;
             state.userData.isLoading = false;
             state.userData.error = null;
         },
-        [fetchUserById.rejected]: (state, action) => {
+        [fetchUserData.rejected]: (state, action) => {
             state.userData.isLoading = false;
-            state.userData.error = action.error;
+            state.userData.error = action.payload || { message: action.error.message };
         },
         [logIn.pending]: (state) => {
             state.login.isLoading = true;
@@ -96,6 +130,19 @@ export const { reducer, actions } = userSlice;
 export default reducer;
 
 // Selectors
-export const userSelector = (state) => state[userReducerName];
-export const userDataSelector = (state) => userSelector(state).userData;
-export const loginSelector = (state) => userSelector(state).login;
+export const userSliceSelector = (state) => state[userReducerName];
+
+export const userDataSelector = createSelector(
+    [userSliceSelector],
+    (userSlice) => userSlice.userData
+);
+
+export const userSelector = createSelector(
+    [userDataSelector],
+    (userData) => userData.user
+);
+
+export const loginSelector = createSelector(
+    [userSliceSelector],
+    (userSlice) => userSlice.login
+);

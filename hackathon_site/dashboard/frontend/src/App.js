@@ -25,6 +25,8 @@ import IncidentForm from "pages/IncidentForm/IncidentForm";
 import NotFound from "pages/NotFound/NotFound";
 import SnackbarNotifier from "components/general/SnackbarNotifier/SnackbarNotifier";
 
+import withParticipantCheck from "components/HOCs/withParticipantCheck/withParticipantCheck";
+
 export const makePalette = () => {
     // In testing, the scss exports don't work so styles is an
     // empty object. This gets around that.
@@ -43,14 +45,26 @@ const UnconnectedApp = () => {
         <div className="App">
             <div className="AppPadding">
                 <Switch>
-                    <Route exact path="/" component={Dashboard} />
+                    <Route exact path="/" component={withParticipantCheck(Dashboard)} />
                     <Route exact path="/login" component={Login} />
-                    <Route exact path="/orders" component={Orders} />
+                    <Route
+                        exact
+                        path="/orders"
+                        component={withParticipantCheck(Orders)}
+                    />
                     <Route exact path="/teams" component={Teams} />
                     <Route exact path="/reports" component={Reports} />
-                    <Route exact path="/inventory" component={Inventory} />
-                    <Route exact path="/cart" component={Cart} />
-                    <Route exact path="/incident-form" component={IncidentForm} />
+                    <Route
+                        exact
+                        path="/inventory"
+                        component={withParticipantCheck(Inventory)}
+                    />
+                    <Route exact path="/cart" component={withParticipantCheck(Cart)} />
+                    <Route
+                        exact
+                        path="/incident-form"
+                        component={withParticipantCheck(IncidentForm)}
+                    />
                     <Route exact path="/404" component={NotFound} />
                     <Redirect to="/404" />
                 </Switch>
