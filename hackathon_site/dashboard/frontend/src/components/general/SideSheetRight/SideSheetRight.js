@@ -7,7 +7,7 @@ import styles from "./SideSheetRight.module.scss";
 
 const SideSheetRight = ({ children, title, isVisible, handleClose }) => {
     return (
-        <Drawer anchor="right" open={isVisible}>
+        <Drawer anchor="right" open={isVisible} onClose={handleClose}>
             <div className={styles.header}>
                 <IconButton
                     className={styles.headerBackArrow}

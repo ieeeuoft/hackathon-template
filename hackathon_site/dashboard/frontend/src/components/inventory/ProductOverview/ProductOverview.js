@@ -61,11 +61,12 @@ export const AddToCartForm = ({
             )}
             <form className={styles.form} onSubmit={handleSubmit}>
                 <FormControl variant="outlined" className={styles.formControl}>
-                    <InputLabel>Qty</InputLabel>
+                    <InputLabel id="qtyLabel">Qty</InputLabel>
                     <Select
                         value={dropdownNum === 0 ? "" : quantity}
                         onChange={handleChange}
                         label="Qty"
+                        labelId="qtyLabel"
                         name="quantity"
                         disabled={dropdownNum === 0}
                     >
@@ -81,7 +82,6 @@ export const AddToCartForm = ({
                         type="submit"
                         onClick={handleSubmit}
                         disabled={dropdownNum === 0}
-                        data-testid="qtySelect"
                     >
                         Add to cart
                     </Button>
@@ -160,7 +160,9 @@ const DetailInfoSection = ({
             <Typography variant="body2" className={styles.heading}>
                 Notes
             </Typography>
-            <Typography>{notes}</Typography>
+            {notes.split("\n").map((note, i) => (
+                <Typography key={i}>{note}</Typography>
+            ))}
         </>
     );
 };
@@ -210,8 +212,8 @@ export const ProductOverview = ({ detail, addToCart, isVisible, handleClose }) =
         isVisible={isVisible}
         handleClose={handleClose}
     >
-        <div classNme={styles.productOverview}>
-            <div classNme={styles.productOverviewDiv}>
+        <div className={styles.productOverview}>
+            <div className={styles.productOverviewDiv}>
                 <MainSection
                     type={detail.type}
                     name={detail.name}

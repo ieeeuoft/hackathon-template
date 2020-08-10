@@ -1,6 +1,7 @@
 import React from "react";
 import styles from "./Dashboard.module.scss";
 import Grid from "@material-ui/core/Grid";
+import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import DashCard from "components/dashboard/DashCard/DashCard";
 import TeamCard from "components/dashboard/TeamCard/TeamCard";
@@ -32,10 +33,10 @@ const Dashboard = () => {
         alert("add to cart");
     };
 
-    const [mobileOpen, setMobileOpen] = React.useState(true);
+    const [sideSheetOpen, setSideSheetOpen] = React.useState(false);
 
     const toggleMenu = () => {
-        setMobileOpen(!mobileOpen);
+        setSideSheetOpen(!sideSheetOpen);
     };
 
     return (
@@ -44,7 +45,7 @@ const Dashboard = () => {
             <ProductOverview
                 detail={productInformation}
                 addToCart={addToCart}
-                isVisible={mobileOpen}
+                isVisible={sideSheetOpen}
                 handleClose={toggleMenu}
             />
             <div className={styles.dashboard}>
@@ -87,7 +88,9 @@ const Dashboard = () => {
                 />
                 <ReturnedTable items={itemsReturned} />
 
-                <button onClick={toggleMenu}>Open product overview</button>
+                <Button variant="contained" onClick={toggleMenu}>
+                    Open product overview
+                </Button>
             </div>
         </>
     );

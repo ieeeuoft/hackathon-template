@@ -52,7 +52,7 @@ describe("<EnhancedAddToCartForm />", () => {
         );
 
         // click the select
-        fireEvent.mouseDown(getByRole("button", { name: "1" }));
+        fireEvent.mouseDown(getByRole("button", { name: "Qty 1" }));
 
         // select the quantity
         const quantitySelected = getByText(quantityToBeSelected);
@@ -82,24 +82,25 @@ describe("<EnhancedAddToCartForm />", () => {
     });
 
     test("button and select are disabled if quantityAvailable is 0", () => {
-        const { getByText, getByTestId } = render(
+        const { getByText, getByLabelText } = render(
             <EnhancedAddToCartForm quantityAvailable={0} />
         );
 
         const button = getByText("Add to cart");
-        const select = getByTestId("qtySelect");
+        const select = getByLabelText("Qty");
 
         expect(button).toBeDisabled();
-        expect(select).toBeDisabled();
+        expect(select).toHaveClass("Mui-disabled");
     });
 
     test("dropdown values are minimum between quantityAvailable and maxConstraint", () => {
-        const { queryByText, getByRole } = render(
+        const { queryByText, getByText, getByRole } = render(
             <EnhancedAddToCartForm quantityAvailable={3} constraintMax={2} />
         );
 
-        fireEvent.mouseDown(getByRole("button", { name: "1" }));
+        fireEvent.mouseDown(getByRole("button", { name: "Qty 1" }));
 
         expect(queryByText("3")).not.toBeInTheDocument();
+        expect(getByText("2")).toBeInTheDocument();
     });
 });
