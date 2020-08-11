@@ -1,26 +1,142 @@
 import React from "react";
-// import styles from "./Inventory.module.scss";
+import styles from "./Inventory.module.scss";
+import { useTheme } from "@material-ui/core/styles";
+import Drawer from "@material-ui/core/Drawer";
 import Header from "components/general/Header/Header";
 import Typography from "@material-ui/core/Typography";
+import TextField from "@material-ui/core/TextField";
+import useMediaQuery from "@material-ui/core/useMediaQuery";
+import Divider from "@material-ui/core/Divider";
+import IconButton from "@material-ui/core/IconButton";
+import Hidden from "@material-ui/core/Hidden";
+import Button from "@material-ui/core/Button";
+import RefreshIcon from "@material-ui/icons/Refresh";
+import SearchIcon from "@material-ui/icons/Search";
+import FilterListIcon from "@material-ui/icons/FilterList";
+import Grid from "@material-ui/core/Grid";
 import InventoryFilter from "components/inventory/InventoryFilter/InventoryFilter";
-import { inventoryCategories } from "testing/mockData";
+import Item from "components/inventory/Item/Item";
+import { inventoryCategories, inventoryItems } from "testing/mockData";
 
 const applyFilter = () => alert("Applies the filter");
 
 const removeFilter = () => alert("Removes all filters and resets form");
 
 const Inventory = () => {
+    const [mobileOpen, setMobileOpen] = React.useState(false);
+
+    const toggleFilter = () => {
+        setMobileOpen(!mobileOpen);
+    };
+
+    const mobileWidth = useMediaQuery(useTheme().breakpoints.up("md"));
+
     return (
-        <div>
+        <>
             <Header />
-            <Typography variant="h1">Hardware Inventory</Typography>
-            <p>IEEEEEE</p>
-            <InventoryFilter
-                categories={inventoryCategories}
-                applyFilter={applyFilter}
-                removeFilter={removeFilter}
-            />
-        </div>
+            <div className={styles.inventory}>
+                <Drawer
+                    className={styles.inventoryFilterDrawer}
+                    variant="permanent"
+                    variant={mobileWidth ? "permanent" : "left"}
+                    open={mobileOpen}
+                    onClose={toggleFilter}
+                >
+                    <InventoryFilter
+                        categories={inventoryCategories}
+                        applyFilter={applyFilter}
+                        removeFilter={removeFilter}
+                    />
+                </Drawer>
+                <div className={styles.inventoryBody}>
+                    <Typography variant="h1">Hardware Inventory</Typography>
+
+                    <div className={styles.inventoryBodyToolbar}>
+                        <Grid
+                            direction="row"
+                            alignItems="center"
+                            className={styles.inventoryBodyToolbarDiv}
+                            container
+                        >
+                            <TextField
+                                className={styles.inventoryBodyToolbarSearch}
+                                id="search-input"
+                                label="Search items"
+                                variant="outlined"
+                                size="small"
+                            />
+                            <IconButton
+                                color="primary"
+                                aria-label="Search"
+                                variant="contained"
+                            >
+                                <SearchIcon />
+                            </IconButton>
+                        </Grid>
+
+                        <Divider
+                            orientation="vertical"
+                            className={styles.inventoryBodyToolbarDivider}
+                            flexItem
+                        />
+
+                        <Grid
+                            direction="row"
+                            justify="space-between"
+                            alignItems="center"
+                            className={styles.inventoryBodyToolbarDiv}
+                            container
+                        >
+                            <Hidden implementation="css" mdUp>
+                                <Button
+                                    aria-label="Orders"
+                                    startIcon={<FilterListIcon />}
+                                    onClick={toggleFilter}
+                                >
+                                    Filter
+                                </Button>
+                            </Hidden>
+
+                            <div style={{ display: "flex", alignItems: "center" }}>
+                                <Typography variant="body2">123 items.</Typography>
+                                <IconButton
+                                    color="primary"
+                                    aria-label="refresh"
+                                    variant="contained"
+                                >
+                                    <RefreshIcon />
+                                </IconButton>
+                            </div>
+                        </Grid>
+                    </div>
+
+                    <Grid
+                        container
+                        direction="row"
+                        spacing={2}
+                    >
+                        {inventoryItems.map((item) => (
+                            <Grid
+                                xs={6}
+                                sm={4}
+                                md={3}
+                                lg={2}
+                                className={styles.Item}
+                                item
+                            >
+                                <Item
+                                    image={item.image}
+                                    title={item.title}
+                                    total={item.total}
+                                    currentStock={item.currentStock}
+                                    key={item.id}
+                                />
+                            </Grid>
+                        ))}
+                    </Grid>
+                </div>
+            </div>
+        </>
     );
 };
 
