@@ -89,6 +89,24 @@ $ python manage.py runserver
 
 If you would like to run on a port other than 8000, specify a port number after `runserver`.
 
+### Creating users locally
+In order to access most of the functionality of the site (the React dashboard or otherwise), you will need to have user accounts to test with. 
+
+To start, create an admin user. This will give you access to the admin site, and will bypass all Django permissions checks:
+
+```bash
+$ python manage.py createsuperuser 
+```
+
+Once a superuser is created (and the Django dev server is running), you can log in to the admin site at `http://localhost:8000/admin`.
+
+#### Adding additional users
+The easiest way to add new users is via the admin site, through the "Users" link of the "Authentication and Authorization" panel. When adding a user, you will be prompted for only a username and a password. The react site uses email to log in, so *make sure* to click "Save and continue editing" and add a first name, last name, and email address.
+
+#### Giving a user a profile
+Profiles are used by participants who have either been accepted or waitlisted. Some features of the React dashboard require the user to have a profile. This can be done through the "Profiles" link of the "Event" panel on the admin site. Click "Add profile", select a user from the dropdown, either add them to an existing team (if you have any) or click the green "+" to create a team, pick a status, fill out any other required fields, and click save.
+
+
 ### Tests
 #### Django
 Django tests are run using [Django's test system](https://docs.djangoproject.com/en/3.0/topics/testing/overview/), based on the standard python `unittest` module.
@@ -99,6 +117,13 @@ A custom settings settings module is available for testing, which tells Django t
 $ cd hackathon_site
 $ python manage.py test --settings=hackathon_site.settings.ci
 ``` 
+##### Fixtures
+Django has fixtures which are hardcoded files (YAML/JSON) that provide initial data for models. They are placed in a fixtures folder under each app.
+
+More information at [this link](https://docs.djangoproject.com/en/3.0/howto/initial-data/).
+
+To load fixtures into the database, use the command `python manage.py loaddata <fixturename>` where `<fixturename>` is the name of the fixture file you’ve created. Each time you run loaddata, the data will be read from the fixture and re-loaded into the database. Note this means that if you change one of the rows created by a fixture and then run loaddata again, you’ll wipe out any changes you’ve made.
+
 
 #### React
 React tests are handled by [Jest](https://jestjs.io/). To run the full suite of React tests:
@@ -106,3 +131,26 @@ React tests are handled by [Jest](https://jestjs.io/). To run the full suite of 
 $ cd hackathon_site/dashboard/frontend
 $ yarn test
 ```
+## File Structure
+The top level [hackathon_site](hackathon_site) folder contains the Django project that encapsulates this template.
+
+The main project configs are in [hackathon_site/hackathon_site](hackathon_site/hackathon_site), including the main settings file [settings/__init__.py](hackathon_site/hackathon_site/settings/__init__.py) and top-level URL config.
+
+The [dashboard](hackathon_site/dashboard) app contains the React project for the inventory management and hardware sign-out platform.
+
+The [event](hackathon_site/event) app contains the public-facing templates for the landing page.
+
+The [applications](hackathon_site/applications) app contains models, forms, and templates for user registration, including landing page and application templates. Since these templates are similar to the landing page, they may extend templates and use static files from the `event` app. 
+
+### Templates and Static Files
+Templates served from Django can be placed in any app. We use [Jinja 2](https://jinja.palletsprojects.com/en/2.11.x/) as our templating engine, instead of the default Django Template Language. Within each app, Jinja 2 templates must be placed in a folder called `jinja2/<app_name>/` (i.e., the full path will be `hackathon_site/<app_name>/jinja2/<app_name>/`). Templates can then be referenced in views as `<app_name>/your_template.html`.
+
+Static files are placed within each app, in a folder named `static/<app_name>/` (same convention as templates). For example, SCSS files for the Event app may be in `hackathon_site/event/static/event/styles/scss/`. They can then be referenced in templates as `<app_name>/<path to static file>`, for example `event/styles/css/styles.css` (assuming the SCSS has been compiled to CSS).
+
+Django can serve static files automatically in development. In a production environment, static files must be collected:
+
+```bash
+$ python manage.py collectstatic
+```
+
+This will place static files in `hackathon_site/static/`. These must be served separately, for example using Nginx, as Django cannot serve static files in production. [Read more about how Django handles static files](https://docs.djangoproject.com/en/3.0/howto/static-files/).
