@@ -8,7 +8,8 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "scss": "node-sass --watch static/event/styles/scss -o static/event/styles/css"
+    "scss-watch": "node-sass --watch static/event/styles/scss -o static/event/styles/css",
+    "scss": "node-sass static/event/styles/scss -o static/event/styles/css"
   },
   "prettier": {
     "printWidth": 88,
