@@ -26,6 +26,10 @@
                 margin: 0 25px;
             }
 
+            &Refresh {
+                @include flexPosition;
+            }
+
             @include responsive(sm-down) {
                 flex-direction: column;
                 margin-bottom: 5px;
@@ -41,7 +45,6 @@
                 &Divider {
                     display: none;
                 }
-
             }
         }
     }
@@ -50,6 +53,10 @@
         width: 280px;
         flex-shrink: 0;
         z-index: 1;
+    }
+
+    &LoadDivider {
+        margin: 30px 0;
     }
 }
 

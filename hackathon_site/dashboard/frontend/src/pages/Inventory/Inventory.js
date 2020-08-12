@@ -38,7 +38,8 @@ const Inventory = () => {
                 <Drawer
                     className={styles.inventoryFilterDrawer}
                     variant="permanent"
-                    variant={mobileWidth ? "permanent" : "left"}
+                    variant={mobileWidth ? "permanent" : "temporary"}
+                    anchor="left"
                     open={mobileOpen}
                     onClose={toggleFilter}
                 >
@@ -97,7 +98,7 @@ const Inventory = () => {
                                 </Button>
                             </Hidden>
 
-                            <div style={{ display: "flex", alignItems: "center" }}>
+                            <div className={styles.inventoryBodyToolbarRefresh}>
                                 <Typography variant="body2">123 items.</Typography>
                                 <IconButton
                                     color="primary"
@@ -110,11 +111,7 @@ const Inventory = () => {
                         </Grid>
                     </div>
 
-                    <Grid
-                        container
-                        direction="row"
-                        spacing={2}
-                    >
+                    <Grid direction="row" spacing={2} container>
                         {inventoryItems.map((item) => (
                             <Grid
                                 xs={6}
@@ -122,6 +119,7 @@ const Inventory = () => {
                                 md={3}
                                 lg={2}
                                 className={styles.Item}
+                                key={item.id}
                                 item
                             >
                                 <Item
@@ -129,11 +127,22 @@ const Inventory = () => {
                                     title={item.title}
                                     total={item.total}
                                     currentStock={item.currentStock}
-                                    key={item.id}
                                 />
                             </Grid>
                         ))}
                     </Grid>
+                    <Divider className={styles.inventoryLoadDivider} />
+                    <Typography variant="subtitle2" align="center" paragraph>
+                        SHOWING 100 OF 123 ITEMS
+                    </Typography>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        size="large"
+                        fullWidth={true}
+                    >
+                        Load more
+                    </Button>
                 </div>
             </div>
         </>

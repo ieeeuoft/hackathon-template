@@ -1,18 +1,11 @@
 @import "./../../../assets/abstracts/mixins";
 @import "./../../../assets/abstracts/variables";
 
-.Item {
+.item {
     &Box,
-    &Black {
-        width: 100%;
-    }
-
+    &Black,
     &Pic {
         width: 100%;
-        &Box {
-            object-fit: cover;
-            opacity: 0.2;
-        }
     }
 
     &Black {
@@ -23,12 +16,12 @@
     &TextBox {
         padding: 10px;
     }
+}
 
-    .outOfStock {
-        color: color(red);
-    }
+.outOfStock {
+    color: color(secondary);
+}
 
-    .inStock {
-        color: color(grey);
-    }
+.inStock {
+    color: color(grey);
 }
