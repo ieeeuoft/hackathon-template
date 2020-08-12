@@ -147,6 +147,18 @@ Templates served from Django can be placed in any app. We use [Jinja 2](https://
 
 Static files are placed within each app, in a folder named `static/<app_name>/` (same convention as templates). For example, SCSS files for the Event app may be in `hackathon_site/event/static/event/styles/scss/`. They can then be referenced in templates as `<app_name>/<path to static file>`, for example `event/styles/css/styles.css` (assuming the SCSS has been compiled to CSS).
 
+To compile the scss automatically when you save, run following task running while you work:
+
+```bash
+$ cd hackathon_site/event
+$ yarn run scss-watch
+```
+To compile all scss files at once, run:
+
+```bash
+$ yarn run scss
+```
+
 Django can serve static files automatically in development. In a production environment, static files must be collected:
 
 ```bash

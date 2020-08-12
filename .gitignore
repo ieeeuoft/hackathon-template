@@ -146,3 +146,9 @@ hackathon_site/static/
 
 # Database persistent data
 development/.postgres-data/
+
+# CSS Files
+hackathon_site/**/*.css
+
+# node_modules, found outside the react app
+node_modules/
