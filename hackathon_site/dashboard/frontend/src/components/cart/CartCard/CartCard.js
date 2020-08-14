@@ -14,9 +14,8 @@ import CloseIcon from "@material-ui/icons/Close";
 
 const Selections = (currentStock) => {
     const items = [];
-    let i = 0;
 
-    for (i = 1; i < currentStock + 1; i++) {
+    for (let i = 1; i < currentStock + 1; i++) {
         items.push(
             <MenuItem key={i} role="quantity" value={i}>
                 {i}
@@ -26,7 +25,7 @@ const Selections = (currentStock) => {
     return items;
 };
 
-const Stock = ({ currentStock, handleChange, item }) => {
+const Stock = ({ currentStock, handleChange, numOfCartItem }) => {
     if (!currentStock) {
         return (
             <Typography variant="caption" className={styles.CartError}>
@@ -45,9 +44,8 @@ const Stock = ({ currentStock, handleChange, item }) => {
                 </InputLabel>
                 <Select
                     label="Qty"
-                    value={item}
+                    value={numOfCartItem}
                     onChange={handleChange}
-                    role="selecter"
                     name="quantity"
                 >
                     {Selections(currentStock)}
@@ -61,16 +59,14 @@ export const CartCard = ({
     image,
     title,
     currentStock,
-    closeChange,
+    handleRemove,
     checkedOutQuantity,
-    isError,
+    error,
 }) => {
-    const [item, setItem] = React.useState(checkedOutQuantity);
+    const [numOfCartItem, setNumItem] = React.useState(checkedOutQuantity);
     const handleChange = (event) => {
-        setItem(event.target.value);
+        setNumItem(event.target.value);
     };
-
-    const errorMessage = "some error message";
 
     return (
         <Card className={styles.Cart} elevation={0}>
@@ -84,23 +80,23 @@ export const CartCard = ({
                 <Typography variant="body2" className={styles.CartName}>
                     {title}
                 </Typography>
-                {isError && (
+                {error && (
                     <Typography variant="caption" className={styles.CartError}>
-                        {errorMessage}
+                        {error}
                     </Typography>
                 )}
                 <Stock
                     currentStock={currentStock}
                     handleChange={handleChange}
-                    item={item}
+                    numOfCartItem={numOfCartItem}
                 />
             </CardContent>
             <CardActions className={styles.CartAction}>
                 <IconButton
                     size="small"
                     className={styles.CartClose}
-                    onClick={closeChange}
-                    role="close"
+                    onClick={handleRemove}
+                    role="remove"
                 >
                     <CloseIcon />
                 </IconButton>
