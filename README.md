@@ -49,7 +49,7 @@ In order to run the django and react development servers locally (or run tests),
 | DB_PASSWORD    |                                   |                | Password for the postgres user.                                                   |
 | DB_PORT        |                                   | 5432           | Port the postgres server is open on.                                              |
 | DB_NAME        |                                   | hackathon_site | Postgres database name.                                                           |
-| REACT_APP_DEV_SERVER_URL |                  | http://localhost:8000 | Path to the django development server, used by React.                             |
+| **REACT_APP_DEV_SERVER_URL** | http://localhost:8000 |              | Path to the django development server, used by React. Update the port if you aren't using the default 8000. |
 
 #### Testing
 Specifying `SECRET_KEY` is still required to run tests, because the settings file expects it to be set. `DEBUG` is forced to `False` by Django.
