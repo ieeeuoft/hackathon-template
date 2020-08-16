@@ -13,7 +13,7 @@ A website template for hackathons run by [IEEE University of Toronto Student Bra
 - [File Structure](#file-structure)
 - [Using this Template](#using-this-template)
     * [Forking](#forking)
-    * [From the Template (Recommended)](#from-the-template--recommended-)
+    * [From the Template (Recommended)](#from-the-template)
     * [Copy the Repository](#copy-the-repository)
 
 ## Requirements
@@ -191,7 +191,7 @@ Unfortunately, GitHub does not allow you to fork your own repository. As a resul
 
 Note: `develop` is our default branch, but it should not be considered the most stable branch. If you want only the most stable releases, we recommend that you apply your customizations on top of the `master` branch.
 
-### From the Template (Recommended)
+### From the Template
 This is our recommended approach to instantiate this template, if forking is unavailable to you. In the end, this gives a similar result to [copying the repository](#copy-the-repository) (below), but maintains the "generated from ieeeuoft/hackathon-template" message on GitHub. If you don't care about that, then copying is simpler.
 
 1. Create an instance of the template by clicking "Use this template". 
