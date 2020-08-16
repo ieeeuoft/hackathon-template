@@ -2,6 +2,20 @@
 
 A website template for hackathons run by [IEEE University of Toronto Student Branch](https://ieee.utoronto.ca/).
 
+## Contents
+- [Requirements](#requirements)
+- [Getting Started](#getting-started)
+    * [Python Environment](#python-environment)
+    * [Environment Variables](#environment-variables)
+    * [Running the development server](#running-the-development-server)
+    * [Creating users locally](#creating-users-locally)
+    * [Tests](#tests)
+- [File Structure](#file-structure)
+- [Using this Template](#using-this-template)
+    * [Forking](#forking)
+    * [From the Template (Recommended)](#from-the-template--recommended-)
+    * [Copy the Repository](#copy-the-repository)
+
 ## Requirements
 - Python 3.8 or higher
 - [Docker](https://docs.docker.com/get-docker/)
