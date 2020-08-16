@@ -9,7 +9,7 @@
     padding: 0 15px;
 }
 .icon-block .material-icons {
-	font-size: inherit;
+    font-size: inherit;
 }
 
 h3 {
@@ -46,7 +46,6 @@ strong {
 }
 // End of navbar stuff
 
-
 .countdown {
     display: flex;
     align-items: center;
@@ -65,7 +64,7 @@ strong {
         font-size: 106px;
         text-align: center;
         background-color: color(secondary);
-        color: #0D061A;
+        color: #0d061a;
         display: flex;
         flex-direction: column;
         margin: 0 5px;
@@ -80,7 +79,9 @@ strong {
     }
 }
 
-#day1, #day2, #day3 {
+#day1,
+#day2,
+#day3 {
     margin: -20px 0 0;
 }
 // End of "About" section
@@ -100,7 +101,7 @@ strong {
 
     &Row {
         display: flex;
-        margin: 10px 0;;
+        margin: 10px 0;
     }
 
     @include responsive(md-down) {
@@ -117,7 +118,7 @@ strong {
 // "Sponsors" section
 .sponsorImgs {
     margin-top: 50px;
-    
+
     img {
         height: 100%;
         width: 100%;
@@ -138,7 +139,7 @@ strong {
 .carousel {
     height: 333px !important;
 
-    .carousel-item  {
+    .carousel-item {
         opacity: 1 !important;
         height: 333px !important;
 
@@ -172,11 +173,11 @@ strong {
 
 /* Colors  */
 .primaryColor {
-    background-color: color(primary) !important;;
+    background-color: color(primary) !important;
 }
 
 .secondaryColor {
-    background-color: color(secondary) !important;;
+    background-color: color(secondary) !important;
 }
 
 .colorBtn {
@@ -185,9 +186,9 @@ strong {
     text-transform: uppercase;
     color: color(font) !important;
     background-color: color(secondary) !important;
-    
+
     &:hover {
-        background-color: #D2A300 !important;
+        background-color: #d2a300 !important;
     }
 }
 
