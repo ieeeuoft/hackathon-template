@@ -3,27 +3,16 @@
     <head>
         {% block head %}
         <title>{% block title %}Hackathon Site{% endblock %}</title>
-        <link
-            rel="stylesheet"
-            type="text/css"
-            href="{{ static('event/styles/css/styles.css') }}"
-        />
+        <link rel="stylesheet" type="text/css" href="{{ static('event/styles/css/styles.css') }}" />
 
         <!-- Compiled and minified CSS -->
-        <link
-            rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
-        />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" />
         {% endblock %}
     </head>
     <body>
         <nav class="navbar primaryColor" role="navigation">
             <div class="nav-wrapper container">
-                <img
-                    src="{{ static('event/images/logo.svg') }}"
-                    class="logoNav"
-                    alt="logo"
-                />
+                <img src="{{ static('event/images/logo.svg') }}" class="logoNav" alt="logo" />
 
                 {% block nav %}
                 {% endblock %}
