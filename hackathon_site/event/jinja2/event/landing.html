@@ -1,6 +1,6 @@
-{% extends "base.html" %}
+{% extends "event/base.html" %}
 
-{% block nav}
+{% block nav %}
 <ul class="right hide-on-med-and-down">
     <li><a href="#about">About</a></li>
     <li><a href="#schedule">Schedule</a></li>
@@ -25,7 +25,7 @@
 </ul>
 
 <a href="#" data-target="nav-mobile" class="sidenav-trigger"><i class="material-icons">menu</i></a>
-{% endblock}
+{% endblock %}
 
 {% block body %}
 <div class="container">
@@ -45,7 +45,7 @@
             <br /><br />
         </div>
         <div class="col">
-            <img src="{{ static('event/images/landing.svg') }}" />
+            <img src="{{ static('event/images/landing.svg') }}" alt="landing"/>
         </div>
     </div>
 </div>
@@ -232,27 +232,27 @@
             <h3 class="center">Sponsors</h3>
             <div class="row sponsorImgs">
                 <!-- Platinum -->
-                <a href="https://www.google.com/" class="col s6 center" rel="noopener" target="_blank"><img src="{{ static('event/images/sponsor.svg') }}" /></a>
-                <a href="https://www.google.com/" class="col s6 center" rel="noopener" target="_blank"><img src="{{ static('event/images/sponsor.svg') }}" /></a>
+                <a href="https://www.google.com/" class="col s6 center" rel="noopener" target="_blank"><img src="{{ static('event/images/sponsor.svg') }}" alt="sponsor-name"/></a>
+                <a href="https://www.google.com/" class="col s6 center" rel="noopener" target="_blank"><img src="{{ static('event/images/sponsor.svg') }}" alt="sponsor-name"/></a>
                 <br />
                 <!-- Gold -->
-                <a href="https://www.google.com/" class="col s4 center" rel="noopener" target="_blank"><img src="{{ static('event/images/sponsor.svg') }}" /></a>
-                <a href="https://www.google.com/" class="col s4 center" rel="noopener" target="_blank"><img src="{{ static('event/images/sponsor.svg') }}" /></a>
-                <a href="https://www.google.com/" class="col s4 center" rel="noopener" target="_blank"><img src="{{ static('event/images/sponsor.svg') }}" /></a>
+                <a href="https://www.google.com/" class="col s4 center" rel="noopener" target="_blank"><img src="{{ static('event/images/sponsor.svg') }}" alt="sponsor-name"/></a>
+                <a href="https://www.google.com/" class="col s4 center" rel="noopener" target="_blank"><img src="{{ static('event/images/sponsor.svg') }}" alt="sponsor-name"/></a>
+                <a href="https://www.google.com/" class="col s4 center" rel="noopener" target="_blank"><img src="{{ static('event/images/sponsor.svg') }}" alt="sponsor-name"/></a>
                 <br />
                 <!-- Silver -->
-                <a href="https://www.google.com/" class="col s3 center" rel="noopener" target="_blank"><img src="{{ static('event/images/sponsor.svg') }}" /></a>
-                <a href="https://www.google.com/" class="col s3 center" rel="noopener" target="_blank"><img src="{{ static('event/images/sponsor.svg') }}" /></a>
-                <a href="https://www.google.com/" class="col s3 center" rel="noopener" target="_blank"><img src="{{ static('event/images/sponsor.svg') }}" /></a>
-                <a href="https://www.google.com/" class="col s3 center" rel="noopener" target="_blank"><img src="{{ static('event/images/sponsor.svg') }}" /></a>
+                <a href="https://www.google.com/" class="col s3 center" rel="noopener" target="_blank"><img src="{{ static('event/images/sponsor.svg') }}" alt="sponsor-name"/></a>
+                <a href="https://www.google.com/" class="col s3 center" rel="noopener" target="_blank"><img src="{{ static('event/images/sponsor.svg') }}" alt="sponsor-name"/></a>
+                <a href="https://www.google.com/" class="col s3 center" rel="noopener" target="_blank"><img src="{{ static('event/images/sponsor.svg') }}" alt="sponsor-name"/></a>
+                <a href="https://www.google.com/" class="col s3 center" rel="noopener" target="_blank"><img src="{{ static('event/images/sponsor.svg') }}" alt="sponsor-name"/></a>
                 <br />
                 <!-- Bronze -->
-                <a href="https://www.google.com/" class="col s2 center" rel="noopener" target="_blank"><img src="{{ static('event/images/sponsor.svg') }}" /></a>
-                <a href="https://www.google.com/" class="col s2 center" rel="noopener" target="_blank"><img src="{{ static('event/images/sponsor.svg') }}" /></a>
-                <a href="https://www.google.com/" class="col s2 center" rel="noopener" target="_blank"><img src="{{ static('event/images/sponsor.svg') }}" /></a>
-                <a href="https://www.google.com/" class="col s2 center" rel="noopener" target="_blank"><img src="{{ static('event/images/sponsor.svg') }}" /></a>
-                <a href="https://www.google.com/" class="col s2 center" rel="noopener" target="_blank"><img src="{{ static('event/images/sponsor.svg') }}" /></a>
-                <a href="https://www.google.com/" class="col s2 center" rel="noopener" target="_blank"><img src="{{ static('event/images/sponsor.svg') }}" /></a>
+                <a href="https://www.google.com/" class="col s2 center" rel="noopener" target="_blank"><img src="{{ static('event/images/sponsor.svg') }}" alt="sponsor-name"/></a>
+                <a href="https://www.google.com/" class="col s2 center" rel="noopener" target="_blank"><img src="{{ static('event/images/sponsor.svg') }}" alt="sponsor-name"/></a>
+                <a href="https://www.google.com/" class="col s2 center" rel="noopener" target="_blank"><img src="{{ static('event/images/sponsor.svg') }}" alt="sponsor-name"/></a>
+                <a href="https://www.google.com/" class="col s2 center" rel="noopener" target="_blank"><img src="{{ static('event/images/sponsor.svg') }}" alt="sponsor-name"/></a>
+                <a href="https://www.google.com/" class="col s2 center" rel="noopener" target="_blank"><img src="{{ static('event/images/sponsor.svg') }}" alt="sponsor-name"/></a>
+                <a href="https://www.google.com/" class="col s2 center" rel="noopener" target="_blank"><img src="{{ static('event/images/sponsor.svg') }}" alt="sponsor-name"/></a>
                 <br />
             </div>
             <p class="center">
@@ -278,12 +278,12 @@
 
 <div class="carousel">
     <!-- IMAGES MUST ALL BE THE SAME SIZE -->
-    <a class="carousel-item" href="#one!"><img src="https://imgur.com/UoVt0SD" /></a>
-    <a class="carousel-item" href="#two!"><img src="https://imgur.com/tFJUdpY" /></a>
-    <a class="carousel-item" href="#three!"><img src="https://imgur.com/EeFW9yt" /></a>
-    <a class="carousel-item" href="#four!"><img src="https://imgur.com/ho1TpX3" /></a>
-    <a class="carousel-item" href="#five!"><img src="https://imgur.com/NuVyjXK" /></a>
-    <a class="carousel-item" href="#six!"><img src="https://imgur.com/r7ZMttJ" /></a>
+    <a class="carousel-item" ><img src="https://i.imgur.com/UoVt0SD.jpg" alt="2019-image-1"/></a>
+    <a class="carousel-item" ><img src="https://i.imgur.com/tFJUdpY.jpg" alt="2019-image-2"/></a>
+    <a class="carousel-item" ><img src="https://i.imgur.com/EeFW9yt.jpg" alt="2019-image-3"/></a>
+    <a class="carousel-item" ><img src="https://i.imgur.com/ho1TpX3.jpg" alt="2019-image-4"/></a>
+    <a class="carousel-item" ><img src="https://i.imgur.com/NuVyjXK.jpg" alt="2019-image-5"/></a>
+    <a class="carousel-item" ><img src="https://i.imgur.com/r7ZMttJ.jpg" alt="2019-image-6"/></a>
 </div>
 
 <footer class="page-footer primaryColor">
