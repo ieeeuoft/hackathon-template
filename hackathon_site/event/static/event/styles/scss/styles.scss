@@ -46,6 +46,15 @@ strong {
 }
 // End of navbar stuff
 
+// Landing section
+.landingImg {
+    display: flex;
+    justify-content: center;
+    margin-top: 60px;
+}
+// End of landing section
+
+// "About" section
 .countdown {
     display: flex;
     align-items: center;
@@ -128,6 +137,12 @@ strong {
 }
 // End of "Sponsors" section
 
+// "FAQ" section
+.collapsible .active {
+    color: color(primary);
+}
+// End of "FAQ" section
+
 // Video section
 .video {
     max-width: 1000px;
@@ -180,6 +195,14 @@ strong {
     background-color: color(secondary) !important;
 }
 
+.primaryText {
+    color: color(primary) !important;
+}
+
+.secondaryText {
+    color: color(secondary) !important;
+}
+
 .colorBtn {
     font-weight: bold;
     text-align: center;
@@ -209,6 +232,14 @@ strong {
 
     @include responsive(sm-down) {
         padding-right: 0;
+    }
+}
+
+.hoverLink {
+    font-weight: bold;
+
+    &:hover {
+        text-decoration: underline;
     }
 }
 // End of formatting stuff
