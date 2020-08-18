@@ -2,6 +2,20 @@
 
 A website template for hackathons run by [IEEE University of Toronto Student Branch](https://ieee.utoronto.ca/).
 
+## Contents
+- [Requirements](#requirements)
+- [Getting Started](#getting-started)
+    * [Python Environment](#python-environment)
+    * [Environment Variables](#environment-variables)
+    * [Running the development server](#running-the-development-server)
+    * [Creating users locally](#creating-users-locally)
+    * [Tests](#tests)
+- [File Structure](#file-structure)
+- [Using this Template](#using-this-template)
+    * [Forking](#forking)
+    * [From the Template (Recommended)](#from-the-template)
+    * [Copy the Repository](#copy-the-repository)
+
 ## Requirements
 - Python 3.8 or higher
 - [Docker](https://docs.docker.com/get-docker/)
@@ -49,7 +63,7 @@ In order to run the django and react development servers locally (or run tests),
 | DB_PASSWORD    |                                   |                | Password for the postgres user.                                                   |
 | DB_PORT        |                                   | 5432           | Port the postgres server is open on.                                              |
 | DB_NAME        |                                   | hackathon_site | Postgres database name.                                                           |
-| REACT_APP_DEV_SERVER_URL |                  | http://localhost:8000 | Path to the django development server, used by React.                             |
+| **REACT_APP_DEV_SERVER_URL** | http://localhost:8000 |              | Path to the django development server, used by React. Update the port if you aren't using the default 8000. |
 
 #### Testing
 Specifying `SECRET_KEY` is still required to run tests, because the settings file expects it to be set. `DEBUG` is forced to `False` by Django.
@@ -147,13 +161,13 @@ Templates served from Django can be placed in any app. We use [Jinja 2](https://
 
 Static files are placed within each app, in a folder named `static/<app_name>/` (same convention as templates). For example, SCSS files for the Event app may be in `hackathon_site/event/static/event/styles/scss/`. They can then be referenced in templates as `<app_name>/<path to static file>`, for example `event/styles/css/styles.css` (assuming the SCSS has been compiled to CSS).
 
-To compile the scss automatically when you save, run following task running while you work:
+To compile the SCSS automatically when you save, run following task running while you work:
 
 ```bash
 $ cd hackathon_site/event
 $ yarn run scss-watch
 ```
-To compile all scss files at once, run:
+To compile all SCSS files at once, run:
 
 ```bash
 $ yarn run scss
@@ -166,3 +180,83 @@ $ python manage.py collectstatic
 ```
 
 This will place static files in `hackathon_site/static/`. These must be served separately, for example using Nginx, as Django cannot serve static files in production. [Read more about how Django handles static files](https://docs.djangoproject.com/en/3.0/howto/static-files/).
+
+## Using this Template
+This repository is setup as a template. To read more about how to use a template and what a template repository is, see [GitHub's doc page](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-repository-from-a-template).
+
+### Forking
+If you are interested in receiving updates to this template in your project, we recommend that you fork this repository into your own account or organization. This will give you the entire commit history of the project, and will allow you to make pull requests from this repository into your own to perform updates.
+
+Unfortunately, GitHub does not allow you to fork your own repository. As a result, the forking option is not available to the owner account or organization. This means that IEEE UofT cannot use this template by forking it, and if you choose to fork your own generic copy of this template for instantiating, you will not be able to fork that fork.
+
+Note: `develop` is our default branch, but it should not be considered the most stable branch. If you want only the most stable releases, we recommend that you apply your customizations on top of the `master` branch.
+
+### From the Template
+This is our recommended approach to instantiate this template, if forking is unavailable to you. In the end, this gives a similar result to [copying the repository](#copy-the-repository) (below), but maintains the "generated from ieeeuoft/hackathon-template" message on GitHub. If you don't care about that, then copying is simpler.
+
+1. Create an instance of the template by clicking "Use this template". 
+![image](https://user-images.githubusercontent.com/26036279/90323566-e153a100-df30-11ea-82b5-11a5effb1fd7.png)
+
+    Note: By default, using a template creates a new repository based off only the default branch, which for this repository is `develop`. We recommend that you apply your customizations on top of the more stable `master` branch. To do so, make sure you check "Include all branches".
+
+    Creating a repository from a template flattens all commits into a single initial commit. If you never plan on merging updates from the upstream template, you may proceed in customizing your instance from here and ignore all of the following steps.
+    
+2. Clone your new instance locally via the method of your choosing.
+
+3. In order to pull history and updates, you will need to add the original template as a remote on the git repository. Note that this only happens on your cloned instance, changing remotes has no effect on the repository you created on GitHub.
+
+    ```bash
+    $ git remote add upstream git@github.com:ieeeuoft/hackathon-template.git
+    ```
+
+    If you do not have git configured to clone over SSH, you may use the HTTPS url instead: `https://github.com/ieeeuoft/hackathon-template.git`
+    
+4. Merge in whichever branch you would like to base your customizations off from upstream right away to get the history. For the rest of this example, we assume you are using `master`.
+    
+    ```bash
+    $ git fetch upstream
+    $ git merge upstream/master master --allow-unrelated-histories
+    $ git push origin master
+    ```
+5. Use the repository as you see fit, by creating feature branches off of `master`. We recommend a [Gitflow workflow](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow).
+
+6. When you want to pull an update from the upstream template, we recommend merging it into a new branch so that you can review the changes, resolve any conflicts, and merge it into your base branch by a pull request for added visibility.
+
+    ```bash
+    $ git checkout master
+    $ git checkout -b update-from-upstream-template    
+    $ git fetch upstream
+    $ git merge upstream/master update-from-upstream-template
+    $ git push -u origin update-from-upstream-template
+    ```
+   
+7. Make a PR on your repo to merge `update-from-upstream-template` into your base branch.
+
+### Copy the Repository
+This approach is very similar to using the template, but you lose the "generated from ..." text. You gain the added benefit of keeping the entire commit history of the repository, and not having to deal with fetching it upfront.
+
+1. Import a new repository at [https://github.com/new/import](https://github.com/new/import). Set the old repository's clone URL to `https://github.com/ieeeuoft/hackathon-template.git`.
+
+2. Clone your new instance locally via the method of your choosing.
+
+3. Add the original template as a remote on the git repository.
+
+    ```bash
+    $ git remote add upstream git@github.com:ieeeuoft/hackathon-template.git
+    ```
+
+    If you do not have git configured to clone over SSH, you may use the HTTPS url instead: `https://github.com/ieeeuoft/hackathon-template.git`
+    
+4. Use the repository as you see fit, by creating feature branches off of `master`. We recommend a [Gitflow workflow](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow).
+
+5. When you want to pull an update from the upstream template, we recommend merging it into a new branch so that you can review the changes, resolve any conflicts, and merge it into your base branch by a pull request for added visibility.
+
+    ```bash
+    $ git checkout master
+    $ git checkout -b update-from-upstream-template    
+    $ git fetch upstream
+    $ git merge upstream/master update-from-upstream-template
+    $ git push -u origin update-from-upstream-template
+    ```
+   
+6. Make a PR on your repo to merge `update-from-upstream-template` into your base branch.
