@@ -6,16 +6,24 @@ import {
     PendingTable,
     UnconnectedReturnedTable,
     UnconnectedCheckedOutTable,
+    UnconnectedBrokenTable,
     ReturnedTable,
     CheckedOutTable,
+    BrokenTable,
 } from "components/dashboard/ItemTable/ItemTable";
 import {
     uiReducerName,
     initialState as uiInitialState,
     toggleCheckedOutTable,
     toggleReturnedTable,
+    toggleBrokenTable,
 } from "slices/ui/uiSlice";
-import { itemsCheckedOut, itemsPending, itemsReturned } from "testing/mockData";
+import {
+    itemsCheckedOut,
+    itemsPending,
+    itemsReturned,
+    itemsBroken,
+} from "testing/mockData";
 import { withStore } from "testing/helpers";
 
 const mockStore = configureStore();
@@ -148,6 +156,78 @@ describe("<UnconnectedReturnedTable />", () => {
     });
 });
 
+describe("<UnconnectedBrokenTable />", () => {
+    it("shows when there are broken or lost items", () => {
+        const { getByText } = render(
+            <UnconnectedBrokenTable
+                items={itemsBroken}
+                status="error"
+                isVisible={true}
+            />
+        );
+
+        expect(getByText(/Reported broken\/lost items/i)).toBeInTheDocument();
+        expect(getByText(/hide all/i)).toBeInTheDocument();
+        itemsBroken.map(({ name }) => {
+            expect(getByText(name)).toBeInTheDocument();
+        });
+    });
+
+    it("Hides the broken table when isVisible is false", () => {
+        const { getByText, queryByText } = render(
+            <UnconnectedBrokenTable
+                items={itemsBroken}
+                status="error"
+                isVisible={false}
+            />
+        );
+
+        expect(getByText(/Reported broken\/lost items/i)).toBeInTheDocument();
+        expect(getByText(/show all/i)).toBeInTheDocument();
+        itemsBroken.map(({ name }) => {
+            expect(queryByText(name)).toBeNull();
+        });
+    });
+
+    it("Calls 'onClickViewReport' when 'View Report' is clicked", () => {
+        const onClickViewReport = jest.fn();
+        const oneRow = [itemsBroken[0]];
+        const { getByText } = render(
+            <UnconnectedBrokenTable
+                items={oneRow}
+                status="error"
+                isVisible={true}
+                onClickViewReport={onClickViewReport}
+            />
+        );
+
+        const button = getByText(/View Report/i);
+        fireEvent.click(button);
+        expect(onClickViewReport).toHaveBeenCalled();
+    });
+
+    it("Calls the same amount of chips and buttons as the rows", () => {
+        const { getAllByText } = render(
+            <UnconnectedBrokenTable
+                items={itemsBroken}
+                status="error"
+                isVisible={true}
+            />
+        );
+
+        const numItems = itemsBroken.length;
+        expect(getAllByText(/View Report/i).length).toBe(numItems);
+        expect(getAllByText("Please visit the tech station").length).toBe(numItems);
+    });
+
+    it("Disappears when there are no broken items", () => {
+        const { queryByText } = render(
+            <UnconnectedBrokenTable items={[]} status={null} isVisible={true} />
+        );
+        expect(queryByText(/Reported broken\/lost items/)).toBeNull();
+    });
+});
+
 describe("Connected tables", () => {
     let store;
 
@@ -178,6 +258,18 @@ describe("Connected tables", () => {
         await fireEvent.click(button);
         expect(store.getActions()).toContainEqual(
             expect.objectContaining({ type: toggleReturnedTable.type })
+        );
+    });
+
+    it("BrokenTable dispatches an action to toggle visibility when button clicked", async () => {
+        const { getByText } = render(
+            withStore(<BrokenTable items={itemsBroken} />, store)
+        );
+        const button = getByText(/hide all/i);
+
+        await fireEvent.click(button);
+        expect(store.getActions()).toContainEqual(
+            expect.objectContaining({ type: toggleBrokenTable.type })
         );
     });
 });

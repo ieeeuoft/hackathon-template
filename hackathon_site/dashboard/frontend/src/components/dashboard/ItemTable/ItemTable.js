@@ -304,7 +304,7 @@ export const UnconnectedBrokenTable = ({
     onClickViewReport,
     status,
 }) => {
-    return (
+    return !items.length ? null : (
         <Container
             className={styles.tableContainer}
             maxWidth={false}
@@ -324,83 +324,67 @@ export const UnconnectedBrokenTable = ({
                 </Button>
             </div>
 
-            {isVisible &&
-                (!items.length ? (
-                    <Paper elevation={3} className={styles.empty} square={true}>
-                        Please bring items to the tech table and a tech team member will
-                        assist you.
-                    </Paper>
-                ) : (
-                    <TableContainer component={Paper} elevation={3} square={true}>
-                        <Table
-                            className={styles.table}
-                            size="small"
-                            aria-label="broken table"
-                        >
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell className={styles.widthFixed} />
-                                    <TableCell
-                                        className={styles.widthHalf}
-                                        align="left"
-                                    >
-                                        Name
+            {isVisible && (
+                <TableContainer component={Paper} elevation={3} square={true}>
+                    <Table
+                        className={styles.table}
+                        size="small"
+                        aria-label="broken table"
+                    >
+                        <TableHead>
+                            <TableRow>
+                                <TableCell className={styles.widthFixed} />
+                                <TableCell className={styles.widthHalf} align="left">
+                                    Name
+                                </TableCell>
+                                <TableCell className={styles.widthFixed} align="left">
+                                    Qty
+                                </TableCell>
+                                <TableCell
+                                    className={styles.widthQuarter}
+                                    align="right"
+                                >
+                                    Time
+                                </TableCell>
+                                <TableCell className={styles.widthFixed} align="left">
+                                    Condition
+                                </TableCell>
+                                <TableCell className={styles.widthFixed} />
+                                <TableCell className={styles.widthQuarter} />
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {items.map((row) => (
+                                <TableRow key={row.id}>
+                                    <TableCell align="left">
+                                        <img
+                                            className={styles.itemImg}
+                                            src={row.url}
+                                            alt={row.name}
+                                        />
                                     </TableCell>
-                                    <TableCell
-                                        className={styles.widthFixed}
-                                        align="left"
-                                    >
-                                        Qty
+                                    <TableCell align="left">{row.name}</TableCell>
+                                    <TableCell align="right">{row.qty}</TableCell>
+                                    <TableCell align="right">{row.time}</TableCell>
+                                    <TableCell align="left">{row.condition}</TableCell>
+                                    <TableCell align="left">
+                                        <ChipStatus status={status} />
                                     </TableCell>
-                                    <TableCell
-                                        className={styles.widthQuarter}
-                                        align="right"
-                                    >
-                                        Time
+                                    <TableCell align="right">
+                                        <Button
+                                            color="primary"
+                                            size="small"
+                                            onClick={onClickViewReport}
+                                        >
+                                            View Report
+                                        </Button>
                                     </TableCell>
-                                    <TableCell
-                                        className={styles.widthFixed}
-                                        align="left"
-                                    >
-                                        Condition
-                                    </TableCell>
-                                    <TableCell className={styles.widthFixed} />
-                                    <TableCell className={styles.widthQuarter} />
                                 </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {items.map((row) => (
-                                    <TableRow key={row.id}>
-                                        <TableCell align="left">
-                                            <img
-                                                className={styles.itemImg}
-                                                src={row.url}
-                                                alt={row.name}
-                                            />
-                                        </TableCell>
-                                        <TableCell align="left">{row.name}</TableCell>
-                                        <TableCell align="right">{row.qty}</TableCell>
-                                        <TableCell align="right">{row.time}</TableCell>
-                                        <TableCell align="left">
-                                            {row.condition}
-                                        </TableCell>
-                                        <TableCell align="left">
-                                            <ChipStatus status={status} />
-                                        </TableCell>
-                                        <TableCell align="right">
-                                            <Button
-                                                color="primary"
-                                                onClick={onClickViewReport}
-                                            >
-                                                View report
-                                            </Button>
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                ))}
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            )}
         </Container>
     );
 };
