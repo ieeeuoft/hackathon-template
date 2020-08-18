@@ -8,6 +8,7 @@ import {
     PendingTable,
     ReturnedTable,
     CheckedOutTable,
+    BrokenTable,
 } from "components/dashboard/ItemTable/ItemTable";
 import Header from "components/general/Header/Header";
 import {
@@ -15,9 +16,11 @@ import {
     itemsCheckedOut,
     itemsPending,
     itemsReturned,
+    itemsBroken,
     orderStatus,
     members,
     teamCode,
+    brokenStatus,
 } from "testing/mockData";
 import { hackathonName } from "constants.js";
 
@@ -61,6 +64,7 @@ const Dashboard = () => {
                         </Grid>
                     ))}
                 </Grid>
+                <BrokenTable items={itemsBroken} status={brokenStatus} />
                 <PendingTable items={itemsPending} status={orderStatus} />
                 <CheckedOutTable
                     items={itemsCheckedOut}

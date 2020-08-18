@@ -21,8 +21,10 @@ import { push } from "connected-react-router";
 import {
     isCheckedOutTableVisibleSelector,
     isReturnedTableVisibleSelector,
+    isBrokenTableVisible,
     toggleCheckedOutTable,
     toggleReturnedTable,
+    toggleBrokenTable,
 } from "slices/ui/uiSlice";
 
 export const ChipStatus = ({ status }) => {
@@ -294,3 +296,119 @@ export const PendingTable = ({ items, status }) => {
         </Container>
     );
 };
+
+export const UnconnectedBrokenTable = ({
+    items,
+    isVisible,
+    toggleVisibility,
+    onClickViewReport,
+    status,
+}) => {
+    return (
+        <Container
+            className={styles.tableContainer}
+            maxWidth={false}
+            disableGutters={true}
+        >
+            <div className={styles.title}>
+                <Typography variant="h2" className={styles.titleBroken}>
+                    Reported broken/lost items
+                </Typography>
+                <Button
+                    onClick={() => {
+                        toggleVisibility();
+                    }}
+                    color="primary"
+                >
+                    {isVisible ? "Hide all" : "Show all"}
+                </Button>
+            </div>
+
+            {isVisible &&
+                (!items.length ? (
+                    <Paper elevation={3} className={styles.empty} square={true}>
+                        Please bring items to the tech table and a tech team member will
+                        assist you.
+                    </Paper>
+                ) : (
+                    <TableContainer component={Paper} elevation={3} square={true}>
+                        <Table
+                            className={styles.table}
+                            size="small"
+                            aria-label="broken table"
+                        >
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell className={styles.widthFixed} />
+                                    <TableCell
+                                        className={styles.widthHalf}
+                                        align="left"
+                                    >
+                                        Name
+                                    </TableCell>
+                                    <TableCell
+                                        className={styles.widthFixed}
+                                        align="left"
+                                    >
+                                        Qty
+                                    </TableCell>
+                                    <TableCell
+                                        className={styles.widthQuarter}
+                                        align="right"
+                                    >
+                                        Time
+                                    </TableCell>
+                                    <TableCell
+                                        className={styles.widthFixed}
+                                        align="left"
+                                    >
+                                        Condition
+                                    </TableCell>
+                                    <TableCell className={styles.widthFixed} />
+                                    <TableCell className={styles.widthQuarter} />
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {items.map((row) => (
+                                    <TableRow key={row.id}>
+                                        <TableCell align="left">
+                                            <img
+                                                className={styles.itemImg}
+                                                src={row.url}
+                                                alt={row.name}
+                                            />
+                                        </TableCell>
+                                        <TableCell align="left">{row.name}</TableCell>
+                                        <TableCell align="right">{row.qty}</TableCell>
+                                        <TableCell align="right">{row.time}</TableCell>
+                                        <TableCell align="left">
+                                            {row.condition}
+                                        </TableCell>
+                                        <TableCell align="left">
+                                            <ChipStatus status={status} />
+                                        </TableCell>
+                                        <TableCell align="right">
+                                            <Button
+                                                color="primary"
+                                                onClick={onClickViewReport}
+                                            >
+                                                View report
+                                            </Button>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                ))}
+        </Container>
+    );
+};
+
+const brokenTableMapStateToProps = (state) => ({
+    isVisible: isBrokenTableVisible(state),
+});
+
+export const BrokenTable = connect(brokenTableMapStateToProps, {
+    toggleVisibility: toggleBrokenTable,
+})(UnconnectedBrokenTable);
