@@ -243,3 +243,47 @@ strong {
     }
 }
 // End of formatting stuff
+
+// Login 
+.login {
+    &Div {
+        background-color: #fff;
+        border-top: solid 10px color(secondary);
+        border-radius: 3px 3px 0 0;
+        padding: 50px 30px 10px;
+        margin: 150px auto;
+        max-width: 950px;
+    }
+
+    &Link {
+        display: flex;
+        justify-content: center;
+
+        i {
+            margin-right: 5px;
+        }
+    }
+}
+
+.formH1 {
+    font-family: "Sen";
+    font-weight: bold;
+    text-align: center;
+    text-transform: uppercase;
+    margin: 0 auto 30px;
+    color: #271648;
+}
+
+/* label color */
+.input-field label:active {
+    color: #34196C !important;
+}
+/* label focus color */
+.input-field input[type=text]:focus + label {
+    color: #34196C !important;
+}
+/* label underline focus color */
+.input-field input[type=text]:focus {
+    border-bottom: 1px solid #34196C !important;
+    box-shadow: 0 1px 0 0 #34196C !important;
+}

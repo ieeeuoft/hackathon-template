@@ -1,0 +1,42 @@
+{% extends "event/formBase.html" %}
+
+{% block form_title %}Sign up{% endblock %}
+{% block form_button %}Sign up{% endblock %}
+
+{% block form_img %}<img src="{{ static('event/images/landing.svg') }}" />{% endblock %}
+               
+{% block form_inputs %}
+    <div class="input-field col s12">
+        <input id="first_name" type="text" class="validate">
+        <label for="first_name">first name</label>
+    </div>
+    <div class="input-field col s12">
+        <input id="last_name" type="text" class="validate">
+        <label for="last_name">last name</label>
+    </div>
+    <div class="input-field col s12">
+        <input id="email" type="email" class="validate">
+        <label for="email">email</label>
+    </div>
+    <div class="input-field col s12">
+        <input id="password" type="password" class="validate">
+        <label for="password">password</label>
+        <span class="helper-text" data-error="wrong" data-success="right">Must contain blah blah</span>
+    </div>
+    <div class="input-field col s12">
+        <input id="password" type="password" class="validate">
+        <label for="password">confirm password</label>
+        <span class="helper-text" data-error="wrong" data-success="right"></span>
+    </div>
+</form>
+{% endblock %}
+
+{% block form_bottom %}
+<div class="row center s12 loginLink">
+    <i class="material-icons">exit_to_app</i><a href="#" class="primaryText loginLink s6">Back to Login</a>
+</div>
+<br />
+<div class="row center">
+    Something wrong? <a href="#" class="primaryText hoverLink">Contact us</a>.
+</div>
+{% endblock %}
