@@ -17,28 +17,23 @@ $(document).ready(function () {
 
     // Countdown stuff
 
-    // Registration open and close date, and event date
-    const regOpenDate = new Date("Sep 1, 2020 00:00:00").getTime();
-    const regCloseDate = new Date("Sep 30, 2020 00:00:00").getTime();
-    const eventDate = new Date("Oct 31, 2020 00:00:00").getTime();
-
-    const now = new Date().getTime();
+    const now = new Date();
     let countDownDate;
 
     // Set the title based off what it's counting down to
-    if (regOpenDate >= now) {
-        countDownDate = regOpenDate;
+    if (registrationOpenDate >= now) {
+        countDownDate = registrationOpenDate;
         $("#countdownTitle").html("Registration Opens In");
-    } else if (regCloseDate >= now) {
-        countDownDate = regCloseDate;
+    } else if (registrationCloseDate >= now) {
+        countDownDate = registrationCloseDate;
         $("#countdownTitle").html("Registration Closes In");
-    } else if (eventDate >= now) {
-        countDownDate = eventDate;
+    } else if (eventStartDate >= now) {
+        countDownDate = eventStartDate;
         $("#countdownTitle").html("Event Starts In");
     }
 
     // Delete the entire countdown if event start date has passed
-    if (eventDate < now) {
+    if (eventStartDate < now) {
         $("#countdown").remove();
         $("#aboutText").removeClass("l7");
     } else {
@@ -48,7 +43,7 @@ $(document).ready(function () {
 });
 
 function setCounter(countDownDate) {
-    const now = new Date().getTime();
+    const now = new Date();
     const distance = countDownDate - now;
     const days = Math.ceil(distance / (1000 * 60 * 60 * 24));
 
