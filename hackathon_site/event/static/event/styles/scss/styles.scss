@@ -19,6 +19,7 @@ h3 {
 
 body {
     font-size: 18px;
+    color: color(font);
 }
 
 strong {
@@ -236,7 +237,7 @@ strong {
 }
 
 .hoverLink {
-    font-weight: bold;
+    font-weight: 500;
 
     &:hover {
         text-decoration: underline;
@@ -265,13 +266,23 @@ strong {
     }
 }
 
-.formH1 {
-    font-family: "Sen";
-    font-weight: bold;
-    text-align: center;
-    text-transform: uppercase;
-    margin: 0 auto 30px;
-    color: #271648;
+.form {
+    &H1 {
+        font-weight: bold;
+        text-align: center;
+        text-transform: uppercase;
+        margin: 0 auto 30px;
+        color: color(dark);
+    }
+
+    &H2 {
+        font-weight: normal;
+        color: color(dark);
+    }
+
+    &Checkbox span {
+        color: color(font);
+    }
 }
 
 /* label color */
@@ -287,4 +298,13 @@ strong {
     border-bottom: 1px solid #34196C !important;
     box-shadow: 0 1px 0 0 #34196C !important;
 }
+
+
+// .longQuestion>label.active {
+//     transform: translateY(-28px) scale(0.8);
+// }
+
+// .longQuestion textarea {
+//     padding-bottom: 55px;
+// }
 // End of section
