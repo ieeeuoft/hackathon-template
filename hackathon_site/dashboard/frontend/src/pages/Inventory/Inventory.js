@@ -37,7 +37,6 @@ const Inventory = () => {
             <div className={styles.inventory}>
                 <Drawer
                     className={styles.inventoryFilterDrawer}
-                    variant="permanent"
                     variant={mobileWidth ? "permanent" : "temporary"}
                     anchor="left"
                     open={mobileOpen}
@@ -53,12 +52,7 @@ const Inventory = () => {
                     <Typography variant="h1">Hardware Inventory</Typography>
 
                     <div className={styles.inventoryBodyToolbar}>
-                        <Grid
-                            direction="row"
-                            alignItems="center"
-                            className={styles.inventoryBodyToolbarDiv}
-                            container
-                        >
+                        <div className={styles.inventoryBodyToolbarDiv}>
                             <TextField
                                 className={styles.inventoryBodyToolbarSearch}
                                 id="search-input"
@@ -73,7 +67,7 @@ const Inventory = () => {
                             >
                                 <SearchIcon />
                             </IconButton>
-                        </Grid>
+                        </div>
 
                         <Divider
                             orientation="vertical"
@@ -81,13 +75,7 @@ const Inventory = () => {
                             flexItem
                         />
 
-                        <Grid
-                            direction="row"
-                            justify="space-between"
-                            alignItems="center"
-                            className={styles.inventoryBodyToolbarDiv}
-                            container
-                        >
+                        <div className={styles.inventoryBodyToolbarDiv}>
                             <Hidden implementation="css" mdUp>
                                 <Button
                                     aria-label="Orders"
@@ -99,7 +87,7 @@ const Inventory = () => {
                             </Hidden>
 
                             <div className={styles.inventoryBodyToolbarRefresh}>
-                                <Typography variant="body2">123 items.</Typography>
+                                <Typography variant="body2">123 items</Typography>
                                 <IconButton
                                     color="primary"
                                     aria-label="refresh"
@@ -108,7 +96,7 @@ const Inventory = () => {
                                     <RefreshIcon />
                                 </IconButton>
                             </div>
-                        </Grid>
+                        </div>
                     </div>
 
                     <Grid direction="row" spacing={2} container>
