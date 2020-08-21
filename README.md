@@ -15,6 +15,7 @@ A website template for hackathons run by [IEEE University of Toronto Student Bra
     * [Forking](#forking)
     * [From the Template (Recommended)](#from-the-template)
     * [Copy the Repository](#copy-the-repository)
+- [Customization](#customization)
 
 ## Requirements
 - Python 3.8 or higher
@@ -260,3 +261,10 @@ This approach is very similar to using the template, but you lose the "generated
     ```
    
 6. Make a PR on your repo to merge `update-from-upstream-template` into your base branch.
+
+## Customization
+This project was designed to be generic and customizable. At minimum, you will want to update templates to include your event's name and logo, but you may customize them to whatever degree you wish. See [file structure](#file-structure) for more details about templates.
+
+Core event settings and constants, such as cutoff dates, are kept at the bottom of the [settings](hackathon_site/hackathon_site/settings/__init__.py) file. These settings can be imported and used in any view, form, or in general any other python file. See the [Django docs on settings](https://docs.djangoproject.com/en/3.1/topics/settings/#using-settings-in-python-code) to read more about how to use them.
+
+For convenience, some constants have been passed into the context of all Jinja templates by default, so they can be used right away. See the [Jinja2 config file](hackathon_site/hackathon_site/jinja2.py) for full details.

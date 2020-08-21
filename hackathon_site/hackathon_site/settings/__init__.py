@@ -10,7 +10,9 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
+from datetime import datetime
 import os
+import pytz
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -162,3 +164,9 @@ SWAGGER_SETTINGS = {"DEFAULT_MODEL_RENDERING": "example", "DEEP_LINKING": True}
 
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
+
+# Event specific settings
+REGISTRATION_OPEN_DATE = datetime(2020, 9, 1, tzinfo=pytz.timezone(TIME_ZONE))
+REGISTRATION_CLOSE_DATE = datetime(2020, 9, 30, tzinfo=pytz.timezone(TIME_ZONE))
+EVENT_START_DATE = datetime(2020, 10, 10, 10, 0, 0, tzinfo=pytz.timezone(TIME_ZONE))
+EVENT_END_DATE = datetime(2020, 10, 11, 17, 0, 0, tzinfo=pytz.timezone(TIME_ZONE))

@@ -1,5 +1,13 @@
 {% extends "event/base.html" %}
 
+{% block head_extends %}
+<script>
+    const registrationOpenDate = new Date("{{ localtime(registration_open_date).strftime('%b %-d, %Y, %H:%M:%S') }}");
+    const registrationCloseDate = new Date("{{ localtime(registration_close_date).strftime('%b %-d, %Y, %H:%M:%S') }}");
+    const eventStartDate = new Date("{{ localtime(event_start_date).strftime('%b %-d, %Y, %H:%M:%S') }}");
+</script>
+{% endblock %}
+
 {% block nav %}
 <ul class="right hide-on-med-and-down">
     <li><a href="#about">About</a></li>
@@ -37,7 +45,10 @@
             </div>
             <div class="row">
                 <h5>Location</h5>
-                <h5>XX XX-XX, 20XX</h5>
+                <h5>
+                    {# Update this logic if your event ends in a different month or year #}
+                    {{ localtime(event_start_date).strftime("%B %d") }}-{{ localtime(event_end_date).strftime("%d, %Y") }}
+                </h5>
             </div>
             <div class="row">
                 <a class="btn-large waves-effect waves-light colorBtn">Login/Apply</a>
@@ -301,7 +312,8 @@
     </div>
     <div class="footer-copyright center">
         <div class="container">
-            Copyright © 2020-2021 IEEE University of Toronto Student Branch
+            Copyright © {% if localtime(event_end_date).year > 2020 %}2020-{% endif %}
+            {{ localtime(event_end_date).strftime("%Y") }} IEEE University of Toronto Student Branch
         </div>
     </div>
 </footer>
