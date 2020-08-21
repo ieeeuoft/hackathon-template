@@ -1,7 +1,7 @@
 from django.contrib.auth.models import Group
 from rest_framework import serializers
 
-from event.models import Profile, User
+from event.models import Profile, User, Team
 
 
 class GroupSerializer(serializers.ModelSerializer):
@@ -10,7 +10,20 @@ class GroupSerializer(serializers.ModelSerializer):
         fields = ("id", "name")
 
 
+class TeamSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Team
+        fields = (
+            "id",
+            "team_code",
+            "created_at",
+            "updated_at",
+        )
+
+
 class ProfileSerializer(serializers.ModelSerializer):
+    team = TeamSerializer(read_only=True)
+
     class Meta:
         model = Profile
         fields = (
@@ -20,6 +33,7 @@ class ProfileSerializer(serializers.ModelSerializer):
             "attended",
             "acknowledge_rules",
             "e_signature",
+            "team",
         )
 
 

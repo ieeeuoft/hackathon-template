@@ -1,8 +1,13 @@
+from django.conf import settings
 from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
 
+import pytz
+
+
 from event.models import Profile, Team, User
+from event.serializers import TeamSerializer
 
 
 class ProfileTestCase(TestCase):
@@ -31,3 +36,17 @@ class IndexViewTestCase(TestCase):
         url = reverse("event:index")
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class TeamSerializerTestCase(TestCase):
+    def test_serializer(self):
+        tz = pytz.timezone(settings.TIME_ZONE)
+
+        team = Team.objects.create()
+        team_serialized = TeamSerializer(team).data
+        team_expected = {
+            "id": team.id,
+            "team_code": team.team_code,
+            "created_at": team.created_at.astimezone(tz).isoformat(),
+            "updated_at": team.updated_at.astimezone(tz).isoformat(),
+        }
