@@ -49,9 +49,15 @@ strong {
 
 // Landing section
 .landingImg {
-    display: flex;
-    justify-content: center;
-    margin-top: 60px;
+    @include flexPosition($jusCon: center);
+
+    img {
+        width: 100%;
+    }
+
+    @include responsive(sm-down) {
+        margin-top: 0;
+    }
 }
 // End of landing section
 
@@ -237,7 +243,7 @@ strong {
 }
 
 .hoverLink {
-    font-weight: 500;
+    font-weight: 600;
 
     &:hover {
         text-decoration: underline;
@@ -248,17 +254,34 @@ strong {
 // Login 
 .login {
     &Div {
+        display: flex;
         background-color: #fff;
         border-top: solid 10px color(secondary);
         border-radius: 3px 3px 0 0;
         padding: 50px 30px 10px;
-        margin: 150px auto;
+        margin: 50px auto 100px;
         max-width: 950px;
+
+        @include responsive(md-down) {
+            padding: 40px 5px 10px;
+        }
+
+        @include responsive(sm-down) {
+            padding-bottom: 50px;
+            display: block;
+        }
+
+        .landingImg img {
+            max-width: 300px;
+        }
     }
 
     &Link {
         display: flex;
         justify-content: center;
+        margin: 15px 0;
+        font-size: size(md);
+        padding: 0 !important;
 
         i {
             margin-right: 5px;

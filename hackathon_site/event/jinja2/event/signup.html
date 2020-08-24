@@ -1,4 +1,4 @@
-{% extends "event/formBase.html" %}
+{% extends "event/form_base.html" %}
 
 {% block form_title %}Sign up{% endblock %}
 {% block form_button %}Sign up{% endblock %}
@@ -32,8 +32,9 @@
 {% endblock %}
 
 {% block form_bottom %}
-<div class="row center s12 loginLink">
-    <i class="material-icons">exit_to_app</i><a href="#" class="primaryText loginLink s6">Back to Login</a>
+<div class="col s12 loginLink">
+    <i class="material-icons primaryText">exit_to_app</i>
+    <a href="#" class="primaryText hoverLink s6">Back to Login</a>
 </div>
 <br />
 <div class="row center">
