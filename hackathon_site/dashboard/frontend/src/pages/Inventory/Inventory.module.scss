@@ -1,0 +1,75 @@
+@import "./../../assets/abstracts/variables";
+@import "./../../assets/abstracts/mixins";
+
+.inventory {
+    display: flex;
+
+    &Body {
+        flex-grow: 1;
+
+        &Toolbar {
+            @include flexPosition($jusCon: flex-end);
+            width: 100%;
+            padding: 10px 0;
+            margin: 10px 0;
+
+            &Div {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                width: auto;
+            }
+
+            &Search {
+                background-color: color(white);
+                margin-right: 8px;
+            }
+
+            &Divider {
+                margin: 0 25px;
+            }
+
+            &Refresh {
+                @include flexPosition;
+            }
+
+            @include responsive(sm-down) {
+                flex-direction: column;
+                margin-bottom: 5px;
+
+                &Div {
+                    width: 100%;
+                }
+
+                &Search {
+                    width: calc(100% - 56px);
+                }
+
+                &Divider {
+                    display: none;
+                }
+            }
+        }
+    }
+
+    &FilterDrawer {
+        width: 280px;
+        flex-shrink: 0;
+        z-index: 1;
+    }
+
+    &LoadDivider {
+        margin: 30px 0;
+    }
+}
+
+.Item {
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 10px;
+    cursor: pointer;
+
+    &:hover {
+        background-color: color(light2);
+    }
+}

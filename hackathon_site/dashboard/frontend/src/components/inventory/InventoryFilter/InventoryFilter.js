@@ -75,38 +75,74 @@ export const InventoryFilter = ({
     isLoadingClear,
 }) => (
     <div className={styles.filter}>
-        <Paper className={styles.filterPaper} square={true} elevation={3}>
-            <form onReset={handleReset} onSubmit={handleSubmit}>
-                <fieldset>
-                    <legend>
-                        <Typography variant="h2">Order by</Typography>
-                    </legend>
-                    <Field
+        <form>
+            <fieldset>
+                <legend>
+                    <Typography variant="h2">Order by</Typography>
+                </legend>
+                <RadioGroup aria-label="order by" name="orderBy">
+                    <FormControlLabel
                         name="orderBy"
-                        component={RadioOrderBy}
-                        options={orderByOptions}
+                        value="all"
+                        label="All"
+                        control={<Radio color="primary" />}
                     />
-                </fieldset>
-                <Divider className={styles.filterDivider} />
-                <fieldset>
-                    <legend>
-                        <Typography variant="h2">Availability</Typography>
-                    </legend>
-                    <Field name="inStock" component={CheckboxAvailability} />
-                </fieldset>
-                <Divider className={styles.filterDivider} />
-                <fieldset>
-                    <legend>
-                        <Typography variant="h2">Categories</Typography>
-                    </legend>
-                    <Field
-                        name="inventoryCategories"
-                        component={CheckboxCategory}
-                        options={categories}
+                    <FormControlLabel
+                        name="orderBy"
+                        value="a-z"
+                        label="A-Z"
+                        control={<Radio color="primary" />}
                     />
-                </fieldset>
-            </form>
-        </Paper>
+                    <FormControlLabel
+                        name="orderBy"
+                        value="z-a"
+                        label="Z-A"
+                        control={<Radio color="primary" />}
+                    />
+                    <FormControlLabel
+                        name="orderBy"
+                        value="stock-high-low"
+                        label="Stock remaining: high to low"
+                        control={<Radio color="primary" />}
+                    />
+                    <FormControlLabel
+                        name="orderBy"
+                        value="stock-low-high"
+                        label="Stock remaining: low to high"
+                        control={<Radio color="primary" />}
+                    />
+                </RadioGroup>
+            </fieldset>
+            <Divider className={styles.filterDivider} />
+            <fieldset>
+                <legend>
+                    <Typography variant="h2">Availability</Typography>
+                </legend>
+                <FormControlLabel
+                    name="inStock"
+                    value="in-stock"
+                    label="In stock"
+                    control={<Checkbox color="primary" />}
+                />
+            </fieldset>
+            <Divider className={styles.filterDivider} />
+            <fieldset>
+                <legend>
+                    <Typography variant="h2">Categories</Typography>
+                </legend>
+                {categories.map((item, i) => (
+                    <div className={styles.filterCategory} key={i}>
+                        <FormControlLabel
+                            name="inventoryFilter"
+                            value={`category-${item.id}`}
+                            label={item.name}
+                            control={<Checkbox color="primary" />}
+                        />
+                        <Chip label={item.qty} className={styles.filterCategoryChip} />
+                    </div>
+                ))}
+            </fieldset>
+        </form>
         <div className={styles.filterBtns}>
             <Button
                 type="submit"
