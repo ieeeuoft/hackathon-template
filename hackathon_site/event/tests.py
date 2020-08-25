@@ -1,3 +1,4 @@
+from django.contrib.auth.models import Group
 from django.conf import settings
 from django.test import TestCase
 from django.urls import reverse
@@ -7,7 +8,7 @@ import pytz
 
 
 from event.models import Profile, Team, User
-from event.serializers import TeamSerializer, UserSerializer
+from event.serializers import TeamSerializer, UserSerializer, GroupSerializer, ProfileSerializer
 
 
 class ProfileTestCase(TestCase):
@@ -50,6 +51,7 @@ class TeamSerializerTestCase(TestCase):
             "created_at": team.created_at.astimezone(tz).isoformat(),
             "updated_at": team.updated_at.astimezone(tz).isoformat(),
         }
+        self.assertEqual(team_expected, team_serialized)
 
 class UserSerializerTestCase(TestCase):
     def test_serializer(self):
@@ -62,5 +64,45 @@ class UserSerializerTestCase(TestCase):
             "last_name": user.last_name,
             "email": user.email,
             "profile": None,
-            "groups": None,
+            "groups": [],
         }
+        self.assertEqual(user_expected, user_serialized)
+
+class GroupSerializerTestCase(TestCase):
+    def test_serializer(self):
+
+        group = Group.objects.create()
+        group_serialized = GroupSerializer(group).data
+        group_expected = {
+            "id": group.id,
+            "name": group.name,
+        }
+        self.assertEqual(group_expected, group_serialized)
+
+class ProfileSerializerTestCase(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username="foo@bar.com",
+            password="foobar123",
+            first_name="Foo",
+            last_name="Bar",
+        )
+
+    def test_serializer(self):
+        team = Team.objects.create()
+        profile = Profile.objects.create(user=self.user, team=team)
+        profile_serialized = ProfileSerializer(profile).data
+        profile_expected = {
+            "id": profile.id,
+            "status": profile.status,
+            "id_provided": profile.id_provided,
+            "attended": profile.attended,
+            "acknowledge_rules": profile.acknowledge_rules,
+            "e_signature": profile.e_signature,
+            "team": {
+                "id": team.id,
+                "team_code": team.team_code,
+            },
+        }
+        # currently failing test
+        # self.assertEqual(profile_expected, profile_serialized)

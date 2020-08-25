@@ -5,7 +5,7 @@ from rest_framework.test import APITestCase
 from hackathon_site.tests import SetupUserMixin
 
 from event.models import Profile, User, Team
-from event.serializers import TeamSerializer, UserSerializer
+from event.serializers import TeamSerializer, UserSerializer, ProfileSerializer, GroupSerializer
 
 
 class CurrentUserTestCase(SetupUserMixin, APITestCase):
@@ -44,6 +44,24 @@ class CurrentUserTestCase(SetupUserMixin, APITestCase):
         serializer = UserSerializer(user_expect)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json(), serializer.data)
+    
+    def test_user_uses_profile_and_group_serializer(self):
+        self._login()
+        response = self.client.get(self.view)
+        res_json = response.json()
+        
+        profile_expect = Profile.objects.get(pk=self.profile.pk)
+        profile_serializer = ProfileSerializer(profile_expect)
+
+        group_expect = Group.objects.get(pk=self.group.pk)
+        group_serializer = GroupSerializer(group_expect)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(res_json['profile'], profile_serializer.data)
+        self.assertEqual(res_json['groups'], [group_serializer.data]) # need to figure out why its different
+
+
+    
 
 
 
@@ -84,3 +102,5 @@ class CurrentTeamTestCase(SetupUserMixin, APITestCase):
         serializer = TeamSerializer(team_expect)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json(), serializer.data)
+
+
