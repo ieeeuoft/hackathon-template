@@ -2,7 +2,6 @@ import React from "react";
 import styles from "./InventoryFilter.module.scss";
 import { Formik, Field } from "formik";
 
-import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import Chip from "@material-ui/core/Chip";
@@ -75,72 +74,34 @@ export const InventoryFilter = ({
     isLoadingClear,
 }) => (
     <div className={styles.filter}>
-        <form>
+        <form onReset={handleReset} onSubmit={handleSubmit}>
             <fieldset>
                 <legend>
                     <Typography variant="h2">Order by</Typography>
                 </legend>
-                <RadioGroup aria-label="order by" name="orderBy">
-                    <FormControlLabel
-                        name="orderBy"
-                        value="all"
-                        label="All"
-                        control={<Radio color="primary" />}
-                    />
-                    <FormControlLabel
-                        name="orderBy"
-                        value="a-z"
-                        label="A-Z"
-                        control={<Radio color="primary" />}
-                    />
-                    <FormControlLabel
-                        name="orderBy"
-                        value="z-a"
-                        label="Z-A"
-                        control={<Radio color="primary" />}
-                    />
-                    <FormControlLabel
-                        name="orderBy"
-                        value="stock-high-low"
-                        label="Stock remaining: high to low"
-                        control={<Radio color="primary" />}
-                    />
-                    <FormControlLabel
-                        name="orderBy"
-                        value="stock-low-high"
-                        label="Stock remaining: low to high"
-                        control={<Radio color="primary" />}
-                    />
-                </RadioGroup>
+                <Field
+                    name="orderBy"
+                    component={RadioOrderBy}
+                    options={orderByOptions}
+                />
             </fieldset>
             <Divider className={styles.filterDivider} />
             <fieldset>
                 <legend>
                     <Typography variant="h2">Availability</Typography>
                 </legend>
-                <FormControlLabel
-                    name="inStock"
-                    value="in-stock"
-                    label="In stock"
-                    control={<Checkbox color="primary" />}
-                />
+                <Field name="inStock" component={CheckboxAvailability} />
             </fieldset>
             <Divider className={styles.filterDivider} />
             <fieldset>
                 <legend>
                     <Typography variant="h2">Categories</Typography>
                 </legend>
-                {categories.map((item, i) => (
-                    <div className={styles.filterCategory} key={i}>
-                        <FormControlLabel
-                            name="inventoryFilter"
-                            value={`category-${item.id}`}
-                            label={item.name}
-                            control={<Checkbox color="primary" />}
-                        />
-                        <Chip label={item.qty} className={styles.filterCategoryChip} />
-                    </div>
-                ))}
+                <Field
+                    name="inventoryCategories"
+                    component={CheckboxCategory}
+                    options={categories}
+                />
             </fieldset>
         </form>
         <div className={styles.filterBtns}>
