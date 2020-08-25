@@ -7,7 +7,7 @@ import pytz
 
 
 from event.models import Profile, Team, User
-from event.serializers import TeamSerializer
+from event.serializers import TeamSerializer, UserSerializer
 
 
 class ProfileTestCase(TestCase):
@@ -49,4 +49,18 @@ class TeamSerializerTestCase(TestCase):
             "team_code": team.team_code,
             "created_at": team.created_at.astimezone(tz).isoformat(),
             "updated_at": team.updated_at.astimezone(tz).isoformat(),
+        }
+
+class UserSerializerTestCase(TestCase):
+    def test_serializer(self):
+
+        user = User.objects.create()
+        user_serialized = UserSerializer(user).data
+        user_expected = {
+            "id": user.id,
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "email": user.email,
+            "profile": None,
+            "groups": None,
         }

@@ -49,7 +49,7 @@ class CurrentTeamAPIView(generics.GenericAPIView, mixins.RetrieveModelMixin):
 
     def get(self, request, *args, **kwargs):
         """
-        Get the current team's profile and team details
+        Get the current users team profile and team details
 
         Reads the profile of the current logged in team.
         """

@@ -5,7 +5,7 @@ from rest_framework.test import APITestCase
 from hackathon_site.tests import SetupUserMixin
 
 from event.models import Profile, User, Team
-from event.serializers import TeamSerializer
+from event.serializers import TeamSerializer, UserSerializer
 
 
 class CurrentUserTestCase(SetupUserMixin, APITestCase):
@@ -38,29 +38,15 @@ class CurrentUserTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(expected_response, data)
 
     def test_user_has_profile(self):
-        expected_response = {
-            **{
-                attr: getattr(self.user, attr)
-                for attr in ("id", "first_name", "last_name", "email")
-            },
-            "profile": {
-                attr: getattr(self.profile, attr)
-                for attr in (
-                    "id",
-                    "status",
-                    "id_provided",
-                    "attended",
-                    "acknowledge_rules",
-                    "e_signature",
-                )
-            },
-            "groups": [{"id": self.group.id, "name": self.group.name}],
-        }
         self._login()
         response = self.client.get(self.view)
+        user_expect = User.objects.get(pk=self.user.pk)
+        serializer = UserSerializer(user_expect)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        data = response.json()
-        self.assertEqual(data, expected_response)
+        self.assertEqual(response.json(), serializer.data)
+
+
+
 
 
 class CurrentTeamTestCase(SetupUserMixin, APITestCase):
