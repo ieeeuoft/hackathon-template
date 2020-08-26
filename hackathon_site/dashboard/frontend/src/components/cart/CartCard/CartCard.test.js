@@ -8,7 +8,7 @@ describe("CartCard Item test", () => {
     const image = "https://i.imgur.com/IO6e5a6.jpg";
     const title = "Some very long title and stuff";
     const currentStock = 9;
-    const handleRemove = jest.fn();
+    const handleRemove = () => {};
     const checkedOutQuantity = 3;
     const outOfStock = "Currently unavailable";
     const error = null;
@@ -31,6 +31,8 @@ describe("CartCard Item test", () => {
     });
 
     test("Button that removes the CartCard item", () => {
+        const handleRemove = jest.fn();
+
         const { getByRole } = render(
             <CartCard
                 image={image}
