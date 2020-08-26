@@ -6,7 +6,7 @@ from event.serializers import UserSerializer
 
 
 class IndexView(TemplateView):
-    template_name = "event/base.html"
+    template_name = "event/landing.html"
 
 
 class CurrentUserAPIView(generics.GenericAPIView, mixins.RetrieveModelMixin):

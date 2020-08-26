@@ -1,0 +1,324 @@
+{% extends "event/base.html" %}
+
+{% block head_extends %}
+<script>
+    const registrationOpenDate = new Date("{{ localtime(registration_open_date).strftime('%b %-d, %Y, %H:%M:%S') }}");
+    const registrationCloseDate = new Date("{{ localtime(registration_close_date).strftime('%b %-d, %Y, %H:%M:%S') }}");
+    const eventStartDate = new Date("{{ localtime(event_start_date).strftime('%b %-d, %Y, %H:%M:%S') }}");
+</script>
+{% endblock %}
+
+{% block nav %}
+<ul class="right hide-on-med-and-down">
+    <li><a href="#about">About</a></li>
+    <li><a href="#schedule">Schedule</a></li>
+    <li><a href="#faq">FAQ</a></li>
+    <li><a href="#sponsors">Sponsors</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <li>
+        <a class="btn-small waves-effect waves-light colorBtn">Login</a>
+    </li>
+</ul>
+
+<ul id="nav-mobile" class="sidenav">
+    <li><img src="{{ static('event/images/logo.svg') }}" class="logoNav" alt="logo" /></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#schedule">Schedule</a></li>
+    <li><a href="#faq">FAQ</a></li>
+    <li><a href="#sponsors">Sponsors</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <li>
+        <a class="btn-small waves-effect waves-light colorBtn">Login/Apply</a>
+    </li>
+</ul>
+
+<a href="#" data-target="nav-mobile" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="section row" id="landing">
+        <div class="col container s12 m7">
+            <h1 class="row header">Hackathon Name</h1>
+            <div class="row">
+                <h4 class="header s12">Subtitle</h4>
+            </div>
+            <div class="row">
+                <h5>Location</h5>
+                <h5>
+                    {# Update this logic if your event ends in a different month or year #}
+                    {{ localtime(event_start_date).strftime("%B %d") }}-{{ localtime(event_end_date).strftime("%d, %Y") }}
+                </h5>
+            </div>
+            <div class="row">
+                <a class="btn-large waves-effect waves-light colorBtn">Login/Apply</a>
+            </div>
+            <br /><br />
+        </div>
+        <div class="col s12 m5 landingImg">
+            <img src="{{ static('event/images/landing.svg') }}" alt="landing"/>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="section scrollspy" id="about">
+        <div class="row">
+            <div class="col m12 l7" id="aboutText">
+                <h3 class="center">About us</h3>
+
+                <p class="center">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
+                    ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
+                    occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                </p>
+                <p class="center">
+                    Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto
+                    beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi
+                    nesciunt.
+                </p>
+            </div>
+
+            <div class="col m12 l5 flexColCenter" id="countdown">
+                <h3 class="center" id="countdownTitle"></h3>
+                <div class="countdown">
+                    <div class="col countdownNum">
+                        <div class="countdownWhiteLine"></div>
+                        <p id="day1"></p>
+                    </div>
+                    <div class="col countdownNum">
+                        <div class="countdownWhiteLine"></div>
+                        <p id="day2"></p>
+                    </div>
+                    <div class="col countdownNum">
+                        <div class="countdownWhiteLine"></div>
+                        <p id="day3"></p>
+                    </div>
+                </div>
+                <div class="col center countdownDays">Days</div>
+            </div>
+        </div>
+    </div>
+</div>
+<br /><br />
+
+<div class="container">
+    <div class="section scrollspy" id="schedule">
+        <div class="row schedule">
+            <div class="m12 center">
+                <h3 class="center">Schedule</h3>
+            </div>
+            <div class="col s12 m7 l6">
+                <h4 class="center">Saturday</h4>
+
+                <div class="scheduleRow">
+                    <p class="scheduleTime">9AM</p>
+                    <p>Participant Registration</p>
+                </div>
+                <div class="scheduleRow">
+                    <p class="scheduleTime">10AM</p>
+                    <p>Opening Ceremonies</p>
+                </div>
+                <div class="scheduleRow">
+                    <p class="scheduleTime">11AM</p>
+                    <p><strong>Hacking Begins</strong></p>
+                </div>
+                <div class="scheduleRow">
+                    <p class="scheduleTime">Various</p>
+                    <p>Workshops & Activities</p>
+                </div>
+            </div>
+
+            <div class="col s12 m5 l6">
+                <h4 class="center">Sunday</h4>
+
+                <div class="scheduleRow">
+                    <p class="scheduleTime">11AM</p>
+                    <p><strong>Hacking Ends!</strong></p>
+                </div>
+                <div class="scheduleRow">
+                    <p class="scheduleTime">12PM</p>
+                    <p>Judging</p>
+                </div>
+                <div class="scheduleRow">
+                    <p class="scheduleTime">3PM</p>
+                    <p>Closing Ceremonies</p>
+                </div>
+                <div class="scheduleRow">
+                    <p class="scheduleTime">4PM</p>
+                    <p>End</p>
+                </div>
+            </div>
+        </div>
+        <div class="m12 center">
+            <a href="#" class="btn-large waves-effect waves-light colorBtn" rel="noopener" target="_blank">Full schedule</a>
+        </div>
+    </div>
+</div>
+<br /><br />
+
+<div class="container">
+    <div class="section scrollspy" id="faq">
+        <div class="row">
+            <div class="col s12 m12 center">
+                <h3 class="center">FAQ</h3>
+            </div>
+            <div class="col s12 m6">
+                <ul class="collapsible">
+                    <li>
+                        <div class="collapsible-header">
+                            What is a hackathon?
+                        </div>
+                        <div class="collapsible-body">
+                            <span>A hackathon is a big bonanza where people from everyone doing everything come together to create projects together with the newest and most exciting tech.</span>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="collapsible-header">
+                            How much does it cost?
+                        </div>
+                        <div class="collapsible-body">
+                            <span>$0! IEEE UofT is a non-profit organization that aims to provide students accessible technical events.</span>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="collapsible-header">
+                            When can I expect to hear back after I applied?
+                        </div>
+                        <div class="collapsible-body">
+                            <span>
+                                We are having 2 rounds of acceptance. If you applied early, you might get an email on the weekend of Oct 10th/11th. If you still haven’t gotten any replies by then,
+                                don’t worry! We will be sending out a second round of acceptance on the weekend of Oct 24th/25th.
+                            </span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="col s12 m6">
+                <ul class="collapsible">
+                    <li>
+                        <div class="collapsible-header">
+                            Who can apply? What if I have no experience?
+                        </div>
+                        <div class="collapsible-body">
+                            <span>
+                                Applicants that are currently in either highschool or university are welcomed to apply! We are a beginner friendly hackathon, so no hackathon experience is needed to
+                                participate! We are all here to learn :)
+                            </span>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="collapsible-header">
+                            What equipment and support would be provided?
+                        </div>
+                        <div class="collapsible-body">
+                            <span>
+                                Unfortunately, due to the current situation of COVID19. We won’t be able to provide any hardware. However, there would be lots of mentors ready to help you! During the
+                                online hackathon, there would be a breakout room for all the mentors where you would be able to access at all times and get immediate help.
+                            </span>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="collapsible-header">
+                            How do online hackathons work?
+                        </div>
+                        <div class="collapsible-body">
+                            <span>
+                                The entire hackathon would be conducted online. You would be able to stay safe and comfortably at home while doing this hackathon. You would be able to communicate to
+                                your team via online meetings and you would be submitting your final products online.
+                            </span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<br /><br />
+
+<div class="container">
+    <div class="section scrollspy" id="sponsors">
+        <div class="row">
+            <h3 class="center">Sponsors</h3>
+            <div class="row sponsorImgs">
+                <!-- Platinum -->
+                <a href="https://www.google.com/" class="col s6 center" rel="noopener" target="_blank"><img src="{{ static('event/images/sponsors/sponsor.svg') }}" alt="sponsor-name"/></a>
+                <a href="https://www.google.com/" class="col s6 center" rel="noopener" target="_blank"><img src="{{ static('event/images/sponsors/sponsor.svg') }}" alt="sponsor-name"/></a>
+                <br />
+                <!-- Gold -->
+                <a href="https://www.google.com/" class="col s4 center" rel="noopener" target="_blank"><img src="{{ static('event/images/sponsors/sponsor.svg') }}" alt="sponsor-name"/></a>
+                <a href="https://www.google.com/" class="col s4 center" rel="noopener" target="_blank"><img src="{{ static('event/images/sponsors/sponsor.svg') }}" alt="sponsor-name"/></a>
+                <a href="https://www.google.com/" class="col s4 center" rel="noopener" target="_blank"><img src="{{ static('event/images/sponsors/sponsor.svg') }}" alt="sponsor-name"/></a>
+                <br />
+                <!-- Silver -->
+                <a href="https://www.google.com/" class="col s3 center" rel="noopener" target="_blank"><img src="{{ static('event/images/sponsors/sponsor.svg') }}" alt="sponsor-name"/></a>
+                <a href="https://www.google.com/" class="col s3 center" rel="noopener" target="_blank"><img src="{{ static('event/images/sponsors/sponsor.svg') }}" alt="sponsor-name"/></a>
+                <a href="https://www.google.com/" class="col s3 center" rel="noopener" target="_blank"><img src="{{ static('event/images/sponsors/sponsor.svg') }}" alt="sponsor-name"/></a>
+                <a href="https://www.google.com/" class="col s3 center" rel="noopener" target="_blank"><img src="{{ static('event/images/sponsors/sponsor.svg') }}" alt="sponsor-name"/></a>
+                <br />
+                <!-- Bronze -->
+                <a href="https://www.google.com/" class="col s2 center" rel="noopener" target="_blank"><img src="{{ static('event/images/sponsors/sponsor.svg') }}" alt="sponsor-name"/></a>
+                <a href="https://www.google.com/" class="col s2 center" rel="noopener" target="_blank"><img src="{{ static('event/images/sponsors/sponsor.svg') }}" alt="sponsor-name"/></a>
+                <a href="https://www.google.com/" class="col s2 center" rel="noopener" target="_blank"><img src="{{ static('event/images/sponsors/sponsor.svg') }}" alt="sponsor-name"/></a>
+                <a href="https://www.google.com/" class="col s2 center" rel="noopener" target="_blank"><img src="{{ static('event/images/sponsors/sponsor.svg') }}" alt="sponsor-name"/></a>
+                <a href="https://www.google.com/" class="col s2 center" rel="noopener" target="_blank"><img src="{{ static('event/images/sponsors/sponsor.svg') }}" alt="sponsor-name"/></a>
+                <a href="https://www.google.com/" class="col s2 center" rel="noopener" target="_blank"><img src="{{ static('event/images/sponsors/sponsor.svg') }}" alt="sponsor-name"/></a>
+                <br />
+            </div>
+            <p class="center">
+                If you would like to sponsor us, feel free to reach out:
+                <a href="mailto:hello@email.com" class="hoverLink">hello@email.com</a>
+            </p>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div class="section">
+        <div class="s12 m8 flexColCenter">
+            <h3 class="center">Check out last year!</h3>
+
+            <video class="video center" controls>
+                <source src="https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_1280_10MG.mp4" type="video/mp4" />
+                Your browser does not support the video tag.
+            </video>
+        </div>
+    </div>
+    <br /><br />
+</div>
+
+<div class="carousel">
+    <!-- IMAGES MUST ALL BE THE SAME SIZE -->
+    <a class="carousel-item" ><img src="https://i.imgur.com/UoVt0SD.jpg" alt="2019-image-1"/></a>
+    <a class="carousel-item" ><img src="https://i.imgur.com/tFJUdpY.jpg" alt="2019-image-2"/></a>
+    <a class="carousel-item" ><img src="https://i.imgur.com/EeFW9yt.jpg" alt="2019-image-3"/></a>
+    <a class="carousel-item" ><img src="https://i.imgur.com/ho1TpX3.jpg" alt="2019-image-4"/></a>
+    <a class="carousel-item" ><img src="https://i.imgur.com/NuVyjXK.jpg" alt="2019-image-5"/></a>
+    <a class="carousel-item" ><img src="https://i.imgur.com/r7ZMttJ.jpg" alt="2019-image-6"/></a>
+</div>
+
+<footer class="page-footer primaryColor">
+    <div class="container scrollspy" id="contact">
+        <h3 class="row center">Contact Us</h3>
+
+        <div class="row center contactBtns">
+            <a href="mailto:hello@email.com" class="waves-effect waves-light" rel="noopener" target="_blank"><img src="{{ static('event/images/social/email.svg') }}" alt="Email" /></a>
+            <a href="https://www.ieee.utoronto.ca" class="waves-effect waves-light" rel="noopener" target="_blank"><img src="{{ static('event/images/social/website.svg') }}" alt="ieee.utoronto.ca" /></a>
+            <a href="https://www.facebook.com/ieeeuoft" class="waves-effect waves-light" rel="noopener" target="_blank"><img src="{{ static('event/images/social/facebook.svg') }}" alt="Facebook" /></a>
+            <a href="https://www.instagram.com/ieee_uoft" class="waves-effect waves-light" rel="noopener" target="_blank"><img src="{{ static('event/images/social/instagram.svg') }}" alt="Instagram"/></a>
+        </div>
+
+        <p class="center">Need a platform for your hackathon? We're <a class="hoverLink" href="https://github.com/ieeeuoft/hackathon-template/" rel="noopener" target="_blank">open source</a>!</p>
+    </div>
+    <div class="footer-copyright center">
+        <div class="container">
+            Copyright © {% if localtime(event_end_date).year > 2020 %}2020-{% endif %}
+            {{ localtime(event_end_date).strftime("%Y") }} IEEE University of Toronto Student Branch
+        </div>
+    </div>
+</footer>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ static('event/js/landing.js') }}"></script>
+{% endblock %}
