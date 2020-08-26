@@ -2,19 +2,38 @@
 <html lang="en">
     <head>
         {% block head %}
-        <title>{% block title %}Hackathon Site{% endblock %}</title>
-        <link rel="stylesheet" type="text/css" href="{{ static("event/styles/css/styles.css") }}" />
-        
-        <!-- Compiled and minified CSS -->
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
+
+        <!-- Material icons  -->
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+        <!-- Compiled and minified CSS for Materialize -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" />
 
-        <!-- Compiled and minified JavaScript -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+        <title>{% block title %}Hackathon Site{% endblock %}</title>
+        <link rel="stylesheet" type="text/css" href="{{ static('event/styles/css/styles.css') }}" />
+
+        {% block head_extends %}{% endblock %}
         {% endblock %}
     </head>
     <body>
+        <nav class="navbar primaryColor" role="navigation">
+            <div class="nav-wrapper container">
+                <img src="{{ static('event/images/logo.svg') }}" class="logoNav" alt="logo" />
+
+                {% block nav %}
+                {% endblock %}
+            </div>
+        </nav>
+
         {% block body %}
-        Hello there
         {% endblock %}
+
+        <!--  Scripts-->
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+        <script src="{{ static('event/js/script.js') }}"></script>
+        {% block scripts %}{% endblock %}
     </body>
 </html>

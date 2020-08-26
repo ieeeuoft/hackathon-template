@@ -1,42 +1,27 @@
 @import "./../../../assets/abstracts/mixins";
 @import "./../../../assets/abstracts/variables";
 
-.Item {
-    display: flex;
-    width: 100%;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: flex-start;
-    padding-bottom: 10px;
-    cursor: pointer;
-
-    &:hover {
-        background-color: color(light2);
-    }
-
+.item {
+    &Box,
+    &Black,
     &Pic {
-        height: 210px;
-        width: 210px;
-        &Box {
-            object-fit: cover;
-            opacity: 0.2;
-        }
+        width: 100%;
     }
 
-    &Name {
-        display: flex;
-        padding-top: 8px;
+    &Black {
+        object-fit: cover;
+        opacity: 0.2;
     }
 
     &TextBox {
-        padding-left: 10px;
+        padding: 10px;
     }
+}
 
-    .outOfStock {
-        color: color(red);
-    }
+.outOfStock {
+    color: color(secondary);
+}
 
-    .inStock {
-        color: color(grey);
-    }
+.inStock {
+    color: color(grey);
 }
