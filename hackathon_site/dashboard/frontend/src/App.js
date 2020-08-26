@@ -24,6 +24,7 @@ import Cart from "pages/Cart/Cart";
 import IncidentForm from "pages/IncidentForm/IncidentForm";
 import NotFound from "pages/NotFound/NotFound";
 import SnackbarNotifier from "components/general/SnackbarNotifier/SnackbarNotifier";
+import Acknowledgement from "pages/Acknowledgement/Acknowledgement";
 
 import withParticipantCheck from "components/HOCs/withParticipantCheck/withParticipantCheck";
 
@@ -47,6 +48,7 @@ const UnconnectedApp = () => {
                 <Switch>
                     <Route exact path="/" component={withParticipantCheck(Dashboard)} />
                     <Route exact path="/login" component={Login} />
+                    <Route exact path="/acknowledgement" component={Acknowledgement} />
                     <Route
                         exact
                         path="/orders"

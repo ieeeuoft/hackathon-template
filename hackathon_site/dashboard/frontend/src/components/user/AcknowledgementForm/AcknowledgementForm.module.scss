@@ -1,0 +1,29 @@
+@import "./../../../assets/abstracts/mixins";
+@import "./../../../assets/abstracts/variables";
+
+.acknowledge {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    &Text {
+        padding-top: 30px;
+        padding-bottom: 30px;
+        max-width: 90%;
+        align-self: center;
+    }
+
+    &Signature {
+        width: 50%;
+        align-self: center;
+    }
+
+    &Button {
+        margin-top: 33px;
+        align-self: center;
+
+        &:hover {
+            background-color: color(dark1);
+        }
+    }
+}
