@@ -72,6 +72,6 @@ export const isCheckedOutTableVisibleSelector = (state) =>
     uiSelector(state).dashboard.isCheckedOutTableVisible;
 export const isReturnedTableVisibleSelector = (state) =>
     uiSelector(state).dashboard.isReturnedTableVisible;
-export const isPendingTableVisible = (state) =>
+export const isPendingTableVisibleSelector = (state) =>
     uiSelector(state).dashboard.isPendingTableVisible;
 export const snackbarSelector = (state) => uiSelector(state).snackbars;

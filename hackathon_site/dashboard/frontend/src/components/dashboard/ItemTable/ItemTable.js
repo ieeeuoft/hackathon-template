@@ -21,7 +21,7 @@ import { push } from "connected-react-router";
 import {
     isCheckedOutTableVisibleSelector,
     isReturnedTableVisibleSelector,
-    isPendingTableVisible,
+    isPendingTableVisibleSelector,
     toggleCheckedOutTable,
     toggleReturnedTable,
     togglePendingTable,
@@ -261,7 +261,7 @@ export const UnconnectedPendingTable = ({
                 maxWidth={false}
                 disableGutters={true}
             >
-                <Typography variant="h2" class={styles.titleChipText}>
+                <Typography variant="h2" className={styles.titleChipText}>
                     Orders pending
                 </Typography>
 
@@ -277,7 +277,7 @@ export const UnconnectedPendingTable = ({
                         }}
                         color="primary"
                     >
-                        {isVisible ? "Hide all" : "Show all"}
+                        {isVisible ? "hide all" : "Show all"}
                     </Button>
                 </Container>
             </Container>
@@ -335,7 +335,7 @@ export const UnconnectedPendingTable = ({
 };
 
 const PendingTableMapStateToProps = (state) => ({
-    isVisible: isPendingTableVisible(state),
+    isVisible: isPendingTableVisibleSelector(state),
 });
 
 export const PendingTable = connect(PendingTableMapStateToProps, {
