@@ -18,15 +18,18 @@
     &Text {
         margin-bottom: 10px;
     }
-    &Broken {
-        margin-bottom: 10px;
-        color: color(secondary);
-    }
 }
 
 .titleChip {
     display: flex;
-    align-items: flex-end;
+    &Space {
+        display: flex;
+        justify-content: space-between;
+    }
+    &Text {
+        min-width: fit-content;
+        padding-top: 7px;
+    }
 }
 
 .itemImg {

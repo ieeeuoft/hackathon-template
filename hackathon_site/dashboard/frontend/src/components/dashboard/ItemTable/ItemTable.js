@@ -21,10 +21,10 @@ import { push } from "connected-react-router";
 import {
     isCheckedOutTableVisibleSelector,
     isReturnedTableVisibleSelector,
-    isBrokenTableVisible,
+    isPendingTableVisible,
     toggleCheckedOutTable,
     toggleReturnedTable,
-    toggleBrokenTable,
+    togglePendingTable,
 } from "slices/ui/uiSlice";
 
 export const ChipStatus = ({ status }) => {
@@ -244,92 +244,50 @@ export const ReturnedTable = connect(returnedTableMapStateToProps, {
     toggleVisibility: toggleReturnedTable,
 })(UnconnectedReturnedTable);
 
-export const PendingTable = ({ items, status }) => {
+export const UnconnectedPendingTable = ({
+    items,
+    status,
+    isVisible,
+    toggleVisibility,
+}) => {
     return !status ? null : (
         <Container
             className={styles.tableContainer}
             maxWidth={false}
             disableGutters={true}
         >
-            <div className={styles.titleChip}>
-                <Typography variant="h2" className={styles.titleText}>
+            <Container
+                className={styles.titleChip}
+                maxWidth={false}
+                disableGutters={true}
+            >
+                <Typography variant="h2" class={styles.titleChipText}>
                     Orders pending
                 </Typography>
-                <ChipStatus status={status} />
-            </div>
-            <TableContainer component={Paper} elevation={3} square={true}>
-                <Table className={styles.table} size="small" aria-label="pending table">
-                    <TableHead>
-                        <TableRow>
-                            <TableCell className={styles.widthFixed} />
-                            <TableCell className={styles.widthHalf} align="left">
-                                Name
-                            </TableCell>
-                            <TableCell className={styles.widthQuarter} align="right">
-                                Requested Qty
-                            </TableCell>
-                            <TableCell className={styles.widthQuarter} align="right">
-                                Granted Qty
-                            </TableCell>
-                            <TableCell className={styles.widthBuffer} />
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {items.map((row) => (
-                            <TableRow key={row.id}>
-                                <TableCell align="left">
-                                    <img
-                                        className={styles.itemImg}
-                                        src={row.url}
-                                        alt={row.name}
-                                    />
-                                </TableCell>
-                                <TableCell align="left">{row.name}</TableCell>
-                                <TableCell align="right">{row.reqQty}</TableCell>
-                                <TableCell align="right">{row.grantQty}</TableCell>
-                                <TableCell className={styles.widthBuffer} />
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
-        </Container>
-    );
-};
 
-export const UnconnectedBrokenTable = ({
-    items,
-    isVisible,
-    toggleVisibility,
-    onClickViewReport,
-    status,
-}) => {
-    return !items.length ? null : (
-        <Container
-            className={styles.tableContainer}
-            maxWidth={false}
-            disableGutters={true}
-        >
-            <div className={styles.title}>
-                <Typography variant="h2" className={styles.titleBroken}>
-                    Reported broken/lost items
-                </Typography>
-                <Button
-                    onClick={() => {
-                        toggleVisibility();
-                    }}
-                    color="primary"
+                <Container
+                    className={styles.titleChipSpace}
+                    maxWidth={false}
+                    disableGutters={true}
                 >
-                    {isVisible ? "Hide all" : "Show all"}
-                </Button>
-            </div>
+                    <ChipStatus status={status} />
+                    <Button
+                        onClick={() => {
+                            toggleVisibility();
+                        }}
+                        color="primary"
+                    >
+                        {isVisible ? "Hide all" : "Show all"}
+                    </Button>
+                </Container>
+            </Container>
 
             {isVisible && (
                 <TableContainer component={Paper} elevation={3} square={true}>
                     <Table
                         className={styles.table}
                         size="small"
-                        aria-label="broken table"
+                        aria-label="pending table"
                     >
                         <TableHead>
                             <TableRow>
@@ -337,20 +295,19 @@ export const UnconnectedBrokenTable = ({
                                 <TableCell className={styles.widthHalf} align="left">
                                     Name
                                 </TableCell>
-                                <TableCell className={styles.widthFixed} align="left">
-                                    Qty
+                                <TableCell
+                                    className={styles.widthQuarter}
+                                    align="right"
+                                >
+                                    Requested Qty
                                 </TableCell>
                                 <TableCell
                                     className={styles.widthQuarter}
                                     align="right"
                                 >
-                                    Time
+                                    Granted Qty
                                 </TableCell>
-                                <TableCell className={styles.widthFixed} align="left">
-                                    Condition
-                                </TableCell>
-                                <TableCell className={styles.widthFixed} />
-                                <TableCell className={styles.widthQuarter} />
+                                <TableCell className={styles.widthBuffer} />
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -364,21 +321,9 @@ export const UnconnectedBrokenTable = ({
                                         />
                                     </TableCell>
                                     <TableCell align="left">{row.name}</TableCell>
-                                    <TableCell align="right">{row.qty}</TableCell>
-                                    <TableCell align="right">{row.time}</TableCell>
-                                    <TableCell align="left">{row.condition}</TableCell>
-                                    <TableCell align="left">
-                                        <ChipStatus status={status} />
-                                    </TableCell>
-                                    <TableCell align="right">
-                                        <Button
-                                            color="primary"
-                                            size="small"
-                                            onClick={onClickViewReport}
-                                        >
-                                            View Report
-                                        </Button>
-                                    </TableCell>
+                                    <TableCell align="right">{row.reqQty}</TableCell>
+                                    <TableCell align="right">{row.grantQty}</TableCell>
+                                    <TableCell className={styles.widthBuffer} />
                                 </TableRow>
                             ))}
                         </TableBody>
@@ -389,10 +334,80 @@ export const UnconnectedBrokenTable = ({
     );
 };
 
-const brokenTableMapStateToProps = (state) => ({
-    isVisible: isBrokenTableVisible(state),
+const PendingTableMapStateToProps = (state) => ({
+    isVisible: isPendingTableVisible(state),
 });
 
-export const BrokenTable = connect(brokenTableMapStateToProps, {
-    toggleVisibility: toggleBrokenTable,
-})(UnconnectedBrokenTable);
+export const PendingTable = connect(PendingTableMapStateToProps, {
+    toggleVisibility: togglePendingTable,
+})(UnconnectedPendingTable);
+
+export const BrokenTable = ({ items, onClickViewReport }) => {
+    return !items.length ? null : (
+        <Container
+            className={styles.tableContainer}
+            maxWidth={false}
+            disableGutters={true}
+        >
+            <div className={styles.titleChip}>
+                <Typography
+                    variant="h2"
+                    className={styles.titleChipText}
+                    color="secondary"
+                >
+                    Reported broken/lost items
+                </Typography>
+                <ChipStatus status="error" />
+            </div>
+
+            <TableContainer component={Paper} elevation={3} square={true}>
+                <Table className={styles.table} size="small" aria-label="broken table">
+                    <TableHead>
+                        <TableRow>
+                            <TableCell className={styles.widthFixed} />
+                            <TableCell className={styles.widthHalf} align="left">
+                                Name
+                            </TableCell>
+                            <TableCell className={styles.widthFixed} align="left">
+                                Qty
+                            </TableCell>
+                            <TableCell className={styles.widthQuarter} align="right">
+                                Time
+                            </TableCell>
+                            <TableCell className={styles.widthFixed} align="left">
+                                Condition
+                            </TableCell>
+                            <TableCell className={styles.widthQuarter} />
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {items.map((row) => (
+                            <TableRow key={row.id}>
+                                <TableCell align="left">
+                                    <img
+                                        className={styles.itemImg}
+                                        src={row.url}
+                                        alt={row.name}
+                                    />
+                                </TableCell>
+                                <TableCell align="left">{row.name}</TableCell>
+                                <TableCell align="right">{row.qty}</TableCell>
+                                <TableCell align="right">{row.time}</TableCell>
+                                <TableCell align="left">{row.condition}</TableCell>
+                                <TableCell align="right">
+                                    <Button
+                                        color="primary"
+                                        size="small"
+                                        onClick={onClickViewReport}
+                                    >
+                                        View Report
+                                    </Button>
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+        </Container>
+    );
+};

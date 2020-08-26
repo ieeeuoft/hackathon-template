@@ -64,7 +64,7 @@ const Dashboard = () => {
                         </Grid>
                     ))}
                 </Grid>
-                <BrokenTable items={itemsBroken} status={brokenStatus} />
+                <BrokenTable items={itemsBroken} />
                 <PendingTable items={itemsPending} status={orderStatus} />
                 <CheckedOutTable
                     items={itemsCheckedOut}

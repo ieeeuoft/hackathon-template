@@ -115,7 +115,6 @@ export const itemsBroken = [
     },
 ];
 
-export const brokenStatus = "error";
 export const orderStatus = "pending";
 
 // Team card
