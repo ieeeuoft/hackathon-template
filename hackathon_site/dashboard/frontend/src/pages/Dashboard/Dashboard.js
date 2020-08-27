@@ -27,6 +27,10 @@ const Dashboard = () => {
     const reportIncident = (id) => {
         alert("Reports incident for component of id " + id);
     };
+
+    const openBrokenTable = (id) => {
+        alert("This would open the report for item of id " + id);
+    };
     return (
         <>
             <Header />
@@ -63,7 +67,7 @@ const Dashboard = () => {
                         </Grid>
                     ))}
                 </Grid>
-                <BrokenTable items={itemsBroken} />
+                <BrokenTable items={itemsBroken} openBrokenTable={openBrokenTable} />
                 <PendingTable items={itemsPending} status={orderStatus} />
                 <CheckedOutTable
                     items={itemsCheckedOut}

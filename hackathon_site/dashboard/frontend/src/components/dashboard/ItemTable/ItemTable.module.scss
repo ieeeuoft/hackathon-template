@@ -18,17 +18,16 @@
     &Text {
         margin-bottom: 10px;
     }
-}
-
-.titleChip {
-    display: flex;
-    &Space {
+    &Chip {
         display: flex;
-        justify-content: space-between;
-    }
-    &Text {
-        min-width: fit-content;
-        padding-top: 7px;
+        &Space {
+            display: flex;
+            justify-content: space-between;
+        }
+        &Text {
+            min-width: fit-content;
+            padding-top: 7px;
+        }
     }
 }
 

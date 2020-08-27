@@ -277,7 +277,7 @@ export const UnconnectedPendingTable = ({
                         }}
                         color="primary"
                     >
-                        {isVisible ? "hide all" : "Show all"}
+                        {isVisible ? "Hide all" : "Show all"}
                     </Button>
                 </Container>
             </Container>
@@ -342,7 +342,7 @@ export const PendingTable = connect(PendingTableMapStateToProps, {
     toggleVisibility: togglePendingTable,
 })(UnconnectedPendingTable);
 
-export const BrokenTable = ({ items, onClickViewReport }) => {
+export const BrokenTable = ({ items, onClickViewReport, openReportAlert }) => {
     return !items.length ? null : (
         <Container
             className={styles.tableContainer}
@@ -398,7 +398,10 @@ export const BrokenTable = ({ items, onClickViewReport }) => {
                                     <Button
                                         color="primary"
                                         size="small"
-                                        onClick={onClickViewReport}
+                                        onClick={() => {
+                                            openReportAlert(row.id);
+                                            onClickViewReport;
+                                        }}
                                     >
                                         View Report
                                     </Button>
