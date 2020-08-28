@@ -55,23 +55,34 @@ class TeamSerializerTestCase(TestCase):
 
 class UserSerializerTestCase(TestCase):
     def test_serializer(self):
-
+        team = Team.objects.create()
+        group = Group.objects.create(name="Test")
         user = User.objects.create()
+        user.groups.add(group)
+
+        profile = Profile.objects.create(
+            user=user, 
+            team=team,
+        )
+        
+
         user_serialized = UserSerializer(user).data
+        profile_serialized = ProfileSerializer(user.profile).data
+        group_serialized = GroupSerializer(user.groups).data
+
         user_expected = {
             "id": user.id,
             "first_name": user.first_name,
             "last_name": user.last_name,
             "email": user.email,
-            "profile": None,
-            "groups": [],
+            "profile": profile_serialized,
+            "groups": group_serialized,
         }
         self.assertEqual(user_expected, user_serialized)
 
 class GroupSerializerTestCase(TestCase):
     def test_serializer(self):
-
-        group = Group.objects.create()
+        group = Group.objects.create(name="Test")
         group_serialized = GroupSerializer(group).data
         group_expected = {
             "id": group.id,
@@ -90,6 +101,8 @@ class ProfileSerializerTestCase(TestCase):
 
     def test_serializer(self):
         team = Team.objects.create()
+        team_serialized = TeamSerializer(team).data
+
         profile = Profile.objects.create(user=self.user, team=team)
         profile_serialized = ProfileSerializer(profile).data
         profile_expected = {
@@ -99,10 +112,7 @@ class ProfileSerializerTestCase(TestCase):
             "attended": profile.attended,
             "acknowledge_rules": profile.acknowledge_rules,
             "e_signature": profile.e_signature,
-            "team": {
-                "id": team.id,
-                "team_code": team.team_code,
-            },
+            "team": team_serialized,
         }
-        # currently failing test
-        # self.assertEqual(profile_expected, profile_serialized)
+        self.assertEqual(profile_expected, profile_serialized)
+
