@@ -251,7 +251,7 @@ strong {
 }
 // End of formatting stuff
 
-// Login 
+// Login stuff
 .login {
     &Div {
         display: flex;
@@ -307,27 +307,33 @@ strong {
         color: color(font);
     }
 }
+// End of form stuff
 
-/* label color */
-.input-field label:active {
-    color: #34196C !important;
+// Dashboard stuff
+.borderTopDiv {
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    border-top: solid 10px color(secondary);
+    border-radius: 3px 3px 0 0;
+    padding: 50px 30px 40px;
+    margin: 20px auto;
+    max-width: 950px;
+    font-size: size(md);
+
+    h4 {
+        margin: 0 0 20px;
+    }
 }
-/* label focus color */
-.input-field input[type=text]:focus + label {
-    color: #34196C !important;
+
+.faq {
+    &Question {
+        font-weight: bold;
+        margin: 10px 0 0;
+    }
+
+    &Answer {
+        margin: 5px 0 20px;
+    }
 }
-/* label underline focus color */
-.input-field input[type=text]:focus {
-    border-bottom: 1px solid #34196C !important;
-    box-shadow: 0 1px 0 0 #34196C !important;
-}
-
-
-// .longQuestion>label.active {
-//     transform: translateY(-28px) scale(0.8);
-// }
-
-// .longQuestion textarea {
-//     padding-bottom: 55px;
-// }
-// End of section
+// End of dashboard stuff
