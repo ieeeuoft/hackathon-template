@@ -40,13 +40,13 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Use Node.js 12.x
-      uses: actions/setup-node@v1
-      with:
-        node-version: '12.x'
-        - name: Install dependencies
-          run: yarn install
-        - name: Formatting check
-          run: yarn prettier --check 'static/**/*.(scss|js)'
+        uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+      - name: Install dependencies
+        run: yarn install
+      - name: Formatting check
+        run: yarn prettier --check 'static/**/*.(scss|js)'
 
   dashboard-checks:
     runs-on: ubuntu:latest
