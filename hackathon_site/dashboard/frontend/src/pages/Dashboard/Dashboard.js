@@ -67,7 +67,7 @@ const Dashboard = () => {
                         </Grid>
                     ))}
                 </Grid>
-                <BrokenTable items={itemsBroken} openBrokenTable={openBrokenTable} />
+                <BrokenTable items={itemsBroken} openReportAlert={openBrokenTable} />
                 <PendingTable items={itemsPending} status={orderStatus} />
                 <CheckedOutTable
                     items={itemsCheckedOut}

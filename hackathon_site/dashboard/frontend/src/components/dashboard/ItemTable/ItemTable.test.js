@@ -191,20 +191,20 @@ describe("<BrokenTable />", () => {
         });
     });
 
-    it("Calls 'onClickViewReport' when 'View Report' is clicked", () => {
-        const onClickViewReport = jest.fn();
+    it("Calls 'openReportAlert' when 'View Report' is clicked", () => {
+        const openReportAlert = jest.fn();
         const oneRow = [itemsBroken[0]];
         const { getByText } = render(
             <BrokenTable
                 items={oneRow}
                 status="error"
-                onClickViewReport={onClickViewReport}
+                openReportAlert={openReportAlert}
             />
         );
 
         const button = getByText(/View Report/i);
         fireEvent.click(button);
-        expect(onClickViewReport).toHaveBeenCalled();
+        expect(openReportAlert).toHaveBeenCalled();
     });
 
     it("Calls the same amount of chips and buttons as the rows", () => {
