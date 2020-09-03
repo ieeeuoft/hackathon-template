@@ -1,9 +1,245 @@
-.test {
-    color: red;
+@import "mixins";
+@import "variables";
 
-    &Blah {
-        background-color: blue;
-        color: red; 
+// Note, Materialize classes are kebab and all the classes below are camel case
+// so you can distinguish its origin
+
+// General HTML stuff
+.icon-block {
+    padding: 0 15px;
+}
+.icon-block .material-icons {
+    font-size: inherit;
+}
+
+h3 {
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+body {
+    font-size: 18px;
+}
+
+strong {
+    font-weight: 700;
+}
+// End of general HTML stuff
+
+// Navbar stuff
+.logoNav {
+    height: 100%;
+    padding: 5px;
+}
+
+.sidenav {
+    .logoNav {
+        height: 80px;
+        margin: 20px;
     }
 }
-  
+
+.navbar {
+    position: sticky;
+    top: 0;
+    z-index: 998;
+}
+// End of navbar stuff
+
+// Landing section
+.landingImg {
+    display: flex;
+    justify-content: center;
+    margin-top: 60px;
+}
+// End of landing section
+
+// "About" section
+.countdown {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &Days {
+        margin-top: 20px;
+        font-size: 30px;
+    }
+
+    &Num {
+        width: 78px;
+        height: 129px;
+        border-radius: 10px;
+        font-weight: bold;
+        font-size: 106px;
+        text-align: center;
+        background-color: color(secondary);
+        color: #0d061a;
+        display: flex;
+        flex-direction: column;
+        margin: 0 5px;
+        padding: 0 !important;
+    }
+
+    &WhiteLine {
+        position: relative;
+        top: 50%;
+        width: 100%;
+        border: 2px solid color(white);
+    }
+}
+
+#day1,
+#day2,
+#day3 {
+    margin: -20px 0 0;
+}
+// End of "About" section
+
+// "Schedule" section
+.schedule {
+    margin: 10px 0 30px;
+
+    p {
+        font-size: 20px;
+        margin: 0;
+    }
+
+    &Time {
+        width: 80px;
+    }
+
+    &Row {
+        display: flex;
+        margin: 10px 0;
+    }
+
+    @include responsive(md-down) {
+        p {
+            font-size: 18px;
+        }
+        &Time {
+            width: 70px;
+        }
+    }
+}
+// End of "Schedule" section
+
+// "Sponsors" section
+.sponsorImgs {
+    margin-top: 50px;
+
+    img {
+        height: 100%;
+        width: 100%;
+        max-height: 150px;
+        padding-bottom: 50px;
+    }
+}
+// End of "Sponsors" section
+
+// "FAQ" section
+.collapsible .active {
+    color: color(primary);
+}
+// End of "FAQ" section
+
+// Video section
+.video {
+    max-width: 1000px;
+    width: 90%;
+}
+// End of video section
+
+// Carousel section
+.carousel {
+    height: 333px !important;
+
+    .carousel-item {
+        opacity: 1 !important;
+        height: 333px !important;
+
+        > img {
+            width: auto !important;
+            height: 100%;
+        }
+    }
+}
+// End of carousel section
+
+// Footer section
+.contactBtns {
+    a {
+        border-radius: 100%;
+        height: 50px;
+        width: 50px;
+        margin: 10px 15px 20px;
+
+        img {
+            height: 100%;
+            width: 100%;
+        }
+
+        &:hover {
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+    }
+}
+// End of section
+
+/* Colors  */
+.primaryColor {
+    background-color: color(primary) !important;
+}
+
+.secondaryColor {
+    background-color: color(secondary) !important;
+}
+
+.primaryText {
+    color: color(primary) !important;
+}
+
+.secondaryText {
+    color: color(secondary) !important;
+}
+
+.colorBtn {
+    font-weight: bold;
+    text-align: center;
+    text-transform: uppercase;
+    color: color(font) !important;
+    background-color: color(secondary) !important;
+
+    &:hover {
+        background-color: #d2a300 !important;
+    }
+}
+
+.active {
+    color: color(secondary);
+}
+// End of colors
+
+// Formatting stuff
+.flexColCenter {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.longText {
+    padding-right: 200px;
+
+    @include responsive(sm-down) {
+        padding-right: 0;
+    }
+}
+
+.hoverLink {
+    font-weight: bold;
+
+    &:hover {
+        text-decoration: underline;
+    }
+}
+// End of formatting stuff

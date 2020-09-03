@@ -1,0 +1,32 @@
+$colors: (
+    font: #0d061a,
+    white: #fff,
+    primary: #34196c,
+    secondary: #ffcb17,
+    light: #dad1e9,
+    dark: #271648,
+);
+
+$fonts: (
+    body: "Roboto",
+);
+
+$font-sizes: (
+    xl: 45px,
+    lg: 18px,
+    md: 16px,
+    sm: 14px,
+    xs: 12px,
+);
+
+@function color($color-name) {
+    @return map-get($colors, $color-name); //(name of map, key)
+}
+
+@function font($fonts-name) {
+    @return map-get($fonts, $fonts-name); //(name of map, key)
+}
+
+@function size($size) {
+    @return map-get($font-sizes, $size); //(name of map, key)
+}

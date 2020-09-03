@@ -8,6 +8,7 @@ import {
     PendingTable,
     ReturnedTable,
     CheckedOutTable,
+    BrokenTable,
 } from "components/dashboard/ItemTable/ItemTable";
 import Header from "components/general/Header/Header";
 import {
@@ -15,6 +16,7 @@ import {
     itemsCheckedOut,
     itemsPending,
     itemsReturned,
+    itemsBroken,
     orderStatus,
     members,
     teamCode,
@@ -24,6 +26,10 @@ import { hackathonName } from "constants.js";
 const Dashboard = () => {
     const reportIncident = (id) => {
         alert("Reports incident for component of id " + id);
+    };
+
+    const openBrokenTable = (id) => {
+        alert("This would open the report for item of id " + id);
     };
     return (
         <>
@@ -61,6 +67,7 @@ const Dashboard = () => {
                         </Grid>
                     ))}
                 </Grid>
+                <BrokenTable items={itemsBroken} openReportAlert={openBrokenTable} />
                 <PendingTable items={itemsPending} status={orderStatus} />
                 <CheckedOutTable
                     items={itemsCheckedOut}
