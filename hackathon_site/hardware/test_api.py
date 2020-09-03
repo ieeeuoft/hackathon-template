@@ -39,7 +39,7 @@ class HardwareListViewTestCase(SetupUserMixin, APITestCase):
             "quantity_remaining": 4,
             "notes": None,
             "max_per_team": 1,
-            "picture": "http://testserver/api/hardware/hardware/picture/location",
+            "picture": "http://testserver/picture/location",
         }
 
         response = self.client.get(self.view)
