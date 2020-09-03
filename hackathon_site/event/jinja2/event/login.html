@@ -1,0 +1,39 @@
+{% extends "event/form_base.html" %}
+
+{% block form_title %}Login{% endblock %}
+{% block form_button %}<button href="#" class="btn-small waves-effect waves-light secondaryColor colorBtn center">Login</button>{% endblock %}
+
+{% block form_img %}<img src="{{ static('event/images/landing.svg') }}" alt="Login image"/>{% endblock %}
+               
+{% block form_inputs %}
+<div class="row" style="margin-bottom: 0;">
+    <div class="input-field col s12" style="margin-bottom: 0;">
+        <input id="email" type="email" class="validate">
+        <label for="email">email</label>
+        <span class="helper-text" data-error="Please put in a valid email"></span>
+    </div>
+    </div>
+<div class="row" style="margin-bottom: 0;">
+    <div class="input-field col s12">
+        <input id="password" type="password" class="validate">
+        <label for="password">password</label>
+        <span class="helper-text" data-error="No combination with this email/password"></span>
+    </div>
+</div>
+{% endblock %}
+
+{% block form_bottom %}
+<div class="row center s12" style="width: 100%">
+    <div class="col m6 s12 loginLink">
+        <i class="material-icons primaryText">person_add</i>
+        <a href="#" class="primaryText hoverLink s6">Create Account</a>
+    </div>
+    <div class="col m6 s12 loginLink">
+        <i class="material-icons primaryText">lock_open</i>
+        <a href="#" class="primaryText hoverLink s6">Forgot Password</a>
+    </div>
+</div>
+<div class="row center">
+    Something wrong? <a href="#" class="primaryText hoverLink">Contact us</a>.
+</div>
+{% endblock %}
