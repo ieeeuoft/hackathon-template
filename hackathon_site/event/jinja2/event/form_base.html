@@ -6,11 +6,15 @@
         <div class="loginDiv z-depth-3 row">
             <div class="row col s12 flexColCenter {% if self.form_img() %}l7 m8{% endif %}">
                 <h1 class="formH1">{% block form_title %}{% endblock %}</h1>
-                <form class="col s12">
+                <form class="col s12"
+                    action="{{ form_action }}"
+                    method="{{ form_method if form_method else "post" }}"
+                >
+                    {{ csrf_input }}
                     {% block form_inputs %}{% endblock %}
+                    <br />
+                    {% block form_button %}{% endblock %}
                 </form>
-
-                {% block form_button %}{% endblock %}
                 <br />
                 {% block form_bottom %}{% endblock %}
             </div>

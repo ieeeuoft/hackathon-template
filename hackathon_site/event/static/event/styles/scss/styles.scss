@@ -306,6 +306,12 @@ strong {
     &Checkbox span {
         color: color(font);
     }
+
+    &FieldError {
+        font-size: 12px;
+        color: #f44336;
+        display: block;
+    }
 }
 // End of form stuff
 
