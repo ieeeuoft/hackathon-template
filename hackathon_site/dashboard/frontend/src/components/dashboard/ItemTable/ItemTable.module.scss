@@ -18,11 +18,17 @@
     &Text {
         margin-bottom: 10px;
     }
-}
-
-.titleChip {
-    display: flex;
-    align-items: flex-end;
+    &Chip {
+        display: flex;
+        &Space {
+            display: flex;
+            justify-content: space-between;
+        }
+        &Text {
+            min-width: fit-content;
+            padding-top: 7px;
+        }
+    }
 }
 
 .itemImg {
@@ -33,6 +39,12 @@
 .chip {
     margin-bottom: 4px;
     margin-left: 15px;
+    &Red {
+        background-color: color(redLight);
+        svg {
+            color: color(secondary);
+        }
+    }
     &Green {
         background-color: color(greenLight);
         svg {
@@ -43,12 +55,6 @@
         background-color: color(orangeLight);
         svg {
             color: color(orange);
-        }
-    }
-    &Red {
-        background-color: color(redLight);
-        svg {
-            color: color(red);
         }
     }
 }
