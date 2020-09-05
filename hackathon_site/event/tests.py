@@ -1,8 +1,10 @@
+from django.conf import settings
 from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
 
 from event.models import Profile, Team, User
+from hackathon_site.tests import SetupUserMixin
 
 
 class ProfileTestCase(TestCase):
@@ -31,3 +33,29 @@ class IndexViewTestCase(TestCase):
         url = reverse("event:index")
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class LogInViewTestCase(SetupUserMixin, TestCase):
+    def setUp(self):
+        super().setUp()
+        self.view = reverse("event:login")
+
+    def test_login_get(self):
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_submit_login_missing_username_and_password(self):
+        response = self.client.post(self.view, {"username": "", "password": ""})
+        self.assertContains(response, "This field is required", count=2)
+
+    def test_submit_login_invalid_credentials(self):
+        response = self.client.post(
+            self.view, {"username": "fake@email.com", "password": "abc123"}
+        )
+        self.assertContains(response, "Please enter a correct username and password")
+
+    def test_submit_login_valid_credentials(self):
+        response = self.client.post(
+            self.view, {"username": self.user.username, "password": self.password}
+        )
+        self.assertEqual(response.url, settings.LOGIN_REDIRECT_URL)
