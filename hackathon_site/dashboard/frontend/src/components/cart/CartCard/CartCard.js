@@ -56,6 +56,7 @@ const Stock = ({ currentStock, handleChange, numOfCartItem }) => {
 };
 
 export const CartCard = ({
+    id,
     image,
     title,
     currentStock,
@@ -69,7 +70,7 @@ export const CartCard = ({
     };
 
     return (
-        <Card className={styles.Cart} elevation={0}>
+        <Card className={styles.Cart} elevation={0} key={id}>
             <CardMedia
                 className={styles.CartPic}
                 image={image}
@@ -95,7 +96,9 @@ export const CartCard = ({
                 <IconButton
                     size="small"
                     className={styles.CartClose}
-                    onClick={handleRemove}
+                    onClick={() => {
+                        handleRemove(id);
+                    }}
                     role="remove"
                 >
                     <CloseIcon />
