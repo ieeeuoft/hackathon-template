@@ -19,6 +19,7 @@ h3 {
 
 body {
     font-size: 18px;
+    color: color(font);
 }
 
 strong {
@@ -48,9 +49,15 @@ strong {
 
 // Landing section
 .landingImg {
-    display: flex;
-    justify-content: center;
-    margin-top: 60px;
+    @include flexPosition($jusCon: center);
+
+    img {
+        width: 100%;
+    }
+
+    @include responsive(sm-down) {
+        margin-top: 0;
+    }
 }
 // End of landing section
 
@@ -186,7 +193,7 @@ strong {
 }
 // End of section
 
-/* Colors  */
+// Colors
 .primaryColor {
     background-color: color(primary) !important;
 }
@@ -236,10 +243,103 @@ strong {
 }
 
 .hoverLink {
-    font-weight: bold;
+    font-weight: 600;
 
     &:hover {
         text-decoration: underline;
     }
 }
 // End of formatting stuff
+
+// Login stuff
+.login {
+    &Div {
+        display: flex;
+        background-color: #fff;
+        border-top: solid 10px color(secondary);
+        border-radius: 3px 3px 0 0;
+        padding: 50px 30px 10px;
+        margin: 50px auto 100px;
+        max-width: 950px;
+
+        @include responsive(md-down) {
+            padding: 40px 5px 10px;
+        }
+
+        @include responsive(sm-down) {
+            padding-bottom: 50px;
+            display: block;
+        }
+
+        .landingImg img {
+            max-width: 300px;
+        }
+    }
+
+    &Link {
+        display: flex;
+        justify-content: center;
+        margin: 15px 0;
+        font-size: size(md);
+        padding: 0 !important;
+
+        i {
+            margin-right: 5px;
+        }
+    }
+}
+
+.form {
+    &H1 {
+        font-weight: bold;
+        text-align: center;
+        text-transform: uppercase;
+        margin: 0 auto 30px;
+        color: color(dark);
+    }
+
+    &H2 {
+        font-weight: normal;
+        color: color(dark);
+    }
+
+    &Checkbox span {
+        color: color(font);
+    }
+
+    &FieldError {
+        font-size: 12px;
+        color: #f44336;
+        display: block;
+    }
+}
+// End of form stuff
+
+// Dashboard stuff
+.borderTopDiv {
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    border-top: solid 10px color(secondary);
+    border-radius: 3px 3px 0 0;
+    padding: 50px 30px 40px;
+    margin: 20px auto;
+    max-width: 950px;
+    font-size: size(md);
+
+    h4 {
+        margin: 0 0 20px;
+    }
+}
+
+.faq {
+    &Question {
+        font-weight: bold;
+        margin: 10px 0 0;
+    }
+
+    &Answer {
+        margin: 5px 0 20px;
+    }
+}
+// End of dashboard stuff

@@ -9,6 +9,7 @@ import {
     PendingTable,
     ReturnedTable,
     CheckedOutTable,
+    BrokenTable,
 } from "components/dashboard/ItemTable/ItemTable";
 import ProductOverview from "components/inventory/ProductOverview/ProductOverview";
 import Header from "components/general/Header/Header";
@@ -17,6 +18,7 @@ import {
     itemsCheckedOut,
     itemsPending,
     itemsReturned,
+    itemsBroken,
     orderStatus,
     members,
     teamCode,
@@ -30,7 +32,7 @@ const Dashboard = () => {
     };
 
     const addToCart = () => {
-        alert("add to cart");
+        alert("Add to cart");
     };
 
     const [sideSheetOpen, setSideSheetOpen] = React.useState(false);
@@ -39,6 +41,9 @@ const Dashboard = () => {
         setSideSheetOpen(!sideSheetOpen);
     };
 
+    const openBrokenTable = (id) => {
+        alert("This would open the report for item of id " + id);
+    };
     return (
         <>
             <Header />
@@ -81,6 +86,7 @@ const Dashboard = () => {
                         </Grid>
                     ))}
                 </Grid>
+                <BrokenTable items={itemsBroken} openReportAlert={openBrokenTable} />
                 <PendingTable items={itemsPending} status={orderStatus} />
                 <CheckedOutTable
                     items={itemsCheckedOut}

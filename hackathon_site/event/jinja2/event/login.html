@@ -1,0 +1,75 @@
+{% extends "event/form_base.html" %}
+
+{% block form_title %}Login{% endblock %}
+
+{% block form_img %}<img src="{{ static('event/images/landing.svg') }}" alt="Login image"/>{% endblock %}
+
+{% set form_action=url("event:login") %}
+
+{% block form_inputs %}
+<div class="row" style="margin-bottom: 0;">
+    <div class="input-field col s12" style="margin-bottom: 0;">
+        <input
+            id="{{ form.username.id_for_label }}"
+            name="username"
+            type="email"
+            class="{% if form.username.errors %}invalid{% endif %}"
+            value="{{ form.username.value() or ""}}"
+        >
+        <label for="{{ form.username.id_for_label }}">Email</label>
+        {% if form.username.errors %}
+            <span class="formFieldError">
+            {% for error in form.username.errors %}
+                {{ error }}
+                <br />
+            {% endfor %}
+            </span>
+        {% endif %}
+
+    </div>
+</div>
+<div class="row" style="margin-bottom: 0;">
+    <div class="input-field col s12">
+        <input
+            id="{{ form.password.id_for_label }}"
+            name="password"
+            type="password"
+            class="{% if form.password.errors %}invalid{% endif %}"
+        >
+        <label for="{{ form.password.id_for_label }}">Password</label>
+        {% if form.password.errors %}
+            <span class="formFieldError">
+            {% for error in form.password.errors %}
+                {{ error }}
+                <br />
+            {% endfor %}
+            </span>
+        {% endif %}
+    </div>
+</div>
+{% if form.non_field_errors %}
+    {% for error in form.non_field_errors() %}
+        {{ error }}
+    {% endfor %}
+{% endif %}
+{% endblock %}
+
+{% block form_button %}
+<button type="submit" id="login-submit" class="btn-small waves-effect waves-light secondaryColor colorBtn center">Login</button>
+{% endblock %}
+
+{% block form_bottom %}
+<div class="row center s12" style="width: 100%">
+    <div class="col m6 s12 loginLink">
+        <i class="material-icons primaryText">person_add</i>
+        <a href="#" class="primaryText hoverLink s6">Create Account</a>
+    </div>
+    <div class="col m6 s12 loginLink">
+        <i class="material-icons primaryText">lock_open</i>
+        <a href="#" class="primaryText hoverLink s6">Forgot Password</a>
+    </div>
+</div>
+<div class="row center">
+    Something wrong? <a href="#" class="primaryText hoverLink">Contact us</a>.
+</div>
+{% endblock %}

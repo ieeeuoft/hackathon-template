@@ -1,0 +1,109 @@
+{% extends "event/form_base.html" %}
+
+{% block form_title %}Application{% endblock %}
+{% block form_button %}Submit{% endblock %}
+               
+{% block form_inputs %}
+    <h4 class="formH2 col s12">Personal</h4>
+    <div class="input-field col m7 s12">
+        <input id="birthday" type="text" class="validate">
+        <label for="birthday">birthday</label>
+    </div>
+    <div class="input-field col m7 s12">
+        <input id="gender" type="text" class="validate">
+        <label for="gender">gender</label>
+    </div>
+    <div class="input-field col m7 s12">
+        <input id="ethnicity" type="text" class="validate">
+        <label for="ethnicity">ethnicity</label>
+    </div>
+    <div class="input-field col m7 s12">
+        <input id="phone-number" type="text" class="validate">
+        <label for="phone-number">phone number</label>
+    </div>
+    <div class="input-field col m7 s12">
+        <input id="t-shirt-size" type="text" class="validate">
+        <label for="t-shirt-size">t-shirt size</label>
+    </div>
+    <div class="input-field col m7 s12">
+        <input id="dietary-restrictions" type="text" class="validate">
+        <label for="dietary-restrictions">dietary restrictions</label>
+        <span class="helper-text">If none, leave blank</span>
+    </div>
+
+    <h4 class="formH2 col s12">Education</h4>
+    <div class="input-field col s12">
+        <input id="school" type="text" class="validate">
+        <label for="school">school</label>
+    </div>
+    <div class="input-field col s12">
+        <input id="program" type="text" class="validate">
+        <label for="program">program of study</label>
+    </div>
+    <div class="input-field col m7 s12">
+        <input id="graduation-year" type="text" class="validate">
+        <label for="graduation-year">graduation year</label>
+    </div>
+
+    <h4 class="formH2 col s12">Resume</h4>
+    <div class="file-field input-field col s12">
+        <div class="btn colorBtn">
+            <span>Upload</span>
+            <input type="file">
+        </div>
+        <div class="file-path-wrapper">
+            <input class="file-path validate" type="text">
+        </div>
+    </div>
+
+    <h4 class="formH2 col s12">Questions</h4>
+    <div class="input-field col s12">
+        <textarea id="textarea2" class="materialize-textarea" data-length="1000"></textarea>
+        <label for="textarea2">Why do you want to participate at _______?</label>
+    </div>
+    <div class="input-field col s12">
+        <textarea id="textarea2" class="materialize-textarea" data-length="1000"></textarea>
+        <label for="textarea2">Tell us about your experience with _______!</label>
+    </div>
+    <div class="input-field col s12">
+        <textarea id="textarea2" class="materialize-textarea" data-length="200"></textarea>
+        <label for="textarea2">How did you hear about  _______?</label>
+    </div>
+
+    <div class="col s12 formCheckbox">
+        <p>
+            <label>
+                <input type="checkbox" class="filled-in" />
+                <span>I have read and agree to the <a href="https://static.mlh.io/docs/mlh-code-of-conduct.pdf" class="hoverLink primaryText" rel="noopener" target="_blank">MLH Code of Conduct</a>.</span>
+            </label>
+        </p>
+        <p>
+            <label>
+                <input type="checkbox" class="filled-in" />
+                <span>
+                    I authorize IEEE to share my application/registration information for event administration, ranking, MLH administration, pre- and post- event information emails, and occasional 
+                    messages about hackathons in-line with the <a href="https://mlh.io/privacy#:~:text=MLH%20may%20disclose%20Personal%20Information,or%20entities%20affiliated%20with%20MLH.&text=As%20a%20result%2C%20if%20you,practices%20of%20these%20Partner%20Companies." class="hoverLink primaryText" rel="noopener" target="_blank">MLH Privacy Policy</a>. 
+                    I further agree to the terms of both the <a href="https://static.mlh.io/docs/mlh-member-event-guidelines.pdf"class="hoverLink primaryText" rel="noopener" target="_blank">MLH Contest
+                    Terms and Conditions</a> and the MLH Privary Policy.
+                </span>
+            </label>
+        </p>
+        <p>
+            <label>
+                <input type="checkbox" class="filled-in" />
+                <span>I consent to IEEE UofT sharing my resume with event sponsors.</span>
+            </label>
+        </p>
+        <p>
+            <label>
+                <input type="checkbox" class="filled-in" />
+                <span>I confirm that I will be 18 years of age or older on MONTH XX, 20XX and am attending a post-secondary institution.</span>
+            </label>
+        </p>
+    </div>    
+<br />
+<div class="container center ">
+    You cannot edit this afterwards!
+</div>
+<br />
+{% endblock %}

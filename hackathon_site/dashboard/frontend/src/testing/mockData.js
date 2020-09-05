@@ -96,6 +96,25 @@ export const itemsPending = [
     },
 ];
 
+export const itemsBroken = [
+    {
+        id: 1,
+        url: "https://i.imgur.com/IO6e5a6.jpg",
+        name: "Arduino",
+        qty: 1,
+        time: "9:30PM XX-XX-2020",
+        condition: "Broken",
+    },
+    {
+        id: 9,
+        url: "https://i.imgur.com/kOlrXto.jpg",
+        name: "Raspi",
+        qty: 1,
+        time: "9:30PM XX-XX-2020",
+        condition: "Lost",
+    },
+];
+
 export const orderStatus = "pending";
 
 // Team card

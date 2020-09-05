@@ -6,6 +6,7 @@ export const initialState = {
     dashboard: {
         isCheckedOutTableVisible: true,
         isReturnedTableVisible: true,
+        isPendingTableVisible: true,
     },
     snackbars: [],
 };
@@ -20,6 +21,10 @@ const uiSlice = createSlice({
         toggleReturnedTable: (state) => {
             state.dashboard.isReturnedTableVisible = !state.dashboard
                 .isReturnedTableVisible;
+        },
+        togglePendingTable: (state) => {
+            state.dashboard.isPendingTableVisible = !state.dashboard
+                .isPendingTableVisible;
         },
         displaySnackbar: (state, { payload: { message, options = {} } }) => {
             if (!options.key) {
@@ -54,6 +59,7 @@ export const { actions, reducer } = uiSlice;
 export const {
     toggleCheckedOutTable,
     toggleReturnedTable,
+    togglePendingTable,
     displaySnackbar,
     dismissSnackbar,
     removeSnackbar,
@@ -66,4 +72,6 @@ export const isCheckedOutTableVisibleSelector = (state) =>
     uiSelector(state).dashboard.isCheckedOutTableVisible;
 export const isReturnedTableVisibleSelector = (state) =>
     uiSelector(state).dashboard.isReturnedTableVisible;
+export const isPendingTableVisibleSelector = (state) =>
+    uiSelector(state).dashboard.isPendingTableVisible;
 export const snackbarSelector = (state) => uiSelector(state).snackbars;

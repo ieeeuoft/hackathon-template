@@ -1,0 +1,29 @@
+{% extends "event/base.html" %}
+
+{% block body %}
+<div class="container">
+    <div class="section">
+        <div class="loginDiv z-depth-3 row">
+            <div class="row col s12 flexColCenter {% if self.form_img() %}l7 m8{% endif %}">
+                <h1 class="formH1">{% block form_title %}{% endblock %}</h1>
+                <form class="col s12"
+                    action="{{ form_action }}"
+                    method="{{ form_method if form_method else "post" }}"
+                >
+                    {{ csrf_input }}
+                    {% block form_inputs %}{% endblock %}
+                    <br />
+                    {% block form_button %}{% endblock %}
+                </form>
+                <br />
+                {% block form_bottom %}{% endblock %}
+            </div>
+            {% if self.form_img() %}
+            <div class="col l5 m4 s12 center landingImg">
+                {% block form_img %}{% endblock %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
