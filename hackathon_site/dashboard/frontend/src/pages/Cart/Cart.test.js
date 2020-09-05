@@ -7,7 +7,7 @@ import { cartItems } from "testing/mockData";
 
 test("Cart items and Cart Summary card appears", () => {
     const { getByText } = render(withStoreAndRouter(<Cart />));
-    
+
     for (let e of cartItems) {
         expect(getByText(e.title)).toBeInTheDocument();
     }
