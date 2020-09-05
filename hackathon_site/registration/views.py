@@ -1,3 +1,8 @@
-from django.shortcuts import render
+from django_registration.backends.activation.views import RegistrationView
 
-# Create your views here.
+from registration.forms import SignUpForm
+
+
+class SignUpView(RegistrationView):
+    template_name = "registration/signup.html"
+    form_class = SignUpForm

@@ -1,5 +1,20 @@
 {% extends "event/base.html" %}
 
+{% macro render_field(field) %}
+    <div class="input-field col s12">
+        {{ field }}
+        {{ field.label_tag() }}
+        {% if field.errors %}
+            <span class="formFieldError">
+            {% for error in field.errors %}
+                {{ error }}
+                <br />
+            {% endfor %}
+            </span>
+        {% endif %}
+    </div>
+{% endmacro %}
+
 {% block body %}
 <div class="container">
     <div class="section">
