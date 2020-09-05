@@ -46,6 +46,7 @@ class LogInViewTestCase(SetupUserMixin, TestCase):
     For practicality reasons, tests for templates with forms are limited to
     POSTing raw data at this time.
     """
+
     def setUp(self):
         super().setUp()
         self.view = reverse("event:login")
