@@ -36,6 +36,7 @@ if DEBUG:
     CORS_ORIGIN_REGEX_WHITELIST = [
         r"^https?://localhost:?\d*$",
     ]
+    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 else:
     # NOTE: If you aren't ieee uoft, put your websites here
     ALLOWED_HOSTS = ["ieee.utoronto.ca"]
@@ -151,6 +152,7 @@ REST_FRAMEWORK = {
 LANGUAGE_CODE = "en-us"
 
 TIME_ZONE = "America/Toronto"
+TZ_INFO = pytz.timezone(TIME_ZONE)
 
 USE_I18N = True
 
@@ -172,7 +174,12 @@ STATIC_URL = "static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 # Event specific settings
-REGISTRATION_OPEN_DATE = datetime(2020, 9, 1, tzinfo=pytz.timezone(TIME_ZONE))
-REGISTRATION_CLOSE_DATE = datetime(2020, 9, 30, tzinfo=pytz.timezone(TIME_ZONE))
-EVENT_START_DATE = datetime(2020, 10, 10, 10, 0, 0, tzinfo=pytz.timezone(TIME_ZONE))
-EVENT_END_DATE = datetime(2020, 10, 11, 17, 0, 0, tzinfo=pytz.timezone(TIME_ZONE))
+REGISTRATION_OPEN_DATE = datetime(2020, 9, 1, tzinfo=TZ_INFO)
+REGISTRATION_CLOSE_DATE = datetime(2020, 9, 30, tzinfo=TZ_INFO)
+EVENT_START_DATE = datetime(2020, 10, 10, 10, 0, 0, tzinfo=TZ_INFO)
+EVENT_END_DATE = datetime(2020, 10, 11, 17, 0, 0, tzinfo=TZ_INFO)
+
+# Registration settings
+now = datetime.now(TZ_INFO)
+ACCOUNT_ACTIVATION_DAYS = 7
+REGISTRATION_OPEN = REGISTRATION_OPEN_DATE <= now < REGISTRATION_CLOSE_DATE
