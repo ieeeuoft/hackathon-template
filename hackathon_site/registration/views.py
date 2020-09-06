@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.template.loader import render_to_string
+from django.urls import reverse_lazy
 from django_registration.backends.activation.views import RegistrationView
 
 from registration.forms import SignUpForm
@@ -8,6 +9,9 @@ from registration.forms import SignUpForm
 class SignUpView(RegistrationView):
     template_name = "registration/signup.html"
     form_class = SignUpForm
+    email_subject_template = "registration/emails/activation_email_subject.txt"
+    email_body_template = "registration/emails/activation_email_body.html"
+    success_url = reverse_lazy("registration:signup_complete")
 
     def get_email_context(self, activation_key):
         context = super().get_email_context(activation_key)

@@ -39,6 +39,6 @@ class SignUpViewTestCase(TestCase):
             "password2": "abcdef456",
         }
         response = self.client.post(self.view, data)
-        self.assertEqual(
-            response.url, "/"
-        )  # This will fail until that view is implemented
+        self.assertRedirects(response, reverse("registration:signup_complete"))
+        redirected_response = response.client.get(response.url)
+        self.assertContains(redirected_response, "Activate your account")
