@@ -149,7 +149,7 @@ $ yarn test
 ## File Structure
 The top level [hackathon_site](hackathon_site) folder contains the Django project that encapsulates this template.
 
-The main project configs are in [hackathon_site/hackathon_site](hackathon_site/hackathon_site), including the main settings file [settings/__init__.py](hackathon_site/hackathon_site/settings/__init__.py) and top-level URL config.
+The main project configs are in [hackathon_site/hackathon_site](hackathon_site/hackathon_site), including the main settings file [settings/\_\_init__.py](hackathon_site/hackathon_site/settings/__init__.py) and top-level URL config.
 
 The [dashboard](hackathon_site/dashboard) app contains the React project for the inventory management and hardware sign-out platform.
 
@@ -275,5 +275,9 @@ Some settings you will definitely want to change are:
 - `REGISTRATION_CLOSE_DATE` - When registration closes
 - `EVENT_START_DATE` - When the event starts
 - `EVENT_END_DATE` - When the event ends
+
+You will also need to set the necessary settings for your email server, so that Django can send emails to users. [Read about those settings here](https://docs.djangoproject.com/en/3.1/topics/email/).
+
+Near the top of the settings file, you must also set `ALLOWED_HOSTS` and `CORS_ORIGIN_REGEX_WHITELIST` for your domain.
 
 For convenience, some constants have been passed into the context of all Jinja templates by default, so they can be used right away. See the [Jinja2 config file](hackathon_site/hackathon_site/jinja2.py) for full details.
