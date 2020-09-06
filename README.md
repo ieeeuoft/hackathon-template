@@ -155,7 +155,7 @@ The [dashboard](hackathon_site/dashboard) app contains the React project for the
 
 The [event](hackathon_site/event) app contains the public-facing templates for the landing page.
 
-The [applications](hackathon_site/applications) app contains models, forms, and templates for user registration, including landing page and application templates. Since these templates are similar to the landing page, they may extend templates and use static files from the `event` app. 
+The [registration](hackathon_site/registration) app contains models, forms, and templates for user registration, including signup and application templates. Since these templates are similar to the landing page, they may extend templates and use static files from the `event` app. 
 
 ### Templates and Static Files
 Templates served from Django can be placed in any app. We use [Jinja 2](https://jinja.palletsprojects.com/en/2.11.x/) as our templating engine, instead of the default Django Template Language. Within each app, Jinja 2 templates must be placed in a folder called `jinja2/<app_name>/` (i.e., the full path will be `hackathon_site/<app_name>/jinja2/<app_name>/`). Templates can then be referenced in views as `<app_name>/your_template.html`.
@@ -266,5 +266,14 @@ This approach is very similar to using the template, but you lose the "generated
 This project was designed to be generic and customizable. At minimum, you will want to update templates to include your event's name and logo, but you may customize them to whatever degree you wish. See [file structure](#file-structure) for more details about templates.
 
 Core event settings and constants, such as cutoff dates, are kept at the bottom of the [settings](hackathon_site/hackathon_site/settings/__init__.py) file. These settings can be imported and used in any view, form, or in general any other python file. See the [Django docs on settings](https://docs.djangoproject.com/en/3.1/topics/settings/#using-settings-in-python-code) to read more about how to use them.
+
+Some settings you will definitely want to change are:
+- `HACKATHON_NAME` - The name of your hackathon, for use in templates
+- `DEFAULT_FROM_EMAIL` - This can be used in templates, and it will also be used by [Django's email system](https://docs.djangoproject.com/en/3.1/topics/email/))
+- `CONTACT_EMAIL` - By default, the same as `DEFAULT_FROM_EMAIL`. The email users should contact you at, for use in templates
+- `REGISTRATION_OPEN_DATE` - When registration opens
+- `REGISTRATION_CLOSE_DATE` - When registration closes
+- `EVENT_START_DATE` - When the event starts
+- `EVENT_END_DATE` - When the event ends
 
 For convenience, some constants have been passed into the context of all Jinja templates by default, so they can be used right away. See the [Jinja2 config file](hackathon_site/hackathon_site/jinja2.py) for full details.
