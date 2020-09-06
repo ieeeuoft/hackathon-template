@@ -70,3 +70,29 @@ class LogInViewTestCase(SetupUserMixin, TestCase):
             self.view, {"username": self.user.username, "password": self.password}
         )
         self.assertEqual(response.url, settings.LOGIN_REDIRECT_URL)
+
+
+class DashboardTestCase(SetupUserMixin, TestCase):
+    def setUp(self):
+        super().setUp()
+        self.view = reverse("event:dashboard")
+
+    def test_redirects_to_login(self):
+        """
+        Redirects to the login page when not logged in
+        """
+        response = self.client.get(self.view)
+        self.assertRedirects(response, f"{reverse('event:login')}?next={self.view}")
+
+    def test_renders_when_logged_in(self):
+        """
+        Renders the dashboard when logged in
+
+        Once the dashboard is fully implemented, this test should
+        be complemented with a whole suite of tests depending on
+        the user's progress through the application, etc.
+        """
+        self._login()
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertContains(response, "Dashboard")
