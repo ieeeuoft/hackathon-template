@@ -1,4 +1,4 @@
-{% set activation_url=scheme + "://" + request.build_absolute_uri(url("registration:activate", kwargs={"activation_key": activation_key})) %}
+{% set activation_url=request.build_absolute_uri(url("registration:activate", kwargs={"activation_key": activation_key})) %}
 
 <p>Hello {{ user.first_name|striptags }},</p>
 
