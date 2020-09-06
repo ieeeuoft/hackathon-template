@@ -25,6 +25,7 @@ urlpatterns = [
                 "registration_close_date": settings.REGISTRATION_CLOSE_DATE,
             },
         ),
+        name="signup_closed",
     ),
     path(
         "activate/<str:activation_key>/",

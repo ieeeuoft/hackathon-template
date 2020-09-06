@@ -15,6 +15,7 @@ class SignUpView(RegistrationView):
     email_subject_template = "registration/emails/activation_email_subject.txt"
     email_body_template = "registration/emails/activation_email_body.html"
     success_url = reverse_lazy("registration:signup_complete")
+    disallowed_url = reverse_lazy("registration:signup_closed")
 
     def get_email_context(self, activation_key):
         context = super().get_email_context(activation_key)

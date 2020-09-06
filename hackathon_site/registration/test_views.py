@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
@@ -42,3 +43,44 @@ class SignUpViewTestCase(TestCase):
         self.assertRedirects(response, reverse("registration:signup_complete"))
         redirected_response = response.client.get(response.url)
         self.assertContains(redirected_response, "Activate your account")
+
+
+class ActivationViewTestCase(TestCase):
+    """
+    Test the activation view. This is nearly identical to django_registration's
+    ActivationView, we just add the contact email into the template context.
+    Hence, that's the only thing we test for.
+    """
+
+    def setUp(self):
+        super().setUp()
+        self.view = reverse(
+            "registration:activate", kwargs={"activation_key": "i-am-fake"}
+        )
+
+    def test_error_page_has_contact_email(self):
+        response = self.client.get(self.view)
+        self.assertContains(response, settings.CONTACT_EMAIL)
+
+
+class MiscRegistrationViewsTestCase(TestCase):
+    """
+    Tests for the straggler registration views, that are just
+    defined in the urlconf with TemplateViews.
+    """
+
+    def test_signup_complete(self):
+        response = self.client.get(reverse("registration:signup_complete"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # Test that the default from email was passed in as a context variable
+        self.assertContains(response, settings.DEFAULT_FROM_EMAIL)
+
+    def test_signup_closed(self):
+        response = self.client.get(reverse("registration:signup_closed"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # Test that context variables were passed in
+        self.assertContains(response, settings.HACKATHON_NAME)
+        self.assertContains(response, settings.CONTACT_EMAIL)
+        self.assertContains(
+            response, settings.REGISTRATION_CLOSE_DATE.strftime("%B %-d, %Y")
+        )
