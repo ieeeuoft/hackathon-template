@@ -8,5 +8,3 @@ class IndexView(TemplateView):
 
 class DashboardView(LoginRequiredMixin, TemplateView):
     template_name = "event/dashboard_base.html"
-
-

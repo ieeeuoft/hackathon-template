@@ -1,7 +1,10 @@
 from django.conf import settings
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
-from django_registration.backends.activation.views import RegistrationView
+from django_registration.backends.activation.views import (
+    RegistrationView,
+    ActivationView as _ActivationView,
+)
 
 from registration.forms import SignUpForm
 
@@ -66,3 +69,15 @@ class SignUpView(RegistrationView):
             settings.DEFAULT_FROM_EMAIL,
             html_message=html_message,
         )
+
+
+class ActivationView(_ActivationView):
+    success_url = reverse_lazy("event:dashboard")
+    # This page only gets rendered if something went wrong, otherwise
+    # the user is redirected
+    template_name = "registration/activation_failed.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["email"] = settings.CONTACT_EMAIL
+        return context
