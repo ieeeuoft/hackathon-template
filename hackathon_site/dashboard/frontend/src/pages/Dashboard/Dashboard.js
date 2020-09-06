@@ -1,6 +1,7 @@
 import React from "react";
 import styles from "./Dashboard.module.scss";
 import Grid from "@material-ui/core/Grid";
+import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import DashCard from "components/dashboard/DashCard/DashCard";
 import TeamCard from "components/dashboard/TeamCard/TeamCard";
@@ -10,6 +11,7 @@ import {
     CheckedOutTable,
     BrokenTable,
 } from "components/dashboard/ItemTable/ItemTable";
+import ProductOverview from "components/inventory/ProductOverview/ProductOverview";
 import Header from "components/general/Header/Header";
 import {
     cardItems,
@@ -20,6 +22,7 @@ import {
     orderStatus,
     members,
     teamCode,
+    productInformation,
 } from "testing/mockData";
 import { hackathonName } from "constants.js";
 
@@ -28,12 +31,28 @@ const Dashboard = () => {
         alert("Reports incident for component of id " + id);
     };
 
+    const addToCart = () => {
+        alert("Add to cart");
+    };
+
+    const [sideSheetOpen, setSideSheetOpen] = React.useState(false);
+
+    const toggleMenu = () => {
+        setSideSheetOpen(!sideSheetOpen);
+    };
+
     const openBrokenTable = (id) => {
         alert("This would open the report for item of id " + id);
     };
     return (
         <>
             <Header />
+            <ProductOverview
+                detail={productInformation}
+                addToCart={addToCart}
+                isVisible={sideSheetOpen}
+                handleClose={toggleMenu}
+            />
             <div className={styles.dashboard}>
                 <Typography variant="h1">{hackathonName} Hardware Dashboard</Typography>
                 <Grid
@@ -74,6 +93,10 @@ const Dashboard = () => {
                     reportIncident={reportIncident}
                 />
                 <ReturnedTable items={itemsReturned} />
+
+                <Button variant="contained" onClick={toggleMenu}>
+                    Open product overview
+                </Button>
             </div>
         </>
     );

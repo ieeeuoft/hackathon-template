@@ -132,23 +132,24 @@ export const userEmail = "graham@email.com";
 
 // Product Overview
 export const productInformation = {
+    id: 1,
     name: "Arduino",
-    type: "red",
     total: 30,
-    quantityAvailable: 0,
+    quantityAvailable: 19,
     img: "https://i.imgur.com/IO6e5a6.jpg",
     category: ["MCU", "FPGA"],
     manufacturer: "Canakit",
     model_num: "Model 3B+",
-    datasheet: "link",
-    notes: "- For micropython ask for image \n - randomnerdtutorials.com",
+    datasheet: "https://www.facebook.com",
+    notes: "- For micropython ask for image\n- randomnerdtutorials.com",
     constraints: ["- Max 1 of this item", "- Max 3 microcontroller labelled red"],
-    quantity: 3,
+    constraintMax: 3, // Can also be null
 };
 
 export const addCartTest = () => {
     alert("Added to Cart");
 };
+
 // Inventory
 export const inventoryCategories = [
     { name: "MCU", qty: 12 },

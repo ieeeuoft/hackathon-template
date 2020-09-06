@@ -1,16 +1,30 @@
 @import "./../../../assets/abstracts/mixins";
 @import "./../../../assets/abstracts/variables";
 
-.topsheet {
-    background-color: color(light2);
+.header {
     display: flex;
-    padding: 24px 50px;
-    width: 100%;
-    position: fixed;
     align-items: center;
+    width: 100%;
+    background-color: color(light2);
     z-index: 5;
-    .backarrow {
-        margin: 0 15px;
-        padding: 0;
+    padding: 8px 34px;
+
+    @include responsive(sm-down) {
+        padding: 4px 12px;
+    }
+
+    &BackArrow {
+        margin-right: 5px;
+    }
+}
+
+.body {
+    width: 100%;
+    height: 100%;
+    padding: 25px 30px;
+
+    @include responsive(sm-up) {
+        padding: 45px 50px;
+        min-width: 550px;
     }
 }
