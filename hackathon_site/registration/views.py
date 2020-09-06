@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.shortcuts import redirect
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django_registration.backends.activation.views import (
@@ -70,6 +71,12 @@ class SignUpView(RegistrationView):
             settings.DEFAULT_FROM_EMAIL,
             html_message=html_message,
         )
+
+    def get(self, request, *args, **kwargs):
+        if self.request.user.is_authenticated:
+            return redirect(reverse_lazy("event:dashboard"))
+
+        return super().get(request, *args, **kwargs)
 
 
 class ActivationView(_ActivationView):

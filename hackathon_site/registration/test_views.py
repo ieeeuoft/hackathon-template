@@ -3,8 +3,10 @@ from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
 
+from hackathon_site.tests import SetupUserMixin
 
-class SignUpViewTestCase(TestCase):
+
+class SignUpViewTestCase(SetupUserMixin, TestCase):
     """
     Tests for the sign up view
 
@@ -33,7 +35,7 @@ class SignUpViewTestCase(TestCase):
 
     def test_valid_submit_redirect(self):
         data = {
-            "email": "foo@bar.com",
+            "email": "testuser@email.com",
             "first_name": "Foo",
             "last_name": "Bar",
             "password1": "abcdef456",
@@ -43,6 +45,11 @@ class SignUpViewTestCase(TestCase):
         self.assertRedirects(response, reverse("registration:signup_complete"))
         redirected_response = response.client.get(response.url)
         self.assertContains(redirected_response, "Activate your account")
+
+    def test_redirects_user_to_dashboard_if_authenticated(self):
+        self._login()
+        response = self.client.get(self.view)
+        self.assertRedirects(response, reverse("event:dashboard"))
 
 
 class ActivationViewTestCase(TestCase):
