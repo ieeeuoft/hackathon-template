@@ -45,14 +45,21 @@ urlpatterns = [
 
 if settings.DEBUG:
     import debug_toolbar
+    from django.core.exceptions import ImproperlyConfigured
     from django.urls import re_path
     from django.views.static import serve
 
     urlpatterns = [path("__debug__/", include(debug_toolbar.urls))] + urlpatterns
 
+    if settings.MEDIA_URL.startswith("http"):
+        raise ImproperlyConfigured(
+            "To serve media from off-site in development, "
+            "remove the media path from hackathon_site.urls"
+        )
     urlpatterns += [
         re_path(
-            r"^media/(?P<path>.*)$", serve, {"document_root": settings.MEDIA_ROOT, }
-        ),
+            r"^%s/(?P<path>.*)$" % settings.MEDIA_URL.strip("/"),
+            serve,
+            {"document_root": settings.MEDIA_ROOT},
+        )
     ]
-
