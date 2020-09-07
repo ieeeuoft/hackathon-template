@@ -30,7 +30,7 @@ class HardwareSerializerTestCase(TestCase):
             "quantity_remaining": 4,
             "notes": None,
             "max_per_team": 1,
-            "picture": "/picture/location",
+            "picture": "/media/picture/location",
         }
 
         data = hardware_serializer.data
@@ -52,7 +52,7 @@ class HardwareSerializerTestCase(TestCase):
             "quantity_remaining": 4,
             "notes": None,
             "max_per_team": 1,
-            "picture": "/picture/location",
+            "picture": "/media/picture/location",
         }
         data = hardware_serializer.data
         self.assertEqual(expected_response, data)
@@ -77,7 +77,7 @@ class HardwareSerializerTestCase(TestCase):
             "quantity_remaining": 3,
             "notes": None,
             "max_per_team": 1,
-            "picture": "/picture/location",
+            "picture": "/media/picture/location",
         }
         data = hardware_serializer.data
         self.assertEqual(expected_response, data)

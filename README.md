@@ -275,9 +275,28 @@ Some settings you will definitely want to change are:
 - `REGISTRATION_CLOSE_DATE` - When registration closes
 - `EVENT_START_DATE` - When the event starts
 - `EVENT_END_DATE` - When the event ends
+- `MEDIA_ROOT` - The path on the server where user-uploaded files will end up, including resumes
 
 You will also need to set the necessary settings for your email server, so that Django can send emails to users. [Read about those settings here](https://docs.djangoproject.com/en/3.1/topics/email/).
 
 Near the top of the settings file, you must also set `ALLOWED_HOSTS` and `CORS_ORIGIN_REGEX_WHITELIST` for your domain.
 
 For convenience, some constants have been passed into the context of all Jinja templates by default, so they can be used right away. See the [Jinja2 config file](hackathon_site/hackathon_site/jinja2.py) for full details.
+
+## Deploying
+This template may be deployed however you wish, we recommend you read [Django's documentation on deploying](https://docs.djangoproject.com/en/3.1/howto/deployment/). 
+
+[Gunicorn](https://gunicorn.org/) is included in `requirements.txt` already, and deploying through gunicorn with a reverse proxy such as [Nginx](https://docs.nginx.com/nginx/admin-guide/web-server/reverse-proxy/) is our recommended approach. The template is fully configured to be deployed under a subdirectory of your website through a reverse proxy, provided that the `SCRIPT_NAME` header is set. You may also set the path prefix explicitly in the settings file with [`FORCE_SCRIPT_NAME`](https://docs.djangoproject.com/en/2.2/ref/settings/#force-script-name).
+
+### Serving static files
+Static files are configured to be served under the `static/` path, and are expected to be in a folder called `static` in the django project root (adjacent to `manage.py`). In production, you should run `python manage.py collectstatic` to move all static files into the `static` folder, and configure your web server to serve them directly. Read more about [managing static files in Django in the docs](https://docs.djangoproject.com/en/3.1/howto/static-files/).
+
+### Serving user uploaded files
+User-uploaded files are handled differently in Django than static files. We recommend you read the pages on Django [file uploads](https://docs.djangoproject.com/en/3.1/topics/http/file-uploads/) and [the security of user-uploaded content](https://docs.djangoproject.com/en/3.1/topics/security/#user-uploaded-content-security) before proceeding.
+
+This template is configured to expect user-uploaded content to be served at `media/`, per the `MEDIA_URL` setting (you are free to change this, for example to an off-domain URL). User-uploaded content will be put in the folder defined by `MEDIA_ROOT`, which defaults to `/var/www/media/` and should almost certainly be configured for your server. Whatever you set it to, make sure the folder exists and is accessible by Django.
+
+Some user-uploaded content, such as resumes, should not be served to the general public. Others, such as pictures of hardware, should be. Hence, we recommend the following:
+
+- Upload all public-facing files with the prefix `uploads/`, so that they end up at `media/uploads/`. Configure your web server to serve this folder, e.g. `/var/www/media/uploads/`, to `media/uploads/` under your domain.
+- Upload all private files to another prefix, e.g. `resumes/`, so that they end up at e.g. `media/resumes/`. For any users that should be able to see these files (such as staff members in this case), have a view that validates the user's permission, then reads in the data from disk and returns it directly in the HTTP response. Keep in mind that there are performance downsides to this approach.

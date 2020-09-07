@@ -1,6 +1,8 @@
 from rest_framework.test import APITestCase
+from django.conf import settings
 from django.urls import reverse
 from rest_framework import status
+
 from hardware.models import Hardware, Category
 from hardware.serializers import HardwareSerializer, CategorySerializer
 from hackathon_site.tests import SetupUserMixin
@@ -39,7 +41,7 @@ class HardwareListViewTestCase(SetupUserMixin, APITestCase):
             "quantity_remaining": 4,
             "notes": None,
             "max_per_team": 1,
-            "picture": "http://testserver/picture/location",
+            "picture": "http://testserver/media/picture/location",
         }
 
         response = self.client.get(self.view)

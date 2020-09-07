@@ -173,6 +173,18 @@ STATIC_URL = "static/"
 
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
+MEDIA_URL = "media/"
+
+if DEBUG:
+    MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
+    if not os.path.isdir(MEDIA_ROOT):
+        os.makedirs(MEDIA_ROOT)
+else:
+    # You will almost certainly want to change this
+    # Remember to create this folder on your server
+    MEDIA_ROOT = "/var/www/media/"
+
 # Event specific settings
 HACKATHON_NAME = "CoolHacks"
 DEFAULT_FROM_EMAIL = "webmaster@localhost"
