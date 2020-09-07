@@ -28,11 +28,27 @@ class ProfileTestCase(TestCase):
         self.assertEqual(Team.objects.first(), profile.team)
 
 
-class IndexViewTestCase(TestCase):
+class IndexViewTestCase(SetupUserMixin, TestCase):
+    """
+    Tests for the landing page template.
+
+    We test for correct rendering and rendering of Logout/Login buttons
+    """
+
+    def setUp(self):
+        super().setUp()
+        self.view = reverse("event:index")
+
     def test_index_view(self):
-        url = reverse("event:index")
-        response = self.client.get(url)
+        response = self.client.get(self.view)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertContains(response, "Login")
+
+    def test_logout_button_renders_when_logged_in(self):
+        self._login()
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertContains(response, "Logout")
 
 
 class LogInViewTestCase(SetupUserMixin, TestCase):
