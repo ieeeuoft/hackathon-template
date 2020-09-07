@@ -1,0 +1,36 @@
+{% extends "event/form_base.html" %}
+
+{% block form_title %}Sign up{% endblock %}
+
+{% block form_img %}<img src="{{ static('event/images/landing.svg') }}"  alt="Signup image" />{% endblock %}
+
+{% set form_action=url("registration:signup") %}
+               
+{% block form_inputs %}
+    {{ render_field(form.email) }}
+    {{ render_field(form.first_name) }}
+    {{ render_field(form.last_name) }}
+    {{ render_field(form.password1, show_help_text=True) }}
+    {{ render_field(form.password2) }}
+
+    {% if form.non_field_errors %}
+        {% for error in form.non_field_errors() %}
+            {{ error }}
+        {% endfor %}
+    {% endif %}
+{% endblock %}
+
+{% block form_button %}
+<button type="submit" class="btn-small waves-effect waves-light secondaryColor colorBtn center">Sign up</button>
+{% endblock %}
+
+{% block form_bottom %}
+<div class="col s12 loginLink">
+    <i class="material-icons primaryText">exit_to_app</i>
+    <a href="{{ url("event:login") }}" class="primaryText hoverLink s6">Back to Login</a>
+</div>
+<br />
+<div class="row center">
+    Something wrong? <a href="#" class="primaryText hoverLink">Contact us</a>.
+</div>
+{% endblock %}
