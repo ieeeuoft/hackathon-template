@@ -55,8 +55,8 @@ class LogInViewTestCase(SetupUserMixin, TestCase):
     """
     Tests for the login template.
 
-    This view uses django.contrib.auth.views.LogoutView, so no logic testing
-    is required
+    This view uses django.contrib.auth.forms.AuthenticationForm, so no direct
+    form testing is required.
 
     Ideally, selenium should be used for a full test of the view UI.
     For practicality reasons, tests for templates with forms are limited to
@@ -118,8 +118,8 @@ class LogOutViewTestCase(SetupUserMixin, TestCase):
     """
     Tests for the logout template. We simply redirect to the homepage.
 
-    This view uses django.contrib.auth.forms.AuthenticationForm, so no direct
-    form testing is required.
+    This view uses django.contrib.auth.views.LogoutView, so no logic testing
+    is required.
     """
 
     def setUp(self):
