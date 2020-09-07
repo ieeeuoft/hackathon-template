@@ -7,9 +7,11 @@
 {% set form_action=url("registration:signup") %}
                
 {% block form_inputs %}
-    {% for field in form %}
-        {{ render_field(field) }}
-    {% endfor %}
+    {{ render_field(form.email) }}
+    {{ render_field(form.first_name) }}
+    {{ render_field(form.last_name) }}
+    {{ render_field(form.password1, show_help_text=True) }}
+    {{ render_field(form.password2) }}
 
     {% if form.non_field_errors %}
         {% for error in form.non_field_errors() %}

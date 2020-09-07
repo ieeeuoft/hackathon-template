@@ -1,9 +1,12 @@
 {% extends "event/base.html" %}
 
-{% macro render_field(field) %}
+{% macro render_field(field, show_help_text=False) %}
     <div class="input-field col s12">
         {{ field }}
         {{ field.label_tag() }}
+        {% if show_help_text %}
+            <span class="helper-text">{{ field.help_text|safe }}</span>
+        {% endif %}
         {% if field.errors %}
             <span class="formFieldError">
             {% for error in field.errors %}
