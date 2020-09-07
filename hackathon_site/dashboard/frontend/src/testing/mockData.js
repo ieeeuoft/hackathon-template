@@ -127,7 +127,7 @@ export const members = [
 export const teamCode = "PAS3NLQ3";
 
 // Navbar
-export const cartQuantity = 0;
+export const cartQuantity = 5;
 export const userEmail = "graham@email.com";
 
 // Product Overview
@@ -295,5 +295,32 @@ export const inventoryItems = [
         title: "Some Hardware 15",
         total: 3,
         currentStock: 0,
+    },
+];
+
+export const cartItems = [
+    {
+        id: 1,
+        image: "https://i.imgur.com/iUpI1hC.jpg",
+        title: "Arduino",
+        currentStock: 19,
+        checkedOutQuantity: 3,
+        isError: false,
+    },
+    {
+        id: 2,
+        image: "https://i.imgur.com/kOlrXto.jpg",
+        title: "Some Hardware 2",
+        currentStock: 0,
+        checkedOutQuantity: 1,
+        isError: false,
+    },
+    {
+        id: 3,
+        image: "https://i.imgur.com/IO6e5a6.jpg",
+        title: "Some Hardware 3",
+        currentStock: 12,
+        checkedOutQuantity: 2,
+        isError: false,
     },
 ];
