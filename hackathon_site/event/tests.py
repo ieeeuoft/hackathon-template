@@ -96,3 +96,21 @@ class DashboardTestCase(SetupUserMixin, TestCase):
         response = self.client.get(self.view)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertContains(response, "Dashboard")
+
+
+class LogOutViewTestCase(SetupUserMixin, TestCase):
+    """
+    Tests for the logout template. We simply redirect to the homepage.
+
+    This view uses django.contrib.auth.forms.AuthenticationForm, so no direct
+    form testing is required.
+    """
+
+    def setUp(self):
+        super().setUp()
+        self.view = reverse("event:logout")
+        self._login()
+
+    def test_logout_get(self):
+        response = self.client.get(self.view)
+        self.assertRedirects(response, "/")
