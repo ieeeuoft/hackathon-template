@@ -30,6 +30,9 @@ SECRET_KEY = os.environ["SECRET_KEY"]
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(int(os.environ.get("DEBUG", 0)))
 
+# Overridden in hackathon_site.settings.ci
+IN_TESTING = False
+
 if DEBUG:
     ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
     INTERNAL_IPS = ["localhost", "127.0.0.1"]
@@ -181,7 +184,7 @@ else:
     # You will almost certainly want to change this
     MEDIA_ROOT = "/var/www/media/"
 
-if not os.path.isdir(MEDIA_ROOT):
+if not IN_TESTING and not os.path.isdir(MEDIA_ROOT):
     os.makedirs(MEDIA_ROOT)
 
 # Event specific settings
