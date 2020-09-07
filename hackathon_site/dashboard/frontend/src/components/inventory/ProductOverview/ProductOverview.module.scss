@@ -1,64 +1,69 @@
 @import "./../../../assets/abstracts/mixins";
 @import "./../../../assets/abstracts/variables";
 
-.mainsection {
-    display: flex;
-    margin: 108px 50px 0 50px;
-    .title {
-        display: flex;
-        font-weight: 500;
-    }
-    .quantityAvailable {
-        margin: 9px 151px 0 0;
-        color: color(grey);
-    }
-    .notAvailable {
-        margin: 9px 151px 0 0;
-        color: red;
-    }
-    .category {
-        margin-top: 59px;
-        font-weight: 500;
-        &Item {
-            color: color(primary);
-            background-color: color(blueLight);
-            margin: 8px 2.5px;
-        }
-    }
-    & img {
-        margin: 0 11px;
+.heading {
+    margin-top: 20px;
+    font-weight: 500;
+}
+
+.productOverview {
+    height: 100%;
+    width: 100%;
+    @include flexPosition($alIte: flex-start);
+    flex-direction: column;
+
+    &Div {
+        width: 100%;
     }
 }
 
-.detailInfoSection {
-    margin: 10px 50px 0 50px;
-    .bodyinfo {
-        display: flex;
+.mainSection {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+
+    &Name {
+        @include flexPosition($alIte: flex-start);
         flex-direction: column;
-        .heading {
-            margin: 5px 0;
-            font-weight: 500;
-        }
-        margin-bottom: 20px;
-        &DataSheet {
-            display: flex;
-        }
+        width: 100%;
+    }
+
+    .quantityAvailable {
+        color: color(grey);
+    }
+
+    .categoryItem {
+        color: color(primary);
+        background-color: color(blueLight);
+        margin: 2.5px 5px 2.5px 0;
+    }
+    img {
+        margin-left: 50px;
+        width: 40%;
+        max-width: 200px;
     }
 }
 
 .form {
-    display: flex;
-    flex-direction: column;
+    width: 100%;
+
     &Control {
-        margin: 20px 50px;
+        margin: 20px 0;
+        width: 120px;
     }
-    .cartButton {
-        color: color(white);
-        background-color: color(primary);
-        margin: 30px 50px;
-        padding: 10px 25px;
-        &:hover {
-            background-color: color(dark1);
+
+    &Button {
+        background-color: color(light2);
+        width: calc(100% + 100px);
+        margin-left: -50px;
+        margin-bottom: -45px;
+        padding: 30px 50px;
+
+        @include responsive(sm-down) {
+            width: calc(100% + 60px);
+            margin-left: -30px;
+            margin-bottom: -25px;
+            padding: 20px 30px;
         }
     }
 }
