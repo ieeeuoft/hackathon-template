@@ -27,7 +27,7 @@ class Hardware(models.Model):
     quantity_available = models.IntegerField(null=False)
     notes = models.TextField(null=True)
     max_per_team = models.IntegerField(null=True)
-    picture = models.FileField(upload_to="hardware/pictures/", null=False)
+    picture = models.ImageField(upload_to="uploads/hardware/pictures/", null=False)
     categories = models.ManyToManyField(Category)
 
     created_at = models.DateTimeField(auto_now_add=True, null=False)
