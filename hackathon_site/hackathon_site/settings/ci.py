@@ -20,8 +20,4 @@ and by running your code before you merge it.
 """
 from hackathon_site.settings import *
 
-# DEBUG is 0 during testing, but some things need to behave differently
-# in testing
-IN_TESTING = True
-
 DATABASES = {"default": {"ENGINE": "django.db.backends.sqlite3", "NAME": ":memory:"}}

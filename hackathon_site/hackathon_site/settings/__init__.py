@@ -30,9 +30,6 @@ SECRET_KEY = os.environ["SECRET_KEY"]
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(int(os.environ.get("DEBUG", 0)))
 
-# Overridden in hackathon_site.settings.ci
-IN_TESTING = False
-
 if DEBUG:
     ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
     INTERNAL_IPS = ["localhost", "127.0.0.1"]
@@ -180,12 +177,13 @@ MEDIA_URL = "media/"
 
 if DEBUG:
     MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
+    if not os.path.isdir(MEDIA_ROOT):
+        os.makedirs(MEDIA_ROOT)
 else:
     # You will almost certainly want to change this
+    # Remember to create this folder on your server
     MEDIA_ROOT = "/var/www/media/"
-
-if not IN_TESTING and not os.path.isdir(MEDIA_ROOT):
-    os.makedirs(MEDIA_ROOT)
 
 # Event specific settings
 HACKATHON_NAME = "CoolHacks"

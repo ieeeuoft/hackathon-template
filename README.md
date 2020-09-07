@@ -294,7 +294,7 @@ Static files are configured to be served under the `static/` path, and are expec
 ### Serving user uploaded files
 User-uploaded files are handled differently in Django than static files. We recommend you read the pages on Django [file uploads](https://docs.djangoproject.com/en/3.1/topics/http/file-uploads/) and [the security of user-uploaded content](https://docs.djangoproject.com/en/3.1/topics/security/#user-uploaded-content-security) before proceeding.
 
-This template is configured to expect user-uploaded content to be served at `media/`, per the `MEDIA_URL` setting (you are free to change this, for example to an off-domain URL). User-uploaded content will be put in the folder defined by `MEDIA_ROOT`, which defaults to `/var/www/media/` and should almost certainly be configured for your server.
+This template is configured to expect user-uploaded content to be served at `media/`, per the `MEDIA_URL` setting (you are free to change this, for example to an off-domain URL). User-uploaded content will be put in the folder defined by `MEDIA_ROOT`, which defaults to `/var/www/media/` and should almost certainly be configured for your server. Whatever you set it to, make sure the folder exists and is accessible by Django.
 
 Some user-uploaded content, such as resumes, should not be served to the general public. Others, such as pictures of hardware, should be. Hence, we recommend the following:
 
