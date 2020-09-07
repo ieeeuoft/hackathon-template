@@ -13,8 +13,6 @@ urlpatterns = [
     ),
     path("dashboard/", DashboardView.as_view(), name="dashboard"),
     path(
-        "accounts/logout/",
-        auth_views.LogoutView.as_view(next_page="/"),
-        name="logout",
-    )
+        "accounts/logout/", auth_views.LogoutView.as_view(next_page="/"), name="logout",
+    ),
 ]
