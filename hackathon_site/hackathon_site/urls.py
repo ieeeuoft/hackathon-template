@@ -49,7 +49,7 @@ if settings.DEBUG:
     from django.urls import re_path
     from django.views.static import serve
 
-    urlpatterns = [path("__debug__/", include(debug_toolbar.urls))] + urlpatterns
+    urlpatterns += [path("__debug__/", include(debug_toolbar.urls))]
 
     if settings.MEDIA_URL.startswith("http"):
         raise ImproperlyConfigured(
