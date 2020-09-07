@@ -28,11 +28,27 @@ class ProfileTestCase(TestCase):
         self.assertEqual(Team.objects.first(), profile.team)
 
 
-class IndexViewTestCase(TestCase):
+class IndexViewTestCase(SetupUserMixin, TestCase):
+    """
+    Tests for the landing page template.
+
+    We test for correct rendering and rendering of Logout/Login buttons
+    """
+
+    def setUp(self):
+        super().setUp()
+        self.view = reverse("event:index")
+
     def test_index_view(self):
-        url = reverse("event:index")
-        response = self.client.get(url)
+        response = self.client.get(self.view)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertContains(response, "Login")
+
+    def test_logout_button_renders_when_logged_in(self):
+        self._login()
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertContains(response, "Logout")
 
 
 class LogInViewTestCase(SetupUserMixin, TestCase):
@@ -96,3 +112,21 @@ class DashboardTestCase(SetupUserMixin, TestCase):
         response = self.client.get(self.view)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertContains(response, "Dashboard")
+
+
+class LogOutViewTestCase(SetupUserMixin, TestCase):
+    """
+    Tests for the logout template. We simply redirect to the homepage.
+
+    This view uses django.contrib.auth.views.LogoutView, so no logic testing
+    is required.
+    """
+
+    def setUp(self):
+        super().setUp()
+        self.view = reverse("event:logout")
+        self._login()
+
+    def test_logout_get(self):
+        response = self.client.get(self.view)
+        self.assertRedirects(response, "/")
