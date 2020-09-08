@@ -199,13 +199,11 @@ class PasswordResetTestCase(SetupUserMixin, TestCase):
         data = {"email": self.user.email}
         self.client.post(self.view_request_reset, data)
 
-        clean = re.compile('<.*?>')
-        clean_mail_body = re.sub(clean, '', mail.outbox[0].body)
+        clean = re.compile("<.*?>")
+        clean_mail_body = re.sub(clean, "", mail.outbox[0].body)
 
         reset_link = [
-            line
-            for line in clean_mail_body.split("\n")
-            if "http://testserver/" in line
+            line for line in clean_mail_body.split("\n") if "http://testserver/" in line
         ][0]
 
         uid_hash = reset_link.split("/")[-2]
@@ -222,13 +220,11 @@ class PasswordResetTestCase(SetupUserMixin, TestCase):
         user_data = {"email": self.user.email}
         self.client.post(self.view_request_reset, user_data)
 
-        clean = re.compile('<.*?>')
-        clean_mail_body = re.sub(clean, '', mail.outbox[0].body)
+        clean = re.compile("<.*?>")
+        clean_mail_body = re.sub(clean, "", mail.outbox[0].body)
 
         reset_link = [
-            line
-            for line in clean_mail_body.split("\n")
-            if "http://testserver/" in line
+            line for line in clean_mail_body.split("\n") if "http://testserver/" in line
         ][0]
 
         response = self.client.get(reset_link)
