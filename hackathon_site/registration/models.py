@@ -53,7 +53,7 @@ class Application(models.Model):
         ("other", "Other"),
     ]
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=False)
     team = models.ForeignKey(Team, on_delete=models.CASCADE, null=False)
 
     # User Submitted Fields
