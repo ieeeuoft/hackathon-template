@@ -4,7 +4,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.utils.translation import gettext_lazy as _
 from django_registration import validators
 
-from registration.models import Application
+from registration.models import Application, Team
 from registration.widgets import MaterialFileInput
 
 User = get_user_model()
@@ -109,7 +109,23 @@ class ApplicationForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop("user")
         super().__init__(*args, **kwargs)
         self.label_suffix = ""
-        self.fields["conduct_agree"].required = True
+        self.fields[
+            "conduct_agree"
+        ].required = True  # TODO: these don't stay checked on page reload
         self.fields["data_agree"].required = True
+
+    def save(self, commit=True):
+        self.instance = super().save(commit=False)
+        team = Team.objects.create()
+
+        self.instance.user = self.user
+        self.instance.team = team
+
+        if commit:
+            self.instance.save()
+            self.save_m2m()
+
+        return self.instance

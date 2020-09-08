@@ -11,6 +11,7 @@
 {% endblock %}
 
 {% block form_title %}Application{% endblock %}
+{% block form_attrs %}enctype="multipart/form-data"{% endblock %}
 
 {% set form_action=url("registration:application") %}
 

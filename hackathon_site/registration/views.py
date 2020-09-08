@@ -3,7 +3,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
-from django.views.generic.edit import FormView
+from django.views.generic.edit import FormView, ModelFormMixin
 from django_registration.backends.activation.views import (
     RegistrationView,
     ActivationView as _ActivationView,
@@ -93,6 +93,11 @@ class ActivationView(_ActivationView):
         return context
 
 
-class ApplicationView(LoginRequiredMixin, FormView):
+class ApplicationView(LoginRequiredMixin, ModelFormMixin, FormView):
     form_class = ApplicationForm
     template_name = "registration/application.html"
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs

@@ -45,6 +45,7 @@
                 <form class="col s12"
                     action="{{ form_action }}"
                     method="{{ form_method if form_method else "post" }}"
+                    {% block form_attrs %}{% endblock %}
                 >
                     {{ csrf_input }}
                     {% block form_inputs %}{% endblock %}
