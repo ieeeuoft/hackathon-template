@@ -1,9 +1,11 @@
 {% extends "event/base.html" %}
 
-{% macro render_field(field, show_help_text=False) %}
-    <div class="input-field col s12">
+{% macro render_field(field, show_help_text=False, show_label=True, size="s12") %}
+    <div class="input-field col {{ size }}">
         {{ field }}
+        {% if show_label %}
         {{ field.label_tag() }}
+        {% endif %}
         {% if show_help_text %}
             <span class="helper-text">{{ field.help_text|safe }}</span>
         {% endif %}
@@ -12,6 +14,22 @@
             {% for error in field.errors %}
                 {{ error }}
                 <br />
+            {% endfor %}
+            </span>
+        {% endif %}
+    </div>
+{% endmacro %}
+
+{% macro render_checkbox_field(field, size="s12") %}
+    <div class="col {{ size }}" style="padding-top: 0.5em; padding-bottom: 0.5em;">
+        <label>
+            <input type="checkbox" class="filled-in" name="{{ field.name }}" id="{{ field.id_for_label }}">
+            <span>{{ field.help_text|safe }}</span>
+        </label>
+        {% if field.errors %}
+            <span class="formFieldError">
+            {% for error in field.errors %}
+                {{ error }}
             {% endfor %}
             </span>
         {% endif %}
