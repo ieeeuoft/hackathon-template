@@ -96,7 +96,7 @@ class ApplicationForm(forms.ModelForm):
             "data_agree",
         ]
         widgets = {
-            "birthday": forms.DateInput(attrs={"type": "date"}),
+            "birthday": forms.DateInput(format="%Y-%m-%d", attrs={"type": "date"}),
             "school": forms.Select(
                 # Choices will be populated by select2
                 attrs={"class": "select2-school-select"},
@@ -116,6 +116,14 @@ class ApplicationForm(forms.ModelForm):
             "conduct_agree"
         ].required = True  # TODO: these don't stay checked on page reload
         self.fields["data_agree"].required = True
+
+    def clean(self):
+        cleaned_data = super().clean()
+        if hasattr(self.user, "application"):
+            raise forms.ValidationError(
+                _("User has already submitted an application"), code="invalid"
+            )
+        return cleaned_data
 
     def save(self, commit=True):
         self.instance = super().save(commit=False)

@@ -97,7 +97,7 @@ $.get("https://raw.githubusercontent.com/MLH/mlh-policies/master/schools.csv", (
 
     select2.data('select2').$selection.css('height', '2.4375rem');
 
-    {% if form.school.value %}
+    {% if form.school.value() and form.school.value() is not none %}
     /* Since school is actually a text field rendered with a select
     *  widget, we can't easily set previously selected values from the widget.
     *  Instead, we can force the option to be selected via JS, adding it if

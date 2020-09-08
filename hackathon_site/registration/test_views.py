@@ -1,10 +1,12 @@
 from django.conf import settings
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
 
 from hackathon_site.tests import SetupUserMixin
 from registration.forms import ApplicationForm
+from registration.models import Application
 
 
 class SignUpViewTestCase(SetupUserMixin, TestCase):
@@ -85,13 +87,38 @@ class ApplicationViewTestCase(SetupUserMixin, TestCase):
         Test that the template displays errors. All fields are rendered the same.
         """
         self._login()
-        form = ApplicationForm()
+        form = ApplicationForm(user=self.user)
         num_required_fields = len(
             [field for field in form.fields.values() if field.required]
         )
 
         response = self.client.post(self.view, {})
         self.assertContains(response, "This field is required", num_required_fields)
+
+    def test_creates_application(self):
+        data = {
+            "birthday": "2000-01-01",
+            "gender": "male",
+            "ethnicity": "caucasian",
+            "phone_number": "2262208655",
+            "school": "UofT",
+            "study_level": "other",
+            "graduation_year": 2020,
+            "q1": "hi",
+            "q2": "there",
+            "q3": "foo",
+            "conduct_agree": True,
+            "data_agree": True,
+            "resume": SimpleUploadedFile(
+                "my_resume.pdf", b"some content", content_type="application/pdf"
+            ),
+        }
+
+        self._login()
+        response = self.client.post(self.view, data=data)
+        self.assertRedirects(response, reverse("event:dashboard"))
+        self.assertEqual(Application.objects.count(), 1)
+        self.assertEqual(Application.objects.first().user, self.user)
 
 
 class MiscRegistrationViewsTestCase(TestCase):
