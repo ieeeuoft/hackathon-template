@@ -130,3 +130,35 @@ class LogOutViewTestCase(SetupUserMixin, TestCase):
     def test_logout_get(self):
         response = self.client.get(self.view)
         self.assertRedirects(response, "/")
+
+
+class PasswordChangeTestCase(SetupUserMixin, TestCase):
+    """
+    Tests for the password change template if already logged in.
+
+    This view uses django.contrib.auth.views.PasswordChangeView and
+    django.contrib.auth.views.PasswordChangeDoneView so no logic testing
+    is required.
+    """
+
+    def setUp(self):
+        super().setUp()
+        self.view = reverse("event:change_password")
+        self._login()
+
+    def test_change_password_get(self):
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_valid_submit_redirect(self):
+        data = {
+            "old_password": "foobar123",  # Make sure this is equal to the password in SetupUserMixin
+            "new_password1": "abcdef456",
+            "new_password2": "abcdef456",
+        }
+        response = self.client.post(self.view, data)
+        self.assertRedirects(response, reverse("event:change_password_done"))
+        redirected_response = response.client.get(response.url)
+        self.assertContains(
+            redirected_response, "Your password was changed successfully"
+        )
