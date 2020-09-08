@@ -2,6 +2,8 @@ from django.conf import settings
 from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
+from django.core import mail
+import re
 
 from event.models import Profile, Team, User
 from hackathon_site.tests import SetupUserMixin
@@ -153,7 +155,6 @@ class PasswordChangeTestCase(SetupUserMixin, TestCase):
     def test_valid_submit_redirect(self):
         data = {
             "old_password": self.password,
-
             "new_password1": "abcdef456",
             "new_password2": "abcdef456",
         }
@@ -162,4 +163,84 @@ class PasswordChangeTestCase(SetupUserMixin, TestCase):
         redirected_response = response.client.get(response.url)
         self.assertContains(
             redirected_response, "Your password was changed successfully"
+        )
+
+
+class PasswordResetTestCase(SetupUserMixin, TestCase):
+    """
+    Tests for the password reset template (reset password without login).
+
+    This view uses django.contrib.auth.views.PasswordResetView,
+    django.contrib.auth.views.PasswordResetDoneView,
+    django.contrib.auth.views.PasswordResetConfirmView, and
+    django.contrib.auth.views.PasswordResetCompleteView, so no logic testing
+    is required.
+    """
+
+    def setUp(self):
+        super().setUp()
+        self.view_request_reset = reverse("event:reset_password")
+        # self.view_reset = reverse("event:reset_password_confirm")
+
+    def test_reset_password_get(self):
+        response = self.client.get(self.view_request_reset)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_reset_password_valid_submit_redirect(self):
+        data = {"email": self.user.email}
+        response = self.client.post(self.view_request_reset, data)
+        self.assertRedirects(response, reverse("event:reset_password_done"))
+        redirected_response = response.client.get(response.url)
+        self.assertContains(redirected_response, "Password reset sent")
+
+        self.assertIn(settings.HACKATHON_NAME, mail.outbox[0].subject)
+
+    def test_reset_password_confirm_get(self):
+        data = {"email": self.user.email}
+        self.client.post(self.view_request_reset, data)
+
+        clean = re.compile('<.*?>')
+        clean_mail_body = re.sub(clean, '', mail.outbox[0].body)
+
+        reset_link = [
+            line
+            for line in clean_mail_body.split("\n")
+            if "http://testserver/" in line
+        ][0]
+
+        uid_hash = reset_link.split("/")[-2]
+
+        response = self.client.get(reset_link)
+        self.assertRedirects(
+            response,
+            reverse("event:reset_password_confirm", args=[uid_hash, "set-password"]),
+        )
+        redirected_response = response.client.get(response.url)
+        self.assertContains(redirected_response, "Reset Password")
+
+    def test_reset_password_confirm_valid_submit_redirect(self):
+        user_data = {"email": self.user.email}
+        self.client.post(self.view_request_reset, user_data)
+
+        clean = re.compile('<.*?>')
+        clean_mail_body = re.sub(clean, '', mail.outbox[0].body)
+
+        reset_link = [
+            line
+            for line in clean_mail_body.split("\n")
+            if "http://testserver/" in line
+        ][0]
+
+        response = self.client.get(reset_link)
+        response.client.get(response.url)
+        new_password_data = {"new_password1": "abcdabcd", "new_password2": "abcdabcd"}
+
+        submitted_response = self.client.post(response.url, new_password_data)
+
+        self.assertRedirects(
+            submitted_response, reverse("event:reset_password_complete")
+        )
+        redirected_response = self.client.get(submitted_response.url)
+        self.assertContains(
+            redirected_response, "Your password has been successfully reset"
         )
