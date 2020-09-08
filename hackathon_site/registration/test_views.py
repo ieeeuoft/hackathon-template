@@ -4,6 +4,7 @@ from django.urls import reverse
 from rest_framework import status
 
 from hackathon_site.tests import SetupUserMixin
+from registration.forms import ApplicationForm
 
 
 class SignUpViewTestCase(SetupUserMixin, TestCase):
@@ -68,6 +69,29 @@ class ActivationViewTestCase(TestCase):
     def test_error_page_has_contact_email(self):
         response = self.client.get(self.view)
         self.assertContains(response, settings.CONTACT_EMAIL)
+
+
+class ApplicationViewTestCase(SetupUserMixin, TestCase):
+    def setUp(self):
+        super().setUp()
+        self.view = reverse("registration:application")
+
+    def test_requires_login(self):
+        response = self.client.get(self.view)
+        self.assertRedirects(response, f"{reverse('event:login')}?next={self.view}")
+
+    def test_displays_errors(self):
+        """
+        Test that the template displays errors. All fields are rendered the same.
+        """
+        self._login()
+        form = ApplicationForm()
+        num_required_fields = len(
+            [field for field in form.fields.values() if field.required]
+        )
+
+        response = self.client.post(self.view, {})
+        self.assertContains(response, "This field is required", num_required_fields)
 
 
 class MiscRegistrationViewsTestCase(TestCase):

@@ -1,7 +1,11 @@
+from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
 from django.utils.translation import gettext_lazy as _
 from django_registration import validators
+
+from registration.models import Application
+from registration.widgets import MaterialFileInput
 
 User = get_user_model()
 
@@ -69,3 +73,43 @@ class SignUpForm(UserCreationForm):
         if commit:
             user.save()
         return user
+
+
+class ApplicationForm(forms.ModelForm):
+    error_css_class = "invalid"
+
+    class Meta:
+        model = Application
+        fields = [
+            "birthday",
+            "gender",
+            "ethnicity",
+            "phone_number",
+            "school",
+            "study_level",
+            "graduation_year",
+            "resume",
+            "q1",
+            "q2",
+            "q3",
+            "conduct_agree",
+            "data_agree",
+        ]
+        widgets = {
+            "birthday": forms.DateInput(attrs={"type": "date"}),
+            "school": forms.Select(
+                # Choices will be populated by select2
+                attrs={"class": "select2-school-select"},
+                choices=((None, ""),),
+            ),
+            "resume": MaterialFileInput(),
+            "q1": forms.Textarea(attrs={"class": "materialize-textarea"}),
+            "q2": forms.Textarea(attrs={"class": "materialize-textarea"}),
+            "q3": forms.Textarea(attrs={"class": "materialize-textarea"}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.label_suffix = ""
+        self.fields["conduct_agree"].required = True
+        self.fields["data_agree"].required = True

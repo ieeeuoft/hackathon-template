@@ -1,13 +1,15 @@
 from django.conf import settings
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
+from django.views.generic.edit import FormView
 from django_registration.backends.activation.views import (
     RegistrationView,
     ActivationView as _ActivationView,
 )
 
-from registration.forms import SignUpForm
+from registration.forms import SignUpForm, ApplicationForm
 
 
 class SignUpView(RegistrationView):
@@ -89,3 +91,8 @@ class ActivationView(_ActivationView):
         context = super().get_context_data(**kwargs)
         context["email"] = settings.CONTACT_EMAIL
         return context
+
+
+class ApplicationView(LoginRequiredMixin, FormView):
+    form_class = ApplicationForm
+    template_name = "registration/application.html"

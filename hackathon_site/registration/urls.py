@@ -32,4 +32,5 @@ urlpatterns = [
         views.ActivationView.as_view(),
         name="activate",
     ),
+    path("application/", views.ApplicationView.as_view(), name="application"),
 ]
