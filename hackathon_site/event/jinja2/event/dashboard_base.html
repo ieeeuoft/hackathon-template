@@ -1,5 +1,10 @@
 {% extends "event/base.html" %}
 
+{% block nav_links %}
+    <li><a href={{ url("event:change_password") }} >Change Password</a></li>
+{% endblock %}
+
+
 {% block body %}
 <div class="container">
     <div class="section">
