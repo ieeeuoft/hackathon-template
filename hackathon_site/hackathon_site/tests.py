@@ -6,7 +6,7 @@ class SetupUserMixin:
         self.password = "foobar123"
         self.user = User.objects.create_user(
             username="foo@bar.com",
-            password="foobar123",
+            password=self.password,
             first_name="Test",
             last_name="Bar",
             email="foo@bar.com",

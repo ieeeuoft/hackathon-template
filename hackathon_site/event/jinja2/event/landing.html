@@ -34,9 +34,9 @@
             </div>
             <div class="row">
                 {% if request.user.is_authenticated %}
-                    <a href={{ url("event:dashboard") }} class="btn-large waves-effect waves-light colorBtn">Continue Application</a>
+                    <a href="{{ url("event:dashboard") }}" class="btn-large waves-effect waves-light colorBtn">Continue Application</a>
                 {% else %}
-                    <a href={{ url("registration:signup") }} class="btn-large waves-effect waves-light colorBtn">Apply</a>
+                    <a href="{{ url("registration:signup") }}" class="btn-large waves-effect waves-light colorBtn">Apply</a>
                 {% endif %}
             </div>
             <br /><br />
@@ -288,7 +288,7 @@
         <h3 class="row center">Contact Us</h3>
 
         <div class="row center contactBtns">
-            <a href="mailto:hello@email.com" class="waves-effect waves-light" rel="noopener" target="_blank"><img src="{{ static('event/images/social/email.svg') }}" alt="Email" /></a>
+            <a href="mailto:{{ contact_email }}" class="waves-effect waves-light" rel="noopener" target="_blank"><img src="{{ static('event/images/social/email.svg') }}" alt="Email" /></a>
             <a href="https://www.ieee.utoronto.ca" class="waves-effect waves-light" rel="noopener" target="_blank"><img src="{{ static('event/images/social/website.svg') }}" alt="ieee.utoronto.ca" /></a>
             <a href="https://www.facebook.com/ieeeuoft" class="waves-effect waves-light" rel="noopener" target="_blank"><img src="{{ static('event/images/social/facebook.svg') }}" alt="Facebook" /></a>
             <a href="https://www.instagram.com/ieee_uoft" class="waves-effect waves-light" rel="noopener" target="_blank"><img src="{{ static('event/images/social/instagram.svg') }}" alt="Instagram"/></a>

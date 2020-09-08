@@ -152,7 +152,7 @@ class PasswordChangeTestCase(SetupUserMixin, TestCase):
 
     def test_valid_submit_redirect(self):
         data = {
-            "old_password": "foobar123",  # Make sure this is equal to the password in SetupUserMixin
+            "old_password": self.password,
             "new_password1": "abcdef456",
             "new_password2": "abcdef456",
         }

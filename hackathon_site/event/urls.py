@@ -1,7 +1,6 @@
 from django.contrib.auth import views as auth_views
-from django.urls import path
+from django.urls import path, reverse_lazy
 from event.views import IndexView, DashboardView
-from django.urls import reverse_lazy
 from event.forms import PasswordChangeForm
 
 app_name = "event"
