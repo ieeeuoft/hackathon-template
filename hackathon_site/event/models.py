@@ -28,7 +28,9 @@ class Profile(models.Model):
     STATUS_CHOICES = [("Accepted", "Accepted"), ("Waitlisted", "Waitlisted")]
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    team = models.ForeignKey(Team, on_delete=models.CASCADE, null=False)
+    team = models.ForeignKey(
+        Team, related_name="profiles", on_delete=models.CASCADE, null=False
+    )
     status = models.CharField(max_length=64, choices=STATUS_CHOICES, null=False)
     id_provided = models.BooleanField(default=False, null=False)
     attended = models.BooleanField(default=False, null=False)

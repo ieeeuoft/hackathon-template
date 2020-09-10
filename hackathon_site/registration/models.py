@@ -54,7 +54,9 @@ class Application(models.Model):
     ]
 
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=False)
-    team = models.ForeignKey(Team, on_delete=models.CASCADE, null=False)
+    team = models.ForeignKey(
+        Team, related_name="applications", on_delete=models.CASCADE, null=False
+    )
 
     # User Submitted Fields
     birthday = models.DateField(null=False)
