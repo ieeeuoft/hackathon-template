@@ -21,3 +21,10 @@ and by running your code before you merge it.
 from hackathon_site.settings import *
 
 DATABASES = {"default": {"ENGINE": "django.db.backends.sqlite3", "NAME": ":memory:"}}
+
+# For testing, make the media root a local folder to avoid
+# permissions errors
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
+if not os.path.isdir(MEDIA_ROOT):
+    os.makedirs(MEDIA_ROOT)
