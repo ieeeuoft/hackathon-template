@@ -1,10 +1,14 @@
 {% extends "event/base.html" %}
 
-{% macro render_field(field, show_help_text=False, show_label=True, size="s12") %}
+{% macro render_field(field, show_help_text=False, show_label=True, show_help_text_as_label=False, size="s12") %}
     <div class="input-field col {{ size }}">
         {{ field }}
         {% if show_label %}
-        {{ field.label_tag() }}
+            {% if show_help_text_as_label %}
+                <label for="{{ field.id_for_label }}">{{ field.help_text }}</label>
+            {% else %}
+                {{ field.label_tag() }}
+            {% endif %}
         {% endif %}
         {% if show_help_text %}
             <span class="helper-text">{{ field.help_text|safe }}</span>

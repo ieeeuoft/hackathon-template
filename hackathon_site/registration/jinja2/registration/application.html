@@ -24,7 +24,9 @@
         </div>
     {% endif %}
     {% for field in form %}
-        {% if field.field.widget.input_type == "select" %}
+        {% if field.field.widget.__class__.__name__ == "Textarea" %}
+            {{ render_field(field, size="s12", show_help_text_as_label=True) }}
+        {% elif field.field.widget.input_type == "select" %}
             {{ render_field(field, size="s12 select2-wrapper") }}
         {% elif field.field.widget.input_type == "file" %}
             {{ render_field(field, size="s12", show_label=False) }}
