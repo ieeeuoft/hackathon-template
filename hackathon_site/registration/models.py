@@ -1,6 +1,9 @@
 from django.db import models
+from django.core import validators
 from django.contrib.auth import get_user_model
 import uuid
+
+from registration.validators import UploadedFileValidator
 
 User = get_user_model()
 
@@ -62,16 +65,43 @@ class Application(models.Model):
     birthday = models.DateField(null=False)
     gender = models.CharField(max_length=50, choices=GENDER_CHOICES, null=False)
     ethnicity = models.CharField(max_length=50, choices=ETHNICITY_CHOICES, null=False)
-    phone_number = models.CharField(max_length=20, null=False)
-    school = models.CharField(max_length=255, null=False)
+    phone_number = models.CharField(
+        max_length=20,
+        null=False,
+        validators=[
+            validators.RegexValidator(
+                r"^(?:\+\d{1,2})?\s?\(?\d{3}\)?[\s-]?\d{3}[\s-]?\d{4}$",
+                message="Enter a valid phone number.",
+            )
+        ],
+    )
+    school = models.CharField(max_length=255, null=False,)
     study_level = models.CharField(
         max_length=50, choices=STUDY_LEVEL_CHOICES, null=False
     )
-    graduation_year = models.IntegerField(null=False)
-    resume = models.FileField(upload_to="applications/resumes/", null=False)
-    q1 = models.TextField(null=False)
-    q2 = models.TextField(null=False)
-    q3 = models.TextField(null=False)
+    graduation_year = models.IntegerField(
+        null=False,
+        validators=[
+            validators.MinValueValidator(
+                2000, message="Enter a realistic graduation year."
+            ),
+            validators.MaxValueValidator(
+                2030, message="Enter a realistic graduation year."
+            ),
+        ],
+    )
+    resume = models.FileField(
+        upload_to="applications/resumes/",
+        validators=[
+            UploadedFileValidator(
+                content_types=["application/pdf"], max_upload_size=20 * 1024 * 1024
+            )
+        ],
+        null=False,
+    )
+    q1 = models.TextField(null=False, help_text="First question?")
+    q2 = models.TextField(null=False, help_text="Second question?")
+    q3 = models.TextField(null=False, help_text="Third question?")
     conduct_agree = models.BooleanField(
         help_text="I have read and agree to the code of conduct.",
         blank=False,
