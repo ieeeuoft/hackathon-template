@@ -3,8 +3,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
-from django.views.generic.edit import BaseCreateView
-from django.views.generic.base import TemplateResponseMixin
+from django.views.generic.edit import CreateView
 from django_registration.backends.activation.views import (
     RegistrationView,
     ActivationView as _ActivationView,
@@ -95,8 +94,7 @@ class ActivationView(_ActivationView):
         return context
 
 
-# class ApplicationView(LoginRequiredMixin, ModelFormMixin, FormView):
-class ApplicationView(LoginRequiredMixin, TemplateResponseMixin, BaseCreateView):
+class ApplicationView(LoginRequiredMixin, CreateView):
     form_class = ApplicationForm
     template_name = "registration/application.html"
     success_url = reverse_lazy("event:dashboard")
