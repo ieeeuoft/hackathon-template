@@ -103,3 +103,9 @@ class ApplicationView(LoginRequiredMixin, CreateView):
         kwargs = super().get_form_kwargs()
         kwargs["user"] = self.request.user
         return kwargs
+
+    def dispatch(self, request, *args, **kwargs):
+        if hasattr(request.user, "application"):
+            return redirect(reverse_lazy("event:dashboard"))
+
+        return super().dispatch(request, *args, **kwargs)

@@ -16,6 +16,13 @@
 {% set form_action=url("registration:application") %}
 
 {% block form_inputs %}
+    {% if form.non_field_errors %}
+        <div class="col s12">
+        {% for error in form.non_field_errors() %}
+            <span class="formError">{{ error }}</span>
+        {% endfor %}
+        </div>
+    {% endif %}
     {% for field in form %}
         {% if field.field.widget.input_type == "select" %}
             {{ render_field(field, size="s12 select2-wrapper") }}
@@ -27,12 +34,6 @@
             {{ render_field(field, size="s12") }}
         {% endif %}
     {% endfor %}
-
-    {% if form.non_field_errors %}
-        {% for error in form.non_field_errors() %}
-            {{ error }}
-        {% endfor %}
-    {% endif %}
 {% endblock %}
 
 {% block form_button %}
