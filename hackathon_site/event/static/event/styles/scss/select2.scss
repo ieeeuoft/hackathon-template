@@ -3,8 +3,8 @@ Materialize CSS For Select2
 
 The below SCSS was originally developed by Cesar Ramos at
 https://github.com/kevzlou7979/select2-materialize, and was converted
-to scss using http://beautifytools.com/css-to-scss-converter.php.
-Original copyright notice reproduced below.
+to scss using http://beautifytools.com/css-to-scss-converter.php. Slight
+modifications made by Graham Hoyes. Original copyright notice reproduced below.
 
 Copyright (c) 2016 Cesar Ramos
 
@@ -30,9 +30,6 @@ THE SOFTWARE.
 
 .select2-wrapper {
     .label-active {
-        //position: absolute;
-        //top: -26px;
-        //font-size: 0.8rem;
         transform: translateY(-14px) scale(0.8);
         transform-origin: 0 0;
     }
