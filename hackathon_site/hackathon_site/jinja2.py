@@ -19,6 +19,8 @@ def environment(**options):
             "registration_close_date": settings.REGISTRATION_CLOSE_DATE,
             "event_start_date": settings.EVENT_START_DATE,
             "event_end_date": settings.EVENT_END_DATE,
+            "from_email": settings.DEFAULT_FROM_EMAIL,
+            "contact_email": settings.CONTACT_EMAIL,
         }
     )
     return env
