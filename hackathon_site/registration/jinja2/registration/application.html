@@ -15,14 +15,17 @@
 
 {% set form_action=url("registration:application") %}
 
-{% block form_inputs %}
+{% block form_description %}
     {% if form.non_field_errors %}
-        <div class="col s12">
+        <div class="row col s12">
         {% for error in form.non_field_errors() %}
             <span class="formError">{{ error }}</span>
         {% endfor %}
         </div>
     {% endif %}
+{% endblock %}
+
+{% block form_inputs %}
     {% for field in form %}
         {% if field.field.widget.__class__.__name__ == "Textarea" %}
             {{ render_field(field, size="s12", show_help_text_as_label=True) }}
