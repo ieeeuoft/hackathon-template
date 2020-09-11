@@ -180,7 +180,6 @@ class PasswordResetTestCase(SetupUserMixin, TestCase):
     def setUp(self):
         super().setUp()
         self.view_request_reset = reverse("event:reset_password")
-        # self.view_reset = reverse("event:reset_password_confirm")
 
     def test_reset_password_get(self):
         response = self.client.get(self.view_request_reset)
