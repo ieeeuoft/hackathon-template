@@ -1,13 +1,16 @@
 from django.conf import settings
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
+from django.views.generic.edit import CreateView
 from django_registration.backends.activation.views import (
     RegistrationView,
     ActivationView as _ActivationView,
 )
 
-from registration.forms import SignUpForm
+
+from registration.forms import SignUpForm, ApplicationForm
 
 
 class SignUpView(RegistrationView):
@@ -89,3 +92,20 @@ class ActivationView(_ActivationView):
         context = super().get_context_data(**kwargs)
         context["email"] = settings.CONTACT_EMAIL
         return context
+
+
+class ApplicationView(LoginRequiredMixin, CreateView):
+    form_class = ApplicationForm
+    template_name = "registration/application.html"
+    success_url = reverse_lazy("event:dashboard")
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
+
+    def dispatch(self, request, *args, **kwargs):
+        if hasattr(request.user, "application"):
+            return redirect(reverse_lazy("event:dashboard"))
+
+        return super().dispatch(request, *args, **kwargs)

@@ -1,7 +1,11 @@
+from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
 from django.utils.translation import gettext_lazy as _
 from django_registration import validators
+
+from registration.models import Application, Team
+from registration.widgets import MaterialFileInput
 
 User = get_user_model()
 
@@ -69,3 +73,81 @@ class SignUpForm(UserCreationForm):
         if commit:
             user.save()
         return user
+
+
+class ApplicationForm(forms.ModelForm):
+    error_css_class = "invalid"
+
+    class Meta:
+        model = Application
+        fields = [
+            "birthday",
+            "gender",
+            "ethnicity",
+            "phone_number",
+            "school",
+            "study_level",
+            "graduation_year",
+            "resume",
+            "q1",
+            "q2",
+            "q3",
+            "conduct_agree",
+            "data_agree",
+        ]
+        widgets = {
+            "birthday": forms.DateInput(format="%Y-%m-%d", attrs={"type": "date"}),
+            "school": forms.Select(
+                # Choices will be populated by select2
+                attrs={"class": "select2-school-select"},
+                choices=((None, ""),),
+            ),
+            "resume": MaterialFileInput(),
+            "q1": forms.Textarea(
+                attrs={"class": "materialize-textarea", "placeholder": "I enjoy cake"}
+            ),
+            "q2": forms.Textarea(
+                attrs={
+                    "class": "materialize-textarea",
+                    "placeholder": "Cake is wonderful",
+                }
+            ),
+            "q3": forms.Textarea(
+                attrs={
+                    "class": "materialize-textarea",
+                    "placeholder": "I could really go for cake right now",
+                }
+            ),
+            "phone_number": forms.TextInput(attrs={"placeholder": "+1 (123) 456-7890"}),
+            "graduation_year": forms.NumberInput(attrs={"placeholder": 2020}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop("user")
+        super().__init__(*args, **kwargs)
+        self.label_suffix = ""
+        self.fields[
+            "conduct_agree"
+        ].required = True  # TODO: these don't stay checked on page reload
+        self.fields["data_agree"].required = True
+
+    def clean(self):
+        cleaned_data = super().clean()
+        if hasattr(self.user, "application"):
+            raise forms.ValidationError(
+                _("User has already submitted an application"), code="invalid"
+            )
+        return cleaned_data
+
+    def save(self, commit=True):
+        self.instance = super().save(commit=False)
+        team = Team.objects.create()
+
+        self.instance.user = self.user
+        self.instance.team = team
+
+        if commit:
+            self.instance.save()
+            self.save_m2m()
+
+        return self.instance

@@ -1,9 +1,15 @@
 {% extends "event/base.html" %}
 
-{% macro render_field(field, show_help_text=False) %}
-    <div class="input-field col s12">
+{% macro render_field(field, show_help_text=False, show_label=True, show_help_text_as_label=False, size="s12") %}
+    <div class="input-field col {{ size }}">
         {{ field }}
-        {{ field.label_tag() }}
+        {% if show_label %}
+            {% if show_help_text_as_label %}
+                <label for="{{ field.id_for_label }}">{{ field.help_text }}</label>
+            {% else %}
+                {{ field.label_tag() }}
+            {% endif %}
+        {% endif %}
         {% if show_help_text %}
             <span class="helper-text">{{ field.help_text|safe }}</span>
         {% endif %}
@@ -12,6 +18,27 @@
             {% for error in field.errors %}
                 {{ error }}
                 <br />
+            {% endfor %}
+            </span>
+        {% endif %}
+    </div>
+{% endmacro %}
+
+{% macro render_checkbox_field(field, size="s12") %}
+    <div class="col {{ size }}" style="padding-top: 0.5em; padding-bottom: 0.5em;">
+        <label>
+            <input
+                type="checkbox"
+                class="filled-in"
+                {% if field.value() %}checked="checked" {% endif %}
+                name="{{ field.name }}"
+                id="{{ field.id_for_label }}">
+            <span>{{ field.help_text|safe }}</span>
+        </label>
+        {% if field.errors %}
+            <span class="formFieldError">
+            {% for error in field.errors %}
+                {{ error }}
             {% endfor %}
             </span>
         {% endif %}
@@ -28,6 +55,7 @@
                 <form class="col s12"
                     {% if form_action %} action="{{ form_action }}" {% endif %}
                     method="{{ form_method if form_method else "post" }}"
+                    {% block form_attrs %}{% endblock %}
                 >
                     {{ csrf_input }}
                     {% block form_inputs %}{% endblock %}
