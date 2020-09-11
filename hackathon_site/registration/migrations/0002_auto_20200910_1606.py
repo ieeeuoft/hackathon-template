@@ -114,7 +114,7 @@ class Migration(migrations.Migration):
                 max_length=20,
                 validators=[
                     django.core.validators.RegexValidator(
-                        "^(?:\\+\\d{1,2})?\\s?\\(?\\d{3}\\)?[\\s-]?\\d{3}[\\s-]?\\d{4}$",
+                        "^(?:\\+\\d{1,3})?\\s?\\(?\\d{3}\\)?[\\s-]?\\d{3}[\\s-]?\\d{4}$",
                         message="Enter a valid phone number.",
                     )
                 ],

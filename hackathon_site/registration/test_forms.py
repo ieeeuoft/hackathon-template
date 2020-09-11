@@ -165,14 +165,21 @@ class ApplicationFormTestCase(SetupUserMixin, TestCase):
         self.assertEqual(Application.objects.count(), 0)
 
     def test_phone_number_regex(self):
-        valid_numbers = ["+11234567890", "1234567890", "(123) 246-7890", "123 456 7890"]
+        valid_numbers = [
+            "+1 123 456 7890",
+            "+121234567890",
+            "+1231234567890",
+            "1234567890",
+            "(123) 246-7890",
+            "123 456 7890",
+        ]
         for number in valid_numbers:
             data = self.data.copy()
             data["phone_number"] = number
             form = self._build_form(data=data)
             self.assertTrue(form.is_valid(), msg=number)
 
-        invalid_numbers = ["abcdefghij", "1234567890123"]
+        invalid_numbers = ["abcdefghij", "+12341234567890"]
         for number in invalid_numbers:
             data = self.data.copy()
             data["phone_number"] = number
