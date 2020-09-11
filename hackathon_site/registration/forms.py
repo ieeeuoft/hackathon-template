@@ -103,9 +103,23 @@ class ApplicationForm(forms.ModelForm):
                 choices=((None, ""),),
             ),
             "resume": MaterialFileInput(),
-            "q1": forms.Textarea(attrs={"class": "materialize-textarea"}),
-            "q2": forms.Textarea(attrs={"class": "materialize-textarea"}),
-            "q3": forms.Textarea(attrs={"class": "materialize-textarea"}),
+            "q1": forms.Textarea(
+                attrs={"class": "materialize-textarea", "placeholder": "I enjoy cake"}
+            ),
+            "q2": forms.Textarea(
+                attrs={
+                    "class": "materialize-textarea",
+                    "placeholder": "Cake is wonderful",
+                }
+            ),
+            "q3": forms.Textarea(
+                attrs={
+                    "class": "materialize-textarea",
+                    "placeholder": "I could really go for cake right now",
+                }
+            ),
+            "phone_number": forms.TextInput(attrs={"placeholder": "+1 (123) 456-7890"}),
+            "graduation_year": forms.NumberInput(attrs={"placeholder": 2020}),
         }
 
     def __init__(self, *args, **kwargs):
