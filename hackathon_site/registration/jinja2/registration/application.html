@@ -111,7 +111,7 @@ $.get("https://raw.githubusercontent.com/MLH/mlh-policies/master/schools.csv", (
         tags: true,
     });
 
-    {% if form.school.value() and form.school.value() is not none %}
+    {% if form.school.value() is not none and form.school.value() %}
     /* Since school is actually a text field rendered with a select
     *  widget, we can't easily set previously selected values from the widget.
     *  Instead, we can force the option to be selected via JS, adding it if
