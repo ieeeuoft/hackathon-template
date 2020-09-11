@@ -70,11 +70,24 @@ $(document).ready(function() {
     selects.on("select2:opening", function () {
         $(this).siblings("label").addClass("label-active");
     });
-    selects.on("select2:closing", function () {
+
+    selects.on("select2:closing", function (e) {
         if (!this.value) {
             $(this).siblings("label").removeClass("label-active");
         }
-    })
+
+        // steal focus during close - only capture once and stop propogation
+        // https://stackoverflow.com/a/49261426/3882202
+        $(e.target).data("select2").$selection.one("focus focusin", function (e) {
+            e.stopPropagation();
+        });
+    });
+
+    // on first focus (bubbles up to document), open the menu
+    // https://stackoverflow.com/a/49261426/3882202
+    $(document).on('focus', '.select2-selection.select2-selection--single', function () {
+      $(this).closest(".select2-container").siblings('select:enabled').select2('open');
+    });
 });
 
 $.get("https://raw.githubusercontent.com/MLH/mlh-policies/master/schools.csv", (data) => {
