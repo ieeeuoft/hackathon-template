@@ -246,16 +246,7 @@ class JoinTeamFormTestCase(SetupUserMixin, TestCase):
         self.assertIn("Team BBBBB does not exist.", form.errors["team_code"])
 
     def test_team_full(self):
-        user2 = User.objects.create_user(username="bob@ross.com", password="abcdef123")
-        user3 = User.objects.create_user(
-            username="franklin@carmichael", password="supersecret456"
-        )
-        user4 = User.objects.create_user(username="lawren@harris", password="wxyz7890")
-
-        self._apply_as_user(self.user, self.team)
-        self._apply_as_user(user2, self.team)
-        self._apply_as_user(user3, self.team)
-        self._apply_as_user(user4, self.team)
+        self._make_full_registration_team(self.team)
 
         form = JoinTeamForm(data={"team_code": self.team.team_code})
         self.assertFalse(form.is_valid())

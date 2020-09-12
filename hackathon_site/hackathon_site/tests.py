@@ -42,3 +42,24 @@ class SetupUserMixin:
 
     def _apply(self):
         return self._apply_as_user(self.user)
+
+    def _make_full_registration_team(self, team=None):
+        if team is None:
+            team = RegistrationTeam.objects.create()
+
+        self.user2 = User.objects.create_user(
+            username="bob@ross.com", password="abcdef123"
+        )
+        self.user3 = User.objects.create_user(
+            username="franklin@carmichael", password="supersecret456"
+        )
+        self.user4 = User.objects.create_user(
+            username="lawren@harris", password="wxyz7890"
+        )
+
+        self._apply_as_user(self.user, team)
+        self._apply_as_user(self.user2, team)
+        self._apply_as_user(self.user3, team)
+        self._apply_as_user(self.user4, team)
+
+        return team

@@ -36,12 +36,12 @@
             {% else %}
                 <p>Your team code is: <strong>{{ application.team.team_code }}</strong>.</p>
                 {% set num_members = application.team.applications.count() %}
-                {% if num_members < application.team.MAX_MEMBERS %}
-                    <p>
-                        Spots remaining on your team: <strong>{{ application.team.MAX_MEMBERS - num_members }}</strong>.
-                        {% if join_team_form %}Share your team code with your teammates, or join their team instead.{% endif %}
-                    </p>
-                {% endif %}
+                <p>
+                    Spots remaining on your team: <strong>{{ application.team.MAX_MEMBERS - num_members }}</strong>.
+                    {% if join_team_form and num_members < application.team.MAX_MEMBERS%}
+                        Share your team code with your teammates, or join their team instead.
+                    {% endif %}
+                </p>
                 <h5>Team Members</h5>
                 <ul>
                     {% for application in application.team.applications.all() %}

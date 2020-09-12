@@ -155,6 +155,41 @@ class DashboardTestCase(SetupUserMixin, TestCase):
         response = self.client.post(self.view, data=data)
         self.assertContains(response, "Team 123456 does not exist.")
 
+    def test_renders_all_team_members(self):
+        self._login()
+        self._apply()
+
+        user2 = User.objects.create(
+            username="bob@ross.com",
+            first_name="Bob",
+            last_name="Ross",
+            password="abcdef123",
+        )
+        team = self.user.application.team
+        self._apply_as_user(user2, team)
+
+        response = self.client.get(self.view)
+
+        for member in User.objects.filter(application__team_id=team.id):
+            self.assertContains(response, f"{member.first_name} {member.last_name}")
+
+        self.assertContains(
+            response, "Spots remaining on your team: <strong>2</strong>"
+        )
+
+    def test_removes_message_to_share_team_code_if_full(self):
+        self._login()
+        self._make_full_registration_team()
+
+        response = self.client.get(self.view)
+        self.assertContains(
+            response, "Spots remaining on your team: <strong>0</strong>"
+        )
+        self.assertNotContains(
+            response,
+            "Share your team code with your teammates, or join their team instead.",
+        )
+
 
 class LogInViewTestCase(SetupUserMixin, TestCase):
     """
