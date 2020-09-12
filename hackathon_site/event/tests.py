@@ -1,3 +1,5 @@
+from datetime import date
+
 from django.conf import settings
 from django.test import TestCase
 from django.urls import reverse
@@ -6,7 +8,29 @@ from django.core import mail
 import re
 
 from event.models import Profile, Team, User
+from registration.models import Application, Team as RegistrationTeam
 from hackathon_site.tests import SetupUserMixin
+
+
+def _create_application(user):
+    application_data = {
+        "birthday": date(2020, 9, 8),
+        "gender": "no-answer",
+        "ethnicity": "no-answer",
+        "phone_number": "1234567890",
+        "school": "UofT",
+        "study_level": "other",
+        "graduation_year": 2020,
+        "q1": "hi",
+        "q2": "there",
+        "q3": "foo",
+        "conduct_agree": True,
+        "data_agree": True,
+        "resume": "uploads/resumes/my_resume.pdf",
+    }
+    return Application.objects.create(
+        user=user, team=RegistrationTeam.objects.create(), **application_data
+    )
 
 
 class ProfileTestCase(TestCase):
@@ -52,6 +76,73 @@ class IndexViewTestCase(SetupUserMixin, TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertContains(response, "Logout")
 
+    def test_links_to_application_when_not_applied(self):
+        self._login()
+        response = self.client.get(self.view)
+        self.assertContains(response, "Continue Application")
+        self.assertContains(response, reverse("registration:application"))
+
+    def test_links_to_dashboard_when_applied(self):
+        self._login()
+        _create_application(self.user)
+        response = self.client.get(self.view)
+        self.assertContains(response, "Go to Dashboard")
+        self.assertContains(response, reverse("event:dashboard"))
+
+
+class DashboardTestCase(SetupUserMixin, TestCase):
+    def setUp(self):
+        super().setUp()
+        self.view = reverse("event:dashboard")
+
+    def test_redirects_to_login(self):
+        """
+        Redirects to the login page when not logged in
+        """
+        response = self.client.get(self.view)
+        self.assertRedirects(response, f"{reverse('event:login')}?next={self.view}")
+
+    def test_renders_when_logged_in(self):
+        """
+        Renders the dashboard when logged in
+
+        Once the dashboard is fully implemented, this test should
+        be complemented with a whole suite of tests depending on
+        the user's progress through the application, etc.
+        """
+        self._login()
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertContains(response, "Dashboard")
+
+    def test_dashboard_when_not_applied(self):
+        """
+        Test the dashboard when the user has not applied
+
+        It should:
+        - Link to the application page
+        - Have a note about applying before forming a team
+        """
+        self._login()
+        response = self.client.get(self.view)
+        self.assertContains(response, "Complete your application")
+        self.assertContains(response, reverse("registration:application"))
+        self.assertContains(
+            response, "You must complete your application before you can form a team"
+        )
+
+    def test_dashboard_when_applied(self):
+        """
+        Test the dashboard after the user has applied
+        """
+        self._login()
+        _create_application(self.user)
+        response = self.client.get(self.view)
+        self.assertNotContains(response, reverse("registration:application"))
+        self.assertNotContains(
+            response, "You must complete your application before you can form a team"
+        )
+
 
 class LogInViewTestCase(SetupUserMixin, TestCase):
     """
@@ -88,32 +179,6 @@ class LogInViewTestCase(SetupUserMixin, TestCase):
             self.view, {"username": self.user.username, "password": self.password}
         )
         self.assertEqual(response.url, settings.LOGIN_REDIRECT_URL)
-
-
-class DashboardTestCase(SetupUserMixin, TestCase):
-    def setUp(self):
-        super().setUp()
-        self.view = reverse("event:dashboard")
-
-    def test_redirects_to_login(self):
-        """
-        Redirects to the login page when not logged in
-        """
-        response = self.client.get(self.view)
-        self.assertRedirects(response, f"{reverse('event:login')}?next={self.view}")
-
-    def test_renders_when_logged_in(self):
-        """
-        Renders the dashboard when logged in
-
-        Once the dashboard is fully implemented, this test should
-        be complemented with a whole suite of tests depending on
-        the user's progress through the application, etc.
-        """
-        self._login()
-        response = self.client.get(self.view)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertContains(response, "Dashboard")
 
 
 class LogOutViewTestCase(SetupUserMixin, TestCase):
