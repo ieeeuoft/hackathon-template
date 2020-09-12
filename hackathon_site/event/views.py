@@ -21,7 +21,7 @@ class IndexView(TemplateView):
 
 class DashboardView(LoginRequiredMixin, FormView):
     template_name = "event/dashboard_base.html"
-    # Form submits should take the use back to the dashboard
+    # Form submits should take the user back to the dashboard
     success_url = reverse_lazy("event:dashboard")
 
     def get_form(self, form_class=None):
