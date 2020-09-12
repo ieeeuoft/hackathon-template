@@ -1,5 +1,3 @@
-from datetime import date
-
 from django.conf import settings
 from django.test import TestCase
 from django.urls import reverse
@@ -8,29 +6,7 @@ from django.core import mail
 import re
 
 from event.models import Profile, Team, User
-from registration.models import Application, Team as RegistrationTeam
 from hackathon_site.tests import SetupUserMixin
-
-
-def _create_application(user):
-    application_data = {
-        "birthday": date(2020, 9, 8),
-        "gender": "no-answer",
-        "ethnicity": "no-answer",
-        "phone_number": "1234567890",
-        "school": "UofT",
-        "study_level": "other",
-        "graduation_year": 2020,
-        "q1": "hi",
-        "q2": "there",
-        "q3": "foo",
-        "conduct_agree": True,
-        "data_agree": True,
-        "resume": "uploads/resumes/my_resume.pdf",
-    }
-    return Application.objects.create(
-        user=user, team=RegistrationTeam.objects.create(), **application_data
-    )
 
 
 class ProfileTestCase(TestCase):
@@ -84,7 +60,7 @@ class IndexViewTestCase(SetupUserMixin, TestCase):
 
     def test_links_to_dashboard_when_applied(self):
         self._login()
-        _create_application(self.user)
+        self._apply()
         response = self.client.get(self.view)
         self.assertContains(response, "Go to Dashboard")
         self.assertContains(response, reverse("event:dashboard"))
@@ -136,7 +112,7 @@ class DashboardTestCase(SetupUserMixin, TestCase):
         Test the dashboard after the user has applied
         """
         self._login()
-        _create_application(self.user)
+        self._apply()
         response = self.client.get(self.view)
         self.assertNotContains(response, reverse("registration:application"))
         self.assertNotContains(
