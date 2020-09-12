@@ -17,6 +17,8 @@ import os
 from pathlib import Path
 import pytz
 
+from django.urls import reverse_lazy
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
 
@@ -109,6 +111,8 @@ TEMPLATES = [
 FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
 
 WSGI_APPLICATION = "hackathon_site.wsgi.application"
+
+LOGIN_REDIRECT_URL = reverse_lazy("event:dashboard")
 
 
 # Database
