@@ -7,6 +7,7 @@ import re
 
 from event.models import Profile, Team, User
 from hackathon_site.tests import SetupUserMixin
+from registration.models import Team as RegistrationTeam
 
 
 class ProfileTestCase(TestCase):
@@ -118,6 +119,41 @@ class DashboardTestCase(SetupUserMixin, TestCase):
         self.assertNotContains(
             response, "You must complete your application before you can form a team"
         )
+
+        # Leave team link appears
+        self.assertContains(response, "Leave team")
+        self.assertContains(response, reverse("registration:leave-team"))
+
+        # Team code appears
+        self.assertContains(response, self.user.application.team.team_code)
+
+        # Join team form appears
+        self.assertContains(response, "Join a Different Team")
+
+    def test_join_team(self):
+        """
+        Once the user has applied and before they have been reviewed, they can join
+        a different team
+        """
+        self._login()
+        self._apply()
+
+        new_team = RegistrationTeam.objects.create()
+        data = {"team_code": new_team.team_code}
+        response = self.client.post(self.view, data=data)
+        self.assertRedirects(response, self.view)
+        redirected_response = self.client.get(response.url)
+        self.assertContains(redirected_response, new_team.team_code)
+
+    def test_join_team_shows_errors(self):
+        self._login()
+        self._apply()
+
+        # This team code is longer than the max allowed, so no chance that team
+        # happens to be created already
+        data = {"team_code": "123456"}
+        response = self.client.post(self.view, data=data)
+        self.assertContains(response, "Team 123456 does not exist.")
 
 
 class LogInViewTestCase(SetupUserMixin, TestCase):
