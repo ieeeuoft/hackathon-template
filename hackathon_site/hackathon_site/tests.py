@@ -19,7 +19,10 @@ class SetupUserMixin:
         self.client.login(username=self.user.username, password=self.password)
 
     @staticmethod
-    def _apply_as_user(user):
+    def _apply_as_user(user, team=None):
+        if team is None:
+            team = RegistrationTeam.objects.create()
+
         application_data = {
             "birthday": date(2000, 1, 1),
             "gender": "no-answer",
@@ -35,9 +38,7 @@ class SetupUserMixin:
             "data_agree": True,
             "resume": "uploads/resumes/my_resume.pdf",
         }
-        return Application.objects.create(
-            user=user, team=RegistrationTeam.objects.create(), **application_data
-        )
+        return Application.objects.create(user=user, team=team, **application_data)
 
     def _apply(self):
         return self._apply_as_user(self.user)

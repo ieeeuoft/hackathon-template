@@ -30,10 +30,27 @@
 
         <div class="borderTopDiv z-depth-3">
             <h4 class="formH2">Apply as team</h4>
-            <p>Have friends you want to work with? Create a team with up to 4 people and we’ll review your applications together. Enter your team code or make a new one and share with your members.</p>
+            <p>Have friends you want to work with? Create a team with up to 4 people and we’ll review your applications together.</p>
             {% if application is none %}
                   <p><strong>You must complete your application before you can form a team. Return here once you've submitted your application.</strong></p>
             {% else %}
+                <p>Your team code is: <strong>{{ application.team.team_code }}</strong>.</p>
+                {% set num_members = application.team.applications.count() %}
+                {% if num_members < application.team.MAX_MEMBERS %}
+                    <p>Spots remaining on your team: <strong>{{ application.team.MAX_MEMBERS - num_members }}</strong>. Share your team code with your teammates, or join their team instead.</p>
+                {% endif %}
+                <h5>Team Members</h5>
+                <ul>
+                    {% for application in application.team.applications.all() %}
+                    <li>{{ application.user.first_name }} {{ application.user.last_name }}</li>
+                    {% endfor %}
+                </ul>
+                <a
+                    href="{{ url("registration:leave-team") }}"
+                    class="btn-small waves-effect waves-light secondaryColor colorBtn center"
+                >
+                    Leave team
+                </a>
             {% endif %}
 
 
