@@ -39,6 +39,7 @@ class DashboardView(LoginRequiredMixin, FormView):
         if not hasattr(self.request.user, "application"):
             return None
 
+        # Once RSVP form is implemented, more logic to choose it should go here
         return JoinTeamForm(**self.get_form_kwargs())
 
     def form_valid(self, form):
