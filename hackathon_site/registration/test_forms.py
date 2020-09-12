@@ -79,8 +79,8 @@ class ApplicationFormTestCase(SetupUserMixin, TestCase):
         super().setUp()
         self.data = {
             "birthday": date(2020, 9, 8),
-            "gender": "male",
-            "ethnicity": "caucasian",
+            "gender": "no-answer",
+            "ethnicity": "no-answer",
             "phone_number": "1234567890",
             "school": "UofT",
             "study_level": "other",

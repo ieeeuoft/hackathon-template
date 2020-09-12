@@ -40,7 +40,11 @@
             </div>
             <div class="row">
                 {% if request.user.is_authenticated %}
-                    <a href="{{ url("event:dashboard") }}" class="btn-large waves-effect waves-light colorBtn">Continue Application</a>
+                    {% if application is none %}
+                        <a href="{{ url("registration:application") }}" class="btn-large waves-effect waves-light colorBtn">Continue Application</a>
+                    {% else %}
+                        <a href="{{ url("event:dashboard") }}" class="btn-large waves-effect waves-light colorBtn">Go to Dashboard</a>
+                    {% endif %}
                 {% else %}
                     <a href="{{ url("registration:signup") }}" class="btn-large waves-effect waves-light colorBtn">Apply</a>
                 {% endif %}

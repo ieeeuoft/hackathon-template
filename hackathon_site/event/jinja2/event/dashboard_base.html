@@ -9,24 +9,40 @@
 <div class="container">
     <div class="section">
         <div class="borderTopDiv z-depth-3">
-            <h1 class="formH1 col s12">Dashboard</h1>
+            <h1 class="formH1">Dashboard</h1>
+
+            {% if application is none %}
+                <h4 class="formH2">Complete your application</h4>
+                <p><strong>Status</strong>: Incomplete</p>
+                <br />
+                <a
+                    href="{{ url("registration:application") }}"
+                    class="btn-small waves-effect waves-light secondaryColor colorBtn"
+                    style="margin-right: auto;"
+                >
+                    Get started
+                </a>
+            {% else %}
+                <h4 class="formH2 col s12">Your application has been submitted!</h4>
+                <p><strong>Status</strong>: Submitted</p>
+                <p>We're in the process of reviewing your application. Watch for an email from {{ from_email }}, and check back here for updates.</p>
+            {% endif %}
 
             <h4 class="formH2 col s12">Complete your application</h4>
-            <p><strong>Status</strong>: incomplete</p>
-            <br />
-            <a href="#" class="btn-small waves-effect waves-light secondaryColor colorBtn" style="margin-right: auto;">Get started</a>
         </div>
 
         <div class="borderTopDiv z-depth-3">
-            <h4 class="formH2 col s12">Apply as team</h4>
-
+            <h4 class="formH2">Apply as team</h4>
             <p>Have friends you want to work with? Create a team with up to 4 people and we’ll review your applications together. Enter your team code or make a new one and share with your members.</p>
             <br />
-            <p><strong>You must complete your application before you can form a team.</strong></p>
+            {% if application is none %}
+                  <p><strong>You must complete your application before you can form a team. Return here once you've submitted your application.</strong></p>
+            {% else %}
+            {% endif %}
         </div>
 
         <div class="borderTopDiv z-depth-3">
-            <h4 class="formH2 col s12">Application FAQs</h4>
+            <h4 class="formH2">Application FAQs</h4>
 
             <p class="faqQuestion">When can I expect to hear back?</p>
             <p class="faqAnswer">Decisions will be sent out in 2 rounds, tentatively scheduled for MONTH XX and XX.</p>
