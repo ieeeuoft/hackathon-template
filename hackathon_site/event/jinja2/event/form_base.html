@@ -52,7 +52,7 @@
             <div class="row col s12 flexColCenter {% if self.form_img() %}l7 m8{% endif %}">
                 <h1 class="formH1">{% block form_title %}{% endblock %}</h1>
                 {% block form_description %}{% endblock %}
-                <form class="col s12"
+                <form class="row col s12 flexColCenter
                     {% if form_action %} action="{{ form_action }}" {% endif %}
                     method="{{ form_method if form_method else "post" }}"
                     {% block form_attrs %}{% endblock %}

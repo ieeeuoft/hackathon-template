@@ -45,8 +45,7 @@
                         {{ self.nav_logout_login_links() }}
                     </ul>
 
-                    <a href="#" data-target="nav-mobile" class="sidenav-trigger"><i class="material-icons">menu</i></a>
-
+                    {% block mobile_nav_btn %}{% endblock %}
                 {% endblock %}
             </div>
         </nav>
