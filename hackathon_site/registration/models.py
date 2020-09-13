@@ -99,9 +99,9 @@ class Application(models.Model):
         ],
         null=False,
     )
-    q1 = models.TextField(null=False, help_text="First question?")
-    q2 = models.TextField(null=False, help_text="Second question?")
-    q3 = models.TextField(null=False, help_text="Third question?")
+    q1 = models.TextField(null=False, help_text="First question?", max_length=1000)
+    q2 = models.TextField(null=False, help_text="Second question?", max_length=1000)
+    q3 = models.TextField(null=False, help_text="Third question?", max_length=1000)
     conduct_agree = models.BooleanField(
         help_text="I have read and agree to the code of conduct.",
         blank=False,

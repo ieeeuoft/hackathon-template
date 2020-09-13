@@ -1,9 +1,9 @@
 {% extends "event/base.html" %}
 
 {% block nav_links %}
-    <li><a href={{ url("event:change_password") }} >Change Password</a></li>
+<li><a href="{{ url("event:dashboard") }}" class="active">Dashboard</a></li>
+<li><a href="{{ url("event:change_password") }}">Change Password</a></li>
 {% endblock %}
-
 
 {% block body %}
 <div class="container">
@@ -13,32 +13,35 @@
 
             {% if application is none %}
                 {% if not registration_open %}
-                    <h4 class="formH2">Applications have closed</h4>
+                    <h2 class="formH2">Applications have closed</h2>
                     <p>Unfortunately, the deadline to apply for {{ event_name }} was {{ localtime(registration_close_date).strftime("%B %-d, %Y") }}.</p>
                     <br />
                     <p>If you have any questions or concerns, please <a href="mailto:{{ contact_email }}" class="hoverLink primaryText">contact us</a>.</p>
                 {% else %}
-                    <h4 class="formH2">Complete your application</h4>
+                    <h2 class="formH2">Complete your application</h2>
                     <p><strong>Status</strong>: Incomplete</p>
+                    <br />
                     <a
                         href="{{ url("registration:application") }}"
-                        class="btn-small waves-effect waves-light secondaryColor colorBtn center"
+                        class="btn-small waves-effect waves-light colorBtn"
+                        style="margin-right: auto;"
                     >
                         Get started
                     </a>
                 {% endif %}
             {% else %}
-                <h4 class="formH2">Your application has been submitted!</h4>
+                <h2 class="formH2">Your application has been submitted!</h2>
                 <p><strong>Status</strong>: Submitted</p>
+                <br />
                 <p>We're in the process of reviewing your application. Watch for an email from {{ from_email }}, and check back here for updates.</p>
             {% endif %}
-
         </div>
 
         {% if registration_open or application is not none %}
         <div class="borderTopDiv z-depth-3">
-            <h4 class="formH2">Apply as team</h4>
+            <h2 class="formH2">Apply as a team</h2>
             <p>Have friends you want to work with? Create a team with up to 4 people and we’ll review your applications together.</p>
+            <br />
             {% if application is none %}
                   <p><strong>You must complete your application before you can form a team. Return here once you've submitted your application.</strong></p>
             {% else %}
@@ -46,14 +49,15 @@
                 {% if registration_open %}
                     {% set num_members = application.team.applications.count() %}
                     <p>
-                        Spots remaining on your team: <strong>{{ application.team.MAX_MEMBERS - num_members }}</strong>.
                         {% if join_team_form and num_members < application.team.MAX_MEMBERS%}
                             Share your team code with your teammates, or join their team instead.
                         {% endif %}
                     </p>
                 {% endif %}
-                <h5>Team Members</h5>
-                <ul>
+
+                <br />
+                <h3 class="formH3">Team members ({{ num_members }}/{{ application.team.MAX_MEMBERS }})</h3>
+                <ul class="browser-default">
                     {% for application in application.team.applications.all() %}
                     <li>{{ application.user.first_name }} {{ application.user.last_name }}</li>
                     {% endfor %}
@@ -61,15 +65,17 @@
                 {% if join_team_form %}
                     <a
                         href="{{ url("registration:leave-team") }}"
-                        class="btn-small waves-effect waves-light secondaryColor colorBtn center"
+                        class="btn-small waves-effect waves-light colorBtn"
+                        style="margin-right: auto; margin-top: 15px;"
                     >
                         Leave team
                     </a>
-
-                    <h5>Join a Different Team</h5>
-                    <form class="row" method="post">
+                    <br />
+                    <br />
+                    <h3 class="formH3">Join a different team</h3>
+                    <form class="valign-wrapper" style="margin-left: 0;" method="post">
                         {{ csrf_input }}
-                        <div class="input-field col s8">
+                        <div class="input-field">
                             {{ join_team_form.team_code }}
                             {{ join_team_form.team_code.label_tag() }}
 
@@ -82,7 +88,7 @@
                                 </span>
                             {% endif %}
                         </div>
-                        <div class="col s4">
+                        <div style="margin-left: 20px;">
                             <button class="btn-small waves-effect waves-light secondaryColor colorBtn center" type="submit">Submit</button>
                         </div>
                     </form>
@@ -93,7 +99,7 @@
         {% endif %}
 
         <div class="borderTopDiv z-depth-3">
-            <h4 class="formH2">Application FAQs</h4>
+            <h2 class="formH2">Application FAQs</h2>
 
             <p class="faqQuestion">When can I expect to hear back?</p>
             <p class="faqAnswer">Decisions will be sent out in 2 rounds, tentatively scheduled for MONTH XX and XX.</p>
@@ -105,7 +111,7 @@
             <p class="faqAnswer">All teams competing must have 3 or 4 members, but you do not need a full team in order to apply. We have a #team-formation channel on Slack as well as a team formation event scheduled before hacking starts at the event.</p>
 
             <p class="faqQuestion">Are decisions unanimous for a team?</p>
-            <p class="faqAnswer">Due to the large number of applicants and limited number of spots for MakeUofT, decisions may not be unanimous. Each member should expect an email regarding their individual decisions.</p>
+            <p class="faqAnswer">Due to the large number of applicants and limited number of spots for {{ event_name }}, decisions may not be unanimous. Each member should expect an email regarding their individual decisions.</p>
 
             <p class="faqQuestion">Who can I contact if I’ll be late?</p>
             <p class="faqAnswer">Please send an email to <a href="mailto:{{ contact_email }}" class="hoverLink">{{ contact_email }}</a> with your name, email you used to apply, expected arrival time, and reason as to why you’re arriving late and we’ll save your spot for you.</p>

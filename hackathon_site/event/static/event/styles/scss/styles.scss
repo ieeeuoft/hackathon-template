@@ -5,6 +5,10 @@
 // so you can distinguish its origin
 
 // General HTML stuff
+p {
+    margin: 0;
+}
+
 .icon-block {
     padding: 0 15px;
 }
@@ -33,10 +37,18 @@ strong {
     padding: 5px;
 }
 
-.sidenav {
-    .logoNav {
-        height: 80px;
-        margin: 20px;
+.logoNavSide {
+    padding: 30px;
+    height: 150px;
+
+    a,
+    img {
+        height: 100% !important;
+        padding: 0 !important;
+
+        &:hover {
+            background-color: transparent !important;
+        }
     }
 }
 
@@ -62,6 +74,11 @@ strong {
 // End of landing section
 
 // "About" section
+#aboutText {
+    p {
+        margin: 20px 0;
+    }
+}
 .countdown {
     display: flex;
     align-items: center;
@@ -168,6 +185,7 @@ strong {
         > img {
             width: auto !important;
             height: 100%;
+            transform: translateX(-120px);
         }
     }
 }
@@ -211,7 +229,7 @@ strong {
 }
 
 .colorBtn {
-    font-weight: bold;
+    font-weight: bold !important;
     text-align: center;
     text-transform: uppercase;
     color: color(font) !important;
@@ -226,6 +244,156 @@ strong {
     color: color(secondary);
 }
 // End of colors
+
+// Login stuff
+.login {
+    &Div {
+        display: flex;
+        background-color: #fff;
+        border-top: solid 10px color(secondary);
+        border-radius: 3px 3px 0 0;
+        padding: 50px 30px 30px;
+        margin: 50px auto 100px;
+        max-width: 900px;
+
+        @include responsive(md-down) {
+            padding: 40px 15px 30px;
+        }
+
+        @include responsive(sm-down) {
+            padding-bottom: 20px;
+            display: block;
+        }
+
+        .landingImg img {
+            max-width: 300px;
+        }
+    }
+
+    &Link {
+        display: flex;
+        justify-content: center;
+        margin: 10px 0 15px;
+        font-size: size(md);
+        padding: 0 !important;
+
+        i {
+            margin-right: 5px;
+        }
+    }
+}
+
+.form {
+    &H1 {
+        font-weight: bold;
+        text-align: center;
+        text-transform: uppercase;
+        margin: 0 auto 30px;
+        color: color(dark);
+        font-size: 50px;
+    }
+
+    &H2 {
+        font-weight: normal;
+        color: color(dark);
+        font-size: 30px;
+        margin: 0 0 15px;
+    }
+
+    &H3 {
+        font-weight: normal;
+        color: color(dark);
+        font-size: 24px;
+        text-transform: initial;
+        margin: 0 0 10px;
+    }
+
+    @include responsive(md-down) {
+        &H1 {
+            font-size: 40px;
+            margin-bottom: 20px;
+        }
+        &H2 {
+            font-size: 24px;
+        }
+        &H3 {
+            font-size: 20px;
+        }
+    }
+
+    &Checkbox span {
+        color: color(font);
+    }
+
+    &FieldError {
+        font-size: 12px;
+        color: #f44336;
+        display: block;
+    }
+
+    &Error {
+        color: #f44336;
+        display: block;
+    }
+}
+
+.input-field {
+    input:not([type]):focus:not([readonly]) + label,
+    input[type="text"]:focus:not([readonly]) + label,
+    input[type="password"]:focus:not([readonly]) + label,
+    input[type="email"]:focus:not([readonly]) + label,
+    input[type="date"]:focus:not([readonly]) + label,
+    input[type="tel"]:focus:not([readonly]) + label,
+    input[type="number"]:focus:not([readonly]) + label,
+    input[type="search"]:focus:not([readonly]) + label,
+    textarea.materialize-textarea:focus:not([readonly]) + label {
+        color: color(primary);
+    }
+
+    input:not([type]):focus:not([readonly]),
+    input[type="text"]:focus:not([readonly]),
+    input[type="password"]:focus:not([readonly]),
+    input[type="email"]:focus:not([readonly]),
+    input[type="date"]:focus:not([readonly]),
+    input[type="tel"]:focus:not([readonly]),
+    input[type="number"]:focus:not([readonly]),
+    input[type="search"]:focus:not([readonly]),
+    textarea.materialize-textarea:focus:not([readonly]) {
+        border-bottom: 1px solid color(primary);
+        -webkit-box-shadow: 0 1px 0 0 color(primary);
+        box-shadow: 0 1px 0 0 color(primary);
+    }
+}
+// End of form stuff
+
+// Dashboard stuff
+.borderTopDiv {
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    border-top: solid 10px color(secondary);
+    border-radius: 3px 3px 0 0;
+    padding: 40px 30px 30px;
+    margin: 20px auto;
+    max-width: 950px;
+    font-size: size(md);
+
+    @include responsive(sm-down) {
+        padding: 25px 20px;
+    }
+}
+
+.faq {
+    &Question {
+        font-weight: bold;
+        margin: 10px 0 0;
+    }
+
+    &Answer {
+        margin: 5px 0 20px;
+    }
+}
+// End of dashboard stuff
 
 // Formatting stuff
 .flexColCenter {
@@ -249,102 +417,16 @@ strong {
         text-decoration: underline;
     }
 }
-// End of formatting stuff
 
-// Login stuff
-.login {
-    &Div {
-        display: flex;
-        background-color: #fff;
-        border-top: solid 10px color(secondary);
-        border-radius: 3px 3px 0 0;
-        padding: 50px 30px 10px;
-        margin: 50px auto 100px;
-        max-width: 950px;
+.rowMarginPadding {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding: 0 !important;
+}
 
-        @include responsive(md-down) {
-            padding: 40px 5px 10px;
-        }
-
-        @include responsive(sm-down) {
-            padding-bottom: 50px;
-            display: block;
-        }
-
-        .landingImg img {
-            max-width: 300px;
-        }
-    }
-
-    &Link {
-        display: flex;
-        justify-content: center;
-        margin: 15px 0;
-        font-size: size(md);
+.formPadding {
+    @include responsive(sm-down) {
         padding: 0 !important;
-
-        i {
-            margin-right: 5px;
-        }
     }
 }
-
-.form {
-    &H1 {
-        font-weight: bold;
-        text-align: center;
-        text-transform: uppercase;
-        margin: 0 auto 30px;
-        color: color(dark);
-    }
-
-    &H2 {
-        font-weight: normal;
-        color: color(dark);
-    }
-
-    &Checkbox span {
-        color: color(font);
-    }
-
-    &FieldError {
-        font-size: 12px;
-        color: #f44336;
-        display: block;
-    }
-
-    &Error {
-        color: #f44336;
-        display: block;
-    }
-}
-// End of form stuff
-
-// Dashboard stuff
-.borderTopDiv {
-    display: flex;
-    flex-direction: column;
-    background-color: #fff;
-    border-top: solid 10px color(secondary);
-    border-radius: 3px 3px 0 0;
-    padding: 50px 30px 40px;
-    margin: 20px auto;
-    max-width: 950px;
-    font-size: size(md);
-
-    h4 {
-        margin: 0 0 20px;
-    }
-}
-
-.faq {
-    &Question {
-        font-weight: bold;
-        margin: 10px 0 0;
-    }
-
-    &Answer {
-        margin: 5px 0 20px;
-    }
-}
-// End of dashboard stuff
+// End of formatting stuff
