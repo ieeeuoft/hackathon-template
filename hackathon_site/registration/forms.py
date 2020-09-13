@@ -167,7 +167,8 @@ class JoinTeamForm(forms.Form):
     def clean(self):
         if not settings.REGISTRATION_OPEN:
             raise forms.ValidationError(
-                _("You cannot change teams after registration has closed."), code="registration_closed"
+                _("You cannot change teams after registration has closed."),
+                code="registration_closed",
             )
 
         return super().clean()
