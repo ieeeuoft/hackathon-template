@@ -347,7 +347,7 @@ class PasswordResetTestCase(SetupUserMixin, TestCase):
             line for line in clean_mail_body.split("\n") if "http://testserver/" in line
         ][0]
 
-        uid_hash = reset_link.split("/")[-2]
+        uid_hash = reset_link.split("/")[-3]
 
         response = self.client.get(reset_link)
         self.assertRedirects(
