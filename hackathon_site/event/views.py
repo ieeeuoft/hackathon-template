@@ -15,6 +15,12 @@ class IndexView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
+        # In testing, the @override_settings decorator doesn't run in time for the jinja2
+        # environment. Set the registration_open context here again to make sure the
+        # overridden settings are reflected in the template
+        context["registration_open"] = settings.REGISTRATION_OPEN
+
         context["user"] = self.request.user
         context["application"] = getattr(self.request.user, "application", None)
         return context

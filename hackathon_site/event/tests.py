@@ -46,6 +46,8 @@ class IndexViewTestCase(SetupUserMixin, TestCase):
         response = self.client.get(self.view)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertContains(response, "Login")
+        self.assertContains(response, "Apply")
+        self.assertContains(response, reverse("registration:signup"))
 
     def test_logout_button_renders_when_logged_in(self):
         self._login()
@@ -53,11 +55,18 @@ class IndexViewTestCase(SetupUserMixin, TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertContains(response, "Logout")
 
-    def test_links_to_application_when_not_applied(self):
+    def test_links_to_application_when_not_applied_and_registration_open(self):
         self._login()
         response = self.client.get(self.view)
         self.assertContains(response, "Continue Application")
         self.assertContains(response, reverse("registration:application"))
+
+    @override_settings(REGISTRATION_OPEN=False)
+    def test_links_to_dashboard_when_not_applied_and_registration_closed(self):
+        self._login()
+        response = self.client.get(self.view)
+        self.assertContains(response, "Go to Dashboard")
+        self.assertContains(response, reverse("event:dashboard"))
 
     def test_links_to_dashboard_when_applied(self):
         self._login()
@@ -65,6 +74,11 @@ class IndexViewTestCase(SetupUserMixin, TestCase):
         response = self.client.get(self.view)
         self.assertContains(response, "Go to Dashboard")
         self.assertContains(response, reverse("event:dashboard"))
+
+    @override_settings(REGISTRATION_OPEN=False)
+    def test_no_apply_button_when_registration_closed(self):
+        response = self.client.get(self.view)
+        self.assertNotContains(response, reverse("registration:signup"))
 
 
 class DashboardTestCase(SetupUserMixin, TestCase):
