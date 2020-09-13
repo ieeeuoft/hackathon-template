@@ -262,3 +262,13 @@ class JoinTeamFormTestCase(SetupUserMixin, TestCase):
         self._apply_as_user(self.user, self.team)
         form = JoinTeamForm(data={"team_code": self.team.team_code})
         self.assertTrue(form.is_valid())
+
+    @override_settings(REGISTRATION_OPEN=False)
+    def test_registration_has_closed(self):
+        self._apply_as_user(self.user, self.team)
+        form = JoinTeamForm(data={"team_code": self.team.team_code})
+        self.assertFalse(form.is_valid())
+        self.assertIn(
+            "You cannot change teams after registration has closed.",
+            form.non_field_errors(),
+        )
