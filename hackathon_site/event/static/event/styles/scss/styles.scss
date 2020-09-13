@@ -300,6 +300,14 @@ strong {
         margin: 0 0 15px;
     }
 
+    &H3 {
+        font-weight: normal;
+        color: color(dark);
+        font-size: 24px;
+        text-transform: initial;
+        margin: 0 0 10px;
+    }
+
     @include responsive(md-down) {
         &H1 {
             font-size: 40px;
@@ -307,6 +315,9 @@ strong {
         }
         &H2 {
             font-size: 24px;
+        }
+        &H3 {
+            font-size: 20px;
         }
     }
 

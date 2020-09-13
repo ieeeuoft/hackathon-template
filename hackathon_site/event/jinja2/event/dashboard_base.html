@@ -40,13 +40,13 @@
                 <p>Your team code is: <strong>{{ application.team.team_code }}</strong>.</p>
                 {% set num_members = application.team.applications.count() %}
                 <p>
-                    Spots remaining on your team: <strong>{{ application.team.MAX_MEMBERS - num_members }}</strong>.
                     {% if join_team_form and num_members < application.team.MAX_MEMBERS%}
                         Share your team code with your teammates, or join their team instead.
                     {% endif %}
                 </p>
-                <h5>Team Members</h5>
-                <ul>
+                <br />
+                <h3 class="formH3">Team members ({{ num_members }}/{{ application.team.MAX_MEMBERS }})</h3>
+                <ul class="browser-default">
                     {% for application in application.team.applications.all() %}
                     <li>{{ application.user.first_name }} {{ application.user.last_name }}</li>
                     {% endfor %}
@@ -54,15 +54,17 @@
                 {% if join_team_form %}
                     <a
                         href="{{ url("registration:leave-team") }}"
-                        class="btn-small waves-effect waves-light secondaryColor colorBtn center"
+                        class="btn-small waves-effect waves-light colorBtn"
+                        style="margin-right: auto; margin-top: 15px;"
                     >
                         Leave team
                     </a>
-
-                    <h5>Join a Different Team</h5>
-                    <form class="row" method="post">
+                    <br />
+                    <br />
+                    <h3 class="formH3">Join a different team</h3>
+                    <form class="valign-wrapper" style="margin-left: 0;" method="post">
                         {{ csrf_input }}
-                        <div class="input-field col s8">
+                        <div class="input-field">
                             {{ join_team_form.team_code }}
                             {{ join_team_form.team_code.label_tag() }}
 
@@ -75,7 +77,7 @@
                                 </span>
                             {% endif %}
                         </div>
-                        <div class="col s4">
+                        <div style="margin-left: 20px;">
                             <button class="btn-small waves-effect waves-light secondaryColor colorBtn center" type="submit">Submit</button>
                         </div>
                     </form>
