@@ -28,3 +28,9 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 if not os.path.isdir(MEDIA_ROOT):
     os.makedirs(MEDIA_ROOT)
+
+# In testing, default registration to be always open (so tests don't
+# fail when the date rolls after the close date). Tests that rely on
+# registration being closed should use the ``django.test.override_settings``
+# decorator.
+REGISTRATION_OPEN = True
