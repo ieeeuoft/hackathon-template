@@ -6,7 +6,6 @@ $(document).scroll(function () {
 
 $(document).ready(function () {
     // Materialize stuff
-    $(".sidenav").sidenav();
     $(".carousel").carousel({ dist: 0, padding: 600 });
     setInterval(function () {
         $(".carousel").carousel("next");

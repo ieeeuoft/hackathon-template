@@ -37,10 +37,17 @@ strong {
     padding: 5px;
 }
 
-.sidenav {
-    .logoNav {
-        height: 80px;
-        margin: 20px;
+.logoNavSide {
+    padding: 30px;
+    height: 150px; 
+
+    a, img {
+        height: 100% !important;
+        padding: 0 !important;
+
+        &:hover {
+            background-color: transparent !important;
+        }
     }
 }
 
@@ -66,6 +73,11 @@ strong {
 // End of landing section
 
 // "About" section
+#aboutText {
+    p {
+        margin: 20px 0;
+    }
+}
 .countdown {
     display: flex;
     align-items: center;
@@ -172,6 +184,7 @@ strong {
         > img {
             width: auto !important;
             height: 100%;
+            transform: translateX(-120px);
         }
     }
 }
@@ -215,7 +228,7 @@ strong {
 }
 
 .colorBtn {
-    font-weight: bold;
+    font-weight: bold !important;
     text-align: center;
     text-transform: uppercase;
     color: color(font) !important;
@@ -231,29 +244,6 @@ strong {
 }
 // End of colors
 
-// Formatting stuff
-.flexColCenter {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.longText {
-    padding-right: 200px;
-
-    @include responsive(sm-down) {
-        padding-right: 0;
-    }
-}
-
-.hoverLink {
-    font-weight: 600;
-
-    &:hover {
-        text-decoration: underline;
-    }
-}
-// End of formatting stuff
 
 // Login stuff
 .login {
@@ -262,16 +252,16 @@ strong {
         background-color: #fff;
         border-top: solid 10px color(secondary);
         border-radius: 3px 3px 0 0;
-        padding: 50px 30px 10px;
+        padding: 50px 30px 30px;
         margin: 50px auto 100px;
-        max-width: 950px;
+        max-width: 900px;
 
         @include responsive(md-down) {
-            padding: 40px 5px 10px;
+            padding: 40px 15px 30px;
         }
 
         @include responsive(sm-down) {
-            padding-bottom: 50px;
+            padding-bottom: 20px;
             display: block;
         }
 
@@ -283,7 +273,7 @@ strong {
     &Link {
         display: flex;
         justify-content: center;
-        margin: 15px 0;
+        margin: 10px 0 15px;
         font-size: size(md);
         padding: 0 !important;
 
@@ -300,11 +290,24 @@ strong {
         text-transform: uppercase;
         margin: 0 auto 30px;
         color: color(dark);
+        font-size: 50px;
     }
 
     &H2 {
         font-weight: normal;
         color: color(dark);
+        font-size: 30px;
+        margin: 0 0 15px;
+    }
+
+    @include responsive(md-down) {
+        &H1 {
+            font-size: 40px;
+            margin-bottom: 20px;
+        }
+        &H2 {
+            font-size: 24px;
+        }
     }
 
     &Checkbox span {
@@ -359,13 +362,13 @@ strong {
     background-color: #fff;
     border-top: solid 10px color(secondary);
     border-radius: 3px 3px 0 0;
-    padding: 40px 30px;
+    padding: 40px 30px 30px;
     margin: 20px auto;
     max-width: 950px;
     font-size: size(md);
 
-    h4 {
-        margin: 0 0 15px;
+    @include responsive(sm-down) {
+        padding: 25px 20px;
     }
 }
 
@@ -380,3 +383,41 @@ strong {
     }
 }
 // End of dashboard stuff
+
+
+
+// Formatting stuff
+.flexColCenter {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.longText {
+    padding-right: 200px;
+
+    @include responsive(sm-down) {
+        padding-right: 0;
+    }
+}
+
+.hoverLink {
+    font-weight: 600;
+
+    &:hover {
+        text-decoration: underline;
+    }
+}
+
+.rowMarginPadding {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding: 0 !important;
+}
+
+.formPadding {
+    @include responsive(sm-down) {
+        padding: 0 !important;
+    }
+}
+// End of formatting stuff

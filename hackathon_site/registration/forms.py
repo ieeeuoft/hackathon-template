@@ -104,18 +104,24 @@ class ApplicationForm(forms.ModelForm):
             ),
             "resume": MaterialFileInput(),
             "q1": forms.Textarea(
-                attrs={"class": "materialize-textarea", "placeholder": "I enjoy cake"}
+                attrs={
+                    "class": "materialize-textarea",
+                    "placeholder": "I enjoy cake",
+                    "data-length": 1000,
+                }
             ),
             "q2": forms.Textarea(
                 attrs={
                     "class": "materialize-textarea",
                     "placeholder": "Cake is wonderful",
+                    "data-length": 1000,
                 }
             ),
             "q3": forms.Textarea(
                 attrs={
                     "class": "materialize-textarea",
                     "placeholder": "I could really go for cake right now",
+                    "data-length": 1000,
                 }
             ),
             "phone_number": forms.TextInput(attrs={"placeholder": "+1 (123) 456-7890"}),

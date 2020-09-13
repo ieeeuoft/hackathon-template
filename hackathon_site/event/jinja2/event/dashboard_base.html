@@ -1,9 +1,13 @@
 {% extends "event/base.html" %}
 
 {% block nav_links %}
-    <li><a href={{ url("event:change_password") }} >Change Password</a></li>
+<li><a href={{ url("event:dashboard") }} class="active">Dashboard</a></li>
+<li><a href={{ url("event:change_password") }}>Change Password</a></li>
 {% endblock %}
 
+{% block mobile_nav_btn %}
+<a href="#" data-target="nav-mobile" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+{% endblock %}
 
 {% block body %}
 <div class="container">
@@ -12,18 +16,18 @@
             <h1 class="formH1">Dashboard</h1>
 
             {% if application is none %}
-                <h4 class="formH2 col s12">Complete your application</h4>
+                <h2 class="formH2">Complete your application</h2>
                 <p><strong>Status</strong>: Incomplete</p>
                 <br />
                 <a
                     href="{{ url("registration:application") }}"
-                    class="btn-small waves-effect waves-light secondaryColor colorBtn"
+                    class="btn-small waves-effect waves-light colorBtn"
                     style="margin-right: auto;"
                 >
                     Get started
                 </a>
             {% else %}
-                <h4 class="formH2 col s12">Your application has been submitted!</h4>
+                <h2 class="formH2">Your application has been submitted!</h2>
                 <p><strong>Status</strong>: Submitted</p>
                 <br />
                 <p>We're in the process of reviewing your application. Watch for an email from {{ from_email }}, and check back here for updates.</p>
@@ -31,7 +35,7 @@
         </div>
 
         <div class="borderTopDiv z-depth-3">
-            <h4 class="formH2">Apply as team</h4>
+            <h2 class="formH2">Apply as team</h2>
             <p>Have friends you want to work with? Create a team with up to 4 people and we’ll review your applications together. Enter your team code or make a new one and share with your members.</p>
             <br />
             {% if application is none %}
@@ -41,7 +45,7 @@
         </div>
 
         <div class="borderTopDiv z-depth-3">
-            <h4 class="formH2">Application FAQs</h4>
+            <h2 class="formH2">Application FAQs</h2>
 
             <p class="faqQuestion">When can I expect to hear back?</p>
             <p class="faqAnswer">Decisions will be sent out in 2 rounds, tentatively scheduled for MONTH XX and XX.</p>

@@ -13,6 +13,15 @@
 {% block form_title %}Application{% endblock %}
 {% block form_attrs %}enctype="multipart/form-data"{% endblock %}
 
+{% block nav_links %}
+<li><a href={{ url("event:dashboard") }}>Dashboard</a></li>
+<li><a href={{ url("event:change_password") }}>Change Password</a></li>
+{% endblock %}
+
+{% block mobile_nav_btn %}
+<a href="#" data-target="nav-mobile" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+{% endblock %}
+
 {% set form_action=url("registration:application") %}
 
 {% block form_description %}
@@ -26,6 +35,7 @@
 {% endblock %}
 
 {% block form_inputs %}
+<div class="row">
     {% for field in form %}
         {% if field.field.widget.__class__.__name__ == "Textarea" %}
             {{ render_field(field, size="s12", show_help_text_as_label=True) }}
@@ -39,18 +49,20 @@
             {{ render_field(field, size="s12") }}
         {% endif %}
     {% endfor %}
+</div>
 {% endblock %}
 
 {% block form_button %}
 <div class="input-field col s12 center" style="margin-bottom: 0">
     <p>You cannot edit this afterwards!</p>
     <br />
-    <button type="submit" class="btn-small waves-effect waves-light secondaryColor colorBtn">Submit</button>
+    <button type="submit" class="btn-small waves-effect waves-light colorBtn">Submit</button>
 </div>
 {% endblock %}
 
 {% block form_bottom %}
-<div class="row center" style="margin-bottom: 0">
+<br />
+<div class="center col s12">
     Something wrong? <a href="#" class="primaryText hoverLink">Contact us</a>.
 </div>
 {% endblock %}
