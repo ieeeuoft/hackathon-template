@@ -121,9 +121,16 @@ class LeaveTeamView(LoginRequiredMixin, View):
     """
 
     def leave_team(self, request):
+        if not settings.REGISTRATION_OPEN:
+            return HttpResponseBadRequest(
+                "You cannot change teams after registration has closed.".encode(
+                    encoding="utf-8"
+                )
+            )
+
         if not hasattr(request.user, "application"):
             return HttpResponseBadRequest(
-                "You have not submitted an application".encode(encoding="utf-8")
+                "You have not submitted an application.".encode(encoding="utf-8")
             )
 
         application = self.request.user.application

@@ -25,7 +25,7 @@
 {% endmacro %}
 
 {% macro render_checkbox_field(field, size="s12") %}
-    <div class="col {{ size }}" style="padding-top: 0.5em; padding-bottom: 0.5em;">
+    <div class="row col {{ size }}" style="padding-top: 0.5em; padding-bottom: 0.5em;">
         <label>
             <input
                 type="checkbox"
@@ -36,7 +36,7 @@
             <span>{{ field.help_text|safe }}</span>
         </label>
         {% if field.errors %}
-            <span class="formFieldError">
+            <span class="formFieldError col s12">
             {% for error in field.errors %}
                 {{ error }}
             {% endfor %}
