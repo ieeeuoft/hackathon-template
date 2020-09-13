@@ -173,18 +173,14 @@ class DashboardTestCase(SetupUserMixin, TestCase):
         for member in User.objects.filter(application__team_id=team.id):
             self.assertContains(response, f"{member.first_name} {member.last_name}")
 
-        self.assertContains(
-            response, "Team members (2/4)"
-        )
+        self.assertContains(response, "Team members (2/4)")
 
     def test_removes_message_to_share_team_code_if_full(self):
         self._login()
         self._make_full_registration_team()
 
         response = self.client.get(self.view)
-        self.assertContains(
-            response, "Team members (4/4)"
-        )
+        self.assertContains(response, "Team members (4/4)")
         self.assertNotContains(
             response,
             "Share your team code with your teammates, or join their team instead.",
