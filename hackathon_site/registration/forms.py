@@ -1,5 +1,5 @@
 from django import forms
-from django.contrib.auth import get_user_model
+from django.conf import settings
 from django.contrib.auth.forms import UserCreationForm
 from django.utils.translation import gettext_lazy as _
 from django_registration import validators
@@ -130,10 +130,15 @@ class ApplicationForm(forms.ModelForm):
         self.fields["data_agree"].required = True
 
     def clean(self):
+        if not settings.REGISTRATION_OPEN:
+            raise forms.ValidationError(
+                _("Registration has closed."), code="registration_closed"
+            )
+
         cleaned_data = super().clean()
         if hasattr(self.user, "application"):
             raise forms.ValidationError(
-                _("User has already submitted an application"), code="invalid"
+                _("User has already submitted an application."), code="invalid"
             )
         return cleaned_data
 
@@ -159,15 +164,24 @@ class JoinTeamForm(forms.Form):
         self.label_suffix = ""
         self.error_css_class = "invalid"
 
+    def clean(self):
+        if not settings.REGISTRATION_OPEN:
+            raise forms.ValidationError(
+                _("You cannot change teams after registration has closed."),
+                code="registration_closed",
+            )
+
+        return super().clean()
+
     def clean_team_code(self):
         team_code = self.cleaned_data["team_code"]
 
         try:
             team = Team.objects.get(team_code=team_code)
         except Team.DoesNotExist:
-            raise forms.ValidationError(f"Team {team_code} does not exist.")
+            raise forms.ValidationError(_(f"Team {team_code} does not exist."))
 
         if team.applications.count() >= Team.MAX_MEMBERS:
-            raise forms.ValidationError(f"Team {team_code} is full.")
+            raise forms.ValidationError(_(f"Team {team_code} is full."))
 
         return team_code

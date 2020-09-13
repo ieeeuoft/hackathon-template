@@ -2,7 +2,7 @@ from datetime import date
 
 from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.urls import reverse
 from rest_framework import status
 
@@ -177,7 +177,11 @@ class LeaveTeamViewTestCase(SetupUserMixin, TestCase):
     def test_bad_response_for_no_application(self):
         self._login()
         response = self.client.get(self.view)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertContains(
+            response,
+            "You have not submitted an application.",
+            status_code=status.HTTP_400_BAD_REQUEST,
+        )
 
     def test_leaves_and_deletes_empty_team(self):
         self._login()
@@ -205,3 +209,13 @@ class LeaveTeamViewTestCase(SetupUserMixin, TestCase):
         self.user.application.refresh_from_db()
         self.assertNotEqual(self.user.application.team.id, initial_team_id)
         self.assertEqual(Team.objects.count(), 2)
+
+    @override_settings(REGISTRATION_OPEN=False)
+    def test_registration_has_closed(self):
+        self._login()
+        response = self.client.get(self.view)
+        self.assertContains(
+            response,
+            "You cannot change teams after registration has closed.",
+            status_code=status.HTTP_400_BAD_REQUEST,
+        )
