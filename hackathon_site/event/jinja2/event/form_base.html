@@ -1,7 +1,7 @@
 {% extends "event/base.html" %}
 
 {% macro render_field(field, show_help_text=False, show_label=True, show_help_text_as_label=False, size="s12") %}
-    <div class="input-field col {{ size }}">
+    <div class="input-field row col {{ size }}">
         {{ field }}
         {% if show_label %}
             {% if show_help_text_as_label %}
@@ -55,13 +55,16 @@
                     {% block form_description %}{% endblock %}
                 </div>
                 
-                <form class="col s12 flexColCenter formPadding
+                <form class="col s12 flexColCenter formPadding"
                     {% if form_action %} action="{{ form_action }}" {% endif %}
                     method="{{ form_method if form_method else "post" }}"
                     {% block form_attrs %}{% endblock %}
                 >
                     {{ csrf_input }}
-                    {% block form_inputs %}{% endblock %}
+                    <div class="row">
+                        {% block form_inputs %}{% endblock %}
+                    </div>
+                    
                     {% block form_button %}{% endblock %}
                 </form>
                 <br />

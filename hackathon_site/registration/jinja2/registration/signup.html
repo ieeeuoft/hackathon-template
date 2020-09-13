@@ -9,7 +9,6 @@
 {% set form_action=url("registration:signup") %}
                
 {% block form_inputs %}
-<div class="row">
     {{ render_field(form.email) }}
     {{ render_field(form.first_name) }}
     {{ render_field(form.last_name) }}
@@ -21,7 +20,6 @@
             {{ error }}
         {% endfor %}
     {% endif %}
-</div>
 {% endblock %}
 
 {% block form_button %}
