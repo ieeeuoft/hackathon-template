@@ -14,8 +14,8 @@
 {% block form_attrs %}enctype="multipart/form-data"{% endblock %}
 
 {% block nav_links %}
-<li><a href={{ url("event:dashboard") }}>Dashboard</a></li>
-<li><a href={{ url("event:change_password") }}>Change Password</a></li>
+<li><a href="{{ url("event:dashboard") }}">Dashboard</a></li>
+<li><a href="{{ url("event:change_password") }}">Change Password</a></li>
 {% endblock %}
 
 {% block mobile_nav_btn %}

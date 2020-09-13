@@ -15,7 +15,7 @@
     <li><a href="#sponsors">Sponsors</a></li>
     <li><a href="#contact">Contact</a></li>
     {% if request.user.is_authenticated %}
-        <li><a href={{ url("event:dashboard") }}>Dashboard</a></li>                     
+        <li><a href="{{ url("event:dashboard") }}">Dashboard</a></li>                     
     {% endif %}
 {% endblock %}
 

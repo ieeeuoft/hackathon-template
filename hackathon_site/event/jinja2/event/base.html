@@ -20,7 +20,7 @@
     <body>
         <nav class="navbar primaryColor" role="navigation">
             <div class="nav-wrapper container">
-                <a href={{ url("event:index") }}><img src="{{ static('event/images/logo.svg') }}" class="logoNav" alt="logo" /></a>
+                <a href="{{ url("event:index") }}"><img src="{{ static('event/images/logo.svg') }}" class="logoNav" alt="logo" /></a>
 
                 {% block nav %}
                     <ul class="right hide-on-med-and-down">
@@ -29,18 +29,18 @@
                         {% block nav_logout_login_links %}
                             {% if request.user.is_authenticated %}
                                 <li>
-                                    <a href={{ url("event:logout") }} class="btn-small waves-effect waves-light colorBtn">Logout</a>
+                                    <a href="{{ url("event:logout") }}" class="btn-small waves-effect waves-light colorBtn">Logout</a>
                                 </li>
                             {% else %}
                                 <li>
-                                    <a href={{ url("event:login") }} class="btn-small waves-effect waves-light colorBtn">Login</a>
+                                    <a href="{{ url("event:login") }}" class="btn-small waves-effect waves-light colorBtn">Login</a>
                                 </li>
                             {% endif %}
                         {% endblock %}
                     </ul>
 
                     <ul id="nav-mobile" class="sidenav">
-                        <li class="logoNavSide"><a href={{ url("event:index") }}><img src="{{ static('event/images/logo.svg') }}" alt="logo" /></a></li>
+                        <li class="logoNavSide"><a href="{{ url("event:index") }}"><img src="{{ static('event/images/logo.svg') }}" alt="logo" /></a></li>
                         {{ self.nav_links() }}
                         {{ self.nav_logout_login_links() }}
                     </ul>
