@@ -2,7 +2,7 @@ from datetime import date
 from io import BytesIO
 
 from django.core.files.uploadedfile import InMemoryUploadedFile
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django_registration import validators
 
 from hackathon_site.tests import SetupUserMixin
@@ -143,7 +143,7 @@ class ApplicationFormTestCase(SetupUserMixin, TestCase):
         form = self._build_form()
         self.assertFalse(form.is_valid())
         self.assertIn(
-            "User has already submitted an application", form.non_field_errors()
+            "User has already submitted an application.", form.non_field_errors()
         )
 
     def test_saving_adds_team_and_user(self):
@@ -233,6 +233,12 @@ class ApplicationFormTestCase(SetupUserMixin, TestCase):
             "File must be no bigger than 20.0\xa0MB. Currently 20.0\xa0MB.",
             form.errors["resume"],
         )
+
+    @override_settings(REGISTRATION_OPEN=False)
+    def test_registration_has_closed(self):
+        form = self._build_form()
+        self.assertFalse(form.is_valid())
+        self.assertIn("Registration has closed.", form.non_field_errors())
 
 
 class JoinTeamFormTestCase(SetupUserMixin, TestCase):

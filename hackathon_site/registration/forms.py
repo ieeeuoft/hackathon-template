@@ -1,5 +1,5 @@
 from django import forms
-from django.contrib.auth import get_user_model
+from django.conf import settings
 from django.contrib.auth.forms import UserCreationForm
 from django.utils.translation import gettext_lazy as _
 from django_registration import validators
@@ -130,10 +130,15 @@ class ApplicationForm(forms.ModelForm):
         self.fields["data_agree"].required = True
 
     def clean(self):
+        if not settings.REGISTRATION_OPEN:
+            raise forms.ValidationError(
+                _("Registration has closed."), code="registration_closed"
+            )
+
         cleaned_data = super().clean()
         if hasattr(self.user, "application"):
             raise forms.ValidationError(
-                _("User has already submitted an application"), code="invalid"
+                _("User has already submitted an application."), code="invalid"
             )
         return cleaned_data
 
