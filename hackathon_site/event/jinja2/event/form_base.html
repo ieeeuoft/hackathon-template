@@ -14,7 +14,7 @@
             <span class="helper-text">{{ field.help_text|safe }}</span>
         {% endif %}
         {% if field.errors %}
-            <span class="formFieldError">
+            <span class="formFieldError col s12">
             {% for error in field.errors %}
                 {{ error }}
                 <br />
