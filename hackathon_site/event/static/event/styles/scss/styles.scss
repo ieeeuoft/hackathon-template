@@ -39,9 +39,10 @@ strong {
 
 .logoNavSide {
     padding: 30px;
-    height: 150px; 
+    height: 150px;
 
-    a, img {
+    a,
+    img {
         height: 100% !important;
         padding: 0 !important;
 
@@ -244,7 +245,6 @@ strong {
 }
 // End of colors
 
-
 // Login stuff
 .login {
     &Div {
@@ -327,26 +327,26 @@ strong {
 }
 
 .input-field {
-    input:not([type]):focus:not([readonly])+label,
-    input[type=text]:focus:not([readonly])+label,
-    input[type=password]:focus:not([readonly])+label,
-    input[type=email]:focus:not([readonly])+label,
-    input[type=date]:focus:not([readonly])+label,
-    input[type=tel]:focus:not([readonly])+label,
-    input[type=number]:focus:not([readonly])+label,
-    input[type=search]:focus:not([readonly])+label,
-    textarea.materialize-textarea:focus:not([readonly])+label {
+    input:not([type]):focus:not([readonly]) + label,
+    input[type="text"]:focus:not([readonly]) + label,
+    input[type="password"]:focus:not([readonly]) + label,
+    input[type="email"]:focus:not([readonly]) + label,
+    input[type="date"]:focus:not([readonly]) + label,
+    input[type="tel"]:focus:not([readonly]) + label,
+    input[type="number"]:focus:not([readonly]) + label,
+    input[type="search"]:focus:not([readonly]) + label,
+    textarea.materialize-textarea:focus:not([readonly]) + label {
         color: color(primary);
     }
 
     input:not([type]):focus:not([readonly]),
-    input[type=text]:focus:not([readonly]),
-    input[type=password]:focus:not([readonly]),
-    input[type=email]:focus:not([readonly]),
-    input[type=date]:focus:not([readonly]),
-    input[type=tel]:focus:not([readonly]),
-    input[type=number]:focus:not([readonly]),
-    input[type=search]:focus:not([readonly]),
+    input[type="text"]:focus:not([readonly]),
+    input[type="password"]:focus:not([readonly]),
+    input[type="email"]:focus:not([readonly]),
+    input[type="date"]:focus:not([readonly]),
+    input[type="tel"]:focus:not([readonly]),
+    input[type="number"]:focus:not([readonly]),
+    input[type="search"]:focus:not([readonly]),
     textarea.materialize-textarea:focus:not([readonly]) {
         border-bottom: 1px solid color(primary);
         -webkit-box-shadow: 0 1px 0 0 color(primary);
@@ -383,8 +383,6 @@ strong {
     }
 }
 // End of dashboard stuff
-
-
 
 // Formatting stuff
 .flexColCenter {
