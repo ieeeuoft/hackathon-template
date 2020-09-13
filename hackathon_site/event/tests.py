@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.urls import reverse
 from rest_framework import status
 from django.core import mail
@@ -129,6 +129,22 @@ class DashboardTestCase(SetupUserMixin, TestCase):
 
         # Join team form appears
         self.assertContains(response, "Join a Different Team")
+
+    @override_settings(REGISTRATION_OPEN=False)
+    def test_not_applied_applications_closed(self):
+        self._login()
+        response = self.client.get(self.view)
+        self.assertContains(response, "Applications have closed")
+        self.assertNotContains(response, "Complete your application")
+        self.assertNotContains(response, "Apply as a team")
+
+    @override_settings(REGISTRATION_OPEN=False)
+    def test_shows_submitted_application_after_applications_closed(self):
+        self._login()
+        self._apply()
+        response = self.client.get(self.view)
+        self.assertContains(response, "Your application has been submitted!")
+        self.assertNotContains(response, "Spots remaining on your team")
 
     def test_join_team(self):
         """

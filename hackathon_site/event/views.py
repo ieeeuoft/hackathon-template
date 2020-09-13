@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
 from django.shortcuts import redirect
@@ -28,7 +29,7 @@ class DashboardView(LoginRequiredMixin, FormView):
         """
         The dashboard can have different forms, but not at the same time:
         - When no application has been submitted, no form.
-        - Once an application has been submitted, the JoinTeamForm.
+        - Once an application has been submitted and registration is open, the JoinTeamForm.
         - Once the application has been reviewed and accepted, the RSVP form.
         - Once the application has been reviewed and rejected, no form.
         """
@@ -39,8 +40,11 @@ class DashboardView(LoginRequiredMixin, FormView):
         if not hasattr(self.request.user, "application"):
             return None
 
+        if settings.REGISTRATION_OPEN:
+            return JoinTeamForm(**self.get_form_kwargs())
+
         # Once RSVP form is implemented, more logic to choose it should go here
-        return JoinTeamForm(**self.get_form_kwargs())
+        return None
 
     def form_valid(self, form):
         """
@@ -64,6 +68,12 @@ class DashboardView(LoginRequiredMixin, FormView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
+        # In testing, the @override_settings decorator doesn't run in time for the jinja2
+        # environment. Set the registration_open context here again to make sure the
+        # overridden settings are reflected in the template
+        context["registration_open"] = settings.REGISTRATION_OPEN
+
         context["user"] = self.request.user
         context["application"] = getattr(self.request.user, "application", None)
 
