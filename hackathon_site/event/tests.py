@@ -1,5 +1,3 @@
-from datetime import date
-
 from django.conf import settings
 from django.test import TestCase
 from django.urls import reverse
@@ -8,29 +6,8 @@ from django.core import mail
 import re
 
 from event.models import Profile, Team, User
-from registration.models import Application, Team as RegistrationTeam
 from hackathon_site.tests import SetupUserMixin
-
-
-def _create_application(user):
-    application_data = {
-        "birthday": date(2020, 9, 8),
-        "gender": "no-answer",
-        "ethnicity": "no-answer",
-        "phone_number": "1234567890",
-        "school": "UofT",
-        "study_level": "other",
-        "graduation_year": 2020,
-        "q1": "hi",
-        "q2": "there",
-        "q3": "foo",
-        "conduct_agree": True,
-        "data_agree": True,
-        "resume": "uploads/resumes/my_resume.pdf",
-    }
-    return Application.objects.create(
-        user=user, team=RegistrationTeam.objects.create(), **application_data
-    )
+from registration.models import Team as RegistrationTeam
 
 
 class ProfileTestCase(TestCase):
@@ -84,7 +61,7 @@ class IndexViewTestCase(SetupUserMixin, TestCase):
 
     def test_links_to_dashboard_when_applied(self):
         self._login()
-        _create_application(self.user)
+        self._apply()
         response = self.client.get(self.view)
         self.assertContains(response, "Go to Dashboard")
         self.assertContains(response, reverse("event:dashboard"))
@@ -136,11 +113,81 @@ class DashboardTestCase(SetupUserMixin, TestCase):
         Test the dashboard after the user has applied
         """
         self._login()
-        _create_application(self.user)
+        self._apply()
         response = self.client.get(self.view)
         self.assertNotContains(response, reverse("registration:application"))
         self.assertNotContains(
             response, "You must complete your application before you can form a team"
+        )
+
+        # Leave team link appears
+        self.assertContains(response, "Leave team")
+        self.assertContains(response, reverse("registration:leave-team"))
+
+        # Team code appears
+        self.assertContains(response, self.user.application.team.team_code)
+
+        # Join team form appears
+        self.assertContains(response, "Join a Different Team")
+
+    def test_join_team(self):
+        """
+        Once the user has applied and before they have been reviewed, they can join
+        a different team
+        """
+        self._login()
+        self._apply()
+
+        new_team = RegistrationTeam.objects.create()
+        data = {"team_code": new_team.team_code}
+        response = self.client.post(self.view, data=data)
+        self.assertRedirects(response, self.view)
+        redirected_response = self.client.get(response.url)
+        self.assertContains(redirected_response, new_team.team_code)
+
+    def test_join_team_shows_errors(self):
+        self._login()
+        self._apply()
+
+        # This team code is longer than the max allowed, so no chance that team
+        # happens to be created already
+        data = {"team_code": "123456"}
+        response = self.client.post(self.view, data=data)
+        self.assertContains(response, "Team 123456 does not exist.")
+
+    def test_renders_all_team_members(self):
+        self._login()
+        self._apply()
+
+        user2 = User.objects.create(
+            username="bob@ross.com",
+            first_name="Bob",
+            last_name="Ross",
+            password="abcdef123",
+        )
+        team = self.user.application.team
+        self._apply_as_user(user2, team)
+
+        response = self.client.get(self.view)
+
+        for member in User.objects.filter(application__team_id=team.id):
+            self.assertContains(response, f"{member.first_name} {member.last_name}")
+
+        self.assertContains(
+            response, "Spots remaining on your team: <strong>2</strong>"
+        )
+
+    def test_removes_message_to_share_team_code_if_full(self):
+        self._login()
+        self._make_full_registration_team()
+
+        response = self.client.get(self.view)
+        self.assertContains(
+            response, "Spots remaining on your team: <strong>0</strong>"
+        )
+        self.assertNotContains(
+            response,
+            "Share your team code with your teammates, or join their team instead.",
         )
 
 

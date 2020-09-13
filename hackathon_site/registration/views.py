@@ -1,8 +1,10 @@
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponseBadRequest
 from django.shortcuts import redirect
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
+from django.views.generic.base import View
 from django.views.generic.edit import CreateView
 from django_registration.backends.activation.views import (
     RegistrationView,
@@ -11,6 +13,7 @@ from django_registration.backends.activation.views import (
 
 
 from registration.forms import SignUpForm, ApplicationForm
+from registration.models import Team
 
 
 class SignUpView(RegistrationView):
@@ -109,3 +112,35 @@ class ApplicationView(LoginRequiredMixin, CreateView):
             return redirect(reverse_lazy("event:dashboard"))
 
         return super().dispatch(request, *args, **kwargs)
+
+
+class LeaveTeamView(LoginRequiredMixin, View):
+    """
+    Visiting this page will remove a user from their team for
+    registration
+    """
+
+    def leave_team(self, request):
+        if not hasattr(request.user, "application"):
+            return HttpResponseBadRequest(
+                "You have not submitted an application".encode(encoding="utf-8")
+            )
+
+        application = self.request.user.application
+        team = application.team
+
+        # Leaving a team automatically puts them on a new team
+        application.team = Team.objects.create()
+        application.save()
+
+        # Delete the team if it is empty
+        if not team.applications.exists():
+            team.delete()
+
+        return redirect(reverse_lazy("event:dashboard"))
+
+    def get(self, request, *args, **kwargs):
+        return self.leave_team(request)
+
+    def post(self, request, *args, **kwargs):
+        return self.leave_team(request)

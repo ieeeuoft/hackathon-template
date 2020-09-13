@@ -1,13 +1,13 @@
 from datetime import date
 from io import BytesIO
 
-from django.core.files.uploadedfile import SimpleUploadedFile, InMemoryUploadedFile
+from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.test import TestCase
 from django_registration import validators
 
 from hackathon_site.tests import SetupUserMixin
 from registration.models import User, Team, Application
-from registration.forms import SignUpForm, ApplicationForm
+from registration.forms import SignUpForm, ApplicationForm, JoinTeamForm
 
 
 class SignUpFormTestCase(TestCase):
@@ -233,3 +233,26 @@ class ApplicationFormTestCase(SetupUserMixin, TestCase):
             "File must be no bigger than 20.0\xa0MB. Currently 20.0\xa0MB.",
             form.errors["resume"],
         )
+
+
+class JoinTeamFormTestCase(SetupUserMixin, TestCase):
+    def setUp(self):
+        super().setUp()
+        self.team = Team.objects.create(team_code="AAAAA")
+
+    def test_team_not_found(self):
+        form = JoinTeamForm(data={"team_code": "BBBBB"})
+        self.assertFalse(form.is_valid())
+        self.assertIn("Team BBBBB does not exist.", form.errors["team_code"])
+
+    def test_team_full(self):
+        self._make_full_registration_team(self.team)
+
+        form = JoinTeamForm(data={"team_code": self.team.team_code})
+        self.assertFalse(form.is_valid())
+        self.assertIn(f"Team {self.team.team_code} is full.", form.errors["team_code"])
+
+    def test_team_has_space(self):
+        self._apply_as_user(self.user, self.team)
+        form = JoinTeamForm(data={"team_code": self.team.team_code})
+        self.assertTrue(form.is_valid())

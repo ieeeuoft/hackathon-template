@@ -30,10 +30,54 @@
 
         <div class="borderTopDiv z-depth-3">
             <h4 class="formH2">Apply as team</h4>
-            <p>Have friends you want to work with? Create a team with up to 4 people and we’ll review your applications together. Enter your team code or make a new one and share with your members.</p>
+            <p>Have friends you want to work with? Create a team with up to 4 people and we’ll review your applications together.</p>
             {% if application is none %}
                   <p><strong>You must complete your application before you can form a team. Return here once you've submitted your application.</strong></p>
             {% else %}
+                <p>Your team code is: <strong>{{ application.team.team_code }}</strong>.</p>
+                {% set num_members = application.team.applications.count() %}
+                <p>
+                    Spots remaining on your team: <strong>{{ application.team.MAX_MEMBERS - num_members }}</strong>.
+                    {% if join_team_form and num_members < application.team.MAX_MEMBERS%}
+                        Share your team code with your teammates, or join their team instead.
+                    {% endif %}
+                </p>
+                <h5>Team Members</h5>
+                <ul>
+                    {% for application in application.team.applications.all() %}
+                    <li>{{ application.user.first_name }} {{ application.user.last_name }}</li>
+                    {% endfor %}
+                </ul>
+                {% if join_team_form %}
+                    <a
+                        href="{{ url("registration:leave-team") }}"
+                        class="btn-small waves-effect waves-light secondaryColor colorBtn center"
+                    >
+                        Leave team
+                    </a>
+
+                    <h5>Join a Different Team</h5>
+                    <form class="row" method="post">
+                        {{ csrf_input }}
+                        <div class="input-field col s8">
+                            {{ join_team_form.team_code }}
+                            {{ join_team_form.team_code.label_tag() }}
+
+                            {% if join_team_form.team_code.errors %}
+                                <span class="formFieldError">
+                                {% for error in join_team_form.team_code.errors %}
+                                    {{ error }}
+                                    <br />
+                                {% endfor %}
+                                </span>
+                            {% endif %}
+                        </div>
+                        <div class="col s4">
+                            <button class="btn-small waves-effect waves-light secondaryColor colorBtn center" type="submit">Submit</button>
+                        </div>
+                    </form>
+                {% endif %}
+
             {% endif %}
 
 
