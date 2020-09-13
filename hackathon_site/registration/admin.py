@@ -11,7 +11,16 @@ class ApplicationInline(admin.TabularInline):
 @admin.register(TeamApplied)
 class TeamAppliedAdmin(admin.ModelAdmin):
     search_fields = ("id", "team_code")
+    list_display = ("team_code", "get_members_count")
     inlines = (ApplicationInline,)
+
+    def get_members_count(self, obj):
+        return obj.applications.count()
+
+    get_members_count.short_description = "Members"
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).prefetch_related("applications")
 
 
 @admin.register(Application)

@@ -8,7 +8,7 @@ from rest_framework import status
 
 from hackathon_site.tests import SetupUserMixin
 from registration.forms import ApplicationForm
-from registration.models import Application, Team
+from registration.models import Application, Team, User
 
 
 class SignUpViewTestCase(SetupUserMixin, TestCase):
@@ -162,3 +162,46 @@ class MiscRegistrationViewsTestCase(TestCase):
         self.assertContains(
             response, settings.REGISTRATION_CLOSE_DATE.strftime("%B %-d, %Y")
         )
+
+
+class LeaveTeamViewTestCase(SetupUserMixin, TestCase):
+    def setUp(self):
+        super().setUp()
+
+        self.view = reverse("registration:leave-team")
+
+    def test_requires_login(self):
+        response = self.client.get(self.view)
+        self.assertRedirects(response, f"{reverse('event:login')}?next={self.view}")
+
+    def test_bad_response_for_no_application(self):
+        self._login()
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_leaves_and_deletes_empty_team(self):
+        self._login()
+        self._apply()
+        initial_team_id = self.user.application.team.id
+
+        response = self.client.get(self.view)
+        self.assertRedirects(response, reverse("event:dashboard"))
+        self.user.application.refresh_from_db()
+        self.assertNotEqual(self.user.application.team.id, initial_team_id)
+        self.assertEqual(Team.objects.count(), 1)
+
+    def test_leaves_and_does_not_delete_nonempty_team(self):
+        self._login()
+        application = self._apply()
+        new_user = User.objects.create_user(
+            username="bob@ross.com", password="hithere987"
+        )
+        self._apply_as_user(new_user, team=application.team)
+
+        initial_team_id = self.user.application.team.id
+
+        response = self.client.get(self.view)
+        self.assertRedirects(response, reverse("event:dashboard"))
+        self.user.application.refresh_from_db()
+        self.assertNotEqual(self.user.application.team.id, initial_team_id)
+        self.assertEqual(Team.objects.count(), 2)

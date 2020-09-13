@@ -4,10 +4,8 @@ from django.contrib.auth.forms import UserCreationForm
 from django.utils.translation import gettext_lazy as _
 from django_registration import validators
 
-from registration.models import Application, Team
+from registration.models import Application, Team, User
 from registration.widgets import MaterialFileInput
-
-User = get_user_model()
 
 
 class SignUpForm(UserCreationForm):
@@ -157,3 +155,25 @@ class ApplicationForm(forms.ModelForm):
             self.save_m2m()
 
         return self.instance
+
+
+class JoinTeamForm(forms.Form):
+    team_code = forms.CharField()
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.label_suffix = ""
+        self.error_css_class = "invalid"
+
+    def clean_team_code(self):
+        team_code = self.cleaned_data["team_code"]
+
+        try:
+            team = Team.objects.get(team_code=team_code)
+        except Team.DoesNotExist:
+            raise forms.ValidationError(f"Team {team_code} does not exist.")
+
+        if team.applications.count() >= Team.MAX_MEMBERS:
+            raise forms.ValidationError(f"Team {team_code} is full.")
+
+        return team_code
