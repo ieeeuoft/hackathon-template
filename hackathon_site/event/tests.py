@@ -128,7 +128,7 @@ class DashboardTestCase(SetupUserMixin, TestCase):
         self.assertContains(response, self.user.application.team.team_code)
 
         # Join team form appears
-        self.assertContains(response, "Join a Different Team")
+        self.assertContains(response, "Join a different team")
 
     def test_join_team(self):
         """
@@ -174,7 +174,7 @@ class DashboardTestCase(SetupUserMixin, TestCase):
             self.assertContains(response, f"{member.first_name} {member.last_name}")
 
         self.assertContains(
-            response, "Spots remaining on your team: <strong>2</strong>"
+            response, "Team members (2/4)"
         )
 
     def test_removes_message_to_share_team_code_if_full(self):
@@ -183,7 +183,7 @@ class DashboardTestCase(SetupUserMixin, TestCase):
 
         response = self.client.get(self.view)
         self.assertContains(
-            response, "Spots remaining on your team: <strong>0</strong>"
+            response, "Team members (4/4)"
         )
         self.assertNotContains(
             response,
