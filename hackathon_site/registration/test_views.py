@@ -1,8 +1,9 @@
 from datetime import date
+from unittest.mock import patch
 
 from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.test import TestCase, override_settings
+from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
 
@@ -210,8 +211,9 @@ class LeaveTeamViewTestCase(SetupUserMixin, TestCase):
         self.assertNotEqual(self.user.application.team.id, initial_team_id)
         self.assertEqual(Team.objects.count(), 2)
 
-    @override_settings(REGISTRATION_OPEN=False)
-    def test_registration_has_closed(self):
+    @patch("registration.views.is_registration_open")
+    def test_registration_has_closed(self, mock_is_registration_open):
+        mock_is_registration_open.return_value = False
         self._login()
         response = self.client.get(self.view)
         self.assertContains(

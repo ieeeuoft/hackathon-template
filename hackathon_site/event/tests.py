@@ -1,9 +1,11 @@
+import re
+from unittest.mock import patch
+
 from django.conf import settings
-from django.test import TestCase, override_settings
+from django.core import mail
+from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
-from django.core import mail
-import re
 
 from event.models import Profile, Team, User
 from hackathon_site.tests import SetupUserMixin
@@ -61,8 +63,11 @@ class IndexViewTestCase(SetupUserMixin, TestCase):
         self.assertContains(response, "Continue Application")
         self.assertContains(response, reverse("registration:application"))
 
-    @override_settings(REGISTRATION_OPEN=False)
-    def test_links_to_dashboard_when_not_applied_and_registration_closed(self):
+    @patch("event.views.is_registration_open")
+    def test_links_to_dashboard_when_not_applied_and_registration_closed(
+        self, mock_is_registration_open
+    ):
+        mock_is_registration_open.return_value = False
         self._login()
         response = self.client.get(self.view)
         self.assertContains(response, "Go to Dashboard")
@@ -75,8 +80,9 @@ class IndexViewTestCase(SetupUserMixin, TestCase):
         self.assertContains(response, "Go to Dashboard")
         self.assertContains(response, reverse("event:dashboard"))
 
-    @override_settings(REGISTRATION_OPEN=False)
-    def test_no_apply_button_when_registration_closed(self):
+    @patch("event.views.is_registration_open")
+    def test_no_apply_button_when_registration_closed(self, mock_is_registration_open):
+        mock_is_registration_open.return_value = False
         response = self.client.get(self.view)
         self.assertNotContains(response, reverse("registration:signup"))
 
@@ -144,16 +150,20 @@ class DashboardTestCase(SetupUserMixin, TestCase):
         # Join team form appears
         self.assertContains(response, "Join a different team")
 
-    @override_settings(REGISTRATION_OPEN=False)
-    def test_not_applied_applications_closed(self):
+    @patch("event.views.is_registration_open")
+    def test_not_applied_applications_closed(self, mock_is_registration_open):
+        mock_is_registration_open.return_value = False
         self._login()
         response = self.client.get(self.view)
         self.assertContains(response, "Applications have closed")
         self.assertNotContains(response, "Complete your application")
         self.assertNotContains(response, "Apply as a team")
 
-    @override_settings(REGISTRATION_OPEN=False)
-    def test_shows_submitted_application_after_applications_closed(self):
+    @patch("event.views.is_registration_open")
+    def test_shows_submitted_application_after_applications_closed(
+        self, mock_is_registration_open
+    ):
+        mock_is_registration_open.return_value = False
         self._login()
         self._apply()
         response = self.client.get(self.view)

@@ -4,6 +4,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.utils.translation import gettext_lazy as _
 from django_registration import validators
 
+from hackathon_site.utils import is_registration_open
 from registration.models import Application, Team, User
 from registration.widgets import MaterialFileInput
 
@@ -136,7 +137,7 @@ class ApplicationForm(forms.ModelForm):
         self.fields["data_agree"].required = True
 
     def clean(self):
-        if not settings.REGISTRATION_OPEN:
+        if not is_registration_open():
             raise forms.ValidationError(
                 _("Registration has closed."), code="registration_closed"
             )
@@ -171,7 +172,7 @@ class JoinTeamForm(forms.Form):
         self.error_css_class = "invalid"
 
     def clean(self):
-        if not settings.REGISTRATION_OPEN:
+        if not is_registration_open():
             raise forms.ValidationError(
                 _("You cannot change teams after registration has closed."),
                 code="registration_closed",

@@ -1,8 +1,9 @@
 from datetime import date
 from io import BytesIO
+from unittest.mock import patch
 
 from django.core.files.uploadedfile import InMemoryUploadedFile
-from django.test import TestCase, override_settings
+from django.test import TestCase
 from django_registration import validators
 
 from hackathon_site.tests import SetupUserMixin
@@ -234,8 +235,9 @@ class ApplicationFormTestCase(SetupUserMixin, TestCase):
             form.errors["resume"],
         )
 
-    @override_settings(REGISTRATION_OPEN=False)
-    def test_registration_has_closed(self):
+    @patch("registration.forms.is_registration_open")
+    def test_registration_has_closed(self, mock_is_registration_open):
+        mock_is_registration_open.return_value = False
         form = self._build_form()
         self.assertFalse(form.is_valid())
         self.assertIn("Registration has closed.", form.non_field_errors())
@@ -263,8 +265,9 @@ class JoinTeamFormTestCase(SetupUserMixin, TestCase):
         form = JoinTeamForm(data={"team_code": self.team.team_code})
         self.assertTrue(form.is_valid())
 
-    @override_settings(REGISTRATION_OPEN=False)
-    def test_registration_has_closed(self):
+    @patch("registration.forms.is_registration_open")
+    def test_registration_has_closed(self, mock_is_registration_open):
+        mock_is_registration_open.return_value = False
         self._apply_as_user(self.user, self.team)
         form = JoinTeamForm(data={"team_code": self.team.team_code})
         self.assertFalse(form.is_valid())

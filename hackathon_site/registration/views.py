@@ -124,7 +124,7 @@ class LeaveTeamView(LoginRequiredMixin, View):
     """
 
     def leave_team(self, request):
-        if not settings.REGISTRATION_OPEN:
+        if not is_registration_open():
             return HttpResponseBadRequest(
                 "You cannot change teams after registration has closed.".encode(
                     encoding="utf-8"
