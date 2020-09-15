@@ -200,7 +200,7 @@ HACKATHON_NAME = "CoolHacks"
 DEFAULT_FROM_EMAIL = "webmaster@localhost"
 CONTACT_EMAIL = DEFAULT_FROM_EMAIL
 
-REGISTRATION_OPEN_DATE = datetime(2020, 9, 14, 21, 0, 0, tzinfo=TZ_INFO)
+REGISTRATION_OPEN_DATE = datetime(2020, 9, 1, tzinfo=TZ_INFO)
 REGISTRATION_CLOSE_DATE = datetime(2020, 9, 30, tzinfo=TZ_INFO)
 EVENT_START_DATE = datetime(2020, 10, 10, 10, 0, 0, tzinfo=TZ_INFO)
 EVENT_END_DATE = datetime(2020, 10, 11, 17, 0, 0, tzinfo=TZ_INFO)
