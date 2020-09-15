@@ -1,6 +1,11 @@
-from datetime import date
+from datetime import date, datetime
+from unittest.mock import patch
+
+from django.conf import settings
+from django.test import TestCase, override_settings
 
 from event.models import User
+from hackathon_site.utils import is_registration_open
 from registration.models import Application, Team as RegistrationTeam
 
 
@@ -63,3 +68,39 @@ class SetupUserMixin:
         self._apply_as_user(self.user4, team)
 
         return team
+
+
+@override_settings(IN_TESTING=False)
+class IsRegistrationOpenTestCase(TestCase):
+    @override_settings(
+        REGISTRATION_OPEN_DATE=datetime(2020, 1, 2, tzinfo=settings.TZ_INFO)
+    )
+    @patch("hackathon_site.utils.datetime")
+    def test_not_open_yet(self, mock_datetime):
+        mock_datetime.now.return_value.replace.return_value = datetime(
+            2020, 1, 1, tzinfo=settings.TZ_INFO
+        )
+        self.assertFalse(is_registration_open())
+
+    @override_settings(
+        REGISTRATION_OPEN_DATE=datetime(2020, 1, 1, tzinfo=settings.TZ_INFO)
+    )
+    @override_settings(
+        REGISTRATION_CLOSE_DATE=datetime(2020, 1, 3, tzinfo=settings.TZ_INFO)
+    )
+    @patch("hackathon_site.utils.datetime")
+    def test_is_open(self, mock_datetime):
+        mock_datetime.now.return_value.replace.return_value = datetime(
+            2020, 1, 2, tzinfo=settings.TZ_INFO
+        )
+        self.assertTrue(is_registration_open())
+
+    @override_settings(
+        REGISTRATION_CLOSE_DATE=datetime(2020, 1, 1, tzinfo=settings.TZ_INFO)
+    )
+    @patch("hackathon_site.utils.datetime")
+    def test_not_open_anymore(self, mock_datetime):
+        mock_datetime.now.return_value.replace.return_value = datetime(
+            2020, 1, 2, tzinfo=settings.TZ_INFO
+        )
+        self.assertFalse(is_registration_open())
