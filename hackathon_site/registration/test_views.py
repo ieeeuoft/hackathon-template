@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 from unittest.mock import patch
 
 from django.conf import settings
@@ -57,6 +57,54 @@ class SignUpViewTestCase(SetupUserMixin, TestCase):
         self._login()
         response = self.client.get(self.view)
         self.assertRedirects(response, reverse("event:dashboard"))
+
+
+class SignUpClosedViewTestCase(TestCase):
+    def setUp(self):
+        self.view = reverse("registration:signup_closed")
+
+    @override_settings(
+        REGISTRATION_OPEN_DATE=datetime(2020, 1, 2, tzinfo=settings.TZ_INFO)
+    )
+    @override_settings(
+        REGISTRATION_CLOSE_DATE=datetime(2020, 1, 3, tzinfo=settings.TZ_INFO)
+    )
+    @patch("registration.views._now")
+    def test_not_open_yet(self, mock_now):
+        mock_now.return_value = datetime(2020, 1, 1, tzinfo=settings.TZ_INFO)
+        response = self.client.get(self.view)
+        self.assertContains(response, "Applications have not opened yet")
+        self.assertContains(
+            response, settings.REGISTRATION_OPEN_DATE.strftime("%B %-d, %Y")
+        )
+
+    @override_settings(
+        REGISTRATION_OPEN_DATE=datetime(2020, 1, 1, tzinfo=settings.TZ_INFO)
+    )
+    @override_settings(
+        REGISTRATION_CLOSE_DATE=datetime(2020, 1, 3, tzinfo=settings.TZ_INFO)
+    )
+    @patch("registration.views._now")
+    def test_registration_open(self, mock_now):
+        mock_now.return_value = datetime(2020, 1, 2, tzinfo=settings.TZ_INFO)
+        response = self.client.get(self.view)
+        self.assertContains(response, "Applications are open!")
+        self.assertContains(response, reverse("registration:signup"))
+
+    @override_settings(
+        REGISTRATION_OPEN_DATE=datetime(2020, 1, 1, tzinfo=settings.TZ_INFO)
+    )
+    @override_settings(
+        REGISTRATION_CLOSE_DATE=datetime(2020, 1, 2, tzinfo=settings.TZ_INFO)
+    )
+    @patch("registration.views._now")
+    def test_closed(self, mock_now):
+        mock_now.return_value = datetime(2020, 1, 3, tzinfo=settings.TZ_INFO)
+        response = self.client.get(self.view)
+        self.assertContains(response, "Applications have closed")
+        self.assertContains(
+            response, settings.REGISTRATION_CLOSE_DATE.strftime("%B %-d, %Y")
+        )
 
 
 class ActivationViewTestCase(SetupUserMixin, TestCase):
@@ -177,16 +225,6 @@ class MiscRegistrationViewsTestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         # Test that the default from email was passed in as a context variable
         self.assertContains(response, settings.DEFAULT_FROM_EMAIL)
-
-    def test_signup_closed(self):
-        response = self.client.get(reverse("registration:signup_closed"))
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        # Test that context variables were passed in
-        self.assertContains(response, settings.HACKATHON_NAME)
-        self.assertContains(response, settings.CONTACT_EMAIL)
-        self.assertContains(
-            response, settings.REGISTRATION_CLOSE_DATE.strftime("%B %-d, %Y")
-        )
 
 
 class LeaveTeamViewTestCase(SetupUserMixin, TestCase):

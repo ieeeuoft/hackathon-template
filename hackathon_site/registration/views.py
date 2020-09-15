@@ -1,10 +1,12 @@
+from datetime import datetime
+
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseBadRequest
 from django.shortcuts import redirect
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
-from django.views.generic.base import View
+from django.views.generic.base import View, TemplateView
 from django.views.generic.edit import CreateView
 from django_registration.backends.activation.views import (
     RegistrationView,
@@ -14,6 +16,10 @@ from django_registration.backends.activation.views import (
 from hackathon_site.utils import is_registration_open
 from registration.forms import SignUpForm, ApplicationForm
 from registration.models import Team
+
+
+def _now():
+    return datetime.now().replace(tzinfo=settings.TZ_INFO)
 
 
 class SignUpView(RegistrationView):
@@ -86,6 +92,22 @@ class SignUpView(RegistrationView):
             return redirect(reverse_lazy("event:dashboard"))
 
         return super().get(request, *args, **kwargs)
+
+
+class SignUpClosedView(TemplateView):
+    template_name = "registration/signup_closed.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context.update(
+            {
+                "registration_close_date": settings.REGISTRATION_CLOSE_DATE,
+                "registration_open_date": settings.REGISTRATION_OPEN_DATE,
+                "now": _now,
+            }
+        )
+        return context
 
 
 class ActivationView(_ActivationView):
