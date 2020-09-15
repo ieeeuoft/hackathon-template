@@ -279,7 +279,7 @@ class LogOutViewTestCase(SetupUserMixin, TestCase):
 
     def test_logout_get(self):
         response = self.client.get(self.view)
-        self.assertRedirects(response, "/")
+        self.assertRedirects(response, settings.LOGOUT_REDIRECT_URL)
 
 
 class PasswordChangeTestCase(SetupUserMixin, TestCase):

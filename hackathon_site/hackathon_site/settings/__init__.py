@@ -115,7 +115,7 @@ FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
 WSGI_APPLICATION = "hackathon_site.wsgi.application"
 
 LOGIN_REDIRECT_URL = reverse_lazy("event:dashboard")
-LOGOUT_REDIRECT_URL = reverse_lazy("registration:signup")
+LOGOUT_REDIRECT_URL = reverse_lazy("event:index")
 
 
 # Database
