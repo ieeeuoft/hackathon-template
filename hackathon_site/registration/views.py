@@ -89,15 +89,10 @@ class SignUpView(RegistrationView):
 
 
 class ActivationView(_ActivationView):
-    success_url = reverse_lazy("event:dashboard")
+    success_url = reverse_lazy("event:login")
     # This page only gets rendered if something went wrong, otherwise
     # the user is redirected
     template_name = "registration/activation_failed.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["email"] = settings.CONTACT_EMAIL
-        return context
 
 
 class ApplicationView(LoginRequiredMixin, CreateView):

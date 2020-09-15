@@ -2,7 +2,7 @@
 
 <p>Hello {{ user.first_name|striptags }},</p>
 
-<p>Thank you for registering for {{ hackathon_name }}! To get started with your application, please <a href="{{ activation_url }}">click here</a> to verify your email. After verifying, please login to continue with your application.</p>
+<p>Thank you for registering for {{ hackathon_name }}! To get started with your application, please <a href="{{ activation_url }}">click here</a> to verify your email. This link will expire in {{ expiration_days }} days. After verifying, please login to continue with your application.</p>
 
 <p>We look forward to hacking with you soon!</p>
 

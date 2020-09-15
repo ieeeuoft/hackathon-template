@@ -3,13 +3,14 @@ from unittest.mock import patch
 
 from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.urls import reverse
 from rest_framework import status
 
 from hackathon_site.tests import SetupUserMixin
 from registration.forms import ApplicationForm
 from registration.models import Application, Team, User
+from registration.views import SignUpView
 
 
 class SignUpViewTestCase(SetupUserMixin, TestCase):
@@ -58,22 +59,45 @@ class SignUpViewTestCase(SetupUserMixin, TestCase):
         self.assertRedirects(response, reverse("event:dashboard"))
 
 
-class ActivationViewTestCase(TestCase):
+class ActivationViewTestCase(SetupUserMixin, TestCase):
     """
-    Test the activation view. This is nearly identical to django_registration's
-    ActivationView, we just add the contact email into the template context.
-    Hence, that's the only thing we test for.
+    Test the activation view
     """
 
     def setUp(self):
         super().setUp()
-        self.view = reverse(
-            "registration:activate", kwargs={"activation_key": "i-am-fake"}
-        )
+        self.view_name = "registration:activate"
 
-    def test_error_page_has_contact_email(self):
-        response = self.client.get(self.view)
+        self.activation_key = SignUpView().get_activation_key(self.user)
+
+    def _build_view(self, activation_key):
+        return reverse(self.view_name, kwargs={"activation_key": activation_key})
+
+    def test_invalid_key(self):
+        response = self.client.get(self._build_view("i-am-fake"))
+        self.assertContains(response, "Activation link is invalid")
         self.assertContains(response, settings.CONTACT_EMAIL)
+
+    def test_account_already_activated(self):
+        self.user.is_active = True
+        self.user.save()
+        response = self.client.get(self._build_view(self.activation_key))
+        self.assertContains(response, "Account already activated")
+        self.assertContains(response, reverse("event:login"))
+        self.assertNotContains(response, settings.CONTACT_EMAIL)
+
+    @override_settings(ACCOUNT_ACTIVATION_DAYS=0)
+    def test_activation_link_expired(self):
+        response = self.client.get(self._build_view(self.activation_key))
+        self.assertContains(response, "Activation link has expired")
+        self.assertContains(response, settings.CONTACT_EMAIL)
+
+    def test_successful_activation(self):
+        self.user.is_active = False
+        self.user.save()
+        activation_key = SignUpView().get_activation_key(self.user)
+        response = self.client.get(self._build_view(activation_key))
+        self.assertRedirects(response, reverse("event:login"))
 
 
 class ApplicationViewTestCase(SetupUserMixin, TestCase):
