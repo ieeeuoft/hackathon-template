@@ -131,6 +131,9 @@ class ApplicationView(LoginRequiredMixin, CreateView):
         if hasattr(request.user, "application"):
             return redirect(reverse_lazy("event:dashboard"))
 
+        if not is_registration_open():
+            return redirect(reverse_lazy("event:dashboard"))
+
         return super().dispatch(request, *args, **kwargs)
 
 
