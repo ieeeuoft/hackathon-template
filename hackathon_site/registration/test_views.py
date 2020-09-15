@@ -201,15 +201,20 @@ class ApplicationViewTestCase(SetupUserMixin, TestCase):
         self.assertEqual(Application.objects.count(), 1)
         self.assertEqual(Application.objects.first().user, self.user)
 
-    def test_redirects_get_if_has_application(self):
+    def test_redirects_if_has_application(self):
         Application.objects.create(user=self.user, team=self.team, **self.data)
         self._login()
         response = self.client.get(self.view)
         self.assertRedirects(response, reverse("event:dashboard"))
+        response = self.client.post(self.view, data=self.post_data)
+        self.assertRedirects(response, reverse("event:dashboard"))
 
-    def test_redirects_post_if_has_application(self):
-        Application.objects.create(user=self.user, team=self.team, **self.data)
+    @patch("registration.views.is_registration_open")
+    def test_redirects_if_registration_closed(self, mock_is_registration_open):
+        mock_is_registration_open.return_value = False
         self._login()
+        response = self.client.get(self.view)
+        self.assertRedirects(response, reverse("event:dashboard"))
         response = self.client.post(self.view, data=self.post_data)
         self.assertRedirects(response, reverse("event:dashboard"))
 
