@@ -1,5 +1,4 @@
 from django import forms
-from django.conf import settings
 from django.contrib.auth.forms import UserCreationForm
 from django.utils.translation import gettext_lazy as _
 from django_registration import validators
@@ -131,9 +130,7 @@ class ApplicationForm(forms.ModelForm):
         self.user = kwargs.pop("user")
         super().__init__(*args, **kwargs)
         self.label_suffix = ""
-        self.fields[
-            "conduct_agree"
-        ].required = True  # TODO: these don't stay checked on page reload
+        self.fields["conduct_agree"].required = True
         self.fields["data_agree"].required = True
 
     def clean(self):
