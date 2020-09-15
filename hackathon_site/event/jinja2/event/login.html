@@ -8,6 +8,10 @@
 
 {% set form_action=url("event:login") %}
 
+{% if next %}
+    {% set form_action = form_action + "?next=" + next %}
+{% endif %}
+
 {% block form_inputs %}
 <div class="input-field row col s12" style="margin-bottom: 0;">
     <input

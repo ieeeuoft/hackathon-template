@@ -11,7 +11,7 @@ from django_registration.backends.activation.views import (
     ActivationView as _ActivationView,
 )
 
-
+from hackathon_site.utils import is_registration_open
 from registration.forms import SignUpForm, ApplicationForm
 from registration.models import Team
 
@@ -23,6 +23,9 @@ class SignUpView(RegistrationView):
     email_body_template = "registration/emails/activation_email_body.html"
     success_url = reverse_lazy("registration:signup_complete")
     disallowed_url = reverse_lazy("registration:signup_closed")
+
+    def registration_allowed(self):
+        return is_registration_open()
 
     def get_email_context(self, activation_key):
         context = super().get_email_context(activation_key)
@@ -121,7 +124,7 @@ class LeaveTeamView(LoginRequiredMixin, View):
     """
 
     def leave_team(self, request):
-        if not settings.REGISTRATION_OPEN:
+        if not is_registration_open():
             return HttpResponseBadRequest(
                 "You cannot change teams after registration has closed.".encode(
                     encoding="utf-8"

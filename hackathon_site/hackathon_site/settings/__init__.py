@@ -32,6 +32,8 @@ SECRET_KEY = os.environ["SECRET_KEY"]
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(int(os.environ.get("DEBUG", 0)))
 
+IN_TESTING = False  # Overwritten by hackathon_site.settings.ci
+
 if DEBUG:
     ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
     INTERNAL_IPS = ["localhost", "127.0.0.1"]
@@ -113,6 +115,7 @@ FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
 WSGI_APPLICATION = "hackathon_site.wsgi.application"
 
 LOGIN_REDIRECT_URL = reverse_lazy("event:dashboard")
+LOGOUT_REDIRECT_URL = reverse_lazy("event:index")
 
 
 # Database
@@ -203,6 +206,4 @@ EVENT_START_DATE = datetime(2020, 10, 10, 10, 0, 0, tzinfo=TZ_INFO)
 EVENT_END_DATE = datetime(2020, 10, 11, 17, 0, 0, tzinfo=TZ_INFO)
 
 # Registration settings
-now = datetime.now(TZ_INFO)
 ACCOUNT_ACTIVATION_DAYS = 7
-REGISTRATION_OPEN = REGISTRATION_OPEN_DATE <= now < REGISTRATION_CLOSE_DATE

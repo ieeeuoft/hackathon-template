@@ -36,12 +36,12 @@
             </div>
             <div class="row">
                 {% if request.user.is_authenticated %}
-                    {% if application is none and registration_open %}
+                    {% if application is none and is_registration_open() %}
                         <a href="{{ url("registration:application") }}" class="btn-large waves-effect waves-light colorBtn">Continue Application</a>
                     {% else %}
                         <a href="{{ url("event:dashboard") }}" class="btn-large waves-effect waves-light colorBtn">Go to Dashboard</a>
                     {% endif %}
-                {% elif registration_open %}
+                {% elif is_registration_open() %}
                     <a href="{{ url("registration:signup") }}" class="btn-large waves-effect waves-light colorBtn">Apply</a>
                 {% endif %}
             </div>
