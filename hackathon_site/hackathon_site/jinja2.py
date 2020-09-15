@@ -6,6 +6,11 @@ from jinja2 import Environment
 
 from hackathon_site.utils import is_registration_open
 
+# In testing, nothing in this file can be overwritten using the
+# @patch or @override_settings decorators, because it is evaluated before
+# the test methods. If you have tests that rely on these values, explicitly
+# set them in the context of your views.
+
 
 def environment(**options):
     env = Environment(**options)
