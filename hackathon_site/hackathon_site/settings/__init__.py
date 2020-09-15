@@ -203,6 +203,4 @@ EVENT_START_DATE = datetime(2020, 10, 10, 10, 0, 0, tzinfo=TZ_INFO)
 EVENT_END_DATE = datetime(2020, 10, 11, 17, 0, 0, tzinfo=TZ_INFO)
 
 # Registration settings
-now = datetime.now(TZ_INFO)
 ACCOUNT_ACTIVATION_DAYS = 7
-REGISTRATION_OPEN = REGISTRATION_OPEN_DATE <= now < REGISTRATION_CLOSE_DATE
