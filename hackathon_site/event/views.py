@@ -16,6 +16,11 @@ class IndexView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
+        # In testing, the @patch decorator doesn't run in time for the jinja2
+        # environment. Set the is_registration_open context here again to make sure the
+        # it is reflected in templates for testing
+        context["is_registration_open"] = is_registration_open
+
         context["user"] = self.request.user
         context["application"] = getattr(self.request.user, "application", None)
         return context
@@ -69,6 +74,11 @@ class DashboardView(LoginRequiredMixin, FormView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
+        # In testing, the @patch decorator doesn't run in time for the jinja2
+        # environment. Set the is_registration_open context here again to make sure the
+        # it is reflected in templates for testing
+        context["is_registration_open"] = is_registration_open
 
         context["user"] = self.request.user
         context["application"] = getattr(self.request.user, "application", None)
