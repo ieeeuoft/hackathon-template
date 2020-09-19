@@ -15,6 +15,9 @@ class ResumeViewTestCase(SetupUserMixin, TestCase):
 
         # Create a sample file on disk
         file = Path(settings.MEDIA_ROOT, "applications", "resumes", "my_resume.txt")
+        if not file.parent.exists():
+            # Make the folder on disk if necessary
+            file.parent.mkdir(parents=True)
         file.write_bytes(b"I enjoy doing things")
 
         self.url = reverse("resume", kwargs={"filename": "my_resume.txt"})
