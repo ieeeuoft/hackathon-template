@@ -29,7 +29,6 @@ class Profile(models.Model):
     team = models.ForeignKey(
         Team, related_name="profiles", on_delete=models.CASCADE, null=False
     )
-    status = models.CharField(max_length=64, null=False)
     id_provided = models.BooleanField(default=False, null=False)
     attended = models.BooleanField(default=False, null=False)
     acknowledge_rules = models.BooleanField(default=False, null=False)
