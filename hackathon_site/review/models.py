@@ -11,9 +11,11 @@ class Review(models.Model):
     ]
 
     reviewer = models.ForeignKey(
-        User, related_name="reviews", on_delete=models.SET_NULL, null=False
+        User, related_name="reviews", on_delete=models.SET_NULL, null=True
     )
-    application = models.OneToOneField(Application, on_delete=models.SET_NULL)
+    application = models.OneToOneField(
+        Application, on_delete=models.SET_NULL, null=True
+    )
     interest = models.IntegerField(default=False, null=False)
     experience = models.IntegerField(default=False, null=False)
     quality = models.IntegerField(default=False, null=False)
