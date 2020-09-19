@@ -69,6 +69,7 @@ INSTALLED_APPS = [
     "registration",
     "event",
     "hardware",
+    "review",
 ]
 
 MIDDLEWARE = [
