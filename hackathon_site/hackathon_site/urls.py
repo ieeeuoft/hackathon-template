@@ -14,12 +14,14 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from django.conf.urls import url
 from django.conf import settings
 
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
+
+from registration.views import ResumeView
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -39,14 +41,21 @@ urlpatterns = [
         name="schema-swagger-ui",
     ),
     path("registration/", include("registration.urls", namespace="registration")),
-    path("", include("event.urls", namespace="event")),
 ]
+
+if not settings.MEDIA_URL.startswith("http"):
+    urlpatterns += [
+        path(
+            "%s/applications/resumes/<str:filename>" % settings.MEDIA_URL.strip("/"),
+            ResumeView.as_view(),
+            name="resume",
+        ),
+    ]
 
 
 if settings.DEBUG:
     import debug_toolbar
     from django.core.exceptions import ImproperlyConfigured
-    from django.urls import re_path
     from django.views.static import serve
 
     urlpatterns += [path("__debug__/", include(debug_toolbar.urls))]
@@ -63,3 +72,6 @@ if settings.DEBUG:
             {"document_root": settings.MEDIA_ROOT},
         )
     ]
+
+# Catchall for event urls at the end of the url routes
+urlpatterns += [path("", include("event.urls", namespace="event"))]

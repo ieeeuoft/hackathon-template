@@ -1,11 +1,14 @@
 from datetime import datetime
+import mimetypes
+from pathlib import Path
 
 from django.conf import settings
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponseBadRequest
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.http import HttpResponseBadRequest, FileResponse, Http404
 from django.shortcuts import redirect
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
+from django.utils._os import safe_join
 from django.views.generic.base import View, TemplateView
 from django.views.generic.edit import CreateView
 from django_registration.backends.activation.views import (
@@ -174,3 +177,37 @@ class LeaveTeamView(LoginRequiredMixin, View):
 
     def post(self, request, *args, **kwargs):
         return self.leave_team(request)
+
+
+class ResumeView(LoginRequiredMixin, PermissionRequiredMixin, View):
+    permission_required = "registration.view_application"
+
+    def get(self, request, *args, **kwargs):
+        """
+        Return requested resume, if found. Requires registration.view_application
+        permissions.
+
+        This is pretty much a simplified version of Django's static file serve
+        view: https://github.com/django/django/blob/stable/3.1.x/django/views/static.py#L19.
+
+        User-uploaded files that don't require a permissions check should be served
+        from a regular web server.
+        """
+
+        filepath = Path(
+            safe_join(
+                settings.MEDIA_ROOT, "applications", "resumes", kwargs["filename"]
+            )
+        )
+
+        if not filepath.is_file():
+            raise Http404()
+
+        content_type, encoding = mimetypes.guess_type((str(filepath)))
+        content_type = content_type or "application/octet-stream"
+
+        response = FileResponse(filepath.open("rb"), content_type=content_type)
+        if encoding:
+            response["Content-Encoding"] = encoding
+
+        return response
