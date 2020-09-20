@@ -26,8 +26,11 @@ class Review(models.Model):
         null=False, validators=[max_validator, min_validator]
     )
     quality = models.IntegerField(null=False, validators=[max_validator, min_validator])
-    reviewer_comments = models.TextField(null=True)
+    reviewer_comments = models.TextField(null=True, blank=True)
     status = models.CharField(max_length=64, choices=STATUS_CHOICES, null=False)
-    decision_sent_date = models.DateField(null=True)
+    decision_sent_date = models.DateField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True, null=False)
     updated_at = models.DateTimeField(auto_now=True, null=False)
+
+    def __str__(self):
+        return f"{self.application.user.first_name} {self.application.user.last_name}"
