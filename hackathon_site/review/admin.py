@@ -13,12 +13,14 @@ admin.site.register(Review)
 class ReviewForm(forms.ModelForm):
     int_choices = [("", "")] + [(str(i),) * 2 for i in range(0, 11)]
 
-    interest = forms.ChoiceField(choices=int_choices)
-    quality = forms.ChoiceField(choices=int_choices)
-    experience = forms.ChoiceField(choices=int_choices)
-    status = forms.ChoiceField(choices=[("", "")] + Review.STATUS_CHOICES)
+    interest = forms.ChoiceField(choices=int_choices, required=True)
+    quality = forms.ChoiceField(choices=int_choices, required=True)
+    experience = forms.ChoiceField(choices=int_choices, required=True)
+    status = forms.ChoiceField(
+        choices=[("", "")] + Review.STATUS_CHOICES, required=True
+    )
     reviewer_comments = forms.CharField(
-        widget=forms.Textarea(attrs={"rows": 3, "cols": 25})
+        widget=forms.Textarea(attrs={"rows": 3, "cols": 25}), required=False
     )
 
     class Meta:
