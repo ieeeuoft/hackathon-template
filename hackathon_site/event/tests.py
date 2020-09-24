@@ -23,12 +23,12 @@ class ProfileTestCase(TestCase):
 
     def test_creates_profile_with_provided_team(self):
         team = Team.objects.create()
-        profile = Profile.objects.create(user=self.user, team=team, status="Accepted")
+        profile = Profile.objects.create(user=self.user, team=team)
         self.assertEqual(Team.objects.count(), 1)
         self.assertEqual(profile.team, team)
 
     def test_creates_team_if_not_provided(self):
-        profile = Profile.objects.create(user=self.user, status="Accepted")
+        profile = Profile.objects.create(user=self.user)
         self.assertEqual(Team.objects.count(), 1)
         self.assertEqual(Team.objects.first(), profile.team)
 
