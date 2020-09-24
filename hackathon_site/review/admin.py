@@ -14,17 +14,61 @@ class ReviewForm(forms.ModelForm):
     interest = forms.ChoiceField(choices=int_choices)
     quality = forms.ChoiceField(choices=int_choices)
     experience = forms.ChoiceField(choices=int_choices)
-    evaluator_comments = forms.CharField(widget=forms.Textarea)
+    status = forms.ChoiceField(choices=[("", "")] + Review.STATUS_CHOICES)
+    reviewer_comments = forms.CharField(widget=forms.Textarea)
 
     class Meta:
         model = Application
         fields = "__all__"
 
-    def full_clean(self):
-        return super().full_clean()
-
     def save(self, commit=True):
-        super().save(commit)
+        """
+        Though this form is linked to an Application instance, it's actually
+        used to save the corresponding review instance.
+        """
+
+        data = {
+            "reviewer": self.request.user,
+            "interest": int(self.cleaned_data["interest"]),
+            "experience": int(self.cleaned_data["experience"]),
+            "quality": int(self.cleaned_data["quality"]),
+            "reviewer_comments": self.cleaned_data["reviewer_comments"],
+            "status": self.cleaned_data["status"],
+        }
+
+        review = getattr(self.instance, "review", None)
+
+        if review is None:
+            data["application"] = self.instance
+            review = Review(**data)
+        else:
+            for attr, value in data.items():
+                setattr(review, attr, value)
+
+        if commit:
+            review.save()
+
+        return super().save(commit)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        if hasattr(self.instance, "review"):
+            # Pre-populate form fields with existing values
+            self.fields["interest"].initial = self.instance.review.interest
+            self.fields["experience"].initial = self.instance.review.experience
+            self.fields["quality"].initial = self.instance.review.quality
+            self.fields["status"].initial = self.instance.review.status
+            self.fields["reviewer_comments"].initial = (
+                self.instance.review.reviewer_comments or ""
+            )
+
+
+class ApplicationReviewInlineFormset(forms.BaseInlineFormSet):
+    def _construct_form(self, i, **kwargs):
+        form = super()._construct_form(i, **kwargs)
+        form.request = self.request
+        return form
 
 
 class ApplicationInline(admin.TabularInline):
@@ -32,9 +76,10 @@ class ApplicationInline(admin.TabularInline):
     autocomplete_fields = ("user",)
     extra = 0
     form = ReviewForm
+    formset = ApplicationReviewInlineFormset
     can_delete = False
     max_num = 0
-    exclude = ("user", "gender", "ethnicity", "phone_number", "resume")
+    exclude = ("user", "gender", "ethnicity", "phone_number", "resume", "rsvp")
     readonly_fields = (
         "get_user_full_name",
         "q1",
@@ -61,6 +106,11 @@ class ApplicationInline(admin.TabularInline):
         return mark_safe(link)
 
     get_resume_link.short_description = "Resume"
+
+    def get_formset(self, request, obj=None, **kwargs):
+        formset = super().get_formset(request, obj, **kwargs)
+        formset.request = request
+        return formset
 
 
 @admin.register(TeamProxy)
