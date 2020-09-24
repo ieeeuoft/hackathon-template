@@ -1,6 +1,8 @@
 from django import forms
 from django.contrib import admin
+from django.db.models import Count
 from django.utils.safestring import mark_safe
+from django.utils.translation import gettext_lazy as _
 
 from registration.models import Application
 from review.models import Review, TeamProxy
@@ -148,11 +150,39 @@ class ApplicationInline(admin.TabularInline):
         formset.request = request
         return formset
 
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related("user", "review")
+
+
+class TeamReviewedListFilter(admin.SimpleListFilter):
+    title = _("Team Reviewed")
+    parameter_name = "reviewed"
+
+    def lookups(self, request, model_admin):
+        return [("true", _("Reviewed")), ("false", _("Not reviewed"))]
+
+    def queryset(self, request, queryset):
+        queryset = queryset.annotate(num_reviews=Count("applications__review"))
+        if self.value() == "true":
+            # Teams where all applications have been reviewed
+            # In python land, we can easily see whether all applications have a
+            # review. In SQL, it's easier to see if the count of applications and
+            # reviews are equal.
+            return queryset.filter(num_reviews=Count("applications"))
+        elif self.value() == "false":
+            # Teams where at least one application has no review
+            return queryset.filter(num_reviews__lt=Count("applications"))
+
 
 @admin.register(TeamProxy)
 class TeamAppliedAdmin(admin.ModelAdmin):
     search_fields = ("id", "team_code")
-    list_display = ("team_code", "get_members_count")
+    list_display = (
+        "team_code",
+        "get_members_count",
+        "get_is_reviewed",
+    )
+    list_filter = (TeamReviewedListFilter,)
     inlines = (ApplicationInline,)
     readonly_fields = ("team_code",)
 
@@ -161,5 +191,19 @@ class TeamAppliedAdmin(admin.ModelAdmin):
 
     get_members_count.short_description = "Members"
 
+    def get_is_reviewed(self, obj):
+        return all(
+            hasattr(application, "review") for application in obj.applications.all()
+        )
+
+    get_is_reviewed.boolean = True
+    get_is_reviewed.short_description = "Reviewed"
+
     def get_queryset(self, request):
-        return super().get_queryset(request).prefetch_related("applications")
+        return (
+            super()
+            .get_queryset(request)
+            .prefetch_related(
+                "applications", "applications__review", "applications__user"
+            )
+        )
