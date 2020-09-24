@@ -108,7 +108,16 @@ class ApplicationInline(admin.TabularInline):
     formset = ApplicationReviewInlineFormset
     can_delete = False
     max_num = 0
-    exclude = ("user", "gender", "ethnicity", "phone_number", "resume", "rsvp")
+    exclude = (
+        "user",
+        "gender",
+        "ethnicity",
+        "phone_number",
+        "resume",
+        "rsvp",
+        "conduct_agree",
+        "data_agree",
+    )
     readonly_fields = (
         "get_user_full_name",
         "study_level",
@@ -119,8 +128,6 @@ class ApplicationInline(admin.TabularInline):
         "q3",
         "get_resume_link",
         "birthday",
-        "conduct_agree",
-        "data_agree",
         "get_reviewer_name",
     )
 
