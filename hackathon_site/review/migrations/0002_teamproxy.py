@@ -6,20 +6,15 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('registration', '0004_application_rsvp'),
-        ('review', '0001_initial'),
+        ("registration", "0004_application_rsvp"),
+        ("review", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='TeamProxy',
-            fields=[
-            ],
-            options={
-                'proxy': True,
-                'indexes': [],
-                'constraints': [],
-            },
-            bases=('registration.team',),
+            name="TeamProxy",
+            fields=[],
+            options={"proxy": True, "indexes": [], "constraints": [],},
+            bases=("registration.team",),
         ),
     ]

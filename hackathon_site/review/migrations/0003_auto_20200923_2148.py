@@ -6,12 +6,11 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('review', '0002_teamproxy'),
+        ("review", "0002_teamproxy"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='teamproxy',
-            options={'verbose_name': 'Team'},
+            name="teamproxy", options={"verbose_name": "Team"},
         ),
     ]
