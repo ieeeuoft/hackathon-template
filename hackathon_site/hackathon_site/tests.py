@@ -73,7 +73,7 @@ class SetupUserMixin:
     def _review(
         self,
         status="Accepted",
-        date_reviewed=datetime.now().replace(tzinfo=settings.TZ_INFO).date(),
+        decision_sent_date=datetime.now().replace(tzinfo=settings.TZ_INFO).date(),
     ):
         self.reviewer = User.objects.create_user(
             username="bob@ross.com", password="abcdef123"
@@ -85,7 +85,7 @@ class SetupUserMixin:
             experience=10,
             quality=10,
             status=status,
-            decision_sent_date=date_reviewed,
+            decision_sent_date=decision_sent_date,
         )
 
 

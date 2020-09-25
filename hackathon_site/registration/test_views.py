@@ -354,7 +354,7 @@ class RSVPViewTestCase(SetupUserMixin, TestCase):
         self._login()
         self._apply()
         self._review(
-            date_reviewed=datetime.now().replace(tzinfo=settings.TZ_INFO).date()
+            decision_sent_date=datetime.now().replace(tzinfo=settings.TZ_INFO).date()
             - timedelta(days=settings.RSVP_DAYS + 1)
         )
 
