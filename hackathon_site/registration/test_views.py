@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from unittest.mock import patch
 
 from django.conf import settings
@@ -288,3 +288,78 @@ class LeaveTeamViewTestCase(SetupUserMixin, TestCase):
             "You cannot change teams after registration has closed.",
             status_code=status.HTTP_400_BAD_REQUEST,
         )
+
+
+class RSVPViewTestCase(SetupUserMixin, TestCase):
+    def setUp(self):
+        super().setUp()
+        self.view_accept = reverse("registration:rsvp", kwargs={"rsvp": "yes"})
+        self.view_decline = reverse("registration:rsvp", kwargs={"rsvp": "no"})
+
+    def test_bad_response_for_no_application(self):
+        self._login()
+        response = self.client.get(self.view_accept)
+        self.assertContains(
+            response,
+            "You have not submitted an application.",
+            status_code=status.HTTP_400_BAD_REQUEST,
+        )
+
+    def test_bad_response_for_not_reviewed(self):
+        self._login()
+        self._apply()
+        response = self.client.get(self.view_accept)
+        self.assertContains(
+            response,
+            "Your application has not yet been reviewed.",
+            status_code=status.HTTP_400_BAD_REQUEST,
+        )
+
+    def test_bad_response_for_not_accepted(self):
+        self._login()
+        self._apply()
+        self._review(status="Waitlisted")
+        response = self.client.get(self.view_accept)
+        self.assertContains(
+            response,
+            "You cannot RSVP since your application has not yet been accepted.",
+            status_code=status.HTTP_400_BAD_REQUEST,
+        )
+
+    def test_decline_no_profile_and_redirects(self):
+        self._login()
+        self._apply()
+        self._review()
+
+        response = self.client.get(self.view_decline)
+        self.user.application.refresh_from_db()
+
+        self.assertFalse(self.user.application.rsvp)
+        self.assertFalse(hasattr(self.user, "profile"))
+        self.assertRedirects(response, reverse("event:dashboard"))
+
+    def test_accept_create_profile_and_redirects(self):
+        self._login()
+        self._apply()
+        self._review()
+
+        response = self.client.get(self.view_accept)
+        self.user.application.refresh_from_db()
+
+        self.assertTrue(self.user.application.rsvp)
+        self.assertTrue(hasattr(self.user, "profile"))
+        self.assertRedirects(response, reverse("event:dashboard"))
+
+    def test_redirects_to_dashboard_if_rsvp_deadline_passed(self):
+        self._login()
+        self._apply()
+        self._review(
+            date_reviewed=datetime.now().replace(tzinfo=settings.TZ_INFO).date()
+            - timedelta(days=settings.RSVP_DAYS + 1)
+        )
+
+        response = self.client.get(self.view_accept)
+        self.user.application.refresh_from_db()
+
+        self.assertIsNone(self.user.application.rsvp)
+        self.assertRedirects(response, reverse("event:dashboard"))
