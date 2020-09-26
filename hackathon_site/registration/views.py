@@ -260,14 +260,14 @@ class RSVPView(LoginRequiredMixin, View):
 
         # Check decision
         else:
-            if decision == "yes":
+            if decision == "yes" and not application.rsvp:
                 application.rsvp = True
                 application.save()
 
                 profile = Profile(user=user, team=EventTeam.objects.create())
                 profile.save()
 
-            elif decision == "no":
+            elif decision == "no" and (application.rsvp or application.rsvp is None):
                 application.rsvp = False
                 application.save()
 
