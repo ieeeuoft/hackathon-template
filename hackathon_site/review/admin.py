@@ -31,7 +31,6 @@ class ReviewForm(forms.ModelForm):
 
     class Meta:
         model = Application
-        # fields = "__all__"
         fields = (
             "quality",
             "interest",
