@@ -6,24 +6,21 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('registration', '0004_application_rsvp'),
-        ('review', '0003_auto_20200923_2148'),
+        ("registration", "0004_application_rsvp"),
+        ("review", "0003_auto_20200923_2148"),
     ]
 
     operations = [
-        migrations.DeleteModel(
-            name='TeamProxy',
-        ),
+        migrations.DeleteModel(name="TeamProxy",),
         migrations.CreateModel(
-            name='TeamReview',
-            fields=[
-            ],
+            name="TeamReview",
+            fields=[],
             options={
-                'verbose_name': 'Team',
-                'proxy': True,
-                'indexes': [],
-                'constraints': [],
+                "verbose_name": "Team",
+                "proxy": True,
+                "indexes": [],
+                "constraints": [],
             },
-            bases=('registration.team',),
+            bases=("registration.team",),
         ),
     ]
