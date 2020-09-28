@@ -74,7 +74,11 @@ class ReviewForm(forms.ModelForm):
         # Once a decision has been sent, changing the review is no longer allowed
         if self.instance.review.decision_sent_date and self.changed_data:
             raise forms.ValidationError(
-                _(f"Reviews cannot be changed after a decision has been sent"),
+                _(
+                    "Reviews cannot be changed after a decision has been sent. "
+                    "Revert changes, or leave and return to this page to reset all fields. "
+                    f"Modified fields: {','.join(field for field in self.changed_data)}."
+                ),
                 code="decision_sent",
             )
 
