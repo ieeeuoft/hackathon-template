@@ -11,7 +11,7 @@ admin.site.register(Review)
 
 
 class ReviewForm(forms.ModelForm):
-    int_choices = [("", None)] + [(str(i), i) for i in range(0, 11)]
+    int_choices = [(None, "")] + [(i, str(i)) for i in range(0, 11)]
 
     interest = forms.TypedChoiceField(
         choices=int_choices, coerce=int, empty_value=None, required=True
@@ -23,7 +23,7 @@ class ReviewForm(forms.ModelForm):
         choices=int_choices, coerce=int, empty_value=None, required=True
     )
     status = forms.ChoiceField(
-        choices=[("", None)] + Review.STATUS_CHOICES, required=True
+        choices=[(None, "")] + Review.STATUS_CHOICES, required=True
     )
     reviewer_comments = forms.CharField(
         widget=forms.Textarea(attrs={"rows": 3, "cols": 25}), required=False
