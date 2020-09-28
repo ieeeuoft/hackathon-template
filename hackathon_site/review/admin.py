@@ -11,13 +11,19 @@ admin.site.register(Review)
 
 
 class ReviewForm(forms.ModelForm):
-    int_choices = [("", "")] + [(str(i),) * 2 for i in range(0, 11)]
+    int_choices = [("", None)] + [(str(i), i) for i in range(0, 11)]
 
-    interest = forms.ChoiceField(choices=int_choices, required=True)
-    quality = forms.ChoiceField(choices=int_choices, required=True)
-    experience = forms.ChoiceField(choices=int_choices, required=True)
+    interest = forms.TypedChoiceField(
+        choices=int_choices, coerce=int, empty_value=None, required=True
+    )
+    quality = forms.TypedChoiceField(
+        choices=int_choices, coerce=int, empty_value=None, required=True
+    )
+    experience = forms.TypedChoiceField(
+        choices=int_choices, coerce=int, empty_value=None, required=True
+    )
     status = forms.ChoiceField(
-        choices=[("", "")] + Review.STATUS_CHOICES, required=True
+        choices=[("", None)] + Review.STATUS_CHOICES, required=True
     )
     reviewer_comments = forms.CharField(
         widget=forms.Textarea(attrs={"rows": 3, "cols": 25}), required=False
@@ -25,7 +31,27 @@ class ReviewForm(forms.ModelForm):
 
     class Meta:
         model = Application
-        fields = "__all__"
+        # fields = "__all__"
+        fields = (
+            "quality",
+            "interest",
+            "experience",
+            "status",
+            "reviewer_comments",
+        )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        if hasattr(self.instance, "review"):
+            # Pre-populate form fields with existing values
+            self.fields["interest"].initial = self.instance.review.interest
+            self.fields["experience"].initial = self.instance.review.experience
+            self.fields["quality"].initial = self.instance.review.quality
+            self.fields["status"].initial = self.instance.review.status
+            self.fields["reviewer_comments"].initial = (
+                self.instance.review.reviewer_comments or ""
+            )
 
     def _save_m2m_and_review(self):
         """
@@ -38,6 +64,21 @@ class ReviewForm(forms.ModelForm):
         """
         super()._save_m2m()
         self.review.save()
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        if not hasattr(self.instance, "review"):
+            return cleaned_data
+
+        # Once a decision has been sent, changing the review is no longer allowed
+        if self.instance.review.decision_sent_date and self.changed_data:
+            raise forms.ValidationError(
+                _(f"Reviews cannot be changed after a decision has been sent"),
+                code="decision_sent",
+            )
+
+        return cleaned_data
 
     def save(self, commit=True):
         """
@@ -74,19 +115,6 @@ class ReviewForm(forms.ModelForm):
             self._save_m2m = self._save_m2m_and_review
 
         return super().save(commit)
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        if hasattr(self.instance, "review"):
-            # Pre-populate form fields with existing values
-            self.fields["interest"].initial = self.instance.review.interest
-            self.fields["experience"].initial = self.instance.review.experience
-            self.fields["quality"].initial = self.instance.review.quality
-            self.fields["status"].initial = self.instance.review.status
-            self.fields["reviewer_comments"].initial = (
-                self.instance.review.reviewer_comments or ""
-            )
 
 
 class ApplicationReviewInlineFormset(forms.BaseInlineFormSet):
@@ -129,6 +157,7 @@ class ApplicationInline(admin.TabularInline):
         "get_resume_link",
         "birthday",
         "get_reviewer_name",
+        "get_decision_sent_date",
     )
 
     def get_user_full_name(self, obj):
@@ -145,10 +174,18 @@ class ApplicationInline(admin.TabularInline):
     def get_reviewer_name(self, obj):
         if hasattr(obj, "review") and obj.review.reviewer:
             return f"{obj.review.reviewer.first_name} {obj.review.reviewer.last_name}"
-        else:
-            return ""
+
+        return ""
 
     get_reviewer_name.short_description = "Reviewer name"
+
+    def get_decision_sent_date(self, obj):
+        if hasattr(obj, "review") and obj.review.decision_sent_date:
+            return obj.review.decision_sent_date
+
+        return ""
+
+    get_decision_sent_date.short_description = "Decision sent date"
 
     def get_formset(self, request, obj=None, **kwargs):
         """
