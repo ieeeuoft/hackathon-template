@@ -36,7 +36,7 @@ class Review(models.Model):
         return f"{self.application.user.first_name} {self.application.user.last_name}"
 
 
-class TeamProxy(Team):
+class TeamReview(Team):
     """
     Proxy model for registration.Team that lets us register it twice with the admin site
 
