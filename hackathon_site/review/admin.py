@@ -5,7 +5,7 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from registration.models import Application
-from review.models import Review, TeamProxy
+from review.models import Review, TeamReview
 
 admin.site.register(Review)
 
@@ -199,6 +199,13 @@ class ApplicationInline(admin.TabularInline):
     def get_queryset(self, request):
         return super().get_queryset(request).select_related("user", "review")
 
+    def has_change_permission(self, request, obj=None):
+        """
+        Let users with change_review permissions use this inline, rather than the default
+        change_application. Viewing still requires registration.view_application.
+        """
+        return request.user.has_perm("review.change_review")
+
 
 class TeamReviewedListFilter(admin.SimpleListFilter):
     title = _("Team Reviewed")
@@ -220,8 +227,35 @@ class TeamReviewedListFilter(admin.SimpleListFilter):
             return queryset.filter(num_reviews__lt=Count("applications"))
 
 
-@admin.register(TeamProxy)
-class TeamAppliedAdmin(admin.ModelAdmin):
+@admin.register(TeamReview)
+class TeamReviewAdmin(admin.ModelAdmin):
+    """
+    Admin view for reviewing applications of teams. This is the recommended way to review
+    applications.
+
+    Applications for each user on the team are displayed in the Applications inline.
+    Review fields are set by the ``ReviewForm`` above, and are added to the corresponding
+    review object for the application.
+
+    In order to view applications on this page, users must have the following permissions:
+        - registration.view_application
+        - registration.view_review
+
+        Note that permissions to view a registration team (registration.view_team) is not actually
+        required, since it is assumed that the use of this view will be coupled with the ability
+        to view and submit reviews.
+
+        Further, note that without registration.change_review permission, the actual review fields
+        won't be rendered at all. This is a limitation of the way we add extra review fields to the
+        Application inline through a form - without change permissions, the form is not rendered
+        at all. Users may still view reviews through their respective admin page.
+
+    In order to view and submit reviews on this page, users must have the following permissions:
+        - registration.view_application
+        - registration.view_review
+        - registration.change_review
+    """
+
     search_fields = ("id", "team_code")
     list_display = (
         "team_code",
@@ -253,3 +287,31 @@ class TeamAppliedAdmin(admin.ModelAdmin):
                 "applications", "applications__review", "applications__user"
             )
         )
+
+    def has_view_permission(self, request, obj=None):
+        """
+        Any user with review change or view permission can view the team review page
+        """
+        return request.user.has_perm("review.view_review") or request.user.has_perm(
+            "review.change_review"
+        )
+
+    def has_change_permission(self, request, obj=None):
+        """
+        Any user with review change permission can change reviews via the team review page
+        """
+        return request.user.has_perm(f"review.change_review")
+
+    def has_add_permission(self, request):
+        """
+        Adding teams isn't supported through the team review page. Use the regular
+        team page instead.
+        """
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        """
+        Deleting teams isn't supported through the team review page. Use the regular
+        team page instead.
+        """
+        return False
