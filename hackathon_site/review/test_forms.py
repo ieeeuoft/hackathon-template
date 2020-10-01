@@ -154,7 +154,6 @@ class ReviewFormTestCase(SetupUserMixin, TestCase):
         form.save(commit=False)
 
         self.assertIsInstance(form.review, Review)
-        self.assertEqual(form.save_m2m, form._save_m2m_and_review)
 
         self.user.refresh_from_db()
         self.assertFalse(hasattr(self.user.application, "review"))
