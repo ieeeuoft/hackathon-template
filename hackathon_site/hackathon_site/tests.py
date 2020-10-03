@@ -71,10 +71,11 @@ class SetupUserMixin:
         return team
 
     def _review(
-        self,
-        status="Accepted",
-        decision_sent_date=datetime.now().replace(tzinfo=settings.TZ_INFO).date(),
+        self, status="Accepted", **kwargs,
     ):
+        decision_sent_date = kwargs.pop(
+            "decision_sent_date", datetime.now().replace(tzinfo=settings.TZ_INFO).date()
+        )
         self.reviewer = User.objects.create_user(
             username="bob@ross.com", password="abcdef123"
         )
