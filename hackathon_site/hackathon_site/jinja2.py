@@ -29,6 +29,7 @@ def environment(**options):
             "event_end_date": settings.EVENT_END_DATE,
             "from_email": settings.DEFAULT_FROM_EMAIL,
             "contact_email": settings.CONTACT_EMAIL,
+            "rsvp_days": settings.RSVP_DAYS,
         }
     )
     return env
