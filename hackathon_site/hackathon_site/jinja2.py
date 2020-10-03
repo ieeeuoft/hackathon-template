@@ -29,6 +29,8 @@ def environment(**options):
             "event_end_date": settings.EVENT_END_DATE,
             "from_email": settings.DEFAULT_FROM_EMAIL,
             "contact_email": settings.CONTACT_EMAIL,
+            "participant_package_link": settings.PARTICIPANT_PACKAGE_LINK,
+            "chat_room_link": settings.CHAT_ROOM_LINK,
         }
     )
     return env
