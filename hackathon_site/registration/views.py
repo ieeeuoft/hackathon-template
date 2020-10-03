@@ -19,8 +19,7 @@ from django_registration.backends.activation.views import (
 from hackathon_site.utils import is_registration_open
 from registration.forms import SignUpForm, ApplicationForm
 from registration.models import Team as RegistrationTeam
-from event.models import Team as EventTeam
-from event.models import Profile
+from event.models import Team as EventTeam, Profile
 
 
 def _now():
@@ -217,15 +216,15 @@ class ResumeView(LoginRequiredMixin, PermissionRequiredMixin, View):
 
 class RSVPView(LoginRequiredMixin, View):
     """
-        This page checks if the RSVP deadline has passed and then does one of
-        the following:
-            1. If the deadline has passed, redirect to the dashboard
-            2. Otherwise if their decision was a 'yes', we note that and
-                create a profile for them
-            3. Otherwise if their decision was a 'no', we note that and remove
-                their profile and team if they had one.
+    This page checks if the RSVP deadline has passed and then does one of
+    the following:
+        1. If the deadline has passed, redirect to the dashboard
+        2. Otherwise if their decision was a 'yes', we note that and
+            create a profile for them
+        3. Otherwise if their decision was a 'no', we note that and remove
+            their profile and team if they had one.
 
-        Finally we redirect to the dashboard.
+    Finally we redirect to the dashboard.
     """
 
     def get(self, request, *args, **kwargs):
@@ -233,7 +232,7 @@ class RSVPView(LoginRequiredMixin, View):
 
         # Check for nulls
         user = self.request.user
-        if not hasattr(request.user, "application"):
+        if not hasattr(user, "application"):
             return HttpResponseBadRequest(
                 "You have not submitted an application.".encode(encoding="utf-8")
             )
