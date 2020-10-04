@@ -12,7 +12,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
-from datetime import datetime
+from datetime import datetime, timedelta
 import os
 from pathlib import Path
 import pytz
@@ -210,6 +210,11 @@ EVENT_END_DATE = datetime(2020, 10, 11, 17, 0, 0, tzinfo=TZ_INFO)
 # Registration settings
 ACCOUNT_ACTIVATION_DAYS = 7
 RSVP_DAYS = 7
+
+# The time at which waitlisted people will start being accepted into
+# the event. This usually happens an hour or two after the start of
+# the event.
+WAITLISTED_ACCEPTANCE_START_TIME = EVENT_START_DATE + timedelta(hours=1)
 
 # Links
 PARTICIPANT_PACKAGE_LINK = "#"

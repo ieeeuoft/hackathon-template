@@ -68,7 +68,7 @@
                  {% elif review.status == "Waitlisted" %}
                     <h4 class="formH2">You've been waitlisted for {{ event_name }}</h4>
                     <p>The {{ event_name }} team has reviewed your application, and have decided not to grant you a guaranteed spot
-                        at {{ event_name }} and to place you in our waitlist. At XX:XXXAM EST on {{ event_start_date.strftime("%b %d %Y") }}, we will begin allowing
+                        at {{ event_name }} and to place you in our waitlist. On {{ waitlisted_acceptance_start_time.strftime("%b %d %Y, at %I:%M%p") }}, we will begin allowing
                         people from the waitlist into the event on a first-come, first-serve basis if there is still room. We offer no
                         guarantee that you will be allowed into the event, regardless of how early you arrive. Please read our 
                         <a class="primaryText hoverLink" href="{{ participant_package_link }}" rel="noopener" target="_blank">participant package</a> for all the info regarding the event if you plan on 
