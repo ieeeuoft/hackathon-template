@@ -105,8 +105,8 @@
                   <p><strong>You must complete your application before you can form a team. Return here once you've submitted your application.</strong></p>
             {% else %}
                 <p>Your team code is: <strong>{{ application.team.team_code }}</strong></p>
+                {% set num_members = application.team.applications.count() %}
                 {% if is_registration_open() %}
-                    {% set num_members = application.team.applications.count() %}
                     <p>
                         {% if join_team_form and num_members < application.team.MAX_MEMBERS%}
                             Share your team code with your teammates, or join their team instead.
