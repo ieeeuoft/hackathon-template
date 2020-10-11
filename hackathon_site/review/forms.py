@@ -118,11 +118,11 @@ class ReviewForm(forms.ModelForm):
 
 
 class ApplicationReviewInlineFormset(forms.BaseInlineFormSet):
-    def _construct_form(self, i, **kwargs):
+    def get_form_kwargs(self, index):
         """
         Pass the request down into the form, so we can use it to set the reviewer.
         ``self.request`` is set by ``ApplicationInline.get_formset()`
         """
+        kwargs = super().get_form_kwargs(index)
         kwargs.update({"request": self.request})
-        form = super()._construct_form(i, **kwargs)
-        return form
+        return kwargs
