@@ -121,7 +121,7 @@ class TeamReviewAdmin(admin.ModelAdmin):
 
     In order to view applications on this page, users must have the following permissions:
         - registration.view_application
-        - registration.view_review
+        - review.view_review
 
         Note that permissions to view a registration team (registration.view_team) is not actually
         required, since it is assumed that the use of this view will be coupled with the ability
@@ -134,8 +134,8 @@ class TeamReviewAdmin(admin.ModelAdmin):
 
     In order to view and submit reviews on this page, users must have the following permissions:
         - registration.view_application
-        - registration.view_review
-        - registration.change_review
+        - review.view_review
+        - review.change_review
     """
 
     search_fields = ("id", "team_code")
