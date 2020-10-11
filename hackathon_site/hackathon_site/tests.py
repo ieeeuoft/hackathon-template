@@ -71,23 +71,26 @@ class SetupUserMixin:
         return team
 
     def _review(
-        self, application=None, **kwargs,
+        self, application=None, reviewer=None, **kwargs,
     ):
         if application is None:
             application = self.user.application
 
+        if reviewer is None:
+            try:
+                self.reviewer = User.objects.get(username="arther@lismer.com")
+            except User.DoesNotExist:
+                self.reviewer = User.objects.create_user(
+                    username="arther@lismer.com", password="abcdef123"
+                )
+                reviewer = self.reviewer
+
         decision_sent_date = kwargs.pop(
             "decision_sent_date", datetime.now().replace(tzinfo=settings.TZ_INFO).date()
         )
-        try:
-            self.reviewer = User.objects.get(username="arther@lismer.com")
-        except User.DoesNotExist:
-            self.reviewer = User.objects.create_user(
-                username="arther@lismer.com", password="abcdef123"
-            )
 
         default_kwargs = {
-            "reviewer": self.reviewer,
+            "reviewer": reviewer,
             "application": application,
             "interest": 10,
             "experience": 10,
