@@ -204,6 +204,7 @@ class TeamReviewChangeAdminTestCase(SetupUserMixin, TestCase):
         """
         self._login(self.view_permissions)
         response = self.client.get(self.change_view)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         for field in ["quality", "interest", "experience", "status"]:
             # This is how the formset builds input IDs
@@ -215,6 +216,7 @@ class TeamReviewChangeAdminTestCase(SetupUserMixin, TestCase):
         """
         self._login(self.change_permissions)
         response = self.client.get(self.change_view)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         for field in ["quality", "interest", "experience", "status"]:
             self.assertContains(response, f"id_applications-0-{field}")
