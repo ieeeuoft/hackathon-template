@@ -7,6 +7,7 @@ from django.test import TestCase, override_settings
 from event.models import User
 from hackathon_site.utils import is_registration_open
 from registration.models import Application, Team as RegistrationTeam
+from review.models import Review
 
 
 class SetupUserMixin:
@@ -68,6 +69,25 @@ class SetupUserMixin:
         self._apply_as_user(self.user4, team)
 
         return team
+
+    def _review(
+        self, status="Accepted", **kwargs,
+    ):
+        decision_sent_date = kwargs.pop(
+            "decision_sent_date", datetime.now().replace(tzinfo=settings.TZ_INFO).date()
+        )
+        self.reviewer = User.objects.create_user(
+            username="bob@ross.com", password="abcdef123"
+        )
+        self.review = Review.objects.create(
+            reviewer=self.reviewer,
+            application=self.user.application,
+            interest=10,
+            experience=10,
+            quality=10,
+            status=status,
+            decision_sent_date=decision_sent_date,
+        )
 
 
 @override_settings(IN_TESTING=False)
