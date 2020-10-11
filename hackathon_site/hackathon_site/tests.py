@@ -71,7 +71,7 @@ class SetupUserMixin:
         return team
 
     def _review(
-        self, application=None, status="Accepted", **kwargs,
+        self, application=None, **kwargs,
     ):
         if application is None:
             application = self.user.application
@@ -86,16 +86,19 @@ class SetupUserMixin:
                 username="arther@lismer.com", password="abcdef123"
             )
 
-        self.review = Review.objects.create(
-            reviewer=self.reviewer,
-            application=application,
-            interest=10,
-            experience=10,
-            quality=10,
-            status=status,
-            reviewer_comments="Very good",
-            decision_sent_date=decision_sent_date,
-        )
+        default_kwargs = {
+            "reviewer": self.reviewer,
+            "application": application,
+            "interest": 10,
+            "experience": 10,
+            "quality": 10,
+            "status": "Accepted",
+            "reviewer_comments": "Very good",
+            "decision_sent_date": decision_sent_date,
+        }
+        default_kwargs.update(kwargs)
+
+        self.review = Review.objects.create(**default_kwargs)
 
 
 @override_settings(IN_TESTING=False)
