@@ -86,6 +86,7 @@ class SetupUserMixin:
             experience=10,
             quality=10,
             status=status,
+            reviewer_comments="Very good",
             decision_sent_date=decision_sent_date,
         )
 

@@ -29,47 +29,8 @@ class ReviewFormTestCase(SetupUserMixin, TestCase):
 
         self.request = FakeRequest()
 
-    def _review(
-        self,
-        application=None,
-        reviewer=None,
-        status="Accepted",
-        decision_sent_date=None,
-    ):
-        """
-        Replace this with SetupUserMixin._review once that's been merged in from
-        the RSVP view branch
-        """
-        if reviewer is None:
-            self.reviewer = User.objects.create_user(
-                username="bob@ross.com", password="abcdef123"
-            )
-        else:
-            self.reviewer = reviewer
-
-        if application is None:
-            self._apply()
-            application = self.user.application
-
-        if decision_sent_date is None:
-            decision_sent_date = datetime.now().replace(tzinfo=settings.TZ_INFO).date()
-        elif decision_sent_date is False:
-            # This is a strange way to omit decision_sent_date, while keeping pycharm
-            # happy about types
-            decision_sent_date = None
-
-        self.review = Review.objects.create(
-            reviewer=self.reviewer,
-            application=application,
-            interest=10,
-            experience=10,
-            quality=10,
-            status=status,
-            reviewer_comments="Very good",
-            decision_sent_date=decision_sent_date,
-        )
-
     def test_initializes_fields_from_instance(self):
+        self._apply()
         self._review()
         form = ReviewForm(instance=self.user.application, request=self.request)
         for field in (
@@ -93,6 +54,7 @@ class ReviewFormTestCase(SetupUserMixin, TestCase):
             self.assertIsNone(form.fields[field].initial)
 
     def test_does_not_allow_changes_after_decision_sent(self):
+        self._apply()
         self._review()
         form = ReviewForm(
             instance=self.user.application, data={"interest": 1}, request=self.request
@@ -122,9 +84,12 @@ class ReviewFormTestCase(SetupUserMixin, TestCase):
         self.assertEqual(review.reviewer, self.reviewer2)
 
     def test_save_form_with_existing_review(self):
-        # Reviews are allowed to be changed as long as a decision
-        # has not been sent (tested above)
-        self._review(decision_sent_date=False)
+        """
+        Reviews are allowed to be changed as long as a decision
+        has not been sent (tested above)
+        """
+        self._apply()
+        self._review(decision_sent_date=None)
 
         form = ReviewForm(
             instance=self.user.application, data=self.data, request=self.request
