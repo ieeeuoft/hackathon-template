@@ -126,13 +126,11 @@ class DashboardView(LoginRequiredMixin, FormView):
         elif (
             hasattr(self.request.user.application, "review")
             and self.request.user.application.review.status == "Waitlisted"
-            and self.request.user.application.rsvp is None
         ):
             context["status"] = "Waitlisted"
         elif (
             hasattr(self.request.user.application, "review")
             and self.request.user.application.review.status == "Rejected"
-            and self.request.user.application.rsvp is None
         ):
             context["status"] = "Rejected"
         elif self.request.user.application.rsvp:
