@@ -41,9 +41,9 @@
                         the event, and join our <a class="primaryText hoverLink" href="{{ chat_room_link }}" rel="noopener" target="_blank">Slack</a>. Stay tuned for more updates regarding detailed event logistics, and we hope to see you soon!</p> <br />
                     <p>If you have questions, read the <a class="primaryText hoverLink" href="#faq">FAQ</a>, or feel free to contact us.</p> <br />
 
-                    <p><strong>Status</strong>: {{ status }}</p>
-                    <br>
                     {% if not rsvp_passed %}
+                        <p><strong>Status</strong>: {{ status }}</p>
+                        <br>
                         <div style="display: flex; width: auto">
                             <a
                                 href="{{ url("registration:rsvp", kwargs={"rsvp": "yes"}) }}"
@@ -61,8 +61,12 @@
                             </a>
                         </div>
 
+                    {% elif rsvp_passed and  application.rsvp == True %}
+                        <p><b>The RSVP deadline has passed. Thanks for confirming your position at {{ event_name }}! We look forward to seeing you there. Note that you cannot change your RSVP at this time.</b></p>
+                    {% elif rsvp_passed and  application.rsvp == False %}
+                        <p><b>The RSVP deadline has passed. We regret to see that you will not be joining us this year at {{ event_name }}. Unfortunately you cannot change your RSVP at this time.</b></p>
                     {% else %}
-                        <p><b>The RSVP deadline has passed.</b></p>
+                        <p><b>It appears you haven't RSVPed. Unfortunately the RSVP deadline has passed and you cannot change your RSVP at this time.</b></p>
                     {% endif %}
 
                  {% elif review.status == "Waitlisted" %}
