@@ -304,11 +304,14 @@ class DashboardTestCase(SetupUserMixin, TestCase):
 
         response = self.client.get(self.view)
 
-        self.assertContains(response, "Offer Accepted")
-        self.assertContains(response, "The RSVP deadline has passed.")
         self.assertContains(
-            response, f"You've been accepted into {settings.HACKATHON_NAME}!"
+            response,
+            f"Thanks for confirming your position at {settings.HACKATHON_NAME}! We look forward to seeing you there.",
         )
+        self.assertContains(
+            response, "Note that you cannot change your RSVP at this time."
+        )
+        self.assertContains(response, "The RSVP deadline has passed.")
 
         # Buttons for RSVP don't appear anymore because rsvp deadline passed
         self.assertNotContains(
@@ -338,10 +341,44 @@ class DashboardTestCase(SetupUserMixin, TestCase):
 
         response = self.client.get(self.view)
 
-        self.assertContains(response, "Offer Declined")
-        self.assertContains(response, "The RSVP deadline has passed.")
         self.assertContains(
-            response, f"You've been accepted into {settings.HACKATHON_NAME}!"
+            response,
+            f"We regret to see that you will not be joining us this year at {settings.HACKATHON_NAME}.",
+        )
+        self.assertContains(
+            response, "Unfortunately you cannot change your RSVP at this time."
+        )
+        self.assertContains(response, "The RSVP deadline has passed.")
+
+        # Buttons for RSVP don't appear anymore because rsvp deadline passed
+        self.assertNotContains(
+            response, reverse("registration:rsvp", kwargs={"rsvp": "yes"})
+        )
+        self.assertNotContains(
+            response, reverse("registration:rsvp", kwargs={"rsvp": "no"})
+        )
+
+        # Can't join teams anymore because reviewed
+        self.assertNotContains(response, "Join a different team")
+
+    def test_dashboard_no_rsvp_and_rsvp_deadline_passed(self):
+        """
+        Test the dashboard when user has not given an RSVP and the RSVP deadline has passed
+        """
+        self._login()
+        self._apply()
+        decision_sent_date = datetime.now().replace(
+            tzinfo=settings.TZ_INFO
+        ) - timedelta(days=settings.RSVP_DAYS + 1)
+
+        self._review(decision_sent_date=decision_sent_date)
+
+        response = self.client.get(self.view)
+
+        self.assertContains(response, "It appears you haven't RSVPed.")
+        self.assertContains(
+            response,
+            "Unfortunately the RSVP deadline has passed and you cannot change your RSVP at this time.",
         )
 
         # Buttons for RSVP don't appear anymore because rsvp deadline passed
