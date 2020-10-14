@@ -33,6 +33,8 @@
                 <br />
                 {% if review.status == "Accepted" %}
                     <h4 class="formH2"><b>Congratulations!</b> You've been accepted into {{ event_name }}!</h4>
+                    <p><strong>Status</strong>: {{ status }}</p>
+                    <br>
                     {% if not rsvp_passed %}
                         <p>To confirm your attendance at {{ event_name }}, please RSVP using the accept or decline buttons below.</p> <br />
                         <p>RSVP by <b>{{ rsvp_deadline }} (11:59PM EST)</b>, otherwise your spot will be given to other applicants.
@@ -47,8 +49,6 @@
                     <p>If you have questions, read the <a class="primaryText hoverLink" href="#faq">FAQ</a>, or feel free to contact us.</p> <br />
 
                     {% if not rsvp_passed %}
-                        <p><strong>Status</strong>: {{ status }}</p>
-                        <br>
                         <div style="display: flex; width: auto">
                             <a
                                 href="{{ url("registration:rsvp", kwargs={"rsvp": "yes"}) }}"
