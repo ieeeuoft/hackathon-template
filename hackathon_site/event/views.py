@@ -93,8 +93,10 @@ class DashboardView(LoginRequiredMixin, FormView):
         context["application"] = getattr(self.request.user, "application", None)
 
         # Pass in the review and rsvp date information
-        if hasattr(self.request.user, "application") and hasattr(
-            self.request.user.application, "review"
+        if (
+            hasattr(self.request.user, "application")
+            and hasattr(self.request.user.application, "review")
+            and self.request.user.application.review.decision_sent_date is not None
         ):
             review = self.request.user.application.review
 
@@ -115,6 +117,13 @@ class DashboardView(LoginRequiredMixin, FormView):
             context["status"] = "Application Incomplete"
         elif hasattr(self.request.user, "application") and not hasattr(
             self.request.user.application, "review"
+        ):
+            context["status"] = "Application Complete"
+        # If the review has been done but a decision hasn't been sent out yet
+        # then the user's dashboard should still show Application Complete
+        elif (
+            hasattr(self.request.user.application, "review")
+            and self.request.user.application.review.decision_sent_date is None
         ):
             context["status"] = "Application Complete"
         elif (

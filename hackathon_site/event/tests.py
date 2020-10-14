@@ -153,6 +153,26 @@ class DashboardTestCase(SetupUserMixin, TestCase):
         # Join team form appears
         self.assertContains(response, "Join a different team")
 
+    def test_dashboard_when_application_reviewed_but_decision_not_sent(self):
+        """
+        Test the dashboard after the user's application has been reviewed but a decision
+        has not been sent to the user yet. The user's dashboard should display the same
+        as when they have just completed their application
+        """
+        self._login()
+        self._apply()
+        self._review(decision_sent_date=None)
+
+        response = self.client.get(self.view)
+        self.assertNotContains(response, reverse("registration:application"))
+        self.assertNotContains(
+            response, "You must complete your application before you can form a team"
+        )
+        self.assertContains(response, "Application Complete")
+
+        # Can't join teams anymore because reviewed
+        self.assertNotContains(response, "Join a different team")
+
     def test_dashboard_when_accepted_waiting_for_rsvp(self):
         """
         Test the dashboard when the user has been accepted and the IEEE team is waiting
