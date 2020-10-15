@@ -1,13 +1,19 @@
+from datetime import datetime, timedelta
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
+from django.conf import settings
 
 from hackathon_site.utils import is_registration_open
 from registration.forms import JoinTeamForm
 from registration.models import Team
+
+
+def _now():
+    return datetime.now().replace(tzinfo=settings.TZ_INFO)
 
 
 class IndexView(TemplateView):
@@ -36,7 +42,8 @@ class DashboardView(LoginRequiredMixin, FormView):
         The dashboard can have different forms, but not at the same time:
         - When no application has been submitted, no form.
         - Once an application has been submitted and registration is open, the JoinTeamForm.
-        - Once the application has been reviewed and accepted, the RSVP form.
+        - Once the application has been reviewed and accepted, no form, but will show buttons
+            to RSVP Yes or RSVP No
         - Once the application has been reviewed and rejected, no form.
         """
 
@@ -46,10 +53,12 @@ class DashboardView(LoginRequiredMixin, FormView):
         if not hasattr(self.request.user, "application"):
             return None
 
+        if hasattr(self.request.user.application, "review"):
+            return None
+
         if is_registration_open():
             return JoinTeamForm(**self.get_form_kwargs())
 
-        # Once RSVP form is implemented, more logic to choose it should go here
         return None
 
     def form_valid(self, form):
@@ -82,6 +91,63 @@ class DashboardView(LoginRequiredMixin, FormView):
 
         context["user"] = self.request.user
         context["application"] = getattr(self.request.user, "application", None)
+
+        # Pass in the review and rsvp date information
+        if (
+            hasattr(self.request.user, "application")
+            and hasattr(self.request.user.application, "review")
+            and self.request.user.application.review.decision_sent_date is not None
+        ):
+            review = self.request.user.application.review
+
+            context["review"] = review
+            context[
+                "rsvp_passed"
+            ] = _now().date() > review.decision_sent_date + timedelta(
+                days=settings.RSVP_DAYS
+            )
+            context["rsvp_deadline"] = (
+                review.decision_sent_date + timedelta(days=settings.RSVP_DAYS)
+            ).strftime("%b %d %Y")
+        else:
+            context["review"] = None
+
+        # Determine the status of the user's application
+        if not hasattr(self.request.user, "application"):
+            context["status"] = "Application Incomplete"
+        elif hasattr(self.request.user, "application") and not hasattr(
+            self.request.user.application, "review"
+        ):
+            context["status"] = "Application Complete"
+        # If the review has been done but a decision hasn't been sent out yet
+        # then the user's dashboard should still show Application Complete
+        elif (
+            hasattr(self.request.user.application, "review")
+            and self.request.user.application.review.decision_sent_date is None
+        ):
+            context["status"] = "Application Complete"
+        elif (
+            hasattr(self.request.user.application, "review")
+            and self.request.user.application.review.status == "Accepted"
+            and self.request.user.application.rsvp is None
+        ):
+            context["status"] = "Accepted, awaiting RSVP"
+        elif (
+            hasattr(self.request.user.application, "review")
+            and self.request.user.application.review.status == "Waitlisted"
+        ):
+            context["status"] = "Waitlisted"
+        elif (
+            hasattr(self.request.user.application, "review")
+            and self.request.user.application.review.status == "Rejected"
+        ):
+            context["status"] = "Rejected"
+        elif self.request.user.application.rsvp:
+            context["status"] = "Offer Accepted"
+        elif not self.request.user.application.rsvp:
+            context["status"] = "Offer Declined"
+        else:
+            context["status"] = "Unknown"
 
         # The form from ``self.get_form()`` will always be available in
         # ``context["form"]``. Naming it explicitly helps with template logic.
