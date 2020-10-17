@@ -56,7 +56,6 @@ class ApplicationInline(admin.TabularInline):
     def get_reviewer_name(self, obj):
         if hasattr(obj, "review") and obj.review.reviewer:
             return f"{obj.review.reviewer.first_name} {obj.review.reviewer.last_name}"
-
         return ""
 
     get_reviewer_name.short_description = "Reviewer name"
@@ -64,7 +63,6 @@ class ApplicationInline(admin.TabularInline):
     def get_decision_sent_date(self, obj):
         if hasattr(obj, "review") and obj.review.decision_sent_date:
             return obj.review.decision_sent_date
-
         return ""
 
     get_decision_sent_date.short_description = "Decision sent date"
