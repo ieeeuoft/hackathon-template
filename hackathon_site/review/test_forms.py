@@ -57,7 +57,7 @@ class ReviewFormTestCase(SetupUserMixin, TestCase):
         self._apply()
         self._review()
         form = ReviewForm(
-            instance=self.user.application, data={"interest": 1}, request=self.request
+            instance=self.user.application, data=self.data, request=self.request
         )
         self.assertFalse(form.is_valid())
         self.assertEqual(len(form.non_field_errors()), 1)
@@ -70,7 +70,7 @@ class ReviewFormTestCase(SetupUserMixin, TestCase):
         self._apply()
         self._review(status="Rejected")
         form = ReviewForm(
-            instance=self.user.application, data={"interest": 1}, request=self.request
+            instance=self.user.application, data=self.data, request=self.request
         )
         self.assertFalse(form.is_valid())
         self.assertEqual(len(form.non_field_errors()), 1)
@@ -83,7 +83,7 @@ class ReviewFormTestCase(SetupUserMixin, TestCase):
         self._apply()
         self._review(status="Waitlisted")
         form = ReviewForm(
-            instance=self.user.application, data={"interest": 1}, request=self.request
+            instance=self.user.application, data=self.data, request=self.request
         )
         self.assertTrue(form.is_valid())
 
