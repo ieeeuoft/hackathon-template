@@ -1,13 +1,18 @@
+from datetime import datetime
+from unittest.mock import patch, MagicMock
+
+from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.db.models import Q
 from django.test import TestCase
+from django.template.defaultfilters import date
 from django.urls import reverse
 from rest_framework import status
 
 from hackathon_site.tests import SetupUserMixin
 from registration.models import Team
-from review.models import Review
+from review.models import Review, User
 
 static = staticfiles_storage.url
 
@@ -72,6 +77,37 @@ class TeamReviewListAdminTestCase(SetupUserMixin, TestCase):
         self.assertContains(response, team.team_code)
         # More precise to look for this than just the number "3"
         self.assertContains(response, '<td class="field-get_members_count">3</td>')
+
+    def test_list_page_shows_submission_date(self):
+        """
+        The submission date for a team is the date of the most recently submitted
+        application on that team.
+        """
+        # Mock the function django uses to set application.updated_at
+        old_updated_date = datetime(2020, 1, 1, 10, 0, 0, tzinfo=settings.TZ_INFO)
+        with patch(
+            "django.utils.timezone.now", MagicMock(return_value=old_updated_date)
+        ):
+            team = self._make_full_registration_team()
+
+        # Make a new team member, this time with application updated_at time set to something newer
+        self.user4.delete()
+        self.user4 = User.objects.create_user(
+            username="lawren@harris", password="wxyz7890"
+        )
+        new_updated_date = datetime(2020, 2, 2, 12, 0, 0, tzinfo=settings.TZ_INFO)
+        with patch(
+            "django.utils.timezone.now", MagicMock(return_value=new_updated_date)
+        ):
+            self._apply_as_user(self.user4, team)
+
+        # This is how Django admin builds date strings
+        # the time is also included on the admin site, but checking this suffices
+        expected_date_string = date(new_updated_date)
+
+        self._login(self.view_permissions)
+        response = self.client.get(self.list_view)
+        self.assertContains(response, expected_date_string)
 
     def test_list_page_shows_entire_team_unreviewed(self):
         """

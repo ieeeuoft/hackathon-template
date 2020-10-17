@@ -1,5 +1,5 @@
 from django.contrib import admin
-from django.db.models import Count
+from django.db.models import Count, Max
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
@@ -168,16 +168,31 @@ class TeamReviewAdmin(admin.ModelAdmin):
     list_display = (
         "team_code",
         "get_members_count",
+        "get_submission_date",
         "get_is_reviewed",
     )
     list_filter = (TeamReviewedListFilter,)
     inlines = (ApplicationInline,)
     readonly_fields = ("team_code",)
 
+    # Display team submission date
+
+    def get_queryset(self, request):
+        return (
+            super()
+            .get_queryset(request)
+            .prefetch_related(
+                "applications", "applications__review", "applications__user"
+            )
+            .annotate(members_count=Count("applications"))
+            .annotate(most_recent_submission=Max("applications__updated_at"))
+        )
+
     def get_members_count(self, obj):
-        return obj.applications.count()
+        return obj.members_count
 
     get_members_count.short_description = "Members"
+    get_members_count.admin_order_field = "members_count"
 
     def get_is_reviewed(self, obj):
         return all(
@@ -187,14 +202,11 @@ class TeamReviewAdmin(admin.ModelAdmin):
     get_is_reviewed.boolean = True
     get_is_reviewed.short_description = "Reviewed"
 
-    def get_queryset(self, request):
-        return (
-            super()
-            .get_queryset(request)
-            .prefetch_related(
-                "applications", "applications__review", "applications__user"
-            )
-        )
+    def get_submission_date(self, obj):
+        return obj.most_recent_submission
+
+    get_submission_date.short_description = "Submission date"
+    get_submission_date.admin_order_field = "most_recent_submission"
 
     def has_view_permission(self, request, obj=None):
         """
