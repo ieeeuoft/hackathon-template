@@ -67,8 +67,15 @@ class ReviewForm(forms.ModelForm):
         if not hasattr(self.instance, "review"):
             return cleaned_data
 
-        # Once a decision has been sent, changing the review is no longer allowed
-        if self.instance.review.decision_sent_date and self.changed_data:
+        # If the user has been accepted or rejected and a decision sent, their review
+        # cannot be changed.
+        # If the user was previously waitlisted, they can be re-reviewed (and their
+        # decision sent date should be cleared elsewhere if the status has changed)
+        if (
+            self.instance.review.decision_sent_date
+            and self.instance.review.status in ("Accepted", "Rejected")
+            and self.cleaned_data
+        ):
             raise forms.ValidationError(
                 _(
                     "Reviews cannot be changed after a decision has been sent. "

@@ -53,7 +53,7 @@ class ReviewFormTestCase(SetupUserMixin, TestCase):
         ):
             self.assertIsNone(form.fields[field].initial)
 
-    def test_does_not_allow_changes_after_decision_sent(self):
+    def test_does_not_allow_changes_after_accept_decision_sent(self):
         self._apply()
         self._review()
         form = ReviewForm(
@@ -65,6 +65,27 @@ class ReviewFormTestCase(SetupUserMixin, TestCase):
             "Reviews cannot be changed after a decision has been sent.",
             form.non_field_errors()[0],
         )
+
+    def test_does_not_allow_changes_after_reject_decision_sent(self):
+        self._apply()
+        self._review(status="Rejected")
+        form = ReviewForm(
+            instance=self.user.application, data={"interest": 1}, request=self.request
+        )
+        self.assertFalse(form.is_valid())
+        self.assertEqual(len(form.non_field_errors()), 1)
+        self.assertIn(
+            "Reviews cannot be changed after a decision has been sent.",
+            form.non_field_errors()[0],
+        )
+
+    def test_allows_changes_after_waitlisted_decision_sent(self):
+        self._apply()
+        self._review(status="Waitlisted")
+        form = ReviewForm(
+            instance=self.user.application, data={"interest": 1}, request=self.request
+        )
+        self.assertTrue(form.is_valid())
 
     def test_save_form_with_no_existing_review(self):
         self._apply()
