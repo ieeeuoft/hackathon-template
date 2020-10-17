@@ -73,7 +73,7 @@ class ReviewForm(forms.ModelForm):
         # decision sent date should be cleared elsewhere if the status has changed)
         if (
             self.instance.review.decision_sent_date
-            and self.instance.review.status in ("Accepted", "Rejected")
+            and self.instance.review.status != "Waitlisted"
             and self.cleaned_data
         ):
             raise forms.ValidationError(
@@ -108,8 +108,16 @@ class ReviewForm(forms.ModelForm):
             data["application"] = self.instance
             review = Review(**data)
         else:
+            old_status = review.status
+
             for attr, value in data.items():
                 setattr(review, attr, value)
+
+            # If they were previously waitlisted and the status has been changed to
+            # accepted or rejected, allow sending a new decision by clearing
+            # decision_sent_date
+            if old_status == "Waitlisted" and review.status != old_status:
+                review.decision_sent_date = None
 
         if commit:
             review.save()

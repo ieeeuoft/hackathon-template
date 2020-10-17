@@ -148,3 +148,46 @@ class ReviewFormTestCase(SetupUserMixin, TestCase):
         self.user.refresh_from_db()
         self.assertTrue(hasattr(self.user.application, "review"))
         self.assertEqual(form.review, self.user.application.review)
+
+    def test_save_form_clears_decision_sent_date_when_changing_from_waitlisted(self):
+        """
+        If the status of the review has been changed from waitlisted to something
+        else, clear the decision sent date so that they can be sent a new notification
+        email. The form will pass validation if a field has changed after a decision
+        has been sent only if they are waitlisted, tested above.
+        """
+        self._apply()
+        self._review(status="Waitlisted")
+        data = self.data.copy()
+        data["status"] = "Accepted"
+
+        form = ReviewForm(
+            instance=self.user.application, data=data, request=self.request
+        )
+        self.assertTrue(form.is_valid())
+        form.save()
+
+        self.user.refresh_from_db()
+
+        review = self.user.application.review
+        self.assertIsNone(review.decision_sent_date)
+
+    def test_save_form_does_not_clear_decision_sent_date_for_waitlisted_changes(self):
+        """
+        When waitlisted, changes are still allowed to the review. Unlike above, if
+        their status is not changed to something else, changes get saved but
+        decision_sent_date should not get cleared.
+        """
+        self._apply()
+        self._review(status="Waitlisted")
+
+        form = ReviewForm(
+            instance=self.user.application, data=self.data, request=self.request
+        )
+        self.assertTrue(form.is_valid())
+        form.save()
+
+        self.user.refresh_from_db()
+
+        review = self.user.application.review
+        self.assertIsNotNone(review.decision_sent_date)
