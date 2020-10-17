@@ -7,7 +7,35 @@ from registration.models import Application
 from review.forms import ReviewForm, ApplicationReviewInlineFormset
 from review.models import Review, TeamReview
 
-admin.site.register(Review)
+
+@admin.register(Review)
+class ReviewAdmin(admin.ModelAdmin):
+    list_display = ("get_user", "status", "decision_sent_date", "get_reviewer")
+    list_filter = (
+        ("decision_sent_date", admin.EmptyFieldListFilter),
+        ("reviewer", admin.RelatedOnlyFieldListFilter),
+    )
+    search_fields = (
+        "application__user__first_name",
+        "application__user__last_name",
+        "application__user__email",
+        "reviewer__first_name",
+        "reviewer__last_name",
+        "reviewer__email",
+    )
+    autocomplete_fields = ("reviewer", "application")
+
+    def get_user(self, obj):
+        return f"{obj.application.user.first_name} {obj.application.user.last_name}"
+
+    get_user.short_description = "User"
+    get_user.admin_order_field = "application__user__first_name"
+
+    def get_reviewer(self, obj):
+        return f"{obj.reviewer.first_name} {obj.reviewer.last_name}"
+
+    get_reviewer.short_description = "Reviewer"
+    get_reviewer.admin_order_field = "reviewer__first_name"
 
 
 class ApplicationInline(admin.TabularInline):
