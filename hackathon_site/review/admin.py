@@ -1,7 +1,10 @@
 from django.contrib import admin
 from django.db.models import Count, Max
+from django.urls import path
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
+
+from django.http import HttpResponse
 
 from registration.models import Application
 from review.forms import ReviewForm, ApplicationReviewInlineFormset
@@ -173,9 +176,8 @@ class TeamReviewAdmin(admin.ModelAdmin):
     )
     list_filter = (TeamReviewedListFilter,)
     inlines = (ApplicationInline,)
+    change_list_template = "review/change_list.html"
     readonly_fields = ("team_code",)
-
-    # Display team submission date
 
     def get_queryset(self, request):
         return (
@@ -235,3 +237,23 @@ class TeamReviewAdmin(admin.ModelAdmin):
         team page instead.
         """
         return False
+
+    def assign_to_team_view(self, request):
+        """
+        Temporary placeholder view to demonstrate the use of extra URLs and
+        template overriding. Should be replaced with the view to assign to teams.
+        """
+        return HttpResponse(f"Hello there, {request.user.first_name}")
+
+    def get_urls(self):
+        from django.urls import path
+
+        urls = super().get_urls()
+        new_urls = [
+            path(
+                "assign/",
+                self.admin_site.admin_view(self.assign_to_team_view, cacheable=True),
+                name="assign-reviewer-to-team",
+            )
+        ]
+        return new_urls + urls
