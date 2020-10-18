@@ -1,6 +1,5 @@
 from django.contrib import admin
 from django.db.models import Count, Max
-from django.urls import path
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
