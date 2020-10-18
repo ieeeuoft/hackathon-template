@@ -74,7 +74,7 @@ class ReviewForm(forms.ModelForm):
         if (
             self.instance.review.decision_sent_date
             and self.instance.review.status != "Waitlisted"
-            and self.cleaned_data
+            and self.changed_data
         ):
             raise forms.ValidationError(
                 _(
