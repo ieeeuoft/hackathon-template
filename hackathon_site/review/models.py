@@ -1,7 +1,7 @@
 from django.db import models
 from django.core import validators
 from event.models import User
-from registration.models import Application
+from registration.models import Application, Team
 
 
 class Review(models.Model):
@@ -34,3 +34,19 @@ class Review(models.Model):
 
     def __str__(self):
         return f"{self.application.user.first_name} {self.application.user.last_name}"
+
+
+class TeamReview(Team):
+    """
+    Proxy model for registration.Team that lets us register it twice with the admin site
+
+    The ModelAdmin in registration/admin.py is the standard implementation which can be used
+    for view teams and inline applications with full information.
+
+    This proxy model is registered with a custom inline form for Applications, to support
+    extra review fields.
+    """
+
+    class Meta:
+        proxy = True
+        verbose_name = "Team"

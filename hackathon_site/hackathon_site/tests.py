@@ -54,7 +54,7 @@ class SetupUserMixin:
             team = RegistrationTeam.objects.create()
 
         self.user2 = User.objects.create_user(
-            username="bob@ross.com", password="abcdef123"
+            username="frank@johnston.com", password="hellothere31415"
         )
         self.user3 = User.objects.create_user(
             username="franklin@carmichael", password="supersecret456"
@@ -71,23 +71,37 @@ class SetupUserMixin:
         return team
 
     def _review(
-        self, status="Accepted", **kwargs,
+        self, application=None, reviewer=None, **kwargs,
     ):
+        if application is None:
+            application = self.user.application
+
+        if reviewer is None:
+            try:
+                self.reviewer = User.objects.get(username="arther@lismer.com")
+            except User.DoesNotExist:
+                self.reviewer = User.objects.create_user(
+                    username="arther@lismer.com", password="abcdef123"
+                )
+                reviewer = self.reviewer
+
         decision_sent_date = kwargs.pop(
             "decision_sent_date", datetime.now().replace(tzinfo=settings.TZ_INFO).date()
         )
-        self.reviewer = User.objects.create_user(
-            username="bob@ross.com", password="abcdef123"
-        )
-        self.review = Review.objects.create(
-            reviewer=self.reviewer,
-            application=self.user.application,
-            interest=10,
-            experience=10,
-            quality=10,
-            status=status,
-            decision_sent_date=decision_sent_date,
-        )
+
+        default_kwargs = {
+            "reviewer": reviewer,
+            "application": application,
+            "interest": 10,
+            "experience": 10,
+            "quality": 10,
+            "status": "Accepted",
+            "reviewer_comments": "Very good",
+            "decision_sent_date": decision_sent_date,
+        }
+        default_kwargs.update(kwargs)
+
+        self.review = Review.objects.create(**default_kwargs)
 
 
 @override_settings(IN_TESTING=False)
