@@ -87,6 +87,31 @@ class ReviewFormTestCase(SetupUserMixin, TestCase):
         )
         self.assertTrue(form.is_valid())
 
+    def test_form_valid_with_no_changes_decision_sent_not_waitlisted(self):
+        """
+        When a decision has been sent and the user is rejected or accepted,
+        form submissions with no changed data should be valid. This is necessary
+        for the admin site which submits each form, regardless of whether it
+        is dirty or not.
+        """
+        self._apply()
+        self._review()
+
+        data = {}
+        for field in (
+            "interest",
+            "quality",
+            "experience",
+            "reviewer_comments",
+            "status",
+        ):
+            data[field] = getattr(self.user.application.review, field)
+
+        form = ReviewForm(
+            instance=self.user.application, data=data, request=self.request
+        )
+        self.assertTrue(form.is_valid())
+
     def test_save_form_with_no_existing_review(self):
         self._apply()
 
