@@ -18,6 +18,7 @@ from review.models import Review, TeamReview
 class ReviewAdmin(admin.ModelAdmin):
     list_display = ("get_user", "status", "decision_sent_date", "get_reviewer")
     list_filter = (
+        "status",
         ("decision_sent_date", admin.EmptyFieldListFilter),
         ("reviewer", admin.RelatedOnlyFieldListFilter),
     )
