@@ -142,6 +142,8 @@ CACHES = {
         "BACKEND": "django_redis.cache.RedisCache",
         "LOCATION": f"redis://{REDIS_URI}",
         "OPTIONS": {"CLIENT_CLASS": "django_redis.client.DefaultClient",},
+        # Default time for cache key expiry, in seconds. Can be changed on a per-key basis
+        "TIMEOUT": 600,
     }
 }
 
