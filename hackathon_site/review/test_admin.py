@@ -181,6 +181,24 @@ class TeamReviewListAdminTestCase(SetupUserMixin, TestCase):
         self.assertContains(response, team_2.team_code)
         self.assertNotContains(response, team_1.team_code)
 
+    def test_has_link_to_get_next_team_with_change_perms(self):
+        """
+        Test that the link to the assignment page is in the template
+        when the user has change permissions
+        """
+        self._login(self.change_permissions)
+        response = self.client.get(self.list_view)
+        self.assertContains(response, reverse("admin:assign-reviewer-to-team"))
+
+    def test_does_not_have_link_to_get_next_team_with_view_perms(self):
+        """
+        Test that the link to the assignment page is not rendered
+        when the user has only view permissions
+        """
+        self._login(self.view_permissions)
+        response = self.client.get(self.list_view)
+        self.assertNotContains(response, reverse("admin:assign-reviewer-to-team"))
+
 
 class TeamReviewChangeAdminTestCase(SetupUserMixin, TestCase):
     """

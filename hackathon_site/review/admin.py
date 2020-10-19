@@ -181,6 +181,11 @@ class TeamReviewAdmin(admin.ModelAdmin):
     change_list_template = "review/change_list.html"
     readonly_fields = ("team_code",)
 
+    def changelist_view(self, request, extra_context=None):
+        extra_context = extra_context or {}
+        extra_context["has_change_permission"] = self.has_change_permission(request)
+        return super().changelist_view(request, extra_context)
+
     def get_queryset(self, request):
         return (
             super()
