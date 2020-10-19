@@ -416,7 +416,7 @@ class AssignReviewerToTeamViewTestCase(SetupUserMixin, TestCase):
 
         # Login as self.user
         self._login()
-        _ = self.client.get(self.view)
+        self.client.get(self.view)
 
         # team2 should now be assigned to self.user
         # if we get again as a different user, we should be given team3
@@ -461,7 +461,7 @@ class AssignReviewerToTeamViewTestCase(SetupUserMixin, TestCase):
 
         self._login()
         # Will assign self.user to team3
-        _ = self.client.get(self.view)
+        self.client.get(self.view)
 
         # Login as a different user. Should be taken back to the changelist page
         self.client.login(username=self.user2.username, password=self.user2_password)
