@@ -55,16 +55,17 @@ $ pip install -r requirements.txt
 ### Environment Variables
 In order to run the django and react development servers locally (or run tests), the following environment variables are used. Those in **bold** are required.
 
-| **Variable**   | **Required value**                | **Default**    | **Description**                                                                   |
-|----------------|-----------------------------------|----------------|-----------------------------------------------------------------------------------|
-| **DEBUG**      | 1                                 | 0              | Run Django in debug mode. Required to run locally.                                |
-| **SECRET_KEY** | Something secret, create your own | None           | Secret key for cryptographic signing. Must not be shared. Required.               |
-| DB_HOST        |                                   | 127.0.0.1      | Postgres database host.                                                           |
-| DB_USER        |                                   | postgres       | User on the postgres database. Must have permissions to create and modify tables. |
-| DB_PASSWORD    |                                   |                | Password for the postgres user.                                                   |
-| DB_PORT        |                                   | 5432           | Port the postgres server is open on.                                              |
-| DB_NAME        |                                   | hackathon_site | Postgres database name.                                                           |
-| **REACT_APP_DEV_SERVER_URL** | http://localhost:8000 |              | Path to the django development server, used by React. Update the port if you aren't using the default 8000. |
+| **Variable**   | **Required value**                | **Default**       | **Description**                                                                   |
+|----------------|-----------------------------------|-------------------|-----------------------------------------------------------------------------------|
+| **DEBUG**      | 1                                 | 0                 | Run Django in debug mode. Required to run locally.                                |
+| **SECRET_KEY** | Something secret, create your own | None              | Secret key for cryptographic signing. Must not be shared. Required.               |
+| DB_HOST        |                                   | 127.0.0.1         | Postgres database host.                                                           |
+| DB_USER        |                                   | postgres          | User on the postgres database. Must have permissions to create and modify tables. |
+| DB_PASSWORD    |                                   |                   | Password for the postgres user.                                                   |
+| DB_PORT        |                                   | 5432              | Port the postgres server is open on.                                              |
+| DB_NAME        |                                   | hackathon_site    | Postgres database name.                                                           |
+| REDIS_URI      |                                   | 172.17.0.1:6379/1 | Redis [URI](https://github.com/lettuce-io/lettuce-core/wiki/Redis-URI-and-connection-details#uri-syntax). `<host>:<port>/<database>`. |
+| **REACT_APP_DEV_SERVER_URL** | http://localhost:8000 |                 | Path to the django development server, used by React. Update the port if you aren't using the default 8000. |
 
 #### Testing
 Specifying `SECRET_KEY` is still required to run tests, because the settings file expects it to be set. `DEBUG` is forced to `False` by Django.
@@ -85,6 +86,11 @@ To shut down the database and all other services:
 $ docker-compose -f development/docker-compose.yml down
 ```
 
+To run only the database service:
+```bash
+$ docker-compose -f development/docker-compose.yml up -d postgres
+```
+
 The postgres container uses a volume mounted to `development/.postgres-data/` for persistent data storage, so you can safely stop the service without losing any data in your local database.
 
 A note about security: by default, the Postgres service is run with [trust authentication](https://www.postgresql.org/docs/current/auth-trust.html) for convenience, so no passwords are required even if they are set. You should not store any sensitive information in your local database, or broadcast your database host publicly with these settings.
@@ -95,6 +101,21 @@ A note about security: by default, the Postgres service is run with [trust authe
 $ cd hackathon_site
 $ python manage.py migrate
 ```
+
+#### Cache
+This application also relies on a cache, for which we use [Redis](https://redis.io/).
+
+You may install Redis on your machine if you wish, but we recommend running it locally using docker. A Redis service is available in [development/docker-compose.yml](/home/graham/ieee/hackathon-template/README.md). To run all the services, including the database:
+```bash
+$ docker-compose -f development/docker-compose.yml up -d
+```
+
+To run only the redis service:
+```bash
+$ docker-compose -f development/docker-compose.yml up -d redis
+```
+
+If you run multiple instances of this application in production using Redis through Docker (perhaps in Swarm mode), you should make sure that the Redis databases used between applications do not conflict. The easiest way to do this is to change the database id in the [Redis URI environment variable](#environment-variables), eg to `172.17.0.1:6379/2`.
 
 #### Run the development server
 Finally, you can run the development server, by default on port 8000. From above, you should already be in the top-level `hackathon_site` directory:
@@ -126,7 +147,7 @@ Profiles are used by participants who have either been accepted or waitlisted. S
 #### Django
 Django tests are run using [Django's test system](https://docs.djangoproject.com/en/3.0/topics/testing/overview/), based on the standard python `unittest` module.
 
-A custom settings settings module is available for testing, which tells Django to use an in-memory sqlite3 database instead of the postgresql database for testing. To run the full test suite locally:
+A custom settings settings module is available for testing, which tells Django to use an in-memory sqlite3 database instead of the postgresql database and to use an in-memory cache instead of Redis. To run the full test suite locally:
 
 ```bash
 $ cd hackathon_site
