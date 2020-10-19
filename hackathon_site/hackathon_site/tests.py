@@ -51,7 +51,7 @@ class SetupUserMixin:
         return self._apply_as_user(self.user)
 
     @staticmethod
-    def __get_random_email():
+    def _get_random_email():
         """
         Return a random email not associated with any user
         """
@@ -80,16 +80,16 @@ class SetupUserMixin:
         else:
             # Make some random users
             user1 = User.objects.create_user(
-                username=self.__get_random_email(), password="foobar123"
+                username=self._get_random_email(), password="foobar123"
             )
             user2 = User.objects.create_user(
-                username=self.__get_random_email(), password="foobar123"
+                username=self._get_random_email(), password="foobar123"
             )
             user3 = User.objects.create_user(
-                username=self.__get_random_email(), password="foobar123"
+                username=self._get_random_email(), password="foobar123"
             )
             user4 = User.objects.create_user(
-                username=self.__get_random_email(), password="foobar123"
+                username=self._get_random_email(), password="foobar123"
             )
 
         self._apply_as_user(user1, team)
