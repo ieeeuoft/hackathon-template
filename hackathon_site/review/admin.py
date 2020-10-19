@@ -1,5 +1,6 @@
 from django.contrib import admin, messages
 from django.core.cache import cache
+from django.core.exceptions import PermissionDenied
 from django.db.models import Count, Max
 from django.db import transaction
 from django.urls import reverse, path
@@ -257,8 +258,10 @@ class TeamReviewAdmin(admin.ModelAdmin):
 
         If a user requests a team but never completes that application and never
         requests a new team, that team will remain in the cache set of assigned teams.
-
         """
+
+        if not self.has_change_permission(request):
+            raise PermissionDenied
 
         active_reviewers_set_cache_key = "admin:assign_to_team:active_reviewers"
 

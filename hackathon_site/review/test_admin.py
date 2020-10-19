@@ -2,6 +2,7 @@ from datetime import datetime
 from unittest.mock import patch, MagicMock
 
 from django.conf import settings
+from django.core.cache import cache
 from django.contrib.auth.models import Permission
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.db.models import Q
@@ -334,3 +335,137 @@ class TeamReviewChangeAdminTestCase(SetupUserMixin, TestCase):
         for i in range(4):
             self.assertContains(response, f'<option value="{i}" selected>{i}</option>')
             self.assertContains(response, f"Reviewing {i}")
+
+
+class AssignReviewerToTeamViewTestCase(SetupUserMixin, TestCase):
+    def setUp(self):
+        super().setUp()
+
+        self.view = reverse("admin:assign-reviewer-to-team")
+
+        self.user.is_staff = True
+        self.user.save()
+
+        self.user2_password = "abcdef123"
+        self.user2 = User.objects.create_user(
+            username="frederick@varley.com", password=self.user2_password
+        )
+        self.user2.is_staff = True
+        self.user2.save()
+
+        self.change_permissions = Permission.objects.filter(
+            Q(codename="view_application", content_type__app_label="registration")
+            | Q(codename="view_review", content_type__app_label="review")
+            | Q(codename="change_review", content_type__app_label="review"),
+        )
+
+        for perm in self.change_permissions:
+            self.user.user_permissions.add(perm)
+            self.user2.user_permissions.add(perm)
+
+        # team1 is entirely reviewed
+        self.team1 = self._make_full_registration_team(self_users=False)
+        for application in self.team1.applications.all():
+            self._review(application)
+
+        # team2 is missing a single review
+        self.team2 = self._make_full_registration_team(self_users=False)
+        for application in self.team2.applications.all()[:2]:
+            self._review(application)
+
+        # team3 is entirely unreviewed
+        self.team3 = self._make_full_registration_team(self_users=False)
+
+    def tearDown(self):
+        super().tearDown()
+        cache.clear()
+
+    def test_permission_denied_without_change_perm(self):
+        """
+        Without review.change_review permission, the view should not work
+        """
+        review_change_permission = Permission.objects.get(
+            codename="change_review", content_type__app_label="review"
+        )
+        self.user.user_permissions.remove(review_change_permission)
+        self._login()
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_takes_to_oldest_team_with_missing_reviews(self):
+        """
+        Test that the user is redirected to the oldest team with unreviewed
+        applications
+        """
+
+        self._login()
+        response = self.client.get(self.view)
+
+        # team2 should be the assigned view, since that one is the oldest
+        # team with missing reviews
+        expected_url = reverse(
+            "admin:review_teamreview_change", kwargs={"object_id": self.team2.id}
+        )
+        self.assertRedirects(response, expected_url)
+
+    def test_skips_team_assigned_to_another_user(self):
+        """
+        Test that the user is redirected to the oldest team with unreviewed
+        applications that is not assigned to another reviewed
+        """
+
+        # Login as self.user
+        self._login()
+        _ = self.client.get(self.view)
+
+        # team2 should now be assigned to self.user
+        # if we get again as a different user, we should be given team3
+        self.client.login(username=self.user2.username, password=self.user2_password)
+        response = self.client.get(self.view)
+        expected_url = reverse(
+            "admin:review_teamreview_change", kwargs={"object_id": self.team3.id}
+        )
+        self.assertRedirects(response, expected_url)
+
+    def test_all_teams_reviewed(self):
+        """
+        Test that a message is displayed on the changelist page if all teams
+        have been reviewed
+        """
+
+        # Review the rest of team2
+        for application in self.team2.applications.filter(review__isnull=True):
+            self._review(application)
+
+        for application in self.team3.applications.all():
+            self._review(application)
+
+        self._login()
+        response = self.client.get(self.view, follow=True)
+        expected_url = reverse("admin:review_teamreview_changelist")
+        self.assertRedirects(response, expected_url)
+        self.assertContains(response, "No more teams remaining")
+
+    def test_all_teams_reviewed_or_assigned(self):
+        """
+        When all teams have been either reviewed or are assigned a reviewer,
+        a message saying there are no teams left should be displayed
+        """
+
+        # Review the rest of team2
+        for application in self.team2.applications.filter(review__isnull=True):
+            self._review(application)
+
+        for application in self.team3.applications.all():
+            self._review(application)
+
+        self._login()
+        # Will assign self.user to team3
+        _ = self.client.get(self.view)
+
+        # Login as a different user. Should be taken back to the changelist page
+        self.client.login(username=self.user2.username, password=self.user2_password)
+        response = self.client.get(self.view, follow=True)
+        expected_url = reverse("admin:review_teamreview_changelist")
+        self.assertRedirects(response, expected_url)
+        self.assertContains(response, "No more teams remaining")
