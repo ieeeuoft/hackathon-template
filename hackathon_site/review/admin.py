@@ -43,6 +43,13 @@ class ReviewAdmin(admin.ModelAdmin):
     get_reviewer.short_description = "Reviewer"
     get_reviewer.admin_order_field = "reviewer__first_name"
 
+    def get_queryset(self, request):
+        return (
+            super()
+            .get_queryset(request)
+            .select_related("application", "application__user", "reviewer")
+        )
+
 
 class ApplicationInline(admin.TabularInline):
     model = Application
