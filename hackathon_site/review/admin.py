@@ -262,10 +262,8 @@ class TeamReviewAdmin(admin.ModelAdmin):
         first.
 
         Each user can be assigned as a reviewer to one team. When that user
-        requests a new team, they are unassigned from the previous one.
-
-        If a user requests a team but never completes that application and never
-        requests a new team, that team will remain in the cache set of assigned teams.
+        requests a new team, they are unassigned from the previous one. The assignment
+        will expire after 20 minutes.
         """
 
         if not self.has_change_permission(request):
