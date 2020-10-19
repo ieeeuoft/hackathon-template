@@ -25,6 +25,13 @@ IN_TESTING = True
 
 DATABASES = {"default": {"ENGINE": "django.db.backends.sqlite3", "NAME": ":memory:"}}
 
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "test-cache",
+    }
+}
+
 # For testing, make the media root a local folder to avoid
 # permissions errors
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")

@@ -147,7 +147,7 @@ Profiles are used by participants who have either been accepted or waitlisted. S
 #### Django
 Django tests are run using [Django's test system](https://docs.djangoproject.com/en/3.0/topics/testing/overview/), based on the standard python `unittest` module.
 
-A custom settings settings module is available for testing, which tells Django to use an in-memory sqlite3 database instead of the postgresql database for testing. To run the full test suite locally:
+A custom settings settings module is available for testing, which tells Django to use an in-memory sqlite3 database instead of the postgresql database and to use an in-memory cache instead of Redis. To run the full test suite locally:
 
 ```bash
 $ cd hackathon_site
