@@ -1,1 +1,1 @@
-{{hackathon_name}} Application Decision 
+{{ hackathon_name }} Application Decision 
