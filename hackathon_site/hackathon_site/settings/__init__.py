@@ -216,8 +216,9 @@ RSVP_DAYS = 7
 # the event.
 WAITLISTED_ACCEPTANCE_START_TIME = EVENT_START_DATE + timedelta(hours=1)
 
-# The date at which applications will be reviewed at the latest. 
+# The date at which applications will be reviewed at the latest.
 FINAL_REVIEW_RESPONSE_DATE = REGISTRATION_CLOSE_DATE + timedelta(days=7)
+
 # Links
 PARTICIPANT_PACKAGE_LINK = "#"
 CHAT_ROOM_LINK = "#"
