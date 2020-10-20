@@ -28,6 +28,7 @@ def environment(**options):
             "event_start_date": settings.EVENT_START_DATE,
             "event_end_date": settings.EVENT_END_DATE,
             "waitlisted_acceptance_start_time": settings.WAITLISTED_ACCEPTANCE_START_TIME,
+            "final_review_response_date": settings.FINAL_REVIEW_RESPONSE_DATE,
             "from_email": settings.DEFAULT_FROM_EMAIL,
             "contact_email": settings.CONTACT_EMAIL,
             "participant_package_link": settings.PARTICIPANT_PACKAGE_LINK,

@@ -1,0 +1,1 @@
+Congratulations, you’ve been accepted to {{ hackathon_name }}!
