@@ -134,6 +134,18 @@ DATABASES = {
     }
 }
 
+# Cache
+# https://docs.djangoproject.com/en/3.1/topics/cache/
+REDIS_URI = os.environ.get("REDIS_URI", "172.17.0.1:6379/1")
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": f"redis://{REDIS_URI}",
+        "OPTIONS": {"CLIENT_CLASS": "django_redis.client.DefaultClient",},
+        # Default time for cache key expiry, in seconds. Can be changed on a per-key basis
+        "TIMEOUT": 600,
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators

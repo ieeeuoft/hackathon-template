@@ -1,9 +1,13 @@
-from django.contrib import admin
+from django.contrib import admin, messages
+from django.core.cache import cache
+from django.core.exceptions import PermissionDenied
 from django.db.models import Count, Max
+from django.db import transaction
+from django.urls import reverse, path
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
-from django.http import HttpResponse
+from django.http import HttpResponseRedirect
 
 from registration.models import Application
 from review.forms import ReviewForm, ApplicationReviewInlineFormset
@@ -14,6 +18,7 @@ from review.models import Review, TeamReview
 class ReviewAdmin(admin.ModelAdmin):
     list_display = ("get_user", "status", "decision_sent_date", "get_reviewer")
     list_filter = (
+        "status",
         ("decision_sent_date", admin.EmptyFieldListFilter),
         ("reviewer", admin.RelatedOnlyFieldListFilter),
     )
@@ -38,6 +43,13 @@ class ReviewAdmin(admin.ModelAdmin):
 
     get_reviewer.short_description = "Reviewer"
     get_reviewer.admin_order_field = "reviewer__first_name"
+
+    def get_queryset(self, request):
+        return (
+            super()
+            .get_queryset(request)
+            .select_related("application", "application__user", "reviewer")
+        )
 
 
 class ApplicationInline(admin.TabularInline):
@@ -178,6 +190,11 @@ class TeamReviewAdmin(admin.ModelAdmin):
     change_list_template = "review/change_list.html"
     readonly_fields = ("team_code",)
 
+    def changelist_view(self, request, extra_context=None):
+        extra_context = extra_context or {}
+        extra_context["has_change_permission"] = self.has_change_permission(request)
+        return super().changelist_view(request, extra_context)
+
     def get_queryset(self, request):
         return (
             super()
@@ -239,14 +256,90 @@ class TeamReviewAdmin(admin.ModelAdmin):
 
     def assign_to_team_view(self, request):
         """
-        Temporary placeholder view to demonstrate the use of extra URLs and
-        template overriding. Should be replaced with the view to assign to teams.
+        Assign the current user to the next team with no reviewer assigned.
+        Teams are ordered by the most recently submitted application on that team
+        ascending, so teams with all applications submitted earlier get reviewed
+        first.
+
+        Each user can be assigned as a reviewer to one team. When that user
+        requests a new team, they are unassigned from the previous one. The assignment
+        will expire after 20 minutes.
         """
-        return HttpResponse(f"Hello there, {request.user.first_name}")
+
+        if not self.has_change_permission(request):
+            raise PermissionDenied
+
+        active_reviewers_set_cache_key = "admin:assign_to_team:active_reviewers"
+
+        def build_reviewer_assignment_cache_key(user_id):
+            """
+            Build a key that stores which team a reviewer is assigned to
+            """
+            return f"admin:assign_to_team:user-{user_id}"
+
+        with transaction.atomic():
+            # Set of reviewers IDs that are currently reviewing
+            active_reviewers = cache.get(active_reviewers_set_cache_key, set())
+
+            # Get a dictionary mapping user id -> assigned team
+            assigned_teams = cache.get_many(
+                [
+                    build_reviewer_assignment_cache_key(user_id)
+                    for user_id in active_reviewers
+                ]
+            )
+
+            current_user_cache_key = build_reviewer_assignment_cache_key(
+                request.user.id
+            )
+
+            queryset = (
+                self.get_queryset(request)
+                .filter(applications__isnull=False)  # Exclude any teams that are empty
+                # Get any team where at least one application is missing a review
+                .filter(applications__review__isnull=True)
+                .exclude(
+                    id__in=list(assigned_teams.values())
+                )  # Exclude teams that are currently assigned
+                .order_by(
+                    "most_recent_submission"
+                )  # Ascending order, annotated in self.get_queryset
+            )
+
+            team = queryset.first()
+
+            if team is None:
+                # No more teams left to review
+                cache.delete(current_user_cache_key)
+
+                messages.add_message(
+                    request,
+                    messages.INFO,
+                    "No more teams remaining. Note that some reviews may still be in progress, "
+                    "so check back later to ensure all were completed",
+                )
+
+                return HttpResponseRedirect(
+                    reverse("admin:review_teamreview_changelist")
+                )
+
+            # Assign the user to their team in the cache, 20 minute TTL
+            cache.set(current_user_cache_key, team.id, timeout=60 * 20)
+
+            # Add the user to the set of active reviewers
+            active_reviewers.add(request.user.id)
+
+            # Update the active reviewers cache set, 20 minute TTL
+            cache.set(
+                active_reviewers_set_cache_key, active_reviewers, timeout=60 * 20,
+            )
+
+        team_review_page = reverse(
+            "admin:review_teamreview_change", kwargs={"object_id": team.id}
+        )
+        return HttpResponseRedirect(team_review_page)
 
     def get_urls(self):
-        from django.urls import path
-
         urls = super().get_urls()
         new_urls = [
             path(
