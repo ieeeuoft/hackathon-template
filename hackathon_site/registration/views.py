@@ -39,7 +39,6 @@ class SignUpView(RegistrationView):
 
     def get_email_context(self, activation_key):
         context = super().get_email_context(activation_key)
-        context["hackathon_name"] = settings.HACKATHON_NAME
         return context
 
     def send_activation_email(self, user):

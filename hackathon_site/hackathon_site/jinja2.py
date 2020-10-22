@@ -22,7 +22,7 @@ def environment(**options):
             "localtime": template_localtime,
             "is_registration_open": is_registration_open,
             # Variables
-            "event_name": settings.HACKATHON_NAME,
+            "hackathon_name": settings.HACKATHON_NAME,
             "registration_open_date": settings.REGISTRATION_OPEN_DATE,
             "registration_close_date": settings.REGISTRATION_CLOSE_DATE,
             "event_start_date": settings.EVENT_START_DATE,
