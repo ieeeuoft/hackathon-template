@@ -1,3 +1,356 @@
-from django.test import TestCase
+import re
+from datetime import datetime, timedelta
+from unittest.mock import patch, MagicMock
 
-# Create your tests here.
+from django.test import TestCase
+from django.urls import reverse
+from django.core import mail
+from django.conf import settings
+from hackathon_site.tests import SetupUserMixin
+from django.contrib.auth.models import Permission
+from django.db.models import Q
+from rest_framework import status
+from review.models import Review
+
+
+class MailerTestCase(SetupUserMixin, TestCase):
+    def setUp(self):
+        super().setUp()
+        self.view = reverse("admin:send-decision-emails")
+
+        self.user.is_staff = True
+        self.user.save()
+
+        self.form_data = {
+            "date_start": datetime.now().date(),
+            "date_end": datetime.now().date() + timedelta(days=1),
+            "status": "Accepted",
+            "quantity": 1,
+        }
+
+    def _login(self, superuser=True):
+        super()._login()
+
+        if superuser:
+            self.user.is_superuser = True
+            self.user.save()
+
+    def _create_teams_and_reviews_for_mail_tests(
+        self, sent_date=None, date_offset=None
+    ):
+        """
+        Creates 4 teams as follows:
+        Team 1: 4 accepted
+        Team 2: 3 Accepted, 1 Waitlisted
+        Team 3: 1 Accepted, 1 Waitlisted, 2 Rejected
+        Team 4: 4 Rejected
+
+        If older_updated_date is not None then it makes 1 Accepted, 1 Waitlisted and 2 Rejected
+        reviews older by the amount passed in through older_updated_date
+        """
+        older_updated_date = None
+        if date_offset is not None:
+            older_updated_date = datetime.now() - timedelta(date_offset)
+
+        team1 = self._make_full_registration_team(self_users=False)
+        team2 = self._make_full_registration_team(self_users=False)
+        team3 = self._make_full_registration_team(self_users=False)
+        team4 = self._make_full_registration_team(self_users=False)
+
+        # Everyone in Team 1 Accepted
+        for application in team1.applications.all():
+            self._review(application, status="Accepted", decision_sent_date=sent_date)
+
+        # 3 Accepted, 1 Waitlisted in Team 2
+        for i, application in enumerate(team2.applications.all()):
+            if older_updated_date is not None and i == 3:
+                with patch(
+                    "django.utils.timezone.now",
+                    MagicMock(return_value=older_updated_date),
+                ):
+                    self._review(
+                        application, status="Waitlisted", decision_sent_date=sent_date,
+                    )
+            elif i == 3:
+                self._review(
+                    application, status="Waitlisted", decision_sent_date=sent_date
+                )
+            else:
+                self._review(
+                    application, status="Accepted", decision_sent_date=sent_date
+                )
+
+        # 1 Accepted, 1 Waitlisted, 2 Rejected in Team 3
+        for i, application in enumerate(team3.applications.all()):
+            if older_updated_date is not None and i == 2:
+                with patch(
+                    "django.utils.timezone.now",
+                    MagicMock(return_value=older_updated_date),
+                ):
+                    self._review(
+                        application, status="Accepted", decision_sent_date=sent_date
+                    )
+            elif i == 2:
+                self._review(
+                    application, status="Accepted", decision_sent_date=sent_date
+                )
+
+            elif i == 3:
+                self._review(
+                    application, status="Waitlisted", decision_sent_date=sent_date
+                )
+            elif older_updated_date is not None and i < 2:
+                with patch(
+                    "django.utils.timezone.now",
+                    MagicMock(return_value=older_updated_date),
+                ):
+                    self._review(
+                        application, status="Rejected", decision_sent_date=sent_date
+                    )
+            else:
+                self._review(
+                    application, status="Rejected", decision_sent_date=sent_date
+                )
+
+        # Everyone in Team 1 Rejected
+        for application in team4.applications.all():
+            self._review(application, status="Rejected", decision_sent_date=sent_date)
+
+        return team1, team2, team3, team4
+
+    def test_regular_users_page_not_visible_without_permissions(self):
+        self._login(superuser=False)
+        response = self.client.get(self.view)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_super_users_page_visible(self):
+        self._login()
+        response = self.client.get(self.view)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_send_decisions_button_not_visible_if_not_superuser(self):
+        self.view_permissions = Permission.objects.filter(
+            Q(codename="view_application", content_type__app_label="registration")
+            | Q(codename="view_review", content_type__app_label="review"),
+        )
+        self._login(superuser=False)
+        for perm in self.view_permissions:
+            self.user.user_permissions.add(perm)
+
+        response = self.client.get(reverse("admin:review_teamreview_changelist"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertNotContains(response, "Send Decisions")
+
+    def test_sends_quantity_number_of_accepted_emails(self):
+        self._login()
+        self._create_teams_and_reviews_for_mail_tests()
+
+        quantity_before = len(
+            Review.objects.filter(
+                decision_sent_date__isnull=True, status="Accepted"
+            ).all()
+        )
+
+        self.form_data["quantity"] = 3  # Send 3 acceptance emails
+
+        response = self.client.post(self.view, data=self.form_data)
+
+        quantity_after = len(
+            Review.objects.filter(
+                decision_sent_date__isnull=True, status="Accepted"
+            ).all()
+        )
+
+        self.assertEqual(len(mail.outbox), 3)
+        self.assertRedirects(response, self.view)
+        self.assertEqual(quantity_before, quantity_after + self.form_data["quantity"])
+
+    def test_sends_quantity_number_of_waitlisted_emails(self):
+        self._login()
+        self._create_teams_and_reviews_for_mail_tests()
+
+        quantity_before = len(
+            Review.objects.filter(
+                decision_sent_date__isnull=True, status="Waitlisted"
+            ).all()
+        )
+
+        # Send only two waitlisted email
+        self.form_data["status"] = "Waitlisted"
+        self.form_data["quantity"] = 2
+        response = self.client.post(self.view, data=self.form_data)
+
+        quantity_after = len(
+            Review.objects.filter(
+                decision_sent_date__isnull=True, status="Waitlisted"
+            ).all()
+        )
+
+        self.assertEqual(len(mail.outbox), 2)
+        self.assertRedirects(response, self.view)
+        self.assertEqual(quantity_before, quantity_after + self.form_data["quantity"])
+
+    def test_sends_quantity_number_of_rejected_emails(self):
+        self._login()
+        self._create_teams_and_reviews_for_mail_tests()
+
+        quantity_before = len(
+            Review.objects.filter(
+                decision_sent_date__isnull=True, status="Rejected"
+            ).all()
+        )
+
+        self.form_data["status"] = "Rejected"
+        self.form_data["quantity"] = 3  # Send 3 rejection emails
+
+        response = self.client.post(self.view, data=self.form_data)
+
+        quantity_after = len(
+            Review.objects.filter(
+                decision_sent_date__isnull=True, status="Rejected"
+            ).all()
+        )
+
+        self.assertEqual(len(mail.outbox), 3)
+        self.assertRedirects(response, self.view)
+        self.assertEqual(quantity_before, quantity_after + self.form_data["quantity"])
+
+    def test_send_all_accepted_within_current_date_range(self):
+        self._login()
+        self._create_teams_and_reviews_for_mail_tests(date_offset=5)
+
+        quantity_before = len(
+            Review.objects.filter(
+                decision_sent_date__isnull=True, status="Accepted"
+            ).all()
+        )
+
+        # Send 10 acceptance emails. There's only 8 accepted people, and 1 older. So should
+        # only send 7 emails
+        self.form_data["quantity"] = 10
+        self.form_data["status"] = "Accepted"
+
+        response = self.client.post(self.view, data=self.form_data)
+
+        quantity_after = len(
+            Review.objects.filter(
+                decision_sent_date__isnull=True, status="Accepted"
+            ).all()
+        )
+
+        self.assertEqual(len(mail.outbox), 7)
+        self.assertRedirects(response, self.view)
+        self.assertEqual(quantity_before, quantity_after + 7)
+
+    def test_send_all_waitlisted_within_current_date_range(self):
+        self._login()
+        self._create_teams_and_reviews_for_mail_tests(date_offset=5)
+
+        quantity_before = len(
+            Review.objects.filter(
+                decision_sent_date__isnull=True, status="Waitlisted"
+            ).all()
+        )
+
+        # Send 10 waitlisted emails. There's only 2 waitlisted people, and 1 older. So should
+        # only send 1 emails
+        self.form_data["quantity"] = 10
+        self.form_data["status"] = "Waitlisted"
+
+        response = self.client.post(self.view, data=self.form_data)
+
+        quantity_after = len(
+            Review.objects.filter(
+                decision_sent_date__isnull=True, status="Waitlisted"
+            ).all()
+        )
+
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertRedirects(response, self.view)
+        self.assertEqual(quantity_before, quantity_after + 1)
+
+    def test_send_all_rejected_within_current_date_range(self):
+        self._login()
+        self._create_teams_and_reviews_for_mail_tests(date_offset=5)
+
+        quantity_before = len(
+            Review.objects.filter(
+                decision_sent_date__isnull=True, status="Rejected"
+            ).all()
+        )
+
+        # Send 10 rejected emails. There's only 6 rejected people, and 2 older. So should
+        # only send 4 emails
+        self.form_data["quantity"] = 10
+        self.form_data["status"] = "Rejected"
+
+        response = self.client.post(self.view, data=self.form_data)
+
+        quantity_after = len(
+            Review.objects.filter(
+                decision_sent_date__isnull=True, status="Rejected"
+            ).all()
+        )
+
+        self.assertEqual(len(mail.outbox), 4)
+        self.assertRedirects(response, self.view)
+        self.assertEqual(quantity_before, quantity_after + 4)
+
+    def test_correct_text_in_accepted_email(self):
+        self._login()
+        self._create_teams_and_reviews_for_mail_tests()
+
+        # Send 1 accepted email
+        self.client.post(self.view, data=self.form_data)
+
+        clean = re.compile("<.*?>")
+        clean_mail_body = re.sub(clean, "", mail.outbox[0].body)
+
+        self.assertIn(
+            f"Congratulations, you’ve been accepted to { settings.HACKATHON_NAME }",
+            mail.outbox[0].subject,
+        )
+        self.assertIn(
+            f"The {settings.HACKATHON_NAME} team has reviewed your application, and we’re excited to welcome you to CoolHacks!",
+            clean_mail_body,
+        )
+
+    def test_correct_text_in_waitlisted_email(self):
+        self._login()
+        self._create_teams_and_reviews_for_mail_tests()
+
+        # Send 1 waitlisted email
+        self.form_data["status"] = "Waitlisted"
+        self.client.post(self.view, data=self.form_data)
+
+        clean = re.compile("<.*?>")
+        clean_mail_body = re.sub(clean, "", mail.outbox[0].body)
+
+        self.assertIn(
+            f"{ settings.HACKATHON_NAME } Application Decision", mail.outbox[0].subject
+        )
+        self.assertIn(
+            f"we have decided to defer your application to the next round",
+            clean_mail_body,
+        )
+
+    def test_correct_text_in_rejected_email(self):
+        self._login()
+        self._create_teams_and_reviews_for_mail_tests()
+
+        # Send 1 rejected email
+        self.form_data["status"] = "Rejected"
+        self.client.post(self.view, data=self.form_data)
+
+        clean = re.compile("<.*?>")
+        clean_mail_body = re.sub(clean, "", mail.outbox[0].body)
+
+        self.assertIn(
+            f"{ settings.HACKATHON_NAME } Application Decision", mail.outbox[0].subject
+        )
+        self.assertIn(
+            "we are not able to offer you a spot in the event this year",
+            clean_mail_body,
+        )
