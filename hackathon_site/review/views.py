@@ -16,12 +16,10 @@ from hackathon_site import settings
 class MailerView(UserPassesTestMixin, FormView):
     template_name = "review/send-decisions.html"
     success_url = reverse_lazy("admin:send-decision-emails")
+    form_class = MailerForm
 
     def test_func(self):
         return self.request.user.is_superuser
-
-    def get_form(self, form_class=None):
-        return MailerForm(**self.get_form_kwargs())
 
     def form_valid(self, form, **kwargs):
         """
@@ -41,34 +39,41 @@ class MailerView(UserPassesTestMixin, FormView):
             updated_at__gte=date_start,
             updated_at__lte=date_end,
             decision_sent_date__isnull=True,
-        ).all()[:quantity]
+        )[:quantity]
 
         # Get a mail socket connection and manually open it
         connection = mail.get_connection(fail_silently=False)
         connection.open()
 
-        for review in queryset:
-            email = mail.EmailMessage(
-                render_to_string(f"review/emails/{status.lower()}_email_subject.txt"),
-                render_to_string(
-                    f"review/emails/{status.lower()}_email_body.html",
-                    {  # Pass context data to the template
-                        "user": review.application.user,
-                        "request": self.request,
-                        "rsvp_deadline": (
-                            datetime.now().date() + timedelta(days=settings.RSVP_DAYS)
-                        ).strftime("%b %d %Y"),
-                    },
-                ),
-                settings.DEFAULT_FROM_EMAIL,
-                [review.application.user.email_user],
-                connection=connection,
-            )
-            email.send()
+        try:
+            for review in queryset:
+                email = mail.EmailMessage(
+                    render_to_string(
+                        f"review/emails/{status.lower()}_email_subject.txt"
+                    ),
+                    render_to_string(
+                        f"review/emails/{status.lower()}_email_body.html",
+                        {  # Pass context data to the template
+                            "user": review.application.user,
+                            "request": self.request,
+                            "rsvp_deadline": (
+                                datetime.now().date()
+                                + timedelta(days=settings.RSVP_DAYS)
+                            ).strftime("%b %d %Y"),
+                        },
+                    ),
+                    settings.DEFAULT_FROM_EMAIL,
+                    [review.application.user.email_user],
+                    connection=connection,
+                )
+                email.send()
 
-            review.decision_sent_date = datetime.now().date()
-            review.save()
-        connection.close()
+                review.decision_sent_date = datetime.now().date()
+                review.save()
+        except Exception as e:
+            raise e
+        finally:
+            connection.close()
 
         return redirect(self.get_success_url())
 
@@ -88,6 +93,3 @@ class MailerView(UserPassesTestMixin, FormView):
         ).count()
 
         return context
-
-    def post(self, request, *args, **kwargs):
-        return super().post(request, *args, **kwargs)
