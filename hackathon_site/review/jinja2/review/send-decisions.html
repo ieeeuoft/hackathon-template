@@ -2,7 +2,6 @@
 
 {% block head_extends %}
 <!-- Select2 CSS -->
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="{{ static('event/styles/css/select2.css') }}" />
 
 <style>
@@ -35,17 +34,7 @@
 
 {% block form_inputs %}
     {% for field in form %}
-        {% if field.field.widget.__class__.__name__ == "Textarea" %}
-            {{ render_field(field, size="s12", show_help_text_as_label=True) }}
-        {% elif field.field.widget.input_type == "select" %}
-            {{ render_field(field, size="s12 select2-wrapper") }}
-        {% elif field.field.widget.input_type == "file" %}
-            {{ render_field(field, size="s12", show_label=False) }}
-        {% elif field.field.widget.input_type == "checkbox" %}
-            {{ render_checkbox_field(field, size="s12") }}
-        {% else %}
-            {{ render_field(field, size="s12") }}
-        {% endif %}
+        {{ render_field(field, size="s12") }}
     {% endfor %}
 {% endblock %}
 
