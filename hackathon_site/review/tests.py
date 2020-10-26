@@ -22,8 +22,9 @@ class MailerTestCase(SetupUserMixin, TestCase):
         self.user.save()
 
         self.form_data = {
-            "date_start": datetime.now().date(),
-            "date_end": datetime.now().date() + timedelta(days=1),
+            "date_start": datetime.now().replace(tzinfo=settings.TZ_INFO).date(),
+            "date_end": datetime.now().replace(tzinfo=settings.TZ_INFO).date()
+            + timedelta(days=1),
             "status": "Accepted",
             "quantity": 1,
         }
@@ -50,7 +51,9 @@ class MailerTestCase(SetupUserMixin, TestCase):
         """
         older_updated_date = None
         if date_offset is not None:
-            older_updated_date = datetime.now() - timedelta(date_offset)
+            older_updated_date = datetime.now().replace(
+                tzinfo=settings.TZ_INFO
+            ) - timedelta(date_offset)
 
         team1 = self._make_full_registration_team(self_users=False)
         team2 = self._make_full_registration_team(self_users=False)
@@ -147,71 +150,17 @@ class MailerTestCase(SetupUserMixin, TestCase):
         self._login()
         self._create_teams_and_reviews_for_mail_tests()
 
-        quantity_before = len(
-            Review.objects.filter(
-                decision_sent_date__isnull=True, status="Accepted"
-            ).all()
-        )
+        quantity_before = Review.objects.filter(
+            decision_sent_date__isnull=True, status="Accepted"
+        ).count()
 
         self.form_data["quantity"] = 3  # Send 3 acceptance emails
 
         response = self.client.post(self.view, data=self.form_data)
 
-        quantity_after = len(
-            Review.objects.filter(
-                decision_sent_date__isnull=True, status="Accepted"
-            ).all()
-        )
-
-        self.assertEqual(len(mail.outbox), 3)
-        self.assertRedirects(response, self.view)
-        self.assertEqual(quantity_before, quantity_after + self.form_data["quantity"])
-
-    def test_sends_quantity_number_of_waitlisted_emails(self):
-        self._login()
-        self._create_teams_and_reviews_for_mail_tests()
-
-        quantity_before = len(
-            Review.objects.filter(
-                decision_sent_date__isnull=True, status="Waitlisted"
-            ).all()
-        )
-
-        # Send only two waitlisted email
-        self.form_data["status"] = "Waitlisted"
-        self.form_data["quantity"] = 2
-        response = self.client.post(self.view, data=self.form_data)
-
-        quantity_after = len(
-            Review.objects.filter(
-                decision_sent_date__isnull=True, status="Waitlisted"
-            ).all()
-        )
-
-        self.assertEqual(len(mail.outbox), 2)
-        self.assertRedirects(response, self.view)
-        self.assertEqual(quantity_before, quantity_after + self.form_data["quantity"])
-
-    def test_sends_quantity_number_of_rejected_emails(self):
-        self._login()
-        self._create_teams_and_reviews_for_mail_tests()
-
-        quantity_before = len(
-            Review.objects.filter(
-                decision_sent_date__isnull=True, status="Rejected"
-            ).all()
-        )
-
-        self.form_data["status"] = "Rejected"
-        self.form_data["quantity"] = 3  # Send 3 rejection emails
-
-        response = self.client.post(self.view, data=self.form_data)
-
-        quantity_after = len(
-            Review.objects.filter(
-                decision_sent_date__isnull=True, status="Rejected"
-            ).all()
-        )
+        quantity_after = Review.objects.filter(
+            decision_sent_date__isnull=True, status="Accepted"
+        ).count()
 
         self.assertEqual(len(mail.outbox), 3)
         self.assertRedirects(response, self.view)
@@ -221,11 +170,9 @@ class MailerTestCase(SetupUserMixin, TestCase):
         self._login()
         self._create_teams_and_reviews_for_mail_tests(date_offset=5)
 
-        quantity_before = len(
-            Review.objects.filter(
-                decision_sent_date__isnull=True, status="Accepted"
-            ).all()
-        )
+        quantity_before = Review.objects.filter(
+            decision_sent_date__isnull=True, status="Accepted"
+        ).count()
 
         # Send 10 acceptance emails. There's only 8 accepted people, and 1 older. So should
         # only send 7 emails
@@ -234,80 +181,35 @@ class MailerTestCase(SetupUserMixin, TestCase):
 
         response = self.client.post(self.view, data=self.form_data)
 
-        quantity_after = len(
-            Review.objects.filter(
-                decision_sent_date__isnull=True, status="Accepted"
-            ).all()
-        )
+        quantity_after = Review.objects.filter(
+            decision_sent_date__isnull=True, status="Accepted"
+        ).count()
 
         self.assertEqual(len(mail.outbox), 7)
         self.assertRedirects(response, self.view)
         self.assertEqual(quantity_before, quantity_after + 7)
-
-    def test_send_all_waitlisted_within_current_date_range(self):
-        self._login()
-        self._create_teams_and_reviews_for_mail_tests(date_offset=5)
-
-        quantity_before = len(
-            Review.objects.filter(
-                decision_sent_date__isnull=True, status="Waitlisted"
-            ).all()
-        )
-
-        # Send 10 waitlisted emails. There's only 2 waitlisted people, and 1 older. So should
-        # only send 1 emails
-        self.form_data["quantity"] = 10
-        self.form_data["status"] = "Waitlisted"
-
-        response = self.client.post(self.view, data=self.form_data)
-
-        quantity_after = len(
-            Review.objects.filter(
-                decision_sent_date__isnull=True, status="Waitlisted"
-            ).all()
-        )
-
-        self.assertEqual(len(mail.outbox), 1)
-        self.assertRedirects(response, self.view)
-        self.assertEqual(quantity_before, quantity_after + 1)
-
-    def test_send_all_rejected_within_current_date_range(self):
-        self._login()
-        self._create_teams_and_reviews_for_mail_tests(date_offset=5)
-
-        quantity_before = len(
-            Review.objects.filter(
-                decision_sent_date__isnull=True, status="Rejected"
-            ).all()
-        )
-
-        # Send 10 rejected emails. There's only 6 rejected people, and 2 older. So should
-        # only send 4 emails
-        self.form_data["quantity"] = 10
-        self.form_data["status"] = "Rejected"
-
-        response = self.client.post(self.view, data=self.form_data)
-
-        quantity_after = len(
-            Review.objects.filter(
-                decision_sent_date__isnull=True, status="Rejected"
-            ).all()
-        )
-
-        self.assertEqual(len(mail.outbox), 4)
-        self.assertRedirects(response, self.view)
-        self.assertEqual(quantity_before, quantity_after + 4)
 
     def test_correct_text_in_accepted_email(self):
         self._login()
         self._create_teams_and_reviews_for_mail_tests()
 
         # Send 1 accepted email
-        self.client.post(self.view, data=self.form_data)
+        response = self.client.post(self.view, data=self.form_data)
 
         clean = re.compile("<.*?>")
         clean_mail_body = re.sub(clean, "", mail.outbox[0].body)
 
+        link = f"http://testserver{reverse('event:dashboard')}"
+
+        rsvp_deadline = (
+            datetime.now().date() + timedelta(days=settings.RSVP_DAYS)
+        ).strftime("%b %d %Y")
+
+        self.assertIn(link, mail.outbox[0].body)
+        self.assertIn(rsvp_deadline, mail.outbox[0].body)
+        self.assertIn(settings.HACKATHON_NAME, mail.outbox[0].body)
+        self.assertIn(settings.PARTICIPANT_PACKAGE_LINK, mail.outbox[0].body)
+        self.assertIn(settings.CHAT_ROOM_LINK, mail.outbox[0].body)
         self.assertIn(
             f"Congratulations, you’ve been accepted to { settings.HACKATHON_NAME }",
             mail.outbox[0].subject,
@@ -328,6 +230,14 @@ class MailerTestCase(SetupUserMixin, TestCase):
         clean = re.compile("<.*?>")
         clean_mail_body = re.sub(clean, "", mail.outbox[0].body)
 
+        link = f"http://testserver{reverse('event:dashboard')}"
+
+        self.assertIn(link, mail.outbox[0].body)
+        self.assertIn(settings.HACKATHON_NAME, mail.outbox[0].body)
+        self.assertIn(
+            settings.FINAL_REVIEW_RESPONSE_DATE.strftime("%B %-d, %Y"),
+            mail.outbox[0].body,
+        )
         self.assertIn(
             f"{ settings.HACKATHON_NAME } Application Decision", mail.outbox[0].subject
         )
@@ -347,6 +257,7 @@ class MailerTestCase(SetupUserMixin, TestCase):
         clean = re.compile("<.*?>")
         clean_mail_body = re.sub(clean, "", mail.outbox[0].body)
 
+        self.assertIn(settings.HACKATHON_NAME, mail.outbox[0].body)
         self.assertIn(
             f"{ settings.HACKATHON_NAME } Application Decision", mail.outbox[0].subject
         )
