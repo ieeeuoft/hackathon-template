@@ -1,15 +1,5 @@
 {% extends "event/form_base.html" %}
 
-{% block head_extends %}
-<!-- Select2 CSS -->
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
-<link rel="stylesheet" type="text/css" href="{{ static('event/styles/css/select2.css') }}" />
-
-<style>
-
-</style>
-{% endblock %}
-
 {% block form_title %}SEND DECISION EMAILS TO PARTICIPANTS{% endblock %}
 {% block form_attrs %}enctype="multipart/form-data"{% endblock %}
 
@@ -35,14 +25,16 @@
 
 {% block form_inputs %}
     {% for field in form %}
-        {% if field.field.widget.__class__.__name__ == "Textarea" %}
-            {{ render_field(field, size="s12", show_help_text_as_label=True) }}
-        {% elif field.field.widget.input_type == "select" %}
-            {{ render_field(field, size="s12 select2-wrapper") }}
-        {% elif field.field.widget.input_type == "file" %}
-            {{ render_field(field, size="s12", show_label=False) }}
-        {% elif field.field.widget.input_type == "checkbox" %}
-            {{ render_checkbox_field(field, size="s12") }}
+        {% if field.field.widget.input_type == "select" %}
+            <div class="input-field row col s12">
+                <select>
+                    <option value="" disabled selected>Choose your option</option>
+                    <option value="Accepted">Accepted</option>
+                    <option value="Waitlisted">Waitlisted</option>
+                    <option value="Rejected">Rejected</option>
+                </select>
+                <label>{{field.label}}</label>
+            </div>
         {% else %}
             {{ render_field(field, size="s12") }}
         {% endif %}
@@ -56,45 +48,9 @@
 {% endblock %}
 
 {% block scripts %}
-
-<!-- Select2 JS -->
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
-
 <script>
-$(document).ready(function() {
-    const selects = $("select");
-    selects.not(".select2-school-select").select2();
-    $(".select2-school-select").select2({tags: true});  // Allow custom options for school
-
-    // Properly style any pre-filled selects
-    $.each(selects, (i, e) => {
-        if (e.value) {
-            $(e).siblings("label").addClass("label-active");
-        }
+    $(document).ready(function(){
+        $('select').formSelect();
     });
-
-    selects.on("select2:opening", function () {
-        $(this).siblings("label").addClass("label-active");
-    });
-
-    selects.on("select2:closing", function (e) {
-        if (!this.value) {
-            $(this).siblings("label").removeClass("label-active");
-        }
-
-        // steal focus during close - only capture once and stop propogation
-        // https://stackoverflow.com/a/49261426/3882202
-        $(e.target).data("select2").$selection.one("focus focusin", function (e) {
-            e.stopPropagation();
-        });
-    });
-
-    // on first focus (bubbles up to document), open the menu
-    // https://stackoverflow.com/a/49261426/3882202
-    $(document).on('focus', '.select2-selection.select2-selection--single', function () {
-      $(this).closest(".select2-container").siblings('select:enabled').select2('open');
-    });
-});
-
 </script>
 {% endblock %}
