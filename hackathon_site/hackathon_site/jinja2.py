@@ -32,7 +32,8 @@ def environment(**options):
             "from_email": settings.DEFAULT_FROM_EMAIL,
             "contact_email": settings.CONTACT_EMAIL,
             "participant_package_link": settings.PARTICIPANT_PACKAGE_LINK,
-            "chat_room_link": settings.CHAT_ROOM_LINK,
+            "chat_room_name": settings.CHAT_ROOM_TUPLE[0],
+            "chat_room_link": settings.CHAT_ROOM_TUPLE[1],
         }
     )
     return env
