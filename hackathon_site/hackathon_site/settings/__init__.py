@@ -209,6 +209,22 @@ else:
     # Remember to create this folder on your server
     MEDIA_ROOT = "/var/www/media/"
 
+# Logging
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {"console": {"level": "INFO", "class": "logging.StreamHandler"}},
+    "loggers": {
+        "django": {"handlers": ["console"], "level": "WARNING", "propagate": True},
+        "django.request": {
+            "handlers": ["console"],
+            "level": "WARNING",
+            "propagate": False,
+        },
+        "review": {"handlers": ["console"], "level": "WARNING", "propagate": False},
+    },
+}
+
 # Event specific settings
 HACKATHON_NAME = "CoolHacks"
 DEFAULT_FROM_EMAIL = "webmaster@localhost"

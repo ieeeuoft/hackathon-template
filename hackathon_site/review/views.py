@@ -11,6 +11,9 @@ from django.core import mail
 from review.forms import MailerForm
 from review.models import Review
 from hackathon_site import settings
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class MailerView(UserPassesTestMixin, FormView):
@@ -71,6 +74,7 @@ class MailerView(UserPassesTestMixin, FormView):
                 review.decision_sent_date = datetime.now().date()
                 review.save()
         except Exception as e:
+            logger.error(e)
             raise e
         finally:
             connection.close()
