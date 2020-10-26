@@ -3,9 +3,6 @@
 {% block form_title %}SEND DECISION EMAILS TO PARTICIPANTS{% endblock %}
 {% block form_attrs %}enctype="multipart/form-data"{% endblock %}
 
-
-
-
 {% set form_action=url("admin:send-decision-emails") %}
 
 {% block form_description %}
@@ -27,7 +24,7 @@
     {% for field in form %}
         {% if field.field.widget.input_type == "select" %}
             <div class="input-field row col s12">
-                <select>
+                <select id="status" name="status">
                     <option value="" disabled selected>Choose your option</option>
                     <option value="Accepted">Accepted</option>
                     <option value="Waitlisted">Waitlisted</option>
