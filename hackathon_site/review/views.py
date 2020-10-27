@@ -32,8 +32,12 @@ class MailerView(UserPassesTestMixin, FormView):
         (with last_updated_date) between date_start and date_end. The number of emails
         for that status that will be sent is dictated by the quantity.
         """
-        date_start = form.cleaned_data["date_start"]
-        date_end = form.cleaned_data["date_end"]
+        date_start = datetime.combine(
+            form.cleaned_data["date_start"], datetime.min.time()
+        ).replace(tzinfo=settings.TZ_INFO)
+        date_end = datetime.combine(
+            form.cleaned_data["date_end"], datetime.max.time()
+        ).replace(tzinfo=settings.TZ_INFO)
         status = form.cleaned_data["status"]
         quantity = form.cleaned_data["quantity"]
 
