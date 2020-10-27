@@ -1,19 +1,11 @@
 {% extends "event/form_base.html" %}
 
 {% block form_title %}SEND DECISION EMAILS TO PARTICIPANTS{% endblock %}
-{% block form_attrs %}enctype="multipart/form-data"{% endblock %}
 
 {% set form_action=url("admin:send-decision-emails") %}
 
 {% block form_description %}
-    {% if form.non_field_errors() %}
-        <div class="row col s12">
-        {% for error in form.non_field_errors() %}
-            <span class="formError">{{ error }}</span>
-        {% endfor %}
-        </div>
-    {% endif %}
-    <div class="row col s12">
+    <div>
         Accepted: {{ accepted_count }}
         Waitlisted: {{ waitlisted_count }}
         Rejected: {{ rejected_count }}
