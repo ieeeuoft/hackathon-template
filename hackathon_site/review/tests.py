@@ -215,7 +215,7 @@ class MailerTestCase(SetupUserMixin, TestCase):
             mail.outbox[0].subject,
         )
         self.assertIn(
-            f"The {settings.HACKATHON_NAME} team has reviewed your application, and we’re excited to welcome you to CoolHacks!",
+            f"The {settings.HACKATHON_NAME} team has reviewed your application, and we’re excited to welcome you to {settings.HACKATHON_NAME}!",
             clean_mail_body,
         )
 
