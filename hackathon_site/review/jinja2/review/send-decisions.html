@@ -6,16 +6,18 @@
 {% set form_action=url("admin:send-decision-emails") %}
 
 {% block form_description %}
-    <div class="row col s12">
-    {% for error in form.non_field_errors() %}
-        <span class="formError">{{ error }}</span>
-    {% endfor %}
-    </div>
+    {% if form.non_field_errors() %}
         <div class="row col s12">
-            Accepted: {{ accepted_count }}
-            Waitlisted: {{ waitlisted_count }}
-            Rejected: {{ rejected_count }}
+        {% for error in form.non_field_errors() %}
+            <span class="formError">{{ error }}</span>
+        {% endfor %}
         </div>
+    {% endif %}
+    <div class="row col s12">
+        Accepted: {{ accepted_count }}
+        Waitlisted: {{ waitlisted_count }}
+        Rejected: {{ rejected_count }}
+    </div>
 {% endblock %}
 
 {% block form_inputs %}
