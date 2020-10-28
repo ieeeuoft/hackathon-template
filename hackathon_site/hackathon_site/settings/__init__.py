@@ -236,5 +236,4 @@ PARTICIPANT_PACKAGE_LINK = "#"
 
 # Note this is in the form (chat_room_name, chat_room_link)
 # Chat room name is such as the following: Slack, Discord
-CHAT_ROOM_NAME = "Slack"
-CHAT_ROOM_LINK = "slack.com"
+CHAT_ROOM = "https://slack.com, Slack"

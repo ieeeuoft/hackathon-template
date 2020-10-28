@@ -188,6 +188,9 @@ class DashboardTestCase(SetupUserMixin, TestCase):
             response, f"You've been accepted into {settings.HACKATHON_NAME}!"
         )
 
+        self.assertContains(response, f"{settings.CHAT_ROOM[0]}")
+        self.assertContains(response, f"{settings.CHAT_ROOM[1]}")
+
         # Buttons for RSVP appear
         self.assertContains(
             response, reverse("registration:rsvp", kwargs={"rsvp": "yes"})
@@ -265,10 +268,9 @@ class DashboardTestCase(SetupUserMixin, TestCase):
         self.assertContains(
             response, f"You've been accepted into {settings.HACKATHON_NAME}!"
         )
-        self.assertContains(response, f"and join our")
-        self.assertContains(response, f"Slack")
-        # self.assertContains(response, f"and join our Slack")
-        self.assertContains(response, f"and join our {settings.CHAT_ROOM_NAME}")
+
+        self.assertContains(response, f"{settings.CHAT_ROOM[0]}")
+        self.assertContains(response, f"{settings.CHAT_ROOM[1]}")
 
         print(response)
         # Buttons for RSVP still appear
