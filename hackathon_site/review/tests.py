@@ -209,7 +209,8 @@ class MailerTestCase(SetupUserMixin, TestCase):
         self.assertIn(rsvp_deadline, mail.outbox[0].body)
         self.assertIn(settings.HACKATHON_NAME, mail.outbox[0].body)
         self.assertIn(settings.PARTICIPANT_PACKAGE_LINK, mail.outbox[0].body)
-        self.assertIn(settings.CHAT_ROOM_LINK, mail.outbox[0].body)
+        self.assertIn(settings.CHAT_ROOM[0], mail.outbox[0].body)
+        self.assertIn(settings.CHAT_ROOM[1], mail.outbox[0].body)
         self.assertIn(
             f"Congratulations, you’ve been accepted to { settings.HACKATHON_NAME }",
             mail.outbox[0].subject,

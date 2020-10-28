@@ -272,4 +272,7 @@ FINAL_REVIEW_RESPONSE_DATE = REGISTRATION_CLOSE_DATE + timedelta(days=7)
 
 # Links
 PARTICIPANT_PACKAGE_LINK = "#"
-CHAT_ROOM_LINK = "#"
+
+# Note this is in the form (chat_room_name, chat_room_link)
+# Chat room name is such as the following: Slack, Discord
+CHAT_ROOM = ("Slack", "https://slack.com")
