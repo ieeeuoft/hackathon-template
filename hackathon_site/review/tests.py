@@ -190,8 +190,12 @@ class MailerTestCase(SetupUserMixin, TestCase):
         self.assertEqual(quantity_before, quantity_after + 7)
 
         expected_users = User.objects.filter(
-            application__review__updated_at__gte=self.form_data["date_start"],
-            application__review__updated_at__lte=self.form_data["date_end"],
+            application__review__updated_at__gte=datetime.combine(
+                self.form_data["date_start"], datetime.min.time()
+            ).replace(tzinfo=settings.TZ_INFO),
+            application__review__updated_at__lte=datetime.combine(
+                self.form_data["date_end"], datetime.max.time()
+            ).replace(tzinfo=settings.TZ_INFO),
             application__review__decision_sent_date__isnull=True,
             application__review__status=self.form_data["status"],
         )
