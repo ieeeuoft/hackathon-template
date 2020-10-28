@@ -54,11 +54,22 @@ class MailerView(UserPassesTestMixin, FormView):
 
         try:
             for review in queryset:
-                email = mail.EmailMessage(
+                review.application.user.email_user(
                     subject=render_to_string(
                         f"review/emails/{status.lower()}_email_subject.txt"
                     ),
-                    body=render_to_string(
+                    message=render_to_string(
+                        f"review/emails/{status.lower()}_email_body.html",
+                        {  # Pass context data to the template
+                            "user": review.application.user,
+                            "request": self.request,
+                            "rsvp_deadline": (
+                                datetime.now().date()
+                                + timedelta(days=settings.RSVP_DAYS)
+                            ).strftime("%b %d %Y"),
+                        },
+                    ),
+                    html_message=render_to_string(
                         f"review/emails/{status.lower()}_email_body.html",
                         {  # Pass context data to the template
                             "user": review.application.user,
@@ -70,11 +81,8 @@ class MailerView(UserPassesTestMixin, FormView):
                         },
                     ),
                     from_email=settings.DEFAULT_FROM_EMAIL,
-                    to=[review.application.user.email],
                     connection=connection,
                 )
-                email.send()
-
                 review.decision_sent_date = datetime.now().date()
                 review.save()
         except Exception as e:
