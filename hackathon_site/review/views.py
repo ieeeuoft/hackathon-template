@@ -54,28 +54,35 @@ class MailerView(UserPassesTestMixin, FormView):
 
         try:
             for review in queryset:
-                email = mail.EmailMessage(
+                current_date = datetime.now().date()
+
+                # Create context data for rendering the template. Note that this assumes that both the message
+                # and html_message have identical context data
+                render_to_string_context = {
+                    "user": review.application.user,
+                    "request": self.request,
+                    "rsvp_deadline": (
+                        current_date + timedelta(days=settings.RSVP_DAYS)
+                    ).strftime("%b %d %Y"),
+                }
+
+                review.application.user.email_user(
                     subject=render_to_string(
                         f"review/emails/{status.lower()}_email_subject.txt"
                     ),
-                    body=render_to_string(
+                    message=render_to_string(
                         f"review/emails/{status.lower()}_email_body.html",
-                        {  # Pass context data to the template
-                            "user": review.application.user,
-                            "request": self.request,
-                            "rsvp_deadline": (
-                                datetime.now().date()
-                                + timedelta(days=settings.RSVP_DAYS)
-                            ).strftime("%b %d %Y"),
-                        },
+                        render_to_string_context,  # Pass context data to the template
+                    ),
+                    html_message=render_to_string(
+                        f"review/emails/{status.lower()}_email_body.html",
+                        render_to_string_context,  # Pass context data to the template
                     ),
                     from_email=settings.DEFAULT_FROM_EMAIL,
-                    to=[review.application.user.email],
                     connection=connection,
                 )
-                email.send()
 
-                review.decision_sent_date = datetime.now().date()
+                review.decision_sent_date = current_date
                 review.save()
         except Exception as e:
             logger.error(e)
