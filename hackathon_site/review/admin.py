@@ -12,6 +12,7 @@ from django.http import HttpResponseRedirect
 from registration.models import Application
 from review.forms import ReviewForm, ApplicationReviewInlineFormset
 from review.models import Review, TeamReview
+from review.views import MailerView
 
 
 @admin.register(Review)
@@ -346,6 +347,11 @@ class TeamReviewAdmin(admin.ModelAdmin):
                 "assign/",
                 self.admin_site.admin_view(self.assign_to_team_view, cacheable=True),
                 name="assign-reviewer-to-team",
-            )
+            ),
+            path(
+                "send-mail/",
+                self.admin_site.admin_view(MailerView.as_view(), cacheable=False),
+                name="send-decision-emails",
+            ),
         ]
         return new_urls + urls
