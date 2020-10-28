@@ -10,7 +10,7 @@ from hackathon_site.tests import SetupUserMixin
 from django.contrib.auth.models import Permission
 from django.db.models import Q
 from rest_framework import status
-from review.models import Review
+from review.models import Review, User
 
 
 class MailerTestCase(SetupUserMixin, TestCase):
@@ -189,6 +189,18 @@ class MailerTestCase(SetupUserMixin, TestCase):
         self.assertRedirects(response, self.view)
         self.assertEqual(quantity_before, quantity_after + 7)
 
+        expected_users = User.objects.filter(
+            application__review__updated_at__gte=self.form_data["date_start"],
+            application__review__updated_at__lte=self.form_data["date_end"],
+            application__review__decision_sent_date__isnull=True,
+            application__review__status=self.form_data["status"],
+        )
+
+        emailed_users = [email.to[0] for email in mail.outbox]
+
+        for user in expected_users:
+            self.assertIn(user.email, emailed_users)
+
     def test_correct_text_in_accepted_email(self):
         self._login()
         self._create_teams_and_reviews_for_mail_tests()
@@ -219,6 +231,9 @@ class MailerTestCase(SetupUserMixin, TestCase):
             f"The {settings.HACKATHON_NAME} team has reviewed your application, and we’re excited to welcome you to {settings.HACKATHON_NAME}!",
             clean_mail_body,
         )
+
+        # Check that email was passed in correctly is a real user
+        self.assertTrue(User.objects.filter(email=mail.outbox[0].to[0]).exists())
 
     def test_correct_text_in_waitlisted_email(self):
         self._login()

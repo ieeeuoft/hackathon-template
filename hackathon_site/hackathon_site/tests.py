@@ -69,27 +69,60 @@ class SetupUserMixin:
         if self_users:
             user1 = self.user
             user2 = self.user2 = User.objects.create_user(
-                username="frank@johnston.com", password="hellothere31415"
+                username="frank@johnston.com",
+                password="hellothere31415",
+                email="frank@johnston.com",
+                first_name="Frank",
+                last_name="Johnston",
             )
             user3 = self.user3 = User.objects.create_user(
-                username="franklin@carmichael.com", password="supersecret456"
+                username="franklin@carmichael.com",
+                password="supersecret456",
+                email="franklin@carmichael.com",
+                first_name="Franklin",
+                last_name="Carmichael",
             )
             user4 = self.user4 = User.objects.create_user(
-                username="lawren@harris.com", password="wxyz7890"
+                username="lawren@harris.com",
+                password="wxyz7890",
+                email="lawren@harris.com",
+                first_name="Lawren",
+                last_name="Harris",
             )
         else:
             # Make some random users
+            email1 = self._get_random_email()
+            email2 = self._get_random_email()
+            email3 = self._get_random_email()
+            email4 = self._get_random_email()
+
             user1 = User.objects.create_user(
-                username=self._get_random_email(), password="foobar123"
+                username=email1,
+                password="foobar123",
+                email=email1,
+                first_name="John1",
+                last_name="Doe1",
             )
             user2 = User.objects.create_user(
-                username=self._get_random_email(), password="foobar123"
+                username=email2,
+                password="foobar123",
+                email=email2,
+                first_name="John2",
+                last_name="Doe2",
             )
             user3 = User.objects.create_user(
-                username=self._get_random_email(), password="foobar123"
+                username=email3,
+                password="foobar123",
+                email=email3,
+                first_name="John3",
+                last_name="Doe3",
             )
             user4 = User.objects.create_user(
-                username=self._get_random_email(), password="foobar123"
+                username=email4,
+                password="foobar123",
+                email=email4,
+                first_name="John4",
+                last_name="Doe4",
             )
 
         self._apply_as_user(user1, team)

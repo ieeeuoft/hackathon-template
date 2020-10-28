@@ -55,10 +55,10 @@ class MailerView(UserPassesTestMixin, FormView):
         try:
             for review in queryset:
                 email = mail.EmailMessage(
-                    render_to_string(
+                    subject=render_to_string(
                         f"review/emails/{status.lower()}_email_subject.txt"
                     ),
-                    render_to_string(
+                    body=render_to_string(
                         f"review/emails/{status.lower()}_email_body.html",
                         {  # Pass context data to the template
                             "user": review.application.user,
@@ -69,8 +69,8 @@ class MailerView(UserPassesTestMixin, FormView):
                             ).strftime("%b %d %Y"),
                         },
                     ),
-                    settings.DEFAULT_FROM_EMAIL,
-                    [review.application.user.email_user],
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    to=[review.application.user.email],
                     connection=connection,
                 )
                 email.send()
