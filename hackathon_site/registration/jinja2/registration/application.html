@@ -21,7 +21,7 @@
 {% set form_action=url("registration:application") %}
 
 {% block form_description %}
-    {% if form.non_field_errors %}
+    {% if form.non_field_errors() %}
         <div class="row col s12">
         {% for error in form.non_field_errors() %}
             <span class="formError">{{ error }}</span>
