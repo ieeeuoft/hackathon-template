@@ -79,6 +79,20 @@ class TeamReviewListAdminTestCase(SetupUserMixin, TestCase):
         # More precise to look for this than just the number "3"
         self.assertContains(response, '<td class="field-get_members_count">3</td>')
 
+    def test_list_page_shows_team_member_count_with_filters(self):
+        """
+        Test that the admin page correctly counts the number of team members with filter
+        """
+        team = self._make_full_registration_team()
+        # Delete a user so there's only 3 members
+        self.user4.delete()
+        self._login(self.view_permissions)
+        response = self.client.get(f"{self.list_view}?reviewed=false")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertContains(response, team.team_code)
+        # More precise to look for this than just the number "3"
+        self.assertContains(response, '<td class="field-get_members_count">3</td>')
+
     def test_list_page_shows_submission_date(self):
         """
         The submission date for a team is the date of the most recently submitted
