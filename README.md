@@ -134,7 +134,7 @@ To start, create an admin user. This will give you access to the admin site, and
 $ python manage.py createsuperuser 
 ```
 
-Once a superuser is created (and the Django dev server is running), you can log in to the admin site at `http://localhost:8000/admin`.
+Once a superuser is created (and the Django dev server is running), you can log in to the admin site at `http://localhost:8000/admin`. Note that creating a superuser does not give it a first or last name, so you should set those from the admin site otherwise some parts of the site may behave weird. Our regular sign up flow also assumes that username and email are the same, so we recommend creating your superuser accordingly.
 
 #### Adding additional users
 The easiest way to add new users is via the admin site, through the "Users" link of the "Authentication and Authorization" panel. When adding a user, you will be prompted for only a username and a password. The react site uses email to log in, so *make sure* to click "Save and continue editing" and add a first name, last name, and email address.
