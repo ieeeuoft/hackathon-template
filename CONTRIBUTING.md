@@ -86,3 +86,5 @@ $ yarn run scss
 If you don't have yarn installed, you can use `npm` in its place for these commands. SCSS files will be compiled into CSS and placed in the appropriate directory. When you refresh the page (you may need to clear your cache first), the navbar should now be purple indicating the styles were loaded successfully.
 
 If you are on Windows, certain pages (including the landing page) may crash because of unix-specific date format strings we use. At the moment, our only suggestion is to build a Docker container to run the site, or install Linux. We do not plan on fully supporting running the site on Windows, since we expect all deployments to run in a Unix environment.
+
+If you are making any changes that involve the registration system, you will probably need to change the default registration close date to something in the future. This can be done by changing the `REGISTRATION_CLOSE_DATE` setting in the [Django settings file](https://github.com/ieeeuoft/hackathon-template/blob/develop/hackathon_site/hackathon_site/settings/__init__.py#L257). Please do not commit this particular change.
