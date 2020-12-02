@@ -206,6 +206,8 @@ This will place static files in `hackathon_site/static/`. These must be served s
 ## Using this Template
 This repository is setup as a template. To read more about how to use a template and what a template repository is, see [GitHub's doc page](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-repository-from-a-template).
 
+Before you begin, note that the [main workflow file](https://github.com/ieeeuoft/hackathon-template/blob/develop/.github/workflows/main.yml) uses the `pull_request_target` trigger. This means that pull requests from forks will run workflows in the base branch, **and will have access to repository secrets**. For the base template repo, this is not a security concern since the only secret used in tests is `DJANGO_SECRET_KEY`, and is meaningless in this repository. However, an instance of this repository will likely have other secrets set. **Unless you are absolutely sure that code run by workflows for pull requests, such as tests, does not have access to important secrets, you should change this trigger type back to `pull_request`**. This means that pull requests from forks (of your fork) will not run actions. Alternatively, if tests only need access to secret keys so they don't complain, use a different secret in the workflow files for running tests.
+
 ### Forking
 If you are interested in receiving updates to this template in your project, we recommend that you fork this repository into your own account or organization. This will give you the entire commit history of the project, and will allow you to make pull requests from this repository into your own to perform updates.
 
