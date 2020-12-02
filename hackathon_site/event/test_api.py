@@ -15,7 +15,7 @@ class CurrentUserTestCase(SetupUserMixin, APITestCase):
         self.profile = Profile.objects.create(user=self.user)
 
         self.view = reverse("api:event:current-user")
-    
+
     def test_that_fails(self):
         self.assertTrue(False)
 
