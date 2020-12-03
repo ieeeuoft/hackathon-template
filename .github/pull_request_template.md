@@ -1,6 +1,6 @@
 ## Overview
 
-- Resolves #
+- Resolves #<number>
 - <Description of all changes made and features implemented>
 
 
