@@ -11,7 +11,7 @@ All substantial work should relate to something tracked in the [issues](https://
 
 Bug tickets should have a detailed description about the unintended behaviour, how to reproduce it, what the expected behaviour is, and optionally what the solution is if it is obvious in advance. Feature suggestions should have a clear need or justification, acceptance criteria if applicable, references to which part of the repository is being modified (docs, review app, registration app, etc), and optionally mockups. If a feature request is being made from someone external to IEEE UofT, please wait for a discussion with a maintainer in the issues comments before spending time implementing it.
 
-### Claiming and Issue
+### Claiming an Issue
 If an issues is unassigned, you are welcome to leave a comment that you would like to work on it. If you don't hear from the issue creator in a reasonable amount of time, please @ a maintainer and we will assign it to you if you have a good plan. If an issue has been claimed but has been inactive for a few weeks, and there is no response from the ticket author or assignee in a reasonable amount of time, mention a maintainer as well and it can be assigned to you. 
 
 ### Making Changes
@@ -57,8 +57,8 @@ For pull requests with branches committed directly to the repository, a regular 
 
  For pull requests from external repositories, you can still check them out from the main repository using the pull request number. For pull request `123`, do:
  ```bash
-$ git fetch origin pull/226/head:pull/226
-$ git checkout pull/226 
+$ git fetch origin pull/123/head:pull/123
+$ git checkout pull/123
 ```
 
 If you need to pull the latest changes from a pull request branch, run the `git fetch ...` line again, or set the upstream for the branch.
