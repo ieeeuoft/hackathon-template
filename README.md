@@ -134,7 +134,7 @@ To start, create an admin user. This will give you access to the admin site, and
 $ python manage.py createsuperuser 
 ```
 
-Once a superuser is created (and the Django dev server is running), you can log in to the admin site at `http://localhost:8000/admin`.
+Once a superuser is created (and the Django dev server is running), you can log in to the admin site at `http://localhost:8000/admin`. Note that creating a superuser does not give it a first or last name, so you should set those from the admin site otherwise some parts of the site may behave weird. Our regular sign up flow also assumes that username and email are the same, so we recommend creating your superuser accordingly.
 
 #### Adding additional users
 The easiest way to add new users is via the admin site, through the "Users" link of the "Authentication and Authorization" panel. When adding a user, you will be prompted for only a username and a password. The react site uses email to log in, so *make sure* to click "Save and continue editing" and add a first name, last name, and email address.
@@ -205,6 +205,8 @@ This will place static files in `hackathon_site/static/`. These must be served s
 
 ## Using this Template
 This repository is setup as a template. To read more about how to use a template and what a template repository is, see [GitHub's doc page](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-repository-from-a-template).
+
+Before you begin, note that the [main workflow file](https://github.com/ieeeuoft/hackathon-template/blob/develop/.github/workflows/main.yml) uses the `pull_request_target` trigger. This means that pull requests from forks will run workflows in the base branch, **and will have access to repository secrets**. For the base template repo, this is not a security concern since the only secret used in tests is `DJANGO_SECRET_KEY`, and is meaningless in this repository. However, an instance of this repository will likely have other secrets set. **Unless you are absolutely sure that code run by workflows for pull requests, such as tests, does not have access to important secrets, you should change this trigger type back to `pull_request`**. This means that pull requests from forks (of your fork) will not run actions. Alternatively, if tests only need access to secret keys so they don't complain, use a different secret in the workflow files for running tests.
 
 ### Forking
 If you are interested in receiving updates to this template in your project, we recommend that you fork this repository into your own account or organization. This will give you the entire commit history of the project, and will allow you to make pull requests from this repository into your own to perform updates.

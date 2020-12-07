@@ -203,7 +203,7 @@ class TeamReviewAdmin(admin.ModelAdmin):
             .prefetch_related(
                 "applications", "applications__review", "applications__user"
             )
-            .annotate(members_count=Count("applications"))
+            .annotate(members_count=Count("applications", distinct=True))
             .annotate(most_recent_submission=Max("applications__updated_at"))
         )
 
