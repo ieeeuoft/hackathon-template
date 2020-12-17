@@ -61,7 +61,7 @@ strong {
 
 // Landing section
 .landingImg {
-    @include flexPosition($jusCon: center);
+    @include flexPosition($jusCon: center, $alIte: center);
 
     img {
         width: 100%;
