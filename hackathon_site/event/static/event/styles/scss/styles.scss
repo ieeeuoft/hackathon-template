@@ -404,7 +404,7 @@ strong {
 
 // Formatting stuff
 .flexColCenter {
-    @mixin flexPosition($alIte: center, $dir: column) {
+    @include flexPosition($alIte: center, $dir: column);
 }
 
 .longText {

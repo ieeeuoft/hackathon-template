@@ -1,4 +1,4 @@
-@mixin flexPosition($jusCon: flex-start, $alIte: flex-start, $dir: row) {
+@mixin flexPosition($jusCon: flex-start, $alIte: stretch, $dir: row) {
     display: flex;
     justify-content: $jusCon;
     align-items: $alIte;
