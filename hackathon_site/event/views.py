@@ -143,9 +143,9 @@ class DashboardView(LoginRequiredMixin, FormView):
         ):
             context["status"] = "Rejected"
         elif self.request.user.application.rsvp:
-            context["status"] = "Offer Accepted"
+            context["status"] = "Will Attend (Accepted)"
         elif not self.request.user.application.rsvp:
-            context["status"] = "Offer Declined"
+            context["status"] = "Cannot Attend (Declined)"
         else:
             context["status"] = "Unknown"
 

@@ -261,11 +261,10 @@ class DashboardTestCase(SetupUserMixin, TestCase):
 
         response = self.client.get(self.view)
 
-        self.assertContains(response, "Offer Accepted")
+        self.assertContains(response, "Will Attend (Accepted)")
         self.assertContains(
             response, f"You've been accepted into {settings.HACKATHON_NAME}!"
         )
-
         self.assertContains(response, f"{settings.CHAT_ROOM[0]}")
         self.assertContains(response, f"{settings.CHAT_ROOM[1]}")
 
@@ -293,7 +292,7 @@ class DashboardTestCase(SetupUserMixin, TestCase):
 
         response = self.client.get(self.view)
 
-        self.assertContains(response, "Offer Declined")
+        self.assertContains(response, "Cannot Attend (Declined)")
         self.assertContains(
             response, f"You've been accepted into {settings.HACKATHON_NAME}!"
         )

@@ -32,8 +32,26 @@
             {% elif application is not none and review is not none %}
                 <br />
                 {% if review.status == "Accepted" %}
-                    <h4 class="formH2"><b>Congratulations!</b> You've been accepted into {{ hackathon_name }}!</h4>
-                    <p><strong>Status</strong>: {{ status }}</p>
+                    {% if application.rsvp == True %}
+                        <h4 class="formH2"><b>Thanks for RSVP'ing!</b> See you at {{ hackathon_name }}!</h4>
+                    {% elif application.rsvp == False %}
+                        <h4 class="formH2"><b>Thanks for letting us know.</b> Hope to see you next year at {{ hackathon_name }}</h4>
+                    {% else %}
+                        <h4 class="formH2"><b>Congratulations!</b> You've been accepted into {{ hackathon_name }}!</h4>
+                    {% endif %}
+                    <p style="display: flex;">
+                        <strong>Status:&nbsp;</strong>
+                        {% if status == "Cannot Attend (Declined)" %} 
+                            <span class="material-icons errorText" style="margin-right: 3px;">
+                                highlight_off
+                            </span>
+                        {% elif status == "Will Attend (Accepted)" %} 
+                            <span class="material-icons successText" style="margin-right: 3px;">
+                                check_circle_outline
+                            </span>
+                        {% endif %}
+                        {{ status }}
+                    </p>
                     <br>
                     {% if not rsvp_passed %}
                         <p>To confirm your attendance at {{ hackathon_name }}, please RSVP using the accept or decline buttons below.</p> <br />
@@ -66,9 +84,9 @@
                             </a>
                         </div>
 
-                    {% elif rsvp_passed and  application.rsvp == True %}
+                    {% elif rsvp_passed and application.rsvp == True %}
                         <p><b>The RSVP deadline has passed. Thanks for confirming your position at {{ hackathon_name }}! We look forward to seeing you there. Note that you cannot change your RSVP at this time.</b></p>
-                    {% elif rsvp_passed and  application.rsvp == False %}
+                    {% elif rsvp_passed and application.rsvp == False %}
                         <p><b>The RSVP deadline has passed. We regret to see that you will not be joining us this year at {{ hackathon_name }}. Unfortunately you cannot change your RSVP at this time.</b></p>
                     {% else %}
                         <p><b>It appears you haven't RSVPed. Unfortunately the RSVP deadline has passed and you cannot change your RSVP at this time.</b></p>
