@@ -262,9 +262,7 @@ class DashboardTestCase(SetupUserMixin, TestCase):
         response = self.client.get(self.view)
 
         self.assertContains(response, "Will Attend (Accepted)")
-        self.assertContains(
-            response, f"See you at {settings.HACKATHON_NAME}!"
-        )
+        self.assertContains(response, f"See you at {settings.HACKATHON_NAME}!")
         self.assertContains(response, f"{settings.CHAT_ROOM[0]}")
         self.assertContains(response, f"{settings.CHAT_ROOM[1]}")
 
