@@ -263,7 +263,7 @@ class DashboardTestCase(SetupUserMixin, TestCase):
 
         self.assertContains(response, "Will Attend (Accepted)")
         self.assertContains(
-            response, f"You've been accepted into {settings.HACKATHON_NAME}!"
+            response, f"See you at {settings.HACKATHON_NAME}!"
         )
         self.assertContains(response, f"{settings.CHAT_ROOM[0]}")
         self.assertContains(response, f"{settings.CHAT_ROOM[1]}")
@@ -294,7 +294,7 @@ class DashboardTestCase(SetupUserMixin, TestCase):
 
         self.assertContains(response, "Cannot Attend (Declined)")
         self.assertContains(
-            response, f"You've been accepted into {settings.HACKATHON_NAME}!"
+            response, f"Hope to see you next year at {settings.HACKATHON_NAME}"
         )
 
         # Buttons for RSVP still appear
