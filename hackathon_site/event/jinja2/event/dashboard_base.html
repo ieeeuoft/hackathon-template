@@ -54,10 +54,14 @@
                     </p>
                     <br>
                     {% if not rsvp_passed %}
-                        <p>To confirm your attendance at {{ hackathon_name }}, please RSVP using the accept or decline buttons below.</p> <br />
-                        <p>RSVP by <b>{{ rsvp_deadline }} (11:59PM EST)</b>, otherwise your spot will be given to other applicants.
-                            Alternatively you can decline the offer. You can change your response at any time before <b>{{ rsvp_deadline }} (11:59PM EST)</b>.
-                        </p> <br />
+                        {% if status == "Accepted, awaiting RSVP" %}
+                            <p>To confirm your attendance at {{ hackathon_name }}, please RSVP using the accept or decline buttons below.</p> <br />
+                            <p>RSVP by <b>{{ rsvp_deadline }} (11:59PM EST)</b>, otherwise your spot will be given to other applicants.
+                                Alternatively you can decline the offer. You can change your response at any time before <b>{{ rsvp_deadline }} (11:59PM EST)</b>.
+                            </p> <br />
+                        {% else %}
+                            <p>You can change your response at any time before <b>{{ rsvp_deadline }} (11:59PM EST)</b>.</p> <br />
+                        {% endif %}
                     {% endif %}
 
                     {% if application.rsvp %}
@@ -68,20 +72,23 @@
 
                     {% if not rsvp_passed %}
                         <div style="display: flex; width: auto">
+                            {% if status == "Cannot Attend (Declined)" or status == "Accepted, awaiting RSVP" %}
                             <a
                                 href="{{ url("registration:rsvp", kwargs={"rsvp": "yes"}) }}"
                                 class="btn-small waves-effect waves-light colorBtn"
+                                style="margin-right: 30px;"
                             >
                                 Will Attend (Accept)
                             </a>
-
+                            {% endif %}
+                            {% if status == "Will Attend (Accepted)" or status == "Accepted, awaiting RSVP" %}
                             <a
                                 href="{{ url("registration:rsvp", kwargs={"rsvp": "no"})}}"
                                 class="btn-small waves-effect waves-light redBtn"
-                                style="margin-left: 30px;"
                             >
                                 Cannot Attend (Decline)
                             </a>
+                            {% endif %}
                         </div>
 
                     {% elif rsvp_passed and application.rsvp == True %}
