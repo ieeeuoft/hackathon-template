@@ -266,9 +266,12 @@ class DashboardTestCase(SetupUserMixin, TestCase):
         self.assertContains(response, f"{settings.CHAT_ROOM[0]}")
         self.assertContains(response, f"{settings.CHAT_ROOM[1]}")
 
-        # Button to decline still appears
+        # Button to decline still appears and button to accept is gone
         self.assertContains(
             response, reverse("registration:rsvp", kwargs={"rsvp": "no"})
+        )
+        self.assertNotContains(
+            response, reverse("registration:rsvp", kwargs={"rsvp": "yes"})
         )
 
         # Can't join teams anymore because reviewed
@@ -292,9 +295,12 @@ class DashboardTestCase(SetupUserMixin, TestCase):
             response, f"Hope to see you next year at {settings.HACKATHON_NAME}"
         )
 
-        # Button to accept still appears
+        # Button to accept still appears and button to decline is gone
         self.assertContains(
             response, reverse("registration:rsvp", kwargs={"rsvp": "yes"})
+        )
+        self.assertNotContains(
+            response, reverse("registration:rsvp", kwargs={"rsvp": "no"})
         )
 
         # Can't join teams anymore because reviewed
