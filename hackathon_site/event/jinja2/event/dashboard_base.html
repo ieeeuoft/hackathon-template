@@ -32,20 +32,20 @@
             {% elif application is not none and review is not none %}
                 <br />
                 {% if review.status == "Accepted" %}
-                    {% if application.rsvp == True %}
+                    {% if application.rsvp %}
                         <h4 class="formH2"><b>Thanks for RSVP'ing!</b> See you at {{ hackathon_name }}!</h4>
-                    {% elif application.rsvp == False %}
+                    {% elif application.rsvp is False %}
                         <h4 class="formH2"><b>Thanks for letting us know.</b> Hope to see you next year at {{ hackathon_name }}</h4>
                     {% else %}
                         <h4 class="formH2"><b>Congratulations!</b> You've been accepted into {{ hackathon_name }}!</h4>
                     {% endif %}
                     <p style="display: flex;">
                         <strong>Status:&nbsp;</strong>
-                        {% if status == "Cannot Attend (Declined)" %} 
+                        {% if application.rsvp is False %} 
                             <span class="material-icons errorText" style="margin-right: 3px;">
                                 highlight_off
                             </span>
-                        {% elif status == "Will Attend (Accepted)" %} 
+                        {% elif application.rsvp %} 
                             <span class="material-icons successText" style="margin-right: 3px;">
                                 check_circle_outline
                             </span>
@@ -54,7 +54,7 @@
                     </p>
                     <br>
                     {% if not rsvp_passed %}
-                        {% if status == "Accepted, awaiting RSVP" %}
+                        {% if application.rsvp is None %}
                             <p>To confirm your attendance at {{ hackathon_name }}, please RSVP using the accept or decline buttons below.</p> <br />
                             <p>RSVP by <b>{{ rsvp_deadline }} (11:59PM EST)</b>, otherwise your spot will be given to other applicants.
                                 Alternatively you can decline the offer. You can change your response at any time before <b>{{ rsvp_deadline }} (11:59PM EST)</b>.
@@ -72,7 +72,7 @@
 
                     {% if not rsvp_passed %}
                         <div style="display: flex; width: auto">
-                            {% if status == "Cannot Attend (Declined)" or status == "Accepted, awaiting RSVP" %}
+                            {% if application.rsvp is False or application.rsvp is None %}
                             <a
                                 href="{{ url("registration:rsvp", kwargs={"rsvp": "yes"}) }}"
                                 class="btn-small waves-effect waves-light colorBtn"
@@ -81,7 +81,7 @@
                                 Will Attend (Accept)
                             </a>
                             {% endif %}
-                            {% if status == "Will Attend (Accepted)" or status == "Accepted, awaiting RSVP" %}
+                            {% if application.rsvp or application.rsvp is None %}
                             <a
                                 href="{{ url("registration:rsvp", kwargs={"rsvp": "no"})}}"
                                 class="btn-small waves-effect waves-light redBtn"
@@ -91,9 +91,9 @@
                             {% endif %}
                         </div>
 
-                    {% elif rsvp_passed and application.rsvp == True %}
+                    {% elif rsvp_passed and application.rsvp %}
                         <p><b>The RSVP deadline has passed. Thanks for confirming your position at {{ hackathon_name }}! We look forward to seeing you there. Note that you cannot change your RSVP at this time.</b></p>
-                    {% elif rsvp_passed and application.rsvp == False %}
+                    {% elif rsvp_passed and application.rsvp is False %}
                         <p><b>The RSVP deadline has passed. We regret to see that you will not be joining us this year at {{ hackathon_name }}. Unfortunately you cannot change your RSVP at this time.</b></p>
                     {% else %}
                         <p><b>It appears you haven't RSVPed. Unfortunately the RSVP deadline has passed and you cannot change your RSVP at this time.</b></p>
