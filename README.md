@@ -330,19 +330,14 @@ $fonts: (
     @return map-get($fonts, $fonts-name); //(name of map, key)
 }
 ```
-
 Instead of calling...
-
 ```
 h1 { font-family: $header; }
 ```
-
 ...you should get the `$header` variable through the `font` function:
-
 ```
 h1 { font-family: font(header); }
 ```
-
 
 #### Dashboard App
 Tbd...
