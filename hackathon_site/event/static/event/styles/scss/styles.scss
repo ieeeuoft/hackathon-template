@@ -265,6 +265,23 @@ strong {
 }
 // End of "Sponsors" section
 
+// "Hackathon stats" section
+.stat {
+    // @include flexPosition($alIte: center, $dir: column);
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    &-number {
+        margin: 10px 0;
+        font-weight: 700;
+    }
+
+    @include responsive(sm-down) {
+        margin-bottom: 25px;
+    }
+}
+// End of "Hackathon stats" section
+
 // "FAQ" section
 .collapsible .active {
     color: color(primary);
