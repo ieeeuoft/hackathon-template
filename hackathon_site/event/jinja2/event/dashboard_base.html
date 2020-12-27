@@ -97,153 +97,99 @@
                         {% elif rsvp_passed and application.rsvp is sameas false %}
                             <p><b>The RSVP deadline has passed. We regret to see that you will not be joining us this year at {{ hackathon_name }}. Unfortunately you cannot change your RSVP at this time.</b></p>
                         {% else %}
-                            <h2 class="formH2">Complete your application</h2>
-                            <p><strong>Status</strong>: {{ status }}</p>
-                            <br />
-                            <a
-                                href="{{ url("registration:application") }}"
-                                class="btn-small waves-effect waves-light colorBtn"
-                                style="margin-right: auto;"
-                            >
-                                Get started
-                            </a>
-                        {% endif %}
-                    {% elif application is not none and review is not none %}
-                        <br />
-                        {% if review.status == "Accepted" %}
-                            <h4 class="formH2"><b>Congratulations!</b> You've been accepted into {{ hackathon_name }}!</h4>
-                            <p><strong>Status</strong>: {{ status }}</p>
-                            <br>
-                            {% if not rsvp_passed %}
-                                <p>To confirm your attendance at {{ hackathon_name }}, please RSVP using the accept or decline buttons below.</p> <br />
-                                <p>RSVP by <b>{{ rsvp_deadline }} (11:59PM EST)</b>, otherwise your spot will be given to other applicants.
-                                    Alternatively you can decline the offer. You can change your response at any time before <b>{{ rsvp_deadline }} (11:59PM EST)</b>.
-                                </p> <br />
-                            {% endif %}
-
-                            {% if application.rsvp %}
-                                <p>Make sure you read the <a class="primaryText hoverLink" href="{{ participant_package_link }}" rel="noopener" target="_blank">participant package</a> for all the info regarding
-                                    the event, and join our <a class="primaryText hoverLink" href="{{ chat_room_link }}" rel="noopener" target="_blank">{{ chat_room_name }}</a>. Stay tuned for more updates regarding detailed event logistics, and we hope to see you soon!</p> <br />
-                            {% endif %}
-                            <p>If you have questions, read the <a class="primaryText hoverLink" href="#faq">FAQ</a>, or feel free to contact us.</p> <br />
-
-                            {% if not rsvp_passed %}
-                                <div style="display: flex; width: auto">
-                                    <a
-                                        href="{{ url("registration:rsvp", kwargs={"rsvp": "yes"}) }}"
-                                        class="btn-small waves-effect waves-light colorBtn"
-                                    >
-                                        Will Attend (Accept)
-                                    </a>
-
-                                    <a
-                                        href="{{ url("registration:rsvp", kwargs={"rsvp": "no"})}}"
-                                        class="btn-small waves-effect waves-light redBtn"
-                                        style="margin-left: 30px;"
-                                    >
-                                        Cannot Attend (Decline)
-                                    </a>
-                                </div>
-
-                            {% elif rsvp_passed and  application.rsvp == True %}
-                                <p><b>The RSVP deadline has passed. Thanks for confirming your position at {{ hackathon_name }}! We look forward to seeing you there. Note that you cannot change your RSVP at this time.</b></p>
-                            {% elif rsvp_passed and  application.rsvp == False %}
-                                <p><b>The RSVP deadline has passed. We regret to see that you will not be joining us this year at {{ hackathon_name }}. Unfortunately you cannot change your RSVP at this time.</b></p>
-                            {% else %}
-                                <p><b>It appears you haven't RSVPed. Unfortunately the RSVP deadline has passed and you cannot change your RSVP at this time.</b></p>
-                            {% endif %}
-
-                        {% elif review.status == "Waitlisted" %}
-                            <h4 class="formH2">You've been waitlisted for {{ hackathon_name }}</h4>
-                            <p>The {{ hackathon_name }} team has reviewed your application, and have decided not to grant you a guaranteed spot
-                                at {{ hackathon_name }} and to place you in our waitlist. On {{ waitlisted_acceptance_start_time.strftime("%b %d %Y, at %I:%M%p") }}, we will begin allowing
-                                people from the waitlist into the event on a first-come, first-serve basis if there is still room. We offer no
-                                guarantee that you will be allowed into the event, regardless of how early you arrive. Please read our 
-                                <a class="primaryText hoverLink" href="{{ participant_package_link }}" rel="noopener" target="_blank">participant package</a> for all the info regarding the event if you plan on 
-                                waiting to see if any spots become available.
-                            </p> <br />
-                            <p>If you have questions, read the <a class="primaryText hoverLink" href="#faq">FAQ</a>, or feel free to contact us.</p> <br />
-
-                            <p><strong>Status</strong>: {{ status }}</p>
-
-                        {% elif review.status == "Rejected" %}
-                            <h4 class="formH2">You've been rejected from {{ hackathon_name }}</h4>
-                            <p>Thank you for your interest in {{ hackathon_name }}. While we appreciate your time and energy,
-                                we are not able to offer you a spot in the event this year. We hope that this decision does not
-                                prevent you from applying next year! Every year we look to increase the number of attendees. If
-                                you have any questions or concerns, feel free to contact us!
-                            </p> <br />
-                            <p><strong>Status</strong>: {{ status }}</p>
+                            <p><b>It appears you haven't RSVPed. Unfortunately the RSVP deadline has passed and you cannot change your RSVP at this time.</b></p>
                         {% endif %}
 
-                    {% else %}
-                        <h2 class="formH2">Your application has been submitted!</h2>
+                    {% elif review.status == "Waitlisted" %}
+                        <h4 class="formH2">You've been waitlisted for {{ hackathon_name }}</h4>
+                        <p>The {{ hackathon_name }} team has reviewed your application, and have decided not to grant you a guaranteed spot
+                            at {{ hackathon_name }} and to place you in our waitlist. On {{ waitlisted_acceptance_start_time.strftime("%b %d %Y, at %I:%M%p") }}, we will begin allowing
+                            people from the waitlist into the event on a first-come, first-serve basis if there is still room. We offer no
+                            guarantee that you will be allowed into the event, regardless of how early you arrive. Please read our 
+                            <a class="primaryText hoverLink" href="{{ participant_package_link }}" rel="noopener" target="_blank">participant package</a> for all the info regarding the event if you plan on 
+                            waiting to see if any spots become available.
+                        </p> <br />
+                        <p>If you have questions, read the <a class="primaryText hoverLink" href="#faq">FAQ</a>, or feel free to contact us.</p> <br />
+
                         <p><strong>Status</strong>: {{ status }}</p>
-                        <br />
-                        <p>We're in the process of reviewing your application. Watch for an email from {{ from_email }}, and check back here for updates.</p>
+
+                    {% elif review.status == "Rejected" %}
+                        <h4 class="formH2">You've been rejected from {{ hackathon_name }}</h4>
+                        <p>Thank you for your interest in {{ hackathon_name }}. While we appreciate your time and energy,
+                            we are not able to offer you a spot in the event this year. We hope that this decision does not
+                            prevent you from applying next year! Every year we look to increase the number of attendees. If
+                            you have any questions or concerns, feel free to contact us!
+                        </p> <br />
+                        <p><strong>Status</strong>: {{ status }}</p>
                     {% endif %}
+
+                {% else %}
+                    <h2 class="formH2">Your application has been submitted!</h2>
+                    <p><strong>Status</strong>: {{ status }}</p>
+                    <br />
+                    <p>We're in the process of reviewing your application. Watch for an email from {{ from_email }}, and check back here for updates.</p>
                 {% endif %}
             </div>
 
             {% if is_registration_open() or application is not none %}
-                <div class="borderTopDiv z-depth-3">
-                    <h2 class="formH2">Apply as a team</h2>
-                    <p>Have friends you want to work with? Create a team with up to 4 people and we’ll review your applications together.</p>
-                    <br />
-                    {% if application is none %}
-                        <p><strong>You must complete your application before you can form a team. Return here once you've submitted your application.</strong></p>
-                    {% else %}
-                        <p>Your team code is: <strong>{{ application.team.team_code }}</strong></p>
-                        {% set num_members = application.team.applications.count() %}
-                        {% if is_registration_open() %}
-                            <p>
-                                {% if join_team_form and num_members < application.team.MAX_MEMBERS%}
-                                    Share your team code with your teammates, or join their team instead.
-                                {% endif %}
-                            </p>
-                        {% endif %}
-
-                        <br />
-                        <h3 class="formH3">Team members ({{ num_members }}/{{ application.team.MAX_MEMBERS }})</h3>
-                        <ul class="browser-default">
-                            {% for application in application.team.applications.all() %}
-                            <li>{{ application.user.first_name }} {{ application.user.last_name }}</li>
-                            {% endfor %}
-                        </ul>
-                        {% if join_team_form %}
-                            <a
-                                href="{{ url("registration:leave-team") }}"
-                                class="btn-small waves-effect waves-light colorBtn"
-                                style="margin-right: auto; margin-top: 15px;"
-                            >
-                                Leave team
-                            </a>
-                            <br />
-                            <br />
-                            <h3 class="formH3">Join a different team</h3>
-                            <form class="valign-wrapper" style="margin-left: 0;" method="post">
-                                {{ csrf_input }}
-                                <div class="input-field">
-                                    {{ join_team_form.team_code }}
-                                    {{ join_team_form.team_code.label_tag() }}
-
-                                    {% if join_team_form.team_code.errors %}
-                                        <span class="formFieldError">
-                                        {% for error in join_team_form.team_code.errors %}
-                                            {{ error }}
-                                            <br />
-                                        {% endfor %}
-                                        </span>
-                                    {% endif %}
-                                </div>
-                                <div style="margin-left: 20px;">
-                                    <button class="btn-small waves-effect waves-light secondaryColor colorBtn center" type="submit">Submit</button>
-                                </div>
-                            </form>
-                        {% endif %}
-
+            <div class="borderTopDiv z-depth-3">
+                <h2 class="formH2">Apply as a team</h2>
+                <p>Have friends you want to work with? Create a team with up to 4 people and we’ll review your applications together.</p>
+                <br />
+                {% if application is none %}
+                    <p><strong>You must complete your application before you can form a team. Return here once you've submitted your application.</strong></p>
+                {% else %}
+                    <p>Your team code is: <strong>{{ application.team.team_code }}</strong></p>
+                    {% set num_members = application.team.applications.count() %}
+                    {% if is_registration_open() %}
+                        <p>
+                            {% if join_team_form and num_members < application.team.MAX_MEMBERS%}
+                                Share your team code with your teammates, or join their team instead.
+                            {% endif %}
+                        </p>
                     {% endif %}
-                </div>
+
+                    <br />
+                    <h3 class="formH3">Team members ({{ num_members }}/{{ application.team.MAX_MEMBERS }})</h3>
+                    <ul class="browser-default">
+                        {% for application in application.team.applications.all() %}
+                        <li>{{ application.user.first_name }} {{ application.user.last_name }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% if join_team_form %}
+                        <a
+                            href="{{ url("registration:leave-team") }}"
+                            class="btn-small waves-effect waves-light colorBtn"
+                            style="margin-right: auto; margin-top: 15px;"
+                        >
+                            Leave team
+                        </a>
+                        <br />
+                        <br />
+                        <h3 class="formH3">Join a different team</h3>
+                        <form class="valign-wrapper" style="margin-left: 0;" method="post">
+                            {{ csrf_input }}
+                            <div class="input-field">
+                                {{ join_team_form.team_code }}
+                                {{ join_team_form.team_code.label_tag() }}
+
+                                {% if join_team_form.team_code.errors %}
+                                    <span class="formFieldError">
+                                    {% for error in join_team_form.team_code.errors %}
+                                        {{ error }}
+                                        <br />
+                                    {% endfor %}
+                                    </span>
+                                {% endif %}
+                            </div>
+                            <div style="margin-left: 20px;">
+                                <button class="btn-small waves-effect waves-light secondaryColor colorBtn center" type="submit">Submit</button>
+                            </div>
+                        </form>
+                    {% endif %}
+
+                {% endif %}
+            </div>
             {% endif %}
 
             <div class="borderTopDiv z-depth-3">
