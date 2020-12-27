@@ -79,6 +79,7 @@ strong {
 .errorText {
     color: color(error);
 }
+
 .successText {
     color: color(success);
 }
@@ -113,9 +114,7 @@ strong {
 
 // Formatting stuff
 .flexColCenter {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    @include flexPosition($alIte: center, $dir: column);
 }
 
 .longText {
@@ -181,7 +180,7 @@ strong {
 
 // Landing section
 .landingImg {
-    @include flexPosition($jusCon: center);
+    @include flexPosition($jusCon: center, $alIte: center);
 
     img {
         width: 100%;
@@ -200,9 +199,7 @@ strong {
     }
 }
 .countdown {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    @include flexPosition($jusCon: center, $alIte: center);
 
     &Days {
         margin-top: 20px;
@@ -217,8 +214,7 @@ strong {
         font-size: 106px;
         text-align: center;
         background-color: color(secondary);
-        display: flex;
-        flex-direction: column;
+        @include flexPosition($dir: column);
         margin: 0 5px;
         padding: 0 !important;
         font-family: font(header);
@@ -283,10 +279,8 @@ strong {
 
 // "Hackathon stats" section
 .stat {
-    // @include flexPosition($alIte: center, $dir: column);
-    display: flex;
-    align-items: center;
-    flex-direction: column;
+    @include flexPosition($alIte: center, $dir: column);
+
     &-number {
         margin: 10px 0;
         font-weight: 700;
@@ -412,9 +406,7 @@ strong {
     }
 
     &Link {
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        @include flexPosition($jusCon: center, $alIte: center);
         margin: 10px 0 15px;
         font-size: size(sm);
         padding: 0 !important;
@@ -507,9 +499,8 @@ strong {
 
 // Dashboard stuff
 .borderTopDiv {
-    display: flex;
-    flex-direction: column;
     background-color: color(white);
+    @include flexPosition($dir: column);
     border-top: solid 10px color(secondary);
     border-radius: 3px 3px 0 0;
     padding: 40px 30px 30px;
