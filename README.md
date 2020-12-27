@@ -16,6 +16,7 @@ A website template for hackathons run by [IEEE University of Toronto Student Bra
     * [From the Template (Recommended)](#from-the-template)
     * [Copy the Repository](#copy-the-repository)
 - [Customization](#customization)
+    * [Branding and Styling](#branding-and-styling)
 
 ## Requirements
 - Python 3.8 or higher
@@ -305,6 +306,40 @@ You will also need to set the necessary settings for your email server, so that 
 Near the top of the settings file, you must also set `ALLOWED_HOSTS` and `CORS_ORIGIN_REGEX_WHITELIST` for your domain.
 
 For convenience, some constants have been passed into the context of all Jinja templates by default, so they can be used right away. See the [Jinja2 config file](hackathon_site/hackathon_site/jinja2.py) for full details.
+
+
+### Branding and Styling
+Both the Event App and Dashboard App are styled by seperate SCSS files found in their respective directories.
+#### Event App
+**Warning: Deleting items in `styles.css`, `_mixins.scss`, and `_variables.scss` will mess up styling throughout all template pages.** Please read the following carefully and make sure you know what you're doing when you're modifying the aforementioned files.
+
+[Materialize](https://materializecss.com/) is the CSS framework that the Event App uses. Review their documentation to get a further understanding of how the template is styled.
+
+In order to determine the original source of a class, class names in kebab notation are from Materialize and class names in camel case are found in `styles.scss`. We recommend you follow this convention when adding your own classes.
+
+[SCSS mixins](https://sass-lang.com/documentation/at-rules/mixin) are stored in `_mixin.scss`. Currently, there are 2 mixin functions: `@mixin flexPosition` to be used if you want to style a class with CSS Flexbox and `@mixin responsive` to be used in place of Media Queries. If you are not familiar with mixins, example usages of both mixins are in `styles.scss`.
+
+Color, font family, and font size variables are stored in `_variables.scss`. Edit the values in the map to customize for your hackathons branding. For further organization, the variables are stored into maps and called using [SCSS functions](https://sass-lang.com/documentation/at-rules/function). 
+
+For example:
+```
+$fonts: (
+    body: "Nunito",
+    header: "Roboto",
+); 
+
+@function font($fonts-name) {
+    @return map-get($fonts, $fonts-name); //(name of map, key)
+}
+```
+Instead of calling...
+```
+h1 { font-family: $header; }
+```
+...you should get the `$header` variable through the `font` function:
+```
+h1 { font-family: font(header); }
+```
 
 ## Deploying
 This template may be deployed however you wish, we recommend you read [Django's documentation on deploying](https://docs.djangoproject.com/en/3.1/howto/deployment/). 
