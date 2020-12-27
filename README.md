@@ -322,7 +322,7 @@ Color, font family, and font size variables are stored in `_variables.scss`. Edi
 For example:
 ```
 $fonts: (
-    body: "Roboto",
+    body: "Nunito",
     header: "Roboto",
 ); 
 

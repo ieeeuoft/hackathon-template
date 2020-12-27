@@ -44,13 +44,19 @@ strong {
 .backgroundColor {
     // Change the background colors of each page here!
     &Landing {
-        background-color: color(white);
+        background-color: color(backgroundColor);
     }
     &FormBase {
-        background-color: color(white);
+        background-color: color(backgroundColor);
     }
     &Dashboard {
-        background-color: color(white);
+        background-color: color(backgroundColor);
+    }
+
+    &Landing,
+    &FormBase,
+    &Dashboard {
+        min-height: 100vh;
     }
 }
 
@@ -206,6 +212,7 @@ strong {
         flex-direction: column;
         margin: 0 5px;
         padding: 0 !important;
+        font-family: font(header);
     }
 
     &WhiteLine {
@@ -284,8 +291,25 @@ strong {
 
 // "FAQ" section
 .collapsible .active {
+    // color: inherit;
     color: color(primary);
 }
+
+.active .collapsible-header {
+    font-weight: bold;
+}
+
+.collapsible,
+.collapsible-body,
+.collapsible-header {
+    border: none;
+    box-shadow: none;
+    margin: 0;
+}
+.collapsible-header {
+    background-color: transparent;
+}
+
 // End of "FAQ" section
 
 // Video section
