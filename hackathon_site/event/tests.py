@@ -261,20 +261,17 @@ class DashboardTestCase(SetupUserMixin, TestCase):
 
         response = self.client.get(self.view)
 
-        self.assertContains(response, "Offer Accepted")
-        self.assertContains(
-            response, f"You've been accepted into {settings.HACKATHON_NAME}!"
-        )
-
+        self.assertContains(response, "Will Attend (Accepted)")
+        self.assertContains(response, f"See you at {settings.HACKATHON_NAME}!")
         self.assertContains(response, f"{settings.CHAT_ROOM[0]}")
         self.assertContains(response, f"{settings.CHAT_ROOM[1]}")
 
-        # Buttons for RSVP still appear
-        self.assertContains(
-            response, reverse("registration:rsvp", kwargs={"rsvp": "yes"})
-        )
+        # Button to decline still appears and button to accept is gone
         self.assertContains(
             response, reverse("registration:rsvp", kwargs={"rsvp": "no"})
+        )
+        self.assertNotContains(
+            response, reverse("registration:rsvp", kwargs={"rsvp": "yes"})
         )
 
         # Can't join teams anymore because reviewed
@@ -293,16 +290,16 @@ class DashboardTestCase(SetupUserMixin, TestCase):
 
         response = self.client.get(self.view)
 
-        self.assertContains(response, "Offer Declined")
+        self.assertContains(response, "Cannot Attend (Declined)")
         self.assertContains(
-            response, f"You've been accepted into {settings.HACKATHON_NAME}!"
+            response, f"Hope to see you next year at {settings.HACKATHON_NAME}"
         )
 
-        # Buttons for RSVP still appear
+        # Button to accept still appears and button to decline is gone
         self.assertContains(
             response, reverse("registration:rsvp", kwargs={"rsvp": "yes"})
         )
-        self.assertContains(
+        self.assertNotContains(
             response, reverse("registration:rsvp", kwargs={"rsvp": "no"})
         )
 

@@ -225,6 +225,13 @@ strong {
     color: color(secondary) !important;
 }
 
+.errorText {
+    color: color(error);
+}
+.successText {
+    color: color(success);
+}
+
 .colorBtn {
     font-weight: bold !important;
     text-align: center;
@@ -241,8 +248,8 @@ strong {
     font-weight: bold !important;
     text-align: center;
     text-transform: uppercase;
-    color: #f3c7c7 !important;
-    background-color: #b40000 !important;
+    color: color(white) !important;
+    background-color: color(error) !important;
 
     &:hover {
         background-color: #870000 !important;
