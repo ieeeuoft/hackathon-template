@@ -76,6 +76,13 @@ strong {
     color: color(secondary) !important;
 }
 
+.errorText {
+    color: color(error);
+}
+.successText {
+    color: color(success);
+}
+
 .colorBtn {
     font-weight: bold !important;
     text-align: center;
@@ -84,7 +91,7 @@ strong {
     background-color: color(secondary) !important;
 
     &:hover {
-        background-color: #ce8100 !important;
+        background-color: color(secondaryOnHover) !important;
     }
 }
 
@@ -92,14 +99,13 @@ strong {
     font-weight: bold !important;
     text-align: center;
     text-transform: uppercase;
-    color: #f3c7c7 !important;
-    background-color: #b40000 !important;
+    color: color(white) !important;
+    background-color: color(error) !important;
 
     &:hover {
-        background-color: #870000 !important;
+        background-color: color(errorOnHover) !important;
     }
 }
-
 .active {
     color: color(secondary);
 }
@@ -207,7 +213,6 @@ strong {
         font-size: 106px;
         text-align: center;
         background-color: color(secondary);
-        color: #0d061a;
         display: flex;
         flex-direction: column;
         margin: 0 5px;
@@ -381,7 +386,7 @@ strong {
 .login {
     &Div {
         display: flex;
-        background-color: #fff;
+        background-color: color(white);
         border-top: solid 10px color(secondary);
         border-radius: 3px 3px 0 0;
         padding: 50px 30px 30px;
@@ -456,12 +461,12 @@ strong {
 
     &FieldError {
         font-size: size(xs);
-        color: #f44336;
+        color: color(error);
         display: block;
     }
 
     &Error {
-        color: #f44336;
+        color: color(error);
         display: block;
     }
 }
@@ -499,7 +504,7 @@ strong {
 .borderTopDiv {
     display: flex;
     flex-direction: column;
-    background-color: #fff;
+    background-color: color(white);
     border-top: solid 10px color(secondary);
     border-radius: 3px 3px 0 0;
     padding: 40px 30px 30px;

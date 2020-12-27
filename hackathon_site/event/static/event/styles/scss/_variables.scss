@@ -1,11 +1,17 @@
 $colors: (
-    font: #0d061a,
+    font: #222,
     white: #fff,
     primary: #1976d2,
     secondary: #ffa000,
     light: #b7dbff,
     dark: #002f5e,
     backgroundColor: #ddeeff,
+    error: #b00020,
+    success: #0b890b,
+    primaryOnHover: #08529c,
+    secondaryOnHover: #ce8100,
+    errorOnHover: #870000,
+    successOnHover: #1d7521,
 );
 
 $fonts: (
