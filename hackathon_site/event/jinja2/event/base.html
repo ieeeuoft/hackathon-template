@@ -14,7 +14,7 @@
         <!-- Google Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Roboto:400,400i,500,700,900|Nunito:400,500,700,900&display=swap" rel="stylesheet">
 
-        <title>{% block title %}Hackathon Site{% endblock %}</title>
+        <title>{% block title %}{{ hackathon_name }} {{ localtime(event_start_date).strftime("%Y") }}{% endblock %}</title>
         <link rel="stylesheet" type="text/css" href="{{ static('event/styles/css/styles.css') }}" />
 
         {% block head_extends %}{% endblock %}
