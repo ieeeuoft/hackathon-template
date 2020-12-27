@@ -16,6 +16,7 @@ A website template for hackathons run by [IEEE University of Toronto Student Bra
     * [From the Template (Recommended)](#from-the-template)
     * [Copy the Repository](#copy-the-repository)
 - [Customization](#customization)
+    * [Branding and Styling](#branding-and-styling)
 
 ## Requirements
 - Python 3.8 or higher
@@ -306,6 +307,7 @@ Near the top of the settings file, you must also set `ALLOWED_HOSTS` and `CORS_O
 
 For convenience, some constants have been passed into the context of all Jinja templates by default, so they can be used right away. See the [Jinja2 config file](hackathon_site/hackathon_site/jinja2.py) for full details.
 
+
 ### Branding and Styling
 Both the Event App and Dashboard App are styled by seperate SCSS files found in their respective directories.
 #### Event App
@@ -338,9 +340,6 @@ h1 { font-family: $header; }
 ```
 h1 { font-family: font(header); }
 ```
-
-#### Dashboard App
-Tbd...
 
 ## Deploying
 This template may be deployed however you wish, we recommend you read [Django's documentation on deploying](https://docs.djangoproject.com/en/3.1/howto/deployment/). 
