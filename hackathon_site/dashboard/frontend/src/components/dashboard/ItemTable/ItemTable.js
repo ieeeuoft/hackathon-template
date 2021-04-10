@@ -201,10 +201,7 @@ export const UnconnectedReturnedTable = ({ items, isVisible, toggleVisibility })
                                 <TableCell className={styles.widthFixed} align="right">
                                     Qty
                                 </TableCell>
-                                <TableCell
-                                    className={styles.width4}
-                                    align="right"
-                                >
+                                <TableCell className={styles.width4} align="right">
                                     Time
                                 </TableCell>
                                 <TableCell className={styles.width2} align="left">
@@ -224,8 +221,12 @@ export const UnconnectedReturnedTable = ({ items, isVisible, toggleVisibility })
                                     </TableCell>
                                     <TableCell align="left">{row.name}</TableCell>
                                     <TableCell align="right">{row.qty}</TableCell>
-                                    <TableCell align="right" className={styles.noWrap}>{row.time}</TableCell>
-                                    <TableCell align="left" className={styles.noWrap}>{row.condition}</TableCell>
+                                    <TableCell align="right" className={styles.noWrap}>
+                                        {row.time}
+                                    </TableCell>
+                                    <TableCell align="left" className={styles.noWrap}>
+                                        {row.condition}
+                                    </TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
@@ -321,7 +322,9 @@ export const UnconnectedPendingTable = ({
                                     </TableCell>
                                     <TableCell align="left">{row.name}</TableCell>
                                     <TableCell align="right">{row.reqQty}</TableCell>
-                                    <TableCell align="right">{row.grantQty ?? "-"}</TableCell>
+                                    <TableCell align="right">
+                                        {row.grantQty ?? "-"}
+                                    </TableCell>
                                     <TableCell className={styles.widthBuffer} />
                                 </TableRow>
                             ))}
@@ -391,8 +394,12 @@ export const BrokenTable = ({ items, openReportAlert }) => {
                                 </TableCell>
                                 <TableCell align="left">{row.name}</TableCell>
                                 <TableCell align="right">{row.qty}</TableCell>
-                                <TableCell align="right" className={styles.noWrap}>{row.time}</TableCell>
-                                <TableCell align="left"  className={styles.noWrap}>{row.condition}</TableCell>
+                                <TableCell align="right" className={styles.noWrap}>
+                                    {row.time}
+                                </TableCell>
+                                <TableCell align="left" className={styles.noWrap}>
+                                    {row.condition}
+                                </TableCell>
                                 <TableCell align="right">
                                     <Button
                                         color="primary"
