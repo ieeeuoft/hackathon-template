@@ -94,7 +94,7 @@ const Dashboard = () => {
                 />
                 <ReturnedTable items={itemsReturned} />
 
-                <Button variant="contained" onClick={toggleMenu}>
+                <Button variant="contained" onClick={toggleMenu} disableElevation>
                     Open product overview
                 </Button>
             </div>

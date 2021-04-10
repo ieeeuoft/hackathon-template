@@ -20,4 +20,9 @@
             font-size: size(xs);
         }
     }
+
+
+    .MuiButton-label {
+        white-space: nowrap;
+    }
 }

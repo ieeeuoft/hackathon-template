@@ -74,12 +74,19 @@ const InventoryFilter = ({ categories, applyFilter, removeFilter }) => (
                             label={item.name}
                             control={<Checkbox color="primary" />}
                         />
-                        <Chip label={item.qty} className={styles.filterCategoryChip} />
+                        <Chip
+                            size="small"
+                            label={item.qty}
+                            className={styles.filterCategoryChip}
+                        />
                     </div>
                 ))}
             </fieldset>
         </form>
         <div className={styles.filterBtns}>
+            <Button type="reset" color="secondary" onClick={removeFilter}>
+                Clear all
+            </Button>
             <Button
                 type="submit"
                 onClick={applyFilter}
@@ -87,11 +94,9 @@ const InventoryFilter = ({ categories, applyFilter, removeFilter }) => (
                 variant="contained"
                 fullWidth={true}
                 className={styles.filterBtnsApply}
+                disableElevation
             >
                 Apply
-            </Button>
-            <Button type="reset" color="secondary" onClick={removeFilter}>
-                Clear all
             </Button>
         </div>
     </div>

@@ -22,10 +22,8 @@
     justify-content: space-between;
     width: 100%;
 
-    &Name {
-        @include flexPosition($alIte: flex-start);
-        flex-direction: column;
-        width: 100%;
+    h6 {
+        font-weight: 400;
     }
 
     .quantityAvailable {
@@ -33,7 +31,6 @@
     }
 
     .categoryItem {
-        color: color(primary);
         background-color: color(blueLight);
         margin: 2.5px 5px 2.5px 0;
     }

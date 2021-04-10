@@ -47,16 +47,16 @@ h1,
 
 h2,
 .MuiTypography-h2 {
-    font-size: size(lg);
+    font-size: size(md);
     font-weight: 500;
     @include responsive(md-down) {
-        font-size: size(md);
+        font-size: size(sm);
     }
 }
 
 h3,
 .MuiTypography-h3 {
-    font-size: size(md);
+    font-size: size(sm);
     font-weight: 500;
     @include responsive(md-down) {
         font-size: size(xs);
