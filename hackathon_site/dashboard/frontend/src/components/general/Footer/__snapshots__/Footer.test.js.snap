@@ -16,7 +16,7 @@ exports[`Footer renders 1`] = `
       <span
         class="MuiTypography-root MuiTypography-caption MuiTypography-gutterBottom MuiTypography-displayBlock"
       >
-        © 2020. Built by the web team at MakeUofT (University of Toronto)
+        © 2020 Built by the web team at MakeUofT (University of Toronto)
       </span>
     </footer>
   </div>

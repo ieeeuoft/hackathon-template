@@ -20,7 +20,7 @@ describe("Footer", () => {
         const footerText = getByText(/Built/, { exact: false });
 
         expect(footerText).toHaveTextContent(
-            `© 2020 - ${fakeYear}. Built by the web team at MakeUofT (University of Toronto)`
+            `© 2020 - ${fakeYear} Built by the web team at MakeUofT (University of Toronto)`
         );
     });
 });
