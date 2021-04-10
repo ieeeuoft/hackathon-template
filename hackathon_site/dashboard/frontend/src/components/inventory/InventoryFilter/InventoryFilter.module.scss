@@ -36,7 +36,6 @@
 
     &Btns {
         @include flexPosition;
-        // flex-direction: column;
         position: sticky;
         bottom: 0;
         width: 100%;
