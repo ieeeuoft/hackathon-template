@@ -49,7 +49,7 @@ export const ChipStatus = ({ status }) => {
             return (
                 <Chip
                     icon={<Error />}
-                    label="Please visit the tech station"
+                    label="Visit the tech station"
                     className={`${styles.chipRed} ${styles.chip}`}
                 />
             );
