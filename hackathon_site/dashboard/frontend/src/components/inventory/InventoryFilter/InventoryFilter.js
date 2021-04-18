@@ -14,8 +14,8 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { inventoryCategories } from "testing/mockData";
 
-const RadioOrderBy = ({ field, options, ...props }) => (
-    <RadioGroup {...field} {...props} name={field.name}>
+const RadioOrderBy = ({ field, options }) => (
+    <RadioGroup {...field} name={field.name}>
         {options.map((item, i) => (
             <FormControlLabel
                 name={field.name}
@@ -29,8 +29,8 @@ const RadioOrderBy = ({ field, options, ...props }) => (
     </RadioGroup>
 );
 
-const CheckboxCategory = ({ field, options, ...props }) => (
-    <FormGroup {...field} {...props} name={field.name}>
+const CheckboxCategory = ({ field, options }) => (
+    <FormGroup {...field} name={field.name}>
         {options.map((item, i) => (
             <div className={styles.filterCategory} key={i}>
                 <FormControlLabel
@@ -143,6 +143,14 @@ export const InventoryFilter = ({
 );
 
 export const EnhancedInventoryFilter = ({ handleSubmit, handleReset }) => {
+    const onSubmit = (formikValues) => {
+        const { orderBy, inStock, inventoryCategories } = formikValues;
+        handleSubmit({ orderBy, inStock, inventoryCategories});
+    };
+    const onReset = () => {
+        handleReset({ orderBy: "Default", inStock: false, inventoryCategories: []});
+    };
+
     return (
         <Formik
             initialValues={{
@@ -150,8 +158,8 @@ export const EnhancedInventoryFilter = ({ handleSubmit, handleReset }) => {
                 inStock: false,
                 inventoryCategories: [],
             }}
-            onSubmit={handleSubmit}
-            onReset={handleReset}
+            onSubmit={onSubmit}
+            onReset={onReset}
             validateOnBlur={false}
             validationOnChange={false}
         >

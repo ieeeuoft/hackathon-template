@@ -28,9 +28,10 @@ const Inventory = () => {
     const mobileWidth = useMediaQuery(useTheme().breakpoints.up("md"));
 
     const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-    const onSubmitTemp = async (formikValues) => {
+    const onSubmitTemp = async ({orderBy, inStock, inventoryCategories}) => {
+        console.log("formikValues", orderBy, inStock, inventoryCategories)
         await sleep(300);
-        alert(JSON.stringify(formikValues, null, 2));
+        alert(JSON.stringify({orderBy, inStock, inventoryCategories}, null, 2));
     };
 
     return (
