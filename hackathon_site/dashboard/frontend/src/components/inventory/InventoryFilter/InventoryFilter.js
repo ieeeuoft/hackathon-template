@@ -145,10 +145,10 @@ export const InventoryFilter = ({
 export const EnhancedInventoryFilter = ({ handleSubmit, handleReset }) => {
     const onSubmit = (formikValues) => {
         const { orderBy, inStock, inventoryCategories } = formikValues;
-        handleSubmit({ orderBy, inStock, inventoryCategories});
+        handleSubmit({ orderBy, inStock, inventoryCategories });
     };
     const onReset = () => {
-        handleReset({ orderBy: "Default", inStock: false, inventoryCategories: []});
+        handleReset({ orderBy: "Default", inStock: false, inventoryCategories: [] });
     };
 
     return (
