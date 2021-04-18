@@ -45,7 +45,7 @@ export const AddToCartForm = ({
     requestFailure,
     values: { quantity },
 }) => {
-    let dropdownNum = !constraintMax
+    const dropdownNum = !constraintMax
         ? quantityAvailable
         : Math.min(quantityAvailable, constraintMax);
 
@@ -166,7 +166,7 @@ const DetailInfoSection = ({
 };
 
 const MainSection = ({ name, total, quantityAvailable, categories, img }) => {
-    let availability =
+    const availability =
         quantityAvailable === 0 ? (
             <Typography color="secondary">OUT OF STOCK</Typography>
         ) : (
