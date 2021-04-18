@@ -11,7 +11,6 @@ import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
-import CircularProgress from "@material-ui/core/CircularProgress";
 import { inventoryCategories } from "testing/mockData";
 
 const RadioOrderBy = ({ field, options }) => (
@@ -66,13 +65,7 @@ export const orderByOptions = [
     { value: "Stock remaining: low to high", label: "Stock remaining: low to high" },
 ];
 
-export const InventoryFilter = ({
-    handleReset,
-    handleSubmit,
-    categories,
-    isLoadingApply,
-    isLoadingClear,
-}) => (
+export const InventoryFilter = ({ handleReset, handleSubmit, categories }) => (
     <div className={styles.filter}>
         <form onReset={handleReset} onSubmit={handleSubmit}>
             <fieldset>
@@ -112,31 +105,11 @@ export const InventoryFilter = ({
                 variant="contained"
                 fullWidth={true}
                 className={styles.filterBtnsApply}
-                disabled={isLoadingApply || isLoadingClear}
             >
                 Apply
-                {isLoadingApply && (
-                    <CircularProgress
-                        className={styles.filterCircularProgress}
-                        size={20}
-                        // data-testid={TEST_IDS.circularProgress}
-                    />
-                )}
             </Button>
-            <Button
-                type="reset"
-                color="secondary"
-                onClick={handleReset}
-                disabled={isLoadingApply || isLoadingClear}
-            >
+            <Button type="reset" color="secondary" onClick={handleReset}>
                 Clear all
-                {isLoadingClear && (
-                    <CircularProgress
-                        className={styles.filterCircularProgress}
-                        size={20}
-                        // data-testid={TEST_IDS.circularProgress}
-                    />
-                )}
             </Button>
         </div>
     </div>
@@ -164,12 +137,7 @@ export const EnhancedInventoryFilter = ({ handleSubmit, handleReset }) => {
             validationOnChange={false}
         >
             {(formikProps) => (
-                <InventoryFilter
-                    {...formikProps}
-                    categories={inventoryCategories}
-                    isLoadingApply={false}
-                    isLoadingClear={false}
-                />
+                <InventoryFilter {...formikProps} categories={inventoryCategories} />
             )}
         </Formik>
     );
