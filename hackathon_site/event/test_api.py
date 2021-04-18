@@ -12,7 +12,7 @@ class CurrentUserTestCase(SetupUserMixin, APITestCase):
         super().setUp()
         self.group = Group.objects.create(name="Test Users")
         self.user.groups.add(self.group)
-        self.profile = Profile.objects.create(user=self.user, status="Accepted")
+        self.profile = Profile.objects.create(user=self.user)
 
         self.view = reverse("api:event:current-user")
 
@@ -46,7 +46,6 @@ class CurrentUserTestCase(SetupUserMixin, APITestCase):
                 attr: getattr(self.profile, attr)
                 for attr in (
                     "id",
-                    "status",
                     "id_provided",
                     "attended",
                     "acknowledge_rules",

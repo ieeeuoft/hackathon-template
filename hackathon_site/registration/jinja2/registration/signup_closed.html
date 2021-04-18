@@ -1,0 +1,26 @@
+{% extends "event/base.html" %}
+
+{% block body %}
+<div class="backgroundColorFormBase">
+    <div class="container">
+        <div class="section">
+            <div class="loginDiv z-depth-3 row">
+                <div class="row col s12 flexColCenter">
+                    {% if localtime(now()) < registration_open_date %}
+                        <h1 class="formH1">Applications have not opened yet</h1>
+                        <p>Applications for {{ hackathon_name }} will open on {{ localtime(registration_open_date).strftime("%B %-d, %Y") }}. Please check back then!</p>
+                    {% elif registration_open_date <= localtime(now()) < registration_close_date %}
+                        <h1 class="formH1">Applications are open!</h1>
+                        <p>What brings you here? Visit the <a href="{{ url("registration:signup") }}">sign up</a> page to get started.</p>
+                    {% else %}
+                        <h1 class="formH1">Applications have closed</h1>
+                        <p>Unfortunately, the deadline to apply for {{ hackathon_name }} was {{ localtime(registration_close_date).strftime("%B %-d, %Y") }}.</p>
+                    {% endif %}
+                    <br />
+                    <p>If you have any questions or concerns, please <a href="mailto:{{ contact_email }}" class="hoverLink primaryText">contact us</a>.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

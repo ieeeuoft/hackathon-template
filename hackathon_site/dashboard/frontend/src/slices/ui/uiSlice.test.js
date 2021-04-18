@@ -2,12 +2,14 @@ import {
     uiSelector,
     isCheckedOutTableVisibleSelector,
     isReturnedTableVisibleSelector,
+    isPendingTableVisibleSelector,
     snackbarSelector,
     initialState,
     uiReducerName,
     reducer,
     toggleCheckedOutTable,
     toggleReturnedTable,
+    togglePendingTable,
     displaySnackbar,
     dismissSnackbar,
     removeSnackbar,
@@ -35,6 +37,12 @@ describe("Selectors", () => {
         );
     });
 
+    test("isPendingTableVisibleSelector", () => {
+        expect(isPendingTableVisibleSelector(mockState)).toEqual(
+            mockState[uiReducerName].dashboard.isPendingTableVisible
+        );
+    });
+
     test("isReturnedTableVisibleSelector", () => {
         expect(isReturnedTableVisibleSelector(mockState)).toEqual(
             mockState[uiReducerName].dashboard.isReturnedTableVisible
@@ -50,6 +58,7 @@ describe("Reducers", () => {
     const checkedOutVisibility = (uiState) =>
         uiState.dashboard.isCheckedOutTableVisible;
     const returnedVisibility = (uiState) => uiState.dashboard.isReturnedTableVisible;
+    const pendingVisibility = (uiState) => uiState.dashboard.isPendingTableVisible;
 
     let mockUiState;
     beforeEach(() => {
@@ -81,6 +90,15 @@ describe("Reducers", () => {
 
         const toggledAgainState = reducer(toggledState, toggleReturnedTable(undefined));
         expect(returnedVisibility(toggledAgainState)).toEqual(initialVisibility);
+    });
+
+    test("togglePendingTable() toggles the Pending table visibility", () => {
+        const initialVisibility = returnedVisibility(mockUiState);
+        const toggledState = reducer(mockUiState, togglePendingTable(undefined));
+        expect(pendingVisibility(toggledState)).toEqual(!initialVisibility);
+
+        const toggledAgainState = reducer(toggledState, togglePendingTable(undefined));
+        expect(pendingVisibility(toggledAgainState)).toEqual(initialVisibility);
     });
 
     test("displaySnackbar() enqueues a new snackbar with provided options", () => {

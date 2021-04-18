@@ -15,7 +15,6 @@ class ProfileSerializer(serializers.ModelSerializer):
         model = Profile
         fields = (
             "id",
-            "status",
             "id_provided",
             "attended",
             "acknowledge_rules",

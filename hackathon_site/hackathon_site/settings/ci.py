@@ -20,4 +20,21 @@ and by running your code before you merge it.
 """
 from hackathon_site.settings import *
 
+# Convenient for some methods to test, since DEBUG=0 in testing
+IN_TESTING = True
+
 DATABASES = {"default": {"ENGINE": "django.db.backends.sqlite3", "NAME": ":memory:"}}
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "test-cache",
+    }
+}
+
+# For testing, make the media root a local folder to avoid
+# permissions errors
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
+if not os.path.isdir(MEDIA_ROOT):
+    os.makedirs(MEDIA_ROOT)

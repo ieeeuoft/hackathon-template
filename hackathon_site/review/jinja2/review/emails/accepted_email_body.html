@@ -1,0 +1,12 @@
+{% set dashboard_url=request.build_absolute_uri(url("event:dashboard")) %}
+
+<p>Hello {{ user.first_name|striptags }},</p>
+
+<p>The {{ hackathon_name }} team has reviewed your application, and we’re excited to welcome you to {{ hackathon_name }}!
+To confirm your attendance, visit your <a href="{{ dashboard_url }}">dashboard</a> to RSVP by {{ rsvp_deadline }} otherwise your spot will be given to other applicants. Alternatively, you can press the "Cannot attend" button.</p>
+
+<p>Read our <a href="{{ participant_package_link }}">participant package</a> for all the info regarding the event, and join our <a href="{{ chat_room_link }}">{{ chat_room_name }}</a>. Stay tuned for more updates regarding detailed event logistics, and we hope to see you soon! If you have questions, read the FAQ on your <a href="{{ dashboard_url }}">dashboard</a> or feel free to contact us. </p>
+
+<p>Happy hacking,<br>
+The {{ hackathon_name }} Team
+</p>

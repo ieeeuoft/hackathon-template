@@ -1,0 +1,33 @@
+{% extends "event/form_base.html" %}
+
+{% block form_title %}SEND DECISION EMAILS TO PARTICIPANTS{% endblock %}
+
+{% set form_action=url("admin:send-decision-emails") %}
+
+{% block form_description %}
+    <div>
+        Accepted: {{ accepted_count }}
+        Waitlisted: {{ waitlisted_count }}
+        Rejected: {{ rejected_count }}
+    </div>
+{% endblock %}
+
+{% block form_inputs %}
+    {% for field in form %}
+        {{ render_field(field, size="s12") }}
+    {% endfor %}
+{% endblock %}
+
+{% block form_button %}
+<div class="input-field col s12 center" style="margin-bottom: 0">
+    <button type="submit" class="btn-small waves-effect waves-light colorBtn">Submit</button>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function(){
+        $('select').formSelect();
+    });
+</script>
+{% endblock %}

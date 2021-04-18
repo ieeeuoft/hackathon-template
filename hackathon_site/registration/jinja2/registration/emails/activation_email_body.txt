@@ -1,0 +1,10 @@
+{% set activation_url=request.build_absolute_uri(url("registration:activate", kwargs={"activation_key": activation_key})) %}
+
+Hello {{ user.first_name }},
+
+Thank you for registering for {{ hackathon_name }}! To get started with your application, please copy this link into your browser to verify your email: {{ activation_url }}. This link will expire in {{ expiration_days }} days. 
+
+After verifying, please login to continue with your application. We look forward to hacking with you soon!
+
+Best,
+The {{ hackathon_name }} Team

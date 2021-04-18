@@ -21,6 +21,8 @@ from django.conf import settings
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
+from registration.views import ResumeView
+
 schema_view = get_schema_view(
     openapi.Info(
         title="Hardware Hackathon API",
@@ -38,11 +40,39 @@ urlpatterns = [
         schema_view.with_ui("swagger", cache_timeout=0),
         name="schema-swagger-ui",
     ),
-    path("", include("event.urls", namespace="event")),
+    path("registration/", include("registration.urls", namespace="registration")),
 ]
+
+if not settings.MEDIA_URL.startswith("http"):
+    urlpatterns += [
+        path(
+            "%s/applications/resumes/<str:filename>" % settings.MEDIA_URL.strip("/"),
+            ResumeView.as_view(),
+            name="resume",
+        ),
+    ]
 
 
 if settings.DEBUG:
     import debug_toolbar
+    from django.core.exceptions import ImproperlyConfigured
+    from django.urls import re_path
+    from django.views.static import serve
 
-    urlpatterns = [path("__debug__/", include(debug_toolbar.urls))] + urlpatterns
+    urlpatterns += [path("__debug__/", include(debug_toolbar.urls))]
+
+    if settings.MEDIA_URL.startswith("http"):
+        raise ImproperlyConfigured(
+            "To serve media from off-site in development, "
+            "remove the media path from hackathon_site.urls"
+        )
+    urlpatterns += [
+        re_path(
+            r"^%s/(?P<path>.*)$" % settings.MEDIA_URL.strip("/"),
+            serve,
+            {"document_root": settings.MEDIA_ROOT},
+        )
+    ]
+
+# Catchall for event urls at the end of the url routes
+urlpatterns += [path("", include("event.urls", namespace="event"))]

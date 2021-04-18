@@ -11,7 +11,10 @@
         <!-- Compiled and minified CSS for Materialize -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" />
 
-        <title>{% block title %}Hackathon Site{% endblock %}</title>
+        <!-- Google Fonts -->
+        <link href="https://fonts.googleapis.com/css?family=Roboto:400,400i,500,700,900|Nunito:400,500,700,900&display=swap" rel="stylesheet">
+
+        <title>{% block title %}{{ hackathon_name }} {{ localtime(event_start_date).strftime("%Y") }}{% endblock %}</title>
         <link rel="stylesheet" type="text/css" href="{{ static('event/styles/css/styles.css') }}" />
 
         {% block head_extends %}{% endblock %}
@@ -20,9 +23,36 @@
     <body>
         <nav class="navbar primaryColor" role="navigation">
             <div class="nav-wrapper container">
-                <img src="{{ static('event/images/logo.svg') }}" class="logoNav" alt="logo" />
+                <a href="{{ url("event:index") }}"><img src="{{ static('event/images/logo.svg') }}" class="logoNav" alt="logo" /></a>
 
                 {% block nav %}
+                    <ul class="right hide-on-med-and-down">
+                        {% block nav_links %}{% endblock %}
+
+                        {% block nav_logout_login_links %}
+                            {% if request.user.is_authenticated %}
+                                <li>
+                                    <a href="{{ url("event:logout") }}" class="btn-small waves-effect waves-light colorBtn">Logout</a>
+                                </li>
+                            {% else %}
+                                <li>
+                                    <a href="{{ url("event:login") }}" class="btn-small waves-effect waves-light colorBtn">Login</a>
+                                </li>
+                            {% endif %}
+                        {% endblock %}
+                    </ul>
+
+                    <ul id="nav-mobile" class="sidenav">
+                        <li class="logoNavSide"><a href="{{ url("event:index") }}"><img src="{{ static('event/images/logo.svg') }}" alt="logo" /></a></li>
+                        {{ self.nav_links() }}
+                        {{ self.nav_logout_login_links() }}
+                    </ul>
+
+                    {% block mobile_nav_btn %}
+                        {% if self.nav_links() %}
+                            <a href="#" data-target="nav-mobile" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+                        {% endif %}
+                    {% endblock %}
                 {% endblock %}
             </div>
         </nav>
@@ -33,7 +63,7 @@
         <!--  Scripts-->
         <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-        <script src="{{ static('event/js/script.js') }}"></script>
+        <script src="{{ static('event/js/main.js') }}"></script>
         {% block scripts %}{% endblock %}
     </body>
 </html>

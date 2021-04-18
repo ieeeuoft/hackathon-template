@@ -141,8 +141,9 @@ cython_debug/
 .idea
 .vscode
 
-# Collected static files
+# Collected static files and media files
 hackathon_site/static/
+hackathon_site/media/
 
 # Database persistent data
 development/.postgres-data/

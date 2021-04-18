@@ -12,4 +12,5 @@ it("Renders correctly when the dashboard appears 4 cards and 3 tables", () => {
     expect(getByText("Returned items")).toBeInTheDocument();
     expect(getByText("Checked out items")).toBeInTheDocument();
     expect(queryByText("Orders pending")).toBeInTheDocument();
+    expect(queryByText("Reported broken/lost items")).toBeInTheDocument();
 });

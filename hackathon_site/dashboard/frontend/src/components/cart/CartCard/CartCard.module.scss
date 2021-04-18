@@ -1,0 +1,45 @@
+@import "./../../../assets/abstracts/mixins";
+@import "./../../../assets/abstracts/variables";
+
+.Cart {
+    display: flex;
+    background-color: color(backgroundC);
+
+    &Pic {
+        height: 90px;
+        width: 90px;
+        filter: drop-shadow(0px 2px 2px #ddd);
+        margin-bottom: 5px;
+    }
+
+    &Name {
+        color: color(font);
+    }
+
+    &Error {
+        color: color(secondary);
+        padding-top: 0px;
+    }
+
+    &Parts {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        padding-left: 30px;
+        padding-top: 10px;
+    }
+
+    &FormControl {
+        width: 98px;
+        background-color: color(white);
+        margin-top: 10px;
+    }
+
+    &Action {
+        display: inline;
+    }
+
+    &Close {
+        color: color(grey);
+    }
+}

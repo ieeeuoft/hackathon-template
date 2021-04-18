@@ -1,0 +1,17 @@
+{% extends "admin/change_list.html" %}
+
+{% load i18n admin_urls %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+<a href="{% url 'admin:index' %}">{% translate 'Home' %}</a>
+&rsaquo; <a href="{% url 'admin:app_list' app_label=cl.opts.app_label %}">{{ cl.opts.app_config.verbose_name }}</a>
+&rsaquo; {{ cl.opts.verbose_name_plural|capfirst }}
+    {% if has_change_permission %}
+    <a class="button" style="float: right; margin: -4px 15px -4px -5px;" href="{% url 'admin:assign-reviewer-to-team' %}">Review Next Team</a>
+    {% endif %}
+    {% if request.user.is_superuser %}
+    <a class="button" style="float: right; margin: -4px 15px -4px -5px;" href="{% url 'admin:send-decision-emails' %}">Send Decisions</a>
+    {% endif %}
+</div>
+{% endblock %}
