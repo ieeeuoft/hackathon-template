@@ -82,11 +82,11 @@ export const UnconnectedCheckedOutTable = ({
 
         {isVisible &&
             (!items.length ? (
-                <Paper variant="outlined" className={styles.empty} square={true}>
+                <Paper elevation={2} className={styles.empty} square={true}>
                     You have no items checked out yet. View our inventory.
                 </Paper>
             ) : (
-                <TableContainer component={Paper} variant="outlined" square={true}>
+                <TableContainer component={Paper} elevation={2} square={true}>
                     <Table
                         className={styles.table}
                         size="small"
@@ -181,12 +181,12 @@ export const UnconnectedReturnedTable = ({ items, isVisible, toggleVisibility })
 
         {isVisible &&
             (!items.length ? (
-                <Paper variant="outlined" className={styles.empty} square={true}>
+                <Paper elevation={2} className={styles.empty} square={true}>
                     Please bring items to the tech table and a tech team member will
                     assist you.
                 </Paper>
             ) : (
-                <TableContainer component={Paper} variant="outlined" square={true}>
+                <TableContainer component={Paper} elevation={2} square={true}>
                     <Table
                         className={styles.table}
                         size="small"
@@ -283,7 +283,7 @@ export const UnconnectedPendingTable = ({
             </Container>
 
             {isVisible && (
-                <TableContainer component={Paper} variant="outlined" square={true}>
+                <TableContainer component={Paper} elevation={2} square={true}>
                     <Table
                         className={styles.table}
                         size="small"
@@ -362,7 +362,7 @@ export const BrokenTable = ({ items, openReportAlert }) => {
                 <ChipStatus status="error" />
             </div>
 
-            <TableContainer component={Paper} variant="outlined" square={true}>
+            <TableContainer component={Paper} elevation={2} square={true}>
                 <Table className={styles.table} size="small" aria-label="broken table">
                     <TableHead>
                         <TableRow>

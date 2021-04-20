@@ -15,7 +15,7 @@ const TitledPaper = ({ title, children }) => (
                 {title}
             </Typography>
         )}
-        <Paper variant="outlined" square={true} className={styles.paper}>
+        <Paper elevation={2} square={true} className={styles.paper}>
             {children}
         </Paper>
     </>
