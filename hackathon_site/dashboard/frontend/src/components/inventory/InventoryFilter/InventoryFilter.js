@@ -12,6 +12,7 @@ import RadioGroup from "@material-ui/core/RadioGroup";
 import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import { inventoryCategories } from "testing/mockData";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 const RadioOrderBy = ({ field, options }) => (
     <RadioGroup {...field} name={field.name}>
@@ -65,7 +66,13 @@ export const orderByOptions = [
     { value: "Stock remaining: low to high", label: "Stock remaining: low to high" },
 ];
 
-export const InventoryFilter = ({ handleReset, handleSubmit, categories }) => (
+export const InventoryFilter = ({
+    handleReset,
+    handleSubmit,
+    categories,
+    isApplyLoading,
+    isClearLoading,
+}) => (
     <div className={styles.filter}>
         <form onReset={handleReset} onSubmit={handleSubmit}>
             <fieldset>
@@ -105,17 +112,42 @@ export const InventoryFilter = ({ handleReset, handleSubmit, categories }) => (
                 variant="contained"
                 fullWidth={true}
                 className={styles.filterBtnsApply}
+                disabled={isApplyLoading || isClearLoading}
             >
                 Apply
+                {isApplyLoading && (
+                    <CircularProgress
+                        className={styles.filterCircularProgress}
+                        size={20}
+                        data-testid="circularProgressApply"
+                    />
+                )}
             </Button>
-            <Button type="reset" color="secondary" onClick={handleReset}>
+            <Button
+                type="reset"
+                color="secondary"
+                onClick={handleReset}
+                disabled={isApplyLoading || isClearLoading}
+            >
                 Clear all
+                {isClearLoading && (
+                    <CircularProgress
+                        className={styles.filterCircularProgress}
+                        size={20}
+                        data-testid="circularProgressClear"
+                    />
+                )}
             </Button>
         </div>
     </div>
 );
 
-export const EnhancedInventoryFilter = ({ handleSubmit, handleReset }) => {
+export const EnhancedInventoryFilter = ({
+    handleSubmit,
+    handleReset,
+    isApplyLoading,
+    isClearLoading,
+}) => {
     const onSubmit = (formikValues) => {
         const { orderBy, inStock, inventoryCategories } = formikValues;
         handleSubmit({ orderBy, inStock, inventoryCategories });
@@ -137,7 +169,12 @@ export const EnhancedInventoryFilter = ({ handleSubmit, handleReset }) => {
             validationOnChange={false}
         >
             {(formikProps) => (
-                <InventoryFilter {...formikProps} categories={inventoryCategories} />
+                <InventoryFilter
+                    {...formikProps}
+                    categories={inventoryCategories}
+                    isApplyLoading={isApplyLoading}
+                    isClearLoading={isClearLoading}
+                />
             )}
         </Formik>
     );
