@@ -1,10 +1,6 @@
 import React from "react";
-import EnhancedInventoryFilter, {
-    InventoryFilter,
-    orderByOptions,
-} from "./InventoryFilter";
+import EnhancedInventoryFilter, { orderByOptions } from "./InventoryFilter";
 import { render, fireEvent, waitFor } from "@testing-library/react";
-import { Formik } from "formik";
 import { inventoryCategories } from "testing/mockData";
 
 describe("<EnhancedInventoryFilter />", () => {
@@ -12,7 +8,11 @@ describe("<EnhancedInventoryFilter />", () => {
         const handleSubmitSpy = jest.fn();
 
         const { getByText } = render(
-            <EnhancedInventoryFilter handleSubmit={handleSubmitSpy} />
+            <EnhancedInventoryFilter
+                handleSubmit={handleSubmitSpy}
+                isApplyLoading={false}
+                isClearLoading={false}
+            />
         );
         const button = getByText("Apply");
         fireEvent.click(button);
@@ -22,23 +22,34 @@ describe("<EnhancedInventoryFilter />", () => {
         });
     });
 
-    it("Calls handleResetSpy when the 'Clear all' button is clicked", () => {
+    it("Calls handleResetSpy when the 'Clear all' button is clicked", async () => {
         const handleResetSpy = jest.fn();
 
         const { getByText } = render(
-            <EnhancedInventoryFilter handleReset={handleResetSpy} />
+            <EnhancedInventoryFilter
+                handleReset={handleResetSpy}
+                isApplyLoading={false}
+                isClearLoading={false}
+            />
         );
 
         const button = getByText("Clear all");
         fireEvent.click(button);
-        expect(handleResetSpy).toHaveBeenCalled();
+
+        await waitFor(() => {
+            expect(handleResetSpy).toHaveBeenCalled();
+        });
     });
 
     it("Checks that all labels of form are in there", () => {
         const handleSubmitSpy = jest.fn();
 
         const { queryByText, getByText } = render(
-            <EnhancedInventoryFilter handleSubmit={handleSubmitSpy} />
+            <EnhancedInventoryFilter
+                handleSubmit={handleSubmitSpy}
+                isApplyLoading={false}
+                isClearLoading={false}
+            />
         );
         for (let c of inventoryCategories) {
             expect(queryByText(c.name)).toBeTruthy();
@@ -62,6 +73,8 @@ describe("<EnhancedInventoryFilter />", () => {
             <EnhancedInventoryFilter
                 handleSubmit={handleSubmitSpy}
                 handleReset={handleResetSpy}
+                isApplyLoading={false}
+                isClearLoading={false}
             />
         );
 
@@ -99,5 +112,23 @@ describe("<EnhancedInventoryFilter />", () => {
                 inventoryCategories,
             });
         });
+    });
+
+    it("Looks for loader on Apply button", () => {
+        const { getByTestId, queryByTestId } = render(
+            <EnhancedInventoryFilter isApplyLoading={true} isClearLoading={false} />
+        );
+
+        expect(getByTestId("circularProgressApply")).toBeInTheDocument();
+        expect(queryByTestId("circularProgressClear")).not.toBeInTheDocument();
+    });
+
+    it("Looks for loader on Clear all button", () => {
+        const { getByTestId, queryByTestId } = render(
+            <EnhancedInventoryFilter isApplyLoading={false} isClearLoading={true} />
+        );
+
+        expect(queryByTestId("circularProgressApply")).not.toBeInTheDocument();
+        expect(getByTestId("circularProgressClear")).toBeInTheDocument();
     });
 });

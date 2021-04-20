@@ -48,6 +48,8 @@ const Inventory = () => {
                     <EnhancedInventoryFilter
                         handleSubmit={onSubmitTemp}
                         handleReset={onSubmitTemp}
+                        isApplyLoading={false}
+                        isClearLoading={false}
                     />
                 </Drawer>
                 <div className={styles.inventoryBody}>
