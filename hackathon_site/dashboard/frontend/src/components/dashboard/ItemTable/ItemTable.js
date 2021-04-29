@@ -130,10 +130,7 @@ export const UnconnectedCheckedOutTable = ({
                                         </IconButton>
                                     </TableCell>
                                     <TableCell align="right">{row.qty}</TableCell>
-                                    <TableCell
-                                        align="right"
-                                        className={styles.widthButton}
-                                    >
+                                    <TableCell align="right">
                                         <Button
                                             color="secondary"
                                             size="small"
@@ -379,7 +376,7 @@ export const BrokenTable = ({ items, openReportAlert }) => {
                             <TableCell className={styles.width2} align="left">
                                 Condition
                             </TableCell>
-                            <TableCell className={styles.widthfixed} />
+                            <TableCell className={styles.widthFixed} />
                         </TableRow>
                     </TableHead>
                     <TableBody>
