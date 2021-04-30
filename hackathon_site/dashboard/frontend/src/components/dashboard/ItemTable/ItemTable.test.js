@@ -41,7 +41,7 @@ describe("<ChipStatus />", () => {
 
     test("Error status", () => {
         const { getByText } = render(<ChipStatus status="error" />);
-        expect(getByText("Please visit the tech station")).toBeInTheDocument();
+        expect(getByText("Visit the tech station")).toBeInTheDocument();
     });
 });
 
@@ -185,7 +185,7 @@ describe("<BrokenTable />", () => {
         );
 
         expect(getByText(/Reported broken\/lost items/i)).toBeInTheDocument();
-        expect(getByText("Please visit the tech station")).toBeInTheDocument();
+        expect(getByText("Visit the tech station")).toBeInTheDocument();
         itemsBroken.map(({ name }) => {
             expect(getByText(name)).toBeInTheDocument();
         });

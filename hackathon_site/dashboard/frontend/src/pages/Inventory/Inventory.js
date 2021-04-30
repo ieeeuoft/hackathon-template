@@ -106,6 +106,7 @@ const Inventory = () => {
                                 sm={4}
                                 md={3}
                                 lg={2}
+                                xl={1}
                                 className={styles.Item}
                                 key={item.id}
                                 item
@@ -128,6 +129,7 @@ const Inventory = () => {
                         color="primary"
                         size="large"
                         fullWidth={true}
+                        disableElevation
                     >
                         Load more
                     </Button>

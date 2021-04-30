@@ -13,7 +13,7 @@ const Item = ({ image, title, total, currentStock }) => {
 
     return (
         <>
-            <Card className={coverStyle} variant="outlined" square={true}>
+            <Card className={coverStyle} elevation={2} square={true}>
                 <CardMedia
                     className={styles.itemPic}
                     component="img"
