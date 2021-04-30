@@ -49,7 +49,7 @@ export const ChipStatus = ({ status }) => {
             return (
                 <Chip
                     icon={<Error />}
-                    label="Please visit the tech station"
+                    label="Visit the tech station"
                     className={`${styles.chipRed} ${styles.chip}`}
                 />
             );
@@ -82,11 +82,11 @@ export const UnconnectedCheckedOutTable = ({
 
         {isVisible &&
             (!items.length ? (
-                <Paper elevation={3} className={styles.empty} square={true}>
+                <Paper elevation={2} className={styles.empty} square={true}>
                     You have no items checked out yet. View our inventory.
                 </Paper>
             ) : (
-                <TableContainer component={Paper} elevation={3} square={true}>
+                <TableContainer component={Paper} elevation={2} square={true}>
                     <Table
                         className={styles.table}
                         size="small"
@@ -95,7 +95,7 @@ export const UnconnectedCheckedOutTable = ({
                         <TableHead>
                             <TableRow>
                                 <TableCell className={styles.widthFixed} />
-                                <TableCell className={styles.widthHalf} align="left">
+                                <TableCell className={styles.width6} align="left">
                                     Name
                                 </TableCell>
                                 <TableCell className={styles.widthFixed} align="center">
@@ -104,7 +104,7 @@ export const UnconnectedCheckedOutTable = ({
                                 <TableCell className={styles.widthFixed} align="right">
                                     Qty
                                 </TableCell>
-                                <TableCell className={styles.widthButton} />
+                                <TableCell align="right" className={styles.width6} />
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -130,12 +130,10 @@ export const UnconnectedCheckedOutTable = ({
                                         </IconButton>
                                     </TableCell>
                                     <TableCell align="right">{row.qty}</TableCell>
-                                    <TableCell
-                                        align="right"
-                                        className={styles.widthButton}
-                                    >
+                                    <TableCell align="right">
                                         <Button
                                             color="secondary"
+                                            size="small"
                                             onClick={() => {
                                                 reportIncident(row.id);
                                                 push("/incident-form");
@@ -180,12 +178,12 @@ export const UnconnectedReturnedTable = ({ items, isVisible, toggleVisibility })
 
         {isVisible &&
             (!items.length ? (
-                <Paper elevation={3} className={styles.empty} square={true}>
+                <Paper elevation={2} className={styles.empty} square={true}>
                     Please bring items to the tech table and a tech team member will
                     assist you.
                 </Paper>
             ) : (
-                <TableContainer component={Paper} elevation={3} square={true}>
+                <TableContainer component={Paper} elevation={2} square={true}>
                     <Table
                         className={styles.table}
                         size="small"
@@ -194,22 +192,18 @@ export const UnconnectedReturnedTable = ({ items, isVisible, toggleVisibility })
                         <TableHead>
                             <TableRow>
                                 <TableCell className={styles.widthFixed} />
-                                <TableCell className={styles.widthHalf} align="left">
+                                <TableCell className={styles.width6} align="left">
                                     Name
                                 </TableCell>
-                                <TableCell className={styles.widthFixed} align="left">
+                                <TableCell className={styles.widthFixed} align="right">
                                     Qty
                                 </TableCell>
-                                <TableCell
-                                    className={styles.widthQuarter}
-                                    align="right"
-                                >
+                                <TableCell className={styles.width4} align="right">
                                     Time
                                 </TableCell>
-                                <TableCell className={styles.widthQuarter} align="left">
+                                <TableCell className={styles.width2} align="left">
                                     Condition
                                 </TableCell>
-                                <TableCell className={styles.widthBuffer} />
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -224,9 +218,12 @@ export const UnconnectedReturnedTable = ({ items, isVisible, toggleVisibility })
                                     </TableCell>
                                     <TableCell align="left">{row.name}</TableCell>
                                     <TableCell align="right">{row.qty}</TableCell>
-                                    <TableCell align="right">{row.time}</TableCell>
-                                    <TableCell align="left">{row.condition}</TableCell>
-                                    <TableCell className={styles.widthBuffer} />
+                                    <TableCell align="right" className={styles.noWrap}>
+                                        {row.time}
+                                    </TableCell>
+                                    <TableCell align="left" className={styles.noWrap}>
+                                        {row.condition}
+                                    </TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
@@ -283,7 +280,7 @@ export const UnconnectedPendingTable = ({
             </Container>
 
             {isVisible && (
-                <TableContainer component={Paper} elevation={3} square={true}>
+                <TableContainer component={Paper} elevation={2} square={true}>
                     <Table
                         className={styles.table}
                         size="small"
@@ -292,17 +289,17 @@ export const UnconnectedPendingTable = ({
                         <TableHead>
                             <TableRow>
                                 <TableCell className={styles.widthFixed} />
-                                <TableCell className={styles.widthHalf} align="left">
+                                <TableCell className={styles.width6} align="left">
                                     Name
                                 </TableCell>
                                 <TableCell
-                                    className={styles.widthQuarter}
+                                    className={`${styles.width1} ${styles.noWrap}`}
                                     align="right"
                                 >
                                     Requested Qty
                                 </TableCell>
                                 <TableCell
-                                    className={styles.widthQuarter}
+                                    className={`${styles.width1} ${styles.noWrap}`}
                                     align="right"
                                 >
                                     Granted Qty
@@ -322,7 +319,9 @@ export const UnconnectedPendingTable = ({
                                     </TableCell>
                                     <TableCell align="left">{row.name}</TableCell>
                                     <TableCell align="right">{row.reqQty}</TableCell>
-                                    <TableCell align="right">{row.grantQty}</TableCell>
+                                    <TableCell align="right">
+                                        {row.grantQty ?? "-"}
+                                    </TableCell>
                                     <TableCell className={styles.widthBuffer} />
                                 </TableRow>
                             ))}
@@ -360,24 +359,24 @@ export const BrokenTable = ({ items, openReportAlert }) => {
                 <ChipStatus status="error" />
             </div>
 
-            <TableContainer component={Paper} elevation={3} square={true}>
+            <TableContainer component={Paper} elevation={2} square={true}>
                 <Table className={styles.table} size="small" aria-label="broken table">
                     <TableHead>
                         <TableRow>
                             <TableCell className={styles.widthFixed} />
-                            <TableCell className={styles.widthHalf} align="left">
+                            <TableCell className={styles.width6} align="left">
                                 Name
                             </TableCell>
                             <TableCell className={styles.widthFixed} align="left">
                                 Qty
                             </TableCell>
-                            <TableCell className={styles.widthQuarter} align="right">
+                            <TableCell className={styles.width4} align="right">
                                 Time
                             </TableCell>
-                            <TableCell className={styles.widthFixed} align="left">
+                            <TableCell className={styles.width2} align="left">
                                 Condition
                             </TableCell>
-                            <TableCell className={styles.widthQuarter} />
+                            <TableCell className={styles.widthFixed} />
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -392,8 +391,12 @@ export const BrokenTable = ({ items, openReportAlert }) => {
                                 </TableCell>
                                 <TableCell align="left">{row.name}</TableCell>
                                 <TableCell align="right">{row.qty}</TableCell>
-                                <TableCell align="right">{row.time}</TableCell>
-                                <TableCell align="left">{row.condition}</TableCell>
+                                <TableCell align="right" className={styles.noWrap}>
+                                    {row.time}
+                                </TableCell>
+                                <TableCell align="left" className={styles.noWrap}>
+                                    {row.condition}
+                                </TableCell>
                                 <TableCell align="right">
                                     <Button
                                         color="primary"

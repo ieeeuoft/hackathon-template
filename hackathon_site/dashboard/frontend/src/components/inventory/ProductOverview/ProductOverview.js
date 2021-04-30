@@ -45,12 +45,9 @@ export const AddToCartForm = ({
     requestFailure,
     values: { quantity },
 }) => {
-    let dropdownNum;
-    if (!constraintMax) {
-        dropdownNum = quantityAvailable;
-    } else {
-        dropdownNum = Math.min(quantityAvailable, constraintMax);
-    }
+    const dropdownNum = !constraintMax
+        ? quantityAvailable
+        : Math.min(quantityAvailable, constraintMax);
 
     return (
         <>
@@ -82,6 +79,7 @@ export const AddToCartForm = ({
                         type="submit"
                         onClick={handleSubmit}
                         disabled={dropdownNum === 0}
+                        disableElevation
                     >
                         Add to cart
                     </Button>
@@ -168,29 +166,24 @@ const DetailInfoSection = ({
 };
 
 const MainSection = ({ name, total, quantityAvailable, categories, img }) => {
-    let availability;
-    if (quantityAvailable === 0) {
-        availability = <Typography color="secondary">OUT OF STOCK</Typography>;
-    } else {
-        availability = (
+    const availability =
+        quantityAvailable === 0 ? (
+            <Typography color="secondary">OUT OF STOCK</Typography>
+        ) : (
             <Typography className={styles.quantityAvailable}>
                 {quantityAvailable} OF {total} IN STOCK
             </Typography>
         );
-    }
 
     return (
         <div className={styles.mainSection}>
-            <div className={styles.mainSectionName}>
+            <div>
+                <Typography variant="h6">{name}</Typography>
+                {availability}
+                <Typography variant="body2" className={styles.heading}>
+                    Category
+                </Typography>
                 <div>
-                    <Typography variant="h6">{name}</Typography>
-                    {availability}
-                </div>
-
-                <div>
-                    <Typography variant="body2" className={styles.heading}>
-                        Category
-                    </Typography>
                     {categories.map((category, i) => (
                         <Chip
                             label={category}

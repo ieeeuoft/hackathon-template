@@ -133,6 +133,7 @@ const Inventory = () => {
                         color="primary"
                         size="large"
                         fullWidth={true}
+                        disableElevation
                     >
                         Load more
                     </Button>

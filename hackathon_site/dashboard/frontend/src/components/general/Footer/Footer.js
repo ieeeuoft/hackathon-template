@@ -10,7 +10,7 @@ const Footer = () => {
     const outputMessage =
         "© 2020" +
         yearRange +
-        ". Built by the web team at MakeUofT (University of Toronto)";
+        " Built by the web team at MakeUofT (University of Toronto)";
 
     return (
         <Container maxWidth={false} disableGutters={true}>

@@ -40,7 +40,11 @@ const CheckboxCategory = ({ field, options }) => (
                     label={item.name}
                     checked={field.value.includes(item.name)}
                 />
-                <Chip label={item.qty} className={styles.filterCategoryChip} />
+                <Chip
+                    size="small"
+                    label={item.qty}
+                    className={styles.filterCategoryChip}
+                />
             </div>
         ))}
     </FormGroup>
@@ -106,24 +110,6 @@ export const InventoryFilter = ({
         </form>
         <div className={styles.filterBtns}>
             <Button
-                type="submit"
-                onClick={handleSubmit}
-                color="primary"
-                variant="contained"
-                fullWidth={true}
-                className={styles.filterBtnsApply}
-                disabled={isApplyLoading || isClearLoading}
-            >
-                Apply
-                {isApplyLoading && (
-                    <CircularProgress
-                        className={styles.filterCircularProgress}
-                        size={20}
-                        data-testid="circularProgressApply"
-                    />
-                )}
-            </Button>
-            <Button
                 type="reset"
                 color="secondary"
                 onClick={handleReset}
@@ -135,6 +121,25 @@ export const InventoryFilter = ({
                         className={styles.filterCircularProgress}
                         size={20}
                         data-testid="circularProgressClear"
+                    />
+                )}
+            </Button>
+            <Button
+                type="submit"
+                onClick={handleSubmit}
+                color="primary"
+                variant="contained"
+                fullWidth={true}
+                className={styles.filterBtnsApply}
+                disabled={isApplyLoading || isClearLoading}
+                disableElevation
+            >
+                Apply
+                {isApplyLoading && (
+                    <CircularProgress
+                        className={styles.filterCircularProgress}
+                        size={20}
+                        data-testid="circularProgressApply"
                     />
                 )}
             </Button>

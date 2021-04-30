@@ -19,8 +19,8 @@ const Cart = () => {
             <Header />
             <Typography variant="h1">Cart</Typography>
 
-            <Grid direction="row" spacing={3} className={styles.cart} container>
-                <Grid sm={12} md={7} item>
+            <Grid direction="row" spacing={6} className={styles.cart} container>
+                <Grid xs={12} sm={12} md={7} item>
                     {cartItems.map((item, i) => (
                         <div key={i}>
                             <CartCard
@@ -36,7 +36,7 @@ const Cart = () => {
                         </div>
                     ))}
                 </Grid>
-                <Grid sm={12} md={5} item>
+                <Grid xs={12} sm={12} md={5} item>
                     <CartSummary cartQuantity={cartQuantity} />
                 </Grid>
             </Grid>
