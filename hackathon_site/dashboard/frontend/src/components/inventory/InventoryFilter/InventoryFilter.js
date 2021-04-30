@@ -50,7 +50,7 @@ const CheckboxCategory = ({ field, options }) => (
     </FormGroup>
 );
 
-const CheckboxAvailability = ({ field, name, ...props }) => (
+const CheckboxAvailability = ({ field, ...props }) => (
     <FormGroup {...field} {...props} name={field.name}>
         <FormControlLabel
             label="In stock"
@@ -63,11 +63,11 @@ const CheckboxAvailability = ({ field, name, ...props }) => (
 );
 
 export const orderByOptions = [
-    { value: "Default", label: "Default" },
-    { value: "A-Z", label: "A-Z" },
-    { value: "Z-A", label: "Z-A" },
-    { value: "Stock remaining: high to low", label: "Stock remaining: high to low" },
-    { value: "Stock remaining: low to high", label: "Stock remaining: low to high" },
+    { value: "", label: "Default" },
+    { value: "name", label: "A-Z" },
+    { value: "-name", label: "Z-A" },
+    { value: "stock", label: "Stock remaining: high to low" },
+    { value: "-stock", label: "Stock remaining: low to high" },
 ];
 
 export const InventoryFilter = ({
@@ -158,13 +158,13 @@ export const EnhancedInventoryFilter = ({
         handleSubmit({ orderBy, inStock, inventoryCategories });
     };
     const onReset = () => {
-        handleReset({ orderBy: "Default", inStock: false, inventoryCategories: [] });
+        handleReset({ orderBy: "", inStock: false, inventoryCategories: [] });
     };
 
     return (
         <Formik
             initialValues={{
-                orderBy: "Default",
+                orderBy: "",
                 inStock: false,
                 inventoryCategories: [],
             }}

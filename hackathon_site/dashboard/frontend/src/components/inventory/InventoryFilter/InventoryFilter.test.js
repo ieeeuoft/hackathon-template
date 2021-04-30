@@ -4,7 +4,7 @@ import { render, fireEvent, waitFor } from "@testing-library/react";
 import { inventoryCategories } from "testing/mockData";
 
 describe("<EnhancedInventoryFilter />", () => {
-    it("Calls handleSubmitSpy when the 'Apply' button is clicked", async () => {
+    it("Calls handleSubmit when the 'Apply' button is clicked", async () => {
         const handleSubmitSpy = jest.fn();
 
         const { getByText } = render(
@@ -22,7 +22,7 @@ describe("<EnhancedInventoryFilter />", () => {
         });
     });
 
-    it("Calls handleResetSpy when the 'Clear all' button is clicked", async () => {
+    it("Calls handleReset when the 'Clear all' button is clicked", async () => {
         const handleResetSpy = jest.fn();
 
         const { getByText } = render(
@@ -62,10 +62,10 @@ describe("<EnhancedInventoryFilter />", () => {
         expect(getByText("Categories")).toBeInTheDocument();
     });
 
-    it("Submits the form, the clears it, and recieves the expected values", async () => {
+    it("Submits the form, then clears it, and receives the expected values", async () => {
         const handleSubmitSpy = jest.fn();
         const handleResetSpy = jest.fn();
-        let orderBy = "A-Z";
+        let orderBy = "name";
         let inStock = true;
         let inventoryCategories = ["MCU"];
 
@@ -98,7 +98,7 @@ describe("<EnhancedInventoryFilter />", () => {
             });
         });
 
-        orderBy = "Default";
+        orderBy = "";
         inStock = false;
         inventoryCategories = [];
 
@@ -114,21 +114,31 @@ describe("<EnhancedInventoryFilter />", () => {
         });
     });
 
-    it("Looks for loader on Apply button", () => {
-        const { getByTestId, queryByTestId } = render(
+    it("Displays a loading wheel on Apply button when loading", () => {
+        const { getByTestId, queryByTestId, getByText } = render(
             <EnhancedInventoryFilter isApplyLoading={true} isClearLoading={false} />
         );
 
+        const applyBtn = getByText("Apply");
+        const clearBtn = getByText("Clear all");
+
         expect(getByTestId("circularProgressApply")).toBeInTheDocument();
         expect(queryByTestId("circularProgressClear")).not.toBeInTheDocument();
+        expect(applyBtn.closest("button")).toBeDisabled();
+        expect(clearBtn.closest("button")).toBeDisabled();
     });
 
-    it("Looks for loader on Clear all button", () => {
-        const { getByTestId, queryByTestId } = render(
+    it("Displays a loading wheel on Clear all button when loading", () => {
+        const { getByTestId, queryByTestId, getByText } = render(
             <EnhancedInventoryFilter isApplyLoading={false} isClearLoading={true} />
         );
 
+        const applyBtn = getByText("Apply");
+        const clearBtn = getByText("Clear all");
+
         expect(queryByTestId("circularProgressApply")).not.toBeInTheDocument();
         expect(getByTestId("circularProgressClear")).toBeInTheDocument();
+        expect(applyBtn.closest("button")).toBeDisabled();
+        expect(clearBtn.closest("button")).toBeDisabled();
     });
 });
