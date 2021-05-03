@@ -34,11 +34,11 @@ jobs:
           DEBUG: 0
         run: python manage.py test --settings=hackathon_site.settings.ci
 
-  event-checks:
+  template-checks:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: hackathon_site/event
+        working-directory: hackathon_site
 
     steps:
       - uses: actions/checkout@v2
@@ -52,7 +52,7 @@ jobs:
       - name: Install dependencies
         run: yarn install
       - name: Formatting check
-        run: yarn prettier --check 'static/**/*.(scss|js)'
+        run: yarn prettier-check '*/static/**/*.(scss|js)'
 
   dashboard-checks:
     runs-on: ubuntu-latest
