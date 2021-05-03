@@ -52,7 +52,7 @@ jobs:
       - name: Install dependencies
         run: yarn install
       - name: Formatting check
-        run: yarn prettier-check '*/static/**/*.(scss|js)'
+        run: yarn run prettier-check
 
   dashboard-checks:
     runs-on: ubuntu-latest
