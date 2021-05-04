@@ -35,10 +35,10 @@ const CheckboxCategory = ({ field, options }) => (
             <div className={styles.filterCategory} key={i}>
                 <FormControlLabel
                     name={field.name}
-                    value={item.name}
+                    value={item.id}
                     control={<Checkbox color="primary" />}
                     label={item.name}
-                    checked={field.value.includes(item.name)}
+                    checked={field.value.includes(item.id.toString())}
                 />
                 <Chip
                     size="small"
@@ -155,7 +155,11 @@ export const EnhancedInventoryFilter = ({
 }) => {
     const onSubmit = (formikValues) => {
         const { orderBy, inStock, inventoryCategories } = formikValues;
-        handleSubmit({ orderBy, inStock, inventoryCategories });
+        handleSubmit({
+            orderBy,
+            inStock,
+            inventoryCategories: inventoryCategories.map((id) => parseInt(id, 10)),
+        });
     };
     const onReset = () => {
         handleReset({ orderBy: "", inStock: false, inventoryCategories: [] });

@@ -67,7 +67,7 @@ describe("<EnhancedInventoryFilter />", () => {
         const handleResetSpy = jest.fn();
         let orderBy = "name";
         let inStock = true;
-        let inventoryCategories = ["MCU"];
+        let inventoryCategories = [1];
 
         const { findByLabelText, findByText } = render(
             <EnhancedInventoryFilter
