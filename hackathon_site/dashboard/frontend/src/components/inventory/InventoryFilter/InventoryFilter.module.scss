@@ -14,7 +14,6 @@
     @include responsive(md-up) {
         margin-top: 80px;
     }
-
     h2 {
         margin-bottom: 5px;
     }
@@ -33,7 +32,6 @@
             background-color: color(blueLight);
         }
     }
-
     &Btns {
         @include flexPosition;
         position: sticky;
@@ -48,6 +46,10 @@
             width: auto;
             margin-bottom: 0;
         }
+    }
+
+    &CircularProgress {
+        margin-left: 1em;
     }
 
     fieldset {
