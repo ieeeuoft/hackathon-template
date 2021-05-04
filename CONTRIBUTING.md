@@ -68,7 +68,7 @@ If you need to pull the latest changes from a pull request branch, run the `git 
 All python code submitted must be formatted with [Black](https://github.com/psf/black) using default settings for consistency and sanity. Black is an opinionated superset of PEP-8 that may do things you don't like, but these are necessary tradeoffs to have clean, readable, and consistent code.
 
 ### JavaScript and SCSS
-JavaScript and SCSS files must be formatted with [Prettier](https://prettier.io/), using the settings defined in our package.json files. There are two of these: One for the [react portion of the site](https://github.com/ieeeuoft/hackathon-template/blob/develop/hackathon_site/dashboard/frontend/package.json), and one for [files used in Jinja templates](https://github.com/ieeeuoft/hackathon-template/blob/develop/hackathon_site/event/package.json). In either case, you can run `yarn install` followed by `yarn prettier --write **/*.(js|scss)` to format everything in the current directory (that syntax may not work on Windows, if so run the command separately for `js` and `scss` extensions).
+JavaScript and SCSS files must be formatted with [Prettier](https://prettier.io/), using the settings defined in our package.json files. There are two of these: One for the [react portion of the site](https://github.com/ieeeuoft/hackathon-template/blob/develop/hackathon_site/dashboard/frontend/package.json), and one for [files used in Jinja templates](https://github.com/ieeeuoft/hackathon-template/blob/develop/hackathon_site/package.json). In both cases, first run `yarn install` to install the necessary packages. For the React side, you can then run `yarn prettier --write **/*.(js|scss)` to format everything in the current directory (that syntax may not work on Windows, if so run the command separately for `js` and `scss` extensions). For files used in Jinja templates, run `yarn prettier` from the root `hackathon_site` project folder.
 
 ### Jinja2 Templates
 Unfortunately, there is no formatter for Jinja2 templates that we know of. If you write or know of one, please let us know! In the meantime, exercise sensible formatting when modifying Jinja templates. We may ask you to change the formatting if it is inconsistent with the rest of the file.
@@ -78,7 +78,7 @@ The first thing to do is make sure you can run the project locally. Follow the [
 
 The first time you launch the Django development server, the site will probably have a pink nav bar at the top. We use SCSS for our stylesheets, which must first be compiled to CSS. To do that, run the following:
 ```bash
-$ cd hackathon_site/event
+$ cd hackathon_site
 $ yarn install
 $ yarn run scss
 ```

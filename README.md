@@ -187,7 +187,7 @@ Static files are placed within each app, in a folder named `static/<app_name>/` 
 To compile the SCSS automatically when you save, run following task running while you work:
 
 ```bash
-$ cd hackathon_site/event
+$ cd hackathon_site
 $ yarn run scss-watch
 ```
 To compile all SCSS files at once, run:

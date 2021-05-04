@@ -1,0 +1,20 @@
+{
+  "name": "event",
+  "version": "1.0.0",
+  "license": "MIT",
+  "devDependencies": {
+    "prettier": "^2.0.5",
+    "sass": "^1.32.12"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "scss": "sass event/static/event/styles/scss:event/static/event/styles/css",
+    "scss-watch": "sass --watch event/static/event/styles/scss:event/static/event/styles/css",
+    "prettier": "prettier --write */static/**/*.js */static/**/*.scss",
+    "prettier-check": "prettier --check */static/**/*.js */static/**/*.scss"
+  },
+  "prettier": {
+    "printWidth": 88,
+    "tabWidth": 4
+  }
+}
