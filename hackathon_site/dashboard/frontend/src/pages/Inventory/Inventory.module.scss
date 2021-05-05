@@ -3,9 +3,10 @@
 
 .inventory {
     display: flex;
+    flex-direction: column;
 
     &Body {
-        flex-grow: 1;
+        display: flex;
 
         &Toolbar {
             @include flexPosition($jusCon: flex-end);
@@ -32,8 +33,14 @@
             &Refresh {
                 @include flexPosition;
             }
+        }
 
-            @include responsive(sm-down) {
+        &Right {
+            margin-left: 25px;
+        }
+
+        @include responsive(sm-down) {
+            &Toolbar {
                 flex-direction: column;
                 margin-bottom: 5px;
 
@@ -47,6 +54,22 @@
 
                 &Divider {
                     display: none;
+                }
+
+                &Refresh {
+                    margin-left: 0;
+                }
+            }
+        }
+
+        @include responsive(md-down) {
+            &Right {
+                margin-left: 0;
+            }
+
+            &Toolbar {
+                &Refresh {
+                    margin-left: 20px;
                 }
             }
         }
