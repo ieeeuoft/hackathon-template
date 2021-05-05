@@ -108,7 +108,7 @@ class DashboardView(LoginRequiredMixin, FormView):
             )
             context["rsvp_deadline"] = (
                 review.decision_sent_date + timedelta(days=settings.RSVP_DAYS)
-            ).strftime("%b %d %Y")
+            ).strftime("%B %-d %Y")
         else:
             context["review"] = None
 
