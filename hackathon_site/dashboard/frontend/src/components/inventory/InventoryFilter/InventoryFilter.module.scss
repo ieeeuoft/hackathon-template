@@ -3,7 +3,7 @@
 
 .filter {
     height: 100%;
-    @include flexPosition;
+    display: flex;
     flex-direction: column;
 
     span {
@@ -41,6 +41,7 @@
 
     @include responsive(md-down) {
         width: 100%;
+        justify-content: space-between;
 
         &Paper {
             box-shadow: none;
