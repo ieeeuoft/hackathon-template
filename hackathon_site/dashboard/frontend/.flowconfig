@@ -5,15 +5,11 @@
 .*/node_modules/.*
 .*/build/.*
 .*\.git/.*
-<PROJECT_ROOT>/.git/.*
-<PROJECT_ROOT>/node_modules/.*
 
 [include]
-./src/.*
 
 [libs]
 flow-typed
-./node_modules/.bin/flow-typed
 
 [lints]
 all=error
@@ -21,5 +17,8 @@ all=error
 [options]
 emoji=true
 exact_by_default=true
+# Below is a hack so Flow can work on Mac M1
+# Issue still not resolved: https://github.com/facebook/flow/issues/8538
+sharedmemory.heap_size=3221225472 
 
 [strict]
