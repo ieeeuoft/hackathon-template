@@ -57,11 +57,11 @@
                         {% if not rsvp_passed %}
                             {% if application.rsvp is none %}
                                 <p>To confirm your attendance at {{ hackathon_name }}, please RSVP using the accept or decline buttons below.</p> <br />
-                                <p>RSVP by <b>{{ rsvp_deadline }} (11:59PM EST)</b>, otherwise your spot will be given to other applicants.
-                                    Alternatively you can decline the offer. You can change your response at any time before <b>{{ rsvp_deadline }} (11:59PM EST)</b>.
+                                <p>RSVP by <b>{{ rsvp_deadline }}</b>, otherwise your spot will be given to other applicants.
+                                    Alternatively you can decline the offer. You can change your response at any time before <b>{{ rsvp_deadline }}</b>.
                                 </p> <br />
                             {% else %}
-                                <p>You can change your response at any time before <b>{{ rsvp_deadline }} (11:59PM EST)</b>.</p> <br />
+                                <p>You can change your response at any time before <b>{{ rsvp_deadline }}</b>.</p> <br />
                             {% endif %}
                         {% endif %}
 

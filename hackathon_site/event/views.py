@@ -1,4 +1,6 @@
 from datetime import datetime, timedelta
+
+import pytz
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
 from django.shortcuts import redirect
@@ -106,9 +108,13 @@ class DashboardView(LoginRequiredMixin, FormView):
             ] = _now().date() > review.decision_sent_date + timedelta(
                 days=settings.RSVP_DAYS
             )
-            context["rsvp_deadline"] = (
-                review.decision_sent_date + timedelta(days=settings.RSVP_DAYS)
-            ).strftime("%B %-d, %Y")
+            rsvp_timezone = pytz.timezone(str(settings.TZ_INFO))
+            rsvp_datetime = datetime.fromordinal(
+                review.decision_sent_date.toordinal()
+            ) + timedelta(days=settings.RSVP_DAYS, hours=23, minutes=59)
+            context["rsvp_deadline"] = rsvp_timezone.localize(rsvp_datetime).strftime(
+                "%B %-d, %Y, %-I:%M %p %Z"
+            )
         else:
             context["review"] = None
 
