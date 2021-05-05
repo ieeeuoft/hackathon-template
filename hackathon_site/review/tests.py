@@ -219,7 +219,7 @@ class MailerTestCase(SetupUserMixin, TestCase):
 
         rsvp_deadline = (
             datetime.now().date() + timedelta(days=settings.RSVP_DAYS)
-        ).strftime("%b %d %Y")
+        ).strftime("%B %-d %Y")
 
         self.assertIn(link, mail.outbox[0].body)
         self.assertIn(rsvp_deadline, mail.outbox[0].body)
