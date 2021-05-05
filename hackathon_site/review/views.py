@@ -63,7 +63,7 @@ class MailerView(UserPassesTestMixin, FormView):
                     "request": self.request,
                     "rsvp_deadline": (
                         current_date + timedelta(days=settings.RSVP_DAYS)
-                    ).strftime("%b %d %Y"),
+                    ).strftime("%B %-d %Y"),
                 }
 
                 review.application.user.email_user(
