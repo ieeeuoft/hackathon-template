@@ -90,6 +90,7 @@ const Inventory = () => {
                                     label="Search items"
                                     variant="outlined"
                                     size="small"
+                                    type="search"
                                 />
                                 <IconButton
                                     color="primary"

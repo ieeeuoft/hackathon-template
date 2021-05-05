@@ -15,7 +15,6 @@
     "formik": "^2.1.4",
     "history": "^4.10.1",
     "lint-staged": "^10.2.2",
-    "node-sass": "^4.14.0",
     "notistack": "^0.9.17",
     "prettier": "^2.0.5",
     "react": "^16.13.1",
@@ -27,6 +26,7 @@
     "redux": "^4.0.5",
     "redux-mock-store": "^1.5.4",
     "redux-thunk": "^2.3.0",
+    "sass": "^1.32.12",
     "yup": "^0.29.1"
   },
   "scripts": {
