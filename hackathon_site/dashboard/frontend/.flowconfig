@@ -1,17 +1,25 @@
+[version]
+0.150.0
+
 [ignore]
 .*/node_modules/.*
 .*/build/.*
+.*\.git/.*
+<PROJECT_ROOT>/.git/.*
+<PROJECT_ROOT>/node_modules/.*
 
 [include]
+./src/.*
 
 [libs]
 flow-typed
+./node_modules/.bin/flow-typed
 
 [lints]
 all=error
 
 [options]
-all=true
-sharedmemory.hash_table_pow=21
+emoji=true
+exact_by_default=true
 
 [strict]
