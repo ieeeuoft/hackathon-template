@@ -1,0 +1,17 @@
+[ignore]
+.*/node_modules/.*
+.*/build/.*
+
+[include]
+
+[libs]
+flow-typed
+
+[lints]
+all=error
+
+[options]
+all=true
+sharedmemory.hash_table_pow=21
+
+[strict]

@@ -33,7 +33,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jest-environment-jsdom-sixteen",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "flow": "flow",
+    "in": "yarn install --frozen-lockfile"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -55,6 +57,11 @@
     "tabWidth": 4
   },
   "devDependencies": {
+    "@babel/cli": "^7.13.16",
+    "@babel/core": "^7.14.0",
+    "@babel/preset-flow": "^7.13.13",
+    "flow-bin": "^0.150.0",
+    "flow-typed": "^3.3.1",
     "husky": "^4.2.5",
     "jest-environment-jsdom-sixteen": "^1.0.3"
   },
