@@ -1,0 +1,9 @@
+<div class="file-field input-field">
+  <div class="btn">
+    <span>Upload {{ widget.name.title() }}</span>
+    <input name="{{ widget.name }}" type="file" accept=".pdf" {% include "django/forms/widgets/attrs.html" %}>
+  </div>
+  <div class="file-path-wrapper">
+    <input class="file-path validate" type="text">
+  </div>
+</div>

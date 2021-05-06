@@ -22,6 +22,7 @@ const CartSummary = ({ cartQuantity }) => (
             onClick={() => {
                 alert("this would submit the order and redirect to dashboard");
             }}
+            disableElevation
         >
             Submit order
         </Button>

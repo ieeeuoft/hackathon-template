@@ -9,7 +9,7 @@ exports[`DashCard render 1`] = `
     any string
   </h2>
   <div
-    class="MuiPaper-root paper MuiPaper-elevation3"
+    class="MuiPaper-root paper MuiPaper-elevation2"
   >
     <a
       class="MuiTypography-root MuiLink-root MuiLink-underlineNone MuiTypography-colorInherit"

@@ -1,0 +1,144 @@
+{% extends "event/form_base.html" %}
+
+{% block head_extends %}
+<!-- Select2 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="{{ static('event/styles/css/select2.css') }}" />
+
+<style>
+
+</style>
+{% endblock %}
+
+{% block form_title %}Application{% endblock %}
+{% block form_attrs %}enctype="multipart/form-data"{% endblock %}
+
+{% block nav_links %}
+<li><a href="{{ url("event:dashboard") }}">Dashboard</a></li>
+<li><a href="{{ url("event:change_password") }}">Change Password</a></li>
+{% endblock %}
+
+{% set form_action=url("registration:application") %}
+
+{% block form_description %}
+    {% if form.non_field_errors() %}
+        <div class="row col s12">
+        {% for error in form.non_field_errors() %}
+            <span class="formError">{{ error }}</span>
+        {% endfor %}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block form_inputs %}
+    {% for field in form %}
+        {% if field.field.widget.__class__.__name__ == "Textarea" %}
+            {{ render_field(field, size="s12", show_help_text_as_label=True) }}
+        {% elif field.field.widget.input_type == "select" %}
+            {{ render_field(field, size="s12 select2-wrapper") }}
+        {% elif field.field.widget.input_type == "file" %}
+            {{ render_field(field, size="s12", show_label=False) }}
+        {% elif field.field.widget.input_type == "checkbox" %}
+            {{ render_checkbox_field(field, size="s12") }}
+        {% else %}
+            {{ render_field(field, size="s12") }}
+        {% endif %}
+    {% endfor %}
+{% endblock %}
+
+{% block form_button %}
+<div class="input-field col s12 center" style="margin-bottom: 0">
+    <p>You cannot edit this afterwards!</p>
+    <br />
+    <button type="submit" class="btn-small waves-effect waves-light colorBtn">Submit</button>
+</div>
+{% endblock %}
+
+{% block form_bottom %}
+<br />
+<div class="center col s12">
+    Something wrong? <a href="mailto:{{ contact_email }}" class="primaryText hoverLink">Contact us</a>.
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ static('event/js/application.js') }}"></script>
+<!-- Select2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    const selects = $("select");
+    selects.not(".select2-school-select").select2();
+    $(".select2-school-select").select2({tags: true});  // Allow custom options for school
+
+    // Properly style any pre-filled selects
+    $.each(selects, (i, e) => {
+        if (e.value) {
+            $(e).siblings("label").addClass("label-active");
+        }
+    });
+
+    selects.on("select2:opening", function () {
+        $(this).siblings("label").addClass("label-active");
+    });
+
+    selects.on("select2:closing", function (e) {
+        if (!this.value) {
+            $(this).siblings("label").removeClass("label-active");
+        }
+
+        // steal focus during close - only capture once and stop propogation
+        // https://stackoverflow.com/a/49261426/3882202
+        $(e.target).data("select2").$selection.one("focus focusin", function (e) {
+            e.stopPropagation();
+        });
+    });
+
+    // on first focus (bubbles up to document), open the menu
+    // https://stackoverflow.com/a/49261426/3882202
+    $(document).on('focus', '.select2-selection.select2-selection--single', function () {
+      $(this).closest(".select2-container").siblings('select:enabled').select2('open');
+    });
+});
+
+$.get("https://raw.githubusercontent.com/MLH/mlh-policies/master/schools.csv", (data) => {
+    /* Populate the school list with MLH's list of recognized schools.
+    *  Because `tags: true` is set, applicants can enter a custom option as well. */
+    let schools = data.split("\n").slice(1);
+    let select2Data = [];
+
+    for (let school of schools) {
+        school = school.trim().replace(/["]/g, "");
+        select2Data.push({
+           id: school,
+           text: school
+        });
+    }
+
+    let select2Elem = $(".select2-school-select");
+
+    select2Elem.select2({
+        data: select2Data,
+        tags: true,
+    });
+
+    {% if form.school.value() is not none and form.school.value() %}
+    /* Since school is actually a text field rendered with a select
+    *  widget, we can't easily set previously selected values from the widget.
+    *  Instead, we can force the option to be selected via JS, adding it if
+    *  necessary. */
+    const selectedSchool = "{{ form.school.value() }}";
+
+    if (select2Elem.find(`option[value='${selectedSchool}']`).length) {
+        select2Elem.val(selectedSchool).trigger("change");
+    } else {
+        const newOption = new Option(selectedSchool, selectedSchool, true, true);
+        select2Elem.append(newOption).trigger("change");
+    }
+
+    select2Elem.siblings("label").addClass("label-active");
+    {% endif %}
+});
+</script>
+{% endblock %}

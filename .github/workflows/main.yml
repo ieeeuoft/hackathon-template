@@ -1,7 +1,7 @@
 name: CI/CD
 
 on:
-  push:
+  pull_request_target:
     branches: '**'
 
 jobs:
@@ -13,6 +13,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+        with:
+          ref: ${{github.event.pull_request.head.ref}}
+          repository: ${{github.event.pull_request.head.repo.full_name}}
       - name: Set up Python 3.8
         uses: actions/setup-python@v1
         with:
@@ -31,14 +34,17 @@ jobs:
           DEBUG: 0
         run: python manage.py test --settings=hackathon_site.settings.ci
 
-  event-checks:
+  template-checks:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: hackathon_site/event
+        working-directory: hackathon_site
 
     steps:
       - uses: actions/checkout@v2
+        with:
+          ref: ${{github.event.pull_request.head.ref}}
+          repository: ${{github.event.pull_request.head.repo.full_name}}
       - name: Use Node.js 12.x
         uses: actions/setup-node@v1
         with:
@@ -46,7 +52,7 @@ jobs:
       - name: Install dependencies
         run: yarn install
       - name: Formatting check
-        run: yarn prettier --check 'static/**/*.(scss|js)'
+        run: yarn run prettier-check
 
   dashboard-checks:
     runs-on: ubuntu-latest
@@ -56,6 +62,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+        with:
+          ref: ${{github.event.pull_request.head.ref}}
+          repository: ${{github.event.pull_request.head.repo.full_name}}
       - name: Use Node.js 12.x
         uses: actions/setup-node@v1
         with:

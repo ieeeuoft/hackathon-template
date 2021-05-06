@@ -14,13 +14,9 @@ import RefreshIcon from "@material-ui/icons/Refresh";
 import SearchIcon from "@material-ui/icons/Search";
 import FilterListIcon from "@material-ui/icons/FilterList";
 import Grid from "@material-ui/core/Grid";
-import InventoryFilter from "components/inventory/InventoryFilter/InventoryFilter";
+import EnhancedInventoryFilter from "components/inventory/InventoryFilter/InventoryFilter";
 import Item from "components/inventory/Item/Item";
-import { inventoryCategories, inventoryItems } from "testing/mockData";
-
-const applyFilter = () => alert("Applies the filter");
-
-const removeFilter = () => alert("Removes all filters and resets form");
+import { inventoryItems } from "testing/mockData";
 
 const Inventory = () => {
     const [mobileOpen, setMobileOpen] = React.useState(false);
@@ -30,6 +26,12 @@ const Inventory = () => {
     };
 
     const mobileWidth = useMediaQuery(useTheme().breakpoints.up("md"));
+
+    const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+    const onSubmitTemp = async ({ orderBy, inStock, inventoryCategories }) => {
+        await sleep(300);
+        alert(JSON.stringify({ orderBy, inStock, inventoryCategories }, null, 2));
+    };
 
     return (
         <>
@@ -42,10 +44,11 @@ const Inventory = () => {
                     open={mobileOpen}
                     onClose={toggleFilter}
                 >
-                    <InventoryFilter
-                        categories={inventoryCategories}
-                        applyFilter={applyFilter}
-                        removeFilter={removeFilter}
+                    <EnhancedInventoryFilter
+                        handleSubmit={onSubmitTemp}
+                        handleReset={onSubmitTemp}
+                        isApplyLoading={false}
+                        isClearLoading={false}
                     />
                 </Drawer>
                 <div className={styles.inventoryBody}>
@@ -106,6 +109,7 @@ const Inventory = () => {
                                 sm={4}
                                 md={3}
                                 lg={2}
+                                xl={1}
                                 className={styles.Item}
                                 key={item.id}
                                 item
@@ -128,6 +132,7 @@ const Inventory = () => {
                         color="primary"
                         size="large"
                         fullWidth={true}
+                        disableElevation
                     >
                         Load more
                     </Button>

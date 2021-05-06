@@ -1,0 +1,23 @@
+{% extends "event/base.html" %}
+
+{% block nav_logout_login_links %}{% endblock %}
+
+{% block body %}
+<div class="backgroundColorFormBase">
+    <div class="container">
+        <div class="section">
+            <div class="loginDiv z-depth-3 row">
+                <div class="row col s12 flexColCenter">
+                    <h1 class="formH1">Activate your account</h1>
+                    <p>You must <strong>verify your email</strong> before you log in. Look for an email (maybe in the junk folder) from <a href="mailto:{{ from_email }}" class="hoverLink primaryText">{{ from_email }}</a> to activate your account in order to continue with your application.</p>
+                    <br />
+                    <div class="col s12 loginLink">
+                        <i class="material-icons primaryText">exit_to_app</i>
+                        <a href="{{ url("event:login") }}" class="primaryText hoverLink">Back to Login</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends "event/base.html" %}
+
+{% block body %}
+<div class="backgroundColorFormBase">
+    <div class="container">
+        <div class="section">
+            <div class="loginDiv z-depth-3 row">
+                <div class="row col s12 flexColCenter">
+                    {% if activation_error["code"] == "already_activated" %}
+                        <h1 class="formH1">Account already activated</h1>
+                        <p>You're good to go! Please <a href="{{ url("event:login") }}">log in</a> to continue.</p>
+                    {% elif activation_error["code"] == "expired" %}
+                        <h1 class="formH1">Activation link has expired</h1>
+                        <p>The activation link you have used has expired. Please <a href="mailto:{{ contact_email }}" class="hoverLink primaryText">contact us</a> for help.</p>
+                    {% elif activation_error["code"] == "invalid_key" or activation_error["code"] == "bad_username" %}
+                        <h1 class="formH1">Activation link is invalid</h1>
+                        <p>The activation link you have used is invalid. Please <a href="mailto:{{ contact_email }}" class="hoverLink primaryText">contact us</a> for help.</p>
+                    {% else %}
+                        <h1 class="formH1">Activation failed</h1>
+                        <p>We were unable to activate your account. Please <a href="mailto:{{ contact_email }}" class="hoverLink primaryText">contact us</a> for help.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

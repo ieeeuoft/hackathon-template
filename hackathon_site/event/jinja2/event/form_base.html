@@ -1,0 +1,83 @@
+{% extends "event/base.html" %}
+
+{% macro render_field(field, show_help_text=False, show_label=True, show_help_text_as_label=False, size="s12") %}
+    <div class="input-field row col {{ size }}">
+        {{ field }}
+        {% if show_label %}
+            {% if show_help_text_as_label %}
+                <label for="{{ field.id_for_label }}">{{ field.help_text }}</label>
+            {% else %}
+                {{ field.label_tag() }}
+            {% endif %}
+        {% endif %}
+        {% if show_help_text %}
+            <span class="helper-text">{{ field.help_text|safe }}</span>
+        {% endif %}
+        {% if field.errors %}
+            <span class="formFieldError col s12">
+            {% for error in field.errors %}
+                {{ error }}
+                <br />
+            {% endfor %}
+            </span>
+        {% endif %}
+    </div>
+{% endmacro %}
+
+{% macro render_checkbox_field(field, size="s12") %}
+    <div class="row col {{ size }}" style="padding-top: 0.5em; padding-bottom: 0.5em;">
+        <label>
+            <input
+                type="checkbox"
+                class="filled-in"
+                {% if field.value() %}checked="checked" {% endif %}
+                name="{{ field.name }}"
+                id="{{ field.id_for_label }}">
+            <span>{{ field.help_text|safe }}</span>
+        </label>
+        {% if field.errors %}
+            <span class="formFieldError col s12">
+            {% for error in field.errors %}
+                {{ error }}
+            {% endfor %}
+            </span>
+        {% endif %}
+    </div>
+{% endmacro %}
+
+{% block body %}
+<div class="backgroundColorFormBase">
+    <div class="container">
+        <div class="section">
+            <div class="loginDiv z-depth-3 row">
+                <div class="row col s12 flexColCenter rowMarginPadding {% if self.form_img() %}l7 m8{% endif %}">
+                    <h1 class="formH1 col s12">{% block form_title %}{% endblock %}</h1>
+                    <div class="row col s12 formPadding" style="width: auto; margin-bottom: 0;">
+                        {% block form_description %}{% endblock %}
+                    </div>
+                    
+                    <form class="col s12 flexColCenter formPadding"
+                        {% if form_action %} action="{{ form_action }}" {% endif %}
+                        method="{{ form_method if form_method else "post" }}"
+                        {% block form_attrs %}{% endblock %}
+                    >
+                        {{ csrf_input }}
+                        <div class="row" style="width: 100%;">
+                            {% block form_inputs %}{% endblock %}
+                        </div>
+                        
+                        {% block form_button %}{% endblock %}
+                    </form>
+                    <br />
+                    {% block form_bottom %}{% endblock %}
+                </div>
+                {% if self.form_img() %}
+                <div class="col l5 m4 s12 landingImg">
+                    {% block form_img %}{% endblock %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

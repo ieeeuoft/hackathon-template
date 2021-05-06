@@ -9,7 +9,7 @@ exports[`TeamCard render 1`] = `
     Team PAS3NLQ3
   </h2>
   <div
-    class="MuiPaper-root paper MuiPaper-elevation3"
+    class="MuiPaper-root paper MuiPaper-elevation2"
   >
     <div
       class="MuiContainer-root name MuiContainer-maxWidthLg"

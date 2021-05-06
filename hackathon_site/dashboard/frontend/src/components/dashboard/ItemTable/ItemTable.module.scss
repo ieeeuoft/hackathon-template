@@ -2,7 +2,7 @@
 @import "./../../../assets/abstracts/variables";
 
 .table {
-    min-width: 700;
+    min-width: 700px;
     &Container {
         margin-top: 25px;
         svg {
@@ -59,36 +59,41 @@
     }
 }
 
+.noWrap {
+    white-space: nowrap;
+}
 .width {
+    &1 {
+        width: calc(100% / 12);
+    }
+    &2 {
+        width: calc(100% / 6);
+    }
+    &3 {
+        width: calc(100% / 4);
+    }
+    &4 {
+        width: calc(100% / 3);
+    }
+    &6 {
+        width: calc(100% / 2);
+    }
+    &12 {
+        width: 100%;
+    }
+    &Buffer {
+        padding-right: 300px !important;
+    }
     &Fixed {
         width: 80px;
     }
-    &Half {
-        width: 50%;
-    }
-    &Quarter {
-        width: 15%;
-    }
-    &Buffer {
-        width: 100%;
-    }
-    &Button {
-        width: 30%;
-    }
     @include responsive(md-down) {
-        &Half {
-            width: 50%;
-            min-width: 180px;
-        }
-        &Quarter {
-            width: 25%;
+        &6 {
+            min-width: 200px;
         }
         &Buffer {
             width: 0px;
             padding: 0px !important;
-        }
-        &Button {
-            width: 10%;
         }
     }
 }

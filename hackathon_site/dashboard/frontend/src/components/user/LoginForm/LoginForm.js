@@ -5,7 +5,6 @@ import Alert from "@material-ui/lab/Alert";
 import Button from "@material-ui/core/Button";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import TextField from "@material-ui/core/TextField";
-import Typography from "@material-ui/core/Typography";
 import * as Yup from "yup";
 
 import styles from "./LoginForm.module.scss";
@@ -91,8 +90,9 @@ export const LoginForm = ({
                     onClick={handleSubmit}
                     variant="contained"
                     disabled={isLoading}
+                    disableElevation
                 >
-                    <Typography>Log In</Typography>
+                    Log In
                     {isLoading && (
                         <CircularProgress
                             className={styles.formCircularProgress}

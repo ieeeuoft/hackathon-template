@@ -1,18 +1,26 @@
 $colors: (
-    font: #0d061a,
+    font: #222,
     white: #fff,
-    primary: #34196c,
-    secondary: #ffcb17,
-    light: #dad1e9,
-    dark: #271648,
+    primary: #1976d2,
+    secondary: #ffa000,
+    light: #b7dbff,
+    dark: #002f5e,
+    backgroundColor: #ddeeff,
+    error: #b00020,
+    success: #0b890b,
+    primaryOnHover: #08529c,
+    secondaryOnHover: #ce8100,
+    errorOnHover: #870000,
+    successOnHover: #1d7521,
 );
 
 $fonts: (
-    body: "Roboto",
+    body: "Nunito",
+    header: "Roboto",
 );
 
 $font-sizes: (
-    xl: 45px,
+    xl: 20px,
     lg: 18px,
     md: 16px,
     sm: 14px,

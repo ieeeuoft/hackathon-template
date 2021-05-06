@@ -1,0 +1,79 @@
+{% extends "event/form_base.html" %}
+
+{% block form_title %}Login{% endblock %}
+
+{% block nav_logout_login_links %}{% endblock %}
+
+{% block form_img %}<img src="{{ static('event/images/login.svg') }}" alt="Login image"/>{% endblock %}
+
+{% set form_action=url("event:login") %}
+
+{% if next %}
+    {% set form_action = form_action + "?next=" + next %}
+{% endif %}
+
+{% block form_inputs %}
+<div class="input-field row col s12" style="margin-bottom: 0;">
+    <input
+        id="{{ form.username.id_for_label }}"
+        name="username"
+        type="email"
+        class="{% if form.username.errors %}invalid{% endif %}"
+        value="{{ form.username.value() or ""}}"
+    >
+    <label for="{{ form.username.id_for_label }}">Email</label>
+    {% if form.username.errors %}
+        <span class="formFieldError col s12">
+        {% for error in form.username.errors %}
+            {{ error }}
+            <br />
+        {% endfor %}
+        </span>
+    {% endif %}
+</div>
+<div class="input-field row col s12">
+    <input
+        id="{{ form.password.id_for_label }}"
+        name="password"
+        type="password"
+        class="{% if form.password.errors %}invalid{% endif %}"
+    >
+    <label for="{{ form.password.id_for_label }}">Password</label>
+    {% if form.password.errors %}
+        <span class="formFieldError col s12">
+        {% for error in form.password.errors %}
+            {{ error }}
+            <br />
+        {% endfor %}
+        </span>
+    {% endif %}
+</div>
+{% if form.non_field_errors() %}
+    {% for error in form.non_field_errors() %}
+        <div class="formFieldError col s12">
+            {{ error }}
+        </div>
+        
+    {% endfor %}
+{% endif %}
+{% endblock %}
+
+{% block form_button %}
+<button type="submit" id="login-submit" class="btn-small waves-effect waves-light colorBtn">Login</button>
+{% endblock %}
+
+{% block form_bottom %}
+<div class="row col s12 rowMarginPadding">
+    <div class="col m6 s12 loginLink">
+        <i class="material-icons primaryText">person_add</i>
+        <a href="{{ url("registration:signup") }}" class="primaryText hoverLink">Create Account</a>
+    </div>
+    <div class="col m6 s12 loginLink">
+        <i class="material-icons primaryText">lock_open</i>
+        <a href="{{ url("event:reset_password") }}" class="primaryText hoverLink">Forgot Password</a>
+    </div>
+</div>
+<div class="col s12 center">
+    Something wrong? <a href="mailto:{{ contact_email }}" class="primaryText hoverLink">Contact us</a>.
+</div>
+{% endblock %}

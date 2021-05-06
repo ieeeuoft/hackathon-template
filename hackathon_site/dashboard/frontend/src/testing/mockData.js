@@ -127,40 +127,41 @@ export const members = [
 export const teamCode = "PAS3NLQ3";
 
 // Navbar
-export const cartQuantity = 0;
+export const cartQuantity = 5;
 export const userEmail = "graham@email.com";
 
 // Product Overview
 export const productInformation = {
+    id: 1,
     name: "Arduino",
-    type: "red",
     total: 30,
-    quantityAvailable: 0,
+    quantityAvailable: 19,
     img: "https://i.imgur.com/IO6e5a6.jpg",
     category: ["MCU", "FPGA"],
     manufacturer: "Canakit",
     model_num: "Model 3B+",
-    datasheet: "link",
-    notes: "- For micropython ask for image \n - randomnerdtutorials.com",
+    datasheet: "https://www.facebook.com",
+    notes: "- For micropython ask for image\n- randomnerdtutorials.com",
     constraints: ["- Max 1 of this item", "- Max 3 microcontroller labelled red"],
-    quantity: 3,
+    constraintMax: 3, // Can also be null
 };
 
 export const addCartTest = () => {
     alert("Added to Cart");
 };
+
 // Inventory
 export const inventoryCategories = [
-    { name: "MCU", qty: 12 },
-    { name: "MCU_limit_3", qty: 6 },
-    { name: "FPGA", qty: 9 },
-    { name: "Sensors", qty: 21 },
-    { name: "Sensors_limit_2", qty: 3 },
-    { name: "Peripherals", qty: 389 },
-    { name: "1080p_cameras", qty: 4 },
-    { name: "Grove", qty: 22 },
-    { name: "Grove_style_boards", qty: 12 },
-    { name: "Grove_style_modules", qty: 10 },
+    { id: 1, name: "MCU", qty: 12 },
+    { id: 2, name: "MCU_limit_3", qty: 6 },
+    { id: 3, name: "FPGA", qty: 9 },
+    { id: 4, name: "Sensors", qty: 21 },
+    { id: 5, name: "Sensors_limit_2", qty: 3 },
+    { id: 6, name: "Peripherals", qty: 389 },
+    { id: 7, name: "1080p_cameras", qty: 4 },
+    { id: 8, name: "Grove", qty: 22 },
+    { id: 9, name: "Grove_style_boards", qty: 12 },
+    { id: 10, name: "Grove_style_modules", qty: 10 },
 ];
 
 // User details
@@ -294,5 +295,32 @@ export const inventoryItems = [
         title: "Some Hardware 15",
         total: 3,
         currentStock: 0,
+    },
+];
+
+export const cartItems = [
+    {
+        id: 1,
+        image: "https://i.imgur.com/iUpI1hC.jpg",
+        title: "Arduino",
+        currentStock: 19,
+        checkedOutQuantity: 3,
+        isError: false,
+    },
+    {
+        id: 2,
+        image: "https://i.imgur.com/kOlrXto.jpg",
+        title: "Some Hardware 2",
+        currentStock: 0,
+        checkedOutQuantity: 1,
+        isError: false,
+    },
+    {
+        id: 3,
+        image: "https://i.imgur.com/IO6e5a6.jpg",
+        title: "Some Hardware 3",
+        currentStock: 12,
+        checkedOutQuantity: 2,
+        isError: false,
     },
 ];

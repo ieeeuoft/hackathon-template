@@ -1,6 +1,5 @@
 import React from "react";
 import Typography from "@material-ui/core/Typography";
-import Link from "@material-ui/core/Link";
 import Button from "@material-ui/core/Button";
 import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
@@ -9,6 +8,7 @@ import LaunchIcon from "@material-ui/icons/Launch";
 import InputLabel from "@material-ui/core/InputLabel";
 import Chip from "@material-ui/core/Chip";
 import Alert from "@material-ui/lab/Alert";
+import SideSheetRight from "components/general/SideSheetRight/SideSheetRight";
 
 import * as Yup from "yup";
 import { Formik } from "formik";
@@ -38,40 +38,52 @@ const createQuantityList = (number) => {
 };
 
 export const AddToCartForm = ({
-    availableQuantity,
+    quantityAvailable,
+    constraintMax,
     handleSubmit,
     handleChange,
     requestFailure,
     values: { quantity },
 }) => {
+    const dropdownNum = !constraintMax
+        ? quantityAvailable
+        : Math.min(quantityAvailable, constraintMax);
+
     return (
         <>
             {requestFailure && (
-                <Alert className={styles.alert} variant="filled" severity="error">
+                <Alert variant="filled" severity="error">
                     {requestFailure.message}
                 </Alert>
             )}
             <form className={styles.form} onSubmit={handleSubmit}>
                 <FormControl variant="outlined" className={styles.formControl}>
-                    <InputLabel>Qty</InputLabel>
+                    <InputLabel id="qtyLabel">Qty</InputLabel>
                     <Select
-                        value={quantity}
+                        value={dropdownNum === 0 ? "" : quantity}
                         onChange={handleChange}
                         label="Qty"
+                        labelId="qtyLabel"
                         name="quantity"
+                        disabled={dropdownNum === 0}
                     >
-                        {createQuantityList(availableQuantity)}
+                        {createQuantityList(dropdownNum)}
                     </Select>
                 </FormControl>
-                <Button
-                    variant="contained"
-                    className={styles.cartButton}
-                    type="submit"
-                    onClick={handleSubmit}
-                    disableElevation
-                >
-                    ADD TO CART
-                </Button>
+                <div className={styles.formButton}>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        fullWidth={true}
+                        size="large"
+                        type="submit"
+                        onClick={handleSubmit}
+                        disabled={dropdownNum === 0}
+                        disableElevation
+                    >
+                        Add to cart
+                    </Button>
+                </div>
             </form>
         </>
     );
@@ -80,7 +92,8 @@ export const AddToCartForm = ({
 export const EnhancedAddToCartForm = ({
     handleSubmit,
     requestFailure,
-    availableQuantity,
+    quantityAvailable,
+    constraintMax,
 }) => {
     const onSubmit = (formikValues) => {
         handleSubmit(formikValues.quantity);
@@ -96,7 +109,8 @@ export const EnhancedAddToCartForm = ({
         >
             {(formikProps) => (
                 <AddToCartForm
-                    availableQuantity={availableQuantity}
+                    quantityAvailable={quantityAvailable}
+                    constraintMax={constraintMax}
                     handleSubmit={formikProps.handleSubmit}
                     handleChange={formikProps.handleChange}
                     requestFailure={requestFailure}
@@ -115,78 +129,61 @@ const DetailInfoSection = ({
     constraints,
 }) => {
     return (
-        <div className={styles.detailInfoSection}>
-            <div className={styles.bodyinfo}>
-                <Typography variant="body2" className={styles.heading}>
-                    Constraints
-                </Typography>
-                {constraints.map((constraint, i) => (
-                    <Typography key={i} variant="body2">
-                        {constraint}
-                    </Typography>
-                ))}
-            </div>
-            <div className={styles.bodyinfo}>
-                <Typography variant="body2" className={styles.heading}>
-                    Manufacturer
-                </Typography>
-                <Typography>{manufacturer}</Typography>
-            </div>
-            <div className={styles.bodyinfo}>
-                <Typography variant="body2" className={styles.heading}>
-                    Model Number
-                </Typography>
-                <Typography>{model_num}</Typography>
-            </div>
-            <div className={styles.bodyinfo}>
-                <Typography variant="body2" className={styles.heading}>
-                    Datasheet
-                </Typography>
-                <Link
-                    href={datasheet}
-                    rel="noopener"
-                    color="inherit"
-                    underline="none"
-                    target="_blank"
-                    className={styles.bodyinfoDataSheet}
-                >
-                    <LaunchIcon />
-                    <Typography>Link</Typography>
-                </Link>
-            </div>
-            <div className={styles.bodyinfo}>
-                <Typography variant="body2" className={styles.heading}>
-                    Notes
-                </Typography>
-                <Typography variant="body2">{notes}</Typography>
-            </div>
-        </div>
+        <>
+            <Typography variant="body2" color="secondary" className={styles.heading}>
+                Constraints
+            </Typography>
+            {constraints.map((constraint, i) => (
+                <Typography key={i}>{constraint}</Typography>
+            ))}
+            <Typography variant="body2" className={styles.heading}>
+                Manufacturer
+            </Typography>
+            <Typography>{manufacturer}</Typography>
+            <Typography variant="body2" className={styles.heading}>
+                Model Number
+            </Typography>
+            <Typography>{model_num}</Typography>
+            <Typography variant="body2" className={styles.heading}>
+                Datasheet
+            </Typography>
+            <Button
+                href={datasheet}
+                rel="noopener"
+                target="_blank"
+                startIcon={<LaunchIcon />}
+            >
+                Link
+            </Button>
+            <Typography variant="body2" className={styles.heading}>
+                Notes
+            </Typography>
+            {notes.split("\n").map((note, i) => (
+                <Typography key={i}>{note}</Typography>
+            ))}
+        </>
     );
 };
 
 const MainSection = ({ name, total, quantityAvailable, categories, img }) => {
-    let availability;
-    if (quantityAvailable === 0) {
-        availability = (
-            <Typography className={styles.notAvailable}>OUT OF STOCK</Typography>
-        );
-    } else {
-        availability = (
+    const availability =
+        quantityAvailable === 0 ? (
+            <Typography color="secondary">OUT OF STOCK</Typography>
+        ) : (
             <Typography className={styles.quantityAvailable}>
                 {quantityAvailable} OF {total} IN STOCK
             </Typography>
         );
-    }
 
     return (
-        <div className={styles.mainsection}>
+        <div className={styles.mainSection}>
             <div>
-                <div className={styles.title}>
-                    <Typography variant="h2">{name}</Typography>
-                </div>
+                <Typography variant="h6">{name}</Typography>
                 {availability}
-                <div className={styles.category}>
-                    <Typography variant="h2">Category</Typography>
+                <Typography variant="body2" className={styles.heading}>
+                    Category
+                </Typography>
+                <div>
                     {categories.map((category, i) => (
                         <Chip
                             label={category}
@@ -197,34 +194,46 @@ const MainSection = ({ name, total, quantityAvailable, categories, img }) => {
                     ))}
                 </div>
             </div>
-            <img src={img} alt="product" />
+            <img src={img} alt={name} />
         </div>
     );
 };
 
-export const ProductOverview = ({ detail, addToCart }) => (
-    <>
-        <MainSection
-            type={detail.type}
-            name={detail.name}
-            total={detail.total}
-            quantityAvailable={detail.quantityAvailable}
-            categories={detail.category}
-            img={detail.img}
-        />
-        <DetailInfoSection
-            manufacturer={detail.manufacturer}
-            model_num={detail.model_num}
-            datasheet={detail.datasheet}
-            notes={detail.notes}
-            constraints={detail.constraints}
-        />
-        {addToCart && (
-            <EnhancedAddToCartForm
-                handleSubmit={addToCart}
-                requestFailure={false}
-                availableQuantity={3}
-            />
-        )}
-    </>
+export const ProductOverview = ({ detail, addToCart, isVisible, handleClose }) => (
+    <SideSheetRight
+        title="Product Overview"
+        isVisible={isVisible}
+        handleClose={handleClose}
+    >
+        <div className={styles.productOverview}>
+            <div className={styles.productOverviewDiv}>
+                <MainSection
+                    type={detail.type}
+                    name={detail.name}
+                    total={detail.total}
+                    quantityAvailable={detail.quantityAvailable}
+                    categories={detail.category}
+                    img={detail.img}
+                />
+                <DetailInfoSection
+                    manufacturer={detail.manufacturer}
+                    model_num={detail.model_num}
+                    datasheet={detail.datasheet}
+                    notes={detail.notes}
+                    constraints={detail.constraints}
+                />
+            </div>
+
+            {addToCart && (
+                <EnhancedAddToCartForm
+                    handleSubmit={addToCart}
+                    requestFailure={false}
+                    quantityAvailable={detail.quantityAvailable}
+                    constraintMax={detail.constraintMax}
+                />
+            )}
+        </div>
+    </SideSheetRight>
 );
+
+export default ProductOverview;

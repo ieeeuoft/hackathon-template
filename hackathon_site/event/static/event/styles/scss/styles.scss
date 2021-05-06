@@ -5,6 +5,10 @@
 // so you can distinguish its origin
 
 // General HTML stuff
+p {
+    margin: 0;
+}
+
 .icon-block {
     padding: 0 15px;
 }
@@ -17,8 +21,18 @@ h3 {
     text-transform: uppercase;
 }
 
+h1,
+h2,
+h3,
+h4,
+h5 {
+    font-family: font(header);
+}
+
 body {
-    font-size: 18px;
+    font-size: size(lg);
+    color: color(font);
+    font-family: font(body);
 }
 
 strong {
@@ -26,39 +40,166 @@ strong {
 }
 // End of general HTML stuff
 
+// Colors
+.backgroundColor {
+    // Change the background colors of each page here!
+    &Landing {
+        background-color: color(backgroundColor);
+    }
+    &FormBase {
+        background-color: color(backgroundColor);
+    }
+    &Dashboard {
+        background-color: color(backgroundColor);
+    }
+
+    &Landing,
+    &FormBase,
+    &Dashboard {
+        min-height: 100vh;
+    }
+}
+
+.primaryColor {
+    background-color: color(primary) !important;
+}
+
+.secondaryColor {
+    background-color: color(secondary) !important;
+}
+
+.primaryText {
+    color: color(primary) !important;
+}
+
+.secondaryText {
+    color: color(secondary) !important;
+}
+
+.errorText {
+    color: color(error);
+}
+
+.successText {
+    color: color(success);
+}
+
+.colorBtn {
+    font-weight: bold !important;
+    text-align: center;
+    text-transform: uppercase;
+    color: color(font) !important;
+    background-color: color(secondary) !important;
+
+    &:hover {
+        background-color: color(secondaryOnHover) !important;
+    }
+}
+
+.redBtn {
+    font-weight: bold !important;
+    text-align: center;
+    text-transform: uppercase;
+    color: color(white) !important;
+    background-color: color(error) !important;
+
+    &:hover {
+        background-color: color(errorOnHover) !important;
+    }
+}
+.active {
+    color: color(secondary);
+}
+// End of colors
+
+// Formatting stuff
+.flexColCenter {
+    @include flexPosition($alIte: center, $dir: column);
+}
+
+.longText {
+    padding-right: 200px;
+
+    @include responsive(sm-down) {
+        padding-right: 0;
+    }
+}
+
+.hoverLink {
+    font-weight: 600;
+
+    &:hover {
+        text-decoration: underline;
+    }
+}
+
+.rowMarginPadding {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding: 0 !important;
+}
+
+.formPadding {
+    @include responsive(sm-down) {
+        padding: 0 !important;
+    }
+}
+// End of formatting stuff
+
 // Navbar stuff
 .logoNav {
     height: 100%;
     padding: 5px;
 }
 
-.sidenav {
-    .logoNav {
-        height: 80px;
-        margin: 20px;
+.logoNavSide {
+    padding: 30px;
+    height: 150px;
+
+    a,
+    img {
+        height: 100% !important;
+        padding: 0 !important;
+
+        &:hover {
+            background-color: transparent !important;
+        }
     }
 }
 
 .navbar {
     position: sticky;
     top: 0;
-    z-index: 998;
+    z-index: 1100;
+}
+
+.sidenav-trigger {
+    margin-left: 0 !important;
 }
 // End of navbar stuff
 
 // Landing section
 .landingImg {
-    display: flex;
-    justify-content: center;
-    margin-top: 60px;
+    @include flexPosition($jusCon: center, $alIte: center);
+
+    img {
+        width: 100%;
+    }
+
+    @include responsive(sm-down) {
+        margin-top: 0;
+    }
 }
 // End of landing section
 
 // "About" section
+#aboutText {
+    p {
+        margin: 20px 0;
+    }
+}
 .countdown {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    @include flexPosition($jusCon: center, $alIte: center);
 
     &Days {
         margin-top: 20px;
@@ -73,11 +214,10 @@ strong {
         font-size: 106px;
         text-align: center;
         background-color: color(secondary);
-        color: #0d061a;
-        display: flex;
-        flex-direction: column;
+        @include flexPosition($dir: column);
         margin: 0 5px;
         padding: 0 !important;
+        font-family: font(header);
     }
 
     &WhiteLine {
@@ -100,7 +240,7 @@ strong {
     margin: 10px 0 30px;
 
     p {
-        font-size: 20px;
+        font-size: size(xl);
         margin: 0;
     }
 
@@ -115,7 +255,7 @@ strong {
 
     @include responsive(md-down) {
         p {
-            font-size: 18px;
+            font-size: size(lg);
         }
         &Time {
             width: 70px;
@@ -137,16 +277,66 @@ strong {
 }
 // End of "Sponsors" section
 
+// "Hackathon stats" section
+.stat {
+    @include flexPosition($alIte: center, $dir: column);
+
+    &-number {
+        margin: 10px 0;
+        font-weight: 700;
+    }
+
+    @include responsive(sm-down) {
+        margin-bottom: 25px;
+    }
+}
+// End of "Hackathon stats" section
+
 // "FAQ" section
 .collapsible .active {
+    // color: inherit;
     color: color(primary);
 }
+
+.active .collapsible-header {
+    font-weight: bold;
+}
+
+.collapsible,
+.collapsible-body,
+.collapsible-header {
+    border: none;
+    box-shadow: none;
+    margin: 0;
+}
+.collapsible-header {
+    background-color: transparent;
+}
+
 // End of "FAQ" section
 
 // Video section
 .video {
     max-width: 1000px;
     width: 90%;
+    height: 557px;
+
+    // iframe heights are static so I have to set the height every time
+    @include responsive(lg-down) {
+        height: 400px;
+    }
+
+    @include responsive(md-down) {
+        height: 360px;
+    }
+
+    @include responsive(sm-down) {
+        height: 250px;
+    }
+
+    @include responsive(xs-down) {
+        height: 200px;
+    }
 }
 // End of video section
 
@@ -161,6 +351,7 @@ strong {
         > img {
             width: auto !important;
             height: 100%;
+            transform: translateX(-120px);
         }
     }
 }
@@ -177,6 +368,9 @@ strong {
         img {
             height: 100%;
             width: 100%;
+            // Manipulate the filter to change the color of the icon.
+            // e.g. invert(0) is black and invert(1) is white
+            filter: invert(1);
         }
 
         &:hover {
@@ -186,60 +380,147 @@ strong {
 }
 // End of section
 
-/* Colors  */
-.primaryColor {
-    background-color: color(primary) !important;
-}
+// Login stuff
+.login {
+    &Div {
+        display: flex;
+        background-color: color(white);
+        border-top: solid 10px color(secondary);
+        border-radius: 3px 3px 0 0;
+        padding: 50px 30px 30px;
+        margin: 50px auto 100px;
+        max-width: 900px;
 
-.secondaryColor {
-    background-color: color(secondary) !important;
-}
+        @include responsive(md-down) {
+            padding: 40px 15px 30px;
+        }
 
-.primaryText {
-    color: color(primary) !important;
-}
+        @include responsive(sm-down) {
+            padding-bottom: 20px;
+            display: block;
+        }
 
-.secondaryText {
-    color: color(secondary) !important;
-}
+        .landingImg img {
+            max-width: 300px;
+        }
+    }
 
-.colorBtn {
-    font-weight: bold;
-    text-align: center;
-    text-transform: uppercase;
-    color: color(font) !important;
-    background-color: color(secondary) !important;
+    &Link {
+        @include flexPosition($jusCon: center, $alIte: center);
+        margin: 10px 0 15px;
+        font-size: size(sm);
+        padding: 0 !important;
 
-    &:hover {
-        background-color: #d2a300 !important;
+        i {
+            margin-right: 5px;
+        }
     }
 }
 
-.active {
-    color: color(secondary);
-}
-// End of colors
+.form {
+    &H1 {
+        font-weight: bold;
+        text-align: center;
+        text-transform: uppercase;
+        margin: 0 auto 30px;
+        font-size: 50px;
+    }
 
-// Formatting stuff
-.flexColCenter {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    &H2 {
+        font-weight: normal;
+        font-size: 30px;
+        margin: 0 0 15px;
+    }
+
+    &H3 {
+        font-weight: normal;
+        font-size: 24px;
+        text-transform: initial;
+        margin: 0 0 10px;
+    }
+
+    @include responsive(md-down) {
+        &H1 {
+            font-size: 40px;
+            margin-bottom: 20px;
+        }
+        &H2 {
+            font-size: 24px;
+        }
+        &H3 {
+            font-size: size(xl);
+        }
+    }
+
+    &Checkbox span {
+        color: color(font);
+    }
+
+    &FieldError {
+        font-size: size(xs);
+        color: color(error);
+        display: block;
+    }
+
+    &Error {
+        color: color(error);
+        display: block;
+    }
 }
 
-.longText {
-    padding-right: 200px;
+.input-field {
+    input:not([type]):focus:not([readonly]) + label,
+    input[type="text"]:focus:not([readonly]) + label,
+    input[type="password"]:focus:not([readonly]) + label,
+    input[type="email"]:focus:not([readonly]) + label,
+    input[type="date"]:focus:not([readonly]) + label,
+    input[type="tel"]:focus:not([readonly]) + label,
+    input[type="number"]:focus:not([readonly]) + label,
+    input[type="search"]:focus:not([readonly]) + label,
+    textarea.materialize-textarea:focus:not([readonly]) + label {
+        color: color(primary);
+    }
+
+    input:not([type]):focus:not([readonly]),
+    input[type="text"]:focus:not([readonly]),
+    input[type="password"]:focus:not([readonly]),
+    input[type="email"]:focus:not([readonly]),
+    input[type="date"]:focus:not([readonly]),
+    input[type="tel"]:focus:not([readonly]),
+    input[type="number"]:focus:not([readonly]),
+    input[type="search"]:focus:not([readonly]),
+    textarea.materialize-textarea:focus:not([readonly]) {
+        border-bottom: 1px solid color(primary);
+        -webkit-box-shadow: 0 1px 0 0 color(primary);
+        box-shadow: 0 1px 0 0 color(primary);
+    }
+}
+// End of form stuff
+
+// Dashboard stuff
+.borderTopDiv {
+    background-color: color(white);
+    @include flexPosition($dir: column);
+    border-top: solid 10px color(secondary);
+    border-radius: 3px 3px 0 0;
+    padding: 40px 30px 30px;
+    margin: 20px auto;
+    max-width: 950px;
+    font-size: size(md);
 
     @include responsive(sm-down) {
-        padding-right: 0;
+        padding: 25px 20px;
     }
 }
 
-.hoverLink {
-    font-weight: bold;
+.faq {
+    &Question {
+        font-weight: bold;
+        margin: 10px 0 0;
+    }
 
-    &:hover {
-        text-decoration: underline;
+    &Answer {
+        margin: 5px 0 20px;
     }
 }
-// End of formatting stuff
+// End of dashboard stuff

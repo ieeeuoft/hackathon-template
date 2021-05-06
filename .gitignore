@@ -141,14 +141,16 @@ cython_debug/
 .idea
 .vscode
 
-# Collected static files
+# Collected static files and media files
 hackathon_site/static/
+hackathon_site/media/
 
 # Database persistent data
 development/.postgres-data/
 
 # CSS Files
 hackathon_site/**/*.css
+hackathon_site/**/*.css.map
 
 # node_modules, found outside the react app
 node_modules/
