@@ -108,13 +108,13 @@ class DashboardView(LoginRequiredMixin, FormView):
             ] = _now().date() > review.decision_sent_date + timedelta(
                 days=settings.RSVP_DAYS
             )
-            rsvp_timezone = pytz.timezone(str(settings.TZ_INFO))
-            rsvp_datetime = datetime.fromordinal(
-                review.decision_sent_date.toordinal()
-            ) + timedelta(days=settings.RSVP_DAYS, hours=23, minutes=59)
-            context["rsvp_deadline"] = rsvp_timezone.localize(rsvp_datetime).strftime(
-                "%B %-d, %Y, %-I:%M %p %Z"
+            rsvp_deadline = datetime.combine(
+                review.decision_sent_date + timedelta(days=settings.RSVP_DAYS),
+                datetime.max.time(),  # 11:59PM
             )
+            context["rsvp_deadline"] = settings.TZ_INFO.localize(
+                rsvp_deadline
+            ).strftime("%B %-d, %Y, %-I:%M %p %Z")
         else:
             context["review"] = None
 
