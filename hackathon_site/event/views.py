@@ -1,6 +1,5 @@
 from datetime import datetime, timedelta
 
-import pytz
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
 from django.shortcuts import redirect
@@ -8,6 +7,7 @@ from django.urls import reverse_lazy
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
 from django.conf import settings
+import pytz
 
 from hackathon_site.utils import is_registration_open
 from registration.forms import JoinTeamForm
