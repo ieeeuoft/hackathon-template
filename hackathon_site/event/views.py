@@ -113,7 +113,7 @@ class DashboardView(LoginRequiredMixin, FormView):
             )
             context["rsvp_deadline"] = settings.TZ_INFO.localize(
                 rsvp_deadline
-            ).strftime("%B %-d, %Y, %-I:%M%P %Z")
+            ).strftime("%B %-d, %Y, %-I:%M %p %Z")
         else:
             context["review"] = None
 
