@@ -11,6 +11,7 @@ import Hidden from "@material-ui/core/Hidden";
 import Button from "@material-ui/core/Button";
 import RefreshIcon from "@material-ui/icons/Refresh";
 import SearchIcon from "@material-ui/icons/Search";
+import CloseIcon from "@material-ui/icons/Close";
 import FilterListIcon from "@material-ui/icons/FilterList";
 import Grid from "@material-ui/core/Grid";
 import EnhancedInventoryFilter from "components/inventory/InventoryFilter/InventoryFilter";
@@ -61,6 +62,16 @@ const Inventory = () => {
                     open={mobileOpen}
                     onClose={toggleFilter}
                 >
+                    <div className={styles.inventoryFilterDrawerTop}>
+                        <Typography variant="h2">Filters</Typography>
+                        <IconButton
+                            color="inherit"
+                            aria-label="CloseFilter"
+                            onClick={toggleFilter}
+                        >
+                            <CloseIcon />
+                        </IconButton>
+                    </div>
                     <EnhancedInventoryFilter
                         handleSubmit={onSubmitTemp}
                         handleReset={onSubmitTemp}
