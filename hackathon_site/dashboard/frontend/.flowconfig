@@ -2,11 +2,11 @@
 0.150.0
 
 [ignore]
-.*/node_modules/.*
 .*/build/.*
 .*\.git/.*
 
 [include]
+src/.*
 
 [libs]
 flow-typed
@@ -17,6 +17,16 @@ all=error
 [options]
 emoji=true
 exact_by_default=true
+module.system.node.resolve_dirname=src
+module.system.node.resolve_dirname=node_modules
+module.file_ext=.js
+module.file_ext=.jsx
+module.file_ext=.json
+module.file_ext=.css
+module.file_ext=.scss
+module.name_mapper.extension='css' -> 'empty/object'
+module.name_mapper.extension='scss' -> 'empty/object'
+suppress_type=$FlowTODO
 # Below is a hack so Flow can work on Mac M1
 # Issue still not resolved: https://github.com/facebook/flow/issues/8538
 sharedmemory.heap_size=3221225472 

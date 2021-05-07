@@ -1,3 +1,4 @@
+// @flow
 import React from "react";
 import { ConnectedRouter } from "connected-react-router";
 import { Route, Redirect, Switch } from "react-router-dom";
@@ -24,10 +25,11 @@ import Cart from "pages/Cart/Cart";
 import IncidentForm from "pages/IncidentForm/IncidentForm";
 import NotFound from "pages/NotFound/NotFound";
 import SnackbarNotifier from "components/general/SnackbarNotifier/SnackbarNotifier";
+import type { Palette } from "api/types";
 
 import withParticipantCheck from "components/HOCs/withParticipantCheck/withParticipantCheck";
 
-export const makePalette = () => {
+export const makePalette = (): Palette => {
     // In testing, the scss exports don't work so styles is an
     // empty object. This gets around that.
     let palette = {};
