@@ -57,11 +57,11 @@
                         {% if not rsvp_passed %}
                             {% if application.rsvp is none %}
                                 <p>To confirm your attendance at {{ hackathon_name }}, please RSVP using the accept or decline buttons below.</p> <br />
-                                <p>RSVP by <b>{{ rsvp_deadline }} (11:59PM EST)</b>, otherwise your spot will be given to other applicants.
-                                    Alternatively you can decline the offer. You can change your response at any time before <b>{{ rsvp_deadline }} (11:59PM EST)</b>.
+                                <p>RSVP by <b>{{ rsvp_deadline }}</b>, otherwise your spot will be given to other applicants.
+                                    Alternatively you can decline the offer. You can change your response at any time before <b>{{ rsvp_deadline }}</b>.
                                 </p> <br />
                             {% else %}
-                                <p>You can change your response at any time before <b>{{ rsvp_deadline }} (11:59PM EST)</b>.</p> <br />
+                                <p>You can change your response at any time before <b>{{ rsvp_deadline }}</b>.</p> <br />
                             {% endif %}
                         {% endif %}
 
@@ -211,7 +211,7 @@
                 <p class="faqAnswer">Please send an email to <a href="mailto:{{ contact_email }}" class="primaryText hoverLink">{{ contact_email }}</a> with your name, email you used to apply, expected arrival time, and reason as to why you’re arriving late and we’ll save your spot for you.</p>
 
                 <p class="faqQuestion">How does the waitlist work the day of?</p>
-                <p class="faqAnswer">The rank on the waitlist is first-come first serve, meaning the sooner you arrive at the event on Saturday, the higher your placement on our waitlist. At 10AM, if we have any spots remaining, we will be letting waitlisted people in.</p>
+                <p class="faqAnswer">The rank on the waitlist is first-come first serve, meaning the sooner you arrive at the event on {{ waitlisted_acceptance_start_time.strftime("%A") }}, the higher your placement on our waitlist. At {{ waitlisted_acceptance_start_time.strftime("%-I:%M %p") }}, if we have any spots remaining, we will be letting waitlisted people in.</p>
 
                 <p class="faqQuestion">Other questions?</p>
                 <p class="faqAnswer">If you have any questions or concerns, feel free to contact us at <a href="mailto:{{ contact_email }}" class="primaryText hoverLink">{{ contact_email }}</a>.</p>
