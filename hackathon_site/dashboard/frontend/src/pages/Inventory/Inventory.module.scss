@@ -14,9 +14,7 @@
             margin: 10px 0;
 
             &Div {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
+                @include flexPosition($jusCon: space-between, $alIte: center);
                 width: auto;
             }
 
@@ -30,7 +28,7 @@
             }
 
             &Refresh {
-                @include flexPosition;
+                @include flexPosition($jusCon: space-between, $alIte: center);
             }
 
             @include responsive(sm-down) {
@@ -64,9 +62,7 @@
 }
 
 .Item {
-    display: flex;
-    flex-direction: column;
-    padding-bottom: 10px;
+    @include flexPosition($dir: column);
     cursor: pointer;
 
     &:hover {

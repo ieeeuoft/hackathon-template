@@ -34,8 +34,7 @@
     &Drawer {
         &Top {
             width: 100%;
-            display: flex;
-            justify-content: flex-end;
+            @include flexPosition($jusCon: flex-end);
             background-color: color(light1);
             padding: 8px 15px;
             svg {

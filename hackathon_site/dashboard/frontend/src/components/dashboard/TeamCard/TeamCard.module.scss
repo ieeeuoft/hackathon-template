@@ -1,3 +1,4 @@
+@import "./../../../assets/abstracts/mixins";
 @import "./../../../assets/abstracts/variables";
 
 .name {
@@ -5,7 +6,6 @@
 }
 
 .lastRow {
-    display: flex;
-    justify-content: flex-end;
+    @include flexPosition($jusCon: flex-end);
     padding-top: 6px;
 }
