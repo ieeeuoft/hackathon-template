@@ -15,14 +15,6 @@ export const initialState = {
         isLoading: false,
         failure: null,
     },
-    // acknowledge: {
-    //     isCheckbox1checked: false,
-    //     isCheckbox2checked: false,
-    //     isCheckbox3checked: false,
-    //     isCheckbox4checked: false,
-    //     hasSignature: false,
-    //     fail: null,
-    // },
     isAuthenticated: false,
 };
 
@@ -100,52 +92,10 @@ export const logIn = createAsyncThunk(
     }
 );
 
-// export const acknowledge = createAsyncThunk(
-//     `${userReducerName}/acknowledge`,
-//     async({signature}, {dispatch, rejectWithValue}) => {
-//         try {
-//             const response = await post("/api/acknowledge",{signature});
-//             dispatch(push("/"));
-//             return response.data;
-//         } catch (e) {
-//             if(e.response.status === 400) {
-//                 return rejectWithValue({ status: 400, message: "Invalid credentials" });
-//             }else if (
-//                 e.response.status === 403 &&
-//                 e.response.data &&
-//                 e.response.data.detail.includes("CSRF")
-//             ) {
-//                 return rejectWithValue({
-//                     status: e.response.status,
-//                     message: "Invalid CSRF Token",
-//                 });
-//             }
-//             return rejectWithValue({
-//                 status: e.response.status,
-//                 message: e.response.data,
-//             });
-//         }
-//     }
-// );
-
 // Slice
 const userSlice = createSlice({
     name: "user",
     initialState,
-    reducers: {
-        // toggleCheckbox1: (state) => {
-        //     state.acknowledge.isCheckbox1checked = !state.acknowledge.isCheckbox1checked;
-        // },
-        // toggleCheckbox2: (state) => {
-        //     state.acknowledge.isCheckbox2checked = !state.acknowledge.isCheckbox2checked;
-        // },
-        // toggleCheckbox3: (state) => {
-        //     state.acknowledge.isCheckbox3checked = !state.acknowledge.isCheckbox3checked;
-        // },
-        // toggleCheckbox4: (state) => {
-        //     state.acknowledge.isCheckbox4checked = !state.acknowledge.isCheckbox4checked;
-        // },
-    },
     extraReducers: {
         [fetchUserData.pending]: (state) => {
             state.userData.isLoading = true;
@@ -172,16 +122,6 @@ const userSlice = createSlice({
             state.login.isLoading = false;
             state.isAuthenticated = false;
         },
-        // [acknowledge.pending]: (state) => {
-        //     state.acknowledge.hasSignature = false;
-        // },
-        // [acknowledge.fulfilled]: (state) => {
-        //     state.acknowledge.hasSignature = true;
-        // },
-        // [acknowledge.rejected]: (state, action) => {
-        //     state.acknowledge.fail = action.payload || { message: action.error.message };
-        //     state.acknowledge.hasSignature = false;
-        // },
     },
 });
 
@@ -205,8 +145,3 @@ export const loginSelector = createSelector(
     [userSliceSelector],
     (userSlice) => userSlice.login
 );
-
-// export const acknowledgeSelector = createSelector(
-//     [userSliceSelector],
-//     (userSlice) => userSlice.acknowledge
-// );

@@ -7,7 +7,11 @@ import AcknowledgementForm from "../../components/user/AcknowledgementForm/Ackno
 import Container from "@material-ui/core/Container";
 import Paper from "@material-ui/core/Paper";
 
-const Reports = () => {
+const Acknowledgement = () => {
+    const onSubmitTemp = async ({ eSignature, acknowledgeRules }) => {
+        alert(JSON.stringify({ eSignature, acknowledgeRules }, null, 2));
+    };
+
     return (
         <>
             <Header showNavbar={false} />
@@ -16,11 +20,14 @@ const Reports = () => {
                     <Typography className={styles.title} variant="h1">
                         ACKNOWLEDGEMENTS
                     </Typography>
-                    <AcknowledgementForm />
+                    <AcknowledgementForm
+                        handleSubmit={onSubmitTemp}
+                        isLoading={false}
+                    />
                 </Paper>
             </Container>
         </>
     );
 };
 
-export default Reports;
+export default Acknowledgement;

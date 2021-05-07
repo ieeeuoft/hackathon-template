@@ -1,74 +1,61 @@
 import React from "react";
 import { render, fireEvent, waitFor } from "@testing-library/react";
-import { EnhancedAcknowledgmentForm } from "./AcknowledgementForm";
-
-const waiver = "Waiver of Liability and Hold Harmless Agreement";
+import {
+    EnhancedAcknowledgmentForm,
+    acknowledgementCheckboxes,
+} from "./AcknowledgementForm";
 
 describe("<EnhancedAcknowledgmentForm />", () => {
-    test("Check if all the text are present", () => {
-        const handleSubmit = () => {};
-        const requestFailure = () => {};
-        const openDoc = () => {};
-
-        const { getByText } = render(
-            <EnhancedAcknowledgmentForm
-                handleSubmit={handleSubmit}
-                requestFailure={requestFailure}
-                openDoc={openDoc}
-            />
+    it("Check if all the text is present", () => {
+        const { getByText, queryByText } = render(
+            <EnhancedAcknowledgmentForm isLoading={false} />
         );
 
-        expect(getByText(/Continue/i)).toBeInTheDocument();
-        expect(getByText(/e-signature/i)).toBeInTheDocument();
+        expect(getByText("Continue")).toBeInTheDocument();
+        expect(getByText("e-signature")).toBeInTheDocument();
+        for (let c of acknowledgementCheckboxes) {
+            expect(queryByText(c.label)).toBeTruthy();
+        }
         expect(
-            getByText(
-                /I understand that making a request does not guarantee hardware. Hardware is given on a first-come-first-serve basis./i
-            )
+            getByText("Waiver of Liability and Hold Harmless Agreement")
         ).toBeInTheDocument();
-        expect(
-            getByText(
-                /Each member of the team must provide government-issued photo ID to check out components. ID will be returned when all components are returned./i
-            )
-        ).toBeInTheDocument();
-        expect(
-            getByText(/I cannot keep hardware\/components lent out to me/i)
-        ).toBeInTheDocument();
-        expect(
-            getByText(
-                /I will be held accountable for damaged or lost hardware. The handling of each instance is case by case./i
-            )
-        ).toBeInTheDocument();
-        expect(
-            getByText(
-                /IN SIGNING THIS RELEASE, I ACKNOWLEDGE AND REPRESENT THAT I have read the foregoing/i
-            )
-        ).toBeInTheDocument();
-        expect(getByText(waiver)).toBeInTheDocument();
-        expect(
-            getByText(
-                /, understand it and sign it voluntarily as my own free act and deed; no oral representations, statements, or inducements, apart from the foregoing written agreement, have been made; I am at least eighteen \(18\) years of age and fully competent; and I execute this Release for full, adequate and complete consideration fully intending to be bound by same./i
-            )
-        ).toBeInTheDocument();
+        expect(getByText(/IN SIGNING THIS RELEASE/i)).toBeInTheDocument();
+        expect(getByText(/understand it and sign it voluntarily/i)).toBeInTheDocument();
     });
 
-    test("Check if the submit button is called when pressed, and if the openDoc function gets called for the link", () => {
+    it("Calls handleSubmit when the 'Continue' button is clicked", async () => {
         const handleSubmit = jest.fn();
-        const requestFailure = () => {};
-        const openDoc = jest.fn();
 
-        const { getByText } = render(
-            <EnhancedAcknowledgmentForm
-                handleSubmit={handleSubmit}
-                requestFailure={requestFailure}
-                openDoc={openDoc}
-            />
+        const { getByText, findByLabelText } = render(
+            <EnhancedAcknowledgmentForm handleSubmit={handleSubmit} isLoading={false} />
         );
 
-        const submitButton = getByText(/Continue/i);
+        for (let c of acknowledgementCheckboxes) {
+            const checkbox = await findByLabelText(c.label);
+            fireEvent.click(checkbox);
+        }
+        const eSignature = await findByLabelText("e-signature");
+        fireEvent.change(eSignature, { target: { value: "Lisa Li" } });
+
+        const submitButton = await getByText("Continue");
         fireEvent.click(submitButton);
-        expect(handleSubmit).toHaveBeenCalled();
-        const waiverLink = getByText(waiver);
-        fireEvent.click(waiverLink);
-        expect(openDoc).toHaveBeenCalled();
+
+        await waitFor(() => {
+            expect(handleSubmit).toHaveBeenCalledWith({
+                eSignature: "Lisa Li",
+                acknowledgeRules: true,
+            });
+        });
+    });
+
+    it("Displays a loading wheel on Continue button when loading", () => {
+        const { getByTestId, getByText } = render(
+            <EnhancedAcknowledgmentForm isLoading={true} />
+        );
+
+        const button = getByText("Continue");
+
+        expect(getByTestId("circularProgress")).toBeInTheDocument();
+        expect(button.closest("button")).toBeDisabled();
     });
 });

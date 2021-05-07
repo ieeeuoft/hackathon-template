@@ -5,176 +5,174 @@ import Typography from "@material-ui/core/Typography/Typography";
 import TextField from "@material-ui/core/TextField/TextField";
 import FormControlLabel from "@material-ui/core/FormControlLabel/FormControlLabel";
 import Button from "@material-ui/core/Button/Button";
-import Link from "@material-ui/core/Link/Link";
+import Modal from "@material-ui/core/Modal";
+import FormGroup from "@material-ui/core/FormGroup";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import Waver from "./Waver";
 import { Formik, Field } from "formik";
+import * as Yup from "yup";
 
 export const ERROR_MESSAGES = {
-    signatureMissing: "e-signature is required",
-    checkboxMissing: "All checkboxes are required",
+    esignatureMissing: "e-signature is required",
+    acknowledgeRulesMissing: "All checkboxes are required",
 };
 
-export const FormikCheckBox = (props) => {
-    return (
-        <Field name={props.name}>
-            {({ field, form }) => (
-                <label>
-                    <input
-                        type="checkbox"
-                        {...props}
-                        checked={field.value.includes(props.value)}
-                        onChange={() => {
-                            if (field.value.includes(props.value)) {
-                                const nextValue = field.value.filter(
-                                    (value) => value !== props.value
-                                );
-                                form.setFieldValue(props.name, nextValue);
-                            } else {
-                                const nextValue = field.value.concat(props.value);
-                                form.setFieldValue(props.name, nextValue);
-                            }
-                        }}
-                    />
-                    {props.value}
-                </label>
-            )}
-        </Field>
-    );
-};
+const acknowledgeFormSchema = Yup.object().shape({
+    eSignature: Yup.string().required(ERROR_MESSAGES.signatureMissing),
+    acknowledgeRules: Yup.array()
+        .min(4)
+        .max(4)
+        .required(ERROR_MESSAGES.acknowledgeRulesMissing),
+});
 
-export const AcknowledgementForm = ({ handleContinue, openDoc }) => {
-    const checkBox1 =
-        "I understand that making a request does not guarantee hardware. Hardware is given on a first-come-first-serve basis.";
-    const checkBox2 =
-        "Each member of the team must provide government-issued photo ID to check out components. ID will be returned when all components are returned.";
-    const checkBox3 = " I cannot keep hardware/components lent out to me.";
-    const checkBox4 =
-        "I will be held accountable for damaged or lost hardware. The handling of each instance is case by case.";
-    const firstHalf =
-        "IN SIGNING THIS RELEASE, I ACKNOWLEDGE AND REPRESENT THAT I have read the foregoing ";
-    const secondHalf =
-        ", understand it and sign it voluntarily as my own free act and deed; no oral representations, statements, or inducements, apart from the foregoing written agreement, have been made; I am at least eighteen (18) years of age and fully competent; and I execute this Release for full, adequate and complete consideration fully intending to be bound by same.";
+export const acknowledgementCheckboxes = [
+    {
+        id: 1,
+        label:
+            "I understand that making a request does not guarantee hardware. Hardware is given on a first-come-first-serve basis.",
+    },
+    {
+        id: 2,
+        label:
+            "Each member of the team must provide government-issued photo ID to check out components. ID will be returned when all components are returned.",
+    },
+    {
+        id: 3,
+        label: "I cannot keep hardware/components lent out to me.",
+    },
+    {
+        id: 4,
+        label:
+            "I will be held accountable for damaged or lost hardware. The handling of each instance is case by case.",
+    },
+];
+
+const CustomCheckboxGroup = ({ field, content }) => (
+    <FormGroup {...field} name={field.name}>
+        {content.map((item) => (
+            <div className={styles.acknowledgeCheckbox}>
+                <FormControlLabel
+                    name={field.name}
+                    value={item.id}
+                    control={<Checkbox color="primary" />}
+                    label={item.label}
+                    checked={field.value.includes(item.id.toString())}
+                />
+            </div>
+        ))}
+    </FormGroup>
+);
+
+export const AcknowledgementForm = ({
+    handleSubmit,
+    handleChange,
+    isLoading,
+    values: { eSignature, acknowledgeRules },
+}) => {
+    const [openWaverModal, setOpenWaverModal] = React.useState(false);
 
     return (
-        // <form className={styles.acknowledge} onSubmit={handleContinue}>
-        //     <FormControlLabel
-        //         control={<Checkbox name="firstCheck" />}
-        //         label={checkBox1}
-        //     />
-        //     <FormControlLabel
-        //         control={<Checkbox name="secondCheck" />}
-        //         label={checkBox2}
-        //     />
-        //     <FormControlLabel
-        //         control={<Checkbox name="thirdCheck" />}
-        //         label={checkBox3}
-        //     />
-        //     <FormControlLabel
-        //         control={<Checkbox name="forthCheck" />}
-        //         label={checkBox4}
-        //     />
-        //     <Typography variant="body1" className={styles.acknowledgeText}>
-        //         {firstHalf}
-        //         <Link href="#" onClick={openDoc}>
-        //             Waiver of Liability and Hold Harmless Agreement
-        //         </Link>
-        //         {secondHalf}
-        //     </Typography>
-        //     <TextField
-        //         label="e-signature"
-        //         className={styles.acknowledgeSignature}
-        //         name="signature"
-        //     />
-        //     <Button
-        //         type="submit"
-        //         className={styles.acknowledgeButton}
-        //         variant="contained"
-        //         color="primary"
-        //         onClick={handleContinue}
-        //     >
-        //         Continue
-        //     </Button>
-        // </form>
-        <div className={styles.acknowledge} onSubmit={handleContinue}>
-            <FormikCheckBox
-                name="agreement"
-                value={checkBox1}
-                className={styles.acknowledgeCheckbox}
-            />
-            <FormikCheckBox
-                name="agreement"
-                value={checkBox2}
-                className={styles.acknowledgeCheckbox}
-            />
-            <FormikCheckBox
-                name="agreement"
-                value={checkBox3}
-                className={styles.acknowledgeCheckbox}
-            />
-            <FormikCheckBox
-                name="agreement"
-                value={checkBox4}
-                className={styles.acknowledgeCheckbox}
-            />
-            <Typography variant="body1" className={styles.acknowledgeText}>
-                {firstHalf}
-                <Link href="#" onClick={openDoc}>
-                    Waiver of Liability and Hold Harmless Agreement
-                </Link>
-                {secondHalf}
-            </Typography>
-            <TextField
-                label="e-signature"
-                className={styles.acknowledgeSignature}
-                name="signature"
-            />
-            <Button
-                type="submit"
-                className={styles.acknowledgeButton}
-                variant="contained"
-                color="primary"
-                onClick={handleContinue}
+        <>
+            <Modal
+                open={openWaverModal}
+                onClose={() => setOpenWaverModal(false)}
+                aria-labelledby="waver-modal-title"
+                aria-describedby="waver-modal-description"
             >
-                Continue
-            </Button>
-        </div>
+                <div className={styles.acknowledgeModal}>{Waver}</div>
+            </Modal>
+            <form className={styles.acknowledge} onSubmit={handleSubmit}>
+                <Field
+                    name="acknowledgeRules"
+                    component={CustomCheckboxGroup}
+                    content={acknowledgementCheckboxes}
+                />
+                <br />
+                <Typography variant="body1">
+                    IN SIGNING THIS RELEASE, I ACKNOWLEDGE AND REPRESENT THAT I have
+                    read the foregoing &nbsp;
+                    <a
+                        className={styles.acknowledgeLink}
+                        onClick={() => setOpenWaverModal(true)}
+                    >
+                        Waiver of Liability and Hold Harmless Agreement
+                    </a>
+                    , understand it and sign it voluntarily as my own free act and deed;
+                    no oral representations, statements, or inducements, apart from the
+                    foregoing written agreement, have been made; I am at least eighteen
+                    (18) years of age and fully competent; and I execute this Release
+                    for full, adequate and complete consideration fully intending to be
+                    bound by same.
+                </Typography>
+                <TextField
+                    label="e-signature"
+                    id="eSignature"
+                    className={styles.acknowledgeSignature}
+                    name="eSignature"
+                    onChange={handleChange}
+                    value={eSignature}
+                    fullWidth
+                />
+                <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    onClick={handleSubmit}
+                    disabled={
+                        isLoading ||
+                        acknowledgeRules.length != acknowledgementCheckboxes.length ||
+                        eSignature === ""
+                    }
+                    disableElevation
+                >
+                    Continue
+                    {isLoading && (
+                        <CircularProgress
+                            className={styles.formCircularProgress}
+                            size={20}
+                            data-testid="circularProgress"
+                        />
+                    )}
+                </Button>
+            </form>
+            {console.log(
+                "dsiabled?",
+                isLoading ||
+                    acknowledgeRules.length != acknowledgementCheckboxes.length ||
+                    eSignature === ""
+            )}
+        </>
     );
 };
 
 export const EnhancedAcknowledgmentForm = ({
     handleSubmit,
     requestFailure,
-    openDoc,
+    isLoading,
 }) => {
     const onSubmit = (formikValues) => {
-        handleSubmit({ signature: formikValues.signature });
+        const { eSignature, acknowledgeRules } = formikValues;
+        const allChecked = acknowledgeRules.length === acknowledgementCheckboxes.length;
+        handleSubmit({ eSignature, acknowledgeRules: allChecked });
     };
 
     return (
         <Formik
-            initialValues={{ signature: "", agreement: [""] }}
+            initialValues={{ eSignature: "", acknowledgeRules: [] }}
             onSubmit={onSubmit}
             validateOnBlur={false}
             validateOnChange={false}
+            validationSchema={acknowledgeFormSchema}
         >
             {(formikProps) => (
                 <AcknowledgementForm
                     {...formikProps}
-                    openDoc={openDoc}
-                    handleContinue={onSubmit}
                     requestFailure={requestFailure}
+                    isLoading={isLoading}
                 />
             )}
         </Formik>
     );
 };
-
-// const mapStateToProps = (state) => ({
-//     isLoading: acknowledgeSelector(state).isLoading,
-//     requestFailure: acknowledgeSelector(state).failure,
-// });
-
-// const ConnectedEnhancedLoginForm = connect(mapStateToProps, { handleLogin: handleSignIn })(
-//     EnhancedAcknowledgmentForm
-// );
 
 export default EnhancedAcknowledgmentForm;
