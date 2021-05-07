@@ -4,15 +4,16 @@
 .inventory {
     display: flex;
     flex-direction: column;
+    max-width: 1800px;
 
     &Body {
         display: flex;
+        margin-top: 30px;
 
         &Toolbar {
             @include flexPosition($jusCon: flex-end);
             width: 100%;
-            padding: 10px 0;
-            margin: 10px 0;
+            margin-bottom: 15px;
 
             &Div {
                 display: flex;
@@ -24,6 +25,7 @@
             &Search {
                 background-color: color(white);
                 margin-right: 8px;
+                width: 250px;
             }
 
             &Divider {
@@ -32,6 +34,7 @@
 
             &Refresh {
                 @include flexPosition;
+                white-space: nowrap;
             }
         }
 
@@ -48,8 +51,8 @@
                     width: 100%;
                 }
 
-                &Search {
-                    width: calc(100% - 56px);
+                &Div:last-child {
+                    margin: 10px 0;
                 }
 
                 &Divider {
@@ -63,6 +66,8 @@
         }
 
         @include responsive(md-down) {
+            margin-top: 15px;
+
             &Right {
                 margin-left: 0;
             }
@@ -70,6 +75,14 @@
             &Toolbar {
                 &Refresh {
                     margin-left: 20px;
+                }
+
+                &Search {
+                    width: 100%;
+                }
+
+                &Div:nth-child(1) {
+                    width: 100%;
                 }
             }
         }

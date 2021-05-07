@@ -89,7 +89,6 @@ const Inventory = () => {
                                     id="search-input"
                                     label="Search items"
                                     variant="outlined"
-                                    size="small"
                                     type="search"
                                 />
                                 <IconButton
