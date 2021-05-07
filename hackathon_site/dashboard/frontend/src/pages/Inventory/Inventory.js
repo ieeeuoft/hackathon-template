@@ -109,8 +109,8 @@ const Inventory = () => {
                             <div className={styles.inventoryBodyToolbarDiv}>
                                 <Hidden implementation="css" mdUp>
                                     <Button
-                                        aria-label="Orders"
-                                        startIcon={<FilterListIcon />}
+                                        aria-label="Filter"
+                                        startIcon={<FilterListIcon color="primary" />}
                                         onClick={toggleFilter}
                                     >
                                         Filter
@@ -121,7 +121,7 @@ const Inventory = () => {
                                     <Typography variant="body2">123 items</Typography>
                                     <IconButton
                                         color="primary"
-                                        aria-label="refresh"
+                                        aria-label="Refresh"
                                         variant="contained"
                                     >
                                         <RefreshIcon />
