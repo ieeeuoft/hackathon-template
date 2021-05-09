@@ -1,6 +1,5 @@
 import React from "react";
 import styles from "./Inventory.module.scss";
-import { useTheme } from "@material-ui/core/styles";
 import Drawer from "@material-ui/core/Drawer";
 import Header from "components/general/Header/Header";
 import Typography from "@material-ui/core/Typography";
@@ -12,6 +11,7 @@ import Button from "@material-ui/core/Button";
 import RefreshIcon from "@material-ui/icons/Refresh";
 import SearchIcon from "@material-ui/icons/Search";
 import CloseIcon from "@material-ui/icons/Close";
+import InputAdornment from "@material-ui/core/InputAdornment";
 import FilterListIcon from "@material-ui/icons/FilterList";
 import Grid from "@material-ui/core/Grid";
 import EnhancedInventoryFilter from "components/inventory/InventoryFilter/InventoryFilter";
@@ -36,16 +36,18 @@ const Inventory = () => {
     // Remove this later once items can be added to cart
     const addToCart = () => {
         alert("Add to cart");
-        setItemOverview(null);
+        setItemOverviewId(null);
     };
 
-    const [itemOverview, setItemOverview] = React.useState(null);
+    const [itemOverviewId, setItemOverviewId] = React.useState(null);
     const toggleMenu = () => {
-        setItemOverview(null);
+        setItemOverviewId(null);
     };
 
-    // itemOverview will be sent to api
-    React.useEffect(() => console.log("itemOverview", itemOverview), [itemOverview]);
+    // use itemOverviewId to fetch the info from the store
+    React.useEffect(() => console.log("itemOverviewId", itemOverviewId), [
+        itemOverviewId,
+    ]);
 
     return (
         <>
@@ -53,7 +55,7 @@ const Inventory = () => {
             <ProductOverview
                 detail={productInformation}
                 addToCart={addToCart}
-                isVisible={typeof itemOverview == "number"}
+                isVisible={typeof itemOverviewId == "number"}
                 handleClose={toggleMenu}
             />
             <div className={styles.inventory}>
@@ -100,7 +102,16 @@ const Inventory = () => {
                                     id="search-input"
                                     label="Search items"
                                     variant="outlined"
-                                    type="search"
+                                    type="text"
+                                    InputProps={{
+                                        endAdornment: (
+                                            <InputAdornment position="end">
+                                                <IconButton>
+                                                    <CloseIcon />
+                                                </IconButton>
+                                            </InputAdornment>
+                                        ),
+                                    }}
                                 />
                                 <IconButton
                                     color="primary"
@@ -151,7 +162,7 @@ const Inventory = () => {
                                     className={styles.Item}
                                     key={item.id}
                                     item
-                                    onClick={() => setItemOverview(item.id)}
+                                    onClick={() => setItemOverviewId(item.id)}
                                 >
                                     <Item
                                         image={item.image}
