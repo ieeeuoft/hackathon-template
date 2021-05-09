@@ -33,7 +33,10 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jest-environment-jsdom-sixteen",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "i": "yarn install --frozen-lockfile",
+    "pretty": "yarn prettier --write 'src/**/*.(scss|js)'",
+    "precheck": "yarn i && yarn test && yarn pretty"
   },
   "eslintConfig": {
     "extends": "react-app"
