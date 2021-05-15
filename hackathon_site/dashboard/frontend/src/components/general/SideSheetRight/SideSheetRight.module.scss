@@ -15,6 +15,12 @@
     &BackArrow {
         margin-right: 5px;
     }
+
+    > h2 {
+        @include responsive(md-down) {
+            font-size: size(md) !important;
+        }
+    }
 }
 
 .body {

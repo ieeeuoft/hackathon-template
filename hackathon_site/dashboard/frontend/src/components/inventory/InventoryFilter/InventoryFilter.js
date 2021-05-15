@@ -5,6 +5,7 @@ import { Formik, Field } from "formik";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import Chip from "@material-ui/core/Chip";
+import Paper from "@material-ui/core/Paper";
 import Divider from "@material-ui/core/Divider";
 import Checkbox from "@material-ui/core/Checkbox";
 import Radio from "@material-ui/core/Radio";
@@ -78,36 +79,38 @@ export const InventoryFilter = ({
     isClearLoading,
 }) => (
     <div className={styles.filter}>
-        <form onReset={handleReset} onSubmit={handleSubmit}>
-            <fieldset>
-                <legend>
-                    <Typography variant="h2">Order by</Typography>
-                </legend>
-                <Field
-                    name="orderBy"
-                    component={RadioOrderBy}
-                    options={orderByOptions}
-                />
-            </fieldset>
-            <Divider className={styles.filterDivider} />
-            <fieldset>
-                <legend>
-                    <Typography variant="h2">Availability</Typography>
-                </legend>
-                <Field name="inStock" component={CheckboxAvailability} />
-            </fieldset>
-            <Divider className={styles.filterDivider} />
-            <fieldset>
-                <legend>
-                    <Typography variant="h2">Categories</Typography>
-                </legend>
-                <Field
-                    name="inventoryCategories"
-                    component={CheckboxCategory}
-                    options={categories}
-                />
-            </fieldset>
-        </form>
+        <Paper elevation={2} className={styles.filterPaper} square={true}>
+            <form onReset={handleReset} onSubmit={handleSubmit}>
+                <fieldset>
+                    <legend>
+                        <Typography variant="h2">Order by</Typography>
+                    </legend>
+                    <Field
+                        name="orderBy"
+                        component={RadioOrderBy}
+                        options={orderByOptions}
+                    />
+                </fieldset>
+                <Divider className={styles.filterDivider} />
+                <fieldset>
+                    <legend>
+                        <Typography variant="h2">Availability</Typography>
+                    </legend>
+                    <Field name="inStock" component={CheckboxAvailability} />
+                </fieldset>
+                <Divider className={styles.filterDivider} />
+                <fieldset>
+                    <legend>
+                        <Typography variant="h2">Categories</Typography>
+                    </legend>
+                    <Field
+                        name="inventoryCategories"
+                        component={CheckboxCategory}
+                        options={categories}
+                    />
+                </fieldset>
+            </form>
+        </Paper>
         <div className={styles.filterBtns}>
             <Button
                 type="reset"
