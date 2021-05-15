@@ -1,6 +1,8 @@
+@import "./../../../assets/abstracts/mixins";
+@import "./../../../assets/abstracts/variables";
+
 .qty {
-    display: flex;
-    justify-content: space-between;
+    @include flexPosition($jusCon: space-between);
     padding: 10px 20px;
 }
 .msg {

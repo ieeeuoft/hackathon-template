@@ -32,16 +32,12 @@
     @include responsive(md-down) {
         width: 100%;
         height: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
+        @include flexPosition($jusCon: space-between, $dir: column);
         &Btn,
         &Active {
-            height: 50px;
             width: 100%;
-            display: flex;
-            justify-content: left;
-            padding: 0px 120px 0px 15px;
+            @include flexPosition($jusCon: start);
+            padding: 13px 120px 13px 15px;
             border-radius: 0;
             svg {
                 margin-right: 30px;

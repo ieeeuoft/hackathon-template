@@ -1,7 +1,14 @@
-@mixin flexPosition($jusCon: space-between, $alIte: center) {
+@mixin flexPosition($jusCon: flex-start, $alIte: stretch, $dir: row) {
     display: flex;
-    justify-content: $jusCon;
-    align-items: $alIte;
+    @if $jusCon != flex-start {
+        justify-content: $jusCon;
+    }
+    @if $alIte != stretch {
+        align-items: $alIte;
+    }
+    @if $dir != row {
+        flex-direction: $dir;
+    }
 }
 
 @mixin responsive($breakpoint) {

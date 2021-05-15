@@ -4,8 +4,7 @@
 .sponsors {
     height: 100%;
     width: 400px;
-    display: flex;
-    flex-direction: column;
+    @include flexPosition($dir: column);
     &Paper {
         flex-grow: 1;
         padding: 28px 0;
