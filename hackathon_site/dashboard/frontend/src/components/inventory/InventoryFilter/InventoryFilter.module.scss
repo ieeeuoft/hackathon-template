@@ -3,8 +3,7 @@
 
 .filter {
     height: 100%;
-    display: flex;
-    flex-direction: column;
+    @include flexPosition($jusCon: space-between, $alIte: center, $dir: column);
 
     span {
         font-size: 14px !important;
@@ -24,13 +23,15 @@
     }
 
     &Category {
-        @include flexPosition;
+        @include flexPosition($jusCon: space-between, $alIte: center);
         &Chip {
             background-color: color(blueLight);
         }
     }
     &Btns {
-        @include flexPosition;
+        @include flexPosition($jusCon: space-between, $alIte: center);
+        position: sticky;
+        bottom: 0;
         width: 100%;
         padding: 15px 10px;
         &Apply {
