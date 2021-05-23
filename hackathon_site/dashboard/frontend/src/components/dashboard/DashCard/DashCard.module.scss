@@ -1,9 +1,8 @@
+@import "./../../../assets/abstracts/mixins";
 @import "./../../../assets/abstracts/variables";
 
 .items {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    @include flexPosition($jusCon: space-between, $alIte: center);
     padding-top: 10px;
     padding-bottom: 10px;
     &:hover {

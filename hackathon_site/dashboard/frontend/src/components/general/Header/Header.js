@@ -70,7 +70,6 @@ const UnconnectedHeader = ({ email, showNavbar = true }) => {
                                 <IconButton
                                     color="inherit"
                                     aria-label="CloseMenu"
-                                    className={styles.headerIconBtn}
                                     onClick={toggleMenu}
                                 >
                                     <CloseIcon />
