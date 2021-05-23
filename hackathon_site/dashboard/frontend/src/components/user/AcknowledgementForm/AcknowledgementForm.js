@@ -91,12 +91,12 @@ export const AcknowledgementForm = ({
                 <Typography variant="body1">
                     IN SIGNING THIS RELEASE, I ACKNOWLEDGE AND REPRESENT THAT I have
                     read the foregoing &nbsp;
-                    <a
+                    <span
                         className={styles.acknowledgeLink}
                         onClick={() => setOpenWaverModal(true)}
                     >
                         Waiver of Liability and Hold Harmless Agreement
-                    </a>
+                    </span>
                     , understand it and sign it voluntarily as my own free act and deed;
                     no oral representations, statements, or inducements, apart from the
                     foregoing written agreement, have been made; I am at least eighteen
@@ -120,7 +120,7 @@ export const AcknowledgementForm = ({
                     onClick={handleSubmit}
                     disabled={
                         isLoading ||
-                        acknowledgeRules.length != acknowledgementCheckboxes.length ||
+                        acknowledgeRules.length !== acknowledgementCheckboxes.length ||
                         eSignature === ""
                     }
                     disableElevation
@@ -135,12 +135,6 @@ export const AcknowledgementForm = ({
                     )}
                 </Button>
             </form>
-            {console.log(
-                "dsiabled?",
-                isLoading ||
-                    acknowledgeRules.length != acknowledgementCheckboxes.length ||
-                    eSignature === ""
-            )}
         </>
     );
 };

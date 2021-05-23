@@ -1,6 +1,5 @@
 import React from "react";
 import Typography from "@material-ui/core/Typography/Typography";
-import styles from "./AcknowledgementForm.module.scss";
 import { hackathonName } from "../../../constants";
 
 const Waver = (
