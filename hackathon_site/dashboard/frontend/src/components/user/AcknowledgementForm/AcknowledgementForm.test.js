@@ -48,6 +48,24 @@ describe("<EnhancedAcknowledgmentForm />", () => {
         });
     });
 
+    it("Doesn't call handleSubmit when the button is disabled because the form isn't filled", async () => {
+        const handleSubmit = jest.fn();
+
+        const { getByText, findByLabelText } = render(
+            <EnhancedAcknowledgmentForm handleSubmit={handleSubmit} isLoading={false} />
+        );
+
+        const submitButton = await getByText("Continue");
+        fireEvent.click(submitButton);
+
+        await waitFor(() => {
+            expect(handleSubmit).not.toHaveBeenCalledWith({
+                eSignature: "Lisa Li",
+                acknowledgeRules: true,
+            });
+        });
+    });
+
     it("Displays a loading wheel on Continue button when loading", () => {
         const { getByTestId, getByText } = render(
             <EnhancedAcknowledgmentForm isLoading={true} />

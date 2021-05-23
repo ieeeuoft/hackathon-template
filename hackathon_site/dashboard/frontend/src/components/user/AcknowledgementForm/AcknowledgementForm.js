@@ -49,14 +49,15 @@ export const acknowledgementCheckboxes = [
 
 const CustomCheckboxGroup = ({ field, content }) => (
     <FormGroup {...field} name={field.name}>
-        {content.map((item) => (
-            <div className={styles.acknowledgeCheckbox}>
+        {content.map((item, i) => (
+            <div className={styles.acknowledgeCheckbox} key={i}>
                 <FormControlLabel
                     name={field.name}
                     value={item.id}
                     control={<Checkbox color="primary" />}
                     label={item.label}
                     checked={field.value.includes(item.id.toString())}
+                    key={i}
                 />
             </div>
         ))}
