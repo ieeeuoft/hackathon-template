@@ -59,10 +59,7 @@ describe("<EnhancedAcknowledgmentForm />", () => {
         fireEvent.click(submitButton);
 
         await waitFor(() => {
-            expect(handleSubmit).not.toHaveBeenCalledWith({
-                eSignature: "Lisa Li",
-                acknowledgeRules: true,
-            });
+            expect(handleSubmit).not.toHaveBeenCalled();
         });
     });
 
