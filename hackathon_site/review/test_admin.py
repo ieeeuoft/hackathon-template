@@ -3,7 +3,7 @@ from unittest.mock import patch, MagicMock
 
 from django.conf import settings
 from django.core.cache import cache
-from django.contrib.auth.models import Permission
+from django.contrib.auth.models import Group, Permission
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.db.models import Q
 from django.test import TestCase
@@ -14,6 +14,7 @@ from rest_framework import status
 from hackathon_site.tests import SetupUserMixin
 from registration.models import Team
 from review.models import Review, User
+from review import REVIEWER_PERMISSIONS
 
 static = staticfiles_storage.url
 
@@ -32,21 +33,21 @@ class TeamReviewListAdminTestCase(SetupUserMixin, TestCase):
             Q(codename="view_application", content_type__app_label="registration")
             | Q(codename="view_review", content_type__app_label="review"),
         )
-        self.change_permissions = Permission.objects.filter(
-            Q(codename="view_application", content_type__app_label="registration")
-            | Q(codename="view_review", content_type__app_label="review")
-            | Q(codename="change_review", content_type__app_label="review"),
-        )
+
+        self.reviewer_group = Group.objects.get(name="Application Reviewers")
 
         self.user.is_staff = True
         self.user.save()
 
-    def _login(self, permissions=None):
+    def _login(self, permissions=None, group=None):
         super()._login()
 
         if permissions is not None:
             for perm in permissions:
                 self.user.user_permissions.add(perm)
+
+        if group is not None:
+            self.user.groups.add(group)
 
     def test_list_page_not_visible_without_permissions(self):
         """
@@ -72,7 +73,7 @@ class TeamReviewListAdminTestCase(SetupUserMixin, TestCase):
         team = self._make_full_registration_team()
         # Delete a user so there's only 3 members
         self.user4.delete()
-        self._login(self.view_permissions)
+        self._login(permissions=self.view_permissions)
         response = self.client.get(self.list_view)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertContains(response, team.team_code)
@@ -86,7 +87,7 @@ class TeamReviewListAdminTestCase(SetupUserMixin, TestCase):
         team = self._make_full_registration_team()
         # Delete a user so there's only 3 members
         self.user4.delete()
-        self._login(self.view_permissions)
+        self._login(permissions=self.view_permissions)
         response = self.client.get(f"{self.list_view}?reviewed=false")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertContains(response, team.team_code)
@@ -120,7 +121,7 @@ class TeamReviewListAdminTestCase(SetupUserMixin, TestCase):
         # the time is also included on the admin site, but checking this suffices
         expected_date_string = date(new_updated_date)
 
-        self._login(self.view_permissions)
+        self._login(permissions=self.view_permissions)
         response = self.client.get(self.list_view)
         self.assertContains(response, expected_date_string)
 
@@ -129,7 +130,7 @@ class TeamReviewListAdminTestCase(SetupUserMixin, TestCase):
         When the entire team is unreviewed, an X image should appear
         """
         self._make_full_registration_team()
-        self._login(self.view_permissions)
+        self._login(permissions=self.view_permissions)
         response = self.client.get(self.list_view)
         # These are somewhat brittle tests, but the best we can do until we
         # start using selenium
@@ -149,7 +150,7 @@ class TeamReviewListAdminTestCase(SetupUserMixin, TestCase):
                 break
             self._review(application)
 
-        self._login(self.view_permissions)
+        self._login(permissions=self.view_permissions)
         response = self.client.get(self.list_view)
         # These are somewhat brittle tests, but the best we can do until we
         # start using selenium
@@ -181,7 +182,7 @@ class TeamReviewListAdminTestCase(SetupUserMixin, TestCase):
         Filter teams that have been fully reviewed
         """
         team_1, team_2 = self.__create_teams_for_filter_test()
-        self._login(self.view_permissions)
+        self._login(permissions=self.view_permissions)
         response = self.client.get(f"{self.list_view}?reviewed=true")
         self.assertContains(response, team_1.team_code)
         self.assertNotContains(response, team_2.team_code)
@@ -191,17 +192,17 @@ class TeamReviewListAdminTestCase(SetupUserMixin, TestCase):
         Filter teams that have not been fully removed
         """
         team_1, team_2 = self.__create_teams_for_filter_test()
-        self._login(self.view_permissions)
+        self._login(permissions=self.view_permissions)
         response = self.client.get(f"{self.list_view}?reviewed=false")
         self.assertContains(response, team_2.team_code)
         self.assertNotContains(response, team_1.team_code)
 
-    def test_has_link_to_get_next_team_with_change_perms(self):
+    def test_has_link_to_get_next_team_with_reviewer_group(self):
         """
         Test that the link to the assignment page is in the template
         when the user has change permissions
         """
-        self._login(self.change_permissions)
+        self._login(group=self.reviewer_group)
         response = self.client.get(self.list_view)
         self.assertContains(response, reverse("admin:assign-reviewer-to-team"))
 
@@ -210,7 +211,7 @@ class TeamReviewListAdminTestCase(SetupUserMixin, TestCase):
         Test that the link to the assignment page is not rendered
         when the user has only view permissions
         """
-        self._login(self.view_permissions)
+        self._login(permissions=self.view_permissions)
         response = self.client.get(self.list_view)
         self.assertNotContains(response, reverse("admin:assign-reviewer-to-team"))
 
@@ -243,21 +244,21 @@ class TeamReviewChangeAdminTestCase(SetupUserMixin, TestCase):
             Q(codename="view_application", content_type__app_label="registration")
             | Q(codename="view_review", content_type__app_label="review"),
         )
-        self.change_permissions = Permission.objects.filter(
-            Q(codename="view_application", content_type__app_label="registration")
-            | Q(codename="view_review", content_type__app_label="review")
-            | Q(codename="change_review", content_type__app_label="review"),
-        )
+
+        self.reviewer_group = Group.objects.get(name="Application Reviewers")
 
         self.user.is_staff = True
         self.user.save()
 
-    def _login(self, permissions=None):
+    def _login(self, permissions=None, group=None):
         super()._login()
 
         if permissions is not None:
             for perm in permissions:
                 self.user.user_permissions.add(perm)
+
+        if group is not None:
+            self.user.groups.add(group)
 
     def test_permission_denied(self):
         """
@@ -267,13 +268,28 @@ class TeamReviewChangeAdminTestCase(SetupUserMixin, TestCase):
         response = self.client.get(self.change_view)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
+    def test_reviewer_group_correct_permissions(self):
+        """
+        Ensure the reviewer group has all the permissions it is supposed to and nothing else.
+        """
+        self.assertEqual(self.reviewer_group.permissions.count(), len(REVIEWER_PERMISSIONS))
+
+        group_perms = self.reviewer_group.permissions.all()
+
+        for permission_name in REVIEWER_PERMISSIONS:
+            app_label, codename = permission_name.split(".", 1)
+            permission = Permission.objects.get(
+                content_type__app_label=app_label, codename=codename
+            )
+            self.assertTrue(permission in group_perms)
+
     def test_does_not_show_review_fields_with_view_permissions(self):
         """
         Without change permissions, only the application fields should be visible,
         not the review fields. We would prefer this not to be the case, but we're
         somewhat stuck with it, so best to assert that the behaviour is known here.
         """
-        self._login(self.view_permissions)
+        self._login(permissions=self.view_permissions)
         response = self.client.get(self.change_view)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -281,11 +297,11 @@ class TeamReviewChangeAdminTestCase(SetupUserMixin, TestCase):
             # This is how the formset builds input IDs
             self.assertNotContains(response, f"id_applications-0-{field}")
 
-    def test_shows_review_fields_with_change_permissions(self):
+    def test_shows_review_fields_with_reviewer_group(self):
         """
-        With change permissions, the selects for review fields should appear.
+        With change permissions granted in the reviewer group, the selects for review fields should appear.
         """
-        self._login(self.change_permissions)
+        self._login(group=self.reviewer_group)
         response = self.client.get(self.change_view)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -298,7 +314,7 @@ class TeamReviewChangeAdminTestCase(SetupUserMixin, TestCase):
         We are primarily concerned that the request is passed into the formset
         properly, so that it makes it's way to the review form.
         """
-        self._login(self.change_permissions)
+        self._login(group=self.reviewer_group)
 
         # These are hidden fields that the formset creates
         post_data = {
@@ -343,7 +359,7 @@ class TeamReviewChangeAdminTestCase(SetupUserMixin, TestCase):
                 reviewer_comments=f"Reviewing {i}",
             )
 
-        self._login(self.change_permissions)
+        self._login(group=self.reviewer_group)
         response = self.client.get(self.change_view)
 
         for i in range(4):
@@ -367,15 +383,10 @@ class AssignReviewerToTeamViewTestCase(SetupUserMixin, TestCase):
         self.user2.is_staff = True
         self.user2.save()
 
-        self.change_permissions = Permission.objects.filter(
-            Q(codename="view_application", content_type__app_label="registration")
-            | Q(codename="view_review", content_type__app_label="review")
-            | Q(codename="change_review", content_type__app_label="review"),
-        )
+        self.reviewer_group = Group.objects.get(name="Application Reviewers")
 
-        for perm in self.change_permissions:
-            self.user.user_permissions.add(perm)
-            self.user2.user_permissions.add(perm)
+        self.user.groups.add(self.reviewer_group)
+        self.user2.groups.add(self.reviewer_group)
 
         # team1 is entirely reviewed
         self.team1 = self._make_full_registration_team(self_users=False)
@@ -394,14 +405,11 @@ class AssignReviewerToTeamViewTestCase(SetupUserMixin, TestCase):
         super().tearDown()
         cache.clear()
 
-    def test_permission_denied_without_change_perm(self):
+    def test_permission_denied_without_reviewer_group(self):
         """
-        Without review.change_review permission, the view should not work
+        Without review.change_review permission granted in Application Reviewer group, the view should not work
         """
-        review_change_permission = Permission.objects.get(
-            codename="change_review", content_type__app_label="review"
-        )
-        self.user.user_permissions.remove(review_change_permission)
+        self.user.groups.remove(self.reviewer_group)
         self._login()
         response = self.client.get(self.view)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)

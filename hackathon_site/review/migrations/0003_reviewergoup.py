@@ -2,16 +2,7 @@
 
 from django.db import migrations
 from django.core.management.sql import emit_post_migrate_signal
-
-REVIEWER_PERMISSIONS = (
-    "auth.view_user",
-    "registration.view_application",
-    "review.add_review",
-    "review.change_review",
-    "review.view_review",
-    "review.view_teamreview",
-)
-
+from review import REVIEWER_PERMISSIONS
 
 def apply_migration(apps, schema_editor):
     # Permissions and content types are created after migrations. So in order for this migration to work on a new db,
