@@ -17,7 +17,7 @@ def apply_migration(apps, schema_editor):
     # Permissions and content types are created after migrations. So in order for this migration to work on a new db,
     # we need to commit the previous migrations before continuing.
     db_alias = schema_editor.connection.alias
-    emit_post_migrate_signal(2, False, db_alias)
+    emit_post_migrate_signal(1, False, db_alias)  # verbosity, interactive, db to use
 
     Group = apps.get_model("auth", "Group")
     Permission = apps.get_model("auth", "Permission")
