@@ -272,7 +272,9 @@ class TeamReviewChangeAdminTestCase(SetupUserMixin, TestCase):
         """
         Ensure the reviewer group has all the permissions it is supposed to and nothing else.
         """
-        self.assertEqual(self.reviewer_group.permissions.count(), len(REVIEWER_PERMISSIONS))
+        self.assertEqual(
+            self.reviewer_group.permissions.count(), len(REVIEWER_PERMISSIONS)
+        )
 
         group_perms = self.reviewer_group.permissions.all()
 

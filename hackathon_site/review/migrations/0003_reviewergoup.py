@@ -4,6 +4,7 @@ from django.db import migrations
 from django.core.management.sql import emit_post_migrate_signal
 from review import REVIEWER_PERMISSIONS
 
+
 def apply_migration(apps, schema_editor):
     # Permissions and content types are created after migrations. So in order for this migration to work on a new db,
     # we need to commit the previous migrations before continuing.
