@@ -4,8 +4,8 @@ from django.db import migrations
 from django.core.management.sql import emit_post_migrate_signal
 
 REVIEWER_PERMISSIONS = (
-    "registration.view_application",
     "auth.view_user",
+    "registration.view_application",
     "review.view_review",
     "review.change_review",
     "review.add_review",
@@ -23,13 +23,12 @@ def apply_migration(apps, schema_editor):
     Permission = apps.get_model("auth", "Permission")
 
     group, _ = Group.objects.get_or_create(name="Application Reviewers")
-    with open("log.txt", "w") as outf:
-        for permission in Permission.objects.all():
-            outf.write(permission.name + "\n")
+
     for permission_name in REVIEWER_PERMISSIONS:
-        print("\n" +permission_name + "\n")
         app_label, codename = permission_name.split(".", 1)
-        permission = Permission.objects.get(content_type__app_label=app_label, codename=codename)
+        permission = Permission.objects.get(
+            content_type__app_label=app_label, codename=codename
+        )
         group.permissions.add(permission)
 
     group.save()
