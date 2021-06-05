@@ -18,6 +18,7 @@ lib/
 lib64/
 parts/
 sdist/
+ieee-virtual/
 var/
 wheels/
 share/python-wheels/

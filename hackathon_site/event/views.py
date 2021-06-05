@@ -12,10 +12,14 @@ from hackathon_site.utils import is_registration_open
 from registration.forms import JoinTeamForm
 from registration.models import Team
 
+from django.views.generic import TemplateView
+from rest_framework import generics, mixins
+
+from event.models import User, Team
+from event.serializers import UserSerializer, TeamSerializer
 
 def _now():
     return datetime.now().replace(tzinfo=settings.TZ_INFO)
-
 
 class IndexView(TemplateView):
     template_name = "event/landing.html"
@@ -32,6 +36,27 @@ class IndexView(TemplateView):
         context["application"] = getattr(self.request.user, "application", None)
         return context
 
+class CurrentTeamAPIView(generics.GenericAPIView, mixins.RetrieveModelMixin):
+    """
+    View to handle API interaction with the current logged in user's team
+    """
+
+    queryset = Team.objects.all()
+    serializer_class = TeamSerializer
+
+    def get_object(self):
+        queryset = self.get_queryset()
+
+        return generics.get_object_or_404(
+            queryset, profile__user_id=self.request.user.id
+        )
+
+    def get(self, request, *args, **kwargs):
+        """
+        Get the current users team profile and team details
+        Reads the profile of the current logged in team.
+        """
+        return self.retrieve(request, *args, **kwargs)
 
 class DashboardView(LoginRequiredMixin, FormView):
     template_name = "event/dashboard_base.html"
