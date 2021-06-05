@@ -51,4 +51,4 @@ class HardwareOrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
-        fields = "__all__"
+        fields = ("id", "hardware_set", "team", "status", "created_at", "updated_at")
