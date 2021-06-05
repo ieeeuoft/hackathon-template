@@ -63,6 +63,25 @@ class ApplicationResource(resources.ModelResource):
             "updated_at",
         )
 
+    def get_export_headers(self):
+        export_headers = [
+            "first_name",
+            "last_name",
+            "email",
+            "team_code",
+            "birthday",
+            "gender",
+            "ethnicity",
+            "school",
+            "study_level",
+            "graduation_year",
+            "review_status",
+            "rsvp",
+            "created_at",
+            "updated_at",
+        ]
+        return export_headers
+
 
 @admin.register(Application)
 class ApplicationAdmin(ExportMixin, admin.ModelAdmin):
