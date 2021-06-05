@@ -654,47 +654,6 @@ class PasswordResetTestCase(SetupUserMixin, TestCase):
         self.assertContains(
             redirected_response, "Your password has been successfully reset"
         )
-#
-# class FullSerializerTestCase(TestCase):
-#     def setUp():
-#         self.team_attributes = {'team_code':'123456',
-#                                 'created_at':DateTime(creation_date),
-#                                 'updated_at':DateTime(update_date)}
-#
-#         self.profile_attributes = {}
-#
-#         self.user_attributes = {}
-#
-#         self.serializer_team_data = {
-#             'id':1,
-#             'team_code':'123456',
-#             'created_at':creation_date,
-#             'updated_at':update_date
-#         }
-#
-#         self.serializer_profile_data = {
-#
-#         }
-#
-#         self.serializer_user_data = {
-#
-#         }
-#
-#         self.team = Team.object.create(**self.team_attributes)
-#         self.team_serializer = TeamSerializer(instance=Team.object.create(**self.team_attributes))
-#
-#     def test_serializer(self):
-#         tz = pytz.timezone(settings.TIME_ZONE)
-#
-#         team = Team.objects.create()
-#         team_serialized = TeamSerializer(team).data
-#         team_expected = {
-#             "id": team.id,
-#             "team_code": team.team_code,
-#             "created_at": team.created_at.astimezone(tz).isoformat(),
-#             "updated_at": team.updated_at.astimezone(tz).isoformat(),
-#         }
-#         self.assertEqual(team_expected, team_serialized)
 
 class UserSerializerTestCase(TestCase):
     def test_serializer(self):
@@ -702,12 +661,8 @@ class UserSerializerTestCase(TestCase):
         group = Group.objects.create(name="Test")
         user = User.objects.create()
         user.groups.add(group)
-        print(user.groups)
-        user.refresh_from_db()
-        user.refresh_from_db()
-        print(user.groups)
 
-        profile = Profile.objects.create(
+        Profile.objects.create(
             user=user,
             team=team,
         )
