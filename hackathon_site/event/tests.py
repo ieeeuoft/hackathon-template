@@ -704,6 +704,7 @@ class UserSerializerTestCase(TestCase):
         user.groups.add(group)
         print(user.groups)
         user.refresh_from_db()
+        user.refresh_from_db()
         print(user.groups)
 
         profile = Profile.objects.create(
@@ -714,7 +715,7 @@ class UserSerializerTestCase(TestCase):
 
         user_serialized = UserSerializer(user).data
         profile_serialized = ProfileSerializer(user.profile).data
-        group_serialized = GroupSerializer(user.groups).data
+        group_serialized = GroupSerializer(user.groups, many=True).data
 
         user_expected = {
             "id": user.id,
