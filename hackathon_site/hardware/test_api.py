@@ -65,9 +65,10 @@ class HardwareDetailViewTestCase(SetupUserMixin, APITestCase):
             picture="/picture/location",
         )
 
-
         self.hardware_serializer = HardwareSerializer(self.hardware)
-        self.view = reverse("api:hardware:hardware-detail",kwargs={'pk':self.hardware.id})
+        self.view = reverse(
+            "api:hardware:hardware-detail", kwargs={"pk": self.hardware.id}
+        )
 
     def test_user_not_logged_in(self):
         response = self.client.get(self.view)
@@ -94,7 +95,6 @@ class HardwareDetailViewTestCase(SetupUserMixin, APITestCase):
         data = response.json()
 
         self.assertEqual(expected_response, data)
-
 
 
 class CategoryListViewTestCase(SetupUserMixin, APITestCase):
