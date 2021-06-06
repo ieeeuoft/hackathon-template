@@ -133,6 +133,7 @@ class HardwareOrderListViewTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         queryset = Order.objects.all()
+        # need to provide a request in the serializer context to produce absolute url for image field
         expected_response = HardwareOrderSerializer(
             queryset, many=True, context={"request": response.wsgi_request}
         ).data
