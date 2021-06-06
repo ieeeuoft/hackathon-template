@@ -70,16 +70,24 @@ class HardwareDetailViewTestCase(SetupUserMixin, APITestCase):
             "api:hardware:hardware-detail", kwargs={"pk": self.hardware.id}
         )
 
+        # Test the categories
+        for item in range(1, 6):
+            category_name = "category" + str(item)
+            self.hardware.categories.add(
+                Category.objects.create(name=category_name, max_per_team=4)
+            )
+
     def test_user_not_logged_in(self):
         response = self.client.get(self.view)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_hardware_get_success(self):
         self._login()
+
         expected_response = {
             "id": self.hardware.id,
             "name": "name",
-            "categories": [],
+            "categories": [category.id for category in self.hardware.categories.all()],
             "model_number": "model",
             "manufacturer": "manufacturer",
             "datasheet": "/datasheet/location/",
