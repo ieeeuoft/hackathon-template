@@ -83,7 +83,7 @@ class CategoryListViewTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(expected_response, data["results"][0])
 
 
-class HardwareOrderListViewTestCase(SetupUserMixin, APITestCase):
+class OrderListViewTestCase(SetupUserMixin, APITestCase):
     def setUp(self):
         super().setUp()
         self.team = Team.objects.create()
