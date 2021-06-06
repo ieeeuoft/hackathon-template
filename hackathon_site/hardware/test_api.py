@@ -7,7 +7,7 @@ from hardware.models import Hardware, Category, Order, OrderItem
 from hardware.serializers import (
     HardwareSerializer,
     CategorySerializer,
-    HardwareOrderSerializer,
+    OrderSerializer,
 )
 from hackathon_site.tests import SetupUserMixin
 
@@ -134,7 +134,7 @@ class HardwareOrderListViewTestCase(SetupUserMixin, APITestCase):
 
         queryset = Order.objects.all()
         # need to provide a request in the serializer context to produce absolute url for image field
-        expected_response = HardwareOrderSerializer(
+        expected_response = OrderSerializer(
             queryset, many=True, context={"request": response.wsgi_request}
         ).data
         data = response.json()

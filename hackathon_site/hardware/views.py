@@ -3,7 +3,7 @@ from rest_framework import generics, mixins
 from hardware.serializers import (
     HardwareSerializer,
     CategorySerializer,
-    HardwareOrderSerializer,
+    OrderSerializer,
 )
 
 
@@ -25,7 +25,7 @@ class CategoryListView(mixins.ListModelMixin, generics.GenericAPIView):
 
 class HardwareOrderListView(mixins.ListModelMixin, generics.GenericAPIView):
     queryset = Order.objects.all()
-    serializer_class = HardwareOrderSerializer
+    serializer_class = OrderSerializer
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)

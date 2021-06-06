@@ -6,7 +6,7 @@ from event.models import Team
 from hardware.serializers import (
     HardwareSerializer,
     CategorySerializer,
-    HardwareOrderSerializer,
+    OrderSerializer,
 )
 
 
@@ -125,7 +125,7 @@ class CategorySerializerTestCase(TestCase):
         self.assertEqual(expected_response, data)
 
 
-class HardwareOrderSerializerTestCase(TestCase):
+class OrderSerializerTestCase(TestCase):
     def setUp(self):
         self.team = Team.objects.create()
         self.hardware = Hardware.objects.create(
@@ -149,7 +149,7 @@ class HardwareOrderSerializerTestCase(TestCase):
 
     def test_empty_order(self):
         order = Order.objects.create(status="Cart", team=self.team)
-        order_serializer = HardwareOrderSerializer(order).data
+        order_serializer = OrderSerializer(order).data
         expected_response = {
             "id": 1,
             "team": self.team.id,
@@ -172,7 +172,7 @@ class HardwareOrderSerializerTestCase(TestCase):
         OrderItem.objects.create(
             order=order, hardware=self.other_hardware,
         )
-        order_serializer = HardwareOrderSerializer(order).data
+        order_serializer = OrderSerializer(order).data
         expected_response = {
             "id": 1,
             "team": self.team.id,
