@@ -128,11 +128,14 @@ class HardwareOrderListViewTestCase(SetupUserMixin, APITestCase):
 
     def test_hardware_get_success(self):
         self._login()
-        queryset = Order.objects.all()
-        expected_response = HardwareOrderSerializer(queryset, many=True).data
 
         response = self.client.get(self.view)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        queryset = Order.objects.all()
+        expected_response = HardwareOrderSerializer(
+            queryset, many=True, context={"request": response.wsgi_request}
+        ).data
         data = response.json()
 
         self.assertEqual(expected_response, data["results"])
