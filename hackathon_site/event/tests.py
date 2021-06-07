@@ -667,7 +667,6 @@ class UserSerializerTestCase(TestCase):
             team=team,
         )
 
-
         user_serialized = UserSerializer(user).data
         profile_serialized = ProfileSerializer(user.profile).data
         group_serialized = GroupSerializer(user.groups, many=True).data
