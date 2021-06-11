@@ -71,7 +71,7 @@ class Order(models.Model):
     updated_at = models.DateTimeField(auto_now=True, null=False)
 
     def __str__(self):
-        return self.id
+        return f"{self.id}"
 
 
 class Incident(models.Model):
@@ -94,4 +94,4 @@ class Incident(models.Model):
     updated_at = models.DateTimeField(auto_now=True, null=False)
 
     def __str__(self):
-        return self.id
+        return f"{self.id}"

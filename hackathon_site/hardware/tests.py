@@ -1,8 +1,13 @@
 from django.test import TestCase
+from rest_framework import serializers
 
 from hardware.models import Hardware, Category, Order, OrderItem
 from event.models import Team
-from hardware.serializers import HardwareSerializer, CategorySerializer
+from hardware.serializers import (
+    HardwareSerializer,
+    CategorySerializer,
+    OrderSerializer,
+)
 
 
 class HardwareSerializerTestCase(TestCase):
@@ -118,3 +123,69 @@ class CategorySerializerTestCase(TestCase):
             "unique_hardware_count": 1,
         }
         self.assertEqual(expected_response, data)
+
+
+class OrderSerializerTestCase(TestCase):
+    def setUp(self):
+        self.team = Team.objects.create()
+        self.hardware = Hardware.objects.create(
+            name="name",
+            model_number="model",
+            manufacturer="manufacturer",
+            datasheet="/datasheet/location/",
+            quantity_available=4,
+            max_per_team=1,
+            picture="/picture/location",
+        )
+        self.other_hardware = Hardware.objects.create(
+            name="other",
+            model_number="otherModel",
+            manufacturer="otherManufacturer",
+            datasheet="/datasheet/location/other/",
+            quantity_available=10,
+            max_per_team=10,
+            picture="/picture/location/other/",
+        )
+
+    def test_empty_order(self):
+        order = Order.objects.create(status="Cart", team=self.team)
+        order_serializer = OrderSerializer(order).data
+        expected_response = {
+            "id": 1,
+            "team": self.team.id,
+            "status": "Cart",
+            "hardware_set": [],
+            "created_at": serializers.DateTimeField().to_representation(
+                order.created_at
+            ),
+            "updated_at": serializers.DateTimeField().to_representation(
+                order.updated_at
+            ),
+        }
+        self.assertEqual(order_serializer, expected_response)
+
+    def test_hardware_set(self):
+        order = Order.objects.create(status="Cart", team=self.team)
+        OrderItem.objects.create(
+            order=order, hardware=self.hardware, part_returned_health="Healthy"
+        )
+        OrderItem.objects.create(
+            order=order, hardware=self.other_hardware,
+        )
+        order_serializer = OrderSerializer(order).data
+        expected_response = {
+            "id": 1,
+            "team": self.team.id,
+            "status": "Cart",
+            "hardware_set": [
+                HardwareSerializer(self.hardware).data,
+                HardwareSerializer(self.other_hardware).data,
+            ],
+            "created_at": serializers.DateTimeField().to_representation(
+                order.created_at
+            ),
+            "updated_at": serializers.DateTimeField().to_representation(
+                order.updated_at
+            ),
+        }
+        self.assertEqual(order_serializer, expected_response)

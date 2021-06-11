@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from hardware.models import Hardware, Category, OrderItem
+from hardware.models import Hardware, Category, OrderItem, Order
 
 
 class HardwareSerializer(serializers.ModelSerializer):
@@ -44,3 +44,11 @@ class CategorySerializer(serializers.ModelSerializer):
     @staticmethod
     def get_unique_hardware_count(obj: Category):
         return Hardware.objects.filter(categories__id=obj.id).count()
+
+
+class OrderSerializer(serializers.ModelSerializer):
+    hardware_set = HardwareSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Order
+        fields = ("id", "hardware_set", "team", "status", "created_at", "updated_at")
