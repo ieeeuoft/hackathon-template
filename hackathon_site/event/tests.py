@@ -15,8 +15,12 @@ from hackathon_site.tests import SetupUserMixin
 from registration.models import Team as RegistrationTeam
 
 import pytz
-from event.serializers import TeamSerializer, UserSerializer, GroupSerializer, ProfileSerializer
-
+from event.serializers import (
+    TeamSerializer,
+    UserSerializer,
+    GroupSerializer,
+    ProfileSerializer,
+)
 
 
 class ProfileTestCase(TestCase):
@@ -655,6 +659,7 @@ class PasswordResetTestCase(SetupUserMixin, TestCase):
             redirected_response, "Your password has been successfully reset"
         )
 
+
 class UserSerializerTestCase(TestCase):
     def test_serializer(self):
         team = Team.objects.create()
@@ -679,14 +684,15 @@ class UserSerializerTestCase(TestCase):
             "profile": profile_serialized,
             "groups": group_serialized,
         }
-        if user_expected!=user_serialized:
+        if user_expected != user_serialized:
             print("\n")
-            print('-------------------')
+            print("-------------------")
             print(user_expected)
-            print('-------------------')
+            print("-------------------")
             print(user_serialized)
-            print('-------------------')
+            print("-------------------")
         self.assertEqual(user_expected, user_serialized)
+
 
 class GroupSerializerTestCase(TestCase):
     def test_serializer(self):
@@ -697,6 +703,7 @@ class GroupSerializerTestCase(TestCase):
             "name": group.name,
         }
         self.assertEqual(group_expected, group_serialized)
+
 
 class ProfileSerializerTestCase(TestCase):
     def setUp(self):
