@@ -9,8 +9,7 @@
 .productOverview {
     height: 100%;
     width: 100%;
-    @include flexPosition($alIte: flex-start);
-    flex-direction: column;
+    @include flexPosition($jusCon: space-between, $alIte: flex-start, $dir: column);
 
     &Div {
         width: 100%;
@@ -18,8 +17,7 @@
 }
 
 .mainSection {
-    display: flex;
-    justify-content: space-between;
+    @include flexPosition($jusCon: space-between);
     width: 100%;
 
     h6 {

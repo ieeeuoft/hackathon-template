@@ -2,8 +2,7 @@
 @import "./../../../assets/abstracts/variables";
 
 .header {
-    display: flex;
-    align-items: center;
+    @include flexPosition($alIte: center);
     width: 100%;
     background-color: color(light2);
     z-index: 5;
@@ -15,6 +14,12 @@
 
     &BackArrow {
         margin-right: 5px;
+    }
+
+    > h2 {
+        @include responsive(md-down) {
+            font-size: size(md) !important;
+        }
     }
 }
 

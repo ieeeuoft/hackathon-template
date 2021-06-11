@@ -16,7 +16,6 @@
     "formik": "^2.1.4",
     "history": "^4.10.1",
     "lint-staged": "^10.2.2",
-    "node-sass": "^4.14.0",
     "notistack": "^0.9.17",
     "prettier": "^2.0.5",
     "react": "^16.13.1",
@@ -28,6 +27,7 @@
     "redux": "^4.0.5",
     "redux-mock-store": "^1.5.4",
     "redux-thunk": "^2.3.0",
+    "sass": "^1.32.12",
     "typescript": "^4.2.4",
     "yup": "^0.29.1"
   },
@@ -35,7 +35,10 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jest-environment-jsdom-sixteen",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "i": "yarn install --frozen-lockfile",
+    "pretty": "yarn prettier --write 'src/**/*.(scss|js)'",
+    "precheck": "yarn pretty && yarn test -o -u --watchAll=false"
   },
   "eslintConfig": {
     "extends": "react-app"

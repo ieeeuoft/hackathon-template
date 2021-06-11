@@ -12,17 +12,14 @@
 }
 
 .title {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
+    @include flexPosition($jusCon: space-between, $alIte: flex-end);
     &Text {
         margin-bottom: 10px;
     }
     &Chip {
         display: flex;
         &Space {
-            display: flex;
-            justify-content: space-between;
+            @include flexPosition($jusCon: space-between);
         }
         &Text {
             min-width: fit-content;

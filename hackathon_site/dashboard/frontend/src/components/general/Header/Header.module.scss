@@ -24,18 +24,10 @@
         }
     }
 
-    &IconBtn {
-        color: color(white);
-        &:hover {
-            background-color: rgba(355, 355, 355, 0.2);
-        }
-    }
-
     &Drawer {
         &Top {
             width: 100%;
-            display: flex;
-            justify-content: flex-end;
+            @include flexPosition($jusCon: flex-end);
             background-color: color(light1);
             padding: 8px 15px;
             svg {
