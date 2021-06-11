@@ -72,6 +72,7 @@ export const AddToCartForm = ({
                 </FormControl>
                 <div className={styles.formButton}>
                     <Button
+                        label="Add to cart"
                         variant="contained"
                         color="primary"
                         fullWidth={true}
@@ -80,6 +81,7 @@ export const AddToCartForm = ({
                         onClick={handleSubmit}
                         disabled={dropdownNum === 0}
                         disableElevation
+                        data-testid="foobar123"
                     >
                         Add to cart
                     </Button>
