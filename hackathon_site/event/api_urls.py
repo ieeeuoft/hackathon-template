@@ -1,6 +1,6 @@
 from django.urls import path
 
-from event import api_views,views
+from event import api_views, views
 
 app_name = "event"
 

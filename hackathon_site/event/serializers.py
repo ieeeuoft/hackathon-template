@@ -9,6 +9,7 @@ class GroupSerializer(serializers.ModelSerializer):
         model = Group
         fields = ("id", "name")
 
+
 class TeamSerializer(serializers.ModelSerializer):
     class Meta:
         model = Team
@@ -18,6 +19,7 @@ class TeamSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
         )
+
 
 class ProfileSerializer(serializers.ModelSerializer):
     team = TeamSerializer(read_only=True)

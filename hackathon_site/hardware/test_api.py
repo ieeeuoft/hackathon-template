@@ -162,17 +162,21 @@ class OrderListViewTestCase(SetupUserMixin, APITestCase):
             picture="/picture/location/other",
         )
         OrderItem.objects.create(
-            order=self.order, hardware=self.hardware,
+            order=self.order,
+            hardware=self.hardware,
         )
         OrderItem.objects.create(
-            order=self.order, hardware=self.other_hardware,
+            order=self.order,
+            hardware=self.other_hardware,
         )
         self.order_2 = Order.objects.create(status="Submitted", team=self.team)
         OrderItem.objects.create(
-            order=self.order_2, hardware=self.hardware,
+            order=self.order_2,
+            hardware=self.hardware,
         )
         OrderItem.objects.create(
-            order=self.order_2, hardware=self.other_hardware,
+            order=self.order_2,
+            hardware=self.other_hardware,
         )
         self.view = reverse("api:hardware:order-list")
 

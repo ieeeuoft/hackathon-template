@@ -155,3 +155,6 @@ hackathon_site/**/*.css.map
 
 # node_modules, found outside the react app
 node_modules/
+
+# OS Stuff
+.DS_Store

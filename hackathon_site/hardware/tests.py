@@ -45,7 +45,10 @@ class HardwareSerializerTestCase(TestCase):
         hardware_serializer = HardwareSerializer(self.hardware)
         team = Team.objects.create()
         order = Order.objects.create(status="Cart", team=team)
-        order_item_1 = OrderItem.objects.create(order=order, hardware=self.hardware,)
+        order_item_1 = OrderItem.objects.create(
+            order=order,
+            hardware=self.hardware,
+        )
         expected_response = {
             "id": 1,
             "name": "name",
@@ -69,7 +72,10 @@ class HardwareSerializerTestCase(TestCase):
         order_item_1 = OrderItem.objects.create(
             order=order, hardware=self.hardware, part_returned_health="Healthy"
         )
-        order_item_2 = OrderItem.objects.create(order=order, hardware=self.hardware,)
+        order_item_2 = OrderItem.objects.create(
+            order=order,
+            hardware=self.hardware,
+        )
 
         expected_response = {
             "id": 1,
@@ -170,7 +176,8 @@ class OrderSerializerTestCase(TestCase):
             order=order, hardware=self.hardware, part_returned_health="Healthy"
         )
         OrderItem.objects.create(
-            order=order, hardware=self.other_hardware,
+            order=order,
+            hardware=self.other_hardware,
         )
         order_serializer = OrderSerializer(order).data
         expected_response = {

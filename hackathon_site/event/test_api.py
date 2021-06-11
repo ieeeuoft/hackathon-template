@@ -5,7 +5,12 @@ from rest_framework.test import APITestCase
 from hackathon_site.tests import SetupUserMixin
 
 from event.models import Profile, User, Team
-from event.serializers import TeamSerializer, UserSerializer, ProfileSerializer, GroupSerializer
+from event.serializers import (
+    TeamSerializer,
+    UserSerializer,
+    ProfileSerializer,
+    GroupSerializer,
+)
 
 
 class CurrentUserTestCase(SetupUserMixin, APITestCase):
@@ -64,6 +69,7 @@ class CurrentUserTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json(), serializer.data)
 
+
 class CurrentTeamTestCase(SetupUserMixin, APITestCase):
     def setUp(self):
         super().setUp()
@@ -71,9 +77,7 @@ class CurrentTeamTestCase(SetupUserMixin, APITestCase):
         self.user.groups.add(self.group)
         self.team = Team.objects.create()
 
-        self.profile = Profile.objects.create(
-            user=self.user, team=self.team
-        )
+        self.profile = Profile.objects.create(user=self.user, team=self.team)
 
         self.view = reverse("api:event:current-team")
 
