@@ -14,7 +14,7 @@ from registration.models import Team
 
 from rest_framework import generics, mixins
 
-from event.models import User, Team
+from event.models import Team
 from event.serializers import UserSerializer, TeamSerializer
 
 
