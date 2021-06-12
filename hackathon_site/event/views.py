@@ -12,7 +12,6 @@ from hackathon_site.utils import is_registration_open
 from registration.forms import JoinTeamForm
 from registration.models import Team
 
-from django.views.generic import TemplateView
 from rest_framework import generics, mixins
 
 from event.models import User, Team
