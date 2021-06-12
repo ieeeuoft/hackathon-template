@@ -44,7 +44,7 @@ strong {
 .backgroundColor {
     // Change the background colors of each page here!
     &Landing {
-        background-color: red;
+        background-color: color(backgroundColor);
     }
     &FormBase {
         background-color: color(backgroundColor);
