@@ -57,10 +57,10 @@ class OrderItem(models.Model):
 
 class Order(models.Model):
     STATUS_CHOICES = [
-        ("Cart", "Cart"),
         ("Submitted", "Submitted"),
         ("Ready for Pickup", "Ready for Pickup"),
         ("Picked Up", "Picked Up"),
+        ("Cancelled", "Cancelled"),
     ]
 
     hardware_set = models.ManyToManyField(Hardware, through=OrderItem)
