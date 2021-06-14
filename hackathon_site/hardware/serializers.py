@@ -70,5 +70,12 @@ class OrderPostSerializer(serializers.Serializer):
     hardware = OrderPostHardwareSerializer(many=True, required=True)
 
     def validate(self, data):
-        past_orders = data["team_id"].order_set.all()
+        requested_hardware = list(map(lambda e: e["id"], data["hardware"]))
+        relevant_past_order_items = (
+            OrderItem.objects.filter(
+                order__team=data["team_id"], hardware__in=requested_hardware,
+            )
+            .exclude(order__status="Cancelled")
+            .select_related("hardware")
+        )
         return data
