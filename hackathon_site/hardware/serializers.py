@@ -46,7 +46,7 @@ class CategorySerializer(serializers.ModelSerializer):
         return Hardware.objects.filter(categories__id=obj.id).count()
 
 
-class OrderSerializer(serializers.ModelSerializer):
+class OrderListSerializer(serializers.ModelSerializer):
     hardware_set = HardwareSerializer(many=True, read_only=True)
 
     class Meta:

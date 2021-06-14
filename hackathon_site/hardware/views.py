@@ -1,9 +1,9 @@
 from hardware.models import Hardware, Category, Order
-from rest_framework import generics, mixins
+from rest_framework import generics, mixins, viewsets
 from hardware.serializers import (
     HardwareSerializer,
     CategorySerializer,
-    OrderSerializer,
+    OrderListSerializer,
 )
 
 
@@ -31,9 +31,18 @@ class CategoryListView(mixins.ListModelMixin, generics.GenericAPIView):
         return self.list(request, *args, **kwargs)
 
 
-class OrderListView(mixins.ListModelMixin, generics.GenericAPIView):
+class OrderViewSet(
+    mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet
+):
     queryset = Order.objects.all()
-    serializer_class = OrderSerializer
+    serializer_class = OrderListSerializer
+    serializer_action_classes = {"list": OrderListSerializer}
+
+    def get_serializer_class(self):
+        try:
+            return self.serializer_action_classes[self.action]
+        except (KeyError, AttributeError):
+            return super(OrderViewSet, self).get_serializer_class()
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
