@@ -65,7 +65,9 @@ class Order(models.Model):
 
     hardware_set = models.ManyToManyField(Hardware, through=OrderItem)
     team = models.ForeignKey(TeamEvent, on_delete=models.CASCADE, null=False)
-    status = models.CharField(max_length=64, choices=STATUS_CHOICES, default="Cart")
+    status = models.CharField(
+        max_length=64, choices=STATUS_CHOICES, default="Submitted"
+    )
 
     created_at = models.DateTimeField(auto_now_add=True, null=False)
     updated_at = models.DateTimeField(auto_now=True, null=False)
