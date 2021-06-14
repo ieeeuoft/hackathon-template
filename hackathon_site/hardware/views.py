@@ -4,6 +4,7 @@ from hardware.serializers import (
     HardwareSerializer,
     CategorySerializer,
     OrderListSerializer,
+    OrderPostSerializer,
 )
 
 
@@ -36,7 +37,10 @@ class OrderViewSet(
 ):
     queryset = Order.objects.all()
     serializer_class = OrderListSerializer
-    serializer_action_classes = {"list": OrderListSerializer}
+    serializer_action_classes = {
+        "list": OrderListSerializer,
+        "create": OrderPostSerializer,
+    }
 
     def get_serializer_class(self):
         try:
@@ -46,3 +50,10 @@ class OrderViewSet(
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        return Response(
+            serializer.data, status=status.HTTP_201_CREATED, headers=headers
+        )

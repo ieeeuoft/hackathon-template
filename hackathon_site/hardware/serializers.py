@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from hardware.models import Hardware, Category, OrderItem, Order
+from event.models import Team as TeamEvent
 
 
 class HardwareSerializer(serializers.ModelSerializer):
@@ -52,3 +53,22 @@ class OrderListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = ("id", "hardware_set", "team", "status", "created_at", "updated_at")
+
+
+class OrderPostHardwareSerializer(serializers.Serializer):
+    id = serializers.PrimaryKeyRelatedField(
+        queryset=Hardware.objects.all(), many=False, required=True
+    )
+    quantity = serializers.IntegerField(required=True)
+
+
+class OrderPostSerializer(serializers.Serializer):
+
+    team_id = serializers.PrimaryKeyRelatedField(
+        queryset=TeamEvent.objects.all(), many=False, required=True
+    )
+    hardware = OrderPostHardwareSerializer(many=True, required=True)
+
+    def validate(self, data):
+        past_orders = data["team_id"].order_set.all()
+        return data
