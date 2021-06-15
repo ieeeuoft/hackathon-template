@@ -1,3 +1,6 @@
+from collections import Counter
+import functools
+import itertools
 from rest_framework import serializers
 from hardware.models import Hardware, Category, OrderItem, Order
 from event.models import Team as TeamEvent
@@ -55,27 +58,68 @@ class OrderListSerializer(serializers.ModelSerializer):
         fields = ("id", "hardware_set", "team", "status", "created_at", "updated_at")
 
 
-class OrderPostHardwareSerializer(serializers.Serializer):
-    id = serializers.PrimaryKeyRelatedField(
-        queryset=Hardware.objects.all(), many=False, required=True
-    )
-    quantity = serializers.IntegerField(required=True)
-
-
 class OrderPostSerializer(serializers.Serializer):
+    class OrderPostHardwareSerializer(serializers.Serializer):
+        id = serializers.PrimaryKeyRelatedField(
+            queryset=Hardware.objects.all(), many=False, required=True
+        )
+        quantity = serializers.IntegerField(required=True)
 
     team_id = serializers.PrimaryKeyRelatedField(
         queryset=TeamEvent.objects.all(), many=False, required=True
     )
     hardware = OrderPostHardwareSerializer(many=True, required=True)
 
-    def validate(self, data):
-        requested_hardware = list(map(lambda e: e["id"], data["hardware"]))
+    @staticmethod
+    def merge_requests(hardware_requests):
+        return functools.reduce(
+            lambda x, y: x + y,
+            [Counter({e["id"]: e["quantity"]}) for e in hardware_requests],
+        )
+
+    def create(self, validated_data):
+        requested_hardware = self.merge_requests(
+            hardware_requests=validated_data["hardware"]
+        )
         relevant_past_order_items = (
-            OrderItem.objects.filter(
-                order__team=data["team_id"], hardware__in=requested_hardware,
-            )
+            OrderItem.objects.filter(hardware__in=requested_hardware.keys(),)
             .exclude(order__status="Cancelled")
             .select_related("hardware")
         )
-        return data
+        team_past_hardware_counts = Counter(
+            (
+                map(
+                    lambda item: item.hardware,
+                    relevant_past_order_items.filter(
+                        order__team=validated_data["team_id"],
+                    ).all(),
+                )
+            )
+        )
+        all_past_hardware_counts = Counter(
+            (map(lambda item: item.hardware, relevant_past_order_items.all(),))
+        )
+        new_order = None
+        unfulfilled_hardware_requests = dict()
+        for (hardware, requested_quantity) in requested_hardware.items():
+            allowed_quantity = min(
+                hardware.max_per_team - team_past_hardware_counts[hardware],
+                hardware.quantity_available - all_past_hardware_counts[hardware],
+            )
+            if allowed_quantity <= 0:
+                unfulfilled_hardware_requests[hardware] = requested_quantity
+                continue
+            if new_order is None:
+                new_order = Order.objects.create(
+                    team=validated_data["team_id"], status="Submitted"
+                )
+            if allowed_quantity < requested_quantity:
+                unfulfilled_hardware_requests[hardware] = (
+                    requested_hardware - allowed_quantity
+                )
+            for _ in itertools.repeat(None, min(allowed_quantity, requested_quantity)):
+                OrderItem.objects.create(
+                    order=new_order, hardware=hardware,
+                )
+
+        return new_order, unfulfilled_hardware_requests
