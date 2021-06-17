@@ -1,3 +1,4 @@
+from django.db import transaction
 from rest_framework import generics, mixins, viewsets, status
 from rest_framework.response import Response
 from hardware.models import Hardware, Category, Order
@@ -53,6 +54,7 @@ class OrderViewSet(
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
 
+    @transaction.atomic
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
