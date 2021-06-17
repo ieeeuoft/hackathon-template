@@ -115,7 +115,7 @@ class OrderCreateSerializer(serializers.Serializer):
                 )
             if allowed_quantity < requested_quantity:
                 unfulfilled_hardware_requests[hardware] = (
-                    requested_hardware - allowed_quantity
+                    requested_quantity - allowed_quantity
                 )
             for _ in itertools.repeat(None, min(allowed_quantity, requested_quantity)):
                 OrderItem.objects.create(
@@ -123,3 +123,18 @@ class OrderCreateSerializer(serializers.Serializer):
                 )
 
         return new_order, unfulfilled_hardware_requests
+
+
+class OrderCreateResponseSerializer(serializers.Serializer):
+    def to_representation(self, instance):
+        response = {"order_id": instance.id}
+        fulfilled_order_items = instance.items
+        fulfilled_count = Counter(
+            map(lambda item: item.hardware_id, fulfilled_order_items.all())
+        )
+        response["hardware"] = dict(fulfilled_count)
+        unfulfilled = self.context["unfulfilled"]
+        response["errors"] = {
+            hardware.id: count for (hardware, count) in unfulfilled.items()
+        }
+        return response

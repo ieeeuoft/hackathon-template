@@ -6,6 +6,7 @@ from hardware.serializers import (
     CategorySerializer,
     OrderListSerializer,
     OrderCreateSerializer,
+    OrderCreateResponseSerializer,
 )
 
 
@@ -55,7 +56,15 @@ class OrderViewSet(
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        data = serializer.save()
-        return Response(
-            serializer.data, status=status.HTTP_201_CREATED, headers=headers
+        new_order, unfulfilled_hardware_requests = serializer.save()
+        if new_order is None:
+            return Response(
+                {"details": "Cannot be fulfilled"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+        response_serializer = OrderCreateResponseSerializer(
+            new_order, context={"unfulfilled": unfulfilled_hardware_requests}
         )
+        response_data = response_serializer.data
+        headers = self.get_success_headers(response_data)
+        return Response(response_data, status=status.HTTP_201_CREATED, headers=headers)
