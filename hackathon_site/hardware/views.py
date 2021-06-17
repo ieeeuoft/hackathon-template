@@ -1,10 +1,11 @@
+from rest_framework import generics, mixins, viewsets, status
+from rest_framework.response import Response
 from hardware.models import Hardware, Category, Order
-from rest_framework import generics, mixins, viewsets
 from hardware.serializers import (
     HardwareSerializer,
     CategorySerializer,
     OrderListSerializer,
-    OrderPostSerializer,
+    OrderCreateSerializer,
 )
 
 
@@ -39,7 +40,7 @@ class OrderViewSet(
     serializer_class = OrderListSerializer
     serializer_action_classes = {
         "list": OrderListSerializer,
-        "create": OrderPostSerializer,
+        "create": OrderCreateSerializer,
     }
 
     def get_serializer_class(self):

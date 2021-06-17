@@ -58,8 +58,8 @@ class OrderListSerializer(serializers.ModelSerializer):
         fields = ("id", "hardware_set", "team", "status", "created_at", "updated_at")
 
 
-class OrderPostSerializer(serializers.Serializer):
-    class OrderPostHardwareSerializer(serializers.Serializer):
+class OrderCreateSerializer(serializers.Serializer):
+    class OrderCreateHardwareSerializer(serializers.Serializer):
         id = serializers.PrimaryKeyRelatedField(
             queryset=Hardware.objects.all(), many=False, required=True
         )
@@ -68,7 +68,7 @@ class OrderPostSerializer(serializers.Serializer):
     team_id = serializers.PrimaryKeyRelatedField(
         queryset=TeamEvent.objects.all(), many=False, required=True
     )
-    hardware = OrderPostHardwareSerializer(many=True, required=True)
+    hardware = OrderCreateHardwareSerializer(many=True, required=True)
 
     @staticmethod
     def merge_requests(hardware_requests):
