@@ -27,7 +27,7 @@ class Team(models.Model):
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     team = models.ForeignKey(
-        Team, related_name="profile", on_delete=models.CASCADE, null=False
+        Team, related_name="profiles", on_delete=models.CASCADE, null=False
     )
     id_provided = models.BooleanField(default=False, null=False)
     attended = models.BooleanField(default=False, null=False)

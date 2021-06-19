@@ -51,7 +51,7 @@ class CurrentTeamAPIView(generics.GenericAPIView, mixins.RetrieveModelMixin):
         queryset = self.get_queryset()
 
         return generics.get_object_or_404(
-            queryset, profile__user_id=self.request.user.id
+            queryset, profiles__user_id=self.request.user.id
         )
 
     def get(self, request, *args, **kwargs):
