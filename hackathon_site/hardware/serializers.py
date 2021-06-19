@@ -1,10 +1,10 @@
+from django.db.models import Count, F, Q
 from rest_framework import serializers
 from hardware.models import Hardware, Category, OrderItem
 
 
 class HardwareSerializer(serializers.ModelSerializer):
-    quantity_remaining = serializers.SerializerMethodField()
-
+    quantity_remaining = serializers.IntegerField()
     class Meta:
         model = Hardware
         fields = (
@@ -19,6 +19,7 @@ class HardwareSerializer(serializers.ModelSerializer):
             "picture",
             "categories",
             "quantity_remaining",
+            "order_items_count"
         )
 
     @staticmethod
