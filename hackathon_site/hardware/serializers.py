@@ -1,7 +1,9 @@
 from collections import Counter
 import functools
 import itertools
+
 from rest_framework import serializers
+
 from hardware.models import Hardware, Category, OrderItem, Order
 from event.models import Team as TeamEvent
 
