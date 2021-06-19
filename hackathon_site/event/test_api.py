@@ -43,23 +43,6 @@ class CurrentUserTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(expected_response, data)
 
     def test_user_has_profile(self):
-        # expected_response = {
-        #     **{
-        #         attr: getattr(self.user, attr)
-        #         for attr in ("id", "first_name", "last_name", "email")
-        #     },
-        #     "profile": {
-        #         attr: getattr(self.profile, attr)
-        #         for attr in (
-        #             "id",
-        #             "id_provided",
-        #             "attended",
-        #             "acknowledge_rules",
-        #             "e_signature",
-        #         )
-        #     },
-        #     "groups": [{"id": self.group.id, "name": self.group.name}],
-        # }
         self._login()
         response = self.client.get(self.view)
 

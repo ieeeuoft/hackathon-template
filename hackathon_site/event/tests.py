@@ -684,13 +684,6 @@ class UserSerializerTestCase(TestCase):
             "profile": profile_serialized,
             "groups": group_serialized,
         }
-        if user_expected != user_serialized:
-            print("\n")
-            print("-------------------")
-            print(user_expected)
-            print("-------------------")
-            print(user_serialized)
-            print("-------------------")
         self.assertEqual(user_expected, user_serialized)
 
 
