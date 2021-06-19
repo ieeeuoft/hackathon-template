@@ -1,4 +1,7 @@
 from django.contrib import admin
+from import_export import resources
+from import_export.admin import ExportMixin
+
 from registration.models import Application, Team as TeamApplied
 
 
@@ -23,8 +26,66 @@ class TeamAppliedAdmin(admin.ModelAdmin):
         return super().get_queryset(request).prefetch_related("applications")
 
 
+class ApplicationResource(resources.ModelResource):
+    class Meta:
+        model = Application
+
+        fields = (
+            "user__first_name",
+            "user__last_name",
+            "user__email",
+            "team__team_code",
+            "birthday",
+            "gender",
+            "ethnicity",
+            "school",
+            "study_level",
+            "graduation_year",
+            "review__status",
+            "rsvp",
+            "created_at",
+            "updated_at",
+        )
+        export_order = (
+            "user__first_name",
+            "user__last_name",
+            "user__email",
+            "team__team_code",
+            "birthday",
+            "gender",
+            "ethnicity",
+            "school",
+            "study_level",
+            "graduation_year",
+            "review__status",
+            "rsvp",
+            "created_at",
+            "updated_at",
+        )
+
+    def get_export_headers(self):
+        export_headers = [
+            "first_name",
+            "last_name",
+            "email",
+            "team_code",
+            "birthday",
+            "gender",
+            "ethnicity",
+            "school",
+            "study_level",
+            "graduation_year",
+            "review_status",
+            "rsvp",
+            "created_at",
+            "updated_at",
+        ]
+        return export_headers
+
+
 @admin.register(Application)
-class ApplicationAdmin(admin.ModelAdmin):
+class ApplicationAdmin(ExportMixin, admin.ModelAdmin):
+    resource_class = ApplicationResource
     autocomplete_fields = ("user", "team")
     list_display = ("get_full_name", "team", "school")
     search_fields = (

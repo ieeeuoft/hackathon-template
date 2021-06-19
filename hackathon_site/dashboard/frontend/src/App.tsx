@@ -27,10 +27,15 @@ import SnackbarNotifier from "components/general/SnackbarNotifier/SnackbarNotifi
 
 import withParticipantCheck from "components/HOCs/withParticipantCheck/withParticipantCheck";
 
-export const makePalette = () => {
+type Palette = {
+    primary?: { main: string };
+    secondary?: { main: string };
+};
+
+export const makePalette = (): Palette => {
     // In testing, the scss exports don't work so styles is an
     // empty object. This gets around that.
-    let palette = {};
+    let palette: Palette = {};
     if (styles.primary) palette.primary = { main: styles.primary };
     if (styles.secondary) palette.secondary = { main: styles.secondary };
     return palette;
