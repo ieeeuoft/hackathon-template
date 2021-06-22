@@ -708,7 +708,6 @@ class ProfileSerializerTestCase(TestCase):
 
     def test_serializer(self):
         team = Team.objects.create()
-        team_serialized = TeamSerializer(team).data
 
         profile = Profile.objects.create(user=self.user, team=team)
         profile_serialized = ProfileSerializer(profile).data
@@ -718,6 +717,6 @@ class ProfileSerializerTestCase(TestCase):
             "attended": profile.attended,
             "acknowledge_rules": profile.acknowledge_rules,
             "e_signature": profile.e_signature,
-            "team": team_serialized,
+            "team": team.id,
         }
         self.assertEqual(profile_expected, profile_serialized)
