@@ -22,8 +22,6 @@ class TeamSerializer(serializers.ModelSerializer):
 
 
 class ProfileSerializer(serializers.ModelSerializer):
-    team = TeamSerializer(read_only=True)
-
     class Meta:
         model = Profile
         fields = (

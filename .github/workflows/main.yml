@@ -72,6 +72,6 @@ jobs:
       - name: Install dependencies
         run: yarn install
       - name: Formatting check
-        run: yarn prettier --check 'src/**/*.(scss|js)'
+        run: yarn prettier --check 'src/**/*.(js|ts|tsx|scss)'
       - name: Tests
         run: yarn test --watchAll=false
