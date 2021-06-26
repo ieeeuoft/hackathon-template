@@ -4,7 +4,7 @@ from hardware.serializers import HardwareSerializer, CategorySerializer
 
 
 class HardwareListView(mixins.ListModelMixin, generics.GenericAPIView):
-    queryset = Hardware.objects.get_queryset()
+    queryset = Hardware.objects.all()
     serializer_class = HardwareSerializer
 
     def get(self, request, *args, **kwargs):

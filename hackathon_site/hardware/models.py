@@ -1,6 +1,6 @@
 from django.db import models
 from event.models import Team as TeamEvent
-
+from django.db.models import Count, F, Q
 
 class Category(models.Model):
     class Meta:
@@ -15,8 +15,29 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+class AnnotatedHardwareManager(models.Manager):
+    def get_queryset(self):
+        return (
+            super()
+                .get_queryset() 
+                .annotate(
+                    quantity_checked_out=Count(
+                        "order_items",
+                        filter=(
+                            Q(order_items__part_returned_health__isnull=True)
+                            & ~Q(order_items__order__status="Cancelled")
+                        ),
+                        distinct=True,
+                    )
+                )
+                .annotate(
+                    quantity_remaining=(F("quantity_available") - F("quantity_checked_out"))
+                )
+        )
 
 class Hardware(models.Model):
+    objects = AnnotatedHardwareManager()
+
     class Meta:
         verbose_name_plural = "hardware"
 
@@ -29,7 +50,6 @@ class Hardware(models.Model):
     max_per_team = models.IntegerField(null=True)
     picture = models.ImageField(upload_to="uploads/hardware/pictures/", null=False)
     categories = models.ManyToManyField(Category)
-    objects = AnnotatedHardwareManager()
 
     created_at = models.DateTimeField(auto_now_add=True, null=False)
     updated_at = models.DateTimeField(auto_now=True, null=False)
@@ -96,22 +116,3 @@ class Incident(models.Model):
 
     def __str__(self):
         return self.id
-
-
-class AnnotatedHardwareManager(models.Manager):
-    def get_queryset(self):
-        return super()
-            .get_queryset()
-            .annotate(
-                quantity_checked_out=Count(
-                    "order_items",
-                    filter=(
-                        Q(order_items__part_returned_health__isnull=True)
-                        & ~Q(order_items__order__status="Cart")
-                    ),
-                    distinct=True,
-                )
-            )
-            .annotate(
-                quantity_remaining=(F("quantity_available") - F("quantity_checked_out"))
-            )
