@@ -69,9 +69,6 @@ class OrderCreateSerializer(serializers.Serializer):
         )
         quantity = serializers.IntegerField(required=True)
 
-    team_id = serializers.PrimaryKeyRelatedField(
-        queryset=TeamEvent.objects.all(), many=False, required=True
-    )
     hardware = OrderCreateHardwareSerializer(many=True, required=True)
 
     @staticmethod
@@ -96,7 +93,7 @@ class OrderCreateSerializer(serializers.Serializer):
                 "order_items",
                 filter=Q(order_items__part_returned_health__isnull=True)
                 & ~Q(order_items__order__status="Cancelled")
-                & Q(order_items__order__team=data["team_id"]),
+                & Q(order_items__order__team=self.context["request"].user.profile.team),
             )
         )
         category_counts = dict()
