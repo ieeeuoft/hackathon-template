@@ -6,7 +6,8 @@ from hardware.serializers import (
     CategorySerializer,
     OrderSerializer,
 )
-from api_filters import HardwareFilter
+
+from .api_filters import HardwareFilter
 
 
 class HardwareListView(mixins.ListModelMixin, generics.GenericAPIView):

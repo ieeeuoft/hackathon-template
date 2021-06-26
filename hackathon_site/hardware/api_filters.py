@@ -1,6 +1,6 @@
 from django_filters import rest_framework as filters
-from models import Hardware
-from serializers import HardwareSerializer
+from .models import Hardware
+from .serializers import HardwareSerializer
 from django_filters.fields import Lookup
 
 
@@ -10,7 +10,7 @@ class HardwareFilter(filters.FilterSet):
 
     class Meta:
         model = Hardware
-        fields = ["name", "quantity_remaining"]
+        fields = ["name", "quantity_available"]
 
     def comma_separate_filter(self, queryset, value):
         value_list = value.split(",")
