@@ -6,8 +6,8 @@ app_name = "hardware"
 
 urlpatterns = [
     path("hardware/", views.HardwareListView.as_view(), name="hardware-list",),
-    path("categories/", views.CategoryListView.as_view(), name="category-list"),
     path("orders/", views.OrderView.as_view(), name="order"),
+    path("categories/", views.CategoryListView.as_view(), name="category-list"),
     re_path(
         r"^hardware/(?P<pk>[0-9]+)/$",
         views.HardwareDetailView.as_view(),
