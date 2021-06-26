@@ -15,6 +15,7 @@ from registration.models import Team
 from rest_framework import generics, mixins
 
 from event.models import Team
+from event.models import Team as EventTeam
 from event.serializers import TeamSerializer
 
 
@@ -98,7 +99,7 @@ class DashboardView(LoginRequiredMixin, FormView):
 
         if isinstance(form, JoinTeamForm):
             application = self.request.user.application
-            new_team = Team.objects.get(team_code=form.cleaned_data["team_code"])
+            new_team = EventTeam.objects.get(team_code=form.cleaned_data["team_code"])
             old_team = application.team
 
             application.team = new_team

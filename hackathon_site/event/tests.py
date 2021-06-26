@@ -10,7 +10,8 @@ from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
 
-from event.models import Profile, Team, User
+from event.models import Profile, User
+from event.models import Team as EventTeam
 from hackathon_site.tests import SetupUserMixin
 from registration.models import Team as RegistrationTeam
 
@@ -33,15 +34,15 @@ class ProfileTestCase(TestCase):
         )
 
     def test_creates_profile_with_provided_team(self):
-        team = Team.objects.create()
+        team = EventTeam.objects.create()
         profile = Profile.objects.create(user=self.user, team=team)
-        self.assertEqual(Team.objects.count(), 1)
+        self.assertEqual(EventTeam.objects.count(), 1)
         self.assertEqual(profile.team, team)
 
     def test_creates_team_if_not_provided(self):
         profile = Profile.objects.create(user=self.user)
-        self.assertEqual(Team.objects.count(), 1)
-        self.assertEqual(Team.objects.first(), profile.team)
+        self.assertEqual(EventTeam.objects.count(), 1)
+        self.assertEqual(EventTeam.objects.first(), profile.team)
 
 
 class IndexViewTestCase(SetupUserMixin, TestCase):
@@ -662,7 +663,7 @@ class PasswordResetTestCase(SetupUserMixin, TestCase):
 
 class UserSerializerTestCase(TestCase):
     def test_serializer(self):
-        team = Team.objects.create()
+        team = EventTeam.objects.create()
         group = Group.objects.create(name="Test")
         user = User.objects.create()
         user.groups.add(group)
@@ -707,7 +708,7 @@ class ProfileSerializerTestCase(TestCase):
         )
 
     def test_serializer(self):
-        team = Team.objects.create()
+        team = EventTeam.objects.create()
 
         profile = Profile.objects.create(user=self.user, team=team)
         profile_serialized = ProfileSerializer(profile).data
