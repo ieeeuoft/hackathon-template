@@ -1,5 +1,5 @@
 from django.db import transaction
-from rest_framework import generics, mixins, viewsets, status
+from rest_framework import generics, mixins, status
 from rest_framework.response import Response
 from hardware.models import Hardware, Category, Order
 from hardware.serializers import (
@@ -35,21 +35,19 @@ class CategoryListView(mixins.ListModelMixin, generics.GenericAPIView):
         return self.list(request, *args, **kwargs)
 
 
-class OrderViewSet(
-    mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet
-):
+class OrderView(generics.ListCreateAPIView):
     queryset = Order.objects.all()
     serializer_class = OrderListSerializer
-    serializer_action_classes = {
-        "list": OrderListSerializer,
-        "create": OrderCreateSerializer,
+    serializer_method_classes = {
+        "GET": OrderListSerializer,
+        "POST": OrderCreateSerializer,
     }
 
     def get_serializer_class(self):
         try:
-            return self.serializer_action_classes[self.action]
+            return self.serializer_method_classes[self.request.method]
         except (KeyError, AttributeError):
-            return super(OrderViewSet, self).get_serializer_class()
+            return super().get_serializer_class()
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
