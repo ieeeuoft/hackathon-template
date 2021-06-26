@@ -1,15 +1,22 @@
 from hardware.models import Hardware, Category, Order
 from rest_framework import generics, mixins
+from django_filters import rest_framework as filters
 from hardware.serializers import (
     HardwareSerializer,
     CategorySerializer,
     OrderSerializer,
 )
+from api_filters import HardwareFilter
 
 
 class HardwareListView(mixins.ListModelMixin, generics.GenericAPIView):
     queryset = Hardware.objects.all()
     serializer_class = HardwareSerializer
+
+    filter_backends = (filters.DjangoFilterBackend,)
+    filterset_fields = ("name", "quantity_remaining")
+    filterset_class = HardwareFilter
+    search_fields = "name"
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
