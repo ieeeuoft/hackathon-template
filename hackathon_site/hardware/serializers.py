@@ -2,6 +2,8 @@ from collections import Counter
 import functools
 import itertools
 
+from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import Count, Q
 from rest_framework import serializers
 
 from hardware.models import Hardware, Category, OrderItem, Order
@@ -78,6 +80,46 @@ class OrderCreateSerializer(serializers.Serializer):
             lambda x, y: x + y,
             [Counter({e["id"]: e["quantity"]}) for e in hardware_requests],
         )
+
+    # check that the requests are within per-team constraints
+    def validate(self, data):
+        requested_hardware = self.merge_requests(hardware_requests=data["hardware"])
+        hardware_query = (
+            Hardware.objects.filter(
+                id__in=[hardware.id for hardware in requested_hardware.keys()],
+            )
+            .all()
+            .prefetch_related("categories", "order_items")
+        )
+        team_unreturned_orders = hardware_query.annotate(
+            past_order_count=Count(
+                "order_items",
+                filter=Q(order_items__part_returned_health__isnull=True)
+                & ~Q(order_items__order__status="Cancelled")
+                & Q(order_items__order__team=data["team_id"]),
+            )
+        )
+        category_counts = dict()
+        error_messages = []
+        for (hardware, requested_quantity) in requested_hardware.items():
+            try:
+                team_hardware = team_unreturned_orders.get(id=hardware.id)
+            except ObjectDoesNotExist:
+                team_hardware = None
+            team_hardware_count = getattr(team_hardware, "past_order_count", 0)
+            if hardware.max_per_team < (team_hardware_count + requested_quantity):
+                error_messages.append("Hardware {} limit reached".format(hardware.name))
+            for category in hardware.categories.all():
+                category_counts[category] = (
+                    category_counts.get(category, 0) + team_hardware_count
+                )
+        for (category, count) in category_counts.items():
+            if category.max_per_team < count:
+                error_messages.append("Category {} limit reached".format(category.name))
+        if error_messages:
+            error_message = "; ".join(error_messages)
+            raise serializers.ValidationError(error_message)
+        return data
 
     def create(self, validated_data):
         requested_hardware = self.merge_requests(
