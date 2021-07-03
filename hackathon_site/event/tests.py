@@ -531,6 +531,13 @@ class LogInViewTestCase(SetupUserMixin, TestCase):
         )
         self.assertEqual(response.url, settings.LOGIN_REDIRECT_URL)
 
+    def test_submit_login_uppercase_username(self):
+        response = self.client.post(
+            self.view,
+            {"username": self.user.username.upper(), "password": self.password},
+        )
+        self.assertEqual(response.url, settings.LOGIN_REDIRECT_URL)
+
 
 class LogOutViewTestCase(SetupUserMixin, TestCase):
     """
