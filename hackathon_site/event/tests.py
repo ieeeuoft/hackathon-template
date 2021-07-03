@@ -2,7 +2,6 @@ import re
 from unittest.mock import patch
 from datetime import datetime, timedelta
 
-from django.conf import settings
 from django.core import mail
 from django.contrib.auth.models import Group
 from django.conf import settings
@@ -10,14 +9,11 @@ from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
 
-from event.models import Profile, User
-from event.models import Team as EventTeam
+from event.models import Profile, User, Team as EventTeam
 from hackathon_site.tests import SetupUserMixin
 from registration.models import Team as RegistrationTeam
 
-import pytz
 from event.serializers import (
-    TeamSerializer,
     UserSerializer,
     GroupSerializer,
     ProfileSerializer,

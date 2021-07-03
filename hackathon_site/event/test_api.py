@@ -8,8 +8,6 @@ from event.models import Profile, User, Team
 from event.serializers import (
     TeamSerializer,
     UserSerializer,
-    ProfileSerializer,
-    GroupSerializer,
 )
 
 
@@ -69,14 +67,20 @@ class CurrentTeamTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_user_has_no_profile(self):
-        # when the user attempts to access the team, while it has no profile. The user must be accepted or waitlisted to have formed a team.
+        """
+        When the user attempts to access the team, while it has no profile.
+        The user must be accepted or waitlisted to have formed a team.
+        """
         self.profile.delete()
         self._login()
         response = self.client.get(self.view)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_user_has_profile(self):
-        # When user has a profile and attempts to access the team, then the user should get the correct response.
+        """
+        When user has a profile and attempts to access the team, then the user
+        should get the correct response.
+        """
         self._login()
         response = self.client.get(self.view)
         team_expected = Team.objects.get(pk=self.team.pk)
