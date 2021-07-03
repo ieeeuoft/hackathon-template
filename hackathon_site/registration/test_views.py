@@ -63,9 +63,9 @@ class SignUpViewTestCase(SetupUserMixin, TestCase):
         }
         self.client.post(self.view, data)
         self.assertTrue(
-            User.objects.exists(
+            User.objects.filter(
                 username="testuser@email.com", email="testuser@email.com"
-            )
+            ).exists()
         )
 
     def test_redirects_user_to_dashboard_if_authenticated(self):
