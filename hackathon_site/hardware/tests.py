@@ -203,31 +203,6 @@ class HardwareQuantityRemainingTestCase(TestCase):
         data = hardware_serializer.data
         self.assertEqual(expected_response, data)
 
-    def test_some_items_cancelled(self):
-        hardware_serializer = HardwareSerializer(self.hardware)
-        team = Team.objects.create()
-        order = Order.objects.create(status="Picked Up", team=team)
-        order_item_1 = OrderItem.objects.create(
-            order=order, hardware=self.hardware, part_returned_health="Healthy"
-        )
-        order_item_2 = OrderItem.objects.create(order=order, hardware=self.hardware,)
-
-        expected_response = {
-            "id": 1,
-            "name": "name",
-            "categories": [],
-            "model_number": "model",
-            "manufacturer": "manufacturer",
-            "datasheet": "/datasheet/location/",
-            "quantity_available": 4,
-            "quantity_remaining": 3,
-            "notes": None,
-            "max_per_team": 1,
-            "picture": "/media/picture/location",
-        }
-        data = hardware_serializer.data
-        self.assertEqual(expected_response, data)
-
 class OrderSerializerTestCase(TestCase):
     def setUp(self):
         self.team = Team.objects.create()
