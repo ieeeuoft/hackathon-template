@@ -1,6 +1,8 @@
 from django.db import models
-from event.models import Team as TeamEvent
 from django.db.models import Count, F, Q
+
+from event.models import Team as TeamEvent
+
 
 class Category(models.Model):
     class Meta:
@@ -25,7 +27,7 @@ class AnnotatedHardwareManager(models.Manager):
                         "order_items",
                         filter=(
                             Q(order_items__part_returned_health__isnull=True)
-                            & ~Q(order_items__order__status="Cancelled")
+                            & ~Q(order_items__order__status="Cart") #TODO: replace with Cancelled
                         ),
                         distinct=True,
                     )
@@ -41,6 +43,9 @@ class Hardware(models.Model):
     class Meta:
         verbose_name_plural = "hardware"
 
+    class Config:
+        annotated_fields = ("quantity_checked_out", "quantity_remaining")
+
     name = models.CharField(max_length=255, null=False)
     model_number = models.CharField(max_length=255, null=False)
     manufacturer = models.CharField(max_length=255, null=False)
@@ -54,6 +59,17 @@ class Hardware(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, null=False)
     updated_at = models.DateTimeField(auto_now=True, null=False)
 
+    def refresh_from_db(self, using=None, fields=None):
+        super().refresh_from_db(using, fields)
+
+        # Fetch the queryset again to populate the annotations. This is somewhat
+        # inefficient since it performs the query twice, so use sparingly.
+        db_instance_qs = self.__class__.objects.filter(pk=self.pk)
+        db_instance = db_instance_qs.get()
+
+        for field_name in self.Config.annotated_fields:
+            setattr(self, field_name, getattr(db_instance, field_name))
+            
     def __str__(self):
         return self.name
 
