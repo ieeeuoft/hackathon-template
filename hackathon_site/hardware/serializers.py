@@ -4,6 +4,7 @@ from hardware.models import Hardware, Category, OrderItem, Order
 
 class HardwareSerializer(serializers.ModelSerializer):
     quantity_remaining = serializers.IntegerField()
+
     class Meta:
         model = Hardware
         fields = (
@@ -19,6 +20,7 @@ class HardwareSerializer(serializers.ModelSerializer):
             "categories",
             "quantity_remaining",
         )
+
 
 class CategorySerializer(serializers.ModelSerializer):
     unique_hardware_count = serializers.SerializerMethodField()

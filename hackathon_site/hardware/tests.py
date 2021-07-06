@@ -93,6 +93,7 @@ class HardwareSerializerTestCase(TestCase):
         data = hardware_serializer.data
         self.assertEqual(expected_response, data)
 
+
 class HardwareQuantityRemainingTestCase(TestCase):
     def setUp(self):
         self.hardware = Hardware.objects.create(
@@ -106,7 +107,9 @@ class HardwareQuantityRemainingTestCase(TestCase):
         )
 
     def test_base_case_no_order_items(self):
-        hardware_serializer = HardwareSerializer(Hardware.objects.get(pk=self.hardware.pk))
+        hardware_serializer = HardwareSerializer(
+            Hardware.objects.get(pk=self.hardware.pk)
+        )
         self.assertEqual(hardware_serializer.data["quantity_remaining"], 4)
 
     def test_some_items_none_returned(self):
@@ -137,6 +140,7 @@ class HardwareQuantityRemainingTestCase(TestCase):
         self.hardware.refresh_from_db()
         hardware_serializer = HardwareSerializer(self.hardware)
         self.assertEqual(hardware_serializer.data["quantity_remaining"], 4)
+
 
 class CategorySerializerTestCase(TestCase):
     def setUp(self):
@@ -173,6 +177,7 @@ class CategorySerializerTestCase(TestCase):
             "unique_hardware_count": 1,
         }
         self.assertEqual(expected_response, data)
+
 
 class OrderSerializerTestCase(TestCase):
     def setUp(self):

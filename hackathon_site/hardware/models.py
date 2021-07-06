@@ -17,25 +17,29 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+
 class AnnotatedHardwareManager(models.Manager):
     def get_queryset(self):
         return (
             super()
-                .get_queryset() 
-                .annotate(
-                    quantity_checked_out=Count(
-                        "order_items",
-                        filter=(
-                            Q(order_items__part_returned_health__isnull=True)
-                            & ~Q(order_items__order__status="Cart") #TODO: replace with Cancelled
-                        ),
-                        distinct=True,
-                    )
+            .get_queryset()
+            .annotate(
+                quantity_checked_out=Count(
+                    "order_items",
+                    filter=(
+                        Q(order_items__part_returned_health__isnull=True)
+                        & ~Q(
+                            order_items__order__status="Cart"
+                        )  # TODO: replace with Cancelled
+                    ),
+                    distinct=True,
                 )
-                .annotate(
-                    quantity_remaining=(F("quantity_available") - F("quantity_checked_out"))
-                )
+            )
+            .annotate(
+                quantity_remaining=(F("quantity_available") - F("quantity_checked_out"))
+            )
         )
+
 
 class Hardware(models.Model):
     objects = AnnotatedHardwareManager()
@@ -69,7 +73,7 @@ class Hardware(models.Model):
 
         for field_name in self.Config.annotated_fields:
             setattr(self, field_name, getattr(db_instance, field_name))
-            
+
     def __str__(self):
         return self.name
 
