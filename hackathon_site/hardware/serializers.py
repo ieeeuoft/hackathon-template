@@ -100,10 +100,7 @@ class OrderCreateSerializer(serializers.Serializer):
         category_counts = dict()
         error_messages = []
         for (hardware, requested_quantity) in requested_hardware.items():
-            try:
-                team_hardware = team_unreturned_orders.get(id=hardware.id)
-            except ObjectDoesNotExist:
-                team_hardware = None
+            team_hardware = team_unreturned_orders.get(id=hardware.id)
             team_hardware_count = getattr(team_hardware, "past_order_count", 0)
             if hardware.max_per_team < (team_hardware_count + requested_quantity):
                 error_messages.append("Hardware {} limit reached".format(hardware.name))
