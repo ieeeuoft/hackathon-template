@@ -94,6 +94,7 @@ class OrderCreateSerializer(serializers.Serializer):
                 filter=Q(order_items__part_returned_health__isnull=True)
                 & ~Q(order_items__order__status="Cancelled")
                 & Q(order_items__order__team=self.context["request"].user.profile.team),
+                distinct=True,
             )
         )
         category_counts = dict()
