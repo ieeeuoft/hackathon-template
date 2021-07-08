@@ -73,6 +73,10 @@ class OrderCreateSerializer(serializers.Serializer):
 
     @staticmethod
     def merge_requests(hardware_requests):
+        # hardware_requests is a list where each element is an OrderedDict
+        # with key value pairs
+        # "id": <Hardware Object>, and
+        # "quantity": <Int>
         return functools.reduce(
             lambda x, y: x + y,
             [Counter({e["id"]: e["quantity"]}) for e in hardware_requests],
@@ -80,6 +84,7 @@ class OrderCreateSerializer(serializers.Serializer):
 
     # check that the requests are within per-team constraints
     def validate(self, data):
+        # requested_hardware is a Counter where the keys are <Hardware Object>'s and values are <Int>'s
         requested_hardware = self.merge_requests(hardware_requests=data["hardware"])
         hardware_query = (
             Hardware.objects.filter(
