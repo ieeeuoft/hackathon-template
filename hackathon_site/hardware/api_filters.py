@@ -13,7 +13,7 @@ class HardwareFilter(filters.FilterSet):
         model = Hardware
         fields = ["name", "quantity_available"]
 
-    def comma_separate_filter(self, queryset, value):
+    def comma_separated_filter(self, queryset, value):
         value_list = value.split(",")
         queryset = super().filter(queryset, Lookup(value_list, "in"))
 
