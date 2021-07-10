@@ -1,7 +1,8 @@
 from django_filters import rest_framework as filters
+from django_filters.fields import Lookup
+
 from .models import Hardware
 from .serializers import HardwareSerializer
-from django_filters.fields import Lookup
 
 
 class HardwareFilter(filters.FilterSet):
