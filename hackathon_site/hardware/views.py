@@ -10,6 +10,7 @@ from hardware.serializers import (
 from hardware.api_filters import HardwareFilter
 from hardware.models import Hardware, Category, Order
 
+
 class HardwareListView(mixins.ListModelMixin, generics.GenericAPIView):
     queryset = Hardware.objects.all()
     serializer_class = HardwareSerializer
