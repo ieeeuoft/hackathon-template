@@ -1,4 +1,5 @@
 from rest_framework import generics, mixins
+from rest_framework.filters import SearchFilter
 from django_filters import rest_framework as filters
 from hardware.serializers import (
     HardwareSerializer,
@@ -13,7 +14,7 @@ class HardwareListView(mixins.ListModelMixin, generics.GenericAPIView):
     queryset = Hardware.objects.all()
     serializer_class = HardwareSerializer
 
-    filter_backends = (filters.DjangoFilterBackend,)
+    filter_backends = (filters.DjangoFilterBackend, SearchFilter)
     filterset_fields = ("name", "quantity_remaining")
     filterset_class = HardwareFilter
     search_fields = "name"
