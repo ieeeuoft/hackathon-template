@@ -3,7 +3,7 @@ from hardware.models import Hardware, Category, OrderItem, Order
 
 
 class HardwareSerializer(serializers.ModelSerializer):
-    quantity_remaining = serializers.SerializerMethodField()
+    quantity_remaining = serializers.IntegerField()
 
     class Meta:
         model = Hardware
@@ -19,18 +19,6 @@ class HardwareSerializer(serializers.ModelSerializer):
             "picture",
             "categories",
             "quantity_remaining",
-        )
-
-    @staticmethod
-    def get_quantity_remaining(obj: Hardware):
-        return (
-            # Get all OrderItems with that HardwareId
-            obj.quantity_available
-            - OrderItem.objects.filter(hardware__id=obj.id)
-            # Get all the ones where they have null returned health
-            .filter(part_returned_health__isnull=True)
-            # Exclude the ones with status of cart
-            .exclude(order__status="Cart").count()
         )
 
 
