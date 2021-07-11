@@ -1,13 +1,9 @@
 from collections import Counter
 import functools
-import itertools
-
-from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Count, Q
 from rest_framework import serializers
 
 from hardware.models import Hardware, Category, OrderItem, Order
-from event.models import Team as TeamEvent
 
 
 class HardwareSerializer(serializers.ModelSerializer):
