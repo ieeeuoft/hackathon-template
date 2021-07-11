@@ -58,15 +58,9 @@ class OrderListView(generics.ListCreateAPIView):
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        new_order, unfulfilled_hardware_requests = serializer.save()
-        if new_order is None:
-            return Response(
-                {"details": "Cannot be fulfilled"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            )
-        response_serializer = OrderCreateResponseSerializer(
-            new_order, context={"unfulfilled": unfulfilled_hardware_requests}
-        )
+        create_response = serializer.save()
+        response_serializer = OrderCreateResponseSerializer(data=create_response)
+        response_serializer.is_valid()
         response_data = response_serializer.data
         headers = self.get_success_headers(response_data)
         return Response(response_data, status=status.HTTP_201_CREATED, headers=headers)

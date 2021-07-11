@@ -117,26 +117,37 @@ class OrderCreateSerializer(serializers.Serializer):
             hardware_requests=validated_data["hardware"]
         )
         new_order = None
-        unfulfilled_hardware_requests = dict()
+        response_data = {"order_id": -1, "hardware": [], "errors": []}
         for (hardware, requested_quantity) in requested_hardware.items():
             num_order_items = min(hardware.quantity_remaining, requested_quantity)
             if num_order_items <= 0:
-                unfulfilled_hardware_requests[hardware] = requested_quantity
+                response_data["hardware"].append({hardware.id: 0})
+                response_data["errors"].append(
+                    {hardware.id: "There are no {} available".format(hardware.name)}
+                )
                 continue
             if new_order is None:
                 new_order = Order.objects.create(
                     team=self.context["request"].user.profile.team, status="Submitted"
                 )
+                response_data["order_id"] = new_order.id
             order_items = [
                 OrderItem(order=new_order, hardware=hardware)
                 for _ in range(num_order_items)
             ]
             OrderItem.objects.bulk_create(order_items)
+            response_data["hardware"].append({hardware.id: num_order_items})
             if num_order_items != requested_quantity:
-                unfulfilled_hardware_requests[hardware] = (
-                    requested_quantity - num_order_items
+                response_data["errors"].append(
+                    {
+                        hardware.id: "Only {} of {} {}(s) were available".format(
+                            requested_quantity - num_order_items,
+                            requested_quantity,
+                            hardware.name,
+                        )
+                    }
                 )
-        return new_order, unfulfilled_hardware_requests
+        return response_data
 
 
 class OrderCreateResponseSerializer(serializers.Serializer):
