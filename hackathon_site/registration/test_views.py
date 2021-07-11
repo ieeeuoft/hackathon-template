@@ -53,6 +53,21 @@ class SignUpViewTestCase(SetupUserMixin, TestCase):
         redirected_response = response.client.get(response.url)
         self.assertContains(redirected_response, "Activate your account")
 
+    def test_lowercases_username(self):
+        data = {
+            "email": "Testuser@email.com",
+            "first_name": "Foo",
+            "last_name": "Bar",
+            "password1": "abcdef456",
+            "password2": "abcdef456",
+        }
+        self.client.post(self.view, data)
+        self.assertTrue(
+            User.objects.filter(
+                username="testuser@email.com", email="testuser@email.com"
+            ).exists()
+        )
+
     def test_redirects_user_to_dashboard_if_authenticated(self):
         self._login()
         response = self.client.get(self.view)

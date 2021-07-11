@@ -86,7 +86,7 @@ describe("<EnhancedAddToCartForm />", () => {
             <EnhancedAddToCartForm quantityAvailable={0} />
         );
 
-        const button = getByText("Add to cart");
+        const button = getByText("Add to cart").closest("button");
         const select = getByLabelText("Qty");
 
         expect(button).toBeDisabled();
