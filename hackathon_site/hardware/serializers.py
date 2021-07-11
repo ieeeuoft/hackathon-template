@@ -112,50 +112,30 @@ class OrderCreateSerializer(serializers.Serializer):
         return data
 
     def create(self, validated_data):
+        # validated data should already satisfy all constraints
         requested_hardware = self.merge_requests(
             hardware_requests=validated_data["hardware"]
-        )
-        relevant_past_order_items = (
-            OrderItem.objects.filter(hardware__in=requested_hardware.keys(),)
-            .exclude(order__status="Cancelled")
-            .select_related("hardware")
-        )
-        team_past_hardware_counts = Counter(
-            (
-                map(
-                    lambda item: item.hardware,
-                    relevant_past_order_items.filter(
-                        order__team=validated_data["team_id"],
-                    ).all(),
-                )
-            )
-        )
-        all_past_hardware_counts = Counter(
-            (map(lambda item: item.hardware, relevant_past_order_items.all(),))
         )
         new_order = None
         unfulfilled_hardware_requests = dict()
         for (hardware, requested_quantity) in requested_hardware.items():
-            allowed_quantity = min(
-                hardware.max_per_team - team_past_hardware_counts[hardware],
-                hardware.quantity_available - all_past_hardware_counts[hardware],
-            )
-            if allowed_quantity <= 0:
+            num_order_items = min(hardware.quantity_remaining, requested_quantity)
+            if num_order_items <= 0:
                 unfulfilled_hardware_requests[hardware] = requested_quantity
                 continue
             if new_order is None:
                 new_order = Order.objects.create(
-                    team=validated_data["team_id"], status="Submitted"
+                    team=self.context["request"].user.profile.team, status="Submitted"
                 )
-            if allowed_quantity < requested_quantity:
+            order_items = [
+                OrderItem(order=new_order, hardware=hardware)
+                for _ in range(num_order_items)
+            ]
+            OrderItem.objects.bulk_create(order_items)
+            if num_order_items != requested_quantity:
                 unfulfilled_hardware_requests[hardware] = (
-                    requested_quantity - allowed_quantity
+                    requested_quantity - num_order_items
                 )
-            for _ in itertools.repeat(None, min(allowed_quantity, requested_quantity)):
-                OrderItem.objects.create(
-                    order=new_order, hardware=hardware,
-                )
-
         return new_order, unfulfilled_hardware_requests
 
 
