@@ -132,9 +132,9 @@ class HardwareQuantityRemainingTestCase(TestCase):
         hardware_serializer = HardwareSerializer(self.hardware)
         self.assertEqual(hardware_serializer.data["quantity_remaining"], 3)
 
-    def test_some_items_in_cart(self):
+    def test_some_items_cancelled(self):
         team = Team.objects.create()
-        order = Order.objects.create(status="Cart", team=team)
+        order = Order.objects.create(status="Cancelled", team=team)
         order_item_1 = OrderItem.objects.create(order=order, hardware=self.hardware,)
         order_item_2 = OrderItem.objects.create(order=order, hardware=self.hardware,)
         self.hardware.refresh_from_db()
