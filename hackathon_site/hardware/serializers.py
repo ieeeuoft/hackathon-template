@@ -99,7 +99,9 @@ class OrderCreateSerializer(serializers.Serializer):
                 error_messages.append("Hardware {} limit reached".format(hardware.name))
             for category in hardware.categories.all():
                 category_counts[category] = (
-                    category_counts.get(category, 0) + team_hardware_count
+                    category_counts.get(category, 0)
+                    + team_hardware_count
+                    + requested_quantity
                 )
         for (category, count) in category_counts.items():
             if category.max_per_team < count:
