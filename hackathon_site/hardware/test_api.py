@@ -174,7 +174,7 @@ class OrderListViewTestCase(SetupUserMixin, APITestCase):
         OrderItem.objects.create(
             order=self.order_2, hardware=self.other_hardware,
         )
-        self.view = reverse("api:hardware:order")
+        self.view = reverse("api:hardware:order-list")
 
     def test_user_not_logged_in(self):
         response = self.client.get(self.view)
