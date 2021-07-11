@@ -1,6 +1,7 @@
 from django.db import transaction
 from rest_framework import generics, mixins, status
 from rest_framework.response import Response
+from drf_yasg.utils import swagger_auto_schema
 from hardware.models import Hardware, Category, Order
 from hardware.serializers import (
     HardwareSerializer,
@@ -53,7 +54,8 @@ class OrderListView(generics.ListCreateAPIView):
         return self.list(request, *args, **kwargs)
 
     @transaction.atomic
-    def create(self, request, *args, **kwargs):
+    @swagger_auto_schema(responses={201: OrderCreateResponseSerializer})
+    def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         new_order, unfulfilled_hardware_requests = serializer.save()

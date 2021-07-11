@@ -158,15 +158,22 @@ class OrderCreateSerializer(serializers.Serializer):
 
 
 class OrderCreateResponseSerializer(serializers.Serializer):
-    def to_representation(self, instance):
-        response = {"order_id": instance.id}
-        fulfilled_order_items = instance.items
-        fulfilled_count = Counter(
-            map(lambda item: item.hardware_id, fulfilled_order_items.all())
+    class OrderCreateResponseQuantitySerializer(serializers.Serializer):
+        hardware_id = serializers.PrimaryKeyRelatedField(
+            queryset=Hardware.objects.all(), many=False, required=True
         )
-        response["hardware"] = dict(fulfilled_count)
-        unfulfilled = self.context["unfulfilled"]
-        response["errors"] = {
-            hardware.id: count for (hardware, count) in unfulfilled.items()
-        }
-        return response
+        quantity_fulfilled = serializers.IntegerField(required=True)
+
+    class OrderCreateResponseErrorSerializer(serializers.Serializer):
+        hardware_id = serializers.PrimaryKeyRelatedField(
+            queryset=Hardware.objects.all(), many=False, required=True
+        )
+        message = serializers.CharField(
+            max_length=None, min_length=None, allow_blank=False
+        )
+
+    order_id = serializers.PrimaryKeyRelatedField(
+        queryset=Order.objects.all(), many=False, required=True
+    )
+    hardware = OrderCreateResponseQuantitySerializer(many=True, required=True)
+    errors = OrderCreateResponseErrorSerializer(many=True, required=True)
