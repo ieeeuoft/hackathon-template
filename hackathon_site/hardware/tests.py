@@ -43,9 +43,9 @@ class HardwareSerializerTestCase(TestCase):
         data = hardware_serializer.data
         self.assertEqual(expected_response, data)
 
-    def test_some_items_in_cart(self):
+    def test_some_items_cancelled(self):
         team = Team.objects.create()
-        order = Order.objects.create(status="Cart", team=team)
+        order = Order.objects.create(status="Cancelled", team=team)
         order_item_1 = OrderItem.objects.create(order=order, hardware=self.hardware,)
 
         self.hardware.refresh_from_db()
