@@ -22,4 +22,4 @@ class HardwareFilter(filters.FilterSet):
     in_stock = filters.BooleanFilter(
         field_name="quantity_remaining", lookup_expr="gt", exclude=False
     )
-    category_ID = filters.CharFilter(method="comma_separate_filter")
+    ids = filters.BaseInFilter(field_name="ids")
