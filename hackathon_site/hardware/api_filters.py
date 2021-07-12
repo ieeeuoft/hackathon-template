@@ -19,7 +19,13 @@ class HardwareFilter(filters.FilterSet):
 
         return queryset
 
-    in_stock = filters.BooleanFilter(
-        field_name="quantity_remaining", lookup_expr="gt", exclude=False
-    )
-    ids = filters.BaseInFilter(field_name="ids")
+    in_stock = filters.BooleanFilter(label="In stock?", method="filter_in_stock")
+
+    @staticmethod
+    def filter_in_stock(queryset, _, value):
+        if value is True:
+            return queryset.filter(quantity_available__gt=0)
+        else:
+            return queryset.filter(quantity_available__lte=0)
+
+    id = filters.BaseInFilter(field_name="id", label="Id(s) of the hardware item")
