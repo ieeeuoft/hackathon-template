@@ -13,12 +13,6 @@ class HardwareFilter(filters.FilterSet):
         model = Hardware
         fields = ["name", "quantity_available"]
 
-    def comma_separated_filter(self, queryset, value):
-        value_list = value.split(",")
-        queryset = super().filter(queryset, Lookup(value_list, "in"))
-
-        return queryset
-
     in_stock = filters.BooleanFilter(label="In stock?", method="filter_in_stock")
 
     @staticmethod
