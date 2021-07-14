@@ -120,6 +120,7 @@ class OrderCreateSerializer(serializers.Serializer):
         )
         new_order = None
         response_data = {"order_id": -1, "hardware": [], "errors": []}
+        order_items = []
         for (hardware, requested_quantity) in requested_hardware.items():
             num_order_items = min(hardware.quantity_remaining, requested_quantity)
             if num_order_items <= 0:
@@ -133,11 +134,10 @@ class OrderCreateSerializer(serializers.Serializer):
                     team=self.context["request"].user.profile.team, status="Submitted"
                 )
                 response_data["order_id"] = new_order.id
-            order_items = [
+            order_items += [
                 OrderItem(order=new_order, hardware=hardware)
                 for _ in range(num_order_items)
             ]
-            OrderItem.objects.bulk_create(order_items)
             response_data["hardware"].append({hardware.id: num_order_items})
             if num_order_items != requested_quantity:
                 response_data["errors"].append(
@@ -149,6 +149,8 @@ class OrderCreateSerializer(serializers.Serializer):
                         )
                     }
                 )
+        if order_items:
+            OrderItem.objects.bulk_create(order_items)
         return response_data
 
 
