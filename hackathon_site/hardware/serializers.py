@@ -77,6 +77,8 @@ class OrderCreateSerializer(serializers.Serializer):
         # requested_hardware is a Counter where the keys are <Hardware Object>'s
         # and values are <Int>'s
         requested_hardware = self.merge_requests(hardware_requests=data["hardware"])
+        if not requested_hardware:
+            raise serializers.ValidationError("No hardware submitted")
         hardware_query = (
             Hardware.objects.filter(
                 id__in=[hardware.id for hardware in requested_hardware.keys()],
@@ -120,7 +122,7 @@ class OrderCreateSerializer(serializers.Serializer):
             hardware_requests=validated_data["hardware"]
         )
         new_order = None
-        response_data = {"order_id": -1, "hardware": [], "errors": []}
+        response_data = {"hardware": [], "errors": []}
         order_items = []
         for (hardware, requested_quantity) in requested_hardware.items():
             num_order_items = min(hardware.quantity_remaining, requested_quantity)
@@ -171,7 +173,7 @@ class OrderCreateResponseSerializer(serializers.Serializer):
         )
 
     order_id = serializers.PrimaryKeyRelatedField(
-        queryset=Order.objects.all(), many=False, required=True
+        queryset=Order.objects.all(), many=False, allow_null=True
     )
     hardware = OrderCreateResponseQuantitySerializer(many=True, required=True)
     errors = OrderCreateResponseErrorSerializer(many=True, required=True)
