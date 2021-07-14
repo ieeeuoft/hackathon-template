@@ -1,7 +1,10 @@
 from django.db import transaction
+from django.contrib.auth.mixins import UserPassesTestMixin
+from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import generics, mixins, status
 from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
+
 from hardware.models import Hardware, Category, Order
 from hardware.serializers import (
     HardwareSerializer,
@@ -36,7 +39,7 @@ class CategoryListView(mixins.ListModelMixin, generics.GenericAPIView):
         return self.list(request, *args, **kwargs)
 
 
-class OrderListView(generics.ListCreateAPIView):
+class OrderListView(UserPassesTestMixin, generics.ListCreateAPIView):
     queryset = Order.objects.all()
     serializer_class = OrderListSerializer
     serializer_method_classes = {
@@ -49,6 +52,15 @@ class OrderListView(generics.ListCreateAPIView):
             return self.serializer_method_classes[self.request.method]
         except (KeyError, AttributeError):
             return super().get_serializer_class()
+
+    def test_func(self):
+        has_profile = False
+        try:
+            profile = self.request.user.profile
+            has_profile = True
+        except ObjectDoesNotExist:
+            pass
+        return has_profile
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)

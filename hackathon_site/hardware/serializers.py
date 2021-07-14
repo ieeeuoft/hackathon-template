@@ -68,6 +68,10 @@ class OrderCreateSerializer(serializers.Serializer):
 
     # check that the requests are within per-team constraints
     def validate(self, data):
+        try:
+            user_profile = self.context["request"].user.profile
+        except:
+            raise serializers.ValidationError("User does not have profile")
         # requested_hardware is a Counter where the keys are <Hardware Object>'s and values are <Int>'s
         requested_hardware = self.merge_requests(hardware_requests=data["hardware"])
         hardware_query = (
