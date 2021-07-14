@@ -62,5 +62,4 @@ class OrderListView(generics.ListCreateAPIView):
         response_serializer = OrderCreateResponseSerializer(data=create_response)
         response_serializer.is_valid()
         response_data = response_serializer.data
-        headers = self.get_success_headers(response_data)
-        return Response(response_data, status=status.HTTP_201_CREATED, headers=headers)
+        return Response(response_data, status=status.HTTP_201_CREATED)
