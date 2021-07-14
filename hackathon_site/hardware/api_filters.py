@@ -1,5 +1,4 @@
 from django_filters import rest_framework as filters
-from django_filters.fields import Lookup
 
 from hardware.models import Hardware
 from hardware.serializers import HardwareSerializer
