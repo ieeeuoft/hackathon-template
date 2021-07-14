@@ -119,7 +119,7 @@ class OrderCreateSerializer(serializers.Serializer):
             if num_order_items <= 0:
                 response_data["hardware"].append({hardware.id: 0})
                 response_data["errors"].append(
-                    {hardware.id: "There are no {} available".format(hardware.name)}
+                    {hardware.id: "There are no {}s available".format(hardware.name)}
                 )
                 continue
             if new_order is None:
