@@ -21,4 +21,4 @@ class HardwareFilter(filters.FilterSet):
         else:
             return queryset.filter(quantity_available__lte=0)
 
-    id = filters.BaseInFilter(field_name="id", label="Id(s) of the hardware item")
+    id = filters.BaseInFilter(field_name="id", label="Comma separated list of hardware IDs")
