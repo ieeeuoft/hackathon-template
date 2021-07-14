@@ -53,7 +53,13 @@ class OrderListView(UserPassesTestMixin, generics.ListCreateAPIView):
         except (KeyError, AttributeError):
             return super().get_serializer_class()
 
-    def test_func(self):
+    def get_test_func(self):
+        if self.request.method == "POST":
+            return self.check_user_has_profile
+        if self.request.method == "GET":
+            return lambda: True
+
+    def check_user_has_profile(self):
         has_profile = False
         try:
             profile = self.request.user.profile
