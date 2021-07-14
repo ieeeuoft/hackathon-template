@@ -1,6 +1,7 @@
 from collections import Counter
 import functools
 from django.db.models import Count, Q
+from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import serializers
 
 from hardware.models import Hardware, Category, OrderItem, Order
@@ -70,7 +71,7 @@ class OrderCreateSerializer(serializers.Serializer):
     def validate(self, data):
         try:
             user_profile = self.context["request"].user.profile
-        except:
+        except ObjectDoesNotExist:
             raise serializers.ValidationError("User does not have profile")
         # requested_hardware is a Counter where the keys are <Hardware Object>'s and values are <Int>'s
         requested_hardware = self.merge_requests(hardware_requests=data["hardware"])
@@ -86,7 +87,7 @@ class OrderCreateSerializer(serializers.Serializer):
                 "order_items",
                 filter=Q(order_items__part_returned_health__isnull=True)
                 & ~Q(order_items__order__status="Cancelled")
-                & Q(order_items__order__team=self.context["request"].user.profile.team),
+                & Q(order_items__order__team=user_profile.team),
                 distinct=True,
             )
         )
