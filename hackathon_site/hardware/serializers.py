@@ -65,6 +65,7 @@ class OrderCreateSerializer(serializers.Serializer):
         return functools.reduce(
             lambda x, y: x + y,
             [Counter({e["id"]: e["quantity"]}) for e in hardware_requests],
+            Counter(),
         )
 
     # check that the requests are within per-team constraints
