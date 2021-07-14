@@ -16,7 +16,6 @@ class HardwareListView(mixins.ListModelMixin, generics.GenericAPIView):
     serializer_class = HardwareSerializer
 
     filter_backends = (filters.DjangoFilterBackend, SearchFilter)
-    filterset_fields = ("name", "quantity_remaining")
     filterset_class = HardwareFilter
     search_fields = ("name",)
 
