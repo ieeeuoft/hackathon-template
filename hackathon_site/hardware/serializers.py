@@ -73,7 +73,8 @@ class OrderCreateSerializer(serializers.Serializer):
             user_profile = self.context["request"].user.profile
         except ObjectDoesNotExist:
             raise serializers.ValidationError("User does not have profile")
-        # requested_hardware is a Counter where the keys are <Hardware Object>'s and values are <Int>'s
+        # requested_hardware is a Counter where the keys are <Hardware Object>'s
+        # and values are <Int>'s
         requested_hardware = self.merge_requests(hardware_requests=data["hardware"])
         hardware_query = (
             Hardware.objects.filter(
