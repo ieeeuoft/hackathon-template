@@ -4,15 +4,16 @@ from hardware.models import Hardware
 from hardware.serializers import HardwareSerializer
 
 
+class NumberInFilter(filters.BaseInFilter, filters.NumberFilter):
+    pass
+
 class HardwareFilter(filters.FilterSet):
     queryset = Hardware
     serializer_class = HardwareSerializer
 
-    class Meta:
-        model = Hardware
-        fields = ["name", "quantity_available"]
 
-    in_stock = filters.BooleanFilter(label="In stock?", method="filter_in_stock")
+
+    in_stock = filters.BooleanFilter(label="In stock?", method="filter_in_stock", help_text="In stock?")
 
     @staticmethod
     def filter_in_stock(queryset, _, value):
@@ -21,4 +22,4 @@ class HardwareFilter(filters.FilterSet):
         else:
             return queryset.filter(quantity_available__lte=0)
 
-    id = filters.BaseInFilter(field_name="id", label="Comma separated list of hardware IDs")
+    id = NumberInFilter(field_name="id", label="Comma separated list of hardware IDs", help_text="Comma separated list of hardware IDs")
