@@ -39,7 +39,7 @@ class CategoryListView(mixins.ListModelMixin, generics.GenericAPIView):
         return self.list(request, *args, **kwargs)
 
 
-class OrderListView(UserPassesTestMixin, generics.ListCreateAPIView):
+class OrderListView(UserPassesTestMixin, generics.ListAPIView):
     queryset = Order.objects.all()
     serializer_class = OrderListSerializer
     serializer_method_classes = {
