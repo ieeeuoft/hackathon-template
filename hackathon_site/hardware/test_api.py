@@ -299,6 +299,16 @@ class HardwareListTestCase(SetupUserMixin, APITestCase):
         print(data_not_present)
         self.assertEqual(data_not_present, expected_data_not_present)
 
+    def test_id_filter(self):
+        self._login()
+
+        url = self._build_filter_url(id="1,3")
+        expected_data = {'count': 2, 'next': None, 'previous': None, 'results': [{'id': 1, 'name': 'hardware1', 'model_number': 'model', 'manufacturer': 'manufacturer', 'datasheet': '/datasheet/location/', 'quantity_available': 0, 'notes': 'notes', 'max_per_team': 1, 'picture': 'http://testserver/media/picture/location', 'categories': [], 'quantity_remaining': 0}, {'id': 3, 'name': 'hardware3', 'model_number': 'model', 'manufacturer': 'manufacturer', 'datasheet': '/datasheet/location/', 'quantity_available': 4, 'notes': 'notes', 'max_per_team': 1, 'picture': 'http://testserver/media/picture/location', 'categories': [], 'quantity_remaining': 4}]}
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.json()
+        self.assertEqual(data, expected_data)
+
 
 
 
