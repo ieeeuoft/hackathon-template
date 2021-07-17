@@ -135,19 +135,36 @@ class CategoryListViewTestCase(SetupUserMixin, APITestCase):
         data = response.json()
 
         self.assertEqual(expected_response, data["results"][0])
-    
+
     def test_hardware_quantity_success(self):
         self._login()
 
         self.category = Category.objects.create(name="Microcontrollers", max_per_team=4)
-        self.hardware1 = Hardware.objects.create(name="Arduino",quantity_available=2)
-        self.hardware2 = Hardware.objects.create(name="ESP32",quantity_available=3)
-
+        self.hardware1 = Hardware.objects.create(name="Arduino", quantity_available=2)
+        self.hardware2 = Hardware.objects.create(name="ESP32", quantity_available=3)
 
         self.hardware1.categories.add(self.category)
         self.hardware2.categories.add(self.category)
 
-        expected_response = {'count': 2, 'next': None, 'previous': None, 'results': [{'id': 1, 'name': 'category', 'max_per_team': 4, 'unique_hardware_count': 0}, {'id': 2, 'name': 'Microcontrollers', 'max_per_team': 4, 'unique_hardware_count': 2}]}
+        expected_response = {
+            "count": 2,
+            "next": None,
+            "previous": None,
+            "results": [
+                {
+                    "id": 1,
+                    "name": "category",
+                    "max_per_team": 4,
+                    "unique_hardware_count": 0,
+                },
+                {
+                    "id": 2,
+                    "name": "Microcontrollers",
+                    "max_per_team": 4,
+                    "unique_hardware_count": 2,
+                },
+            ],
+        }
 
         response = self.client.get(self.view)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
