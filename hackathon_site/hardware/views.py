@@ -14,6 +14,9 @@ from hardware.serializers import (
     OrderCreateSerializer,
     OrderCreateResponseSerializer,
 )
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class HardwareListView(mixins.ListModelMixin, generics.GenericAPIView):
@@ -80,6 +83,7 @@ class OrderListView(UserPassesTestMixin, generics.ListAPIView):
         create_response = serializer.save()
         response_serializer = OrderCreateResponseSerializer(data=create_response)
         if not response_serializer.is_valid():
+            logger.error(response_serializer.error_messages)
             return HttpResponseServerError()
         response_data = response_serializer.validated_data
         return Response(response_data, status=status.HTTP_201_CREATED)
