@@ -1,6 +1,7 @@
 from django.db import transaction
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.exceptions import ObjectDoesNotExist
+from django.http import HttpResponseServerError
 from rest_framework import generics, mixins, status
 from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
@@ -78,6 +79,7 @@ class OrderListView(UserPassesTestMixin, generics.ListAPIView):
         serializer.is_valid(raise_exception=True)
         create_response = serializer.save()
         response_serializer = OrderCreateResponseSerializer(data=create_response)
-        response_serializer.is_valid()
-        response_data = response_serializer.data
+        if not response_serializer.is_valid():
+            return HttpResponseServerError()
+        response_data = response_serializer.validated_data
         return Response(response_data, status=status.HTTP_201_CREATED)
