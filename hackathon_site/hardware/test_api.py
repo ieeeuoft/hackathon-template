@@ -140,16 +140,20 @@ class CategoryListViewTestCase(SetupUserMixin, APITestCase):
         self._login()
 
         self.category = Category.objects.create(name="Microcontrollers", max_per_team=4)
-        self.hardware = Hardware.objects.create(name="Arduino",quantity_available=2,categories=[2])
-        self.hardware = Hardware.objects.create(name="ESP32",quantity_available=3,categories=[2])
-        response = self.client.generics(self.view)
+        self.hardware1 = Hardware.objects.create(name="Arduino",quantity_available=2)
+        self.hardware2 = Hardware.objects.create(name="ESP32",quantity_available=3)
 
-        expected_response = {
-            "id": 2,
-            "name": "Microcontrollers",
-            "max_per_team": 4,
-            "unique_hardware_count": 2,
-        }
+
+        self.hardware1.categories.add(self.category)
+        self.hardware2.categories.add(self.category)
+
+        expected_response = {'count': 2, 'next': None, 'previous': None, 'results': [{'id': 1, 'name': 'category', 'max_per_team': 4, 'unique_hardware_count': 0}, {'id': 2, 'name': 'Microcontrollers', 'max_per_team': 4, 'unique_hardware_count': 2}]}
+
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.json()
+        self.assertEqual(expected_response, data)
+
 
 class OrderListViewGetTestCase(SetupUserMixin, APITestCase):
     def setUp(self):
