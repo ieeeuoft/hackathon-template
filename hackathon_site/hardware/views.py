@@ -1,15 +1,14 @@
 from django.db import transaction
-from django.contrib.auth.mixins import UserPassesTestMixin
-from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseServerError
-from rest_framework import generics, mixins, status
-from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
+from rest_framework import generics, mixins, status, permissions
+from rest_framework.response import Response
 
+from event.permissions import UserHasProfile
 from hardware.models import Hardware, Category, Order
 from hardware.serializers import (
-    HardwareSerializer,
     CategorySerializer,
+    HardwareSerializer,
     OrderListSerializer,
     OrderCreateSerializer,
     OrderCreateResponseSerializer,
@@ -43,7 +42,7 @@ class CategoryListView(mixins.ListModelMixin, generics.GenericAPIView):
         return self.list(request, *args, **kwargs)
 
 
-class OrderListView(UserPassesTestMixin, generics.ListAPIView):
+class OrderListView(generics.ListAPIView):
     queryset = Order.objects.all()
     serializer_class = OrderListSerializer
     serializer_method_classes = {
@@ -57,21 +56,12 @@ class OrderListView(UserPassesTestMixin, generics.ListAPIView):
         except (KeyError, AttributeError):
             return super().get_serializer_class()
 
-    def get_test_func(self):
+    def get_permissions(self):
         if self.request.method == "POST":
-            return self.check_user_has_profile
-        if self.request.method == "GET":
-            return lambda: True
+            return [UserHasProfile()]
+        return [permissions.IsAuthenticated()]
 
-    def check_user_has_profile(self):
-        has_profile = False
-        try:
-            profile = self.request.user.profile
-            has_profile = True
-        except ObjectDoesNotExist:
-            pass
-        return has_profile
-
+    # TODO: make this admin only
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
 
