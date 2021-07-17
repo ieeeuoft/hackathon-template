@@ -122,14 +122,19 @@ class OrderCreateSerializer(serializers.Serializer):
             hardware_requests=validated_data["hardware"]
         )
         new_order = None
-        response_data = {"hardware": [], "errors": []}
+        response_data = {"order_id": None, "hardware": [], "errors": []}
         order_items = []
         for (hardware, requested_quantity) in requested_hardware.items():
             num_order_items = min(hardware.quantity_remaining, requested_quantity)
             if num_order_items <= 0:
-                response_data["hardware"].append({hardware.id: 0})
+                response_data["hardware"].append(
+                    {"hardware_id": hardware.id, "quantity_fulfilled": 0}
+                )
                 response_data["errors"].append(
-                    {hardware.id: "There are no {}s available".format(hardware.name)}
+                    {
+                        "hardware_id": hardware.id,
+                        "message": "There are no {}s available".format(hardware.name),
+                    }
                 )
                 continue
             if new_order is None:
@@ -141,15 +146,18 @@ class OrderCreateSerializer(serializers.Serializer):
                 OrderItem(order=new_order, hardware=hardware)
                 for _ in range(num_order_items)
             ]
-            response_data["hardware"].append({hardware.id: num_order_items})
+            response_data["hardware"].append(
+                {"hardware_id": hardware.id, "quantity_fulfilled": num_order_items}
+            )
             if num_order_items != requested_quantity:
                 response_data["errors"].append(
                     {
-                        hardware.id: "Only {} of {} {}(s) were available".format(
+                        "hardware_id": hardware.id,
+                        "message": "Only {} of {} {}(s) were available".format(
                             requested_quantity - num_order_items,
                             requested_quantity,
                             hardware.name,
-                        )
+                        ),
                     }
                 )
         if order_items:

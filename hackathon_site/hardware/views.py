@@ -85,5 +85,5 @@ class OrderListView(UserPassesTestMixin, generics.ListAPIView):
         if not response_serializer.is_valid():
             logger.error(response_serializer.error_messages)
             return HttpResponseServerError()
-        response_data = response_serializer.validated_data
+        response_data = response_serializer.data
         return Response(response_data, status=status.HTTP_201_CREATED)
