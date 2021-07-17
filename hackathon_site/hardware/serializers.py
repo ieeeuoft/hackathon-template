@@ -35,7 +35,7 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = ("id", "name", "max_per_team", "unique_hardware_count")
 
     @staticmethod
-    def get_unique_hardware_count(obj: Category):
+    def get_unique_hardware_count(obj: Category) -> int:
         #return Hardware.objects.filter(categories__id=obj.id).count()
         return obj.hardware_set.count()
 
