@@ -262,10 +262,9 @@ class HardwareListTestCase(SetupUserMixin, APITestCase):
             "quantity_available": 4,
             "notes": "notes",
             "max_per_team": 1,
-            'picture': 'http://testserver/media/picture/location',
-            'categories': [],
-            'quantity_remaining': 4
-
+            "picture": "http://testserver/media/picture/location",
+            "categories": [],
+            "quantity_remaining": 4,
         }
 
         self.assertEqual(data["results"][0], expected_data)
@@ -275,7 +274,39 @@ class HardwareListTestCase(SetupUserMixin, APITestCase):
 
         # # when in_stock is true
         url_true = self._build_filter_url(in_stock="true")
-        expected_data_true = {'count': 2, 'next': None, 'previous': None, 'results': [{'id': 2, 'name': 'arduino', 'model_number': 'model', 'manufacturer': 'manufacturer', 'datasheet': '/datasheet/location/', 'quantity_available': 4, 'notes': 'notes', 'max_per_team': 1, 'picture': 'http://testserver/media/picture/location', 'categories': [], 'quantity_remaining': 4}, {'id': 3, 'name': 'hardware3', 'model_number': 'model', 'manufacturer': 'manufacturer', 'datasheet': '/datasheet/location/', 'quantity_available': 4, 'notes': 'notes', 'max_per_team': 1, 'picture': 'http://testserver/media/picture/location', 'categories': [], 'quantity_remaining': 4}]}
+        expected_data_true = {
+            "count": 2,
+            "next": None,
+            "previous": None,
+            "results": [
+                {
+                    "id": 2,
+                    "name": "arduino",
+                    "model_number": "model",
+                    "manufacturer": "manufacturer",
+                    "datasheet": "/datasheet/location/",
+                    "quantity_available": 4,
+                    "notes": "notes",
+                    "max_per_team": 1,
+                    "picture": "http://testserver/media/picture/location",
+                    "categories": [],
+                    "quantity_remaining": 4,
+                },
+                {
+                    "id": 3,
+                    "name": "hardware3",
+                    "model_number": "model",
+                    "manufacturer": "manufacturer",
+                    "datasheet": "/datasheet/location/",
+                    "quantity_available": 4,
+                    "notes": "notes",
+                    "max_per_team": 1,
+                    "picture": "http://testserver/media/picture/location",
+                    "categories": [],
+                    "quantity_remaining": 4,
+                },
+            ],
+        }
         response_true = self.client.get(url_true)
         self.assertEqual(response_true.status_code, status.HTTP_200_OK)
         data_true = response_true.json()
@@ -283,7 +314,26 @@ class HardwareListTestCase(SetupUserMixin, APITestCase):
 
         # when in_stock is false
         url_false = self._build_filter_url(in_stock="false")
-        expected_data_false = {'count': 1, 'next': None, 'previous': None, 'results': [{'id': 1, 'name': 'hardware1', 'model_number': 'model', 'manufacturer': 'manufacturer', 'datasheet': '/datasheet/location/', 'quantity_available': 0, 'notes': 'notes', 'max_per_team': 1, 'picture': 'http://testserver/media/picture/location', 'categories': [], 'quantity_remaining': 0}]}
+        expected_data_false = {
+            "count": 1,
+            "next": None,
+            "previous": None,
+            "results": [
+                {
+                    "id": 1,
+                    "name": "hardware1",
+                    "model_number": "model",
+                    "manufacturer": "manufacturer",
+                    "datasheet": "/datasheet/location/",
+                    "quantity_available": 0,
+                    "notes": "notes",
+                    "max_per_team": 1,
+                    "picture": "http://testserver/media/picture/location",
+                    "categories": [],
+                    "quantity_remaining": 0,
+                }
+            ],
+        }
         response_false = self.client.get(url_false)
         self.assertEqual(response_false.status_code, status.HTTP_200_OK)
         data_false = response_false.json()
@@ -292,7 +342,52 @@ class HardwareListTestCase(SetupUserMixin, APITestCase):
 
         # when in_stock is not present
         url_not_present = self._build_filter_url(in_stock="")
-        expected_data_not_present = {'count': 3, 'next': None, 'previous': None, 'results': [{'id': 1, 'name': 'hardware1', 'model_number': 'model', 'manufacturer': 'manufacturer', 'datasheet': '/datasheet/location/', 'quantity_available': 0, 'notes': 'notes', 'max_per_team': 1, 'picture': 'http://testserver/media/picture/location', 'categories': [], 'quantity_remaining': 0}, {'id': 2, 'name': 'arduino', 'model_number': 'model', 'manufacturer': 'manufacturer', 'datasheet': '/datasheet/location/', 'quantity_available': 4, 'notes': 'notes', 'max_per_team': 1, 'picture': 'http://testserver/media/picture/location', 'categories': [], 'quantity_remaining': 4}, {'id': 3, 'name': 'hardware3', 'model_number': 'model', 'manufacturer': 'manufacturer', 'datasheet': '/datasheet/location/', 'quantity_available': 4, 'notes': 'notes', 'max_per_team': 1, 'picture': 'http://testserver/media/picture/location', 'categories': [], 'quantity_remaining': 4}]}
+        expected_data_not_present = {
+            "count": 3,
+            "next": None,
+            "previous": None,
+            "results": [
+                {
+                    "id": 1,
+                    "name": "hardware1",
+                    "model_number": "model",
+                    "manufacturer": "manufacturer",
+                    "datasheet": "/datasheet/location/",
+                    "quantity_available": 0,
+                    "notes": "notes",
+                    "max_per_team": 1,
+                    "picture": "http://testserver/media/picture/location",
+                    "categories": [],
+                    "quantity_remaining": 0,
+                },
+                {
+                    "id": 2,
+                    "name": "arduino",
+                    "model_number": "model",
+                    "manufacturer": "manufacturer",
+                    "datasheet": "/datasheet/location/",
+                    "quantity_available": 4,
+                    "notes": "notes",
+                    "max_per_team": 1,
+                    "picture": "http://testserver/media/picture/location",
+                    "categories": [],
+                    "quantity_remaining": 4,
+                },
+                {
+                    "id": 3,
+                    "name": "hardware3",
+                    "model_number": "model",
+                    "manufacturer": "manufacturer",
+                    "datasheet": "/datasheet/location/",
+                    "quantity_available": 4,
+                    "notes": "notes",
+                    "max_per_team": 1,
+                    "picture": "http://testserver/media/picture/location",
+                    "categories": [],
+                    "quantity_remaining": 4,
+                },
+            ],
+        }
         response_not_present = self.client.get(url_not_present)
         self.assertEqual(response_not_present.status_code, status.HTTP_200_OK)
         data_not_present = response_not_present.json()
@@ -303,14 +398,40 @@ class HardwareListTestCase(SetupUserMixin, APITestCase):
         self._login()
 
         url = self._build_filter_url(id="1,3")
-        expected_data = {'count': 2, 'next': None, 'previous': None, 'results': [{'id': 1, 'name': 'hardware1', 'model_number': 'model', 'manufacturer': 'manufacturer', 'datasheet': '/datasheet/location/', 'quantity_available': 0, 'notes': 'notes', 'max_per_team': 1, 'picture': 'http://testserver/media/picture/location', 'categories': [], 'quantity_remaining': 0}, {'id': 3, 'name': 'hardware3', 'model_number': 'model', 'manufacturer': 'manufacturer', 'datasheet': '/datasheet/location/', 'quantity_available': 4, 'notes': 'notes', 'max_per_team': 1, 'picture': 'http://testserver/media/picture/location', 'categories': [], 'quantity_remaining': 4}]}
+        expected_data = {
+            "count": 2,
+            "next": None,
+            "previous": None,
+            "results": [
+                {
+                    "id": 1,
+                    "name": "hardware1",
+                    "model_number": "model",
+                    "manufacturer": "manufacturer",
+                    "datasheet": "/datasheet/location/",
+                    "quantity_available": 0,
+                    "notes": "notes",
+                    "max_per_team": 1,
+                    "picture": "http://testserver/media/picture/location",
+                    "categories": [],
+                    "quantity_remaining": 0,
+                },
+                {
+                    "id": 3,
+                    "name": "hardware3",
+                    "model_number": "model",
+                    "manufacturer": "manufacturer",
+                    "datasheet": "/datasheet/location/",
+                    "quantity_available": 4,
+                    "notes": "notes",
+                    "max_per_team": 1,
+                    "picture": "http://testserver/media/picture/location",
+                    "categories": [],
+                    "quantity_remaining": 4,
+                },
+            ],
+        }
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.json()
         self.assertEqual(data, expected_data)
-
-
-
-
-
-
