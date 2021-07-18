@@ -1,12 +1,16 @@
-from django_filters import rest_framework as filters
+from django import forms
+from django_filters import rest_framework as filters, widgets
 
 from hardware.models import Hardware
 from hardware.serializers import HardwareSerializer
 
 
-class NumberInFilter(filters.BaseInFilter, filters.NumberFilter):
-    pass
+class CSVInputIntegerField(forms.IntegerField):
+    widget = widgets.CSVWidget
 
+
+class IntegerCSVFilter(filters.BaseInFilter):
+    field_class = CSVInputIntegerField
 
 class HardwareFilter(filters.FilterSet):
     queryset = Hardware
@@ -23,7 +27,7 @@ class HardwareFilter(filters.FilterSet):
         else:
             return queryset.filter(quantity_available__lte=0)
 
-    id = NumberInFilter(
+    id =IntegerCSVFilter(
         field_name="id",
         label="Comma separated list of hardware IDs",
         help_text="Comma separated list of hardware IDs",
