@@ -194,3 +194,22 @@ class OrderListViewGetTestCase(SetupUserMixin, APITestCase):
         data = response.json()
 
         self.assertEqual(expected_response, data["results"])
+
+
+class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
+    def setUp(self):
+        super().setUp()
+        self.team = Team.objects.create()
+        self.category_limit_1 = Category(name="category_limit_1", max_per_team=1)
+        self.category_limit_10 = Category(name="category_limit_10", max_per_team=10)
+        self.view = reverse("api:hardware:order-list")
+
+    def test_user_not_logged_in(self):
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_user_has_no_profile(self):
+        self._login()
+        request_data = {"hardware": []}
+        response = self.client.post(self.view, request_data)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
