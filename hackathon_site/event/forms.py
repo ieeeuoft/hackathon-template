@@ -1,6 +1,9 @@
-from django.contrib.auth.forms import PasswordChangeForm as _PasswordChangeForm
-from django.contrib.auth.forms import PasswordResetForm as _PasswordResetForm
-from django.contrib.auth.forms import SetPasswordForm as _SetPasswordForm
+from django.contrib.auth.forms import (
+    PasswordChangeForm as _PasswordChangeForm,
+    PasswordResetForm as _PasswordResetForm,
+    SetPasswordForm as _SetPasswordForm,
+    AuthenticationForm as _AuthenticationForm,
+)
 
 
 class PasswordChangeForm(_PasswordChangeForm):
@@ -22,3 +25,8 @@ class SetPasswordForm(_SetPasswordForm):
         super().__init__(*args, **kwargs)
         self.error_css_class = "invalid"
         self.label_suffix = ""
+
+
+class AuthenticationForm(_AuthenticationForm):
+    def clean_username(self):
+        return self.cleaned_data["username"].lower()
