@@ -305,6 +305,7 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
 
         request_data = {"hardware": [{"id": hardware.id, "quantity": 2}]}
         response = self.client.post(self.view, request_data, format="json")
+
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         pass
 
