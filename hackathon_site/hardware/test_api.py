@@ -204,7 +204,7 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
             name="category_limit_1", max_per_team=1
         )
         self.category_B_limit_10 = Category.objects.create(
-            name="category_limit_10", max_per_team=4
+            name="category_limit_10", max_per_team=10
         )
         self.view = reverse("api:hardware:order-list")
 
