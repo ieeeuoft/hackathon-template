@@ -240,3 +240,22 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(len(order.items.all()), 1, "More than 1 order item created")
         self.assertCountEqual(order.hardware_set.all(), [simple_hardware])
         pass
+
+    def test_invalid_input_hardware_limit(self):
+        self._login()
+        profile = self._make_event_profile()
+        hardware = Hardware.objects.create(
+            name="name",
+            model_number="model",
+            manufacturer="manufacturer",
+            datasheet="/datasheet/location/",
+            notes="notes",
+            quantity_available=10,
+            max_per_team=1,
+            picture="/picture/location",
+        )
+        hardware.categories.add(self.category_B_limit_4.pk)
+        request_data = {"hardware": [{"id": hardware.id, "quantity": 2}]}
+        response = self.client.post(self.view, request_data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        pass
