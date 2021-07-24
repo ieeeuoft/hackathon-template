@@ -293,14 +293,20 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
             team=self.user.profile.team, status="Ready for Pickup"
         )
         ready_order_item = OrderItem.objects.create(
-            order=submitted_order, hardware=hardware
+            order=ready_order, hardware=hardware
         )
 
-        ready_order = Order.objects.create(
+        picked_up_order = Order.objects.create(
             team=self.user.profile.team, status="Picked Up"
         )
-        ready_order_item = OrderItem.objects.create(
-            order=submitted_order, hardware=hardware
+        picked_up_order_item = OrderItem.objects.create(
+            order=picked_up_order, hardware=hardware
+        )
+
+        request_data = {"hardware": [{"id": hardware.id, "quantity": 2}]}
+        response = self.client.post(self.view, request_data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        pass
         )
 
         request_data = {"hardware": [{"id": hardware.id, "quantity": 2}]}
