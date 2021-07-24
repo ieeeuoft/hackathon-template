@@ -200,8 +200,12 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
     def setUp(self):
         super().setUp()
         self.team = Team.objects.create()
-        self.category_limit_1 = Category(name="category_limit_1", max_per_team=1)
-        self.category_limit_10 = Category(name="category_limit_10", max_per_team=10)
+        self.category_A_limit_1 = Category.objects.create(
+            name="category_limit_1", max_per_team=1
+        )
+        self.category_B_limit_4 = Category.objects.create(
+            name="category_limit_10", max_per_team=4
+        )
         self.view = reverse("api:hardware:order-list")
 
     def test_user_not_logged_in(self):
