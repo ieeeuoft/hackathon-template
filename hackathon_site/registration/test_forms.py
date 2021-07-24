@@ -80,7 +80,7 @@ class ApplicationFormTestCase(SetupUserMixin, TestCase):
     def setUp(self):
         super().setUp()
         self.data = {
-            "birthday": date(2020, 9, 8),
+            "birthday": date(2000, 7, 7),
             "gender": "no-answer",
             "ethnicity": "no-answer",
             "phone_number": "1234567890",
@@ -244,16 +244,13 @@ class ApplicationFormTestCase(SetupUserMixin, TestCase):
         self.assertIn("Registration has closed.", form.non_field_errors())
 
     def test_invalid_birthday(self):
-        def assert_bad_birthday(form):
-            self.assertFalse(form.is_valid())
-            self.assertIn(
-                "User is too young to participate.", form.errors["birthday"]
-            )
-
         data = self.data.copy()
         data["birthday"] = (settings.EVENT_START_DATE - timedelta(days=(settings.MINIMUM_AGE*365)-1)).date()
         form = self._build_form(data=data)
-        assert_bad_birthday(form)
+        self.assertFalse(form.is_valid())
+        self.assertIn(
+            "User is too young to participate.", form.errors["birthday"]
+        )
 
         data["birthday"] = (settings.EVENT_START_DATE - timedelta(days=(settings.MINIMUM_AGE*365)+1)).date()
         form = self._build_form(data=data)
