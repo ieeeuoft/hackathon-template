@@ -1,4 +1,5 @@
-from datetime import datetime, timedelta
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
 
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
@@ -154,12 +155,14 @@ class ApplicationForm(forms.ModelForm):
 
     def clean_birthday(self):
         latest_birthday = (
-            settings.EVENT_START_DATE - timedelta(days=settings.MINIMUM_AGE * 365)
+            settings.EVENT_START_DATE - relativedelta(years=settings.MINIMUM_AGE)
         ).date()
         user_birthday = self.cleaned_data["birthday"]
+        print(user_birthday)
+        print(latest_birthday)
         if user_birthday > latest_birthday:
             raise forms.ValidationError(
-                _("User is too young to participate."),
+                _(f"You must be {settings.MINIMUM_AGE} to participate."),
                 code="user_is_too_young_to_participate",
             )
         return self.cleaned_data["birthday"]

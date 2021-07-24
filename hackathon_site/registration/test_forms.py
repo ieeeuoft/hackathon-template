@@ -1,4 +1,6 @@
 from datetime import date, timedelta
+from dateutil.relativedelta import relativedelta
+
 from io import BytesIO
 from unittest.mock import patch
 
@@ -246,14 +248,19 @@ class ApplicationFormTestCase(SetupUserMixin, TestCase):
     def test_invalid_birthday(self):
         data = self.data.copy()
         data["birthday"] = (
-            settings.EVENT_START_DATE - timedelta(days=(settings.MINIMUM_AGE * 365) - 1)
+            settings.EVENT_START_DATE
+            - relativedelta(years=settings.MINIMUM_AGE - 1, days=360)
         ).date()
         form = self._build_form(data=data)
         self.assertFalse(form.is_valid())
-        self.assertIn("User is too young to participate.", form.errors["birthday"])
+        self.assertIn(
+            f"You must be {settings.MINIMUM_AGE} to participate.",
+            form.errors["birthday"],
+        )
 
         data["birthday"] = (
-            settings.EVENT_START_DATE - timedelta(days=(settings.MINIMUM_AGE * 365) + 1)
+            settings.EVENT_START_DATE
+            - relativedelta(years=settings.MINIMUM_AGE, days=1)
         ).date()
         form = self._build_form(data=data)
         self.assertTrue(form.is_valid())
