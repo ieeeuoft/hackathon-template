@@ -1,7 +1,10 @@
+from datetime import datetime, timedelta
+
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.utils.translation import gettext_lazy as _
 from django_registration import validators
+from django.conf import settings
 
 from hackathon_site.utils import is_registration_open
 from registration.models import Application, Team, User
@@ -148,6 +151,15 @@ class ApplicationForm(forms.ModelForm):
                 _("User has already submitted an application."), code="invalid"
             )
         return cleaned_data
+
+    def clean_birthday(self):
+        latest_birthday = (settings.EVENT_START_DATE - timedelta(days=settings.MINIMUM_AGE*365)).date()
+        user_birthday = self.cleaned_data["birthday"]
+        if (user_birthday > latest_birthday):
+            raise forms.ValidationError(
+                _("User is too young to participate."), code="user_is_too_young_to_participate"
+            )
+        return self.cleaned_data["birthday"]
 
     def save(self, commit=True):
         self.instance = super().save(commit=False)
