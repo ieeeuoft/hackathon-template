@@ -307,9 +307,38 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
         response = self.client.post(self.view, request_data, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         pass
-        )
 
-        request_data = {"hardware": [{"id": hardware.id, "quantity": 2}]}
+    def test_returned_orders_hardware_limit(self):
+        self._login()
+        profile = self._make_event_profile()
+        hardware = Hardware.objects.create(
+            name="name",
+            model_number="model",
+            manufacturer="manufacturer",
+            datasheet="/datasheet/location/",
+            notes="notes",
+            quantity_available=10,
+            max_per_team=4,
+            picture="/picture/location",
+        )
+        hardware.categories.add(self.category_B_limit_10.pk)
+
+        order = Order.objects.create(team=self.user.profile.team, status="Picked Up")
+        healthy_order_item = OrderItem.objects.create(order=order, hardware=hardware)
+        healthy_order_item.part_returned_health = "Healthy"
+        healthy_order_item.save()
+        used_order_item = OrderItem.objects.create(order=order, hardware=hardware)
+        used_order_item.part_returned_health = "Heavily Used"
+        used_order_item.save()
+        broken_order_item = OrderItem.objects.create(order=order, hardware=hardware)
+        broken_order_item.part_returned_health = "Broken"
+        broken_order_item.save()
+        lost_order_item = OrderItem.objects.create(order=order, hardware=hardware)
+        lost_order_item.part_returned_health = "Lost"
+        lost_order_item.save()
+
+        request_data = {"hardware": [{"id": hardware.id, "quantity": 4}]}
         response = self.client.post(self.view, request_data, format="json")
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         pass
