@@ -203,7 +203,7 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
         self.category_A_limit_1 = Category.objects.create(
             name="category_limit_1", max_per_team=1
         )
-        self.category_B_limit_4 = Category.objects.create(
+        self.category_B_limit_10 = Category.objects.create(
             name="category_limit_10", max_per_team=4
         )
         self.view = reverse("api:hardware:order-list")
@@ -254,7 +254,7 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
             max_per_team=1,
             picture="/picture/location",
         )
-        hardware.categories.add(self.category_B_limit_4.pk)
+        hardware.categories.add(self.category_B_limit_10.pk)
         request_data = {"hardware": [{"id": hardware.id, "quantity": 2}]}
         response = self.client.post(self.view, request_data, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
