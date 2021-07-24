@@ -200,10 +200,10 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
     def setUp(self):
         super().setUp()
         self.team = Team.objects.create()
-        self.category_A_limit_1 = Category.objects.create(
+        self.category_limit_1 = Category.objects.create(
             name="category_limit_1", max_per_team=1
         )
-        self.category_B_limit_10 = Category.objects.create(
+        self.category_limit_10 = Category.objects.create(
             name="category_limit_10", max_per_team=10
         )
         self.view = reverse("api:hardware:order-list")
@@ -259,7 +259,7 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
             max_per_team=1,
             picture="/picture/location",
         )
-        hardware.categories.add(self.category_B_limit_10.pk)
+        hardware.categories.add(self.category_limit_10.pk)
 
         request_data = {"hardware": [{"id": hardware.id, "quantity": 2}]}
         response = self.client.post(self.view, request_data, format="json")
@@ -280,7 +280,7 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
             max_per_team=4,
             picture="/picture/location",
         )
-        hardware.categories.add(self.category_B_limit_10.pk)
+        hardware.categories.add(self.category_limit_10.pk)
 
         submitted_order = Order.objects.create(
             team=self.user.profile.team, status="Submitted"
@@ -322,7 +322,7 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
             max_per_team=4,
             picture="/picture/location",
         )
-        hardware.categories.add(self.category_B_limit_10.pk)
+        hardware.categories.add(self.category_limit_10.pk)
 
         order = Order.objects.create(team=self.user.profile.team, status="Picked Up")
         healthy_order_item = OrderItem.objects.create(order=order, hardware=hardware)
@@ -357,7 +357,7 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
             max_per_team=1,
             picture="/picture/location",
         )
-        hardware.categories.add(self.category_B_limit_10.pk)
+        hardware.categories.add(self.category_limit_10.pk)
 
         order = Order.objects.create(team=self.user.profile.team, status="Cancelled")
         order_item = OrderItem.objects.create(order=order, hardware=hardware)
