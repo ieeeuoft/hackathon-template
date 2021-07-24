@@ -266,3 +266,44 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         pass
+
+    def test_invalid_input_hardware_limit_past_orders(self):
+        self._login()
+        profile = self._make_event_profile()
+        hardware = Hardware.objects.create(
+            name="name",
+            model_number="model",
+            manufacturer="manufacturer",
+            datasheet="/datasheet/location/",
+            notes="notes",
+            quantity_available=10,
+            max_per_team=4,
+            picture="/picture/location",
+        )
+        hardware.categories.add(self.category_B_limit_10.pk)
+
+        submitted_order = Order.objects.create(
+            team=self.user.profile.team, status="Submitted"
+        )
+        submitted_order_item = OrderItem.objects.create(
+            order=submitted_order, hardware=hardware
+        )
+
+        ready_order = Order.objects.create(
+            team=self.user.profile.team, status="Ready for Pickup"
+        )
+        ready_order_item = OrderItem.objects.create(
+            order=submitted_order, hardware=hardware
+        )
+
+        ready_order = Order.objects.create(
+            team=self.user.profile.team, status="Picked Up"
+        )
+        ready_order_item = OrderItem.objects.create(
+            order=submitted_order, hardware=hardware
+        )
+
+        request_data = {"hardware": [{"id": hardware.id, "quantity": 2}]}
+        response = self.client.post(self.view, request_data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        pass
