@@ -153,11 +153,14 @@ class ApplicationForm(forms.ModelForm):
         return cleaned_data
 
     def clean_birthday(self):
-        latest_birthday = (settings.EVENT_START_DATE - timedelta(days=settings.MINIMUM_AGE*365)).date()
+        latest_birthday = (
+            settings.EVENT_START_DATE - timedelta(days=settings.MINIMUM_AGE * 365)
+        ).date()
         user_birthday = self.cleaned_data["birthday"]
-        if (user_birthday > latest_birthday):
+        if user_birthday > latest_birthday:
             raise forms.ValidationError(
-                _("User is too young to participate."), code="user_is_too_young_to_participate"
+                _("User is too young to participate."),
+                code="user_is_too_young_to_participate",
             )
         return self.cleaned_data["birthday"]
 

@@ -245,16 +245,19 @@ class ApplicationFormTestCase(SetupUserMixin, TestCase):
 
     def test_invalid_birthday(self):
         data = self.data.copy()
-        data["birthday"] = (settings.EVENT_START_DATE - timedelta(days=(settings.MINIMUM_AGE*365)-1)).date()
+        data["birthday"] = (
+            settings.EVENT_START_DATE - timedelta(days=(settings.MINIMUM_AGE * 365) - 1)
+        ).date()
         form = self._build_form(data=data)
         self.assertFalse(form.is_valid())
-        self.assertIn(
-            "User is too young to participate.", form.errors["birthday"]
-        )
+        self.assertIn("User is too young to participate.", form.errors["birthday"])
 
-        data["birthday"] = (settings.EVENT_START_DATE - timedelta(days=(settings.MINIMUM_AGE*365)+1)).date()
+        data["birthday"] = (
+            settings.EVENT_START_DATE - timedelta(days=(settings.MINIMUM_AGE * 365) + 1)
+        ).date()
         form = self._build_form(data=data)
         self.assertTrue(form.is_valid())
+
 
 class JoinTeamFormTestCase(SetupUserMixin, TestCase):
     def setUp(self):
