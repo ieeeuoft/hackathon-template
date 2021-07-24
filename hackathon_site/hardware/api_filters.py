@@ -12,6 +12,7 @@ class CSVInputIntegerField(forms.IntegerField):
 class IntegerCSVFilter(filters.BaseInFilter):
     field_class = CSVInputIntegerField
 
+
 class HardwareFilter(filters.FilterSet):
     queryset = Hardware
     serializer_class = HardwareSerializer
@@ -23,11 +24,11 @@ class HardwareFilter(filters.FilterSet):
     @staticmethod
     def filter_in_stock(queryset, _, value):
         if value is True:
-            return queryset.filter(quantity_available__gt=0)
+            return queryset.filter(quantity_remaining__gt=0)
         else:
-            return queryset.filter(quantity_available__lte=0)
+            return queryset.filter(quantity_remaining__lte=0)
 
-    id =IntegerCSVFilter(
+    id = IntegerCSVFilter(
         field_name="id",
         label="Comma separated list of hardware IDs",
         help_text="Comma separated list of hardware IDs",
