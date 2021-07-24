@@ -217,3 +217,26 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
         request_data = {"hardware": []}
         response = self.client.post(self.view, request_data)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_create_simple_order(self):
+        self._login()
+        profile = self._make_event_profile()
+        simple_hardware = Hardware.objects.create(
+            name="name",
+            model_number="model",
+            manufacturer="manufacturer",
+            datasheet="/datasheet/location/",
+            notes="notes",
+            quantity_available=1,
+            max_per_team=1,
+            picture="/picture/location",
+        )
+        request_data = {"hardware": [{"id": simple_hardware.id, "quantity": 1}]}
+        response = self.client.post(self.view, request_data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        order_id = response.json().get("order_id")
+        self.assertIsNotNone(order_id, "No order id returned")
+        order = Order.objects.get(pk=order_id)
+        self.assertEqual(len(order.items.all()), 1, "More than 1 order item created")
+        self.assertCountEqual(order.hardware_set.all(), [simple_hardware])
+        pass
