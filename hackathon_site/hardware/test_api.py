@@ -763,3 +763,31 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
         pass
+
+    def test_no_remaining_quantities(self):
+        self._login()
+        profile = self._make_event_profile()
+        hardware = Hardware.objects.create(
+            name="name",
+            model_number="model",
+            manufacturer="manufacturer",
+            datasheet="/datasheet/location/",
+            notes="notes",
+            quantity_available=1,
+            max_per_team=10,
+            picture="/picture/location",
+        )
+        hardware.categories.add(self.category_limit_10.pk)
+
+        order = Order.objects.create(team=self.user.profile.team, status="Submitted")
+        order_item = OrderItem.objects.create(order=order, hardware=hardware)
+
+        request_data = {"hardware": [{"id": hardware.id, "quantity": 1}]}
+        response = self.client.post(self.view, request_data, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        order_id = response.json().get("order_id")
+        self.assertIsNone(order_id, "No order id should be returned")
+
+        pass
