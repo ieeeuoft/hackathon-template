@@ -738,4 +738,28 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(response_errors_hardware_id, hardware.id)
 
         pass
+
+    def test_empty_input(self):
+        self._login()
+        profile = self._make_event_profile()
+        hardware = Hardware.objects.create(
+            name="name",
+            model_number="model",
+            manufacturer="manufacturer",
+            datasheet="/datasheet/location/",
+            notes="notes",
+            quantity_available=10,
+            max_per_team=10,
+            picture="/picture/location",
+        )
+        hardware.categories.add(self.category_limit_1.pk)
+
+        request_data = {"hardware": []}
+        response = self.client.post(self.view, request_data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        request_data = {"hardware": [{"id": hardware.id, "quantity": 0}]}
+        response = self.client.post(self.view, request_data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
         pass
