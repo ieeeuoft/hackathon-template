@@ -256,8 +256,6 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
         self.assertIsNotNone(response_hardware_fulfilled, "No fulfilled quantity")
         self.assertEqual(response_hardware_fulfilled, 1)
 
-        pass
-
     def test_invalid_input_hardware_limit(self):
         self._login()
         profile = self._make_event_profile()
@@ -277,7 +275,6 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
         response = self.client.post(self.view, request_data, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        pass
 
     def test_invalid_input_hardware_limit_past_orders(self):
         self._login()
@@ -319,7 +316,6 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
         response = self.client.post(self.view, request_data, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        pass
 
     def test_hardware_limit_returned_orders(self):
         self._login()
@@ -362,8 +358,6 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
             4,
         )
 
-        pass
-
     def test_hardware_limit_cancelled_orders(self):
         self._login()
         profile = self._make_event_profile()
@@ -386,7 +380,6 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
         response = self.client.post(self.view, request_data, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        pass
 
     def test_invalid_input_category_limit(self):
         self._login()
@@ -407,7 +400,6 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
         response = self.client.post(self.view, request_data, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        pass
 
     def test_invalid_input_category_limit_past_orders(self):
         self._login()
@@ -449,7 +441,6 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
         response = self.client.post(self.view, request_data, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        pass
 
     def test_category_limit_returned_orders(self):
         self._login()
@@ -492,8 +483,6 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
             4,
         )
 
-        pass
-
     def test_category_limit_cancelled_orders(self):
         self._login()
         profile = self._make_event_profile()
@@ -516,7 +505,6 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
         response = self.client.post(self.view, request_data, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        pass
 
     def test_invalid_inputs_multiple_hardware(self):
         self._login()
@@ -555,7 +543,6 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
         response = self.client.post(self.view, request_data, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        pass
 
     def test_multiple_hardware_success(self):
         self._login()
@@ -625,8 +612,6 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
             else:
                 self.assertEqual(hardware_fulfilled, num_hardware_2_requested)
 
-        pass
-
     def test_repeated_hardware_input_ids(self):
         self._login()
         profile = self._make_event_profile()
@@ -672,7 +657,6 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
         response_hardware_fulfilled = response_hardware[0].get("quantity_fulfilled")
         self.assertIsNotNone(response_hardware_fulfilled, "No fulfilled quantity")
         self.assertEqual(response_hardware_fulfilled, num_hardware_requested)
-        pass
 
     def test_limited_by_remaining_quantities(self):
         # we won't test the other contributing causes for "remaining quantities"
@@ -737,8 +721,6 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
         self.assertIsNotNone(response_errors_hardware_id, "No hardware id")
         self.assertEqual(response_errors_hardware_id, hardware.id)
 
-        pass
-
     def test_empty_input(self):
         self._login()
         profile = self._make_event_profile()
@@ -761,8 +743,6 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
         request_data = {"hardware": [{"id": hardware.id, "quantity": 0}]}
         response = self.client.post(self.view, request_data, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-
-        pass
 
     def test_no_remaining_quantities(self):
         self._login()
@@ -789,5 +769,3 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
 
         order_id = response.json().get("order_id")
         self.assertIsNone(order_id, "No order id should be returned")
-
-        pass
