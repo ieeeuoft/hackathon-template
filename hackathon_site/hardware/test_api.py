@@ -752,7 +752,7 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
             max_per_team=10,
             picture="/picture/location",
         )
-        hardware.categories.add(self.category_limit_1.pk)
+        hardware.categories.add(self.category_limit_10.pk)
 
         request_data = {"hardware": []}
         response = self.client.post(self.view, request_data, format="json")
