@@ -240,19 +240,17 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-        order_id = response.json().get("order_id")
-        self.assertIsNotNone(order_id, "No order id returned")
+        expected_response = {
+            "order_id": 1,
+            "hardware": [{"hardware_id": simple_hardware.id, "quantity_fulfilled": 1}],
+            "errors": [],
+        }
 
-        order = Order.objects.get(pk=order_id)
-        self.assertEqual(len(order.items.all()), 1, "More than 1 order item created")
+        self.assertEqual(response.json(), expected_response)
+
+        order = Order.objects.get(pk=1)
+        self.assertEqual(order.items.count(), 1, "More than 1 order item created")
         self.assertCountEqual(order.hardware_set.all(), [simple_hardware])
-
-        response_hardware = response.json().get("hardware")
-        self.assertEqual(len(response_hardware), 1)
-        response_hardware_id = response_hardware[0].get("hardware_id")
-        self.assertEqual(response_hardware_id, simple_hardware.id)
-        response_hardware_fulfilled = response_hardware[0].get("quantity_fulfilled")
-        self.assertEqual(response_hardware_fulfilled, 1)
 
     def test_invalid_input_hardware_limit(self):
         self._login()
@@ -349,12 +347,17 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-        self.assertEqual(
-            hardware.order_items.filter(part_returned_health__isnull=True)
-            .exclude(order__status="Cancelled")
-            .count(),
-            4,
-        )
+        expected_response = {
+            "order_id": 2,
+            "hardware": [{"hardware_id": hardware.id, "quantity_fulfilled": 4}],
+            "errors": [],
+        }
+
+        self.assertEqual(response.json(), expected_response)
+
+        order = Order.objects.get(pk=2)
+        self.assertEqual(order.items.count(), 4)
+        self.assertCountEqual(order.hardware_set.all(), [hardware])
 
     def test_hardware_limit_cancelled_orders(self):
         self._login()
@@ -378,6 +381,18 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
         response = self.client.post(self.view, request_data, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        expected_response = {
+            "order_id": 2,
+            "hardware": [{"hardware_id": hardware.id, "quantity_fulfilled": 1}],
+            "errors": [],
+        }
+
+        self.assertEqual(response.json(), expected_response)
+
+        order = Order.objects.get(pk=2)
+        self.assertEqual(order.items.all().count(), 1)
+        self.assertCountEqual(order.hardware_set.all(), [hardware])
 
     def test_invalid_input_category_limit(self):
         self._login()
@@ -474,12 +489,17 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-        self.assertEqual(
-            hardware.order_items.filter(part_returned_health__isnull=True)
-            .exclude(order__status="Cancelled")
-            .count(),
-            4,
-        )
+        expected_response = {
+            "order_id": 2,
+            "hardware": [{"hardware_id": hardware.id, "quantity_fulfilled": 4}],
+            "errors": [],
+        }
+
+        self.assertEqual(response.json(), expected_response)
+
+        order = Order.objects.get(pk=2)
+        self.assertEqual(order.items.count(), 4)
+        self.assertCountEqual(order.hardware_set.all(), [hardware])
 
     def test_category_limit_cancelled_orders(self):
         self._login()
@@ -503,6 +523,18 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
         response = self.client.post(self.view, request_data, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        expected_response = {
+            "order_id": 2,
+            "hardware": [{"hardware_id": hardware.id, "quantity_fulfilled": 1}],
+            "errors": [],
+        }
+
+        self.assertEqual(response.json(), expected_response)
+
+        order = Order.objects.get(pk=2)
+        self.assertEqual(order.items.count(), 1)
+        self.assertCountEqual(order.hardware_set.all(), [hardware])
 
     def test_invalid_inputs_multiple_hardware(self):
         self._login()
@@ -580,11 +612,29 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
             ]
         }
         response = self.client.post(self.view, request_data, format="json")
+        response_json = response.json()
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-        order_id = response.json().get("order_id")
-        self.assertIsNotNone(order_id, "No order id returned")
+        order_id = response_json.get("order_id")
+        self.assertEqual(order_id, 1)
+
+        response_hardware = response_json.get("hardware")
+        self.assertEqual(len(response_hardware), 2)
+        expected_response_hardware_1 = {
+            "hardware_id": hardware_1.id,
+            "quantity_fulfilled": num_hardware_1_requested,
+        }
+        expected_response_hardware_2 = {
+            "hardware_id": hardware_2.id,
+            "quantity_fulfilled": num_hardware_2_requested,
+        }
+        self.assertCountEqual(
+            response_hardware,
+            [expected_response_hardware_1, expected_response_hardware_2],
+        )
+
+        self.assertEqual(response_json.get("errors"), [])
 
         order = Order.objects.get(pk=order_id)
         self.assertCountEqual(order.hardware_set.all(), [hardware_1, hardware_2])
@@ -594,19 +644,6 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(
             order.items.filter(hardware=hardware_2).count(), num_hardware_2_requested
         )
-
-        response_hardware = response.json().get("hardware")
-        self.assertEqual(len(response_hardware), 2)
-        for entry in response_hardware:
-            entry_hardware_id = entry.get("hardware_id")
-            self.assertIn(entry_hardware_id, [hardware_1.id, hardware_2.id])
-
-            hardware_fulfilled = entry.get("quantity_fulfilled")
-
-            if entry_hardware_id == hardware_1.id:
-                self.assertEqual(hardware_fulfilled, num_hardware_1_requested)
-            else:
-                self.assertEqual(hardware_fulfilled, num_hardware_2_requested)
 
     def test_repeated_hardware_input_ids(self):
         self._login()
@@ -636,21 +673,22 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-        order_id = response.json().get("order_id")
-        self.assertIsNotNone(order_id, "No order id returned")
+        expected_response = {
+            "order_id": 1,
+            "hardware": [
+                {
+                    "hardware_id": hardware.id,
+                    "quantity_fulfilled": num_hardware_requested,
+                }
+            ],
+            "errors": [],
+        }
 
-        order = Order.objects.get(pk=order_id)
+        self.assertEqual(response.json(), expected_response)
+
+        order = Order.objects.get(pk=1)
+        self.assertEqual(order.items.all().count(), num_hardware_requested)
         self.assertCountEqual(order.hardware_set.all(), [hardware])
-        self.assertEqual(
-            order.items.filter(hardware=hardware).count(), num_hardware_requested
-        )
-
-        response_hardware = response.json().get("hardware")
-        self.assertEqual(len(response_hardware), 1)
-        response_hardware_id = response_hardware[0].get("hardware_id")
-        self.assertEqual(response_hardware_id, hardware.id)
-        response_hardware_fulfilled = response_hardware[0].get("quantity_fulfilled")
-        self.assertEqual(response_hardware_fulfilled, num_hardware_requested)
 
     def test_limited_by_remaining_quantities(self):
         # we won't test the other contributing causes for "remaining quantities"
@@ -691,26 +729,30 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-        order_id = response.json().get("order_id")
-        self.assertIsNotNone(order_id, "No order id returned")
+        expected_response = {
+            "order_id": 2,
+            "hardware": [
+                {
+                    "hardware_id": hardware.id,
+                    "quantity_fulfilled": num_expected_fulfilled,
+                }
+            ],
+            "errors": [
+                {
+                    "hardware_id": hardware.id,
+                    "message": "Only {} of {} {}(s) were available".format(
+                        num_expected_fulfilled, num_hardware_requested, hardware.name,
+                    ),
+                }
+            ],
+        }
+        self.assertEqual(response.json(), expected_response)
 
-        order = Order.objects.get(pk=order_id)
+        order = Order.objects.get(pk=2)
         self.assertCountEqual(order.hardware_set.all(), [hardware])
         self.assertEqual(
             order.items.filter(hardware=hardware).count(), num_expected_fulfilled
         )
-
-        response_hardware = response.json().get("hardware")
-        self.assertEqual(len(response_hardware), 1)
-        response_hardware_id = response_hardware[0].get("hardware_id")
-        self.assertEqual(response_hardware_id, hardware.id)
-        response_hardware_fulfilled = response_hardware[0].get("quantity_fulfilled")
-        self.assertEqual(response_hardware_fulfilled, num_expected_fulfilled)
-
-        response_errors = response.json().get("errors")
-        self.assertEqual(len(response_hardware), 1)
-        response_errors_hardware_id = response_errors[0].get("hardware_id")
-        self.assertEqual(response_errors_hardware_id, hardware.id)
 
     def test_empty_input(self):
         self._login()
@@ -758,5 +800,14 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-        order_id = response.json().get("order_id")
-        self.assertIsNone(order_id, "No order id should be returned")
+        expected_response = {
+            "order_id": None,
+            "hardware": [{"hardware_id": hardware.id, "quantity_fulfilled": 0,}],
+            "errors": [
+                {
+                    "hardware_id": hardware.id,
+                    "message": "There are no {}s available".format(hardware.name),
+                }
+            ],
+        }
+        self.assertEqual(response.json(), expected_response)
