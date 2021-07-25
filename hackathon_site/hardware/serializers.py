@@ -112,8 +112,7 @@ class OrderCreateSerializer(serializers.Serializer):
             if count > category.max_per_team:
                 error_messages.append("Category {} limit reached".format(category.name))
         if error_messages:
-            error_message = "; ".join(error_messages)
-            raise serializers.ValidationError(error_message)
+            raise serializers.ValidationError(error_messages)
         return data
 
     def create(self, validated_data):
