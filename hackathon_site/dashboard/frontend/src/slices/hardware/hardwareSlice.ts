@@ -1,4 +1,4 @@
-import { createSlice, createEntityAdapter} from "@reduxjs/toolkit";
+import { createSlice, createEntityAdapter } from "@reduxjs/toolkit";
 
 export interface Hardware {
     id: number;
@@ -12,7 +12,7 @@ export interface Hardware {
     picture: string;
     categories: number[];
     quantity_remaining: string;
-};
+}
 
 export interface HardwareState {
     isLoading: boolean;
