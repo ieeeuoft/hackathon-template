@@ -312,7 +312,7 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         pass
 
-    def test_returned_orders_hardware_limit(self):
+    def test_hardware_limit_returned_orders(self):
         self._login()
         profile = self._make_event_profile()
         hardware = Hardware.objects.create(
@@ -355,7 +355,7 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
 
         pass
 
-    def test_invalid_input_hardware_limit_cancelled_orders(self):
+    def test_hardware_limit_cancelled_orders(self):
         self._login()
         profile = self._make_event_profile()
         hardware = Hardware.objects.create(
@@ -442,7 +442,7 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         pass
 
-    def test_returned_orders_category_limit(self):
+    def test_category_limit_returned_orders(self):
         self._login()
         profile = self._make_event_profile()
         hardware = Hardware.objects.create(
