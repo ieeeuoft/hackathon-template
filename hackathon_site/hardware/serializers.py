@@ -154,9 +154,7 @@ class OrderCreateSerializer(serializers.Serializer):
                     {
                         "hardware_id": hardware.id,
                         "message": "Only {} of {} {}(s) were available".format(
-                            requested_quantity - num_order_items,
-                            requested_quantity,
-                            hardware.name,
+                            num_order_items, requested_quantity, hardware.name,
                         ),
                     }
                 )
