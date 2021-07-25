@@ -517,4 +517,43 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         pass
+
+    def test_invalid_inputs_multiple_hardware(self):
+        self._login()
+        profile = self._make_event_profile()
+
+        limited_hardware = Hardware.objects.create(
+            name="name",
+            model_number="model",
+            manufacturer="manufacturer",
+            datasheet="/datasheet/location/",
+            notes="notes",
+            quantity_available=10,
+            max_per_team=1,
+            picture="/picture/location",
+        )
+        limited_hardware.categories.add(self.category_limit_10.pk)
+
+        limited_category_hardware = Hardware.objects.create(
+            name="name",
+            model_number="model",
+            manufacturer="manufacturer",
+            datasheet="/datasheet/location/",
+            notes="notes",
+            quantity_available=10,
+            max_per_team=10,
+            picture="/picture/location",
+        )
+        limited_category_hardware.categories.add(self.category_limit_1.pk)
+
+        request_data = {
+            "hardware": [
+                {"id": limited_hardware.id, "quantity": 10},
+                {"id": limited_category_hardware.id, "quantity": 10},
+            ]
+        }
+        response = self.client.post(self.view, request_data, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        pass
         pass
