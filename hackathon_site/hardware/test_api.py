@@ -493,4 +493,28 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
         )
 
         pass
+
+    def test_category_limit_cancelled_orders(self):
+        self._login()
+        profile = self._make_event_profile()
+        hardware = Hardware.objects.create(
+            name="name",
+            model_number="model",
+            manufacturer="manufacturer",
+            datasheet="/datasheet/location/",
+            notes="notes",
+            quantity_available=10,
+            max_per_team=10,
+            picture="/picture/location",
+        )
+        hardware.categories.add(self.category_limit_1.pk)
+
+        order = Order.objects.create(team=self.user.profile.team, status="Cancelled")
+        order_item = OrderItem.objects.create(order=order, hardware=hardware)
+
+        request_data = {"hardware": [{"id": hardware.id, "quantity": 1}]}
+        response = self.client.post(self.view, request_data, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        pass
         pass
