@@ -333,18 +333,18 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
         hardware.categories.add(self.category_limit_10.pk)
 
         order = Order.objects.create(team=self.user.profile.team, status="Picked Up")
-        healthy_order_item = OrderItem.objects.create(order=order, hardware=hardware)
-        healthy_order_item.part_returned_health = "Healthy"
-        healthy_order_item.save()
-        used_order_item = OrderItem.objects.create(order=order, hardware=hardware)
-        used_order_item.part_returned_health = "Heavily Used"
-        used_order_item.save()
-        broken_order_item = OrderItem.objects.create(order=order, hardware=hardware)
-        broken_order_item.part_returned_health = "Broken"
-        broken_order_item.save()
-        lost_order_item = OrderItem.objects.create(order=order, hardware=hardware)
-        lost_order_item.part_returned_health = "Lost"
-        lost_order_item.save()
+        healthy_order_item = OrderItem.objects.create(
+            order=order, hardware=hardware, part_returned_health="Healthy"
+        )
+        used_order_item = OrderItem.objects.create(
+            order=order, hardware=hardware, part_returned_health="Heavily Used"
+        )
+        broken_order_item = OrderItem.objects.create(
+            order=order, hardware=hardware, part_returned_health="Broken"
+        )
+        lost_order_item = OrderItem.objects.create(
+            order=order, hardware=hardware, part_returned_health="Lost"
+        )
 
         request_data = {"hardware": [{"id": hardware.id, "quantity": 4}]}
         response = self.client.post(self.view, request_data, format="json")
