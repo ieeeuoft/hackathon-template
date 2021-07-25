@@ -272,6 +272,11 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
+        expected_response = {
+            "non_field_errors": ["Hardware {} limit reached".format(hardware.name)]
+        }
+        self.assertEqual(response.json(), expected_response)
+
     def test_invalid_input_hardware_limit_past_orders(self):
         self._login()
         profile = self._make_event_profile()
@@ -312,6 +317,11 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
         response = self.client.post(self.view, request_data, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        expected_response = {
+            "non_field_errors": ["Hardware {} limit reached".format(hardware.name)]
+        }
+        self.assertEqual(response.json(), expected_response)
 
     def test_hardware_limit_returned_orders(self):
         self._login()
@@ -414,6 +424,13 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
+        expected_response = {
+            "non_field_errors": [
+                "Category {} limit reached".format(self.category_limit_1.name)
+            ]
+        }
+        self.assertEqual(response.json(), expected_response)
+
     def test_invalid_input_category_limit_past_orders(self):
         self._login()
         profile = self._make_event_profile()
@@ -454,6 +471,13 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
         response = self.client.post(self.view, request_data, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        expected_response = {
+            "non_field_errors": [
+                "Category {} limit reached".format(self.category_limit_4.name)
+            ]
+        }
+        self.assertEqual(response.json(), expected_response)
 
     def test_category_limit_returned_orders(self):
         self._login()
@@ -573,6 +597,14 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
         response = self.client.post(self.view, request_data, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        expected_error_messages = [
+            "Category {} limit reached".format(self.category_limit_1.name),
+            "Hardware {} limit reached".format(limited_hardware.name),
+        ]
+        self.assertCountEqual(
+            response.json().get("non_field_errors"), expected_error_messages
+        )
 
     def test_multiple_hardware_success(self):
         self._login()
@@ -772,10 +804,14 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
         request_data = {"hardware": []}
         response = self.client.post(self.view, request_data, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        expected_response = {"non_field_errors": ["No hardware submitted"]}
+        self.assertEqual(response.json(), expected_response)
 
         request_data = {"hardware": [{"id": hardware.id, "quantity": 0}]}
         response = self.client.post(self.view, request_data, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        expected_response = {"non_field_errors": ["No hardware submitted"]}
+        self.assertEqual(response.json(), expected_response)
 
     def test_no_remaining_quantities(self):
         self._login()
