@@ -627,4 +627,50 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
 
         pass
 
+    def test_repeated_hardware_input_ids(self):
+        self._login()
+        profile = self._make_event_profile()
+
+        hardware = Hardware.objects.create(
+            name="name",
+            model_number="model",
+            manufacturer="manufacturer",
+            datasheet="/datasheet/location/",
+            notes="notes",
+            quantity_available=10,
+            max_per_team=10,
+            picture="/picture/location",
+        )
+        hardware.categories.add(self.category_limit_10.pk)
+
+        num_hardware_requested = 6
+
+        request_data = {
+            "hardware": [
+                {"id": hardware.id, "quantity": 1}
+                for _ in range(num_hardware_requested)
+            ]
+        }
+        response = self.client.post(self.view, request_data, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        order_id = response.json().get("order_id")
+        self.assertIsNotNone(order_id, "No order id returned")
+
+        order = Order.objects.get(pk=order_id)
+        self.assertCountEqual(order.hardware_set.all(), [hardware])
+        self.assertEqual(
+            order.items.filter(hardware=hardware).count(), num_hardware_requested
+        )
+
+        response_hardware = response.json().get("hardware")
+        self.assertEqual(len(response_hardware), 1)
+        response_hardware_id = response_hardware[0].get("hardware_id")
+        self.assertIsNotNone(response_hardware_id, "No hardware id")
+        self.assertEqual(response_hardware_id, hardware.id)
+        response_hardware_fulfilled = response_hardware[0].get("quantity_fulfilled")
+        self.assertIsNotNone(response_hardware_fulfilled, "No fulfilled quantity")
+        self.assertEqual(response_hardware_fulfilled, num_hardware_requested)
+        pass
         pass
