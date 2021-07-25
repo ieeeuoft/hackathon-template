@@ -345,6 +345,14 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
         response = self.client.post(self.view, request_data, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        self.assertEqual(
+            hardware.order_items.filter(part_returned_health__isnull=True)
+            .exclude(order__status="Cancelled")
+            .count(),
+            4,
+        )
+
         pass
 
     def test_invalid_input_hardware_limit_cancelled_orders(self):
@@ -467,4 +475,13 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
         response = self.client.post(self.view, request_data, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        self.assertEqual(
+            hardware.order_items.filter(part_returned_health__isnull=True)
+            .exclude(order__status="Cancelled")
+            .count(),
+            4,
+        )
+
+        pass
         pass
