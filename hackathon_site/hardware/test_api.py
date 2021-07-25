@@ -556,4 +556,75 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         pass
+
+    def test_multiple_hardware_success(self):
+        self._login()
+        profile = self._make_event_profile()
+
+        hardware_1 = Hardware.objects.create(
+            name="name",
+            model_number="model",
+            manufacturer="manufacturer",
+            datasheet="/datasheet/location/",
+            notes="notes",
+            quantity_available=10,
+            max_per_team=10,
+            picture="/picture/location",
+        )
+        hardware_1.categories.add(self.category_limit_10.pk)
+
+        hardware_2 = Hardware.objects.create(
+            name="name",
+            model_number="model",
+            manufacturer="manufacturer",
+            datasheet="/datasheet/location/",
+            notes="notes",
+            quantity_available=10,
+            max_per_team=4,
+            picture="/picture/location",
+        )
+        hardware_2.categories.add(self.category_limit_4.pk)
+
+        num_hardware_1_requested = 6
+        num_hardware_2_requested = 4
+
+        request_data = {
+            "hardware": [
+                {"id": hardware_1.id, "quantity": num_hardware_1_requested},
+                {"id": hardware_2.id, "quantity": num_hardware_2_requested},
+            ]
+        }
+        response = self.client.post(self.view, request_data, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        order_id = response.json().get("order_id")
+        self.assertIsNotNone(order_id, "No order id returned")
+
+        order = Order.objects.get(pk=order_id)
+        self.assertCountEqual(order.hardware_set.all(), [hardware_1, hardware_2])
+        self.assertEqual(
+            order.items.filter(hardware=hardware_1).count(), num_hardware_1_requested
+        )
+        self.assertEqual(
+            order.items.filter(hardware=hardware_2).count(), num_hardware_2_requested
+        )
+
+        response_hardware = response.json().get("hardware")
+        self.assertEqual(len(response_hardware), 2)
+        for entry in response_hardware:
+            entry_hardware_id = entry.get("hardware_id")
+            self.assertIsNotNone(entry_hardware_id, "No hardware id")
+            self.assertIn(entry_hardware_id, [hardware_1.id, hardware_2.id])
+
+            hardware_fulfilled = entry.get("quantity_fulfilled")
+            self.assertIsNotNone(hardware_fulfilled, "No fulfilled quantity")
+
+            if entry_hardware_id == hardware_1.id:
+                self.assertEqual(hardware_fulfilled, num_hardware_1_requested)
+            else:
+                self.assertEqual(hardware_fulfilled, num_hardware_2_requested)
+
+        pass
+
         pass
