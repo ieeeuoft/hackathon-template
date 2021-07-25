@@ -250,10 +250,8 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
         response_hardware = response.json().get("hardware")
         self.assertEqual(len(response_hardware), 1)
         response_hardware_id = response_hardware[0].get("hardware_id")
-        self.assertIsNotNone(response_hardware_id, "No hardware id")
         self.assertEqual(response_hardware_id, simple_hardware.id)
         response_hardware_fulfilled = response_hardware[0].get("quantity_fulfilled")
-        self.assertIsNotNone(response_hardware_fulfilled, "No fulfilled quantity")
         self.assertEqual(response_hardware_fulfilled, 1)
 
     def test_invalid_input_hardware_limit(self):
@@ -601,11 +599,9 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(len(response_hardware), 2)
         for entry in response_hardware:
             entry_hardware_id = entry.get("hardware_id")
-            self.assertIsNotNone(entry_hardware_id, "No hardware id")
             self.assertIn(entry_hardware_id, [hardware_1.id, hardware_2.id])
 
             hardware_fulfilled = entry.get("quantity_fulfilled")
-            self.assertIsNotNone(hardware_fulfilled, "No fulfilled quantity")
 
             if entry_hardware_id == hardware_1.id:
                 self.assertEqual(hardware_fulfilled, num_hardware_1_requested)
@@ -652,10 +648,8 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
         response_hardware = response.json().get("hardware")
         self.assertEqual(len(response_hardware), 1)
         response_hardware_id = response_hardware[0].get("hardware_id")
-        self.assertIsNotNone(response_hardware_id, "No hardware id")
         self.assertEqual(response_hardware_id, hardware.id)
         response_hardware_fulfilled = response_hardware[0].get("quantity_fulfilled")
-        self.assertIsNotNone(response_hardware_fulfilled, "No fulfilled quantity")
         self.assertEqual(response_hardware_fulfilled, num_hardware_requested)
 
     def test_limited_by_remaining_quantities(self):
@@ -709,16 +703,13 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
         response_hardware = response.json().get("hardware")
         self.assertEqual(len(response_hardware), 1)
         response_hardware_id = response_hardware[0].get("hardware_id")
-        self.assertIsNotNone(response_hardware_id, "No hardware id")
         self.assertEqual(response_hardware_id, hardware.id)
         response_hardware_fulfilled = response_hardware[0].get("quantity_fulfilled")
-        self.assertIsNotNone(response_hardware_fulfilled, "No fulfilled quantity")
         self.assertEqual(response_hardware_fulfilled, num_expected_fulfilled)
 
         response_errors = response.json().get("errors")
         self.assertEqual(len(response_hardware), 1)
         response_errors_hardware_id = response_errors[0].get("hardware_id")
-        self.assertIsNotNone(response_errors_hardware_id, "No hardware id")
         self.assertEqual(response_errors_hardware_id, hardware.id)
 
     def test_empty_input(self):
