@@ -247,6 +247,15 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(len(order.items.all()), 1, "More than 1 order item created")
         self.assertCountEqual(order.hardware_set.all(), [simple_hardware])
 
+        response_hardware = response.json().get("hardware")
+        self.assertEqual(len(response_hardware), 1)
+        response_hardware_id = response_hardware[0].get("hardware_id")
+        self.assertIsNotNone(response_hardware_id, "No hardware id")
+        self.assertEqual(response_hardware_id, simple_hardware.id)
+        response_hardware_fulfilled = response_hardware[0].get("quantity_fulfilled")
+        self.assertIsNotNone(response_hardware_fulfilled, "No fulfilled quantity")
+        self.assertEqual(response_hardware_fulfilled, 1)
+
         pass
 
     def test_invalid_input_hardware_limit(self):
