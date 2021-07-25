@@ -57,6 +57,9 @@ class SignUpForm(UserCreationForm):
         for field in self._meta.fields:
             self.fields[field].required = True
 
+    def clean_email(self):
+        return self.cleaned_data["email"].lower()
+
     def save(self, commit=True):
         """
         Set the user's username to their email when saving

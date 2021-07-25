@@ -10,7 +10,12 @@ from django.conf import settings
 
 from hackathon_site.utils import is_registration_open
 from registration.forms import JoinTeamForm
-from registration.models import Team
+from registration.models import Team as RegistrationTeam
+
+from rest_framework import generics, mixins
+
+from event.models import Team as EventTeam
+from event.serializers import TeamSerializer
 
 
 def _now():
@@ -31,6 +36,29 @@ class IndexView(TemplateView):
         context["user"] = self.request.user
         context["application"] = getattr(self.request.user, "application", None)
         return context
+
+
+class CurrentTeamAPIView(generics.GenericAPIView, mixins.RetrieveModelMixin):
+    """
+    View to handle API interaction with the current logged in user's EventTeam
+    """
+
+    queryset = EventTeam.objects.all()
+    serializer_class = TeamSerializer
+
+    def get_object(self):
+        queryset = self.get_queryset()
+
+        return generics.get_object_or_404(
+            queryset, profiles__user_id=self.request.user.id
+        )
+
+    def get(self, request, *args, **kwargs):
+        """
+        Get the current users team profile and team details
+        Reads the profile of the current logged in team.
+        """
+        return self.retrieve(request, *args, **kwargs)
 
 
 class DashboardView(LoginRequiredMixin, FormView):
@@ -70,7 +98,9 @@ class DashboardView(LoginRequiredMixin, FormView):
 
         if isinstance(form, JoinTeamForm):
             application = self.request.user.application
-            new_team = Team.objects.get(team_code=form.cleaned_data["team_code"])
+            new_team = RegistrationTeam.objects.get(
+                team_code=form.cleaned_data["team_code"]
+            )
             old_team = application.team
 
             application.team = new_team
