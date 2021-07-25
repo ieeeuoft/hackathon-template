@@ -675,6 +675,8 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
         pass
 
     def test_limited_by_remaining_quantities(self):
+        # we won't test the other contributing causes for "remaining quantities"
+        # because they should be covered by the tests for remaining quantity field
         self._login()
         profile = self._make_event_profile()
 
