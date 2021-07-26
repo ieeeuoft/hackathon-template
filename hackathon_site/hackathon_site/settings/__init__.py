@@ -246,6 +246,11 @@ LOGGING = {
             "propagate": False,
         },
         "review": {"handlers": ["console", "console_errors"], "propagate": False},
+        "hardware": {
+            "handlers": ["console", "console_errors", "mail_admins"],
+            "level": "ERROR",
+            "propagate": False,
+        },
     },
 }
 
