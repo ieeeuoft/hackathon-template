@@ -101,9 +101,15 @@ export const logout = createAsyncThunk(
     async (arg, {dispatch, rejectWithValue}) => {
         try {
             const response = await post("/api/auth/logout/", null);
+            dispatch(push("/"));
             return response.data;
         } catch (e) {
-            console.log(e)
+            dispatch(
+                displaySnackbar({
+                    message: e.response.data.detail,
+                    options: { variant: "error" },
+                })
+            );
             return rejectWithValue({
                 status: e.response.status,
                 message: e.response.data,
@@ -147,6 +153,7 @@ const userSlice = createSlice({
             state.logout.isLoading = true;
         },
         [logout.fulfilled]: (state) => {
+            state.userData.user = null;
             state.isAuthenticated = false;
             state.logout.isLoading = false;
             state.logout.failure = null;
