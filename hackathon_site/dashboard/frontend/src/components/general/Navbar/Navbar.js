@@ -1,6 +1,7 @@
 import React from "react";
 import styles from "./Navbar.module.scss";
 import { Link } from "react-router-dom";
+import { push } from "connected-react-router";
 import { connect } from "react-redux";
 // Images and logos
 import DashboardIcon from "@material-ui/icons/Dashboard";
@@ -12,7 +13,9 @@ import { ReactComponent as Inventory } from "assets/images/icons/Hardware.svg";
 // Components
 import Button from "@material-ui/core/Button";
 
-const UnconnectedNavbar = ({ cartQuantity, pathname }) => (
+import { logout, logoutSelector } from "slices/users/userSlice";
+
+const UnconnectedNavbar = ({ logout, cartQuantity, pathname }) => (
     <nav className={styles.nav}>
         <div className={styles.navFlexDiv}>
             <Link to={"/"}>
@@ -79,6 +82,10 @@ const UnconnectedNavbar = ({ cartQuantity, pathname }) => (
         <Button
             aria-label="Logout"
             className={`${styles.navBtn} ${styles.navBtnLogout}`}
+            onClick={() => {
+                logout();
+                push("/");
+            }}
         >
             <b>Logout</b>
         </Button>
@@ -89,6 +96,6 @@ const mapStateToProps = (state) => ({
     pathname: state.router.location.pathname,
 });
 
-const Navbar = connect(mapStateToProps)(UnconnectedNavbar);
+const Navbar = connect(mapStateToProps, { logout: logout })(UnconnectedNavbar);
 
 export default Navbar;
