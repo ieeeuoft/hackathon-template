@@ -1,7 +1,6 @@
 import React from "react";
 import styles from "./Navbar.module.scss";
 import { Link } from "react-router-dom";
-import { push } from "connected-react-router";
 import { connect } from "react-redux";
 // Images and logos
 import DashboardIcon from "@material-ui/icons/Dashboard";
@@ -84,7 +83,6 @@ const UnconnectedNavbar = ({ logout, cartQuantity, pathname }) => (
             className={`${styles.navBtn} ${styles.navBtnLogout}`}
             onClick={() => {
                 logout();
-                push("/");
             }}
         >
             <b>Logout</b>
