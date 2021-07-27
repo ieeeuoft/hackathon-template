@@ -13,7 +13,7 @@ export const getCsrfToken = () => {
         for (let i = 0; i < cookies.length; i++) {
             const cookie = cookies[i].trim();
             if (cookie.trim().startsWith("csrftoken=")) {
-                return decodeURIComponent(cookie.substr(11));
+                return decodeURIComponent(cookie.substr(10));
             }
         }
     }
