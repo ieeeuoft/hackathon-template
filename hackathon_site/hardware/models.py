@@ -28,9 +28,7 @@ class AnnotatedHardwareManager(models.Manager):
                     "order_items",
                     filter=(
                         Q(order_items__part_returned_health__isnull=True)
-                        & ~Q(
-                            order_items__order__status="Cart"
-                        )  # TODO: replace with Cancelled
+                        & ~Q(order_items__order__status="Cancelled")
                     ),
                     distinct=True,
                 )
@@ -98,15 +96,17 @@ class OrderItem(models.Model):
 
 class Order(models.Model):
     STATUS_CHOICES = [
-        ("Cart", "Cart"),
         ("Submitted", "Submitted"),
         ("Ready for Pickup", "Ready for Pickup"),
         ("Picked Up", "Picked Up"),
+        ("Cancelled", "Cancelled"),
     ]
 
     hardware_set = models.ManyToManyField(Hardware, through=OrderItem)
     team = models.ForeignKey(TeamEvent, on_delete=models.CASCADE, null=False)
-    status = models.CharField(max_length=64, choices=STATUS_CHOICES, default="Cart")
+    status = models.CharField(
+        max_length=64, choices=STATUS_CHOICES, default="Submitted"
+    )
 
     created_at = models.DateTimeField(auto_now_add=True, null=False)
     updated_at = models.DateTimeField(auto_now=True, null=False)
