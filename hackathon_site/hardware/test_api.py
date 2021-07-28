@@ -206,7 +206,7 @@ class HardwareListTestCase(SetupUserMixin, APITestCase):
             manufacturer="manufacturer",
             datasheet="/datasheet/location/",
             notes="notes",
-            quantity_available=0,
+            quantity_available=1,
             max_per_team=1,
             picture="/picture/location",
         )
@@ -342,4 +342,16 @@ class HardwareListTestCase(SetupUserMixin, APITestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.json()
-        self.assertEqual(data, expected_data)
+        results = data["results"]
+        returned_ids = [res["id"] for res in results]
+        self.assertEqual(returned_ids, [1,3])
+
+    def test_id_invalid(self):
+        self._login()
+
+        url = self._build_filter_url(id="1,2,abcde")
+        response = self.client.get(url)
+        data = response.json()
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(data, {"id": ["Enter a whole number."]})
