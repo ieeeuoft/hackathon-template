@@ -22,7 +22,7 @@ export const getCsrfToken = () => {
 
 export const cleanURI = (uri) => {
     uri = uri.replace(/^\//, ""); // Remove leading slashes
-    uri = uri.endsWith("/") ? uri : (uri + "/");
+    uri = uri.endsWith("/") ? uri : uri + "/";
     return uri;
 };
 

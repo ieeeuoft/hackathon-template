@@ -98,7 +98,7 @@ export const logIn = createAsyncThunk(
 
 export const logout = createAsyncThunk(
     `${userReducerName}/logout`,
-    async (arg, {dispatch, rejectWithValue}) => {
+    async (arg, { dispatch, rejectWithValue }) => {
         try {
             const response = await post("/api/auth/logout/", null);
             dispatch(push("/"));
@@ -189,4 +189,4 @@ export const loginSelector = createSelector(
 export const logoutSelector = createSelector(
     [userSliceSelector],
     (userSlice) => userSlice.logout
-)
+);
