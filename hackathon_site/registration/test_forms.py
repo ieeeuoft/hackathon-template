@@ -1,10 +1,13 @@
-from datetime import date
+from datetime import date, timedelta
+from dateutil.relativedelta import relativedelta
+
 from io import BytesIO
 from unittest.mock import patch
 
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.test import TestCase
 from django_registration import validators
+from django.conf import settings
 
 from hackathon_site.tests import SetupUserMixin
 from registration.models import User, Team, Application
@@ -79,7 +82,7 @@ class ApplicationFormTestCase(SetupUserMixin, TestCase):
     def setUp(self):
         super().setUp()
         self.data = {
-            "birthday": date(2020, 9, 8),
+            "birthday": date(2000, 7, 7),
             "gender": "no-answer",
             "ethnicity": "no-answer",
             "phone_number": "1234567890",
@@ -241,6 +244,26 @@ class ApplicationFormTestCase(SetupUserMixin, TestCase):
         form = self._build_form()
         self.assertFalse(form.is_valid())
         self.assertIn("Registration has closed.", form.non_field_errors())
+
+    def test_invalid_birthday(self):
+        data = self.data.copy()
+        data["birthday"] = (
+            settings.EVENT_START_DATE
+            - relativedelta(years=settings.MINIMUM_AGE - 1, days=360)
+        ).date()
+        form = self._build_form(data=data)
+        self.assertFalse(form.is_valid())
+        self.assertIn(
+            f"You must be {settings.MINIMUM_AGE} to participate.",
+            form.errors["birthday"],
+        )
+
+        data["birthday"] = (
+            settings.EVENT_START_DATE
+            - relativedelta(years=settings.MINIMUM_AGE, days=1)
+        ).date()
+        form = self._build_form(data=data)
+        self.assertTrue(form.is_valid())
 
 
 class JoinTeamFormTestCase(SetupUserMixin, TestCase):
