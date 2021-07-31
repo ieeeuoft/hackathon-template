@@ -26,6 +26,7 @@ packaging==20.4
 pathspec==0.8.0
 Pillow==8.2.0
 psycopg2-binary==2.8.6
+python-dateutil==2.8.2
 pyparsing==2.4.7
 pytz==2020.1
 PyYAML==5.4

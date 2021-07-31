@@ -5,7 +5,7 @@ from uuid import uuid4
 from django.conf import settings
 from django.test import TestCase, override_settings
 
-from event.models import User
+from event.models import User, Team as EventTeam, Profile
 from hackathon_site.utils import is_registration_open
 from registration.models import Application, Team as RegistrationTeam
 from review.models import Review
@@ -164,6 +164,15 @@ class SetupUserMixin:
         default_kwargs.update(kwargs)
 
         self.review = Review.objects.create(**default_kwargs)
+
+    def _make_event_profile(self, user=None, team=None):
+        if team is None:
+            team = EventTeam.objects.create()
+
+        if user is None:
+            user = self.user
+
+        return Profile.objects.create(user=user, team=team)
 
 
 @override_settings(IN_TESTING=False)
