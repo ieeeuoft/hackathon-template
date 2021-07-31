@@ -344,7 +344,7 @@ class HardwareListTestCase(SetupUserMixin, APITestCase):
         data = response.json()
         results = data["results"]
         returned_ids = [res["id"] for res in results]
-        self.assertEqual(returned_ids, [1,3])
+        self.assertEqual(returned_ids, [1, 3])
 
     def test_id_invalid(self):
         self._login()
