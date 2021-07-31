@@ -1,10 +1,12 @@
+import store, { RootState } from "slices/store";
 import {
     hardwareSliceSelector,
     hardwareReducerName,
     initialState,
 } from "./hardwareSlice";
 
-const mockState = {
+const mockState: RootState = {
+    ...store.getState(),
     [hardwareReducerName]: initialState,
 };
 
