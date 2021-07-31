@@ -12,7 +12,7 @@ import { ReactComponent as Inventory } from "assets/images/icons/Hardware.svg";
 // Components
 import Button from "@material-ui/core/Button";
 
-import { logout, logoutSelector } from "slices/users/userSlice";
+import logout from "slices/users/userSlice";
 
 const UnconnectedNavbar = ({ logout, cartQuantity, pathname }) => (
     <nav className={styles.nav}>
