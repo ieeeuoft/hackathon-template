@@ -1,4 +1,5 @@
 import { createSlice, createEntityAdapter } from "@reduxjs/toolkit";
+import { RootState } from "slices/store";
 
 export interface Hardware {
     id: number;
@@ -11,27 +12,30 @@ export interface Hardware {
     max_per_team: number;
     picture: string;
     categories: number[];
-    quantity_remaining: string;
+    quantity_remaining: number;
 }
 
-export interface HardwareState {
+interface HardwareExtraState {
     isLoading: boolean;
     error: string | null;
     next: string | null;
 }
 
-export const hardwareReducerName = "hardware";
-const hardwareAdapter = createEntityAdapter();
-export const initialState: HardwareState = {
+const extraState: HardwareExtraState = {
     isLoading: false,
     error: null,
     next: null,
 };
 
+export const hardwareReducerName = "hardware";
+const hardwareAdapter = createEntityAdapter<Hardware>();
+export const initialState = hardwareAdapter.getInitialState(extraState);
+export type HardwareState = typeof initialState;
+
 // Slices
 const hardwareSlice = createSlice({
     name: hardwareReducerName,
-    initialState: hardwareAdapter.getInitialState(initialState),
+    initialState: hardwareAdapter.getInitialState(extraState),
     reducers: {},
 });
 
@@ -39,6 +43,6 @@ export const { actions, reducer } = hardwareSlice;
 export default reducer;
 
 // Selectors
-export const hardwareSliceSelector = (state) => state[hardwareReducerName];
+export const hardwareSliceSelector = (state: RootState) => state[hardwareReducerName];
 
 export const hardwareSelector = hardwareAdapter.getSelectors(hardwareSliceSelector);

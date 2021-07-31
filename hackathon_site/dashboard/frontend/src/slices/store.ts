@@ -1,13 +1,13 @@
 import { combineReducers } from "redux";
 import { configureStore, getDefaultMiddleware } from "@reduxjs/toolkit";
 import { connectRouter, routerMiddleware } from "connected-react-router";
-import { createBrowserHistory } from "history";
+import { createBrowserHistory, History } from "history";
 
 import userReducer, { userReducerName } from "slices/users/userSlice";
 import uiReducer, { uiReducerName } from "slices/ui/uiSlice";
 import hardwareReducer, { hardwareReducerName } from "slices/hardware/hardwareSlice";
 
-const rootReducer = (history) =>
+const rootReducer = (history: History) =>
     combineReducers({
         [hardwareReducerName]: hardwareReducer,
         [userReducerName]: userReducer,
@@ -23,3 +23,4 @@ export const store = configureStore({
 });
 
 export default store;
+export type RootState = ReturnType<typeof store.getState>;
