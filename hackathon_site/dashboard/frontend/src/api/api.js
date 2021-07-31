@@ -26,19 +26,19 @@ export const cleanURI = (uri) => {
     return uri;
 };
 
-const config = {
+const makeConfig = () => ({
     headers: {
         "X-CSRFToken": getCsrfToken(),
     },
     withCredentials: true,
-};
+});
 
 export const get = (uri) => {
     uri = cleanURI(uri);
-    return axios.get(`${SERVER_URL}/${uri}`, config);
+    return axios.get(`${SERVER_URL}/${uri}`, makeConfig());
 };
 
 export const post = (uri, data) => {
     uri = cleanURI(uri);
-    return axios.post(`${SERVER_URL}/${uri}`, data, config);
+    return axios.post(`${SERVER_URL}/${uri}`, data, makeConfig());
 };
