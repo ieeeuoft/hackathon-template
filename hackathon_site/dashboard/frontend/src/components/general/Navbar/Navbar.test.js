@@ -1,6 +1,6 @@
 import React from "react";
 import { fireEvent, render } from "@testing-library/react";
-import { Navbar, UnconnectedNavbar } from "./Navbar";
+import Navbar, { UnconnectedNavbar } from "./Navbar";
 import { styles } from "./Navbar.module.scss";
 import { withStoreAndRouter, withRouter } from "testing/helpers";
 import { cartQuantity } from "testing/mockData";

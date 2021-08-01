@@ -11,7 +11,7 @@ import Menu from "@material-ui/icons/Menu";
 import CloseIcon from "@material-ui/icons/Close";
 import { connect } from "react-redux";
 
-import { Navbar } from "components/general/Navbar/Navbar";
+import Navbar from "components/general/Navbar/Navbar";
 import { userSelector } from "slices/users/userSlice";
 import { cartQuantity } from "testing/mockData";
 import { hackathonName } from "constants.js";
