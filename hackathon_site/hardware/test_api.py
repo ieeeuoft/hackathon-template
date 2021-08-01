@@ -196,7 +196,7 @@ class OrderListViewTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(expected_response, data["results"])
 
 
-class HardwareListTestCase(SetupUserMixin, APITestCase):
+class HardwareListViewTestCase(SetupUserMixin, APITestCase):
     def setUp(self):
         super().setUp()
 
