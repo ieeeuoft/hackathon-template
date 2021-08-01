@@ -14,7 +14,7 @@ import Button from "@material-ui/core/Button";
 
 import { logout } from "slices/users/userSlice";
 
-const UnconnectedNavbar = ({ logout, cartQuantity, pathname }) => (
+export const UnconnectedNavbar = ({ logout, cartQuantity, pathname }) => (
     <nav className={styles.nav}>
         <div className={styles.navFlexDiv}>
             <Link to={"/"}>
@@ -94,6 +94,4 @@ const mapStateToProps = (state) => ({
     pathname: state.router.location.pathname,
 });
 
-const Navbar = connect(mapStateToProps, { logout })(UnconnectedNavbar);
-
-export default Navbar;
+export const Navbar = connect(mapStateToProps, { logout })(UnconnectedNavbar);
