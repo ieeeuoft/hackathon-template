@@ -1,5 +1,5 @@
 import React from "react";
-import { render } from "@testing-library/react";
+import { fireEvent, render } from "@testing-library/react";
 import Navbar from "./Navbar";
 import { styles } from "./Navbar.module.scss";
 import { withStoreAndRouter } from "testing/helpers";
@@ -29,5 +29,27 @@ describe("<Navbar />", () => {
 
             expect(container.querySelectorAll(".navActive").length).toBe(1);
         });
+    });
+
+    test("logout function is called when logout button is clicked", () => {
+        const handleLogoutSpy = jest.fn();
+
+        const { getByText, debug } = render(
+            withStoreAndRouter(
+                <Navbar
+                    cartQuantity={cartQuantity}
+                    pathname={"/"}
+                    logout={handleLogoutSpy}
+                />
+            )
+        );
+
+        // click logout button
+        const logOutButton = getByText("Logout").closest("button");
+        debug(logOutButton);
+        fireEvent.click(logOutButton);
+
+        // confirm that handler function was called
+        expect(handleLogoutSpy).toHaveBeenCalledTimes(1);
     });
 });
