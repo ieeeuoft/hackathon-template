@@ -94,6 +94,6 @@ const mapStateToProps = (state) => ({
     pathname: state.router.location.pathname,
 });
 
-const Navbar = connect(mapStateToProps, { logout: logout })(UnconnectedNavbar);
+const Navbar = connect(mapStateToProps, { logout })(UnconnectedNavbar);
 
 export default Navbar;
