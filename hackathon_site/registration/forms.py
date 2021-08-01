@@ -158,8 +158,6 @@ class ApplicationForm(forms.ModelForm):
             settings.EVENT_START_DATE - relativedelta(years=settings.MINIMUM_AGE)
         ).date()
         user_birthday = self.cleaned_data["birthday"]
-        print(user_birthday)
-        print(latest_birthday)
         if user_birthday > latest_birthday:
             raise forms.ValidationError(
                 _(f"You must be {settings.MINIMUM_AGE} to participate."),
