@@ -35,7 +35,7 @@ class HardwareDetailView(mixins.RetrieveModelMixin, generics.GenericAPIView):
 
 
 class CategoryListView(mixins.ListModelMixin, generics.GenericAPIView):
-    queryset = Category.objects.all()
+    queryset = Category.objects.all().prefetch_related("hardware_set")
     serializer_class = CategorySerializer
 
     def get(self, request, *args, **kwargs):
