@@ -147,8 +147,6 @@ class CategoryListViewTestCase(SetupUserMixin, APITestCase):
         hardware1.categories.add(self.category)
         hardware2.categories.add(category2)
 
-
-
         response = self.client.get(self.view)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.json()
