@@ -37,7 +37,7 @@ class CategorySerializer(serializers.ModelSerializer):
     @staticmethod
     def get_unique_hardware_count(obj: Category) -> int:
         # return Hardware.objects.filter(categories__id=obj.id).count()
-        return obj.hardware_set.annotate(Count("id",distinct=True)).count()
+        return obj.hardware_set.annotate(Count("id", distinct=True)).count()
 
 
 class OrderListSerializer(serializers.ModelSerializer):
