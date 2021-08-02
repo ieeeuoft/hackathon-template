@@ -10,10 +10,12 @@ import {
     userDataSelector,
     userSelector,
     loginSelector,
+    logoutSelector,
     reducer,
     userReducerName,
     initialState,
     logIn,
+    logout,
     fetchUserData,
 } from "./userSlice";
 
@@ -44,6 +46,10 @@ describe("Selectors", () => {
 
     test("loginSelector returns the login object", () => {
         expect(loginSelector(mockState)).toEqual(mockState[userReducerName].login);
+    });
+
+    test("logoutSelector returns the logout object", () => {
+        expect(logoutSelector(mockState)).toEqual(mockState[userReducerName].logout);
     });
 });
 
@@ -330,5 +336,96 @@ describe("logIn Thunk and Reducer", () => {
                 })
             );
         });
+    });
+});
+
+describe("logOut Thunk and Reducer", () => {
+    let store;
+
+    beforeEach(() => {
+        store = mockStore(mockState);
+    });
+
+    describe("Reducers", () => {
+        test("Pending", () => {
+            expect(reducer(initialState, logout.pending()).logout.isLoading).toBe(true);
+        });
+
+        test("Fulfilled", () => {
+            const resultState = reducer(
+                reducer(
+                    reducer(initialState, logIn.fulfilled()),
+                    fetchUserData.fulfilled(mockUser)
+                ),
+                logout.fulfilled()
+            );
+            expect(resultState).toEqual(
+                expect.objectContaining({
+                    isAuthenticated: false,
+                    logout: { isLoading: false, failure: null },
+                })
+            );
+            expect(resultState.userData.user).toBeNull();
+        });
+
+        test("Rejected by rejectWithValue", () => {
+            const expectedFailureResponse = { status: 999, message: "Some message" };
+            const action = logout.rejected(
+                "Rejected",
+                "some-id",
+                null,
+                expectedFailureResponse
+            );
+            expect(reducer(initialState, action)).toEqual(
+                expect.objectContaining({
+                    logout: { isLoading: false, failure: expectedFailureResponse },
+                })
+            );
+        });
+    });
+
+    test("Successful logout", async () => {
+        const response = { data: { key: "abc123" } };
+        post.mockImplementationOnce(() => Promise.resolve(response));
+
+        await store.dispatch(logout());
+
+        const actions = store.getActions();
+
+        expect(actions).toContainEqual(
+            expect.objectContaining({
+                type: logout.fulfilled.type,
+                payload: response.data,
+            })
+        );
+        expect(actions).toContainEqual(push("/"));
+    });
+
+    test("Failed logout", async () => {
+        const error = {
+            response: { status: 999, data: { detail: "Something went wrong" } },
+        };
+        post.mockImplementationOnce(() => Promise.reject(error));
+
+        await store.dispatch(logout());
+
+        const actions = store.getActions();
+
+        expect(actions).toEqual([
+            expect.objectContaining({
+                type: logout.pending.type,
+            }),
+            displaySnackbar({
+                message: error.response.data.detail,
+                options: { variant: "error" },
+            }),
+            expect.objectContaining({
+                type: logout.rejected.type,
+                payload: {
+                    status: error.response.status,
+                    message: error.response.data,
+                },
+            }),
+        ]);
     });
 });

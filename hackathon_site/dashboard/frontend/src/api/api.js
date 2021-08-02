@@ -13,7 +13,7 @@ export const getCsrfToken = () => {
         for (let i = 0; i < cookies.length; i++) {
             const cookie = cookies[i].trim();
             if (cookie.trim().startsWith("csrftoken=")) {
-                return decodeURIComponent(cookie.substr(11));
+                return decodeURIComponent(cookie.substr(10));
             }
         }
     }
@@ -22,23 +22,23 @@ export const getCsrfToken = () => {
 
 export const cleanURI = (uri) => {
     uri = uri.replace(/^\//, ""); // Remove leading slashes
-    uri = uri.endsWith("/") ? uri : (uri = "/");
+    uri = uri.endsWith("/") ? uri : uri + "/";
     return uri;
 };
 
-const config = {
+const makeConfig = () => ({
     headers: {
         "X-CSRFToken": getCsrfToken(),
     },
     withCredentials: true,
-};
+});
 
 export const get = (uri) => {
     uri = cleanURI(uri);
-    return axios.get(`${SERVER_URL}/${uri}`, config);
+    return axios.get(`${SERVER_URL}/${uri}`, makeConfig());
 };
 
 export const post = (uri, data) => {
     uri = cleanURI(uri);
-    return axios.post(`${SERVER_URL}/${uri}`, data, config);
+    return axios.post(`${SERVER_URL}/${uri}`, data, makeConfig());
 };
