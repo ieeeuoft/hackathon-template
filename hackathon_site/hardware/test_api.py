@@ -139,12 +139,12 @@ class CategoryListViewTestCase(SetupUserMixin, APITestCase):
     def test_hardware_quantity_success(self):
         self._login()
 
-        self.category = Category.objects.create(name="Microcontrollers", max_per_team=4)
-        self.hardware1 = Hardware.objects.create(name="Arduino", quantity_available=2)
-        self.hardware2 = Hardware.objects.create(name="ESP32", quantity_available=3)
+        category2 = Category.objects.create(name="Microcontrollers", max_per_team=4)
+        hardware1 = Hardware.objects.create(name="Arduino", quantity_available=2)
+        hardware2 = Hardware.objects.create(name="ESP32", quantity_available=3)
 
-        self.hardware1.categories.add(self.category)
-        self.hardware2.categories.add(self.category)
+        hardware1.categories.add(category2)
+        hardware2.categories.add(category2)
 
         expected_response = {
             "count": 2,
