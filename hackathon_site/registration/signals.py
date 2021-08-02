@@ -8,4 +8,3 @@ def delete_application(sender, instance, **kwargs):
     team = instance.team
     if team.applications.count() == 0:
         team.delete()
-    pass
