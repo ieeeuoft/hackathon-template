@@ -12,7 +12,9 @@ import { ReactComponent as Inventory } from "assets/images/icons/Hardware.svg";
 // Components
 import Button from "@material-ui/core/Button";
 
-const UnconnectedNavbar = ({ cartQuantity, pathname }) => (
+import { logout } from "slices/users/userSlice";
+
+export const UnconnectedNavbar = ({ logout, cartQuantity, pathname }) => (
     <nav className={styles.nav}>
         <div className={styles.navFlexDiv}>
             <Link to={"/"}>
@@ -79,6 +81,9 @@ const UnconnectedNavbar = ({ cartQuantity, pathname }) => (
         <Button
             aria-label="Logout"
             className={`${styles.navBtn} ${styles.navBtnLogout}`}
+            onClick={() => {
+                logout();
+            }}
         >
             <b>Logout</b>
         </Button>
@@ -89,6 +94,6 @@ const mapStateToProps = (state) => ({
     pathname: state.router.location.pathname,
 });
 
-const Navbar = connect(mapStateToProps)(UnconnectedNavbar);
+const Navbar = connect(mapStateToProps, { logout })(UnconnectedNavbar);
 
 export default Navbar;
