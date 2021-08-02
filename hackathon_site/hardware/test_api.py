@@ -144,27 +144,10 @@ class CategoryListViewTestCase(SetupUserMixin, APITestCase):
         hardware2 = Hardware.objects.create(name="ESP32", quantity_available=3)
 
         hardware1.categories.add(category2)
+        hardware1.categories.add(self.category)
         hardware2.categories.add(category2)
 
-        expected_response = {
-            "count": 2,
-            "next": None,
-            "previous": None,
-            "results": [
-                {
-                    "id": 1,
-                    "name": "category",
-                    "max_per_team": 4,
-                    "unique_hardware_count": 0,
-                },
-                {
-                    "id": 2,
-                    "name": "Microcontrollers",
-                    "max_per_team": 4,
-                    "unique_hardware_count": 2,
-                },
-            ],
-        }
+
 
         response = self.client.get(self.view)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
