@@ -15,6 +15,10 @@ export const initialState = {
         isLoading: false,
         failure: null,
     },
+    logout: {
+        isLoading: false,
+        failure: null,
+    },
     isAuthenticated: false,
 };
 
@@ -92,6 +96,28 @@ export const logIn = createAsyncThunk(
     }
 );
 
+export const logout = createAsyncThunk(
+    `${userReducerName}/logout`,
+    async (arg, { dispatch, rejectWithValue }) => {
+        try {
+            const response = await post("/api/auth/logout/", null);
+            dispatch(push("/"));
+            return response.data;
+        } catch (e) {
+            dispatch(
+                displaySnackbar({
+                    message: e.response.data.detail,
+                    options: { variant: "error" },
+                })
+            );
+            return rejectWithValue({
+                status: e.response.status,
+                message: e.response.data,
+            });
+        }
+    }
+);
+
 // Slice
 const userSlice = createSlice({
     name: "user",
@@ -123,6 +149,19 @@ const userSlice = createSlice({
             state.login.isLoading = false;
             state.isAuthenticated = false;
         },
+        [logout.pending]: (state) => {
+            state.logout.isLoading = true;
+        },
+        [logout.fulfilled]: (state) => {
+            state.userData.user = null;
+            state.isAuthenticated = false;
+            state.logout.isLoading = false;
+            state.logout.failure = null;
+        },
+        [logout.rejected]: (state, action) => {
+            state.logout.failure = action.payload || { message: action.error.message };
+            state.logout.isLoading = false;
+        },
     },
 });
 
@@ -145,4 +184,9 @@ export const userSelector = createSelector(
 export const loginSelector = createSelector(
     [userSliceSelector],
     (userSlice) => userSlice.login
+);
+
+export const logoutSelector = createSelector(
+    [userSliceSelector],
+    (userSlice) => userSlice.logout
 );
