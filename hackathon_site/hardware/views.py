@@ -2,11 +2,13 @@ from django_filters import rest_framework as filters
 from django.db import transaction
 from django.http import HttpResponseServerError
 from drf_yasg.utils import swagger_auto_schema
+import logging
 from rest_framework import generics, mixins, status, permissions
 from rest_framework.response import Response
 from rest_framework.filters import SearchFilter
 
 from event.permissions import UserHasProfile
+from hardware.api_filters import HardwareFilter
 from hardware.models import Hardware, Category, Order
 from hardware.serializers import (
     CategorySerializer,
@@ -15,12 +17,9 @@ from hardware.serializers import (
     OrderCreateSerializer,
     OrderCreateResponseSerializer,
 )
-import logging
+
 
 logger = logging.getLogger(__name__)
-
-from hardware.api_filters import HardwareFilter
-from hardware.models import Hardware, Category, Order
 
 
 class HardwareListView(mixins.ListModelMixin, generics.GenericAPIView):
