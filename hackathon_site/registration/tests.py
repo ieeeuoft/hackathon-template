@@ -95,12 +95,10 @@ class ApplicationSignalTestCase(TestCase):
     def test_remove_team_when_empty(self):
         self.application.delete()
         self.assertEqual(RegistrationTeam.objects.count(), 0)
-        pass
 
     def test_cascade_on_delete_user(self):
         self.user.delete()
         self.assertEqual(RegistrationTeam.objects.count(), 0)
-        pass
 
     def test_keep_team_when_not_empty(self):
         second_user = User.objects.create(
@@ -116,4 +114,3 @@ class ApplicationSignalTestCase(TestCase):
         self.assertEqual(RegistrationTeam.objects.count(), 1)
         second_application.delete()
         self.assertEqual(RegistrationTeam.objects.count(), 0)
-        pass

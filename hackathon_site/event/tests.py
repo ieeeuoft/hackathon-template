@@ -55,12 +55,10 @@ class ProfileSignalTestCase(TestCase):
     def test_remove_team_when_empty(self):
         self.profile.delete()
         self.assertEqual(EventTeam.objects.count(), 0)
-        pass
 
     def test_cascade_on_delete_user(self):
         self.user.delete()
         self.assertEqual(EventTeam.objects.count(), 0)
-        pass
 
     def test_keep_team_when_not_empty(self):
         second_user = User.objects.create(
@@ -74,7 +72,6 @@ class ProfileSignalTestCase(TestCase):
         self.assertEqual(EventTeam.objects.count(), 1)
         second_profile.delete()
         self.assertEqual(EventTeam.objects.count(), 0)
-        pass
 
 
 class IndexViewTestCase(SetupUserMixin, TestCase):
