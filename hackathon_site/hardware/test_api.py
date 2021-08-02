@@ -153,7 +153,7 @@ class CategoryListViewTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.json()
 
-        expected_unique_hardware_counts = [0, 2]
+        expected_unique_hardware_counts = [1, 2]
         actual_unique_hardware_counts = [
             result["unique_hardware_count"] for result in data["results"]
         ]
