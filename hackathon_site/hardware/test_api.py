@@ -156,7 +156,6 @@ class CategoryListViewTestCase(SetupUserMixin, APITestCase):
             result["unique_hardware_count"] for result in data["results"]
         ]
 
-        print(data)
         self.assertEqual(expected_unique_hardware_counts, actual_unique_hardware_counts)
 
 
