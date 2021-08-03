@@ -2,7 +2,8 @@ name: CI/CD
 
 on:
   pull_request_target:
-    branches: '**'
+    branches:
+      - '**'
 
 jobs:
   backend-checks:
@@ -72,6 +73,8 @@ jobs:
       - name: Install dependencies
         run: yarn install
       - name: Formatting check
-        run: yarn prettier --check 'src/**/*.(scss|js)'
+        run: yarn prettier --check 'src/**/*.(js|ts|tsx|scss)'
+      - name: Typescript check
+        run: yarn run tsc
       - name: Tests
         run: yarn test --watchAll=false

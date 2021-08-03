@@ -1,4 +1,6 @@
 from django.db import models
+from django.db.models import Count, F, Q
+
 from event.models import Team as TeamEvent
 
 
@@ -16,9 +18,35 @@ class Category(models.Model):
         return self.name
 
 
+class AnnotatedHardwareManager(models.Manager):
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .annotate(
+                quantity_checked_out=Count(
+                    "order_items",
+                    filter=(
+                        Q(order_items__part_returned_health__isnull=True)
+                        & ~Q(order_items__order__status="Cancelled")
+                    ),
+                    distinct=True,
+                )
+            )
+            .annotate(
+                quantity_remaining=(F("quantity_available") - F("quantity_checked_out"))
+            )
+        )
+
+
 class Hardware(models.Model):
+    objects = AnnotatedHardwareManager()
+
     class Meta:
         verbose_name_plural = "hardware"
+
+    class Config:
+        annotated_fields = ("quantity_checked_out", "quantity_remaining")
 
     name = models.CharField(max_length=255, null=False)
     model_number = models.CharField(max_length=255, null=False)
@@ -32,6 +60,17 @@ class Hardware(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True, null=False)
     updated_at = models.DateTimeField(auto_now=True, null=False)
+
+    def refresh_from_db(self, using=None, fields=None):
+        super().refresh_from_db(using, fields)
+
+        # Fetch the queryset again to populate the annotations. This is somewhat
+        # inefficient since it performs the query twice, so use sparingly.
+        db_instance_qs = self.__class__.objects.filter(pk=self.pk)
+        db_instance = db_instance_qs.get()
+
+        for field_name in self.Config.annotated_fields:
+            setattr(self, field_name, getattr(db_instance, field_name))
 
     def __str__(self):
         return self.name
@@ -57,21 +96,23 @@ class OrderItem(models.Model):
 
 class Order(models.Model):
     STATUS_CHOICES = [
-        ("Cart", "Cart"),
         ("Submitted", "Submitted"),
         ("Ready for Pickup", "Ready for Pickup"),
         ("Picked Up", "Picked Up"),
+        ("Cancelled", "Cancelled"),
     ]
 
     hardware_set = models.ManyToManyField(Hardware, through=OrderItem)
     team = models.ForeignKey(TeamEvent, on_delete=models.CASCADE, null=False)
-    status = models.CharField(max_length=64, choices=STATUS_CHOICES, default="Cart")
+    status = models.CharField(
+        max_length=64, choices=STATUS_CHOICES, default="Submitted"
+    )
 
     created_at = models.DateTimeField(auto_now_add=True, null=False)
     updated_at = models.DateTimeField(auto_now=True, null=False)
 
     def __str__(self):
-        return self.id
+        return f"{self.id}"
 
 
 class Incident(models.Model):
@@ -94,4 +135,4 @@ class Incident(models.Model):
     updated_at = models.DateTimeField(auto_now=True, null=False)
 
     def __str__(self):
-        return self.id
+        return f"{self.id}"

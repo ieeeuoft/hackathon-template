@@ -2,15 +2,22 @@ import re
 from unittest.mock import patch
 from datetime import datetime, timedelta
 
-from django.conf import settings
 from django.core import mail
+from django.contrib.auth.models import Group
+from django.conf import settings
 from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
 
-from event.models import Profile, Team, User
+from event.models import Profile, User, Team as EventTeam
 from hackathon_site.tests import SetupUserMixin
 from registration.models import Team as RegistrationTeam
+
+from event.serializers import (
+    UserSerializer,
+    GroupSerializer,
+    ProfileSerializer,
+)
 
 
 class ProfileTestCase(TestCase):
@@ -23,15 +30,48 @@ class ProfileTestCase(TestCase):
         )
 
     def test_creates_profile_with_provided_team(self):
-        team = Team.objects.create()
+        team = EventTeam.objects.create()
         profile = Profile.objects.create(user=self.user, team=team)
-        self.assertEqual(Team.objects.count(), 1)
+        self.assertEqual(EventTeam.objects.count(), 1)
         self.assertEqual(profile.team, team)
 
     def test_creates_team_if_not_provided(self):
         profile = Profile.objects.create(user=self.user)
-        self.assertEqual(Team.objects.count(), 1)
-        self.assertEqual(Team.objects.first(), profile.team)
+        self.assertEqual(EventTeam.objects.count(), 1)
+        self.assertEqual(EventTeam.objects.first(), profile.team)
+
+
+class ProfileSignalTestCase(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username="foo@bar.com",
+            password="foobar123",
+            first_name="Foo",
+            last_name="Bar",
+        )
+        self.team = EventTeam.objects.create()
+        self.profile = Profile.objects.create(user=self.user, team=self.team)
+
+    def test_remove_team_when_empty(self):
+        self.profile.delete()
+        self.assertEqual(EventTeam.objects.count(), 0)
+
+    def test_cascade_on_delete_user(self):
+        self.user.delete()
+        self.assertEqual(EventTeam.objects.count(), 0)
+
+    def test_keep_team_when_not_empty(self):
+        second_user = User.objects.create(
+            username="bar@bar.com",
+            password="foobar123",
+            first_name="Foo",
+            last_name="Bar",
+        )
+        second_profile = Profile.objects.create(user=second_user, team=self.team)
+        self.profile.delete()
+        self.assertEqual(EventTeam.objects.count(), 1)
+        second_profile.delete()
+        self.assertEqual(EventTeam.objects.count(), 0)
 
 
 class IndexViewTestCase(SetupUserMixin, TestCase):
@@ -524,6 +564,13 @@ class LogInViewTestCase(SetupUserMixin, TestCase):
         )
         self.assertEqual(response.url, settings.LOGIN_REDIRECT_URL)
 
+    def test_submit_login_uppercase_username(self):
+        response = self.client.post(
+            self.view,
+            {"username": self.user.username.upper(), "password": self.password},
+        )
+        self.assertEqual(response.url, settings.LOGIN_REDIRECT_URL)
+
 
 class LogOutViewTestCase(SetupUserMixin, TestCase):
     """
@@ -648,3 +695,65 @@ class PasswordResetTestCase(SetupUserMixin, TestCase):
         self.assertContains(
             redirected_response, "Your password has been successfully reset"
         )
+
+
+class UserSerializerTestCase(TestCase):
+    def test_serializer(self):
+        team = EventTeam.objects.create()
+        group = Group.objects.create(name="Test")
+        user = User.objects.create()
+        user.groups.add(group)
+
+        Profile.objects.create(
+            user=user, team=team,
+        )
+
+        user_serialized = UserSerializer(user).data
+        profile_serialized = ProfileSerializer(user.profile).data
+        group_serialized = GroupSerializer(user.groups, many=True).data
+
+        user_expected = {
+            "id": user.id,
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "email": user.email,
+            "profile": profile_serialized,
+            "groups": group_serialized,
+        }
+        self.assertEqual(user_expected, user_serialized)
+
+
+class GroupSerializerTestCase(TestCase):
+    def test_serializer(self):
+        group = Group.objects.create(name="Test")
+        group_serialized = GroupSerializer(group).data
+        group_expected = {
+            "id": group.id,
+            "name": group.name,
+        }
+        self.assertEqual(group_expected, group_serialized)
+
+
+class ProfileSerializerTestCase(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username="foo@bar.com",
+            password="foobar123",
+            first_name="Foo",
+            last_name="Bar",
+        )
+
+    def test_serializer(self):
+        team = EventTeam.objects.create()
+
+        profile = Profile.objects.create(user=self.user, team=team)
+        profile_serialized = ProfileSerializer(profile).data
+        profile_expected = {
+            "id": profile.id,
+            "id_provided": profile.id_provided,
+            "attended": profile.attended,
+            "acknowledge_rules": profile.acknowledge_rules,
+            "e_signature": profile.e_signature,
+            "team": team.id,
+        }
+        self.assertEqual(profile_expected, profile_serialized)
