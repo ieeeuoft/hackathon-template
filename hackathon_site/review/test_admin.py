@@ -3,7 +3,7 @@ from unittest.mock import patch, MagicMock
 
 from django.conf import settings
 from django.core.cache import cache
-from django.contrib.auth.models import Permission
+from django.contrib.auth.models import Group, Permission
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.db.models import Q
 from django.test import TestCase
@@ -249,6 +249,8 @@ class TeamReviewChangeAdminTestCase(SetupUserMixin, TestCase):
             | Q(codename="view_review", content_type__app_label="review")
             | Q(codename="change_review", content_type__app_label="review"),
         )
+
+        self.reviewer_group = Group.objects.get(name="Application Reviewers")
 
         self.user.is_staff = True
         self.user.save()
