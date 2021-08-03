@@ -16,6 +16,7 @@ from rest_framework import generics, mixins
 
 from event.models import Team as EventTeam
 from event.serializers import TeamSerializer
+from event.permissions import UserHasProfile
 
 
 def _now():
@@ -200,3 +201,11 @@ class DashboardView(LoginRequiredMixin, FormView):
         at once.
         """
         return super().post(request, *args, **kwargs)
+
+
+class LeaveTeamView(generics.GenericAPIView):
+    permission_classes = [UserHasProfile]
+
+    @transaction.atomic
+    def post(self, request, *args, **kwargs):
+        pass
