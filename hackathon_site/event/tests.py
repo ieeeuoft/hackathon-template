@@ -41,6 +41,39 @@ class ProfileTestCase(TestCase):
         self.assertEqual(EventTeam.objects.first(), profile.team)
 
 
+class ProfileSignalTestCase(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username="foo@bar.com",
+            password="foobar123",
+            first_name="Foo",
+            last_name="Bar",
+        )
+        self.team = EventTeam.objects.create()
+        self.profile = Profile.objects.create(user=self.user, team=self.team)
+
+    def test_remove_team_when_empty(self):
+        self.profile.delete()
+        self.assertEqual(EventTeam.objects.count(), 0)
+
+    def test_cascade_on_delete_user(self):
+        self.user.delete()
+        self.assertEqual(EventTeam.objects.count(), 0)
+
+    def test_keep_team_when_not_empty(self):
+        second_user = User.objects.create(
+            username="bar@bar.com",
+            password="foobar123",
+            first_name="Foo",
+            last_name="Bar",
+        )
+        second_profile = Profile.objects.create(user=second_user, team=self.team)
+        self.profile.delete()
+        self.assertEqual(EventTeam.objects.count(), 1)
+        second_profile.delete()
+        self.assertEqual(EventTeam.objects.count(), 0)
+
+
 class IndexViewTestCase(SetupUserMixin, TestCase):
     """
     Tests for the landing page template.

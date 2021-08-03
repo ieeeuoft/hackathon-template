@@ -1,10 +1,14 @@
+from django_filters import rest_framework as filters
 from django.db import transaction
 from django.http import HttpResponseServerError
 from drf_yasg.utils import swagger_auto_schema
+import logging
 from rest_framework import generics, mixins, status, permissions
 from rest_framework.response import Response
+from rest_framework.filters import SearchFilter
 
 from event.permissions import UserHasProfile
+from hardware.api_filters import HardwareFilter
 from hardware.models import Hardware, Category, Order
 from hardware.serializers import (
     CategorySerializer,
@@ -13,7 +17,7 @@ from hardware.serializers import (
     OrderCreateSerializer,
     OrderCreateResponseSerializer,
 )
-import logging
+
 
 logger = logging.getLogger(__name__)
 
@@ -21,6 +25,10 @@ logger = logging.getLogger(__name__)
 class HardwareListView(mixins.ListModelMixin, generics.GenericAPIView):
     queryset = Hardware.objects.all()
     serializer_class = HardwareSerializer
+
+    filter_backends = (filters.DjangoFilterBackend, SearchFilter)
+    filterset_class = HardwareFilter
+    search_fields = ("name",)
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)

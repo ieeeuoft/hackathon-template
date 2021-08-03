@@ -870,3 +870,132 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
             ],
         }
         self.assertEqual(response.json(), expected_response)
+
+
+class HardwareListViewTestCase(SetupUserMixin, APITestCase):
+    def setUp(self):
+        super().setUp()
+
+        self.hardware1 = Hardware.objects.create(
+            name="hardware1",
+            model_number="model",
+            manufacturer="manufacturer",
+            datasheet="/datasheet/location/",
+            notes="notes",
+            quantity_available=1,
+            max_per_team=1,
+            picture="/picture/location",
+        )
+
+        self.hardware2 = Hardware.objects.create(
+            name="arduino",
+            model_number="model",
+            manufacturer="manufacturer",
+            datasheet="/datasheet/location/",
+            notes="notes",
+            quantity_available=4,
+            max_per_team=1,
+            picture="/picture/location",
+        )
+
+        self.hardware3 = Hardware.objects.create(
+            name="hardware3",
+            model_number="model",
+            manufacturer="manufacturer",
+            datasheet="/datasheet/location/",
+            notes="notes",
+            quantity_available=4,
+            max_per_team=1,
+            picture="/picture/location",
+        )
+
+        self.view = reverse("api:hardware:hardware-list")
+
+        self.team = Team.objects.create()
+        self.order = Order.objects.create(status="Submitted", team=self.team)
+
+    def _build_filter_url(self, **kwargs):
+        return (
+            self.view + "?" + "&".join([f"{key}={val}" for key, val in kwargs.items()])
+        )
+
+    def test_user_not_logged_in(self):
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_search_by_name(self):
+        self._login()
+
+        url = self._build_filter_url(search="arduino")
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        data = response.json()
+
+        self.assertEqual(len(data["results"]), 1)
+        self.assertEqual(data["results"][0]["id"], 2)
+
+    def test_in_stock_true(self):
+        self._login()
+        OrderItem.objects.create(hardware=self.hardware1, order=self.order)
+
+        url = self._build_filter_url(in_stock="true")
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        data = response.json()
+        results = data["results"]
+        returned_ids = [res["id"] for res in results]
+        self.assertEqual(returned_ids, [2, 3])
+
+    def test_in_stock_false(self):
+        self._login()
+        OrderItem.objects.create(hardware=self.hardware1, order=self.order)
+
+        url = self._build_filter_url(in_stock="false")
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        data = response.json()
+        results = data["results"]
+        returned_ids = [res["id"] for res in results]
+        self.assertEqual(returned_ids, [1])
+
+    def test_in_stock_not_present(self):
+        self._login()
+        OrderItem.objects.create(hardware=self.hardware1, order=self.order)
+
+        url = self._build_filter_url(in_stock="")
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        data = response.json()
+        results = data["results"]
+        returned_ids = [res["id"] for res in results]
+
+        self.assertEqual(returned_ids, [1, 2, 3])
+
+    def test_id_filter(self):
+        self._login()
+
+        url = self._build_filter_url(id="1,3")
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.json()
+        results = data["results"]
+        returned_ids = [res["id"] for res in results]
+        self.assertEqual(returned_ids, [1, 3])
+
+    def test_id_invalid(self):
+        self._login()
+
+        url = self._build_filter_url(id="1,2,abcde")
+        response = self.client.get(url)
+        data = response.json()
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(data, {"id": ["Enter a whole number."]})

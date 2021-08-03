@@ -66,6 +66,7 @@ INSTALLED_APPS = [
     "dj_rest_auth",
     "drf_yasg",
     "import_export",
+    "django_filters",
     "dashboard",
     "registration",
     "event",
@@ -169,6 +170,7 @@ REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
     "PAGE_SIZE": 100,
+    "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend",],
 }
 
 # Internationalization
