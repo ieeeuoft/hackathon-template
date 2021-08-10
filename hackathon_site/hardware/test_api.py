@@ -136,6 +136,28 @@ class CategoryListViewTestCase(SetupUserMixin, APITestCase):
 
         self.assertEqual(expected_response, data["results"][0])
 
+    def test_hardware_quantity_success(self):
+        self._login()
+
+        category2 = Category.objects.create(name="Microcontrollers", max_per_team=4)
+        hardware1 = Hardware.objects.create(name="Arduino", quantity_available=2)
+        hardware2 = Hardware.objects.create(name="ESP32", quantity_available=3)
+
+        hardware1.categories.add(category2)
+        hardware1.categories.add(self.category)
+        hardware2.categories.add(category2)
+
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.json()
+
+        expected_unique_hardware_counts = [1, 2]
+        actual_unique_hardware_counts = [
+            result["unique_hardware_count"] for result in data["results"]
+        ]
+
+        self.assertEqual(expected_unique_hardware_counts, actual_unique_hardware_counts)
+
 
 class OrderListViewGetTestCase(SetupUserMixin, APITestCase):
     def setUp(self):
