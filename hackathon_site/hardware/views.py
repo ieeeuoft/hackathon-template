@@ -9,10 +9,11 @@ from rest_framework.filters import SearchFilter
 
 from event.permissions import UserHasProfile
 from hardware.api_filters import HardwareFilter
-from hardware.models import Hardware, Category, Order
+from hardware.models import Hardware, Category, Order, Incident
 from hardware.serializers import (
     CategorySerializer,
     HardwareSerializer,
+    IncidentsSerializer,
     OrderListSerializer,
     OrderCreateSerializer,
     OrderCreateResponseSerializer,
@@ -41,6 +42,17 @@ class HardwareDetailView(mixins.RetrieveModelMixin, generics.GenericAPIView):
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
 
+
+class IncidentsListView(mixins.ListModelMixin, generics.GenericAPIView):
+    queryset = Incident.objects.all()
+    serializer_class = IncidentsSerializer
+
+    # filter_backends = (filters.DjangoFilterBackend, SearchFilter)
+    # filterset_class = HardwareFilter
+    # search_fields = ("name",)
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
 
 class CategoryListView(mixins.ListModelMixin, generics.GenericAPIView):
     queryset = Category.objects.all().prefetch_related("hardware_set")
