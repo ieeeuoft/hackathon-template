@@ -139,7 +139,7 @@ class Incident(models.Model):
 
     @property
     def order__team(self):
-        return self.order_item.order.team.team_code
+        return self.order_item.order.team.id
 
     @property
     def hardware__id(self):
