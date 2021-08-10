@@ -18,7 +18,10 @@ class IncidentsFilter(filters.FilterSet):
     serializer_class = IncidentsSerializer
 
     order_item__hardware__id = filters.NumberFilter(label="order_item__hardware__id")
-    order_item__order__team__id = filters.NumberFilter(label="order_item__order__team__id")
+    order_item__order__team__id = filters.NumberFilter(
+        label="order_item__order__team__id"
+    )
+
 
 class HardwareFilter(filters.FilterSet):
     queryset = Hardware

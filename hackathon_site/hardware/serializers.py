@@ -45,7 +45,18 @@ class IncidentsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Incident
-        fields = ("id", "state", "time_occurred", "description", "order_item","created_at", "updated_at","order__team","hardware__id")
+        fields = (
+            "id",
+            "state",
+            "time_occurred",
+            "description",
+            "order_item",
+            "created_at",
+            "updated_at",
+            "order__team",
+            "hardware__id",
+        )
+
 
 class OrderListSerializer(serializers.ModelSerializer):
     hardware_set = HardwareSerializer(many=True, read_only=True)

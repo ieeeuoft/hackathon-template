@@ -49,10 +49,11 @@ class IncidentsListView(mixins.ListModelMixin, generics.GenericAPIView):
 
     filter_backends = (filters.DjangoFilterBackend, SearchFilter)
     filterset_class = IncidentsFilter
-    search_fields = ("order_item__hardware__id","order_item__order__team__id")
+    search_fields = ("order_item__hardware__id", "order_item__order__team__id")
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
+
 
 class CategoryListView(mixins.ListModelMixin, generics.GenericAPIView):
     queryset = Category.objects.all().prefetch_related("hardware_set")
