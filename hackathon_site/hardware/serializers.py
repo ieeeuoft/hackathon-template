@@ -4,7 +4,7 @@ from django.db.models import Count, Q
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import serializers
 
-from hardware.models import Hardware, Category, OrderItem, Order
+from hardware.models import Hardware, Category, OrderItem, Order, Incident
 
 
 class HardwareSerializer(serializers.ModelSerializer):
@@ -38,6 +38,14 @@ class CategorySerializer(serializers.ModelSerializer):
     def get_unique_hardware_count(obj: Category) -> int:
         return obj.hardware_set.annotate(Count("id", distinct=True)).count()
 
+
+class IncidentsSerializer(serializers.ModelSerializer):
+    order__team = serializers.ReadOnlyField()
+    hardware__id = serializers.ReadOnlyField()
+
+    class Meta:
+        model = Incident
+        fields = ("id", "state", "time_occurred", "description", "order_item","created_at", "updated_at","order__team","hardware__id")
 
 class OrderListSerializer(serializers.ModelSerializer):
     hardware_set = HardwareSerializer(many=True, read_only=True)
