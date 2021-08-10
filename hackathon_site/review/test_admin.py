@@ -14,7 +14,6 @@ from rest_framework import status
 from hackathon_site.tests import SetupUserMixin
 from registration.models import Team
 from review.models import Review, User
-from review import REVIEWER_PERMISSIONS
 
 static = staticfiles_storage.url
 
@@ -274,6 +273,15 @@ class TeamReviewChangeAdminTestCase(SetupUserMixin, TestCase):
         """
         Ensure the reviewer group has all the permissions it is supposed to and nothing else.
         """
+        REVIEWER_PERMISSIONS = (
+            "auth.view_user",
+            "registration.view_application",
+            "review.add_review",
+            "review.change_review",
+            "review.view_review",
+            "review.view_teamreview",
+        )
+
         self.assertEqual(
             self.reviewer_group.permissions.count(), len(REVIEWER_PERMISSIONS)
         )

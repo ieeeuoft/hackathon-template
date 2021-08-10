@@ -2,7 +2,15 @@
 
 from django.db import migrations
 from django.core.management.sql import emit_post_migrate_signal
-from review import REVIEWER_PERMISSIONS
+
+REVIEWER_PERMISSIONS = (
+    "auth.view_user",
+    "registration.view_application",
+    "review.add_review",
+    "review.change_review",
+    "review.view_review",
+    "review.view_teamreview",
+)
 
 
 def apply_migration(apps, schema_editor):
