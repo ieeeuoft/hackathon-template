@@ -14,7 +14,7 @@ import CloseIcon from "@material-ui/icons/Close";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import FilterListIcon from "@material-ui/icons/FilterList";
 import Grid from "@material-ui/core/Grid";
-import EnhancedInventoryFilter from "components/inventory/InventoryFilter/InventoryFilter";
+import InventoryFilter from "components/inventory/InventoryFilter/InventoryFilter";
 import Item from "components/inventory/Item/Item";
 import ProductOverview from "components/inventory/ProductOverview/ProductOverview";
 import { productInformation, inventoryItems } from "testing/mockData";
@@ -26,12 +26,12 @@ const Inventory = () => {
     };
 
     // Remove this later once filter data is able to be submitted
-    const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-    const onSubmitTemp = async ({ orderBy, inStock, inventoryCategories }) => {
-        await sleep(300);
-        alert(JSON.stringify({ orderBy, inStock, inventoryCategories }, null, 2));
-        setMobileOpen(false);
-    };
+    // const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+    // const onSubmitTemp = async ({ orderBy, inStock, inventoryCategories }) => {
+    //     await sleep(300);
+    //     alert(JSON.stringify({ orderBy, inStock, inventoryCategories }, null, 2));
+    //     setMobileOpen(false);
+    // };
 
     // Remove this later once items can be added to cart
     const addToCart = () => {
@@ -74,24 +74,14 @@ const Inventory = () => {
                             <CloseIcon />
                         </IconButton>
                     </div>
-                    <EnhancedInventoryFilter
-                        handleSubmit={onSubmitTemp}
-                        handleReset={onSubmitTemp}
-                        isApplyLoading={false}
-                        isClearLoading={false}
-                    />
+                    <InventoryFilter />
                 </Drawer>
 
                 <Typography variant="h1">Hardware Inventory</Typography>
 
                 <div className={styles.inventoryBody}>
                     <Hidden implementation="css" smDown>
-                        <EnhancedInventoryFilter
-                            handleSubmit={onSubmitTemp}
-                            handleReset={onSubmitTemp}
-                            isApplyLoading={false}
-                            isClearLoading={false}
-                        />
+                        <InventoryFilter />
                     </Hidden>
 
                     <div className={styles.inventoryBodyRight}>

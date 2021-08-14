@@ -1,4 +1,9 @@
-import { createSlice, createEntityAdapter, PayloadAction } from "@reduxjs/toolkit";
+import {
+    createSlice,
+    createEntityAdapter,
+    PayloadAction,
+    createSelector,
+} from "@reduxjs/toolkit";
 import { RootState } from "slices/store";
 import { Hardware, HardwareFilters } from "api/types";
 
@@ -31,8 +36,8 @@ const hardwareSlice = createSlice({
             { payload }: PayloadAction<HardwareFilters>
         ) => {
             state.filters = {
-                ...payload,
                 ...state.filters,
+                ...payload,
             };
         },
     },
@@ -47,3 +52,8 @@ export const { setFilters } = actions;
 export const hardwareSliceSelector = (state: RootState) => state[hardwareReducerName];
 
 export const hardwareSelector = hardwareAdapter.getSelectors(hardwareSliceSelector);
+
+export const isLoadingSelector = createSelector(
+    [hardwareSliceSelector],
+    (hardwareSlice) => hardwareSlice.isLoading
+);

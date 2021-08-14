@@ -16,6 +16,9 @@ import { inventoryCategories } from "testing/mockData";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
 import { Category, HardwareOrdering } from "api/types";
+import { connect, ConnectedProps } from "react-redux";
+import { isLoadingSelector, setFilters } from "slices/hardware/hardwareSlice";
+import { RootState } from "slices/store";
 
 type OrderByOptions = {
     value: HardwareOrdering;
@@ -80,8 +83,8 @@ const CheckboxAvailability = ({ field, ...props }: FieldProps) => (
 );
 
 interface InventoryFilterValues {
-    order_by: string;
-    in_stock: boolean;
+    ordering: HardwareOrdering;
+    in_stock?: boolean;
     // Categories is a string array because html checkboxes have string values
     categories: string[];
 }
@@ -107,7 +110,7 @@ export const InventoryFilter = ({
                         <Typography variant="h2">Order by</Typography>
                     </legend>
                     <Field
-                        name="order_by"
+                        name="ordering"
                         component={RadioOrderBy}
                         options={orderByOptions}
                     />
@@ -171,31 +174,26 @@ export const InventoryFilter = ({
     </div>
 );
 
-interface EnhancedInventoryFilterProps {
-    handleSubmit: (arg: any) => void;
-    handleReset: (arg: any) => void;
-    isApplyLoading: boolean;
-    isClearLoading: boolean;
-}
 export const EnhancedInventoryFilter = ({
-    handleSubmit,
-    handleReset,
+    setFilters,
     isApplyLoading,
     isClearLoading,
-}: EnhancedInventoryFilterProps) => {
-    const onSubmit = ({ order_by, in_stock, categories }: InventoryFilterValues) => {
-        handleSubmit({
-            order_by,
+}: ConnectedInventoryFilterProps) => {
+    const onSubmit = ({ ordering, in_stock, categories }: InventoryFilterValues) => {
+        in_stock = in_stock || undefined;
+
+        setFilters({
+            ordering,
             in_stock,
             categories: categories.map((id) => parseInt(id, 10)),
         });
     };
     const onReset = () => {
-        handleReset({ order_by: "", in_stock: false, categories: [] });
+        setFilters({ ordering: "", in_stock: false, categories: [] });
     };
 
     const initialValues: InventoryFilterValues = {
-        order_by: "",
+        ordering: "",
         in_stock: false,
         categories: [],
     };
@@ -220,4 +218,15 @@ export const EnhancedInventoryFilter = ({
     );
 };
 
-export default EnhancedInventoryFilter;
+const mapStateToProps = (state: RootState) => ({
+    isApplyLoading: isLoadingSelector(state),
+    isClearLoading: isLoadingSelector(state),
+});
+
+export const connector = connect(mapStateToProps, { setFilters });
+
+type ConnectedInventoryFilterProps = ConnectedProps<typeof connector>;
+
+export const ConnectedInventoryFilter = connector(EnhancedInventoryFilter);
+
+export default ConnectedInventoryFilter;
