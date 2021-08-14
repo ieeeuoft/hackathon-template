@@ -13,11 +13,10 @@ import SearchIcon from "@material-ui/icons/Search";
 import CloseIcon from "@material-ui/icons/Close";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import FilterListIcon from "@material-ui/icons/FilterList";
-import Grid from "@material-ui/core/Grid";
 import InventoryFilter from "components/inventory/InventoryFilter/InventoryFilter";
-import Item from "components/inventory/Item/Item";
+import InventoryGrid from "components/inventory/InventoryGrid/InventoryGrid";
 import ProductOverview from "components/inventory/ProductOverview/ProductOverview";
-import { productInformation, inventoryItems } from "testing/mockData";
+import { productInformation } from "testing/mockData";
 
 const Inventory = () => {
     const [mobileOpen, setMobileOpen] = React.useState(false);
@@ -133,28 +132,7 @@ const Inventory = () => {
                                 </div>
                             </div>
                         </div>
-                        <Grid direction="row" spacing={2} container>
-                            {inventoryItems.map((item) => (
-                                <Grid
-                                    xs={6}
-                                    sm={4}
-                                    md={3}
-                                    lg={2}
-                                    xl={1}
-                                    className={styles.Item}
-                                    key={item.id}
-                                    item
-                                    onClick={() => setItemOverviewId(item.id)}
-                                >
-                                    <Item
-                                        image={item.image}
-                                        title={item.title}
-                                        total={item.total}
-                                        currentStock={item.currentStock}
-                                    />
-                                </Grid>
-                            ))}
-                        </Grid>
+                        <InventoryGrid />
                         <Divider className={styles.inventoryLoadDivider} />
                         <Typography variant="subtitle2" align="center" paragraph>
                             SHOWING 100 OF 123 ITEMS

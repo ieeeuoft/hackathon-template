@@ -145,7 +145,7 @@ export const { setFilters, updateFilters, clearFilters } = actions;
 // Selectors
 export const hardwareSliceSelector = (state: RootState) => state[hardwareReducerName];
 
-export const hardwareSelector = hardwareAdapter.getSelectors(hardwareSliceSelector);
+export const hardwareSelectors = hardwareAdapter.getSelectors(hardwareSliceSelector);
 
 export const isLoadingSelector = createSelector(
     [hardwareSliceSelector],
