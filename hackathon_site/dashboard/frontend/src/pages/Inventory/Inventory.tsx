@@ -39,7 +39,7 @@ const Inventory = () => {
         setItemOverviewId(null);
     };
 
-    const [itemOverviewId, setItemOverviewId] = React.useState(null);
+    const [itemOverviewId, setItemOverviewId] = React.useState<number | null>(null);
     const toggleMenu = () => {
         setItemOverviewId(null);
     };
@@ -103,11 +103,7 @@ const Inventory = () => {
                                         ),
                                     }}
                                 />
-                                <IconButton
-                                    color="primary"
-                                    aria-label="Search"
-                                    variant="contained"
-                                >
+                                <IconButton color="primary" aria-label="Search">
                                     <SearchIcon />
                                 </IconButton>
                             </div>
@@ -131,11 +127,7 @@ const Inventory = () => {
 
                                 <div className={styles.inventoryBodyToolbarRefresh}>
                                     <Typography variant="body2">123 items</Typography>
-                                    <IconButton
-                                        color="primary"
-                                        aria-label="Refresh"
-                                        variant="contained"
-                                    >
+                                    <IconButton color="primary" aria-label="Refresh">
                                         <RefreshIcon />
                                     </IconButton>
                                 </div>

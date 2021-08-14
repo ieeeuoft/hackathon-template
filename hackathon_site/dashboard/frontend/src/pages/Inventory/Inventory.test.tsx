@@ -1,6 +1,6 @@
 import React from "react";
 import { render } from "@testing-library/react";
-import Inventory from "./Inventory";
+import Inventory from "pages/Inventory/Inventory";
 import { withStoreAndRouter } from "testing/helpers";
 import { inventoryItems } from "testing/mockData";
 
