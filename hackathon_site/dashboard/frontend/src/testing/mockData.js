@@ -151,17 +151,34 @@ export const addCartTest = () => {
 };
 
 // Inventory
+// export const inventoryCategories = [
+//     { id: 1, name: "MCU", max: 12 },
+//     { id: 2, name: "MCU_limit_3", qty: 6 },
+//     { id: 3, name: "FPGA", qty: 9 },
+//     { id: 4, name: "Sensors", qty: 21 },
+//     { id: 5, name: "Sensors_limit_2", qty: 3 },
+//     { id: 6, name: "Peripherals", qty: 389 },
+//     { id: 7, name: "1080p_cameras", qty: 4 },
+//     { id: 8, name: "Grove", qty: 22 },
+//     { id: 9, name: "Grove_style_boards", qty: 12 },
+//     { id: 10, name: "Grove_style_modules", qty: 10 },
+// ];
 export const inventoryCategories = [
-    { id: 1, name: "MCU", qty: 12 },
-    { id: 2, name: "MCU_limit_3", qty: 6 },
-    { id: 3, name: "FPGA", qty: 9 },
-    { id: 4, name: "Sensors", qty: 21 },
-    { id: 5, name: "Sensors_limit_2", qty: 3 },
-    { id: 6, name: "Peripherals", qty: 389 },
-    { id: 7, name: "1080p_cameras", qty: 4 },
-    { id: 8, name: "Grove", qty: 22 },
-    { id: 9, name: "Grove_style_boards", qty: 12 },
-    { id: 10, name: "Grove_style_modules", qty: 10 },
+    { id: 1, name: "MCU", max_per_team: 12, unique_hardware_count: 10 },
+    { id: 2, name: "MCU_limit_3", max_per_team: 3, unique_hardware_count: 6 },
+    { id: 3, name: "FPGA", max_per_team: 2, unique_hardware_count: 9 },
+    { id: 4, name: "Sensors", max_per_team: 12, unique_hardware_count: 21 },
+    { id: 5, name: "Sensors_limit_2", max_per_team: 2, unique_hardware_count: 3 },
+    { id: 6, name: "Peripherals", max_per_team: 12, unique_hardware_count: 389 },
+    { id: 7, name: "1080p_cameras", max_per_team: 4, unique_hardware_count: 4 },
+    { id: 8, name: "Grove", max_per_team: 12, unique_hardware_count: 22 },
+    { id: 9, name: "Grove_style_boards", max_per_team: 12, unique_hardware_count: 12 },
+    {
+        id: 10,
+        name: "Grove_style_modules",
+        max_per_team: 12,
+        unique_hardware_count: 10,
+    },
 ];
 
 // User details

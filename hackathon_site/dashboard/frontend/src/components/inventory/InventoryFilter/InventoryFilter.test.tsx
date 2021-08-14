@@ -1,5 +1,7 @@
 import React from "react";
-import EnhancedInventoryFilter, { orderByOptions } from "./InventoryFilter";
+import EnhancedInventoryFilter, {
+    orderByOptions,
+} from "components/inventory/InventoryFilter/InventoryFilter";
 import { render, fireEvent, waitFor } from "@testing-library/react";
 import { inventoryCategories } from "testing/mockData";
 
@@ -9,6 +11,7 @@ describe("<EnhancedInventoryFilter />", () => {
 
         const { getByText } = render(
             <EnhancedInventoryFilter
+                handleReset={() => {}}
                 handleSubmit={handleSubmitSpy}
                 isApplyLoading={false}
                 isClearLoading={false}
@@ -28,6 +31,7 @@ describe("<EnhancedInventoryFilter />", () => {
         const { getByText } = render(
             <EnhancedInventoryFilter
                 handleReset={handleResetSpy}
+                handleSubmit={() => {}}
                 isApplyLoading={false}
                 isClearLoading={false}
             />
@@ -46,6 +50,7 @@ describe("<EnhancedInventoryFilter />", () => {
 
         const { queryByText, getByText } = render(
             <EnhancedInventoryFilter
+                handleReset={() => {}}
                 handleSubmit={handleSubmitSpy}
                 isApplyLoading={false}
                 isClearLoading={false}
@@ -65,9 +70,9 @@ describe("<EnhancedInventoryFilter />", () => {
     it("Submits the form, then clears it, and receives the expected values", async () => {
         const handleSubmitSpy = jest.fn();
         const handleResetSpy = jest.fn();
-        let orderBy = "name";
-        let inStock = true;
-        let inventoryCategories = [1];
+        let order_by = "name";
+        let in_stock = true;
+        let categories = [1];
 
         const { findByLabelText, findByText } = render(
             <EnhancedInventoryFilter
@@ -92,31 +97,36 @@ describe("<EnhancedInventoryFilter />", () => {
 
         await waitFor(() => {
             expect(handleSubmitSpy).toHaveBeenCalledWith({
-                orderBy,
-                inStock,
-                inventoryCategories,
+                order_by,
+                in_stock,
+                categories,
             });
         });
 
-        orderBy = "";
-        inStock = false;
-        inventoryCategories = [];
+        order_by = "";
+        in_stock = false;
+        categories = [];
 
         // Clear form
         fireEvent.click(buttonClear);
 
         await waitFor(() => {
             expect(handleResetSpy).toHaveBeenCalledWith({
-                orderBy,
-                inStock,
-                inventoryCategories,
+                order_by,
+                in_stock,
+                categories,
             });
         });
     });
 
     it("Displays a loading wheel on Apply button when loading", () => {
         const { getByTestId, queryByTestId, getByText } = render(
-            <EnhancedInventoryFilter isApplyLoading={true} isClearLoading={false} />
+            <EnhancedInventoryFilter
+                handleReset={() => {}}
+                handleSubmit={() => {}}
+                isApplyLoading={true}
+                isClearLoading={false}
+            />
         );
 
         const applyBtn = getByText("Apply");
@@ -130,7 +140,12 @@ describe("<EnhancedInventoryFilter />", () => {
 
     it("Displays a loading wheel on Clear all button when loading", () => {
         const { getByTestId, queryByTestId, getByText } = render(
-            <EnhancedInventoryFilter isApplyLoading={false} isClearLoading={true} />
+            <EnhancedInventoryFilter
+                handleReset={() => {}}
+                handleSubmit={() => {}}
+                isApplyLoading={false}
+                isClearLoading={true}
+            />
         );
 
         const applyBtn = getByText("Apply");

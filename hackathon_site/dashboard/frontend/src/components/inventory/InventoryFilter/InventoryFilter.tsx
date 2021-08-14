@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "./InventoryFilter.module.scss";
-import { Formik, Field } from "formik";
+import { Formik, Field, FieldProps, FormikValues } from "formik";
 
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
@@ -15,7 +15,22 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import { inventoryCategories } from "testing/mockData";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
-const RadioOrderBy = ({ field, options }) => (
+import { Category, HardwareOrdering } from "api/types";
+
+type OrderByOptions = {
+    value: HardwareOrdering;
+    label: string;
+}[];
+
+export const orderByOptions: OrderByOptions = [
+    { value: "", label: "Default" },
+    { value: "name", label: "A-Z" },
+    { value: "-name", label: "Z-A" },
+    { value: "quantity_remaining", label: "Stock remaining: high to low" },
+    { value: "-quantity_remaining", label: "Stock remaining: low to high" },
+];
+
+const RadioOrderBy = ({ field, options }: FieldProps & { options: OrderByOptions }) => (
     <RadioGroup {...field} name={field.name}>
         {options.map((item, i) => (
             <FormControlLabel
@@ -30,8 +45,8 @@ const RadioOrderBy = ({ field, options }) => (
     </RadioGroup>
 );
 
-const CheckboxCategory = ({ field, options }) => (
-    <FormGroup {...field} name={field.name}>
+const CheckboxCategory = ({ field, options }: FieldProps & { options: Category[] }) => (
+    <FormGroup {...field}>
         {options.map((item, i) => (
             <div className={styles.filterCategory} key={i}>
                 <FormControlLabel
@@ -43,7 +58,8 @@ const CheckboxCategory = ({ field, options }) => (
                 />
                 <Chip
                     size="small"
-                    label={item.qty}
+                    // TODO: Was item.qty, but that's not a thing on categories right now
+                    label={item.unique_hardware_count}
                     className={styles.filterCategoryChip}
                 />
             </div>
@@ -51,25 +67,30 @@ const CheckboxCategory = ({ field, options }) => (
     </FormGroup>
 );
 
-const CheckboxAvailability = ({ field, ...props }) => (
-    <FormGroup {...field} {...props} name={field.name}>
+const CheckboxAvailability = ({ field, ...props }: FieldProps) => (
+    <FormGroup {...field} {...props}>
         <FormControlLabel
             label="In stock"
             name={field.name}
-            value="In stock"
+            value={true}
             control={<Checkbox color="primary" />}
             checked={field.value}
         />
     </FormGroup>
 );
 
-export const orderByOptions = [
-    { value: "", label: "Default" },
-    { value: "name", label: "A-Z" },
-    { value: "-name", label: "Z-A" },
-    { value: "stock", label: "Stock remaining: high to low" },
-    { value: "-stock", label: "Stock remaining: low to high" },
-];
+interface InventoryFilterValues {
+    order_by: string;
+    in_stock: boolean;
+    // Categories is a string array because html checkboxes have string values
+    categories: string[];
+}
+
+type InventoryFilterProps = FormikValues & {
+    categories: Category[];
+    isApplyLoading: boolean;
+    isClearLoading: boolean;
+};
 
 export const InventoryFilter = ({
     handleReset,
@@ -77,7 +98,7 @@ export const InventoryFilter = ({
     categories,
     isApplyLoading,
     isClearLoading,
-}) => (
+}: InventoryFilterProps) => (
     <div className={styles.filter}>
         <Paper elevation={2} className={styles.filterPaper} square={true}>
             <form onReset={handleReset} onSubmit={handleSubmit}>
@@ -86,7 +107,7 @@ export const InventoryFilter = ({
                         <Typography variant="h2">Order by</Typography>
                     </legend>
                     <Field
-                        name="orderBy"
+                        name="order_by"
                         component={RadioOrderBy}
                         options={orderByOptions}
                     />
@@ -96,7 +117,7 @@ export const InventoryFilter = ({
                     <legend>
                         <Typography variant="h2">Availability</Typography>
                     </legend>
-                    <Field name="inStock" component={CheckboxAvailability} />
+                    <Field name="in_stock" component={CheckboxAvailability} />
                 </fieldset>
                 <Divider className={styles.filterDivider} />
                 <fieldset>
@@ -104,7 +125,7 @@ export const InventoryFilter = ({
                         <Typography variant="h2">Categories</Typography>
                     </legend>
                     <Field
-                        name="inventoryCategories"
+                        name="categories"
                         component={CheckboxCategory}
                         options={categories}
                     />
@@ -150,31 +171,38 @@ export const InventoryFilter = ({
     </div>
 );
 
+interface EnhancedInventoryFilterProps {
+    handleSubmit: (arg: any) => void;
+    handleReset: (arg: any) => void;
+    isApplyLoading: boolean;
+    isClearLoading: boolean;
+}
 export const EnhancedInventoryFilter = ({
     handleSubmit,
     handleReset,
     isApplyLoading,
     isClearLoading,
-}) => {
-    const onSubmit = (formikValues) => {
-        const { orderBy, inStock, inventoryCategories } = formikValues;
+}: EnhancedInventoryFilterProps) => {
+    const onSubmit = ({ order_by, in_stock, categories }: InventoryFilterValues) => {
         handleSubmit({
-            orderBy,
-            inStock,
-            inventoryCategories: inventoryCategories.map((id) => parseInt(id, 10)),
+            order_by,
+            in_stock,
+            categories: categories.map((id) => parseInt(id, 10)),
         });
     };
     const onReset = () => {
-        handleReset({ orderBy: "", inStock: false, inventoryCategories: [] });
+        handleReset({ order_by: "", in_stock: false, categories: [] });
+    };
+
+    const initialValues: InventoryFilterValues = {
+        order_by: "",
+        in_stock: false,
+        categories: [],
     };
 
     return (
         <Formik
-            initialValues={{
-                orderBy: "",
-                inStock: false,
-                inventoryCategories: [],
-            }}
+            initialValues={initialValues}
             onSubmit={onSubmit}
             onReset={onReset}
             validateOnBlur={false}
