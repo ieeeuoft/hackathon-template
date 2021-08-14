@@ -28,8 +28,14 @@ class HardwareFilter(filters.FilterSet):
         else:
             return queryset.filter(quantity_remaining__lte=0)
 
-    id = IntegerCSVFilter(
+    ids = IntegerCSVFilter(
         field_name="id",
         label="Comma separated list of hardware IDs",
+        help_text="Comma separated list of hardware IDs",
+    )
+
+    categories = IntegerCSVFilter(
+        field_name="categories",
+        label="Comma separated list of category IDs",
         help_text="Comma separated list of hardware IDs",
     )
