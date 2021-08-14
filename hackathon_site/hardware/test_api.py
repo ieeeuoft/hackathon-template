@@ -3,11 +3,12 @@ from django.urls import reverse
 from rest_framework import status
 
 from event.models import Team
-from hardware.models import Hardware, Category, Order, OrderItem
+from hardware.models import Hardware, Category, Order, OrderItem, Incident
 from hardware.serializers import (
     HardwareSerializer,
     CategorySerializer,
     OrderListSerializer,
+    IncidentsSerializer,
 )
 from hackathon_site.tests import SetupUserMixin
 
@@ -157,6 +158,10 @@ class CategoryListViewTestCase(SetupUserMixin, APITestCase):
         ]
 
         self.assertEqual(expected_unique_hardware_counts, actual_unique_hardware_counts)
+
+
+class IncidentsListViewTestCase(SetupUserMixin, APITestCase):
+
 
 
 class OrderListViewGetTestCase(SetupUserMixin, APITestCase):
