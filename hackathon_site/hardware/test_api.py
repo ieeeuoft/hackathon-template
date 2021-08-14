@@ -161,6 +161,38 @@ class CategoryListViewTestCase(SetupUserMixin, APITestCase):
 
 
 class IncidentsListViewTestCase(SetupUserMixin, APITestCase):
+    def setUp(self):
+        super().setUp()
+        self.team = Team.objects.create()
+        self.order = Order.objects.create(status="Cart", team=self.team)
+        self.hardware = Hardware.objects.create(
+            name="name",
+            model_number="model",
+            manufacturer="manufacturer",
+            datasheet="/datasheet/location/",
+            notes="notes",
+            quantity_available=4,
+            max_per_team=1,
+            picture="/picture/location",
+        )
+        self.other_hardware = Hardware.objects.create(
+            name="other",
+            model_number="otherModel",
+            manufacturer="otherManufacturer",
+            datasheet="/datasheet/location/other",
+            quantity_available=10,
+            max_per_team=10,
+            picture="/picture/location/other",
+        )
+        self.order_item = OrderItem.objects.create(
+            order=self.order, hardware=self.hardware,
+        )
+
+
+        self.incident=Incident.objects.create(state="Broken",description="Description",order_item=self.order_item,time_occurred="2021-08-08 00:00:00")
+        self.view = reverse("api:hardware:incidents-list")
+
+
 
 
 
