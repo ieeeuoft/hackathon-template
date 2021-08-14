@@ -37,5 +37,5 @@ class HardwareFilter(filters.FilterSet):
     categories = IntegerCSVFilter(
         field_name="categories",
         label="Comma separated list of category IDs",
-        help_text="Comma separated list of hardware IDs",
+        help_text="Comma separated list of category IDs",
     )
