@@ -49,6 +49,14 @@ class HardwareListViewTestCase(SetupUserMixin, APITestCase):
             picture="/picture/location",
         )
 
+        self.category1 = Category.objects.create(name="category1", max_per_team=4)
+        self.category2 = Category.objects.create(name="category2", max_per_team=4)
+        self.category3 = Category.objects.create(name="category3", max_per_team=4)
+
+        self.hardware1.categories.add(self.category1)
+        self.hardware2.categories.add(self.category1, self.category2)
+        self.hardware3.categories.add(self.category3)
+
         self.view = reverse("api:hardware:hardware-list")
 
         self.team = Team.objects.create()
@@ -99,7 +107,7 @@ class HardwareListViewTestCase(SetupUserMixin, APITestCase):
         data = response.json()
         results = data["results"]
         returned_ids = [res["id"] for res in results]
-        self.assertEqual(returned_ids, [2, 3])
+        self.assertCountEqual(returned_ids, [2, 3])
 
     def test_in_stock_false(self):
         self._login()
@@ -113,7 +121,7 @@ class HardwareListViewTestCase(SetupUserMixin, APITestCase):
         data = response.json()
         results = data["results"]
         returned_ids = [res["id"] for res in results]
-        self.assertEqual(returned_ids, [1])
+        self.assertCountEqual(returned_ids, [1])
 
     def test_in_stock_not_present(self):
         self._login()
@@ -128,7 +136,7 @@ class HardwareListViewTestCase(SetupUserMixin, APITestCase):
         results = data["results"]
         returned_ids = [res["id"] for res in results]
 
-        self.assertEqual(returned_ids, [1, 2, 3])
+        self.assertCountEqual(returned_ids, [1, 2, 3])
 
     def test_id_filter(self):
         self._login()
@@ -140,7 +148,7 @@ class HardwareListViewTestCase(SetupUserMixin, APITestCase):
         data = response.json()
         results = data["results"]
         returned_ids = [res["id"] for res in results]
-        self.assertEqual(returned_ids, [1, 3])
+        self.assertCountEqual(returned_ids, [1, 3])
 
     def test_id_invalid(self):
         self._login()
@@ -151,6 +159,27 @@ class HardwareListViewTestCase(SetupUserMixin, APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(data, {"ids": ["Enter a whole number."]})
+
+    def test_category_filter(self):
+        self._login()
+
+        url = self._build_filter_url(categories="1,2")
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.json()
+        returned_ids = [res["id"] for res in data["results"]]
+        self.assertCountEqual(returned_ids, [1, 2])
+
+    def test_category_invalid(self):
+        self._login()
+
+        url = self._build_filter_url(categories="1,abcde")
+        response = self.client.get(url)
+        data = response.json()
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(data, {"categories": ["Enter a whole number."]})
 
 
 class HardwareDetailViewTestCase(SetupUserMixin, APITestCase):
