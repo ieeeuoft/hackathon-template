@@ -17,7 +17,7 @@ class HardwareListViewTestCase(SetupUserMixin, APITestCase):
         super().setUp()
 
         self.hardware1 = Hardware.objects.create(
-            name="hardware1",
+            name="aHardware",
             model_number="model",
             manufacturer="manufacturer",
             datasheet="/datasheet/location/",
@@ -28,7 +28,7 @@ class HardwareListViewTestCase(SetupUserMixin, APITestCase):
         )
 
         self.hardware2 = Hardware.objects.create(
-            name="arduino",
+            name="bHardware",
             model_number="model",
             manufacturer="manufacturer",
             datasheet="/datasheet/location/",
@@ -39,12 +39,12 @@ class HardwareListViewTestCase(SetupUserMixin, APITestCase):
         )
 
         self.hardware3 = Hardware.objects.create(
-            name="hardware3",
+            name="cHardware",
             model_number="model",
             manufacturer="manufacturer",
             datasheet="/datasheet/location/",
             notes="notes",
-            quantity_available=4,
+            quantity_available=5,
             max_per_team=1,
             picture="/picture/location",
         )
@@ -86,7 +86,7 @@ class HardwareListViewTestCase(SetupUserMixin, APITestCase):
     def test_search_by_name(self):
         self._login()
 
-        url = self._build_filter_url(search="arduino")
+        url = self._build_filter_url(search="bHardware")
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -180,6 +180,38 @@ class HardwareListViewTestCase(SetupUserMixin, APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(data, {"categories": ["Enter a whole number."]})
+
+    def test_order_by_name(self):
+        self._login()
+
+        order_asc = [1, 2, 3]
+
+        for order in ["+", "-"]:
+            url = self._build_filter_url(ordering=f"{order}name")
+            response = self.client.get(url)
+            data = response.json()
+            returned_ids = [res["id"] for res in data["results"]]
+
+            if order == "+":
+                self.assertEqual(returned_ids, order_asc, msg="ascending")
+            else:
+                self.assertEqual(returned_ids, order_asc[::-1], msg="descending")
+
+    def test_order_by_quantity_remaining(self):
+        self._login()
+
+        order_asc = [1, 2, 3]
+
+        for order in ["", "-"]:
+            url = self._build_filter_url(ordering=f"{order}quantity_remaining")
+            response = self.client.get(url)
+            data = response.json()
+            returned_ids = [res["id"] for res in data["results"]]
+
+            if order == "":
+                self.assertEqual(returned_ids, order_asc, msg="ascending")
+            else:
+                self.assertEqual(returned_ids, order_asc[::-1], msg="descending")
 
 
 class HardwareDetailViewTestCase(SetupUserMixin, APITestCase):
