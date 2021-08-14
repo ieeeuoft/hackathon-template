@@ -193,7 +193,22 @@ class IncidentsListViewTestCase(SetupUserMixin, APITestCase):
         self.view = reverse("api:hardware:incidents-list")
 
 
+    def test_incident_get_success(self):
+        self._login()
 
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        queryset = Incident.objects.all()
+        # need to provide a request in the serializer context to produce absolute url for image field
+        expected_response = IncidentsSerializer(
+            queryset, many=True, context={"request": response.wsgi_request}
+        ).data
+        data = response.json()
+
+
+
+        self.assertEqual(expected_response, data["results"])
 
 
 class OrderListViewGetTestCase(SetupUserMixin, APITestCase):
