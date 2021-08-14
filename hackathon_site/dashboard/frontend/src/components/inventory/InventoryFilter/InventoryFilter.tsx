@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "./InventoryFilter.module.scss";
-import { Formik, Field, FieldProps, FormikValues } from "formik";
+import { Formik, Field, FieldProps, FormikValues, FormikHelpers } from "formik";
 
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
@@ -15,9 +15,15 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import { inventoryCategories } from "testing/mockData";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
-import { Category, HardwareOrdering } from "api/types";
+import { Category, HardwareFilters, HardwareOrdering } from "api/types";
 import { connect, ConnectedProps } from "react-redux";
-import { isLoadingSelector, setFilters } from "slices/hardware/hardwareSlice";
+import {
+    hardwareFiltersSelector,
+    isLoadingSelector,
+    getHardwareWithFilters,
+    updateFilters,
+    clearFilters,
+} from "slices/hardware/hardwareSlice";
 import { RootState } from "slices/store";
 
 type OrderByOptions = {
@@ -84,7 +90,7 @@ const CheckboxAvailability = ({ field, ...props }: FieldProps) => (
 
 interface InventoryFilterValues {
     ordering: HardwareOrdering;
-    in_stock?: boolean;
+    in_stock: boolean;
     // Categories is a string array because html checkboxes have string values
     categories: string[];
 }
@@ -175,27 +181,50 @@ export const InventoryFilter = ({
 );
 
 export const EnhancedInventoryFilter = ({
-    setFilters,
+    filters,
+    getHardwareWithFilters,
+    updateFilters,
+    clearFilters,
     isApplyLoading,
     isClearLoading,
 }: ConnectedInventoryFilterProps) => {
     const onSubmit = ({ ordering, in_stock, categories }: InventoryFilterValues) => {
-        in_stock = in_stock || undefined;
-
-        setFilters({
+        const toSet = {
             ordering,
-            in_stock,
+            in_stock, // If false, it will be cleared below
             categories: categories.map((id) => parseInt(id, 10)),
+        };
+
+        let toClear: (keyof HardwareFilters)[] = [];
+        if (!in_stock) {
+            toClear.push("in_stock");
+        }
+
+        updateFilters({
+            toSet,
+            toClear,
         });
+        getHardwareWithFilters();
     };
+
     const onReset = () => {
-        setFilters({ ordering: "", in_stock: false, categories: [] });
+        // Reset the form's initial values, since they won't be updated
+        // in redux in time for the form to re-render.
+        // const resetValues: InventoryFilterValues = {
+        //     ordering: "",
+        //     in_stock: false,
+        //     categories: [],
+        // };
+        // resetForm({ values: resetValues });
+
+        clearFilters();
+        getHardwareWithFilters();
     };
 
     const initialValues: InventoryFilterValues = {
-        ordering: "",
-        in_stock: false,
-        categories: [],
+        ordering: filters.ordering || "",
+        in_stock: !!filters.in_stock,
+        categories: filters.categories?.map((id) => id.toString()) || [],
     };
 
     return (
@@ -221,9 +250,14 @@ export const EnhancedInventoryFilter = ({
 const mapStateToProps = (state: RootState) => ({
     isApplyLoading: isLoadingSelector(state),
     isClearLoading: isLoadingSelector(state),
+    filters: hardwareFiltersSelector(state),
 });
 
-export const connector = connect(mapStateToProps, { setFilters });
+export const connector = connect(mapStateToProps, {
+    getHardwareWithFilters,
+    updateFilters,
+    clearFilters,
+});
 
 type ConnectedInventoryFilterProps = ConnectedProps<typeof connector>;
 

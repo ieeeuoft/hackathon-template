@@ -2,7 +2,7 @@ import axios from "axios";
 
 export const SERVER_URL =
     process.env.NODE_ENV === "development"
-        ? process.env.REACT_APP_DEV_SERVER_URL.replace(/\/$/, "")
+        ? process.env.REACT_APP_DEV_SERVER_URL?.replace(/\/$/, "")
         : "";
 
 export const getCsrfToken = () => {
@@ -20,7 +20,7 @@ export const getCsrfToken = () => {
     return null;
 };
 
-export const cleanURI = (uri) => {
+export const cleanURI = (uri: string) => {
     uri = uri.replace(/^\//, ""); // Remove leading slashes
     uri = uri.endsWith("/") ? uri : uri + "/";
     return uri;
@@ -33,12 +33,17 @@ const makeConfig = () => ({
     withCredentials: true,
 });
 
-export const get = (uri) => {
+export const get = (uri: string, params?: { [key: string]: any }) => {
     uri = cleanURI(uri);
+
+    if (params) {
+        uri += "?" + new URLSearchParams(params).toString();
+    }
+
     return axios.get(`${SERVER_URL}/${uri}`, makeConfig());
 };
 
-export const post = (uri, data) => {
+export const post = (uri: string, data: any) => {
     uri = cleanURI(uri);
     return axios.post(`${SERVER_URL}/${uri}`, data, makeConfig());
 };
