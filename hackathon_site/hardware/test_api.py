@@ -188,10 +188,13 @@ class IncidentsListViewTestCase(SetupUserMixin, APITestCase):
             order=self.order, hardware=self.hardware,
         )
 
-
-        self.incident=Incident.objects.create(state="Broken",description="Description",order_item=self.order_item,time_occurred="2021-08-08 00:00:00")
+        self.incident = Incident.objects.create(
+            state="Broken",
+            description="Description",
+            order_item=self.order_item,
+            time_occurred="2021-08-08 00:00:00",
+        )
         self.view = reverse("api:hardware:incidents-list")
-
 
     def test_incident_get_success(self):
         self._login()
@@ -205,8 +208,6 @@ class IncidentsListViewTestCase(SetupUserMixin, APITestCase):
             queryset, many=True, context={"request": response.wsgi_request}
         ).data
         data = response.json()
-
-
 
         self.assertEqual(expected_response, data["results"])
 
