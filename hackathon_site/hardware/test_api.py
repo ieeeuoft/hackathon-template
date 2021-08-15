@@ -141,7 +141,7 @@ class HardwareListViewTestCase(SetupUserMixin, APITestCase):
     def test_id_filter(self):
         self._login()
 
-        url = self._build_filter_url(ids="1,3")
+        url = self._build_filter_url(hardware_ids="1,3")
 
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -153,17 +153,17 @@ class HardwareListViewTestCase(SetupUserMixin, APITestCase):
     def test_id_invalid(self):
         self._login()
 
-        url = self._build_filter_url(ids="1,2,abcde")
+        url = self._build_filter_url(hardware_ids="1,2,abcde")
         response = self.client.get(url)
         data = response.json()
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(data, {"ids": ["Enter a whole number."]})
+        self.assertEqual(data, {"hardware_ids": ["Enter a whole number."]})
 
     def test_category_filter(self):
         self._login()
 
-        url = self._build_filter_url(categories="1,2")
+        url = self._build_filter_url(category_ids="1,2")
 
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -174,12 +174,12 @@ class HardwareListViewTestCase(SetupUserMixin, APITestCase):
     def test_category_invalid(self):
         self._login()
 
-        url = self._build_filter_url(categories="1,abcde")
+        url = self._build_filter_url(category_ids="1,abcde")
         response = self.client.get(url)
         data = response.json()
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(data, {"categories": ["Enter a whole number."]})
+        self.assertEqual(data, {"category_ids": ["Enter a whole number."]})
 
     def test_order_by_name(self):
         self._login()
