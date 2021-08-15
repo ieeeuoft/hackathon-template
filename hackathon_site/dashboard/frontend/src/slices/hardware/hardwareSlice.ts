@@ -64,14 +64,11 @@ export const getHardwareWithFilters = createAsyncThunk<
 );
 
 // Slice
-type Nullable<T> = {
-    [P in keyof T]?: T[P] | null;
-};
 
 // type SetFilterArgs = Nullable<HardwareFilters>;
 interface UpdateFiltersArgs {
     toSet: HardwareFilters;
-    toClear: (keyof HardwareFilters)[];
+    toClear?: (keyof HardwareFilters)[];
 }
 
 const hardwareSlice = createSlice({
@@ -94,7 +91,9 @@ const hardwareSlice = createSlice({
             };
 
             // Delete what needs to be removed
-            toClear.forEach((k) => delete state.filters[k]);
+            if (toClear) {
+                toClear.forEach((k) => delete state.filters[k]);
+            }
         },
 
         setFilters: (

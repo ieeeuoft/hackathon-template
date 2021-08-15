@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styles from "./InventoryFilter.module.scss";
 import { Formik, Field, FieldProps, FormikValues, FormikHelpers } from "formik";
 
@@ -188,43 +188,39 @@ export const EnhancedInventoryFilter = ({
     isApplyLoading,
     isClearLoading,
 }: ConnectedInventoryFilterProps) => {
+    useEffect(() => {
+        clearFilters();
+        getHardwareWithFilters();
+    }, []);
+
     const onSubmit = ({ ordering, in_stock, categories }: InventoryFilterValues) => {
         const toSet = {
             ordering,
-            in_stock, // If false, it will be cleared below
+            in_stock: in_stock || undefined, // If false, it will be cleared below
             categories: categories.map((id) => parseInt(id, 10)),
         };
 
-        let toClear: (keyof HardwareFilters)[] = [];
-        if (!in_stock) {
-            toClear.push("in_stock");
-        }
+        // let toClear: (keyof HardwareFilters)[] = [];
+        // if (!in_stock) {
+        //     toClear.push("in_stock");
+        // }
 
         updateFilters({
             toSet,
-            toClear,
+            // toClear,
         });
         getHardwareWithFilters();
     };
 
     const onReset = () => {
-        // Reset the form's initial values, since they won't be updated
-        // in redux in time for the form to re-render.
-        // const resetValues: InventoryFilterValues = {
-        //     ordering: "",
-        //     in_stock: false,
-        //     categories: [],
-        // };
-        // resetForm({ values: resetValues });
-
         clearFilters();
         getHardwareWithFilters();
     };
 
     const initialValues: InventoryFilterValues = {
-        ordering: filters.ordering || "",
-        in_stock: !!filters.in_stock,
-        categories: filters.categories?.map((id) => id.toString()) || [],
+        ordering: "",
+        in_stock: false,
+        categories: [],
     };
 
     return (
