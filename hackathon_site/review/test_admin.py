@@ -3,7 +3,7 @@ from unittest.mock import patch, MagicMock
 
 from django.conf import settings
 from django.core.cache import cache
-from django.contrib.auth.models import Permission
+from django.contrib.auth.models import Group, Permission
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.db.models import Q
 from django.test import TestCase
@@ -249,6 +249,8 @@ class TeamReviewChangeAdminTestCase(SetupUserMixin, TestCase):
             | Q(codename="change_review", content_type__app_label="review"),
         )
 
+        self.reviewer_group = Group.objects.get(name="Application Reviewers")
+
         self.user.is_staff = True
         self.user.save()
 
@@ -266,6 +268,32 @@ class TeamReviewChangeAdminTestCase(SetupUserMixin, TestCase):
         self._login()
         response = self.client.get(self.change_view)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_reviewer_group_correct_permissions(self):
+        """
+        Ensure the reviewer group has all the permissions it is supposed to and nothing else.
+        """
+        REVIEWER_PERMISSIONS = (
+            "auth.view_user",
+            "registration.view_application",
+            "review.add_review",
+            "review.change_review",
+            "review.view_review",
+            "review.view_teamreview",
+        )
+
+        self.assertEqual(
+            self.reviewer_group.permissions.count(), len(REVIEWER_PERMISSIONS)
+        )
+
+        group_perms = self.reviewer_group.permissions.all()
+
+        for permission_name in REVIEWER_PERMISSIONS:
+            app_label, codename = permission_name.split(".", 1)
+            permission = Permission.objects.get(
+                content_type__app_label=app_label, codename=codename
+            )
+            self.assertTrue(permission in group_perms)
 
     def test_does_not_show_review_fields_with_view_permissions(self):
         """
