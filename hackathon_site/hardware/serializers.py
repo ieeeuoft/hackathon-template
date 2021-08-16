@@ -39,7 +39,7 @@ class CategorySerializer(serializers.ModelSerializer):
         return obj.hardware_set.annotate(Count("id", distinct=True)).count()
 
 
-class IncidentsSerializer(serializers.ModelSerializer):
+class IncidentSerializer(serializers.ModelSerializer):
     order__team = serializers.ReadOnlyField()
     hardware__id = serializers.ReadOnlyField()
 
