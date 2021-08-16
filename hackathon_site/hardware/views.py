@@ -5,7 +5,7 @@ from drf_yasg.utils import swagger_auto_schema
 import logging
 from rest_framework import generics, mixins, status, permissions
 from rest_framework.response import Response
-from rest_framework.filters import SearchFilter
+from rest_framework.filters import SearchFilter, OrderingFilter
 
 from event.permissions import UserHasProfile
 from hardware.api_filters import HardwareFilter, IncidentsFilter
@@ -27,9 +27,10 @@ class HardwareListView(mixins.ListModelMixin, generics.GenericAPIView):
     queryset = Hardware.objects.all()
     serializer_class = HardwareSerializer
 
-    filter_backends = (filters.DjangoFilterBackend, SearchFilter)
+    filter_backends = (filters.DjangoFilterBackend, SearchFilter, OrderingFilter)
     filterset_class = HardwareFilter
     search_fields = ("name",)
+    ordering_fields = ("name", "quantity_remaining")
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)

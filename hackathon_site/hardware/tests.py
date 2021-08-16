@@ -22,6 +22,11 @@ class HardwareSerializerTestCase(TestCase):
             picture="/picture/location",
         )
 
+        self.category1 = Category.objects.create(name="category1", max_per_team=4)
+        self.category2 = Category.objects.create(name="category2", max_per_team=4)
+
+        self.hardware.categories.add(self.category1, self.category2)
+
     def test_base_case_no_order_items(self):
         self.hardware.refresh_from_db()
         hardware_serializer = HardwareSerializer(self.hardware)
@@ -29,7 +34,7 @@ class HardwareSerializerTestCase(TestCase):
         expected_response = {
             "id": 1,
             "name": "name",
-            "categories": [],
+            "categories": [self.category1.id, self.category2.id],
             "model_number": "model",
             "manufacturer": "manufacturer",
             "datasheet": "/datasheet/location/",
@@ -54,7 +59,7 @@ class HardwareSerializerTestCase(TestCase):
         expected_response = {
             "id": 1,
             "name": "name",
-            "categories": [],
+            "categories": [self.category1.id, self.category2.id],
             "model_number": "model",
             "manufacturer": "manufacturer",
             "datasheet": "/datasheet/location/",
@@ -80,7 +85,7 @@ class HardwareSerializerTestCase(TestCase):
         expected_response = {
             "id": 1,
             "name": "name",
-            "categories": [],
+            "categories": [self.category1.id, self.category2.id],
             "model_number": "model",
             "manufacturer": "manufacturer",
             "datasheet": "/datasheet/location/",
