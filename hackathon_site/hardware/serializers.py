@@ -38,13 +38,14 @@ class CategorySerializer(serializers.ModelSerializer):
     def get_unique_hardware_count(obj: Category) -> int:
         return obj.hardware_set.annotate(Count("id", distinct=True)).count()
 
+
 class OrderItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderItem
         fields = ("id", "hardware", "order", "part_returned_health")
 
-class IncidentSerializer(serializers.ModelSerializer):
 
+class IncidentSerializer(serializers.ModelSerializer):
 
     order_item = OrderItemSerializer()
     team_id = serializers.SerializerMethodField()
@@ -60,7 +61,6 @@ class IncidentSerializer(serializers.ModelSerializer):
             "team_id",
             "created_at",
             "updated_at",
-
         )
 
     @staticmethod

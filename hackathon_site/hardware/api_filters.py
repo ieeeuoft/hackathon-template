@@ -17,8 +17,6 @@ class IncidentFilter(filters.FilterSet):
     queryset = Incident
     serializer_class = IncidentSerializer
 
-
-
     hardware_id = filters.NumberFilter(field_name="order_item__hardware__id")
     team_id = filters.NumberFilter(field_name="order_item__order__team__id")
 
