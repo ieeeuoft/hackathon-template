@@ -13,7 +13,7 @@ from hardware.models import Hardware, Category, Order, Incident
 from hardware.serializers import (
     CategorySerializer,
     HardwareSerializer,
-    IncidentsSerializer,
+    IncidentSerializer,
     OrderListSerializer,
     OrderCreateSerializer,
     OrderCreateResponseSerializer,
@@ -45,7 +45,7 @@ class HardwareDetailView(mixins.RetrieveModelMixin, generics.GenericAPIView):
 
 class IncidentsListView(mixins.ListModelMixin, generics.GenericAPIView):
     queryset = Incident.objects.all()
-    serializer_class = IncidentsSerializer
+    serializer_class = IncidentSerializer
 
     filter_backends = (filters.DjangoFilterBackend, SearchFilter)
     filterset_class = IncidentsFilter

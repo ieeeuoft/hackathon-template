@@ -2,7 +2,7 @@ from django import forms
 from django_filters import rest_framework as filters, widgets
 
 from hardware.models import Hardware, Incident
-from hardware.serializers import HardwareSerializer, IncidentsSerializer
+from hardware.serializers import HardwareSerializer, IncidentSerializer
 
 
 class CSVInputIntegerField(forms.IntegerField):
@@ -15,7 +15,7 @@ class IntegerCSVFilter(filters.BaseInFilter):
 
 class IncidentsFilter(filters.FilterSet):
     queryset = Incident
-    serializer_class = IncidentsSerializer
+    serializer_class = IncidentSerializer
 
     order_item__hardware__id = filters.NumberFilter(label="order_item__hardware__id")
     order_item__order__team__id = filters.NumberFilter(

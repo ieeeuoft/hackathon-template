@@ -8,7 +8,7 @@ from hardware.serializers import (
     HardwareSerializer,
     CategorySerializer,
     OrderListSerializer,
-    IncidentsSerializer,
+    IncidentSerializer,
 )
 from hackathon_site.tests import SetupUserMixin
 
