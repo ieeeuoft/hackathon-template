@@ -43,7 +43,7 @@ class HardwareDetailView(mixins.RetrieveModelMixin, generics.GenericAPIView):
         return self.retrieve(request, *args, **kwargs)
 
 
-class IncidentsListView(mixins.ListModelMixin, generics.GenericAPIView):
+class IncidentListView(mixins.ListModelMixin, generics.GenericAPIView):
     queryset = Incident.objects.all()
     serializer_class = IncidentSerializer
 
