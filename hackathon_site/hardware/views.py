@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework.filters import SearchFilter
 
 from event.permissions import UserHasProfile
-from hardware.api_filters import HardwareFilter, IncidentsFilter
+from hardware.api_filters import HardwareFilter, IncidentFilter
 from hardware.models import Hardware, Category, Order, Incident
 from hardware.serializers import (
     CategorySerializer,
@@ -48,7 +48,7 @@ class IncidentListView(mixins.ListModelMixin, generics.GenericAPIView):
     serializer_class = IncidentSerializer
 
     filter_backends = (filters.DjangoFilterBackend, SearchFilter)
-    filterset_class = IncidentsFilter
+    filterset_class = IncidentFilter
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)

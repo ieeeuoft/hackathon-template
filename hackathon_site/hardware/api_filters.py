@@ -13,7 +13,7 @@ class IntegerCSVFilter(filters.BaseInFilter):
     field_class = CSVInputIntegerField
 
 
-class IncidentsFilter(filters.FilterSet):
+class IncidentFilter(filters.FilterSet):
     queryset = Incident
     serializer_class = IncidentSerializer
 
