@@ -44,7 +44,7 @@ class HardwareDetailView(mixins.RetrieveModelMixin, generics.GenericAPIView):
 
 
 class IncidentListView(mixins.ListModelMixin, generics.GenericAPIView):
-    queryset = Incident.objects.all()
+    queryset = Incident.objects.all().select_related("order_item", "order_item__order__team")
     serializer_class = IncidentSerializer
 
     filter_backends = (filters.DjangoFilterBackend, SearchFilter)
