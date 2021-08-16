@@ -137,10 +137,3 @@ class Incident(models.Model):
     def __str__(self):
         return f"{self.id}"
 
-    @property
-    def order__team(self):
-        return self.order_item.order.team.id
-
-    @property
-    def hardware__id(self):
-        return self.order_item.hardware.id

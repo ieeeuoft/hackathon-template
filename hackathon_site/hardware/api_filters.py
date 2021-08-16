@@ -17,10 +17,10 @@ class IncidentFilter(filters.FilterSet):
     queryset = Incident
     serializer_class = IncidentSerializer
 
-    order_item__hardware__id = filters.NumberFilter(label="order_item__hardware__id")
-    order_item__order__team__id = filters.NumberFilter(
-        label="order_item__order__team__id"
-    )
+
+
+    hardware_id = filters.NumberFilter(field_name="order_item__hardware__id")
+    team_id = filters.NumberFilter(field_name="order_item__order__team__id")
 
 
 class HardwareFilter(filters.FilterSet):
