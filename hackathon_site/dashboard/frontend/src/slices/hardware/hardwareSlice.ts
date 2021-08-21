@@ -7,7 +7,7 @@ import {
 } from "@reduxjs/toolkit";
 import { RootState } from "slices/store";
 
-import { APIResponse, Hardware, HardwareFilters } from "api/types";
+import { APIResponse, Hardware, HardwareFilters, HardwareOrdering } from "api/types";
 import { get } from "api/api";
 import { displaySnackbar } from "slices/ui/uiSlice";
 
@@ -73,16 +73,23 @@ const hardwareSlice = createSlice({
          * Update the filters for the Hardware API
          *
          * To clear a particular filter, set the field to undefined.
-         * Because of something in RTK, that will unset the filter
-         * (normally, spreads don't work that way).
          */
         setFilters: (
             state: HardwareState,
             { payload }: PayloadAction<HardwareFilters>
         ) => {
-            state.filters = {
+            const { in_stock, hardware_ids, category_ids, search, ordering } = {
                 ...state.filters,
                 ...payload,
+            };
+
+            // Remove values that are empty or falsy
+            state.filters = {
+                ...(in_stock && { in_stock }),
+                ...(hardware_ids && hardware_ids.length > 0 && { hardware_ids }),
+                ...(category_ids && category_ids.length > 0 && { category_ids }),
+                ...(search && { search }),
+                ...(ordering && { ordering }),
             };
         },
 

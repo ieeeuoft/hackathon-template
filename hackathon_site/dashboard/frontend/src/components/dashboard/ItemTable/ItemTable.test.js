@@ -24,7 +24,7 @@ import {
     itemsReturned,
     itemsBroken,
 } from "testing/mockData";
-import { withStore } from "testing/helpers";
+import { withStore } from "testing/utils";
 
 const mockStore = configureStore();
 

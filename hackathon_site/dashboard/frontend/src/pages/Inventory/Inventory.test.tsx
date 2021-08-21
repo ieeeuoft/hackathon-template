@@ -1,7 +1,7 @@
 import React from "react";
 import { render } from "@testing-library/react";
 import Inventory from "pages/Inventory/Inventory";
-import { withStoreAndRouter } from "testing/helpers";
+import { withStoreAndRouter } from "testing/utils";
 import { inventoryItems } from "testing/mockData";
 
 test("renders without crashing", () => {

@@ -1,7 +1,7 @@
 import React from "react";
 import { render } from "@testing-library/react";
 import LoginPage from "./Login";
-import { withStoreAndRouter } from "testing/helpers";
+import { withStoreAndRouter } from "testing/utils";
 
 describe("<LoginPage />", () => {
     it("Renders with title and cookie text", () => {

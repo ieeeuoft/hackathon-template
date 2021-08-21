@@ -1,160 +1,104 @@
 import React from "react";
-import {
-    EnhancedInventoryFilter,
-    orderByOptions,
-} from "components/inventory/InventoryFilter/InventoryFilter";
-import { render, fireEvent, waitFor } from "@testing-library/react";
+import InventoryFilter from "components/inventory/InventoryFilter/InventoryFilter";
+import { render, fireEvent, waitFor, act } from "@testing-library/react";
+
+import { get } from "api/api";
 import { inventoryCategories } from "testing/mockData";
+import { withStore } from "testing/utils";
+import { makeStore, RootState } from "slices/store";
+import { hardwareReducerName, initialState } from "slices/hardware/hardwareSlice";
+import { HardwareFilters } from "api/types";
+import { DeepPartial } from "redux";
 
-describe("<EnhancedInventoryFilter />", () => {
-    it("Calls handleSubmit when the 'Apply' button is clicked", async () => {
-        const handleSubmitSpy = jest.fn();
+jest.mock("api/api");
 
-        const { getByText } = render(
-            <EnhancedInventoryFilter
-                handleReset={() => {}}
-                handleSubmit={handleSubmitSpy}
-                isApplyLoading={false}
-                isClearLoading={false}
-            />
-        );
-        const button = getByText("Apply");
-        fireEvent.click(button);
+describe("<InventoryFilter />", () => {
+    /* Inventory filter tests
+     *
+     * Rather than testing just the unconnected inventory filter and using
+     * mocks for redux actions, these tests are closer to integration tests.
+     * They directly test the connected filter, and assert all the way on
+     * the level of the (mocked) API requests.
+     */
+
+    it("Submits selected filters", async () => {
+        const { getByText } = render(withStore(<InventoryFilter />));
+
+        const orderByNameButton = getByText("Z-A");
+        const inStockCheckbox = getByText("In stock");
+
+        // TODO: Once categories are connected to the store,
+        //  some mocking will be required to populate this data
+        const mcuCheckbox = getByText("MCU_limit_3");
+        const FPGACheckbox = getByText("FPGA");
+
+        const applyButton = getByText("Apply");
+
+        fireEvent.click(orderByNameButton);
+        fireEvent.click(inStockCheckbox);
+        fireEvent.click(mcuCheckbox);
+        fireEvent.click(FPGACheckbox);
+        fireEvent.click(applyButton);
+
+        const expectedFilters: HardwareFilters = {
+            ordering: "-name",
+            in_stock: true,
+            category_ids: [2, 3],
+        };
 
         await waitFor(() => {
-            expect(handleSubmitSpy).toHaveBeenCalled();
+            expect(get).toHaveBeenCalledWith(expect.anything(), expectedFilters);
         });
     });
 
-    it("Calls handleReset when the 'Clear all' button is clicked", async () => {
-        const handleResetSpy = jest.fn();
+    it("Clears filters when toggled", async () => {
+        const { getByText } = render(withStore(<InventoryFilter />));
 
-        const { getByText } = render(
-            <EnhancedInventoryFilter
-                handleReset={handleResetSpy}
-                handleSubmit={() => {}}
-                isApplyLoading={false}
-                isClearLoading={false}
-            />
-        );
+        const orderByNameButton = getByText("Z-A");
+        const inStockCheckbox = getByText("In stock");
+        const FPGACheckbox = getByText("FPGA");
+        const applyButton = getByText("Apply");
 
-        const button = getByText("Clear all");
-        fireEvent.click(button);
+        fireEvent.click(orderByNameButton);
+        fireEvent.click(inStockCheckbox);
+        fireEvent.click(FPGACheckbox);
+
+        fireEvent.click(inStockCheckbox);
+        fireEvent.click(FPGACheckbox);
+        fireEvent.click(applyButton);
+
+        const expectedFilters: HardwareFilters = {
+            ordering: "-name",
+        };
 
         await waitFor(() => {
-            expect(handleResetSpy).toHaveBeenCalled();
+            expect(get).toHaveBeenCalledWith(expect.anything(), expectedFilters);
         });
     });
 
-    it("Checks that all labels of form are in there", () => {
-        const handleSubmitSpy = jest.fn();
+    it("Disables the clear and apply buttons when loading", async () => {
+        const preloadedState: DeepPartial<RootState> = {
+            [hardwareReducerName]: {
+                ...initialState,
+                isLoading: true,
+            },
+        };
+        const store = makeStore(preloadedState);
 
-        const { queryByText, getByText } = render(
-            <EnhancedInventoryFilter
-                handleReset={() => {}}
-                handleSubmit={handleSubmitSpy}
-                isApplyLoading={false}
-                isClearLoading={false}
-            />
-        );
+        const { getByText } = render(withStore(<InventoryFilter />, store));
+
+        const applyButton = getByText("Apply");
+        const clearButton = getByText(/clear all/i);
+
+        expect(applyButton.closest("button")).toBeDisabled();
+        expect(clearButton.closest("button")).toBeDisabled();
+    });
+
+    it("Renders options for each category", () => {
+        const { getByText } = render(withStore(<InventoryFilter />));
+
         for (let c of inventoryCategories) {
-            expect(queryByText(c.name)).toBeTruthy();
+            expect(getByText(c.name)).toBeInTheDocument();
         }
-        for (let o of orderByOptions) {
-            expect(queryByText(o.label)).toBeTruthy();
-        }
-        expect(getByText("Order by")).toBeInTheDocument();
-        expect(getByText("Availability")).toBeInTheDocument();
-        expect(getByText("Categories")).toBeInTheDocument();
-    });
-
-    it("Submits the form, then clears it, and receives the expected values", async () => {
-        const handleSubmitSpy = jest.fn();
-        const handleResetSpy = jest.fn();
-        let order_by = "name";
-        let in_stock = true;
-        let categories = [1];
-
-        const { findByLabelText, findByText } = render(
-            <EnhancedInventoryFilter
-                handleSubmit={handleSubmitSpy}
-                handleReset={handleResetSpy}
-                isApplyLoading={false}
-                isClearLoading={false}
-            />
-        );
-
-        const orderByInput = await findByLabelText("A-Z");
-        const inStockInput = await findByLabelText("In stock");
-        const inventoryCategoriesInput = await findByLabelText("MCU");
-        const buttonSubmit = await findByText("Apply");
-        const buttonClear = await findByText("Clear all");
-
-        // Select checkboxes/radio buttons and submit
-        fireEvent.click(orderByInput);
-        fireEvent.click(inStockInput);
-        fireEvent.click(inventoryCategoriesInput);
-        fireEvent.click(buttonSubmit);
-
-        await waitFor(() => {
-            expect(handleSubmitSpy).toHaveBeenCalledWith({
-                order_by,
-                in_stock,
-                categories,
-            });
-        });
-
-        order_by = "";
-        in_stock = false;
-        categories = [];
-
-        // Clear form
-        fireEvent.click(buttonClear);
-
-        await waitFor(() => {
-            expect(handleResetSpy).toHaveBeenCalledWith({
-                order_by,
-                in_stock,
-                categories,
-            });
-        });
-    });
-
-    it("Displays a loading wheel on Apply button when loading", () => {
-        const { getByTestId, queryByTestId, getByText } = render(
-            <EnhancedInventoryFilter
-                handleReset={() => {}}
-                handleSubmit={() => {}}
-                isApplyLoading={true}
-                isClearLoading={false}
-            />
-        );
-
-        const applyBtn = getByText("Apply");
-        const clearBtn = getByText("Clear all");
-
-        expect(getByTestId("circularProgressApply")).toBeInTheDocument();
-        expect(queryByTestId("circularProgressClear")).not.toBeInTheDocument();
-        expect(applyBtn.closest("button")).toBeDisabled();
-        expect(clearBtn.closest("button")).toBeDisabled();
-    });
-
-    it("Displays a loading wheel on Clear all button when loading", () => {
-        const { getByTestId, queryByTestId, getByText } = render(
-            <EnhancedInventoryFilter
-                handleReset={() => {}}
-                handleSubmit={() => {}}
-                isApplyLoading={false}
-                isClearLoading={true}
-            />
-        );
-
-        const applyBtn = getByText("Apply");
-        const clearBtn = getByText("Clear all");
-
-        expect(queryByTestId("circularProgressApply")).not.toBeInTheDocument();
-        expect(getByTestId("circularProgressClear")).toBeInTheDocument();
-        expect(applyBtn.closest("button")).toBeDisabled();
-        expect(clearBtn.closest("button")).toBeDisabled();
     });
 });

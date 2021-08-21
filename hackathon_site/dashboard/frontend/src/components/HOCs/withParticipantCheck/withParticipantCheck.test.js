@@ -6,7 +6,7 @@ import { push } from "connected-react-router";
 
 import { userReducerName, fetchUserData } from "slices/users/userSlice";
 import { displaySnackbar } from "slices/ui/uiSlice";
-import { withStore } from "testing/helpers";
+import { withStore } from "testing/utils";
 import { mockUser } from "testing/mockData";
 import withParticipantCheck from "./withParticipantCheck";
 

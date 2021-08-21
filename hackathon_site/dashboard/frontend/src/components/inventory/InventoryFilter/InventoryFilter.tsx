@@ -1,7 +1,6 @@
 import React from "react";
 import styles from "./InventoryFilter.module.scss";
 import { Formik, Field, FieldProps, FormikValues } from "formik";
-
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import Chip from "@material-ui/core/Chip";
@@ -13,7 +12,6 @@ import RadioGroup from "@material-ui/core/RadioGroup";
 import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import { inventoryCategories } from "testing/mockData";
-import CircularProgress from "@material-ui/core/CircularProgress";
 
 import { Category, HardwareFilters, HardwareOrdering } from "api/types";
 import { connect, ConnectedProps } from "react-redux";
@@ -97,16 +95,14 @@ interface InventoryFilterValues {
 
 type InventoryFilterProps = FormikValues & {
     categories: Category[];
-    isApplyLoading: boolean;
-    isClearLoading: boolean;
+    isLoading: boolean;
 };
 
 export const InventoryFilter = ({
     handleReset,
     handleSubmit,
     categories,
-    isApplyLoading,
-    isClearLoading,
+    isLoading,
 }: InventoryFilterProps) => (
     <div className={styles.filter}>
         <Paper elevation={2} className={styles.filterPaper} square={true}>
@@ -146,16 +142,9 @@ export const InventoryFilter = ({
                 type="reset"
                 color="secondary"
                 onClick={handleReset}
-                disabled={isApplyLoading || isClearLoading}
+                disabled={isLoading}
             >
                 Clear all
-                {isClearLoading && (
-                    <CircularProgress
-                        className={styles.filterCircularProgress}
-                        size={20}
-                        data-testid="circularProgressClear"
-                    />
-                )}
             </Button>
             <Button
                 type="submit"
@@ -164,29 +153,20 @@ export const InventoryFilter = ({
                 variant="contained"
                 fullWidth={true}
                 className={styles.filterBtnsApply}
-                disabled={isApplyLoading || isClearLoading}
+                disabled={isLoading}
                 disableElevation
             >
                 Apply
-                {isApplyLoading && (
-                    <CircularProgress
-                        className={styles.filterCircularProgress}
-                        size={20}
-                        data-testid="circularProgressApply"
-                    />
-                )}
             </Button>
         </div>
     </div>
 );
 
 export const EnhancedInventoryFilter = ({
-    filters,
     getHardwareWithFilters,
     setFilters,
     clearFilters,
-    isApplyLoading,
-    isClearLoading,
+    isLoading,
 }: ConnectedInventoryFilterProps) => {
     const onSubmit = ({ ordering, in_stock, categories }: InventoryFilterValues) => {
         const filters: HardwareFilters = {
@@ -222,8 +202,7 @@ export const EnhancedInventoryFilter = ({
                 <InventoryFilter
                     {...formikProps}
                     categories={inventoryCategories}
-                    isApplyLoading={isApplyLoading}
-                    isClearLoading={isClearLoading}
+                    isLoading={isLoading}
                 />
             )}
         </Formik>
@@ -231,8 +210,7 @@ export const EnhancedInventoryFilter = ({
 };
 
 const mapStateToProps = (state: RootState) => ({
-    isApplyLoading: isLoadingSelector(state),
-    isClearLoading: isLoadingSelector(state),
+    isLoading: isLoadingSelector(state),
     filters: hardwareFiltersSelector(state),
 });
 
