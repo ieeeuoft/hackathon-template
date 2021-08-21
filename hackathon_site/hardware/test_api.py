@@ -319,7 +319,7 @@ class CategoryListViewTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(expected_unique_hardware_counts, actual_unique_hardware_counts)
 
 
-class IncidentsListViewTestCase(SetupUserMixin, APITestCase):
+class IncidentListsViewTestCase(SetupUserMixin, APITestCase):
     def setUp(self):
         super().setUp()
         self.team = Team.objects.create()
@@ -353,7 +353,12 @@ class IncidentsListViewTestCase(SetupUserMixin, APITestCase):
             order_item=self.order_item,
             time_occurred="2021-08-08 00:00:00",
         )
-        self.view = reverse("api:hardware:incidents-list")
+        self.view = reverse("api:hardware:incident-list")
+
+    def _build_filter_url(self, **kwargs):
+        return (
+            self.view + "?" + "&".join([f"{key}={val}" for key, val in kwargs.items()])
+        )
 
     def test_incident_get_success(self):
         self._login()
@@ -369,6 +374,33 @@ class IncidentsListViewTestCase(SetupUserMixin, APITestCase):
         data = response.json()
 
         self.assertEqual(expected_response, data["results"])
+
+
+    def test_hardware_id_filter(self):
+        self._login()
+
+        url = self._build_filter_url(hardware_id="1")
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.json()
+        results = data["results"]
+        print(results)
+        returned_ids = [res["id"] for res in results]
+        self.assertCountEqual(returned_ids, [1])
+
+    def test_team_id_filter(self):
+        self._login()
+
+        url = self._build_filter_url(team_id="1")
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.json()
+        results = data["results"]
+        print(results)
+        returned_ids = [res["id"] for res in results]
+        self.assertCountEqual(returned_ids, [1])
 
 
 class OrderListViewGetTestCase(SetupUserMixin, APITestCase):
