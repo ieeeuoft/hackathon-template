@@ -245,9 +245,6 @@ class IncidentSerializerTestCase(TestCase):
             ),
         }
 
-        print(data)
-        print("\n")
-        print(expected_response)
         self.assertEqual(expected_response, data)
 
 
