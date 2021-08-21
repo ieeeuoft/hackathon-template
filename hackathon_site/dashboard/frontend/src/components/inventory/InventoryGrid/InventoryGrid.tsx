@@ -4,7 +4,7 @@ import styles from "pages/Inventory/Inventory.module.scss";
 import Item from "components/inventory/Item/Item";
 
 import { Hardware } from "api/types";
-import { connect, ConnectedProps } from "react-redux";
+import { connect } from "react-redux";
 import { RootState } from "slices/store";
 import { hardwareSelectors } from "slices/hardware/hardwareSlice";
 import { Typography } from "@material-ui/core";
@@ -50,8 +50,6 @@ const mapStateToProps = (state: RootState) => ({
 });
 
 const connector = connect(mapStateToProps, {});
-
-type ConnectedInventoryGridProps = ConnectedProps<typeof connector>;
 
 export const ConnectedInventoryGrid = connector(UnconnectedInventoryGrid);
 

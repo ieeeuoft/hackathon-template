@@ -1,6 +1,6 @@
-import React, { useEffect } from "react";
+import React from "react";
 import styles from "./InventoryFilter.module.scss";
-import { Formik, Field, FieldProps, FormikValues, FormikHelpers } from "formik";
+import { Formik, Field, FieldProps, FormikValues } from "formik";
 
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
@@ -21,7 +21,7 @@ import {
     hardwareFiltersSelector,
     isLoadingSelector,
     getHardwareWithFilters,
-    updateFilters,
+    setFilters,
     clearFilters,
 } from "slices/hardware/hardwareSlice";
 import { RootState } from "slices/store";
@@ -183,37 +183,24 @@ export const InventoryFilter = ({
 export const EnhancedInventoryFilter = ({
     filters,
     getHardwareWithFilters,
-    updateFilters,
+    setFilters,
     clearFilters,
     isApplyLoading,
     isClearLoading,
 }: ConnectedInventoryFilterProps) => {
-    useEffect(() => {
-        clearFilters();
-        getHardwareWithFilters();
-    }, []);
-
     const onSubmit = ({ ordering, in_stock, categories }: InventoryFilterValues) => {
-        const toSet = {
+        const filters: HardwareFilters = {
             ordering,
             in_stock: in_stock || undefined, // If false, it will be cleared below
-            categories: categories.map((id) => parseInt(id, 10)),
+            category_ids: categories.map((id) => parseInt(id, 10)),
         };
 
-        // let toClear: (keyof HardwareFilters)[] = [];
-        // if (!in_stock) {
-        //     toClear.push("in_stock");
-        // }
-
-        updateFilters({
-            toSet,
-            // toClear,
-        });
+        setFilters(filters);
         getHardwareWithFilters();
     };
 
     const onReset = () => {
-        clearFilters();
+        clearFilters({ saveSearch: true });
         getHardwareWithFilters();
     };
 
@@ -249,9 +236,9 @@ const mapStateToProps = (state: RootState) => ({
     filters: hardwareFiltersSelector(state),
 });
 
-export const connector = connect(mapStateToProps, {
+const connector = connect(mapStateToProps, {
     getHardwareWithFilters,
-    updateFilters,
+    setFilters,
     clearFilters,
 });
 

@@ -1,24 +1,28 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styles from "./Inventory.module.scss";
 import Drawer from "@material-ui/core/Drawer";
 import Header from "components/general/Header/Header";
 import Typography from "@material-ui/core/Typography";
-import TextField from "@material-ui/core/TextField";
 import Divider from "@material-ui/core/Divider";
 import IconButton from "@material-ui/core/IconButton";
 import Hidden from "@material-ui/core/Hidden";
 import Button from "@material-ui/core/Button";
 import RefreshIcon from "@material-ui/icons/Refresh";
-import SearchIcon from "@material-ui/icons/Search";
 import CloseIcon from "@material-ui/icons/Close";
-import InputAdornment from "@material-ui/core/InputAdornment";
 import FilterListIcon from "@material-ui/icons/FilterList";
 import InventoryFilter from "components/inventory/InventoryFilter/InventoryFilter";
 import InventoryGrid from "components/inventory/InventoryGrid/InventoryGrid";
 import ProductOverview from "components/inventory/ProductOverview/ProductOverview";
 import { productInformation } from "testing/mockData";
+import InventorySearch from "components/inventory/InventorySearch/InventorySearch";
+import { RootState } from "slices/store";
+import { connect, ConnectedProps } from "react-redux";
+import { clearFilters, getHardwareWithFilters } from "slices/hardware/hardwareSlice";
 
-const Inventory = () => {
+const UnconnectedInventory = ({
+    clearFilters,
+    getHardwareWithFilters,
+}: ConnectedInventoryProps) => {
     const [mobileOpen, setMobileOpen] = React.useState(false);
     const toggleFilter = () => {
         setMobileOpen(!mobileOpen);
@@ -44,9 +48,15 @@ const Inventory = () => {
     };
 
     // use itemOverviewId to fetch the info from the store
-    React.useEffect(() => console.log("itemOverviewId", itemOverviewId), [
-        itemOverviewId,
-    ]);
+    // React.useEffect(() => console.log("itemOverviewId", itemOverviewId), [
+    //     itemOverviewId,
+    // ]);
+
+    // When the page is loaded, clear filters and fetch fresh inventory data
+    useEffect(() => {
+        clearFilters();
+        getHardwareWithFilters();
+    }, [clearFilters, getHardwareWithFilters]);
 
     return (
         <>
@@ -86,25 +96,7 @@ const Inventory = () => {
                     <div className={styles.inventoryBodyRight}>
                         <div className={styles.inventoryBodyToolbar}>
                             <div className={styles.inventoryBodyToolbarDiv}>
-                                <TextField
-                                    className={styles.inventoryBodyToolbarSearch}
-                                    id="search-input"
-                                    label="Search items"
-                                    variant="outlined"
-                                    type="text"
-                                    InputProps={{
-                                        endAdornment: (
-                                            <InputAdornment position="end">
-                                                <IconButton>
-                                                    <CloseIcon />
-                                                </IconButton>
-                                            </InputAdornment>
-                                        ),
-                                    }}
-                                />
-                                <IconButton color="primary" aria-label="Search">
-                                    <SearchIcon />
-                                </IconButton>
+                                <InventorySearch />
                             </div>
 
                             <Divider
@@ -153,4 +145,12 @@ const Inventory = () => {
     );
 };
 
-export default Inventory;
+const mapStateToProps = (state: RootState) => ({});
+
+const connector = connect(mapStateToProps, { clearFilters, getHardwareWithFilters });
+
+type ConnectedInventoryProps = ConnectedProps<typeof connector>;
+
+export const ConnectedInventory = connector(UnconnectedInventory);
+
+export default ConnectedInventory;

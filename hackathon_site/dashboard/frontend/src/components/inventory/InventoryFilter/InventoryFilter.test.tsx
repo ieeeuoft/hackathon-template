@@ -1,5 +1,6 @@
 import React from "react";
-import EnhancedInventoryFilter, {
+import {
+    EnhancedInventoryFilter,
     orderByOptions,
 } from "components/inventory/InventoryFilter/InventoryFilter";
 import { render, fireEvent, waitFor } from "@testing-library/react";

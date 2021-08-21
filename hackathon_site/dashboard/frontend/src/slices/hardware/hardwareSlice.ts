@@ -31,7 +31,7 @@ export const initialState = hardwareAdapter.getInitialState(extraState);
 export type HardwareState = typeof initialState;
 
 // Thunks
-interface RejectWithValue {
+interface RejectValue {
     status: number;
     message: any;
 }
@@ -39,7 +39,7 @@ interface RejectWithValue {
 export const getHardwareWithFilters = createAsyncThunk<
     APIResponse<Hardware>,
     void,
-    { state: RootState; rejectValue: RejectWithValue }
+    { state: RootState; rejectValue: RejectValue }
 >(
     `${hardwareReducerName}/getHardwareWithFilters`,
     async (_, { dispatch, getState, rejectWithValue }) => {
@@ -65,12 +65,6 @@ export const getHardwareWithFilters = createAsyncThunk<
 
 // Slice
 
-// type SetFilterArgs = Nullable<HardwareFilters>;
-interface UpdateFiltersArgs {
-    toSet: HardwareFilters;
-    toClear?: (keyof HardwareFilters)[];
-}
-
 const hardwareSlice = createSlice({
     name: hardwareReducerName,
     initialState: hardwareAdapter.getInitialState(extraState),
@@ -78,29 +72,18 @@ const hardwareSlice = createSlice({
         /**
          * Update the filters for the Hardware API
          *
-         * To clear a particular filter, pass to the toClear param
-         * */
-        updateFilters: (
-            state: HardwareState,
-            { payload: { toSet, toClear } }: PayloadAction<UpdateFiltersArgs>
-        ) => {
-            // Set what needs to be set
-            state.filters = {
-                ...state.filters,
-                ...toSet,
-            };
-
-            // Delete what needs to be removed
-            if (toClear) {
-                toClear.forEach((k) => delete state.filters[k]);
-            }
-        },
-
+         * To clear a particular filter, set the field to undefined.
+         * Because of something in RTK, that will unset the filter
+         * (normally, spreads don't work that way).
+         */
         setFilters: (
             state: HardwareState,
             { payload }: PayloadAction<HardwareFilters>
         ) => {
-            state.filters = payload;
+            state.filters = {
+                ...state.filters,
+                ...payload,
+            };
         },
 
         clearFilters: (
@@ -139,7 +122,7 @@ const hardwareSlice = createSlice({
 export const { actions, reducer } = hardwareSlice;
 export default reducer;
 
-export const { setFilters, updateFilters, clearFilters } = actions;
+export const { setFilters, clearFilters } = actions;
 
 // Selectors
 export const hardwareSliceSelector = (state: RootState) => state[hardwareReducerName];

@@ -29,8 +29,8 @@ export type HardwareOrdering =
 
 export interface HardwareFilters {
     in_stock?: boolean;
-    ids?: number[];
-    categories?: number[];
+    hardware_ids?: number[];
+    category_ids?: number[];
     search?: string;
     ordering?: HardwareOrdering;
 }
