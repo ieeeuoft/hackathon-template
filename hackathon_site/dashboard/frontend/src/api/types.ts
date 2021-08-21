@@ -13,7 +13,7 @@ export interface Hardware {
     model_number: string;
     manufacturer: string;
     datasheet: string;
-    quantity_available: string;
+    quantity_available: number;
     max_per_team: number;
     picture: string;
     categories: number[];
