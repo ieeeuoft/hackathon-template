@@ -1,12 +1,13 @@
 from django.test import TestCase
 from rest_framework import serializers
 
-from hardware.models import Hardware, Category, Order, OrderItem
+from hardware.models import Hardware, Category, Order, OrderItem, Incident
 from event.models import Team
 from hardware.serializers import (
     HardwareSerializer,
     CategorySerializer,
     OrderListSerializer,
+    IncidentSerializer,
 )
 
 
@@ -181,6 +182,67 @@ class CategorySerializerTestCase(TestCase):
             "max_per_team": 4,
             "unique_hardware_count": 1,
         }
+        self.assertEqual(expected_response, data)
+
+
+class IncidentSerializerTestCase(TestCase):
+    def setUp(self):
+        self.team = Team.objects.create()
+        self.order = Order.objects.create(status="Picked Up", team=self.team)
+
+        self.category = Category.objects.create(name="category", max_per_team=4)
+        self.hardware = Hardware.objects.create(
+            name="name",
+            model_number="model",
+            manufacturer="manufacturer",
+            datasheet="/datasheet/location/",
+            quantity_available=4,
+            max_per_team=1,
+            picture="/picture/location",
+        )
+
+        self.order_item_1 = OrderItem.objects.create(
+            order=self.order, hardware=self.hardware, part_returned_health="Healthy"
+        )
+        self.incident = Incident.objects.create(
+            state="Broken",
+            description="Description",
+            time_occurred=serializers.DateTimeField().to_representation(
+                self.order.created_at
+            ),
+            created_at=serializers.DateTimeField().to_representation(
+                self.order.created_at
+            ),
+            updated_at=serializers.DateTimeField().to_representation(
+                self.order.created_at
+            ),
+            order_item_id=self.order_item_1.id,
+        )
+
+    def test_base(self):
+        incident_serializer = IncidentSerializer(self.incident)
+        data = incident_serializer.data
+        data["order_item"] = dict(data["order_item"])
+        expected_response = {
+            "id": 1,
+            "state": "Broken",
+            "time_occurred": serializers.DateTimeField().to_representation(
+                self.order.created_at
+            ),
+            "description": "Description",
+            "order_item": {'id': 1, 'hardware': 1, 'order': 1, 'part_returned_health': 'Healthy'},
+            "team_id": 1,
+            "created_at": serializers.DateTimeField().to_representation(
+                self.incident.created_at
+            ),
+            "updated_at": serializers.DateTimeField().to_representation(
+                self.incident.updated_at
+            ),
+        }
+
+        print(data)
+        print("\n")
+        print(expected_response)
         self.assertEqual(expected_response, data)
 
 
