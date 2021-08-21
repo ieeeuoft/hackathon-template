@@ -230,7 +230,12 @@ class IncidentSerializerTestCase(TestCase):
                 self.order.created_at
             ),
             "description": "Description",
-            "order_item": {'id': 1, 'hardware': 1, 'order': 1, 'part_returned_health': 'Healthy'},
+            "order_item": {
+                "id": 1,
+                "hardware": 1,
+                "order": 1,
+                "part_returned_health": "Healthy",
+            },
             "team_id": 1,
             "created_at": serializers.DateTimeField().to_representation(
                 self.incident.created_at

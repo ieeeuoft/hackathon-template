@@ -375,7 +375,6 @@ class IncidentListsViewTestCase(SetupUserMixin, APITestCase):
 
         self.assertEqual(expected_response, data["results"])
 
-
     def test_hardware_id_filter(self):
         self._login()
 
