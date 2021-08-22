@@ -1,12 +1,14 @@
 from datetime import datetime, timedelta
 
+from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
+from django.db.models import Q
+from django.http import HttpResponseBadRequest
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
-from django.conf import settings
 
 from hackathon_site.utils import is_registration_open
 from registration.forms import JoinTeamForm
@@ -17,6 +19,8 @@ from rest_framework import generics, mixins
 from event.models import Team as EventTeam
 from event.serializers import TeamSerializer
 from event.permissions import UserHasProfile
+
+from hardware.models import OrderItem
 
 
 def _now():
@@ -208,4 +212,15 @@ class LeaveTeamView(generics.GenericAPIView):
 
     @transaction.atomic
     def post(self, request, *args, **kwargs):
+        profile = request.user.profile
+        team = profile.team
+
+        # Raise 400 if team has active orders
+        active_orders = OrderItem.objects.filter(
+            Q(part_returned_health__isnull=True),
+            ~Q(order__status="Cancelled"),
+            Q(order__team=team),
+        )
+        if active_orders.exists():
+            return HttpResponseBadRequest("Cannot leave a team with active orders")
         pass
