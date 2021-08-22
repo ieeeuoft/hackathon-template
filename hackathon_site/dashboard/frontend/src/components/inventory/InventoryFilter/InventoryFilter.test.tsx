@@ -1,16 +1,27 @@
 import React from "react";
-import InventoryFilter from "components/inventory/InventoryFilter/InventoryFilter";
-import { render, fireEvent, waitFor, act } from "@testing-library/react";
+import { render, fireEvent, waitFor } from "@testing-library/react";
 
+import InventoryFilter from "components/inventory/InventoryFilter/InventoryFilter";
 import { get } from "api/api";
 import { inventoryCategories } from "testing/mockData";
 import { withStore } from "testing/utils";
 import { makeStore, RootState } from "slices/store";
-import { hardwareReducerName, initialState } from "slices/hardware/hardwareSlice";
+import {
+    hardwareReducerName,
+    HardwareState,
+    initialState,
+} from "slices/hardware/hardwareSlice";
 import { HardwareFilters } from "api/types";
 import { DeepPartial } from "redux";
 
 jest.mock("api/api");
+
+const makeState = (overrides: Partial<HardwareState>): DeepPartial<RootState> => ({
+    [hardwareReducerName]: {
+        ...initialState,
+        ...overrides,
+    },
+});
 
 describe("<InventoryFilter />", () => {
     /* Inventory filter tests
@@ -76,13 +87,32 @@ describe("<InventoryFilter />", () => {
         });
     });
 
-    it("Disables the clear and apply buttons when loading", async () => {
-        const preloadedState: DeepPartial<RootState> = {
-            [hardwareReducerName]: {
-                ...initialState,
-                isLoading: true,
-            },
+    it("Clears filters when the clear button is clicked", async () => {
+        const initialFilters: HardwareFilters = {
+            in_stock: true,
+            ordering: "-name",
+            category_ids: [1, 2],
+            search: "abc123",
         };
+
+        const preloadedState = makeState({ filters: initialFilters });
+        const store = makeStore(preloadedState);
+
+        const { getByText } = render(withStore(<InventoryFilter />, store));
+
+        const clearButton = getByText(/clear all/i);
+
+        fireEvent.click(clearButton);
+
+        const expectedFilters = { search: "abc123" };
+
+        await waitFor(() => {
+            expect(get).toHaveBeenCalledWith(expect.anything(), expectedFilters);
+        });
+    });
+
+    it("Disables the clear and apply buttons when loading", async () => {
+        const preloadedState = makeState({ isLoading: true });
         const store = makeStore(preloadedState);
 
         const { getByText } = render(withStore(<InventoryFilter />, store));

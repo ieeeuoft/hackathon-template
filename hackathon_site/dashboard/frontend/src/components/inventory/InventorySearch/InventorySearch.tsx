@@ -36,7 +36,7 @@ export const InventorySearch = ({
             InputProps={{
                 endAdornment: (
                     <InputAdornment position="end">
-                        <IconButton onClick={handleReset}>
+                        <IconButton onClick={handleReset} data-testid="clear-button">
                             <CloseIcon />
                         </IconButton>
                     </InputAdornment>
@@ -45,8 +45,13 @@ export const InventorySearch = ({
             value={search}
             onChange={handleChange}
         />
-        <IconButton color="primary" aria-label="Search">
-            <SearchIcon onClick={handleSubmit} />
+        <IconButton
+            color="primary"
+            aria-label="Search"
+            onClick={handleSubmit}
+            data-testid="search-button"
+        >
+            <SearchIcon />
         </IconButton>
     </form>
 );
