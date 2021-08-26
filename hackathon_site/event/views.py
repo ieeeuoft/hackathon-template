@@ -12,6 +12,7 @@ from django.views.generic.edit import FormView
 from drf_yasg.utils import swagger_auto_schema
 
 from rest_framework import generics, mixins, status
+from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
 from hackathon_site.utils import is_registration_open
@@ -220,14 +221,12 @@ class LeaveTeamView(generics.GenericAPIView):
 
         # Raise 400 if team has active orders
         active_orders = OrderItem.objects.filter(
-            Q(part_returned_health__isnull=True),
-            ~Q(order__status="Cancelled"),
-            Q(order__team=team),
+            ~Q(order__status="Cancelled"), Q(order__team=team),
         )
         if active_orders.exists():
-            return Response(
-                "Cannot leave a team with active orders",
-                status=status.HTTP_400_BAD_REQUEST,
+            raise ValidationError(
+                {"detail": "Cannot leave a team with already processed orders"},
+                code=status.HTTP_400_BAD_REQUEST,
             )
 
         # create new team
