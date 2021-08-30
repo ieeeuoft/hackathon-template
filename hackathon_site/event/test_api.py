@@ -87,3 +87,5 @@ class CurrentTeamTestCase(SetupUserMixin, APITestCase):
         serializer = TeamSerializer(team_expected)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json(), serializer.data)
+
+class

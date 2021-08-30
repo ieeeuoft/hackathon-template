@@ -7,6 +7,11 @@ from django.urls import reverse_lazy
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
 from django.conf import settings
+from drf_yasg.utils import swagger_auto_schema
+
+from rest_framework import generics, mixins, status
+from rest_framework.exceptions import ValidationError
+from rest_framework.response import Response
 
 from hackathon_site.utils import is_registration_open
 from registration.forms import JoinTeamForm
@@ -16,6 +21,7 @@ from rest_framework import generics, mixins
 
 from event.models import Team as EventTeam
 from event.serializers import TeamSerializer
+from event.permissions import UserHasProfile
 
 
 def _now():
@@ -200,3 +206,17 @@ class DashboardView(LoginRequiredMixin, FormView):
         at once.
         """
         return super().post(request, *args, **kwargs)
+
+class JoinTeamView(generics.GenericAPIView):
+    permission_classes = [UserHasProfile]
+
+    @transaction.atomic
+    @swagger_auto_schema(responses={201: TeamSerializer})
+    def post(self,request,*args,**kwargs):
+        profile = request.user.profile
+        team = profile.team
+
+        response_serializer = TeamSerializer(profile.team)
+        response_data = response_serializer.data
+        return Response(data=response_data, status=status.HTTP_201_CREATED,)
+
