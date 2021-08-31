@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosResponse as _AxiosResponse } from "axios";
 
 export const SERVER_URL =
     process.env.NODE_ENV === "development"
@@ -33,14 +33,20 @@ const makeConfig = () => ({
     withCredentials: true,
 });
 
-export const get = (uri: string, params?: { [key: string]: any }) => {
+// Re-export the response type, so it's available without needing to import axios
+export type AxiosResponse<T> = _AxiosResponse;
+
+export const get = <T>(
+    uri: string,
+    params?: { [key: string]: any }
+): Promise<AxiosResponse<T>> => {
     uri = cleanURI(uri);
 
     if (params) {
         uri += "?" + new URLSearchParams(params).toString();
     }
 
-    return axios.get(`${SERVER_URL}/${uri}`, makeConfig());
+    return axios.get<T>(`${SERVER_URL}/${uri}`, makeConfig());
 };
 
 export const post = (uri: string, data: any) => {

@@ -5,9 +5,9 @@ import {
     createSelector,
     createAsyncThunk,
 } from "@reduxjs/toolkit";
-import { RootState } from "slices/store";
+import { RootState, AppDispatch } from "slices/store";
 
-import { APIResponse, Hardware, HardwareFilters, HardwareOrdering } from "api/types";
+import { APIListResponse, Hardware, HardwareFilters } from "api/types";
 import { get } from "api/api";
 import { displaySnackbar } from "slices/ui/uiSlice";
 
@@ -37,16 +37,19 @@ interface RejectValue {
 }
 
 export const getHardwareWithFilters = createAsyncThunk<
-    APIResponse<Hardware>,
+    APIListResponse<Hardware>,
     void,
-    { state: RootState; rejectValue: RejectValue }
+    { state: RootState; rejectValue: RejectValue; dispatch: AppDispatch }
 >(
     `${hardwareReducerName}/getHardwareWithFilters`,
     async (_, { dispatch, getState, rejectWithValue }) => {
         const filters = hardwareFiltersSelector(getState());
 
         try {
-            const response = await get("/api/hardware/hardware/", filters);
+            const response = await get<APIListResponse<Hardware>>(
+                "/api/hardware/hardware/",
+                filters
+            );
             return response.data;
         } catch (e) {
             dispatch(

@@ -1,7 +1,7 @@
 import { combineReducers, DeepPartial, StateFromReducersMapObject } from "redux";
 import { configureStore, getDefaultMiddleware } from "@reduxjs/toolkit";
 import { connectRouter, routerMiddleware } from "connected-react-router";
-import { createBrowserHistory, History } from "history";
+import { createBrowserHistory } from "history";
 
 import userReducer, { userReducerName } from "slices/users/userSlice";
 import uiReducer, { uiReducerName } from "slices/ui/uiSlice";
@@ -30,3 +30,5 @@ export const store = makeStore();
 export default store;
 
 export type RootState = StateFromReducersMapObject<typeof reducers>;
+export type RootStore = typeof store;
+export type AppDispatch = typeof store.dispatch;
