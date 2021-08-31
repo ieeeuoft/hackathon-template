@@ -6,7 +6,7 @@ from event.models import Team
 from hardware.serializers import (
     HardwareSerializer,
     CategorySerializer,
-    OrderSerializer,
+    OrderListSerializer,
 )
 
 
@@ -22,12 +22,19 @@ class HardwareSerializerTestCase(TestCase):
             picture="/picture/location",
         )
 
+        self.category1 = Category.objects.create(name="category1", max_per_team=4)
+        self.category2 = Category.objects.create(name="category2", max_per_team=4)
+
+        self.hardware.categories.add(self.category1, self.category2)
+
     def test_base_case_no_order_items(self):
+        self.hardware.refresh_from_db()
         hardware_serializer = HardwareSerializer(self.hardware)
+
         expected_response = {
             "id": 1,
             "name": "name",
-            "categories": [],
+            "categories": [self.category1.id, self.category2.id],
             "model_number": "model",
             "manufacturer": "manufacturer",
             "datasheet": "/datasheet/location/",
@@ -41,15 +48,18 @@ class HardwareSerializerTestCase(TestCase):
         data = hardware_serializer.data
         self.assertEqual(expected_response, data)
 
-    def test_some_items_in_cart(self):
-        hardware_serializer = HardwareSerializer(self.hardware)
+    def test_some_items_cancelled(self):
         team = Team.objects.create()
-        order = Order.objects.create(status="Cart", team=team)
+        order = Order.objects.create(status="Cancelled", team=team)
         order_item_1 = OrderItem.objects.create(order=order, hardware=self.hardware,)
+
+        self.hardware.refresh_from_db()
+        hardware_serializer = HardwareSerializer(self.hardware)
+
         expected_response = {
             "id": 1,
             "name": "name",
-            "categories": [],
+            "categories": [self.category1.id, self.category2.id],
             "model_number": "model",
             "manufacturer": "manufacturer",
             "datasheet": "/datasheet/location/",
@@ -63,18 +73,19 @@ class HardwareSerializerTestCase(TestCase):
         self.assertEqual(expected_response, data)
 
     def test_some_items_returned(self):
-        hardware_serializer = HardwareSerializer(self.hardware)
         team = Team.objects.create()
         order = Order.objects.create(status="Picked Up", team=team)
         order_item_1 = OrderItem.objects.create(
             order=order, hardware=self.hardware, part_returned_health="Healthy"
         )
         order_item_2 = OrderItem.objects.create(order=order, hardware=self.hardware,)
+        self.hardware.refresh_from_db()
+        hardware_serializer = HardwareSerializer(self.hardware)
 
         expected_response = {
             "id": 1,
             "name": "name",
-            "categories": [],
+            "categories": [self.category1.id, self.category2.id],
             "model_number": "model",
             "manufacturer": "manufacturer",
             "datasheet": "/datasheet/location/",
@@ -86,6 +97,54 @@ class HardwareSerializerTestCase(TestCase):
         }
         data = hardware_serializer.data
         self.assertEqual(expected_response, data)
+
+
+class HardwareQuantityRemainingTestCase(TestCase):
+    def setUp(self):
+        self.hardware = Hardware.objects.create(
+            name="name",
+            model_number="model",
+            manufacturer="manufacturer",
+            datasheet="/datasheet/location/",
+            quantity_available=4,
+            max_per_team=1,
+            picture="/picture/location",
+        )
+
+    def test_base_case_no_order_items(self):
+        hardware_serializer = HardwareSerializer(
+            Hardware.objects.get(pk=self.hardware.pk)
+        )
+        self.assertEqual(hardware_serializer.data["quantity_remaining"], 4)
+
+    def test_some_items_none_returned(self):
+        team = Team.objects.create()
+        order = Order.objects.create(status="Picked Up", team=team)
+        order_item_1 = OrderItem.objects.create(order=order, hardware=self.hardware,)
+        order_item_2 = OrderItem.objects.create(order=order, hardware=self.hardware,)
+        self.hardware.refresh_from_db()
+        hardware_serializer = HardwareSerializer(self.hardware)
+        self.assertEqual(hardware_serializer.data["quantity_remaining"], 2)
+
+    def test_some_items_returned(self):
+        team = Team.objects.create()
+        order = Order.objects.create(status="Picked Up", team=team)
+        order_item_1 = OrderItem.objects.create(
+            order=order, hardware=self.hardware, part_returned_health="Healthy"
+        )
+        order_item_2 = OrderItem.objects.create(order=order, hardware=self.hardware,)
+        self.hardware.refresh_from_db()
+        hardware_serializer = HardwareSerializer(self.hardware)
+        self.assertEqual(hardware_serializer.data["quantity_remaining"], 3)
+
+    def test_some_items_cancelled(self):
+        team = Team.objects.create()
+        order = Order.objects.create(status="Cancelled", team=team)
+        order_item_1 = OrderItem.objects.create(order=order, hardware=self.hardware,)
+        order_item_2 = OrderItem.objects.create(order=order, hardware=self.hardware,)
+        self.hardware.refresh_from_db()
+        hardware_serializer = HardwareSerializer(self.hardware)
+        self.assertEqual(hardware_serializer.data["quantity_remaining"], 4)
 
 
 class CategorySerializerTestCase(TestCase):
@@ -125,7 +184,7 @@ class CategorySerializerTestCase(TestCase):
         self.assertEqual(expected_response, data)
 
 
-class OrderSerializerTestCase(TestCase):
+class OrderListSerializerTestCase(TestCase):
     def setUp(self):
         self.team = Team.objects.create()
         self.hardware = Hardware.objects.create(
@@ -149,7 +208,7 @@ class OrderSerializerTestCase(TestCase):
 
     def test_empty_order(self):
         order = Order.objects.create(status="Cart", team=self.team)
-        order_serializer = OrderSerializer(order).data
+        order_serializer = OrderListSerializer(order).data
         expected_response = {
             "id": 1,
             "team": self.team.id,
@@ -172,7 +231,9 @@ class OrderSerializerTestCase(TestCase):
         OrderItem.objects.create(
             order=order, hardware=self.other_hardware,
         )
-        order_serializer = OrderSerializer(order).data
+        self.hardware.refresh_from_db()
+        self.other_hardware.refresh_from_db()
+        order_serializer = OrderListSerializer(order).data
         expected_response = {
             "id": 1,
             "team": self.team.id,

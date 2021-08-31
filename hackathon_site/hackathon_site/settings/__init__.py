@@ -66,6 +66,7 @@ INSTALLED_APPS = [
     "dj_rest_auth",
     "drf_yasg",
     "import_export",
+    "django_filters",
     "dashboard",
     "registration",
     "event",
@@ -169,6 +170,7 @@ REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
     "PAGE_SIZE": 100,
+    "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend",],
 }
 
 # Internationalization
@@ -246,6 +248,11 @@ LOGGING = {
             "propagate": False,
         },
         "review": {"handlers": ["console", "console_errors"], "propagate": False},
+        "hardware": {
+            "handlers": ["console", "console_errors", "mail_admins"],
+            "level": "ERROR",
+            "propagate": False,
+        },
     },
 }
 
@@ -258,6 +265,9 @@ REGISTRATION_OPEN_DATE = datetime(2020, 9, 1, tzinfo=TZ_INFO)
 REGISTRATION_CLOSE_DATE = datetime(2023, 9, 30, tzinfo=TZ_INFO)
 EVENT_START_DATE = datetime(2023, 10, 10, 10, 0, 0, tzinfo=TZ_INFO)
 EVENT_END_DATE = datetime(2023, 10, 11, 17, 0, 0, tzinfo=TZ_INFO)
+
+# Registration user requirements
+MINIMUM_AGE = 14
 
 # Registration settings
 ACCOUNT_ACTIVATION_DAYS = 7
