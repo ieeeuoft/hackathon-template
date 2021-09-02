@@ -206,17 +206,3 @@ class DashboardView(LoginRequiredMixin, FormView):
         at once.
         """
         return super().post(request, *args, **kwargs)
-
-class JoinTeamView(generics.GenericAPIView):
-    permission_classes = [UserHasProfile]
-
-    @transaction.atomic
-    @swagger_auto_schema(responses={201: TeamSerializer})
-    def post(self,request,*args,**kwargs):
-        profile = request.user.profile
-        team = profile.team
-
-        response_serializer = TeamSerializer(profile.team)
-        response_data = response_serializer.data
-        return Response(data=response_data, status=status.HTTP_201_CREATED,)
-
