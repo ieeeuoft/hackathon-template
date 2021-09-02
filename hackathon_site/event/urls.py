@@ -1,7 +1,12 @@
 from django.contrib.auth import views as auth_views
 from django.urls import path, reverse_lazy
 from event.views import IndexView, DashboardView
-from event.forms import PasswordChangeForm, PasswordResetForm, SetPasswordForm
+from event.forms import (
+    PasswordChangeForm,
+    PasswordResetForm,
+    SetPasswordForm,
+    AuthenticationForm,
+)
 
 app_name = "event"
 
@@ -9,7 +14,9 @@ urlpatterns = [
     path("", IndexView.as_view(), name="index"),
     path(
         "accounts/login/",
-        auth_views.LoginView.as_view(template_name="event/login.html"),
+        auth_views.LoginView.as_view(
+            template_name="event/login.html", form_class=AuthenticationForm
+        ),
         name="login",
     ),
     path("accounts/logout/", auth_views.LogoutView.as_view(), name="logout",),

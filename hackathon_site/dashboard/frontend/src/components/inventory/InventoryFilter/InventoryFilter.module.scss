@@ -3,7 +3,7 @@
 
 .filter {
     height: 100%;
-    @include flexPosition($jusCon: space-between, $alIte: center, $dir: column);
+    @include flexPosition($alIte: center, $dir: column);
 
     span {
         font-size: 14px !important;
@@ -30,8 +30,6 @@
     }
     &Btns {
         @include flexPosition($jusCon: space-between, $alIte: center);
-        position: sticky;
-        bottom: 0;
         width: 100%;
         padding: 15px 10px;
         &Apply {

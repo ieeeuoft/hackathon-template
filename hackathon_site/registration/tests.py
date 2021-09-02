@@ -1,7 +1,9 @@
 from django.test import TestCase
 from unittest.mock import MagicMock
 
+from hackathon_site.tests import SetupUserMixin
 from registration.views import SignUpView
+from registration.models import Team as RegistrationTeam, User
 
 
 class CustomSignUpViewTestCase(TestCase):
@@ -77,3 +79,38 @@ class CustomSignUpViewTestCase(TestCase):
 
         # Test that the plaintext email is the same as the html email
         self.assertEqual(plain_message, html_message)
+
+
+class ApplicationSignalTestCase(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username="foo@bar.com",
+            password="foobar123",
+            first_name="Foo",
+            last_name="Bar",
+        )
+        self.team = RegistrationTeam.objects.create()
+        self.application = SetupUserMixin._apply_as_user(user=self.user, team=self.team)
+
+    def test_remove_team_when_empty(self):
+        self.application.delete()
+        self.assertEqual(RegistrationTeam.objects.count(), 0)
+
+    def test_cascade_on_delete_user(self):
+        self.user.delete()
+        self.assertEqual(RegistrationTeam.objects.count(), 0)
+
+    def test_keep_team_when_not_empty(self):
+        second_user = User.objects.create(
+            username="bar@bar.com",
+            password="foobar123",
+            first_name="Foo",
+            last_name="Bar",
+        )
+        second_application = SetupUserMixin._apply_as_user(
+            user=second_user, team=self.team
+        )
+        self.application.delete()
+        self.assertEqual(RegistrationTeam.objects.count(), 1)
+        second_application.delete()
+        self.assertEqual(RegistrationTeam.objects.count(), 0)
