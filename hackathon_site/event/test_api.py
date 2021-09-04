@@ -109,18 +109,38 @@ class LeaveTeamTestCase(SetupUserMixin, APITestCase):
         response = self.client.post(self.view)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
+    def check_leave_and_delete(self):
+        old_team = self.profile.team
+        response = self.client.post(self.view)
+        self.user.refresh_from_db()
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data["id"], self.user.profile.team.pk)
+        self.assertNotEqual(old_team.pk, self.user.profile.team.pk)
+        self.assertEqual(
+            Team.objects.filter(team_code=old_team.team_code).exists(), False
+        )
+
+    def check_cannot_leave(self):
+        old_team = self.profile.team
+        response = self.client.post(self.view)
+        self.user.refresh_from_db()
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(old_team.pk, self.user.profile.team.pk)
+        self.assertEqual(Team.objects.filter(team_code=old_team.team_code).count(), 1)
+
     def test_leave_and_delete(self):
         """
-            when there is no orders or other members on the team,
-            user should be able to leave and be put on a new team
+        when there is no orders or other members on the team,
+        user should be able to leave and be put on a new team
         """
         self._login()
         self.check_leave_and_delete()
 
     def test_leave_with_order(self):
         """
-            when there are orders but no other members on the team,
-            user can only leave when there are only cancelled orders
+        when there are orders but no other members on the team,
+        user can only leave when there are only cancelled orders
         """
         self._login()
 
@@ -146,8 +166,8 @@ class LeaveTeamTestCase(SetupUserMixin, APITestCase):
 
     def test_leave_with_not_empty_team(self):
         """
-            when there are other members but no orders on the team,
-            user can only leave but the old team stays
+        when there are other members but no orders on the team,
+        user can only leave but the old team stays
         """
         old_team = self.profile.team
 
@@ -173,23 +193,3 @@ class LeaveTeamTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(
             Team.objects.filter(team_code=old_team.team_code).exists(), True
         )
-
-    def check_leave_and_delete(self):
-        old_team = self.profile.team
-        response = self.client.post(self.view)
-        self.user.refresh_from_db()
-
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(response.data["id"], self.user.profile.team.pk)
-        self.assertNotEqual(old_team.pk, self.user.profile.team.pk)
-        self.assertEqual(
-            Team.objects.filter(team_code=old_team.team_code).exists(), False
-        )
-
-    def check_cannot_leave(self):
-        old_team = self.profile.team
-        response = self.client.post(self.view)
-        self.user.refresh_from_db()
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(old_team.pk, self.user.profile.team.pk)
-        self.assertEqual(Team.objects.filter(team_code=old_team.team_code).count(), 1)
