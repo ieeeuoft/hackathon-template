@@ -3,17 +3,12 @@ from datetime import datetime, timedelta
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
-from django.db.models import Q
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
 
-from drf_yasg.utils import swagger_auto_schema
-
-from rest_framework import generics, mixins, status
-from rest_framework.exceptions import ValidationError
-from rest_framework.response import Response
+from rest_framework import generics, mixins
 
 from hackathon_site.utils import is_registration_open
 from registration.forms import JoinTeamForm
@@ -21,9 +16,6 @@ from registration.models import Team as RegistrationTeam
 
 from event.models import Team as EventTeam
 from event.serializers import TeamSerializer
-from event.permissions import UserHasProfile
-
-from hardware.models import OrderItem
 
 
 def _now():
@@ -208,36 +200,3 @@ class DashboardView(LoginRequiredMixin, FormView):
         at once.
         """
         return super().post(request, *args, **kwargs)
-
-
-class LeaveTeamView(generics.GenericAPIView):
-    permission_classes = [UserHasProfile]
-
-    @transaction.atomic
-    @swagger_auto_schema(responses={201: TeamSerializer})
-    def post(self, request, *args, **kwargs):
-        profile = request.user.profile
-        team = profile.team
-
-        # Raise 400 if team has active orders
-        active_orders = OrderItem.objects.filter(
-            ~Q(order__status="Cancelled"), Q(order__team=team),
-        )
-        if active_orders.exists():
-            raise ValidationError(
-                {"detail": "Cannot leave a team with already processed orders"},
-                code=status.HTTP_400_BAD_REQUEST,
-            )
-
-        # create new team
-        profile.team = EventTeam.objects.create()
-        profile.save()
-
-        # delete old team if empty
-        if not team.profiles.exists():
-            team.delete()
-
-        # Construct response data
-        response_serializer = TeamSerializer(profile.team)
-        response_data = response_serializer.data
-        return Response(data=response_data, status=status.HTTP_201_CREATED,)
