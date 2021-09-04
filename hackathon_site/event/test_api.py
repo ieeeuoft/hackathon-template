@@ -136,7 +136,9 @@ class LeaveTeamTestCase(SetupUserMixin, APITestCase):
         order = Order.objects.create(status="Cart", team=self.team)
         OrderItem.objects.create(order=order, hardware=hardware)
 
-        for status_choice in Order.STATUS_CHOICES:
+        for _, status_choice in Order.STATUS_CHOICES:
+            order.status = status_choice
+            order.save()
             if status_choice != "Cancelled":
                 self.check_cannot_leave()
             else:
