@@ -7,17 +7,20 @@ from django.urls import reverse_lazy
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
 from django.conf import settings
+from django_filters import rest_framework as filters
+
 
 from hackathon_site.utils import is_registration_open
 from registration.forms import JoinTeamForm
 from registration.models import Team as RegistrationTeam
 
 from rest_framework import generics, mixins
+from rest_framework.filters import SearchFilter, OrderingFilter
 
 from event.models import Team as EventTeam
 from event.serializers import TeamSerializer
 
-
+from event.api_filters import TeamFilter
 
 
 
@@ -208,6 +211,10 @@ class DashboardView(LoginRequiredMixin, FormView):
 class TeamListView(mixins.ListModelMixin, generics.GenericAPIView):
     queryset = EventTeam.objects.all()
     serializer_class = TeamSerializer
+
+    filter_backends = (filters.DjangoFilterBackend, SearchFilter)
+    filterset_class = TeamFilter
+    search_fields = ("team_code","id","profiles__user__first_name","profiles__user__last_name")
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
