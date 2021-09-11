@@ -23,7 +23,6 @@ from event.serializers import TeamSerializer
 from event.api_filters import TeamFilter
 
 
-
 def _now():
     return datetime.now().replace(tzinfo=settings.TZ_INFO)
 
@@ -214,7 +213,12 @@ class TeamListView(mixins.ListModelMixin, generics.GenericAPIView):
 
     filter_backends = (filters.DjangoFilterBackend, SearchFilter)
     filterset_class = TeamFilter
-    search_fields = ("team_code","id","profiles__user__first_name","profiles__user__last_name")
+    search_fields = (
+        "team_code",
+        "id",
+        "profiles__user__first_name",
+        "profiles__user__last_name",
+    )
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)

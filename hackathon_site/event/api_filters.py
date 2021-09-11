@@ -13,10 +13,10 @@ class CSVInputIntegerField(forms.IntegerField):
 class IntegerCSVFilter(filters.BaseInFilter):
     field_class = CSVInputIntegerField
 
+
 class TeamFilter(filters.FilterSet):
     queryset = EventTeam
     serializer_class = TeamSerializer
-
 
     @staticmethod
     def filter_in_stock(queryset, _, value):
@@ -32,7 +32,5 @@ class TeamFilter(filters.FilterSet):
     )
 
     team_code = filters.CharFilter(
-        field_name="team_code",
-        label="Team code",
-        help_text="Team code",
+        field_name="team_code", label="Team code", help_text="Team code",
     )
