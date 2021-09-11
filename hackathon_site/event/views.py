@@ -18,8 +18,7 @@ from event.models import Team as EventTeam
 from event.serializers import TeamSerializer
 
 
-from event.models import Team
-from event.serializers import (TeamSerializer)
+
 
 
 def _now():
@@ -207,7 +206,7 @@ class DashboardView(LoginRequiredMixin, FormView):
 
 
 class TeamListView(mixins.ListModelMixin, generics.GenericAPIView):
-    queryset = Team.objects.all()
+    queryset = EventTeam.objects.all()
     serializer_class = TeamSerializer
 
     def get(self, request, *args, **kwargs):
