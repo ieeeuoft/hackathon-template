@@ -400,6 +400,18 @@ class IncidentListsViewTestCase(SetupUserMixin, APITestCase):
         returned_ids = [res["id"] for res in results]
         self.assertCountEqual(returned_ids, [1])
 
+    def test_name_search_filter(self):
+        self._login()
+
+        url = self._build_filter_url(name="name")
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.json()
+        results = data["results"]
+        returned_ids = [res["id"] for res in results]
+        self.assertCountEqual(returned_ids, [1])
+
 
 class OrderListViewGetTestCase(SetupUserMixin, APITestCase):
     def setUp(self):
