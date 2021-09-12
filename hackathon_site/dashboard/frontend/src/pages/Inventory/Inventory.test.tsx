@@ -34,23 +34,4 @@ describe("Inventory Page", () => {
 
         expect(getByText(/load more/i)).toBeInTheDocument();
     });
-
-    it("Displays an error when fetching hardware fails", async () => {
-        const failureResponse = {
-            response: {
-                status: 500,
-                message: "Something went wrong",
-            },
-        };
-
-        mockedGet.mockRejectedValue(failureResponse);
-
-        const { getByText } = render(<InventoryFilter />);
-
-        await waitFor(() => {
-            expect(
-                getByText("Failed to fetch hardware data: Error 500")
-            ).toBeInTheDocument();
-        });
-    });
 });
