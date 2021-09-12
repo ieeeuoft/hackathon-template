@@ -8,9 +8,8 @@ import {
 } from "testing/utils";
 
 import InventoryGrid from "components/inventory/InventoryGrid/InventoryGrid";
-import { get, AxiosResponse } from "api/api";
+import { get } from "api/api";
 import { mockHardware } from "testing/mockData";
-import { APIListResponse, Hardware } from "api/types";
 import { makeStore } from "slices/store";
 import { getHardwareWithFilters } from "slices/hardware/hardwareSlice";
 
