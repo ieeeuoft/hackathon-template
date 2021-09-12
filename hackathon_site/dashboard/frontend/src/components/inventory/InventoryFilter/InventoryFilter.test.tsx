@@ -96,7 +96,7 @@ describe("<InventoryFilter />", () => {
         });
     });
 
-    it("Clears filters when the clear button is clicked", async () => {
+    it("Clears all filters except search when the clear button is clicked", async () => {
         const initialFilters: HardwareFilters = {
             in_stock: true,
             ordering: "-name",
