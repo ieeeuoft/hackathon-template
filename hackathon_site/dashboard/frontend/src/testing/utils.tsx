@@ -8,6 +8,9 @@ import {
 
 import { makeStore, RootStore, RootState } from "slices/store";
 import { DeepPartial } from "redux";
+import { SnackbarProvider } from "notistack";
+import { AxiosResponse } from "axios";
+import { APIListResponse } from "api/types";
 
 export const withRouter = (component: React.ComponentElement<any, any>) => (
     <BrowserRouter>{component}</BrowserRouter>
@@ -37,7 +40,13 @@ const customRender = (
         ...renderOptions
     }: RenderOptions = {}
 ) => {
-    const wrapper = ({ children }: any) => withStoreAndRouter(children, store);
+    const wrapper = ({ children }: any) => (
+        <Provider store={store}>
+            <SnackbarProvider>
+                <BrowserRouter>{children}</BrowserRouter>
+            </SnackbarProvider>
+        </Provider>
+    );
     return rtlRender(ui, { wrapper, ...renderOptions });
 };
 
@@ -54,3 +63,17 @@ export const promiseResolveWithDelay = <T extends unknown>(
     new Promise((resolve) => {
         setTimeout(() => resolve(value), ms);
     });
+
+export const makeMockApiListResponse = <T extends unknown>(
+    data: T[],
+    next?: string,
+    previous?: string
+): AxiosResponse<APIListResponse<T>> =>
+    ({
+        data: {
+            count: data.length,
+            results: data,
+            next: next || null,
+            previous: previous || null,
+        },
+    } as AxiosResponse<APIListResponse<T>>);

@@ -1,6 +1,11 @@
 import React from "react";
 
-import { render, waitFor, promiseResolveWithDelay } from "testing/utils";
+import {
+    render,
+    waitFor,
+    promiseResolveWithDelay,
+    makeMockApiListResponse,
+} from "testing/utils";
 
 import InventoryGrid from "components/inventory/InventoryGrid/InventoryGrid";
 import { get, AxiosResponse } from "api/api";
@@ -21,14 +26,9 @@ describe("<InventoryGrid />", () => {
 
     it("Renders all hardware from the store", async () => {
         // To populate the store, dispatch a thunk while mocking the API response
-        const apiResponse: APIListResponse<Hardware> = {
-            count: mockHardware.length,
-            results: mockHardware,
-            next: null,
-            previous: null,
-        };
+        const apiResponse = makeMockApiListResponse(mockHardware);
 
-        mockedGet.mockResolvedValue({ data: apiResponse } as AxiosResponse);
+        mockedGet.mockResolvedValue(apiResponse);
 
         const store = makeStore();
         store.dispatch(getHardwareWithFilters());
@@ -43,16 +43,9 @@ describe("<InventoryGrid />", () => {
     });
 
     it("Displays a linear progress when loading", async () => {
-        const apiResponse: APIListResponse<Hardware> = {
-            count: mockHardware.length,
-            results: mockHardware,
-            next: null,
-            previous: null,
-        };
+        const apiResponse = makeMockApiListResponse(mockHardware);
 
-        mockedGet.mockReturnValue(
-            promiseResolveWithDelay({ data: apiResponse } as AxiosResponse, 500)
-        );
+        mockedGet.mockReturnValue(promiseResolveWithDelay(apiResponse, 500));
 
         const store = makeStore();
         store.dispatch(getHardwareWithFilters());
@@ -63,9 +56,10 @@ describe("<InventoryGrid />", () => {
             expect(queryByTestId("linear-progress")).toBeInTheDocument();
         });
 
+        // After results have loaded, progress bar should disappear
         await waitFor(() => {
-            expect(getByText(mockHardware[0].name)).toBeInTheDocument();
             expect(queryByTestId("linear-progress")).not.toBeInTheDocument();
+            expect(getByText(mockHardware[0].name)).toBeInTheDocument();
         });
     });
 });

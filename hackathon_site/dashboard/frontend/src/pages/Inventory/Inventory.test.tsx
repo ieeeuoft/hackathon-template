@@ -1,13 +1,12 @@
 import React from "react";
 
-import { render, waitFor } from "testing/utils";
+import { makeMockApiListResponse, render, waitFor } from "testing/utils";
 
 import Inventory from "pages/Inventory/Inventory";
 import { mockHardware } from "testing/mockData";
 
 import { get } from "api/api";
-import { APIListResponse, Hardware } from "api/types";
-import { AxiosResponse } from "axios";
+import InventoryFilter from "components/inventory/InventoryFilter/InventoryFilter";
 
 jest.mock("api/api");
 const mockedGet = get as jest.MockedFunction<typeof get>;
@@ -23,14 +22,9 @@ describe("Inventory Page", () => {
 
     it("Has necessary page elements", async () => {
         // Mock inventory data to make sure the inventory grid is being rendered
-        const apiResponse: APIListResponse<Hardware> = {
-            count: mockHardware.length,
-            results: mockHardware,
-            next: null,
-            previous: null,
-        };
+        const apiResponse = makeMockApiListResponse(mockHardware);
 
-        mockedGet.mockResolvedValue({ data: apiResponse } as AxiosResponse);
+        mockedGet.mockResolvedValue(apiResponse);
 
         const { getByText } = render(<Inventory />);
 
@@ -39,5 +33,24 @@ describe("Inventory Page", () => {
         });
 
         expect(getByText(/load more/i)).toBeInTheDocument();
+    });
+
+    it("Displays an error when fetching hardware fails", async () => {
+        const failureResponse = {
+            response: {
+                status: 500,
+                message: "Something went wrong",
+            },
+        };
+
+        mockedGet.mockRejectedValue(failureResponse);
+
+        const { getByText } = render(<InventoryFilter />);
+
+        await waitFor(() => {
+            expect(
+                getByText("Failed to fetch hardware data: Error 500")
+            ).toBeInTheDocument();
+        });
     });
 });

@@ -1,4 +1,4 @@
-import { combineReducers, DeepPartial, StateFromReducersMapObject } from "redux";
+import { combineReducers, StateFromReducersMapObject } from "redux";
 import { configureStore } from "@reduxjs/toolkit";
 import { connectRouter, routerMiddleware } from "connected-react-router";
 import { createBrowserHistory } from "history";

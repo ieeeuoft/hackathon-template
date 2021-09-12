@@ -1,10 +1,17 @@
 import React from "react";
+import { DeepPartial } from "redux";
 
-import { render, fireEvent, waitFor } from "testing/utils";
+import {
+    render,
+    fireEvent,
+    waitFor,
+    promiseResolveWithDelay,
+    makeMockApiListResponse,
+} from "testing/utils";
 
 import InventoryFilter from "components/inventory/InventoryFilter/InventoryFilter";
 import { get } from "api/api";
-import { inventoryCategories } from "testing/mockData";
+import { inventoryCategories, mockHardware } from "testing/mockData";
 import { RootState } from "slices/store";
 import {
     hardwareReducerName,
@@ -12,9 +19,9 @@ import {
     initialState,
 } from "slices/hardware/hardwareSlice";
 import { HardwareFilters } from "api/types";
-import { DeepPartial } from "redux";
 
 jest.mock("api/api");
+const mockedGet = get as jest.MockedFunction<typeof get>;
 
 const makeState = (overrides: Partial<HardwareState>): DeepPartial<RootState> => ({
     [hardwareReducerName]: {
@@ -60,7 +67,7 @@ describe("<InventoryFilter />", () => {
         };
 
         await waitFor(() => {
-            expect(get).toHaveBeenCalledWith(hardwareUri, expectedFilters);
+            expect(mockedGet).toHaveBeenCalledWith(hardwareUri, expectedFilters);
         });
     });
 
@@ -85,7 +92,7 @@ describe("<InventoryFilter />", () => {
         };
 
         await waitFor(() => {
-            expect(get).toHaveBeenCalledWith(hardwareUri, expectedFilters);
+            expect(mockedGet).toHaveBeenCalledWith(hardwareUri, expectedFilters);
         });
     });
 
@@ -108,20 +115,31 @@ describe("<InventoryFilter />", () => {
         const expectedFilters = { search: "abc123" };
 
         await waitFor(() => {
-            expect(get).toHaveBeenCalledWith(hardwareUri, expectedFilters);
+            expect(mockedGet).toHaveBeenCalledWith(hardwareUri, expectedFilters);
         });
     });
 
     it("Disables the clear and apply buttons when loading", async () => {
-        const preloadedState = makeState({ isLoading: true });
+        const apiResponse = makeMockApiListResponse(mockHardware);
+        mockedGet.mockReturnValue(promiseResolveWithDelay(apiResponse, 500));
 
-        const { getByText } = render(<InventoryFilter />, { preloadedState });
+        const { getByText } = render(<InventoryFilter />);
 
         const applyButton = getByText("Apply");
         const clearButton = getByText(/clear all/i);
 
-        expect(applyButton.closest("button")).toBeDisabled();
-        expect(clearButton.closest("button")).toBeDisabled();
+        fireEvent.click(applyButton);
+
+        await waitFor(() => {
+            expect(applyButton.closest("button")).toBeDisabled();
+            expect(clearButton.closest("button")).toBeDisabled();
+        });
+
+        // After the results are returned, the buttons should be re-enabled
+        await waitFor(() => {
+            expect(applyButton.closest("button")).toBeEnabled();
+            expect(clearButton.closest("button")).toBeEnabled();
+        });
     });
 
     it("Renders options for each category", () => {
