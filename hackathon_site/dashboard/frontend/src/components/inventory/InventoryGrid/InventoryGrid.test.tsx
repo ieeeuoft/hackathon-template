@@ -28,9 +28,7 @@ describe("<InventoryGrid />", () => {
             previous: null,
         };
 
-        mockedGet.mockResolvedValue({ data: apiResponse } as AxiosResponse<
-            typeof apiResponse
-        >);
+        mockedGet.mockResolvedValue({ data: apiResponse } as AxiosResponse);
 
         const store = makeStore();
         store.dispatch(getHardwareWithFilters());
