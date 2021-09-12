@@ -51,7 +51,7 @@ export const getHardwareWithFilters = createAsyncThunk<
                 filters
             );
             return response.data;
-        } catch (e) {
+        } catch (e: any) {
             dispatch(
                 displaySnackbar({
                     message: `Failed to fetch hardware data: Error ${e.response.status}`,
@@ -70,7 +70,7 @@ export const getHardwareWithFilters = createAsyncThunk<
 
 const hardwareSlice = createSlice({
     name: hardwareReducerName,
-    initialState: hardwareAdapter.getInitialState(extraState),
+    initialState,
     reducers: {
         /**
          * Update the filters for the Hardware API

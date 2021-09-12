@@ -34,7 +34,7 @@ const makeConfig = () => ({
 });
 
 // Re-export the response type, so it's available without needing to import axios
-export type AxiosResponse<T> = _AxiosResponse;
+export type AxiosResponse<T> = _AxiosResponse<T>;
 
 export const get = <T>(
     uri: string,

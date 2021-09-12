@@ -1,5 +1,5 @@
 import { combineReducers, DeepPartial, StateFromReducersMapObject } from "redux";
-import { configureStore, getDefaultMiddleware } from "@reduxjs/toolkit";
+import { configureStore } from "@reduxjs/toolkit";
 import { connectRouter, routerMiddleware } from "connected-react-router";
 import { createBrowserHistory } from "history";
 
@@ -18,10 +18,11 @@ const reducers = {
 
 const reducer = combineReducers(reducers);
 
-export const makeStore = (preloadedState?: DeepPartial<RootState>) =>
+export const makeStore = (preloadedState?: any) =>
     configureStore({
         reducer,
-        middleware: [...getDefaultMiddleware(), routerMiddleware(history)],
+        middleware: (getDefaultMiddleware) =>
+            getDefaultMiddleware().concat(routerMiddleware(history)),
         preloadedState,
     });
 
