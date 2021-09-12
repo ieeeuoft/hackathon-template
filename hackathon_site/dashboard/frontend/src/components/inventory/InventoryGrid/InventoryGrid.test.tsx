@@ -1,8 +1,8 @@
 import React from "react";
-import { render, waitFor } from "@testing-library/react";
+
+import { render, waitFor } from "testing/utils";
 
 import InventoryGrid from "components/inventory/InventoryGrid/InventoryGrid";
-import { withStore } from "testing/utils";
 import { get, AxiosResponse } from "api/api";
 import { mockHardware } from "testing/mockData";
 import { APIListResponse, Hardware } from "api/types";
@@ -14,7 +14,7 @@ const mockedGet = get as jest.MockedFunction<typeof get>;
 
 describe("<InventoryGrid />", () => {
     it("Displays a message when no items found", () => {
-        const { getByText } = render(withStore(<InventoryGrid />));
+        const { getByText } = render(<InventoryGrid />);
 
         expect(getByText(/no items found/i)).toBeInTheDocument();
     });
@@ -35,7 +35,7 @@ describe("<InventoryGrid />", () => {
         const store = makeStore();
         store.dispatch(getHardwareWithFilters());
 
-        const { getByText } = render(withStore(<InventoryGrid />, store));
+        const { getByText } = render(<InventoryGrid />, { store });
 
         await waitFor(() => {
             mockHardware.forEach((hardware) =>

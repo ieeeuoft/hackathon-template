@@ -1,11 +1,11 @@
 import React from "react";
-import { render, fireEvent, waitFor } from "@testing-library/react";
+
+import { render, fireEvent, waitFor } from "testing/utils";
 
 import InventoryFilter from "components/inventory/InventoryFilter/InventoryFilter";
 import { get } from "api/api";
 import { inventoryCategories } from "testing/mockData";
-import { withStore } from "testing/utils";
-import { makeStore, RootState } from "slices/store";
+import { RootState } from "slices/store";
 import {
     hardwareReducerName,
     HardwareState,
@@ -23,6 +23,8 @@ const makeState = (overrides: Partial<HardwareState>): DeepPartial<RootState> =>
     },
 });
 
+const hardwareUri = "/api/hardware/hardware/";
+
 describe("<InventoryFilter />", () => {
     /* Inventory filter tests
      *
@@ -33,7 +35,7 @@ describe("<InventoryFilter />", () => {
      */
 
     it("Submits selected filters", async () => {
-        const { getByText } = render(withStore(<InventoryFilter />));
+        const { getByText } = render(<InventoryFilter />);
 
         const orderByNameButton = getByText("Z-A");
         const inStockCheckbox = getByText("In stock");
@@ -58,12 +60,12 @@ describe("<InventoryFilter />", () => {
         };
 
         await waitFor(() => {
-            expect(get).toHaveBeenCalledWith(expect.anything(), expectedFilters);
+            expect(get).toHaveBeenCalledWith(hardwareUri, expectedFilters);
         });
     });
 
     it("Clears filters when toggled", async () => {
-        const { getByText } = render(withStore(<InventoryFilter />));
+        const { getByText } = render(<InventoryFilter />);
 
         const orderByNameButton = getByText("Z-A");
         const inStockCheckbox = getByText("In stock");
@@ -83,7 +85,7 @@ describe("<InventoryFilter />", () => {
         };
 
         await waitFor(() => {
-            expect(get).toHaveBeenCalledWith(expect.anything(), expectedFilters);
+            expect(get).toHaveBeenCalledWith(hardwareUri, expectedFilters);
         });
     });
 
@@ -96,9 +98,8 @@ describe("<InventoryFilter />", () => {
         };
 
         const preloadedState = makeState({ filters: initialFilters });
-        const store = makeStore(preloadedState);
 
-        const { getByText } = render(withStore(<InventoryFilter />, store));
+        const { getByText } = render(<InventoryFilter />, { preloadedState });
 
         const clearButton = getByText(/clear all/i);
 
@@ -107,15 +108,14 @@ describe("<InventoryFilter />", () => {
         const expectedFilters = { search: "abc123" };
 
         await waitFor(() => {
-            expect(get).toHaveBeenCalledWith(expect.anything(), expectedFilters);
+            expect(get).toHaveBeenCalledWith(hardwareUri, expectedFilters);
         });
     });
 
     it("Disables the clear and apply buttons when loading", async () => {
         const preloadedState = makeState({ isLoading: true });
-        const store = makeStore(preloadedState);
 
-        const { getByText } = render(withStore(<InventoryFilter />, store));
+        const { getByText } = render(<InventoryFilter />, { preloadedState });
 
         const applyButton = getByText("Apply");
         const clearButton = getByText(/clear all/i);
@@ -125,7 +125,7 @@ describe("<InventoryFilter />", () => {
     });
 
     it("Renders options for each category", () => {
-        const { getByText } = render(withStore(<InventoryFilter />));
+        const { getByText } = render(<InventoryFilter />);
 
         for (let c of inventoryCategories) {
             expect(getByText(c.name)).toBeInTheDocument();

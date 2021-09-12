@@ -1,10 +1,10 @@
 import React from "react";
-import { render, fireEvent, waitFor, getByLabelText } from "@testing-library/react";
 import { DeepPartial } from "redux";
+
+import { render, fireEvent, waitFor } from "testing/utils";
 
 import InventorySearch from "components/inventory/InventorySearch/InventorySearch";
 import { get } from "api/api";
-import { withStore } from "testing/utils";
 import { HardwareFilters } from "api/types";
 import {
     hardwareReducerName,
@@ -22,9 +22,11 @@ const makeState = (overrides: Partial<HardwareState>): DeepPartial<RootState> =>
     },
 });
 
+const hardwareUri = "/api/hardware/hardware/";
+
 describe("<InventorySearch />", () => {
     it("Submits search query", async () => {
-        const { getByLabelText } = render(withStore(<InventorySearch />));
+        const { getByLabelText } = render(<InventorySearch />);
 
         const input = getByLabelText(/search items/i);
 
@@ -36,12 +38,12 @@ describe("<InventorySearch />", () => {
         };
 
         await waitFor(() => {
-            expect(get).toHaveBeenCalledWith(expect.anything(), expectedFilters);
+            expect(get).toHaveBeenCalledWith(hardwareUri, expectedFilters);
         });
     });
 
     it("Submits search query when clicking search button", async () => {
-        const { getByLabelText, getByTestId } = render(withStore(<InventorySearch />));
+        const { getByLabelText, getByTestId } = render(<InventorySearch />);
 
         const input = getByLabelText(/search items/i);
         const searchButton = getByTestId("search-button");
@@ -54,7 +56,7 @@ describe("<InventorySearch />", () => {
         };
 
         await waitFor(() => {
-            expect(get).toHaveBeenCalledWith(expect.anything(), expectedFilters);
+            expect(get).toHaveBeenCalledWith(hardwareUri, expectedFilters);
         });
     });
 
@@ -67,9 +69,8 @@ describe("<InventorySearch />", () => {
         };
 
         const preloadedState = makeState({ filters: initialFilters });
-        const store = makeStore(preloadedState);
 
-        const { getByLabelText } = render(withStore(<InventorySearch />, store));
+        const { getByLabelText } = render(<InventorySearch />, { preloadedState });
 
         const input = getByLabelText(/search items/i);
         fireEvent.change(input, { target: { value: "foobar" } });
@@ -81,7 +82,7 @@ describe("<InventorySearch />", () => {
         };
 
         await waitFor(() => {
-            expect(get).toHaveBeenCalledWith(expect.anything(), expectedFilters);
+            expect(get).toHaveBeenCalledWith(hardwareUri, expectedFilters);
         });
     });
 
@@ -94,9 +95,8 @@ describe("<InventorySearch />", () => {
         };
 
         const preloadedState = makeState({ filters: initialFilters });
-        const store = makeStore(preloadedState);
 
-        const { getByTestId } = render(withStore(<InventorySearch />, store));
+        const { getByTestId } = render(<InventorySearch />, { preloadedState });
 
         const clearButton = getByTestId("clear-button");
         fireEvent.click(clearButton);
@@ -104,7 +104,7 @@ describe("<InventorySearch />", () => {
         const { search, ...expectedFilters } = initialFilters;
 
         await waitFor(() => {
-            expect(get).toHaveBeenCalledWith(expect.anything(), expectedFilters);
+            expect(get).toHaveBeenCalledWith(hardwareUri, expectedFilters);
         });
     });
 });

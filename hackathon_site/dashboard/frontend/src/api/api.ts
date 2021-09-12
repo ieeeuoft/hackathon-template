@@ -1,4 +1,7 @@
-import axios, { AxiosResponse as _AxiosResponse } from "axios";
+import axios, { AxiosResponse } from "axios";
+
+// Re-export the response type, so it's available without needing to import axios
+export type { AxiosResponse } from "axios";
 
 export const SERVER_URL =
     process.env.NODE_ENV === "development"
@@ -32,9 +35,6 @@ const makeConfig = () => ({
     },
     withCredentials: true,
 });
-
-// Re-export the response type, so it's available without needing to import axios
-export type AxiosResponse<T> = _AxiosResponse<T>;
 
 export const get = <T>(
     uri: string,
