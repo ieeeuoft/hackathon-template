@@ -46,3 +46,11 @@ export * from "@testing-library/react";
 
 // Override render method
 export { customRender as render };
+
+export const promiseResolveWithDelay = <T extends unknown>(
+    value: T,
+    ms: number = 500
+): Promise<T> =>
+    new Promise((resolve) => {
+        setTimeout(() => resolve(value), ms);
+    });

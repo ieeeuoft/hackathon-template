@@ -4,13 +4,16 @@ import styles from "pages/Inventory/Inventory.module.scss";
 import Item from "components/inventory/Item/Item";
 
 import { useSelector } from "react-redux";
-import { hardwareSelectors } from "slices/hardware/hardwareSlice";
-import { Typography } from "@material-ui/core";
+import { hardwareSelectors, isLoadingSelector } from "slices/hardware/hardwareSlice";
+import { LinearProgress, Typography } from "@material-ui/core";
 
 export const InventoryGrid = () => {
     const items = useSelector(hardwareSelectors.selectAll);
+    const isLoading = useSelector(isLoadingSelector);
 
-    return (
+    return isLoading ? (
+        <LinearProgress style={{ width: "100%" }} data-testid="linear-progress" />
+    ) : (
         <Grid direction="row" spacing={2} container>
             {items.length > 0 ? (
                 items.map((item) => (

@@ -1,6 +1,6 @@
 import React from "react";
 
-import { render, waitFor } from "testing/utils";
+import { render, waitFor, promiseResolveWithDelay } from "testing/utils";
 
 import InventoryGrid from "components/inventory/InventoryGrid/InventoryGrid";
 import { get, AxiosResponse } from "api/api";
@@ -39,6 +39,33 @@ describe("<InventoryGrid />", () => {
             mockHardware.forEach((hardware) =>
                 expect(getByText(hardware.name)).toBeInTheDocument()
             );
+        });
+    });
+
+    it("Displays a linear progress when loading", async () => {
+        const apiResponse: APIListResponse<Hardware> = {
+            count: mockHardware.length,
+            results: mockHardware,
+            next: null,
+            previous: null,
+        };
+
+        mockedGet.mockReturnValue(
+            promiseResolveWithDelay({ data: apiResponse } as AxiosResponse, 500)
+        );
+
+        const store = makeStore();
+        store.dispatch(getHardwareWithFilters());
+
+        const { getByText, queryByTestId } = render(<InventoryGrid />, { store });
+
+        await waitFor(() => {
+            expect(queryByTestId("linear-progress")).toBeInTheDocument();
+        });
+
+        await waitFor(() => {
+            expect(getByText(mockHardware[0].name)).toBeInTheDocument();
+            expect(queryByTestId("linear-progress")).not.toBeInTheDocument();
         });
     });
 });
