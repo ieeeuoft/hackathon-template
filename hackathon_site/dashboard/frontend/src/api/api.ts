@@ -7,10 +7,12 @@ let SERVER_URL: string;
 
 if (process.env.NODE_ENV === "development") {
     if (!process.env.REACT_APP_DEV_SERVER_URL) {
-        throw new Error("REACT_APP_DEV_SERVER_URL must be set (probably to http://localhost:8000)");
+        throw new Error(
+            "REACT_APP_DEV_SERVER_URL must be set (probably to http://localhost:8000)"
+        );
     }
 
-    SERVER_URL = process.env.REACT_APP_DEV_SERVER_URL?.replace(/\/$/, "")
+    SERVER_URL = process.env.REACT_APP_DEV_SERVER_URL?.replace(/\/$/, "");
 } else {
     SERVER_URL = "";
 }
