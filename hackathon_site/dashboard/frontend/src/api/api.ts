@@ -3,10 +3,17 @@ import axios, { AxiosResponse } from "axios";
 // Re-export the response type, so it's available without needing to import axios
 export type { AxiosResponse } from "axios";
 
-export const SERVER_URL =
-    process.env.NODE_ENV === "development"
-        ? process.env.REACT_APP_DEV_SERVER_URL?.replace(/\/$/, "")
-        : "";
+export let SERVER_URL: string;
+
+if (process.env.NODE_ENV === "development") {
+    if (!process.env.REACT_APP_DEV_SERVER_URL) {
+        throw new Error("REACT_APP_DEV_SERVER_URL must be set (probably to http://localhost:8000)");
+    }
+
+    SERVER_URL = process.env.REACT_APP_DEV_SERVER_URL?.replace(/\/$/, "")
+} else {
+    SERVER_URL = "";
+}
 
 export const getCsrfToken = () => {
     // When Django serves the react template (and also from some API responses),
