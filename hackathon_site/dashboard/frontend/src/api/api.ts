@@ -3,7 +3,7 @@ import axios, { AxiosResponse } from "axios";
 // Re-export the response type, so it's available without needing to import axios
 export type { AxiosResponse } from "axios";
 
-export let SERVER_URL: string;
+let SERVER_URL: string;
 
 if (process.env.NODE_ENV === "development") {
     if (!process.env.REACT_APP_DEV_SERVER_URL) {
