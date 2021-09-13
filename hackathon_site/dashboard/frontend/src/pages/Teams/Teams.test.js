@@ -1,9 +1,10 @@
 import React from "react";
-import { render } from "@testing-library/react";
+
+import { render } from "testing/utils";
+
 import Teams from "./Teams";
-import { withStoreAndRouter } from "testing/utils";
 
 test("renders without crashing", () => {
-    const { getByText } = render(withStoreAndRouter(<Teams />));
+    const { getByText } = render(<Teams />);
     expect(getByText("IEEEEEE")).toBeInTheDocument();
 });

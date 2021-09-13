@@ -1,9 +1,10 @@
 import React from "react";
-import { render } from "@testing-library/react";
+
+import { render } from "testing/utils";
+
 import IncidentForm from "./IncidentForm";
-import { withStoreAndRouter } from "testing/utils";
 
 test("renders without crashing", () => {
-    const { getByText } = render(withStoreAndRouter(<IncidentForm />));
+    const { getByText } = render(<IncidentForm />);
     expect(getByText("IEEEEEE")).toBeInTheDocument();
 });
