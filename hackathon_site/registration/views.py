@@ -4,6 +4,7 @@ from pathlib import Path
 
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.db import transaction
 from django.http import HttpResponseBadRequest, FileResponse, Http404
 from django.shortcuts import redirect
 from django.template.loader import render_to_string
@@ -142,6 +143,7 @@ class LeaveTeamView(LoginRequiredMixin, View):
     registration
     """
 
+    @transaction.atomic
     def leave_team(self, request):
         if not is_registration_open():
             return HttpResponseBadRequest(
