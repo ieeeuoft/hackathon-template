@@ -8,6 +8,7 @@ from rest_framework.response import Response
 from rest_framework.filters import SearchFilter, OrderingFilter
 
 from event.permissions import UserHasProfile
+from hardware.permissions import UserHasHardareOrderViewPermission
 from hardware.api_filters import HardwareFilter, OrderFilter
 from hardware.models import Hardware, Category, Order
 from hardware.serializers import (
@@ -62,6 +63,8 @@ class OrderListView(generics.ListAPIView):
     filter_backends = (filters.DjangoFilterBackend, OrderingFilter)
     filterset_class = OrderFilter
     ordering_fields = "created_at"
+
+    permission_classes = (UserHasHardareOrderViewPermission,)
 
     def get_serializer_class(self):
         try:
