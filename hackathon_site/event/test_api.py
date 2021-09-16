@@ -59,8 +59,20 @@ class CurrentTeamTestCase(SetupUserMixin, APITestCase):
         self.team = Team.objects.create()
 
         self.profile = Profile.objects.create(user=self.user, team=self.team)
+        self.team_code = self.team.team_code
+        self.view_name = "api:event:join-team"
 
-        self.view = reverse("api:event:current-team")
+    def _build_view(self,team_code):
+        return reverse(self.view_name, kwargs={"team_code": team_code})
+
+    def test_invalid_key(self):
+        response = self.client.get(self._build_view("56ABC"))
+        # self.assertContains(response, "Activation link is invalid")
+        # self.assertContains(response, settings.CONTACT_EMAIL)
+
+
+
+
 
     def test_user_not_logged_in(self):
         response = self.client.get(self.view)
@@ -88,4 +100,21 @@ class CurrentTeamTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json(), serializer.data)
 
-class
+class JoinTeamTestCase(SetupUserMixin,APITestCase):
+    def setUp(self):
+        super().setUp()
+        self.team = Team.objects.create()
+        self.profile = Profile.objects.create(user=self.user, team=self.team)
+        self.team_code = self.team.team_code
+        self.view = reverse("api:event:join-team")
+
+    def test_user_not_logged_in(self):
+        response = self.client.post(self.view)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_user_has_no_profile(self):
+        self.profile.delete()
+        self._login()
+        response = self.client.post(self.view)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
