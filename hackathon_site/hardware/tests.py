@@ -212,6 +212,7 @@ class OrderListSerializerTestCase(TestCase):
         expected_response = {
             "id": 1,
             "team": self.team.id,
+            "team_code": self.team.team_code,
             "status": "Cart",
             "hardware_set": [],
             "created_at": serializers.DateTimeField().to_representation(
@@ -237,6 +238,7 @@ class OrderListSerializerTestCase(TestCase):
         expected_response = {
             "id": 1,
             "team": self.team.id,
+            "team_code": self.team.team_code,
             "status": "Cart",
             "hardware_set": [
                 HardwareSerializer(self.hardware).data,
