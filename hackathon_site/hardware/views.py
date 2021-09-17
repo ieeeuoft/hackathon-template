@@ -8,7 +8,6 @@ from rest_framework.response import Response
 from rest_framework.filters import SearchFilter, OrderingFilter
 
 from event.permissions import UserHasProfile
-from hardware.permissions import UserHasHardareOrderViewPermission
 from hardware.api_filters import HardwareFilter, OrderFilter
 from hardware.models import Hardware, Category, Order
 from hardware.serializers import (
@@ -53,18 +52,17 @@ class CategoryListView(mixins.ListModelMixin, generics.GenericAPIView):
 
 
 class OrderListView(generics.ListAPIView):
-    queryset = Order.objects.all()
+    queryset = Order.objects.all().select_related("team")
     serializer_class = OrderListSerializer
     serializer_method_classes = {
         "GET": OrderListSerializer,
         "POST": OrderCreateSerializer,
     }
 
-    filter_backends = (filters.DjangoFilterBackend, OrderingFilter)
+    filter_backends = (filters.DjangoFilterBackend, OrderingFilter, SearchFilter)
     filterset_class = OrderFilter
-    ordering_fields = "created_at"
-
-    permission_classes = (UserHasHardareOrderViewPermission,)
+    ordering_fields = ("created_at",)
+    search_fields = ("team__team_code", "id")
 
     def get_serializer_class(self):
         try:

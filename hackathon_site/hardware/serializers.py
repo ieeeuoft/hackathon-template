@@ -40,14 +40,14 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class OrderListSerializer(serializers.ModelSerializer):
-    hardware_set = HardwareSerializer(many=True, read_only=True)
+    hardware = HardwareSerializer(many=True, read_only=True)
     team_code = serializers.SerializerMethodField()
 
     class Meta:
         model = Order
         fields = (
             "id",
-            "hardware_set",
+            "hardware",
             "team",
             "team_code",
             "status",

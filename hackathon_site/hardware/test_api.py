@@ -1,4 +1,3 @@
-from datetime import datetime, timedelta
 from rest_framework.test import APITestCase
 from django.urls import reverse
 from rest_framework import status
@@ -357,11 +356,7 @@ class OrderListViewGetTestCase(SetupUserMixin, APITestCase):
         OrderItem.objects.create(
             order=self.order_2, hardware=self.other_hardware,
         )
-        self.order_3 = Order.objects.create(
-            created_at=(datetime.now() + timedelta(days=1)).date(),
-            status="Cancelled",
-            team=self.team2,
-        )
+        self.order_3 = Order.objects.create(status="Cancelled", team=self.team2,)
         OrderItem.objects.create(
             order=self.order_3, hardware=self.hardware,
         )
@@ -401,8 +396,8 @@ class OrderListViewGetTestCase(SetupUserMixin, APITestCase):
         data = response.json()
         results = data["results"]
 
-        returned_ids = [res["team"] for res in results]
-        self.assertCountEqual(returned_ids, [1, 1])
+        returned_ids = [res["id"] for res in results]
+        self.assertCountEqual(returned_ids, [self.order.id, self.order_2.id])
 
     def test_team_code_filter(self):
         self._login()
@@ -414,8 +409,8 @@ class OrderListViewGetTestCase(SetupUserMixin, APITestCase):
         data = response.json()
         results = data["results"]
 
-        returned_codes = [res["team_code"] for res in results]
-        self.assertCountEqual(returned_codes, ["ABCDE"])
+        returned_ids = [res["id"] for res in results]
+        self.assertCountEqual(returned_ids, [self.order_3.id])
 
     def test_status_filter(self):
         self._login()
@@ -427,15 +422,13 @@ class OrderListViewGetTestCase(SetupUserMixin, APITestCase):
         data = response.json()
         results = data["results"]
 
-        returned_statuses = [res["status"] for res in results]
-        self.assertCountEqual(returned_statuses, ["Cart"])
+        returned_ids = [res["id"] for res in results]
+        self.assertCountEqual(returned_ids, [self.order.id])
 
     def test_created_at_ordering(self):
         self._login()
 
         url = self._build_filter_url(ordering="created_at")
-        print(url)
-        print()
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.json()
@@ -443,6 +436,18 @@ class OrderListViewGetTestCase(SetupUserMixin, APITestCase):
 
         # this assertion is incorrect, I will fix
         self.assertEqual(results[0]["id"], self.order.id)
+
+    def test_search_filter(self):
+        self._login()
+
+        url = self._build_filter_url(search="ABCDE")
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.json()
+        results = data["results"]
+
+        returned_ids = [res["id"] for res in results]
+        self.assertCountEqual(returned_ids, [self.order_3.id])
 
 
 class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
