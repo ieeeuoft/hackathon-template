@@ -15,7 +15,7 @@ from registration.forms import JoinTeamForm
 from registration.models import Team as RegistrationTeam
 
 from rest_framework import generics, mixins
-from rest_framework.filters import SearchFilter, OrderingFilter
+from rest_framework.filters import SearchFilter
 
 from event.models import Team as EventTeam
 from event.serializers import TeamSerializer
