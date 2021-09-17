@@ -18,7 +18,6 @@ class TeamFilter(filters.FilterSet):
     queryset = EventTeam
     serializer_class = TeamSerializer
 
-
     team_ids = IntegerCSVFilter(
         field_name="id",
         label="Comma separated list of team IDs",
