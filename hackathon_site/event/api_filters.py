@@ -18,12 +18,6 @@ class TeamFilter(filters.FilterSet):
     queryset = EventTeam
     serializer_class = TeamSerializer
 
-    @staticmethod
-    def filter_in_stock(queryset, _, value):
-        if value is True:
-            return queryset.filter(quantity_remaining__gt=0)
-        else:
-            return queryset.filter(quantity_remaining__lte=0)
 
     team_ids = IntegerCSVFilter(
         field_name="id",
