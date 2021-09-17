@@ -66,17 +66,15 @@ class CurrentTeamTestCase(SetupUserMixin, APITestCase):
         return reverse(self.view_name, kwargs={"team_code": team_code})
 
     def test_invalid_key(self):
-        response = self.client.get(self._build_view("56ABC"))
-        # self.assertContains(response, "Activation link is invalid")
-        # self.assertContains(response, settings.CONTACT_EMAIL)
+        self._login()
+        response = self.client.post(self._build_view("56ABD"))
+        self.assertEqual(response.status_code,status.HTTP_400_BAD_REQUEST)
 
-
-
-
-
-    def test_user_not_logged_in(self):
-        response = self.client.get(self.view)
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+    def test_join_full_team(self):
+        self._login()
+        team = self._make_full_event_team(self_users=False)
+        print(team.team_code)
+        response = self.client.post(self._build_view(team.team_code))
 
     def test_user_has_no_profile(self):
         """

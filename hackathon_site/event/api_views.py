@@ -70,15 +70,11 @@ class JoinTeamView(generics.GenericAPIView, mixins.RetrieveModelMixin):
         try:
             team = Team.objects.get(team_code = team_code)
         except:
+            team
             raise ValidationError(
                 {"detail": "Team does not exist!"},
                 code=status.HTTP_400_BAD_REQUEST
             )
-
-        # Raise 400 if team has active orders
-        active_orders = OrderItem.objects.filter(
-            ~Q(order__status="Cancelled"), Q(order__team=team),
-        )
 
         if not team.profiles.exists():
             raise ValidationError(
@@ -89,9 +85,15 @@ class JoinTeamView(generics.GenericAPIView, mixins.RetrieveModelMixin):
             raise ValidationError(
                 {"detail":"Team is full"}
             )
+
+        # Raise 400 if team has active orders
+        active_orders = OrderItem.objects.filter(
+            ~Q(order__status="Cancelled"), Q(order__team=team),
+        )
+
         if active_orders.exists():
             raise ValidationError(
-                {"detail": "Cannot leave a team with already processed orders"},
+                {"detail": "Cannot join a team with already processed orders"},
                 code=status.HTTP_400_BAD_REQUEST,
             )
 

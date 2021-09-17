@@ -6,6 +6,7 @@ from django.conf import settings
 from django.test import TestCase, override_settings
 
 from event.models import User, Team as EventTeam, Profile
+from event.models import Team
 from hackathon_site.utils import is_registration_open
 from registration.models import Application, Team as RegistrationTeam
 from review.models import Review
@@ -62,9 +63,81 @@ class SetupUserMixin:
             email = f"{uuid[:10]}@{uuid[10:20]}.com"
         return email
 
+
+
     def _make_full_registration_team(self, team=None, self_users=True):
         if team is None:
             team = RegistrationTeam.objects.create()
+
+        if self_users:
+            user1 = self.user
+            user2 = self.user2 = User.objects.create_user(
+                username="frank@johnston.com",
+                password="hellothere31415",
+                email="frank@johnston.com",
+                first_name="Frank",
+                last_name="Johnston",
+            )
+            user3 = self.user3 = User.objects.create_user(
+                username="franklin@carmichael.com",
+                password="supersecret456",
+                email="franklin@carmichael.com",
+                first_name="Franklin",
+                last_name="Carmichael",
+            )
+            user4 = self.user4 = User.objects.create_user(
+                username="lawren@harris.com",
+                password="wxyz7890",
+                email="lawren@harris.com",
+                first_name="Lawren",
+                last_name="Harris",
+            )
+        else:
+            # Make some random users
+            email1 = self._get_random_email()
+            email2 = self._get_random_email()
+            email3 = self._get_random_email()
+            email4 = self._get_random_email()
+
+            user1 = User.objects.create_user(
+                username=email1,
+                password="foobar123",
+                email=email1,
+                first_name="John1",
+                last_name="Doe1",
+            )
+            user2 = User.objects.create_user(
+                username=email2,
+                password="foobar123",
+                email=email2,
+                first_name="John2",
+                last_name="Doe2",
+            )
+            user3 = User.objects.create_user(
+                username=email3,
+                password="foobar123",
+                email=email3,
+                first_name="John3",
+                last_name="Doe3",
+            )
+            user4 = User.objects.create_user(
+                username=email4,
+                password="foobar123",
+                email=email4,
+                first_name="John4",
+                last_name="Doe4",
+            )
+
+        self._apply_as_user(user1, team)
+        self._apply_as_user(user2, team)
+        self._apply_as_user(user3, team)
+        self._apply_as_user(user4, team)
+
+        return team
+
+    def _make_full_event_team(self, team=None, self_users=True):
+        if team is None:
+            team = Team.objects.create()
 
         if self_users:
             user1 = self.user
