@@ -19,8 +19,9 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 
 from event.models import Team as EventTeam
 from event.serializers import TeamSerializer
-
 from event.api_filters import TeamFilter
+
+from permissions import FullDjangoModelPermissions
 
 
 def _now():
@@ -210,6 +211,7 @@ class DashboardView(LoginRequiredMixin, FormView):
 class TeamListView(mixins.ListModelMixin, generics.GenericAPIView):
     queryset = EventTeam.objects.all()
     serializer_class = TeamSerializer
+    permission_classes = [FullDjangoModelPermissions]
 
     filter_backends = (filters.DjangoFilterBackend, SearchFilter)
     filterset_class = TeamFilter
