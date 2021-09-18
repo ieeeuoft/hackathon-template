@@ -435,7 +435,9 @@ class OrderListViewGetTestCase(SetupUserMixin, APITestCase):
         results = data["results"]
 
         returned_ids = [res["id"] for res in results]
-        self.assertEqual(returned_ids, [self.order.id, self.order_2.id, self.order_3.id])
+        self.assertEqual(
+            returned_ids, [self.order.id, self.order_2.id, self.order_3.id]
+        )
 
     def test_created_at_ordering_descending(self):
         self._login()
@@ -447,7 +449,9 @@ class OrderListViewGetTestCase(SetupUserMixin, APITestCase):
         results = data["results"]
 
         returned_ids = [res["id"] for res in results]
-        self.assertEqual(returned_ids, [self.order_3.id, self.order_2.id, self.order.id])
+        self.assertEqual(
+            returned_ids, [self.order_3.id, self.order_2.id, self.order.id]
+        )
 
     def test_search_filter(self):
         self._login()
