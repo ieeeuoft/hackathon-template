@@ -52,7 +52,11 @@ class CategoryListView(mixins.ListModelMixin, generics.GenericAPIView):
 
 
 class OrderListView(generics.ListAPIView):
-    queryset = Order.objects.all().select_related("team")
+    queryset = (
+        Order.objects.all()
+        .select_related("team")
+        .prefetch_related("hardware", "hardware__categories")
+    )
     serializer_class = OrderListSerializer
     serializer_method_classes = {
         "GET": OrderListSerializer,
