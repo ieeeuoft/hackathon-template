@@ -520,7 +520,7 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
 
         order = Order.objects.get(pk=1)
         self.assertEqual(order.items.count(), 1, "More than 1 order item created")
-        self.assertCountEqual(order.hardware_set.all(), [simple_hardware])
+        self.assertCountEqual(order.hardware.all(), [simple_hardware])
 
     def test_invalid_input_hardware_limit(self):
         self._login()
@@ -637,7 +637,7 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
 
         order = Order.objects.get(pk=2)
         self.assertEqual(order.items.count(), 4)
-        self.assertCountEqual(order.hardware_set.all(), [hardware])
+        self.assertCountEqual(order.hardware.all(), [hardware])
 
     def test_hardware_limit_cancelled_orders(self):
         self._login()
@@ -672,7 +672,7 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
 
         order = Order.objects.get(pk=2)
         self.assertEqual(order.items.all().count(), 1)
-        self.assertCountEqual(order.hardware_set.all(), [hardware])
+        self.assertCountEqual(order.hardware.all(), [hardware])
 
     def test_invalid_input_category_limit(self):
         self._login()
@@ -793,7 +793,7 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
 
         order = Order.objects.get(pk=2)
         self.assertEqual(order.items.count(), 4)
-        self.assertCountEqual(order.hardware_set.all(), [hardware])
+        self.assertCountEqual(order.hardware.all(), [hardware])
 
     def test_category_limit_cancelled_orders(self):
         self._login()
@@ -828,7 +828,7 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
 
         order = Order.objects.get(pk=2)
         self.assertEqual(order.items.count(), 1)
-        self.assertCountEqual(order.hardware_set.all(), [hardware])
+        self.assertCountEqual(order.hardware.all(), [hardware])
 
     def test_invalid_inputs_multiple_hardware(self):
         self._login()
@@ -939,7 +939,7 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(response_json.get("errors"), [])
 
         order = Order.objects.get(pk=order_id)
-        self.assertCountEqual(order.hardware_set.all(), [hardware_1, hardware_2])
+        self.assertCountEqual(order.hardware.all(), [hardware_1, hardware_2])
         self.assertEqual(
             order.items.filter(hardware=hardware_1).count(), num_hardware_1_requested
         )
@@ -990,7 +990,7 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
 
         order = Order.objects.get(pk=1)
         self.assertEqual(order.items.all().count(), num_hardware_requested)
-        self.assertCountEqual(order.hardware_set.all(), [hardware])
+        self.assertCountEqual(order.hardware.all(), [hardware])
 
     def test_limited_by_remaining_quantities(self):
         # we won't test the other contributing causes for "remaining quantities"
@@ -1051,7 +1051,7 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(response.json(), expected_response)
 
         order = Order.objects.get(pk=2)
-        self.assertCountEqual(order.hardware_set.all(), [hardware])
+        self.assertCountEqual(order.hardware.all(), [hardware])
         self.assertEqual(
             order.items.filter(hardware=hardware).count(), num_expected_fulfilled
         )
