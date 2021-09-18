@@ -425,7 +425,7 @@ class OrderListViewGetTestCase(SetupUserMixin, APITestCase):
         returned_ids = [res["id"] for res in results]
         self.assertCountEqual(returned_ids, [self.order.id])
 
-    def test_created_at_ordering(self):
+    def test_created_at_ordering_ascending(self):
         self._login()
 
         url = self._build_filter_url(ordering="created_at")
@@ -434,8 +434,20 @@ class OrderListViewGetTestCase(SetupUserMixin, APITestCase):
         data = response.json()
         results = data["results"]
 
-        # this assertion is incorrect, I will fix
-        self.assertEqual(results[0]["id"], self.order.id)
+        returned_ids = [res["id"] for res in results]
+        self.assertEqual(returned_ids, [self.order.id, self.order_2.id, self.order_3.id])
+
+    def test_created_at_ordering_descending(self):
+        self._login()
+
+        url = self._build_filter_url(ordering="-created_at")
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.json()
+        results = data["results"]
+
+        returned_ids = [res["id"] for res in results]
+        self.assertEqual(returned_ids, [self.order_3.id, self.order_2.id, self.order.id])
 
     def test_search_filter(self):
         self._login()
