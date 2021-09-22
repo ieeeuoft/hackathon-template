@@ -10,6 +10,7 @@ from event.serializers import (
     UserSerializer,
 )
 
+
 class CurrentUserTestCase(SetupUserMixin, APITestCase):
     def setUp(self):
         super().setUp()
@@ -61,13 +62,13 @@ class CurrentTeamTestCase(SetupUserMixin, APITestCase):
         self.team_code = self.team.team_code
         self.view_name = "api:event:join-team"
 
-    def _build_view(self,team_code):
+    def _build_view(self, team_code):
         return reverse(self.view_name, kwargs={"team_code": team_code})
 
     def test_invalid_key(self):
         self._login()
         response = self.client.post(self._build_view("56ABD"))
-        self.assertEqual(response.status_code,status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_join_full_team(self):
         self._login()

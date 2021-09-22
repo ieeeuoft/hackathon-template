@@ -1,6 +1,6 @@
 from rest_framework import generics, mixins
 
-from event.models import User,Team
+from event.models import User, Team
 from event.serializers import TeamSerializer
 from event.serializers import UserSerializer
 from event.permissions import UserHasProfile
@@ -68,11 +68,10 @@ class JoinTeamView(generics.GenericAPIView, mixins.RetrieveModelMixin):
         current_team = profile.team
 
         try:
-            team = Team.objects.get(team_code = team_code)
+            team = Team.objects.get(team_code=team_code)
         except:
             raise ValidationError(
-                {"detail": "Team does not exist!"},
-                code=status.HTTP_400_BAD_REQUEST
+                {"detail": "Team does not exist!"}, code=status.HTTP_400_BAD_REQUEST
             )
 
         if not team.profiles.exists():
@@ -81,9 +80,7 @@ class JoinTeamView(generics.GenericAPIView, mixins.RetrieveModelMixin):
                 code=status.HTTP_400_BAD_REQUEST,
             )
         if team.profiles.count() >= Team.MAX_MEMBERS:
-            raise ValidationError(
-                {"detail":"Team is full"}
-            )
+            raise ValidationError({"detail": "Team is full"})
 
         # Raise 400 if team has active orders
         active_orders = OrderItem.objects.filter(
