@@ -10,7 +10,6 @@ from event.serializers import (
     UserSerializer,
 )
 
-
 class CurrentUserTestCase(SetupUserMixin, APITestCase):
     def setUp(self):
         super().setUp()
@@ -76,15 +75,15 @@ class CurrentTeamTestCase(SetupUserMixin, APITestCase):
         print(team.team_code)
         response = self.client.post(self._build_view(team.team_code))
 
+    def test_user_not_logged_in(self):
+        response = self.client.post(self._build_view("56ABD"))
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
     def test_user_has_no_profile(self):
-        """
-        When the user attempts to access the team, while it has no profile.
-        The user must be accepted or waitlisted to have formed a team.
-        """
         self.profile.delete()
         self._login()
-        response = self.client.get(self.view)
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        response = self.client.post(self._build_view("56ABD"))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_user_has_profile(self):
         """
@@ -97,22 +96,3 @@ class CurrentTeamTestCase(SetupUserMixin, APITestCase):
         serializer = TeamSerializer(team_expected)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json(), serializer.data)
-
-class JoinTeamTestCase(SetupUserMixin,APITestCase):
-    def setUp(self):
-        super().setUp()
-        self.team = Team.objects.create()
-        self.profile = Profile.objects.create(user=self.user, team=self.team)
-        self.team_code = self.team.team_code
-        self.view = reverse("api:event:join-team")
-
-    def test_user_not_logged_in(self):
-        response = self.client.post(self.view)
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-
-    def test_user_has_no_profile(self):
-        self.profile.delete()
-        self._login()
-        response = self.client.post(self.view)
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-

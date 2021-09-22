@@ -70,7 +70,6 @@ class JoinTeamView(generics.GenericAPIView, mixins.RetrieveModelMixin):
         try:
             team = Team.objects.get(team_code = team_code)
         except:
-            team
             raise ValidationError(
                 {"detail": "Team does not exist!"},
                 code=status.HTTP_400_BAD_REQUEST

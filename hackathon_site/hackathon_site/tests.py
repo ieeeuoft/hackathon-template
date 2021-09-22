@@ -65,40 +65,44 @@ class SetupUserMixin:
 
 
 
-    def _make_full_registration_team(self, team=None, self_users=True):
+    def _make_full_registration_team(self, team=None, self_users=True,num_users=4):
         if team is None:
             team = RegistrationTeam.objects.create()
 
         if self_users:
+
             user1 = self.user
-            user2 = self.user2 = User.objects.create_user(
-                username="frank@johnston.com",
-                password="hellothere31415",
-                email="frank@johnston.com",
-                first_name="Frank",
-                last_name="Johnston",
-            )
-            user3 = self.user3 = User.objects.create_user(
-                username="franklin@carmichael.com",
-                password="supersecret456",
-                email="franklin@carmichael.com",
-                first_name="Franklin",
-                last_name="Carmichael",
-            )
-            user4 = self.user4 = User.objects.create_user(
-                username="lawren@harris.com",
-                password="wxyz7890",
-                email="lawren@harris.com",
-                first_name="Lawren",
-                last_name="Harris",
-            )
+            cumulative_users = [user1]
+            if num_users>1:
+                user2 = self.user2 = User.objects.create_user(
+                    username="frank@johnston.com",
+                    password="hellothere31415",
+                    email="frank@johnston.com",
+                    first_name="Frank",
+                    last_name="Johnston",
+                )
+                cumulative_users+=[user2]
+            if num_users>2:
+                user3 = self.user3 = User.objects.create_user(
+                    username="franklin@carmichael.com",
+                    password="supersecret456",
+                    email="franklin@carmichael.com",
+                    first_name="Franklin",
+                    last_name="Carmichael",
+                )
+                cumulative_users+=[user3]
+            if num_users>3:
+                user4 = self.user4 = User.objects.create_user(
+                    username="lawren@harris.com",
+                    password="wxyz7890",
+                    email="lawren@harris.com",
+                    first_name="Lawren",
+                    last_name="Harris",
+                )
+                cumulative_users+=[user4]
         else:
             # Make some random users
             email1 = self._get_random_email()
-            email2 = self._get_random_email()
-            email3 = self._get_random_email()
-            email4 = self._get_random_email()
-
             user1 = User.objects.create_user(
                 username=email1,
                 password="foobar123",
@@ -106,69 +110,81 @@ class SetupUserMixin:
                 first_name="John1",
                 last_name="Doe1",
             )
-            user2 = User.objects.create_user(
-                username=email2,
-                password="foobar123",
-                email=email2,
-                first_name="John2",
-                last_name="Doe2",
-            )
-            user3 = User.objects.create_user(
-                username=email3,
-                password="foobar123",
-                email=email3,
-                first_name="John3",
-                last_name="Doe3",
-            )
-            user4 = User.objects.create_user(
-                username=email4,
-                password="foobar123",
-                email=email4,
-                first_name="John4",
-                last_name="Doe4",
-            )
+            cumulative_users = [user1]
+            if num_users>1:
+                email2 = self._get_random_email()
+                user2 = User.objects.create_user(
+                    username=email2,
+                    password="foobar123",
+                    email=email2,
+                    first_name="John2",
+                    last_name="Doe2",
+                )
+                cumulative_users+=[user2]
+            if num_users>2:
+                email3 = self._get_random_email()
+                user3 = User.objects.create_user(
+                    username=email3,
+                    password="foobar123",
+                    email=email3,
+                    first_name="John3",
+                    last_name="Doe3",
+                )
+                cumulative_users+=[user3]
+            if num_users>3:
+                email4 = self._get_random_email()
+                user4 = User.objects.create_user(
+                    username=email4,
+                    password="foobar123",
+                    email=email4,
+                    first_name="John4",
+                    last_name="Doe4",
+                )
+                cumulative_users+=[user4]
 
-        self._apply_as_user(user1, team)
-        self._apply_as_user(user2, team)
-        self._apply_as_user(user3, team)
-        self._apply_as_user(user4, team)
+        for user in cumulative_users:
+            self._apply_as_user(user,team)
 
         return team
 
-    def _make_full_event_team(self, team=None, self_users=True):
+    def _make_full_event_team(self, team=None, self_users=True, num_users=4):
         if team is None:
-            team = Team.objects.create()
+            team = EventTeam.objects.create()
 
         if self_users:
+
             user1 = self.user
-            user2 = self.user2 = User.objects.create_user(
-                username="frank@johnston.com",
-                password="hellothere31415",
-                email="frank@johnston.com",
-                first_name="Frank",
-                last_name="Johnston",
-            )
-            user3 = self.user3 = User.objects.create_user(
-                username="franklin@carmichael.com",
-                password="supersecret456",
-                email="franklin@carmichael.com",
-                first_name="Franklin",
-                last_name="Carmichael",
-            )
-            user4 = self.user4 = User.objects.create_user(
-                username="lawren@harris.com",
-                password="wxyz7890",
-                email="lawren@harris.com",
-                first_name="Lawren",
-                last_name="Harris",
-            )
+            cumulative_users = [user1]
+            if num_users > 1:
+                user2 = self.user2 = User.objects.create_user(
+                    username="frank@johnston.com",
+                    password="hellothere31415",
+                    email="frank@johnston.com",
+                    first_name="Frank",
+                    last_name="Johnston",
+                )
+                cumulative_users += [user2]
+            if num_users > 2:
+                user3 = self.user3 = User.objects.create_user(
+                    username="franklin@carmichael.com",
+                    password="supersecret456",
+                    email="franklin@carmichael.com",
+                    first_name="Franklin",
+                    last_name="Carmichael",
+                )
+                cumulative_users += [user3]
+            if num_users > 3:
+                user4 = self.user4 = User.objects.create_user(
+                    username="lawren@harris.com",
+                    password="wxyz7890",
+                    email="lawren@harris.com",
+                    first_name="Lawren",
+                    last_name="Harris",
+                )
+                cumulative_users += [user4]
         else:
             # Make some random users
             email1 = self._get_random_email()
-            email2 = self._get_random_email()
-            email3 = self._get_random_email()
-            email4 = self._get_random_email()
-
             user1 = User.objects.create_user(
                 username=email1,
                 password="foobar123",
@@ -176,32 +192,40 @@ class SetupUserMixin:
                 first_name="John1",
                 last_name="Doe1",
             )
-            user2 = User.objects.create_user(
-                username=email2,
-                password="foobar123",
-                email=email2,
-                first_name="John2",
-                last_name="Doe2",
-            )
-            user3 = User.objects.create_user(
-                username=email3,
-                password="foobar123",
-                email=email3,
-                first_name="John3",
-                last_name="Doe3",
-            )
-            user4 = User.objects.create_user(
-                username=email4,
-                password="foobar123",
-                email=email4,
-                first_name="John4",
-                last_name="Doe4",
-            )
+            cumulative_users = [user1]
+            if num_users > 1:
+                email2 = self._get_random_email()
+                user2 = User.objects.create_user(
+                    username=email2,
+                    password="foobar123",
+                    email=email2,
+                    first_name="John2",
+                    last_name="Doe2",
+                )
+                cumulative_users += [user2]
+            if num_users > 2:
+                email3 = self._get_random_email()
+                user3 = User.objects.create_user(
+                    username=email3,
+                    password="foobar123",
+                    email=email3,
+                    first_name="John3",
+                    last_name="Doe3",
+                )
+                cumulative_users += [user3]
+            if num_users > 3:
+                email4 = self._get_random_email()
+                user4 = User.objects.create_user(
+                    username=email4,
+                    password="foobar123",
+                    email=email4,
+                    first_name="John4",
+                    last_name="Doe4",
+                )
+                cumulative_users += [user4]
 
-        self._apply_as_user(user1, team)
-        self._apply_as_user(user2, team)
-        self._apply_as_user(user3, team)
-        self._apply_as_user(user4, team)
+        for user in cumulative_users:
+            self._apply_as_user(user, team)
 
         return team
 
