@@ -3,6 +3,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 from hackathon_site.tests import SetupUserMixin
+from django.contrib.auth.models import Permission
 
 from event.models import Profile, User, Team
 from event.serializers import (
@@ -87,3 +88,84 @@ class CurrentTeamTestCase(SetupUserMixin, APITestCase):
         serializer = TeamSerializer(team_expected)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json(), serializer.data)
+
+
+class EventTeamListsViewTestCase(SetupUserMixin, APITestCase):
+    def setUp(self):
+        super().setUp()
+        self.team = Team.objects.create()
+        self.team2 = Team.objects.create()
+        self.team3 = Team.objects.create()
+
+        self.view = reverse("api:event:team-list")
+
+    def _login(self):
+        self.client.login(username=self.user.username, password=self.password)
+
+    def _login_permission(self):
+        self.client.login(username=self.user.username, password=self.password)
+        self.user.user_permissions.add(
+            Permission.objects.get(codename="view_team", pk="28")
+        )
+
+    def _build_filter_url(self, **kwargs):
+        return (
+            self.view + "?" + "&".join([f"{key}={val}" for key, val in kwargs.items()])
+        )
+
+    def test_team_get_no_permission(self):
+        self._login()
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_team_get_permission(self):
+        self._login_permission()
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        queryset = Team.objects.all()
+
+        # need to provide a request in the serializer context to produce absolute url for image field
+        expected_response = TeamSerializer(
+            queryset, many=True, context={"request": response.wsgi_request}
+        ).data
+        data = response.json()
+
+        self.assertEqual(expected_response, data["results"])
+
+    def test_team_code_filter(self):
+        self._login_permission()
+
+        url = self._build_filter_url(team_code=self.team.team_code)
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.json()
+        results = data["results"]
+
+        returned_ids = [res["team_code"] for res in results]
+        self.assertCountEqual(returned_ids, [self.team.team_code])
+
+    def test_team_id_filter(self):
+        self._login_permission()
+
+        url = self._build_filter_url(team_ids="1,3")
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.json()
+        results = data["results"]
+
+        returned_ids = [res["id"] for res in results]
+        self.assertCountEqual(returned_ids, [1, 3])
+
+    def test_name_search_filter(self):
+        self._login_permission()
+
+        url = self._build_filter_url(search=self.team2.team_code)
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.json()
+        results = data["results"]
+        returned_ids = [res["team_code"] for res in results]
+        self.assertCountEqual(returned_ids, [self.team2.team_code])
