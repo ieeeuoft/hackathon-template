@@ -334,6 +334,8 @@ class IncidentListsViewTestCase(SetupUserMixin, APITestCase):
             max_per_team=1,
             picture="/picture/location",
         )
+
+
         self.other_hardware = Hardware.objects.create(
             name="other",
             model_number="otherModel",
@@ -347,11 +349,22 @@ class IncidentListsViewTestCase(SetupUserMixin, APITestCase):
             order=self.order, hardware=self.hardware,
         )
 
+        self.order_item2 = OrderItem.objects.create(
+            order=self.order, hardware=self.other_hardware,
+        )
+
         self.incident = Incident.objects.create(
             state="Broken",
             description="Description",
             order_item=self.order_item,
-            time_occurred="2021-08-08 00:00:00",
+            time_occurred="2022-08-08 00:00:00",
+        )
+
+        self.incident2 = Incident.objects.create(
+            state="Missing",
+            description="Description",
+            order_item=self.order_item2,
+            time_occurred="2022-08-08 00:00:00",
         )
         self.view = reverse("api:hardware:incident-list")
 
@@ -397,20 +410,22 @@ class IncidentListsViewTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.json()
         results = data["results"]
+
         returned_ids = [res["id"] for res in results]
-        self.assertCountEqual(returned_ids, [1])
+        print(results)
+        self.assertCountEqual(returned_ids, [1,2])
 
     def test_name_search_filter(self):
         self._login()
 
-        url = self._build_filter_url(name="name")
+        url = self._build_filter_url(search="other")
 
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.json()
         results = data["results"]
         returned_ids = [res["id"] for res in results]
-        self.assertCountEqual(returned_ids, [1])
+        self.assertCountEqual(returned_ids, [2])
 
 
 class OrderListViewGetTestCase(SetupUserMixin, APITestCase):
