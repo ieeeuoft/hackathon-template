@@ -335,7 +335,6 @@ class IncidentListsViewTestCase(SetupUserMixin, APITestCase):
             picture="/picture/location",
         )
 
-
         self.other_hardware = Hardware.objects.create(
             name="other",
             model_number="otherModel",
@@ -413,7 +412,7 @@ class IncidentListsViewTestCase(SetupUserMixin, APITestCase):
 
         returned_ids = [res["id"] for res in results]
         print(results)
-        self.assertCountEqual(returned_ids, [1,2])
+        self.assertCountEqual(returned_ids, [1, 2])
 
     def test_name_search_filter(self):
         self._login()
