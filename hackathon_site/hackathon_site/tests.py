@@ -38,7 +38,7 @@ class SetupUserMixin:
             "e_signature": True,
         }
 
-        return Profile.objects.create(user=user,team=team,**profile_data)
+        return Profile.objects.create(user=user, team=team, **profile_data)
 
     @staticmethod
     def _apply_as_user(user, team=None):

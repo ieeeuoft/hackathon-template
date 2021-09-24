@@ -76,7 +76,7 @@ class JoinTeamTestCase(SetupUserMixin, APITestCase):
         team = self._make_full_event_team(self_users=False)
         print(team.team_code)
         response = self.client.post(self._build_view(team.team_code))
-        self.assertEqual(str(response.content),'b\'{"detail":"Team is full"}\'')
+        self.assertEqual(str(response.content), 'b\'{"detail":"Team is full"}\'')
 
     def test_user_not_logged_in(self):
         response = self.client.post(self._build_view("56ABD"))
@@ -113,7 +113,7 @@ class JoinTeamTestCase(SetupUserMixin, APITestCase):
             picture="/picture/location",
         )
 
-        self.team = self._make_full_event_team(self_users=False,num_users=3)
+        self.team = self._make_full_event_team(self_users=False, num_users=3)
 
         order = Order.objects.create(status="Cart", team=self.team)
         OrderItem.objects.create(order=order, hardware=hardware)
