@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 
+from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
 from django.shortcuts import redirect
@@ -16,8 +17,6 @@ from rest_framework.response import Response
 from hackathon_site.utils import is_registration_open
 from registration.forms import JoinTeamForm
 from registration.models import Team as RegistrationTeam
-
-from rest_framework import generics, mixins
 
 from event.models import Team as EventTeam
 from event.serializers import TeamSerializer

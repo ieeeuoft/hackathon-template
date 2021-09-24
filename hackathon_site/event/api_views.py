@@ -1,4 +1,5 @@
-from rest_framework import generics, mixins
+from django.db import transaction
+from django.db.models import Q
 
 from event.models import User, Team
 from event.serializers import TeamSerializer
@@ -19,7 +20,8 @@ from hackathon_site.utils import is_registration_open
 
 from rest_framework import generics, mixins
 
-from event.serializers import TeamSerializer
+from event.models import User, Team as EventTeam
+from event.serializers import UserSerializer, TeamSerializer
 from event.permissions import UserHasProfile
 
 from hardware.models import OrderItem
@@ -47,6 +49,37 @@ class CurrentUserAPIView(generics.GenericAPIView, mixins.RetrieveModelMixin):
         """
         return self.retrieve(request, *args, **kwargs)
 
+class LeaveTeamView(generics.GenericAPIView):
+    serializer_class = TeamSerializer
+    permission_classes = [UserHasProfile]
+
+    @transaction.atomic
+    def post(self, request, *args, **kwargs):
+        profile = request.user.profile
+        team = profile.team
+
+        # Raise 400 if team has active orders
+        active_orders = OrderItem.objects.filter(
+            ~Q(order__status="Cancelled"), Q(order__team=team),
+        )
+        if active_orders.exists():
+            raise ValidationError(
+                {"detail": "Cannot leave a team with already processed orders"},
+                code=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # create new team
+        profile.team = EventTeam.objects.create()
+        profile.save()
+
+        # delete old team if empty
+        if not team.profiles.exists():
+            team.delete()
+
+        # Construct response data
+        response_serializer = TeamSerializer(profile.team)
+        response_data = response_serializer.data
+        return Response(data=response_data, status=status.HTTP_201_CREATED,)
 
 class JoinTeamView(generics.GenericAPIView, mixins.RetrieveModelMixin):
     permission_classes = [UserHasProfile]
