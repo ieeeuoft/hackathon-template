@@ -49,6 +49,7 @@ class CurrentUserAPIView(generics.GenericAPIView, mixins.RetrieveModelMixin):
         """
         return self.retrieve(request, *args, **kwargs)
 
+
 class LeaveTeamView(generics.GenericAPIView):
     serializer_class = TeamSerializer
     permission_classes = [UserHasProfile]
@@ -80,6 +81,7 @@ class LeaveTeamView(generics.GenericAPIView):
         response_serializer = TeamSerializer(profile.team)
         response_data = response_serializer.data
         return Response(data=response_data, status=status.HTTP_201_CREATED,)
+
 
 class JoinTeamView(generics.GenericAPIView, mixins.RetrieveModelMixin):
     permission_classes = [UserHasProfile]

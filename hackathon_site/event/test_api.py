@@ -51,6 +51,7 @@ class CurrentUserTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json(), serializer.data)
 
+
 class JoinTeamTestCase(SetupUserMixin, APITestCase):
     def setUp(self):
         super().setUp()
@@ -122,7 +123,8 @@ class JoinTeamTestCase(SetupUserMixin, APITestCase):
             order.save()
             if status_choice != "Cancelled":
                 self.check_cannot_join()
-        
+
+
 class LeaveTeamTestCase(SetupUserMixin, APITestCase):
     def setUp(self):
         super().setUp()
