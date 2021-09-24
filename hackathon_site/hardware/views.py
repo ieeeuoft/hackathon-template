@@ -18,6 +18,7 @@ from hardware.serializers import (
     OrderCreateResponseSerializer,
 )
 
+from event.permissions import FullDjangoModelPermissions
 
 logger = logging.getLogger(__name__)
 
@@ -55,7 +56,6 @@ class OrderListView(generics.ListAPIView):
     queryset = (
         Order.objects.all()
         .select_related("team")
-        .prefetch_related("hardware", "hardware__categories")
     )
     serializer_class = OrderListSerializer
     serializer_method_classes = {
@@ -67,6 +67,8 @@ class OrderListView(generics.ListAPIView):
     filterset_class = OrderFilter
     ordering_fields = ("created_at",)
     search_fields = ("team__team_code", "id")
+
+    permissions_classes = [FullDjangoModelPermissions]
 
     def get_serializer_class(self):
         try:
