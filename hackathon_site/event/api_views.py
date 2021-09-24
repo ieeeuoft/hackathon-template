@@ -93,7 +93,8 @@ class JoinTeamView(generics.GenericAPIView, mixins.RetrieveModelMixin):
                 code=status.HTTP_400_BAD_REQUEST,
             )
 
-        profile.team = team_code
+        print(type(profile.team))
+        profile.team = team
         profile.save()
 
         response_serializer = TeamSerializer(profile.team)

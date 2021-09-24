@@ -9,6 +9,7 @@ from event.serializers import (
     TeamSerializer,
     UserSerializer,
 )
+from hardware.models import Hardware, Order, OrderItem
 
 
 class CurrentUserTestCase(SetupUserMixin, APITestCase):
@@ -51,7 +52,7 @@ class CurrentUserTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(response.json(), serializer.data)
 
 
-class CurrentTeamTestCase(SetupUserMixin, APITestCase):
+class JoinTeamTestCase(SetupUserMixin, APITestCase):
     def setUp(self):
         super().setUp()
         self.group = Group.objects.create(name="Test Users")
@@ -75,6 +76,7 @@ class CurrentTeamTestCase(SetupUserMixin, APITestCase):
         team = self._make_full_event_team(self_users=False)
         print(team.team_code)
         response = self.client.post(self._build_view(team.team_code))
+        self.assertEqual(str(response.content),'b\'{"detail":"Team is full"}\'')
 
     def test_user_not_logged_in(self):
         response = self.client.post(self._build_view("56ABD"))
@@ -86,14 +88,38 @@ class CurrentTeamTestCase(SetupUserMixin, APITestCase):
         response = self.client.post(self._build_view("56ABD"))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_user_has_profile(self):
+    def check_cannot_join(self):
+        old_team = self.profile.team
+        response = self.client.post(self._build_view(self.team.team_code))
+        self.user.refresh_from_db()
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(old_team.pk, self.user.profile.team.pk)
+        self.assertEqual(Team.objects.filter(team_code=old_team.team_code).count(), 1)
+
+    def test_leave_with_order(self):
         """
-        When user has a profile and attempts to access the team, then the user
-        should get the correct response.
+        when there are orders but no other members on the team,
+        user can only leave when there are only cancelled orders
         """
         self._login()
-        response = self.client.get(self.view)
-        team_expected = Team.objects.get(pk=self.team.pk)
-        serializer = TeamSerializer(team_expected)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.json(), serializer.data)
+
+        hardware = Hardware.objects.create(
+            name="name",
+            model_number="model",
+            manufacturer="manufacturer",
+            datasheet="/datasheet/location/",
+            quantity_available=4,
+            max_per_team=1,
+            picture="/picture/location",
+        )
+
+        self.team = self._make_full_event_team(self_users=False,num_users=3)
+
+        order = Order.objects.create(status="Cart", team=self.team)
+        OrderItem.objects.create(order=order, hardware=hardware)
+
+        for _, status_choice in Order.STATUS_CHOICES:
+            order.status = status_choice
+            order.save()
+            if status_choice != "Cancelled":
+                self.check_cannot_join()
