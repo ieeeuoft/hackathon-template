@@ -3,6 +3,7 @@ import copy
 from rest_framework import permissions
 from rest_framework.permissions import DjangoModelPermissions
 
+
 class UserHasProfile(permissions.IsAuthenticated):
     """
     Allows access only to authenticate users with profiles.
