@@ -414,7 +414,7 @@ class IncidentListsViewTestCase(SetupUserMixin, APITestCase):
         results = data["results"]
 
         returned_ids = [res["id"] for res in results]
-        print(results)
+
         self.assertCountEqual(returned_ids, [1, 2])
 
     def test_name_search_filter(self):
