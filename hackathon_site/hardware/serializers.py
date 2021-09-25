@@ -39,6 +39,14 @@ class CategorySerializer(serializers.ModelSerializer):
         return obj.hardware_set.annotate(Count("id", distinct=True)).count()
 
 
+class ChangeOrderStatusSerializer(serializers.ModelSerializer):
+    hardware_set = HardwareSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Order
+        fields = ("id", "hardware_set", "team", "status", "created_at", "updated_at")
+
+
 class OrderListSerializer(serializers.ModelSerializer):
     hardware_set = HardwareSerializer(many=True, read_only=True)
 

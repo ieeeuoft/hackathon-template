@@ -16,6 +16,7 @@ from hardware.serializers import (
     OrderListSerializer,
     OrderCreateSerializer,
     OrderCreateResponseSerializer,
+    ChangeOrderStatusSerializer,
 )
 
 
@@ -57,7 +58,9 @@ class OrderListView(generics.ListAPIView):
     serializer_method_classes = {
         "GET": OrderListSerializer,
         "POST": OrderCreateSerializer,
+        "PATCH": ChangeOrderStatusSerializer
     }
+    lookup_field = "id"
 
     def get_serializer_class(self):
         try:
@@ -87,20 +90,13 @@ class OrderListView(generics.ListAPIView):
         response_data = response_serializer.data
         return Response(response_data, status=status.HTTP_201_CREATED)
 
+    @transaction.atomic
+    def patch(self, request, order_id, *args, **kwargs):
+        order = self.get_object()
+        serializer = self.get_serializer_class()(order,status="Submitted",partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(data=serializer.data, status=status.HTTP_202_ACCEPTED)
+        else:
+            return Response(data=serializer.data, status=status.HTTP_400_BAD_REQUEST)
 
-class UpdateOrderView:
-    queryset = Order.objects.all()
-    serializer_class = OrderListSerializer
-    serializer_method_classes = {
-        "GET": OrderListSerializer,
-        "POST": OrderCreateSerializer,
-    }
-
-    def get_serializer_class(self):
-        try:
-            return self.serializer_method_classes[self.request.method]
-        except (KeyError, AttributeError):
-            return super().get_serializer_class()
-
-
-#     serialize
