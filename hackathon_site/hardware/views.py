@@ -52,8 +52,7 @@ class CategoryListView(mixins.ListModelMixin, generics.GenericAPIView):
 
 class OrderListView(generics.ListAPIView):
     queryset = (
-        Order.objects.all()
-        .select_related("team")
+        Order.objects.all().select_related("team")
         # Causing problems with filtering, will figure out later:
         # .prefetch_related("hardware", "hardware__categories")
     )
