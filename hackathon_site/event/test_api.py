@@ -136,7 +136,7 @@ class JoinTeamTestCase(SetupUserMixin, APITestCase):
         response = self.client.post(self._build_view("56ABD"))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def check_cannot_leave(self):
+    def check_cannot_leave_active(self):
         old_team = self.profile.team
         sample_team = self._make_full_event_team(self_users=False, num_users=2)
         response = self.client.post(self._build_view(sample_team.team_code))
@@ -181,7 +181,7 @@ class JoinTeamTestCase(SetupUserMixin, APITestCase):
             order.status = status_choice
             order.save()
             if status_choice != "Cancelled":
-                self.check_cannot_leave()
+                self.check_cannot_leave_active()
             else:
                 self.check_can_leave_cancelled()
 
