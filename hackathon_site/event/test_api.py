@@ -105,13 +105,14 @@ class JoinTeamTestCase(SetupUserMixin, APITestCase):
     def test_join_and_delete(self):
         """
         When a member wants to join a team, if their current team only includes
-        them, their current team is deleted.
+        them, their current team is deleted..
         """
         self._login()
-        self.client.post(self._build_view(self.team_code))
+
+        # A single-user team is created as part of the setup.
         team = self._make_event_team(self_users=False, num_users=2)
         self.client.post(self._build_view(team.team_code))
-        self.assertEqual(self.team.profiles.exists(), False)
+        self.assertFalse(self.team.profiles.exists())
 
     def test_invalid_key(self):
         self._login()
