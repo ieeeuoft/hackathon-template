@@ -104,6 +104,17 @@ class JoinTeamTestCase(SetupUserMixin, APITestCase):
     def _build_view(self, team_code):
         return reverse(self.view_name, kwargs={"team_code": team_code})
 
+    def test_join_and_delete(self):
+        """
+        When a member wants to join a team, if their current team only includes
+        them, their current team is deleted.
+        """
+        self._login()
+        self.client.post(self._build_view(self.team.team_code))
+        team = self._make_full_event_team(self_users=False, num_users=2)
+        self.client.post(self._build_view(team.team_code))
+        self.assertEqual(self.team.profiles.exists(), False)
+
     def test_invalid_key(self):
         self._login()
         response = self.client.post(self._build_view("56ABD"))
@@ -124,6 +135,55 @@ class JoinTeamTestCase(SetupUserMixin, APITestCase):
         self._login()
         response = self.client.post(self._build_view("56ABD"))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def check_cannot_leave(self):
+        old_team = self.profile.team
+        sample_team = self._make_full_event_team(self_users=False, num_users=2)
+        response = self.client.post(self._build_view(sample_team.team_code))
+        self.user.refresh_from_db()
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(old_team.pk, self.user.profile.team.pk)
+
+    def check_can_leave_cancelled(self):
+        old_team = self.profile.team
+        sample_team = self._make_full_event_team(self_users=False, num_users=2)
+        response = self.client.post(self._build_view(sample_team.team_code))
+        self.user.refresh_from_db()
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data["id"], self.user.profile.team.pk)
+        self.assertNotEqual(old_team.pk, self.user.profile.team.pk)
+        self.assertEqual(
+            Team.objects.filter(team_code=old_team.team_code).exists(), False
+        )
+
+    def test_cannot_leave_with_order(self):
+        """
+        check user cannot join another team when there
+        are submitted orders, unless those orders are
+        cancelled.
+        """
+        self._login()
+
+        hardware = Hardware.objects.create(
+            name="name",
+            model_number="model",
+            manufacturer="manufacturer",
+            datasheet="/datasheet/location/",
+            quantity_available=4,
+            max_per_team=1,
+            picture="/picture/location",
+        )
+        order = Order.objects.create(status="Cart", team=self.team)
+        OrderItem.objects.create(order=order, hardware=hardware)
+
+        for _, status_choice in Order.STATUS_CHOICES:
+            order.status = status_choice
+            order.save()
+            if status_choice != "Cancelled":
+                self.check_cannot_leave()
+            else:
+                self.check_can_leave_cancelled()
 
 
 class LeaveTeamTestCase(SetupUserMixin, APITestCase):
