@@ -1,9 +1,10 @@
 import React from "react";
-import { render } from "@testing-library/react";
+
+import { render } from "testing/utils";
+
 import NotFound from "./NotFound";
-import { withStoreAndRouter } from "testing/helpers";
 
 test("renders without crashing", () => {
-    const { getByText } = render(withStoreAndRouter(<NotFound />));
+    const { getByText } = render(<NotFound />);
     expect(getByText("Error 404")).toBeInTheDocument();
 });
