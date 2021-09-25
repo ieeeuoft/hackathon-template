@@ -1,0 +1,11 @@
+@import "./../../../assets/abstracts/variables";
+@import "./../../../assets/abstracts/mixins";
+
+.Item {
+    @include flexPosition($dir: column);
+    cursor: pointer;
+
+    &:hover {
+        background-color: color(light2);
+    }
+}

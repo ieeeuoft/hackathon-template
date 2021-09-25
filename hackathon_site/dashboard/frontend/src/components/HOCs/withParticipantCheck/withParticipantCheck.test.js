@@ -1,13 +1,13 @@
 import React from "react";
-import { render } from "@testing-library/react";
 import configureStore from "redux-mock-store";
 import thunk from "redux-thunk";
 import { push } from "connected-react-router";
 
+import { render } from "testing/utils";
+import { mockUser } from "testing/mockData";
+
 import { userReducerName, fetchUserData } from "slices/users/userSlice";
 import { displaySnackbar } from "slices/ui/uiSlice";
-import { withStore } from "testing/helpers";
-import { mockUser } from "testing/mockData";
 import withParticipantCheck from "./withParticipantCheck";
 
 jest.mock("api/api"); // To make sure that fetchUserData() doesn't actually do anything
@@ -31,7 +31,8 @@ describe("withAuthenticationCheck", () => {
         const store = mockStore(mockState);
 
         const { queryByText, getByTestId } = render(
-            withStore(<WrappedComponent>{content}</WrappedComponent>, store)
+            <WrappedComponent>{content}</WrappedComponent>,
+            { store }
         );
 
         expect(getByTestId("linear-progress")).toBeInTheDocument();
@@ -60,9 +61,9 @@ describe("withAuthenticationCheck", () => {
 
         const store = mockStore(mockState);
 
-        const { queryByText } = render(
-            withStore(<WrappedComponent>{content}</WrappedComponent>, store)
-        );
+        const { queryByText } = render(<WrappedComponent>{content}</WrappedComponent>, {
+            store,
+        });
 
         expect(queryByText(content)).not.toBeInTheDocument();
         expect(store.getActions()).toEqual([
@@ -87,9 +88,9 @@ describe("withAuthenticationCheck", () => {
 
         const store = mockStore(mockState);
 
-        const { getByText } = render(
-            withStore(<WrappedComponent>{content}</WrappedComponent>, store)
-        );
+        const { getByText } = render(<WrappedComponent>{content}</WrappedComponent>, {
+            store,
+        });
 
         expect(getByText(content)).toBeInTheDocument();
         expect(store.getActions().length).toBe(0);
