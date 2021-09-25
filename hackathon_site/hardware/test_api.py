@@ -1,6 +1,9 @@
 from rest_framework.test import APITestCase
 from django.urls import reverse
+from django.conf import settings
 from rest_framework import status
+from datetime import datetime
+
 
 from event.models import Team
 from hardware.models import Hardware, Category, Order, OrderItem, Incident
@@ -356,14 +359,14 @@ class IncidentListsViewTestCase(SetupUserMixin, APITestCase):
             state="Broken",
             description="Description",
             order_item=self.order_item,
-            time_occurred="2022-08-08 00:00:00",
+            time_occurred=datetime(2022, 8, 8, tzinfo=settings.TZ_INFO),
         )
 
         self.incident2 = Incident.objects.create(
             state="Missing",
             description="Description",
             order_item=self.order_item2,
-            time_occurred="2022-08-08 00:00:00",
+            time_occurred=datetime(2022, 8, 8, tzinfo=settings.TZ_INFO),
         )
         self.view = reverse("api:hardware:incident-list")
 
