@@ -115,12 +115,3 @@
         margin: 30px 0;
     }
 }
-
-.Item {
-    @include flexPosition($dir: column);
-    cursor: pointer;
-
-    &:hover {
-        background-color: color(light2);
-    }
-}

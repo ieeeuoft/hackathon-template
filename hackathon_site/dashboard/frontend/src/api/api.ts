@@ -1,9 +1,21 @@
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 
-export const SERVER_URL =
-    process.env.NODE_ENV === "development"
-        ? process.env.REACT_APP_DEV_SERVER_URL.replace(/\/$/, "")
-        : "";
+// Re-export the response type, so it's available without needing to import axios
+export type { AxiosResponse } from "axios";
+
+let SERVER_URL: string;
+
+if (process.env.NODE_ENV === "development") {
+    if (!process.env.REACT_APP_DEV_SERVER_URL) {
+        throw new Error(
+            "REACT_APP_DEV_SERVER_URL must be set (probably to http://localhost:8000)"
+        );
+    }
+
+    SERVER_URL = process.env.REACT_APP_DEV_SERVER_URL?.replace(/\/$/, "");
+} else {
+    SERVER_URL = "";
+}
 
 export const getCsrfToken = () => {
     // When Django serves the react template (and also from some API responses),
@@ -20,7 +32,7 @@ export const getCsrfToken = () => {
     return null;
 };
 
-export const cleanURI = (uri) => {
+export const cleanURI = (uri: string) => {
     uri = uri.replace(/^\//, ""); // Remove leading slashes
     uri = uri.endsWith("/") ? uri : uri + "/";
     return uri;
@@ -33,12 +45,20 @@ const makeConfig = () => ({
     withCredentials: true,
 });
 
-export const get = (uri) => {
+export const get = <T>(
+    uri: string,
+    params?: { [key: string]: any }
+): Promise<AxiosResponse<T>> => {
     uri = cleanURI(uri);
-    return axios.get(`${SERVER_URL}/${uri}`, makeConfig());
+
+    if (params) {
+        uri += "?" + new URLSearchParams(params).toString();
+    }
+
+    return axios.get<T>(`${SERVER_URL}/${uri}`, makeConfig());
 };
 
-export const post = (uri, data) => {
+export const post = (uri: string, data: any) => {
     uri = cleanURI(uri);
     return axios.post(`${SERVER_URL}/${uri}`, data, makeConfig());
 };

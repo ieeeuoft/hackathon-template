@@ -1,7 +1,6 @@
 import React from "react";
 import styles from "./InventoryFilter.module.scss";
-import { Formik, Field } from "formik";
-
+import { Formik, Field, FieldProps, FormikValues } from "formik";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import Chip from "@material-ui/core/Chip";
@@ -13,9 +12,32 @@ import RadioGroup from "@material-ui/core/RadioGroup";
 import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import { inventoryCategories } from "testing/mockData";
-import CircularProgress from "@material-ui/core/CircularProgress";
 
-const RadioOrderBy = ({ field, options }) => (
+import { Category, HardwareFilters, HardwareOrdering } from "api/types";
+import { connect, ConnectedProps } from "react-redux";
+import {
+    hardwareFiltersSelector,
+    isLoadingSelector,
+    getHardwareWithFilters,
+    setFilters,
+    clearFilters,
+} from "slices/hardware/hardwareSlice";
+import { RootState } from "slices/store";
+
+type OrderByOptions = {
+    value: HardwareOrdering;
+    label: string;
+}[];
+
+export const orderByOptions: OrderByOptions = [
+    { value: "", label: "Default" },
+    { value: "name", label: "A-Z" },
+    { value: "-name", label: "Z-A" },
+    { value: "quantity_remaining", label: "Stock remaining: high to low" },
+    { value: "-quantity_remaining", label: "Stock remaining: low to high" },
+];
+
+const RadioOrderBy = ({ field, options }: FieldProps & { options: OrderByOptions }) => (
     <RadioGroup {...field} name={field.name}>
         {options.map((item, i) => (
             <FormControlLabel
@@ -30,8 +52,8 @@ const RadioOrderBy = ({ field, options }) => (
     </RadioGroup>
 );
 
-const CheckboxCategory = ({ field, options }) => (
-    <FormGroup {...field} name={field.name}>
+const CheckboxCategory = ({ field, options }: FieldProps & { options: Category[] }) => (
+    <FormGroup {...field}>
         {options.map((item, i) => (
             <div className={styles.filterCategory} key={i}>
                 <FormControlLabel
@@ -43,7 +65,8 @@ const CheckboxCategory = ({ field, options }) => (
                 />
                 <Chip
                     size="small"
-                    label={item.qty}
+                    // TODO: Was item.qty, but that's not a thing on categories right now
+                    label={item.unique_hardware_count}
                     className={styles.filterCategoryChip}
                 />
             </div>
@@ -51,33 +74,36 @@ const CheckboxCategory = ({ field, options }) => (
     </FormGroup>
 );
 
-const CheckboxAvailability = ({ field, ...props }) => (
-    <FormGroup {...field} {...props} name={field.name}>
+const CheckboxAvailability = ({ field, ...props }: FieldProps) => (
+    <FormGroup {...field} {...props}>
         <FormControlLabel
             label="In stock"
             name={field.name}
-            value="In stock"
+            value={true}
             control={<Checkbox color="primary" />}
             checked={field.value}
         />
     </FormGroup>
 );
 
-export const orderByOptions = [
-    { value: "", label: "Default" },
-    { value: "name", label: "A-Z" },
-    { value: "-name", label: "Z-A" },
-    { value: "stock", label: "Stock remaining: high to low" },
-    { value: "-stock", label: "Stock remaining: low to high" },
-];
+interface InventoryFilterValues {
+    ordering: HardwareOrdering;
+    in_stock: boolean;
+    // Categories is a string array because html checkboxes have string values
+    categories: string[];
+}
+
+type InventoryFilterProps = FormikValues & {
+    categories: Category[];
+    isLoading: boolean;
+};
 
 export const InventoryFilter = ({
     handleReset,
     handleSubmit,
     categories,
-    isApplyLoading,
-    isClearLoading,
-}) => (
+    isLoading,
+}: InventoryFilterProps) => (
     <div className={styles.filter}>
         <Paper elevation={2} className={styles.filterPaper} square={true}>
             <form onReset={handleReset} onSubmit={handleSubmit}>
@@ -86,7 +112,7 @@ export const InventoryFilter = ({
                         <Typography variant="h2">Order by</Typography>
                     </legend>
                     <Field
-                        name="orderBy"
+                        name="ordering"
                         component={RadioOrderBy}
                         options={orderByOptions}
                     />
@@ -96,7 +122,7 @@ export const InventoryFilter = ({
                     <legend>
                         <Typography variant="h2">Availability</Typography>
                     </legend>
-                    <Field name="inStock" component={CheckboxAvailability} />
+                    <Field name="in_stock" component={CheckboxAvailability} />
                 </fieldset>
                 <Divider className={styles.filterDivider} />
                 <fieldset>
@@ -104,7 +130,7 @@ export const InventoryFilter = ({
                         <Typography variant="h2">Categories</Typography>
                     </legend>
                     <Field
-                        name="inventoryCategories"
+                        name="categories"
                         component={CheckboxCategory}
                         options={categories}
                     />
@@ -116,16 +142,9 @@ export const InventoryFilter = ({
                 type="reset"
                 color="secondary"
                 onClick={handleReset}
-                disabled={isApplyLoading || isClearLoading}
+                disabled={isLoading}
             >
                 Clear all
-                {isClearLoading && (
-                    <CircularProgress
-                        className={styles.filterCircularProgress}
-                        size={20}
-                        data-testid="circularProgressClear"
-                    />
-                )}
             </Button>
             <Button
                 type="submit"
@@ -134,47 +153,46 @@ export const InventoryFilter = ({
                 variant="contained"
                 fullWidth={true}
                 className={styles.filterBtnsApply}
-                disabled={isApplyLoading || isClearLoading}
+                disabled={isLoading}
                 disableElevation
             >
                 Apply
-                {isApplyLoading && (
-                    <CircularProgress
-                        className={styles.filterCircularProgress}
-                        size={20}
-                        data-testid="circularProgressApply"
-                    />
-                )}
             </Button>
         </div>
     </div>
 );
 
 export const EnhancedInventoryFilter = ({
-    handleSubmit,
-    handleReset,
-    isApplyLoading,
-    isClearLoading,
-}) => {
-    const onSubmit = (formikValues) => {
-        const { orderBy, inStock, inventoryCategories } = formikValues;
-        handleSubmit({
-            orderBy,
-            inStock,
-            inventoryCategories: inventoryCategories.map((id) => parseInt(id, 10)),
-        });
+    getHardwareWithFilters,
+    setFilters,
+    clearFilters,
+    isLoading,
+}: ConnectedInventoryFilterProps) => {
+    const onSubmit = ({ ordering, in_stock, categories }: InventoryFilterValues) => {
+        const filters: HardwareFilters = {
+            ordering,
+            in_stock: in_stock || undefined, // If false, it will be cleared below
+            category_ids: categories.map((id) => parseInt(id, 10)),
+        };
+
+        setFilters(filters);
+        getHardwareWithFilters();
     };
+
     const onReset = () => {
-        handleReset({ orderBy: "", inStock: false, inventoryCategories: [] });
+        clearFilters({ saveSearch: true });
+        getHardwareWithFilters();
+    };
+
+    const initialValues: InventoryFilterValues = {
+        ordering: "",
+        in_stock: false,
+        categories: [],
     };
 
     return (
         <Formik
-            initialValues={{
-                orderBy: "",
-                inStock: false,
-                inventoryCategories: [],
-            }}
+            initialValues={initialValues}
             onSubmit={onSubmit}
             onReset={onReset}
             validateOnBlur={false}
@@ -184,12 +202,26 @@ export const EnhancedInventoryFilter = ({
                 <InventoryFilter
                     {...formikProps}
                     categories={inventoryCategories}
-                    isApplyLoading={isApplyLoading}
-                    isClearLoading={isClearLoading}
+                    isLoading={isLoading}
                 />
             )}
         </Formik>
     );
 };
 
-export default EnhancedInventoryFilter;
+const mapStateToProps = (state: RootState) => ({
+    isLoading: isLoadingSelector(state),
+    filters: hardwareFiltersSelector(state),
+});
+
+const connector = connect(mapStateToProps, {
+    getHardwareWithFilters,
+    setFilters,
+    clearFilters,
+});
+
+type ConnectedInventoryFilterProps = ConnectedProps<typeof connector>;
+
+export const ConnectedInventoryFilter = connector(EnhancedInventoryFilter);
+
+export default ConnectedInventoryFilter;
