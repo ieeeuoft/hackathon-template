@@ -86,3 +86,21 @@ class OrderListView(generics.ListAPIView):
             return HttpResponseServerError()
         response_data = response_serializer.data
         return Response(response_data, status=status.HTTP_201_CREATED)
+
+
+class UpdateOrderView:
+    queryset = Order.objects.all()
+    serializer_class = OrderListSerializer
+    serializer_method_classes = {
+        "GET": OrderListSerializer,
+        "POST": OrderCreateSerializer,
+    }
+
+    def get_serializer_class(self):
+        try:
+            return self.serializer_method_classes[self.request.method]
+        except (KeyError, AttributeError):
+            return super().get_serializer_class()
+
+
+#     serialize
