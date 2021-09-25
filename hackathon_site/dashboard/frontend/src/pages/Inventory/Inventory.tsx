@@ -19,12 +19,14 @@ import ProductOverview from "components/inventory/ProductOverview/ProductOvervie
 
 import { RootState } from "slices/store";
 import { clearFilters, getHardwareWithFilters } from "slices/hardware/hardwareSlice";
+import { getCategories } from "slices/hardware/categorySlice";
 
 import { productInformation } from "testing/mockData";
 
 const UnconnectedInventory = ({
     clearFilters,
     getHardwareWithFilters,
+    getCategories,
 }: ConnectedInventoryProps) => {
     const [mobileOpen, setMobileOpen] = React.useState(false);
     const toggleFilter = () => {
@@ -46,7 +48,8 @@ const UnconnectedInventory = ({
     useEffect(() => {
         clearFilters();
         getHardwareWithFilters();
-    }, [clearFilters, getHardwareWithFilters]);
+        getCategories();
+    }, [clearFilters, getHardwareWithFilters, getCategories]);
 
     return (
         <>
@@ -137,7 +140,11 @@ const UnconnectedInventory = ({
 
 const mapStateToProps = (state: RootState) => ({});
 
-const connector = connect(mapStateToProps, { clearFilters, getHardwareWithFilters });
+const connector = connect(mapStateToProps, {
+    clearFilters,
+    getHardwareWithFilters,
+    getCategories,
+});
 
 type ConnectedInventoryProps = ConnectedProps<typeof connector>;
 

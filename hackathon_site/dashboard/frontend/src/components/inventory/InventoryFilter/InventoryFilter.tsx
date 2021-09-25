@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styles from "./InventoryFilter.module.scss";
 import { Formik, Field, FieldProps, FormikValues } from "formik";
 import Typography from "@material-ui/core/Typography";
@@ -11,10 +11,9 @@ import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
-import { inventoryCategories } from "testing/mockData";
+import { connect, ConnectedProps, useDispatch, useSelector } from "react-redux";
 
 import { Category, HardwareFilters, HardwareOrdering } from "api/types";
-import { connect, ConnectedProps } from "react-redux";
 import {
     hardwareFiltersSelector,
     isLoadingSelector,
@@ -22,6 +21,10 @@ import {
     setFilters,
     clearFilters,
 } from "slices/hardware/hardwareSlice";
+import {
+    categorySelectors,
+    isLoadingSelector as isCategoriesLoadingSelector,
+} from "slices/hardware/categorySlice";
 import { RootState } from "slices/store";
 
 type OrderByOptions = {
@@ -94,73 +97,77 @@ interface InventoryFilterValues {
 }
 
 type InventoryFilterProps = FormikValues & {
-    categories: Category[];
     isLoading: boolean;
 };
 
 export const InventoryFilter = ({
     handleReset,
     handleSubmit,
-    categories,
     isLoading,
-}: InventoryFilterProps) => (
-    <div className={styles.filter}>
-        <Paper elevation={2} className={styles.filterPaper} square={true}>
-            <form onReset={handleReset} onSubmit={handleSubmit}>
-                <fieldset>
-                    <legend>
-                        <Typography variant="h2">Order by</Typography>
-                    </legend>
-                    <Field
-                        name="ordering"
-                        component={RadioOrderBy}
-                        options={orderByOptions}
-                    />
-                </fieldset>
-                <Divider className={styles.filterDivider} />
-                <fieldset>
-                    <legend>
-                        <Typography variant="h2">Availability</Typography>
-                    </legend>
-                    <Field name="in_stock" component={CheckboxAvailability} />
-                </fieldset>
-                <Divider className={styles.filterDivider} />
-                <fieldset>
-                    <legend>
-                        <Typography variant="h2">Categories</Typography>
-                    </legend>
-                    <Field
-                        name="categories"
-                        component={CheckboxCategory}
-                        options={categories}
-                    />
-                </fieldset>
-            </form>
-        </Paper>
-        <div className={styles.filterBtns}>
-            <Button
-                type="reset"
-                color="secondary"
-                onClick={handleReset}
-                disabled={isLoading}
-            >
-                Clear all
-            </Button>
-            <Button
-                type="submit"
-                onClick={handleSubmit}
-                color="primary"
-                variant="contained"
-                fullWidth={true}
-                className={styles.filterBtnsApply}
-                disabled={isLoading}
-                disableElevation
-            >
-                Apply
-            </Button>
+}: InventoryFilterProps) => {
+    const categories = useSelector(categorySelectors.selectAll);
+    const isCategoriesLoading = useSelector(isCategoriesLoadingSelector);
+
+    return (
+        <div className={styles.filter}>
+            <Paper elevation={2} className={styles.filterPaper} square={true}>
+                <form onReset={handleReset} onSubmit={handleSubmit}>
+                    <fieldset>
+                        <legend>
+                            <Typography variant="h2">Order by</Typography>
+                        </legend>
+                        <Field
+                            name="ordering"
+                            component={RadioOrderBy}
+                            options={orderByOptions}
+                        />
+                    </fieldset>
+                    <Divider className={styles.filterDivider} />
+                    <fieldset>
+                        <legend>
+                            <Typography variant="h2">Availability</Typography>
+                        </legend>
+                        <Field name="in_stock" component={CheckboxAvailability} />
+                    </fieldset>
+                    <Divider className={styles.filterDivider} />
+                    <fieldset>
+                        <legend>
+                            <Typography variant="h2">Categories</Typography>
+                        </legend>
+                        {isCategoriesLoading && "Loading"}
+                        <Field
+                            name="categories"
+                            component={CheckboxCategory}
+                            options={categories}
+                        />
+                    </fieldset>
+                </form>
+            </Paper>
+            <div className={styles.filterBtns}>
+                <Button
+                    type="reset"
+                    color="secondary"
+                    onClick={handleReset}
+                    disabled={isLoading}
+                >
+                    Clear all
+                </Button>
+                <Button
+                    type="submit"
+                    onClick={handleSubmit}
+                    color="primary"
+                    variant="contained"
+                    fullWidth={true}
+                    className={styles.filterBtnsApply}
+                    disabled={isLoading}
+                    disableElevation
+                >
+                    Apply
+                </Button>
+            </div>
         </div>
-    </div>
-);
+    );
+};
 
 export const EnhancedInventoryFilter = ({
     getHardwareWithFilters,
@@ -199,11 +206,7 @@ export const EnhancedInventoryFilter = ({
             validationOnChange={false}
         >
             {(formikProps) => (
-                <InventoryFilter
-                    {...formikProps}
-                    categories={inventoryCategories}
-                    isLoading={isLoading}
-                />
+                <InventoryFilter {...formikProps} isLoading={isLoading} />
             )}
         </Formik>
     );
