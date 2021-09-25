@@ -1,4 +1,3 @@
-from event.models import Team
 from django.db import transaction
 from django.db.models import Q
 
@@ -74,7 +73,7 @@ class JoinTeamView(generics.GenericAPIView, mixins.RetrieveModelMixin):
     permission_classes = [UserHasProfile]
     serializer_class = TeamSerializer
     lookup_field = "team_code"
-    queryset = Team
+    queryset = EventTeam
 
     @transaction.atomic
     def post(self, request, team_code, *args, **kwargs):
@@ -85,7 +84,7 @@ class JoinTeamView(generics.GenericAPIView, mixins.RetrieveModelMixin):
         self.kwargs["lookup_url_kwarg"] = team_code
         team = self.get_object()
 
-        if team.profiles.count() >= Team.MAX_MEMBERS:
+        if team.profiles.count() >= EventTeam.MAX_MEMBERS:
             raise ValidationError({"detail": "Team is full."})
 
         active_orders = OrderItem.objects.filter(

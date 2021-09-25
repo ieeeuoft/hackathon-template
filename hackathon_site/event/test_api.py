@@ -110,7 +110,7 @@ class JoinTeamTestCase(SetupUserMixin, APITestCase):
         them, their current team is deleted.
         """
         self._login()
-        self.client.post(self._build_view(self.team.team_code))
+        self.client.post(self._build_view(self.team_code))
         team = self._make_full_event_team(self_users=False, num_users=2)
         self.client.post(self._build_view(team.team_code))
         self.assertEqual(self.team.profiles.exists(), False)

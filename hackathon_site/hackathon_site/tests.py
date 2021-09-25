@@ -125,7 +125,7 @@ class SetupUserMixin:
             team = EventTeam.objects.create()
         if self_users == True:
             for user in self.create_user_set():
-                self._apply_as_user(user, team)
+                self._make_profile(user, team)
         else:
             for user_number in range(1, num_users + 1, 1):
                 random_email = self._get_random_email()
