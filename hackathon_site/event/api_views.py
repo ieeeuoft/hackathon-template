@@ -72,7 +72,7 @@ class JoinTeamView(generics.GenericAPIView, mixins.RetrieveModelMixin):
     permission_classes = [UserHasProfile]
     serializer_class = TeamSerializer
     lookup_field = "team_code"
-    queryset = EventTeam
+    queryset = EventTeam.objects.all()
 
     @transaction.atomic
     def post(self, request, team_code, *args, **kwargs):
@@ -80,11 +80,10 @@ class JoinTeamView(generics.GenericAPIView, mixins.RetrieveModelMixin):
         profile = request.user.profile
         current_team = profile.team
 
-        self.kwargs["lookup_url_kwarg"] = team_code
         team = self.get_object()
 
         if team.profiles.count() >= EventTeam.MAX_MEMBERS:
-            raise ValidationError({"detail": "Team is full."})
+            raise ValidationError({"detail": "Team is full"})
 
         active_orders = OrderItem.objects.filter(
             ~Q(order__status="Cancelled"), Q(order__team=current_team),
@@ -103,4 +102,4 @@ class JoinTeamView(generics.GenericAPIView, mixins.RetrieveModelMixin):
 
         response_serializer = TeamSerializer(profile.team)
         response_data = response_serializer.data
-        return Response(data=response_data, status=status.HTTP_201_CREATED,)
+        return Response(data=response_data, status=status.HTTP_200_OK,)

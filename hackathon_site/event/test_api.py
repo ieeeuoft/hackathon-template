@@ -93,8 +93,6 @@ class CurrentTeamTestCase(SetupUserMixin, APITestCase):
 class JoinTeamTestCase(SetupUserMixin, APITestCase):
     def setUp(self):
         super().setUp()
-        self.group = Group.objects.create(name="Test Users")
-        self.user.groups.add(self.group)
         self.team = Team.objects.create()
 
         self.profile = Profile.objects.create(user=self.user, team=self.team)
@@ -111,7 +109,7 @@ class JoinTeamTestCase(SetupUserMixin, APITestCase):
         """
         self._login()
         self.client.post(self._build_view(self.team_code))
-        team = self._make_full_event_team(self_users=False, num_users=2)
+        team = self._make_event_team(self_users=False, num_users=2)
         self.client.post(self._build_view(team.team_code))
         self.assertEqual(self.team.profiles.exists(), False)
 
@@ -122,9 +120,9 @@ class JoinTeamTestCase(SetupUserMixin, APITestCase):
 
     def test_join_full_team(self):
         self._login()
-        team = self._make_full_event_team(self_users=False)
+        team = self._make_event_team(self_users=False)
         response = self.client.post(self._build_view(team.team_code))
-        self.assertEqual(response.json(), {"detail": "Team is full."})
+        self.assertEqual(response.json(), {"detail": "Team is full"})
 
     def test_user_not_logged_in(self):
         response = self.client.post(self._build_view("56ABD"))
@@ -138,7 +136,7 @@ class JoinTeamTestCase(SetupUserMixin, APITestCase):
 
     def check_cannot_leave_active(self):
         old_team = self.profile.team
-        sample_team = self._make_full_event_team(self_users=False, num_users=2)
+        sample_team = self._make_event_team(self_users=False, num_users=2)
         response = self.client.post(self._build_view(sample_team.team_code))
         self.user.refresh_from_db()
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -146,16 +144,14 @@ class JoinTeamTestCase(SetupUserMixin, APITestCase):
 
     def check_can_leave_cancelled(self):
         old_team = self.profile.team
-        sample_team = self._make_full_event_team(self_users=False, num_users=2)
+        sample_team = self._make_event_team(self_users=False, num_users=2)
         response = self.client.post(self._build_view(sample_team.team_code))
         self.user.refresh_from_db()
 
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["id"], self.user.profile.team.pk)
         self.assertNotEqual(old_team.pk, self.user.profile.team.pk)
-        self.assertFalse(
-            Team.objects.filter(team_code=old_team.team_code).exists()
-        )
+        self.assertFalse(Team.objects.filter(team_code=old_team.team_code).exists())
 
     def test_cannot_leave_with_order(self):
         """
