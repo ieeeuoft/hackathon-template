@@ -22,7 +22,11 @@ class SetupUserMixin:
             email="foo@bar.com",
         )
 
-    def _login(self):
+    def _login(self, permissions=None):
+        if permissions is not None:
+            for permission in permissions:
+                self.user.user_permissions.add(permission)
+
         self.client.login(username=self.user.username, password=self.password)
 
     @staticmethod

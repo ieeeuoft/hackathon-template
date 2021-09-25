@@ -198,35 +198,28 @@ class LeaveTeamTestCase(SetupUserMixin, APITestCase):
 
 class EventTeamListsViewTestCase(SetupUserMixin, APITestCase):
     def setUp(self):
-        super().setUp()
+
         self.team = Team.objects.create()
         self.team2 = Team.objects.create()
         self.team3 = Team.objects.create()
-
-        self.view = reverse("api:event:team-list")
-
-    def _login(self):
-        self.client.login(username=self.user.username, password=self.password)
-
-    def _login_permission(self):
-        self.client.login(username=self.user.username, password=self.password)
-        self.user.user_permissions.add(
-            Permission.objects.get(codename="view_team", content_type__app_label="event")
+        self.permissions = Permission.objects.filter(
+            content_type__app_label="event", codename="view_team"
         )
-
+        super().setUp()
+        self.view = reverse("api:event:team-list")
 
     def _build_filter_url(self, **kwargs):
         return (
             self.view + "?" + "&".join([f"{key}={val}" for key, val in kwargs.items()])
         )
 
-    def test_team_get_no_permission(self):
+    def test_team_get_no_permissions(self):
         self._login()
         response = self.client.get(self.view)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_team_get_permission(self):
-        self._login_permission()
+    def test_team_get_has_permissions(self):
+        self._login(self.permissions)
         response = self.client.get(self.view)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         queryset = Team.objects.all()
@@ -239,8 +232,12 @@ class EventTeamListsViewTestCase(SetupUserMixin, APITestCase):
 
         self.assertEqual(expected_response, data["results"])
 
+    def test_team_get_not_login(self):
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
     def test_team_code_filter(self):
-        self._login_permission()
+        self._login(self.permissions)
 
         url = self._build_filter_url(team_code=self.team.team_code)
 
@@ -253,7 +250,7 @@ class EventTeamListsViewTestCase(SetupUserMixin, APITestCase):
         self.assertCountEqual(returned_ids, [self.team.team_code])
 
     def test_team_id_filter(self):
-        self._login_permission()
+        self._login(self.permissions)
 
         url = self._build_filter_url(team_ids="1,3")
 
@@ -266,7 +263,7 @@ class EventTeamListsViewTestCase(SetupUserMixin, APITestCase):
         self.assertCountEqual(returned_ids, [1, 3])
 
     def test_name_search_filter(self):
-        self._login_permission()
+        self._login(self.permissions)
 
         url = self._build_filter_url(search=self.team2.team_code)
 
