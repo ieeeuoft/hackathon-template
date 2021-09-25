@@ -153,8 +153,8 @@ class JoinTeamTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data["id"], self.user.profile.team.pk)
         self.assertNotEqual(old_team.pk, self.user.profile.team.pk)
-        self.assertEqual(
-            Team.objects.filter(team_code=old_team.team_code).exists(), False
+        self.assertFalse(
+            Team.objects.filter(team_code=old_team.team_code).exists()
         )
 
     def test_cannot_leave_with_order(self):
