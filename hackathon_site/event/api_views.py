@@ -105,8 +105,10 @@ class JoinTeamView(generics.GenericAPIView, mixins.RetrieveModelMixin):
         try:
             team = Team.objects.get(team_code=team_code)
         except:
+            print('pizza')
             raise ValidationError(
-                {"detail": "Team does not exist!"}, code=status.HTTP_400_BAD_REQUEST
+                {"detail": "Team does not exist!"},
+                code=status.HTTP_404_NOT_FOUND,
             )
 
         if not team.profiles.exists():
@@ -128,7 +130,6 @@ class JoinTeamView(generics.GenericAPIView, mixins.RetrieveModelMixin):
                 code=status.HTTP_400_BAD_REQUEST,
             )
 
-        print(type(profile.team))
         profile.team = team
         profile.save()
 

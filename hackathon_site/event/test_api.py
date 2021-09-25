@@ -6,8 +6,8 @@ from hackathon_site.tests import SetupUserMixin
 
 from event.models import Profile, User, Team
 from event.serializers import (
-    TeamSerializer,
     UserSerializer,
+    TeamSerializer,
 )
 from hardware.models import Hardware, Order, OrderItem
 
@@ -51,6 +51,42 @@ class CurrentUserTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json(), serializer.data)
 
+class CurrentTeamTestCase(SetupUserMixin, APITestCase):
+    def setUp(self):
+        super().setUp()
+        self.group = Group.objects.create(name="Test Users")
+        self.user.groups.add(self.group)
+        self.team = Team.objects.create()
+
+        self.profile = Profile.objects.create(user=self.user, team=self.team)
+
+        self.view = reverse("api:event:current-team")
+
+    def test_user_not_logged_in(self):
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_user_has_no_profile(self):
+        """
+        When the user attempts to access the team, while it has no profile.
+        The user must be accepted or waitlisted to have formed a team.
+        """
+        self.profile.delete()
+        self._login()
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_user_has_profile(self):
+        """
+        When user has a profile and attempts to access the team, then the user
+        should get the correct response.
+        """
+        self._login()
+        response = self.client.get(self.view)
+        team_expected = Team.objects.get(pk=self.team.pk)
+        serializer = TeamSerializer(team_expected)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.json(), serializer.data)
 
 class JoinTeamTestCase(SetupUserMixin, APITestCase):
     def setUp(self):
@@ -69,14 +105,13 @@ class JoinTeamTestCase(SetupUserMixin, APITestCase):
     def test_invalid_key(self):
         self._login()
         response = self.client.post(self._build_view("56ABD"))
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_join_full_team(self):
         self._login()
         team = self._make_full_event_team(self_users=False)
-        print(team.team_code)
         response = self.client.post(self._build_view(team.team_code))
-        self.assertEqual(str(response.content), 'b\'{"detail":"Team is full"}\'')
+        self.assertEqual(response.json(), {"detail":"Team is full"})
 
     def test_user_not_logged_in(self):
         response = self.client.post(self._build_view("56ABD"))
@@ -96,7 +131,7 @@ class JoinTeamTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(old_team.pk, self.user.profile.team.pk)
         self.assertEqual(Team.objects.filter(team_code=old_team.team_code).count(), 1)
 
-    def test_leave_with_order(self):
+    def test_join_with_order(self):
         """
         when there are orders but no other members on the team,
         user can only leave when there are only cancelled orders
