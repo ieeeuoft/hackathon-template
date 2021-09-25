@@ -1,30 +1,37 @@
 import React from "react";
 
-import { makeMockApiListResponse, render, waitFor } from "testing/utils";
+import { makeMockApiListResponse, render, waitFor, when } from "testing/utils";
 
 import Inventory from "pages/Inventory/Inventory";
-import { mockHardware } from "testing/mockData";
+import { mockCategories, mockHardware } from "testing/mockData";
 
 import { get } from "api/api";
-import InventoryFilter from "components/inventory/InventoryFilter/InventoryFilter";
 
 jest.mock("api/api");
 const mockedGet = get as jest.MockedFunction<typeof get>;
 
 const hardwareUri = "/api/hardware/hardware/";
+const categoriesUri = "/api/hardware/categories/";
 
 describe("Inventory Page", () => {
     it("Clears filters and fetches fresh data on load", () => {
         render(<Inventory />);
 
         expect(get).toHaveBeenCalledWith(hardwareUri, {});
+        expect(get).toHaveBeenCalledWith(categoriesUri);
     });
 
     it("Has necessary page elements", async () => {
         // Mock inventory data to make sure the inventory grid is being rendered
-        const apiResponse = makeMockApiListResponse(mockHardware);
+        const hardwareApiResponse = makeMockApiListResponse(mockHardware);
+        const categoryApiResponse = makeMockApiListResponse(mockCategories);
 
-        mockedGet.mockResolvedValue(apiResponse);
+        when(mockedGet)
+            .calledWith(hardwareUri, {})
+            .mockResolvedValue(hardwareApiResponse);
+        when(mockedGet)
+            .calledWith(categoriesUri)
+            .mockResolvedValue(categoryApiResponse);
 
         const { getByText } = render(<Inventory />);
 

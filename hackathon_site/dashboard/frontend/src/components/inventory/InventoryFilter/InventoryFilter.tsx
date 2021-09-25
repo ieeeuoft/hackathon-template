@@ -126,7 +126,7 @@ export const InventoryFilter = ({ handleReset, handleSubmit }: FormikValues) => 
                             <Typography variant="h2">Categories</Typography>
                         </legend>
                         {isCategoriesLoading ? (
-                            <LinearProgress data-testid="circular-progress" />
+                            <LinearProgress data-testid="categories-linear-progress" />
                         ) : (
                             <Field
                                 name="categories"

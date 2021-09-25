@@ -77,3 +77,6 @@ export const makeMockApiListResponse = <T extends unknown>(
             previous: previous || null,
         },
     } as AxiosResponse<APIListResponse<T>>);
+
+// Re-export everything from jest-when
+export * from "jest-when";

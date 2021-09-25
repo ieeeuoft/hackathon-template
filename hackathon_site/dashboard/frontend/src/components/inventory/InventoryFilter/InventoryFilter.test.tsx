@@ -11,14 +11,15 @@ import {
 
 import InventoryFilter from "components/inventory/InventoryFilter/InventoryFilter";
 import { get } from "api/api";
-import { inventoryCategories, mockHardware } from "testing/mockData";
-import { RootState } from "slices/store";
+import { mockCategories, mockHardware } from "testing/mockData";
+import { makeStore, RootState } from "slices/store";
 import {
     hardwareReducerName,
     HardwareState,
     initialState,
 } from "slices/hardware/hardwareSlice";
 import { HardwareFilters } from "api/types";
+import { getCategories } from "slices/hardware/categorySlice";
 
 jest.mock("api/api");
 const mockedGet = get as jest.MockedFunction<typeof get>;
@@ -142,11 +143,25 @@ describe("<InventoryFilter />", () => {
         });
     });
 
-    it("Renders options for each category", () => {
-        const { getByText } = render(<InventoryFilter />);
+    it("Renders loading bar, then options for each category", async () => {
+        const categoryApiResponse = makeMockApiListResponse(mockCategories);
+        mockedGet.mockReturnValue(promiseResolveWithDelay(categoryApiResponse, 500));
 
-        for (let c of inventoryCategories) {
-            expect(getByText(c.name)).toBeInTheDocument();
-        }
+        // Pre-populate the store by dispatching fetch categories action
+        const store = makeStore();
+        store.dispatch(getCategories());
+
+        const { getByText, queryByTestId } = render(<InventoryFilter />, { store });
+
+        await waitFor(() => {
+            expect(queryByTestId("categories-linear-progress")).toBeInTheDocument();
+        });
+
+        await waitFor(() => {
+            expect(queryByTestId("categories-linear-progress")).not.toBeInTheDocument();
+            for (let c of mockCategories) {
+                expect(getByText(c.name)).toBeInTheDocument();
+            }
+        });
     });
 });
