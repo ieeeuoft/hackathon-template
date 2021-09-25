@@ -2,10 +2,9 @@ from event.models import Team
 from django.db import transaction
 from django.db.models import Q
 
-from rest_framework import status
+from rest_framework import generics, mixins, status
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
-from rest_framework import generics, mixins
 
 from event.models import User, Team as EventTeam
 from event.serializers import UserSerializer, TeamSerializer
