@@ -82,7 +82,7 @@ class JoinTeamView(generics.GenericAPIView, mixins.RetrieveModelMixin):
         profile = request.user.profile
         current_team = profile.team
 
-        self.kwargs['lookup_url_kwarg'] = team_code
+        self.kwargs["lookup_url_kwarg"] = team_code
         team = self.get_object()
 
         if team.profiles.count() >= Team.MAX_MEMBERS:
