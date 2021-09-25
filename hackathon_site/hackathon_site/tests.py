@@ -114,8 +114,8 @@ class SetupUserMixin:
                     username=random_email,
                     password="foobar123",
                     email=random_email,
-                    first_name="John{}".format(user_number),
-                    last_name="Doe{}".format(user_number),
+                    first_name=f"John{user_number}",
+                    last_name=f"Doe{user_number}",
                 )
                 self._apply_as_user(new_user, team)
         return team

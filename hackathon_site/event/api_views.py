@@ -96,10 +96,8 @@ class JoinTeamView(generics.GenericAPIView, mixins.RetrieveModelMixin):
 
         profile.team = team
         profile.save()
-        current_team
         if not current_team.profiles.exists():
             current_team.delete()
-        current_team
         response_serializer = TeamSerializer(profile.team)
         response_data = response_serializer.data
         return Response(data=response_data, status=status.HTTP_200_OK,)
