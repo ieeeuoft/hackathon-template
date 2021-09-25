@@ -15,7 +15,8 @@ class UserHasProfile(permissions.IsAuthenticated):
             and hasattr(request.user, "profile")
         )
 
-class FullViewDjangoModelPermissions(DjangoModelPermissions):
+
+class FullDjangoModelPermissions(DjangoModelPermissions):
     """
     Adds view permission requirements, which are otherwise not checked by DjangoModelPermissions
     """

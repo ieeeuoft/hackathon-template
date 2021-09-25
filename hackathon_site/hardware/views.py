@@ -7,7 +7,7 @@ from rest_framework import generics, mixins, status, permissions
 from rest_framework.response import Response
 from rest_framework.filters import SearchFilter, OrderingFilter
 
-from event.permissions import UserHasProfile
+from event.permissions import UserHasProfile, FullDjangoModelPermissions
 from hardware.api_filters import HardwareFilter, OrderFilter
 from hardware.models import Hardware, Category, Order
 from hardware.serializers import (
@@ -17,8 +17,6 @@ from hardware.serializers import (
     OrderCreateSerializer,
     OrderCreateResponseSerializer,
 )
-
-from event.permissions import FullDjangoModelPermissions
 
 logger = logging.getLogger(__name__)
 
@@ -56,6 +54,8 @@ class OrderListView(generics.ListAPIView):
     queryset = (
         Order.objects.all()
         .select_related("team")
+        # Causing problems with filtering, will figure out later:
+        # .prefetch_related("hardware", "hardware__categories")
     )
     serializer_class = OrderListSerializer
     serializer_method_classes = {
@@ -68,8 +68,6 @@ class OrderListView(generics.ListAPIView):
     ordering_fields = ("created_at",)
     search_fields = ("team__team_code", "id")
 
-    permissions_classes = [FullDjangoModelPermissions]
-
     def get_serializer_class(self):
         try:
             return self.serializer_method_classes[self.request.method]
@@ -79,6 +77,8 @@ class OrderListView(generics.ListAPIView):
     def get_permissions(self):
         if self.request.method == "POST":
             return [UserHasProfile()]
+        if self.request.method == "GET":
+            return [FullDjangoModelPermissions()]
         return [permissions.IsAuthenticated()]
 
     # TODO: make this admin only
