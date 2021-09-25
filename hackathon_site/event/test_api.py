@@ -51,6 +51,7 @@ class CurrentUserTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json(), serializer.data)
 
+
 class CurrentTeamTestCase(SetupUserMixin, APITestCase):
     def setUp(self):
         super().setUp()
@@ -88,6 +89,7 @@ class CurrentTeamTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json(), serializer.data)
 
+
 class JoinTeamTestCase(SetupUserMixin, APITestCase):
     def setUp(self):
         super().setUp()
@@ -111,7 +113,7 @@ class JoinTeamTestCase(SetupUserMixin, APITestCase):
         self._login()
         team = self._make_full_event_team(self_users=False)
         response = self.client.post(self._build_view(team.team_code))
-        self.assertEqual(response.json(), {"detail":"Team is full"})
+        self.assertEqual(response.json(), {"detail": "Team is full"})
 
     def test_user_not_logged_in(self):
         response = self.client.post(self._build_view("56ABD"))
