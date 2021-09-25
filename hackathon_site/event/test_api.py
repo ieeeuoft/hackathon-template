@@ -211,8 +211,9 @@ class EventTeamListsViewTestCase(SetupUserMixin, APITestCase):
     def _login_permission(self):
         self.client.login(username=self.user.username, password=self.password)
         self.user.user_permissions.add(
-            Permission.objects.get(codename="view_team", pk="28")
+            Permission.objects.get(codename="view_team", content_type__app_label="event")
         )
+
 
     def _build_filter_url(self, **kwargs):
         return (
