@@ -22,7 +22,8 @@ describe("Inventory Page", () => {
     });
 
     it("Has necessary page elements", async () => {
-        // Mock inventory data to make sure the inventory grid is being rendered
+        // Mock inventory data to make sure the inventory grid and filters
+        // are being rendered
         const hardwareApiResponse = makeMockApiListResponse(mockHardware);
         const categoryApiResponse = makeMockApiListResponse(mockCategories);
 
@@ -37,6 +38,7 @@ describe("Inventory Page", () => {
 
         await waitFor(() => {
             expect(getByText(mockHardware[0].name)).toBeInTheDocument();
+            expect(getByText(mockCategories[0].name)).toBeInTheDocument();
         });
 
         expect(getByText(/load more/i)).toBeInTheDocument();

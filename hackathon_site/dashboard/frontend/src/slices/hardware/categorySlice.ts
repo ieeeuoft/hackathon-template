@@ -49,7 +49,7 @@ export const getCategories = createAsyncThunk<
             const response = await get<APIListResponse<Category>>(path);
             data = response.data;
             categories.push(...data.results);
-        } while (data.next !== null);
+        } while (data?.next !== null);
 
         return categories;
     } catch (e: any) {

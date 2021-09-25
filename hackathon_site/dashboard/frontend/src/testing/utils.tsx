@@ -66,12 +66,13 @@ export const promiseResolveWithDelay = <T extends unknown>(
 
 export const makeMockApiListResponse = <T extends unknown>(
     data: T[],
-    next?: string,
-    previous?: string
+    next?: string | null,
+    previous?: string | null,
+    count?: number
 ): AxiosResponse<APIListResponse<T>> =>
     ({
         data: {
-            count: data.length,
+            count: count ?? data.length,
             results: data,
             next: next || null,
             previous: previous || null,
