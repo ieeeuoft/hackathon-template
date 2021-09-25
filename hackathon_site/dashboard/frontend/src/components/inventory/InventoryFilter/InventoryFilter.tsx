@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import styles from "./InventoryFilter.module.scss";
 import { Formik, Field, FieldProps, FormikValues } from "formik";
 import Typography from "@material-ui/core/Typography";
@@ -11,12 +11,12 @@ import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
-import { connect, ConnectedProps, useDispatch, useSelector } from "react-redux";
+import LinearProgress from "@material-ui/core/LinearProgress";
+import { useDispatch, useSelector } from "react-redux";
 
 import { Category, HardwareFilters, HardwareOrdering } from "api/types";
 import {
-    hardwareFiltersSelector,
-    isLoadingSelector,
+    isLoadingSelector as isHardwareLoadingSelector,
     getHardwareWithFilters,
     setFilters,
     clearFilters,
@@ -25,8 +25,6 @@ import {
     categorySelectors,
     isLoadingSelector as isCategoriesLoadingSelector,
 } from "slices/hardware/categorySlice";
-import { RootState } from "slices/store";
-
 type OrderByOptions = {
     value: HardwareOrdering;
     label: string;
@@ -96,17 +94,10 @@ interface InventoryFilterValues {
     categories: string[];
 }
 
-type InventoryFilterProps = FormikValues & {
-    isLoading: boolean;
-};
-
-export const InventoryFilter = ({
-    handleReset,
-    handleSubmit,
-    isLoading,
-}: InventoryFilterProps) => {
+export const InventoryFilter = ({ handleReset, handleSubmit }: FormikValues) => {
     const categories = useSelector(categorySelectors.selectAll);
     const isCategoriesLoading = useSelector(isCategoriesLoadingSelector);
+    const isHardwareLoading = useSelector(isHardwareLoadingSelector);
 
     return (
         <div className={styles.filter}>
@@ -134,12 +125,15 @@ export const InventoryFilter = ({
                         <legend>
                             <Typography variant="h2">Categories</Typography>
                         </legend>
-                        {isCategoriesLoading && "Loading"}
-                        <Field
-                            name="categories"
-                            component={CheckboxCategory}
-                            options={categories}
-                        />
+                        {isCategoriesLoading ? (
+                            <LinearProgress data-testid="circular-progress" />
+                        ) : (
+                            <Field
+                                name="categories"
+                                component={CheckboxCategory}
+                                options={categories}
+                            />
+                        )}
                     </fieldset>
                 </form>
             </Paper>
@@ -148,7 +142,7 @@ export const InventoryFilter = ({
                     type="reset"
                     color="secondary"
                     onClick={handleReset}
-                    disabled={isLoading}
+                    disabled={isHardwareLoading}
                 >
                     Clear all
                 </Button>
@@ -159,7 +153,7 @@ export const InventoryFilter = ({
                     variant="contained"
                     fullWidth={true}
                     className={styles.filterBtnsApply}
-                    disabled={isLoading}
+                    disabled={isHardwareLoading}
                     disableElevation
                 >
                     Apply
@@ -169,12 +163,9 @@ export const InventoryFilter = ({
     );
 };
 
-export const EnhancedInventoryFilter = ({
-    getHardwareWithFilters,
-    setFilters,
-    clearFilters,
-    isLoading,
-}: ConnectedInventoryFilterProps) => {
+export const EnhancedInventoryFilter = () => {
+    const dispatch = useDispatch();
+
     const onSubmit = ({ ordering, in_stock, categories }: InventoryFilterValues) => {
         const filters: HardwareFilters = {
             ordering,
@@ -182,13 +173,13 @@ export const EnhancedInventoryFilter = ({
             category_ids: categories.map((id) => parseInt(id, 10)),
         };
 
-        setFilters(filters);
-        getHardwareWithFilters();
+        dispatch(setFilters(filters));
+        dispatch(getHardwareWithFilters());
     };
 
     const onReset = () => {
-        clearFilters({ saveSearch: true });
-        getHardwareWithFilters();
+        dispatch(clearFilters({ saveSearch: true }));
+        dispatch(getHardwareWithFilters());
     };
 
     const initialValues: InventoryFilterValues = {
@@ -205,26 +196,9 @@ export const EnhancedInventoryFilter = ({
             validateOnBlur={false}
             validationOnChange={false}
         >
-            {(formikProps) => (
-                <InventoryFilter {...formikProps} isLoading={isLoading} />
-            )}
+            {(formikProps) => <InventoryFilter {...formikProps} />}
         </Formik>
     );
 };
 
-const mapStateToProps = (state: RootState) => ({
-    isLoading: isLoadingSelector(state),
-    filters: hardwareFiltersSelector(state),
-});
-
-const connector = connect(mapStateToProps, {
-    getHardwareWithFilters,
-    setFilters,
-    clearFilters,
-});
-
-type ConnectedInventoryFilterProps = ConnectedProps<typeof connector>;
-
-export const ConnectedInventoryFilter = connector(EnhancedInventoryFilter);
-
-export default ConnectedInventoryFilter;
+export default EnhancedInventoryFilter;
