@@ -108,7 +108,7 @@ class SetupUserMixin:
             for user in self._create_user_set():
                 self._apply_as_user(user, team)
         else:
-            for user_number in range(1, num_users + 1, 1):
+            for user_number in range(1, num_users + 1):
                 random_email = self._get_random_email()
                 new_user = User.objects.create_user(
                     username=random_email,

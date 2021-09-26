@@ -75,7 +75,7 @@ class JoinTeamView(generics.GenericAPIView, mixins.RetrieveModelMixin):
     queryset = EventTeam.objects.all()
 
     @transaction.atomic
-    def post(self, request, team_code, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
 
         profile = request.user.profile
         current_team = profile.team
