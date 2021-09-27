@@ -1,12 +1,12 @@
 from datetime import datetime, timedelta
 
-from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
+from django.conf import settings
 
 from rest_framework import generics, mixins
 
