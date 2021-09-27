@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { connect, ConnectedProps } from "react-redux";
+import { connect, ConnectedProps, useDispatch } from "react-redux";
 import Drawer from "@material-ui/core/Drawer";
 import Typography from "@material-ui/core/Typography";
 import Divider from "@material-ui/core/Divider";
@@ -17,15 +17,14 @@ import InventoryFilter from "components/inventory/InventoryFilter/InventoryFilte
 import InventoryGrid from "components/inventory/InventoryGrid/InventoryGrid";
 import ProductOverview from "components/inventory/ProductOverview/ProductOverview";
 
-import { RootState } from "slices/store";
 import { clearFilters, getHardwareWithFilters } from "slices/hardware/hardwareSlice";
+import { getCategories } from "slices/hardware/categorySlice";
 
 import { productInformation } from "testing/mockData";
 
-const UnconnectedInventory = ({
-    clearFilters,
-    getHardwareWithFilters,
-}: ConnectedInventoryProps) => {
+const Inventory = () => {
+    const dispatch = useDispatch();
+
     const [mobileOpen, setMobileOpen] = React.useState(false);
     const toggleFilter = () => {
         setMobileOpen(!mobileOpen);
@@ -44,9 +43,10 @@ const UnconnectedInventory = ({
 
     // When the page is loaded, clear filters and fetch fresh inventory data
     useEffect(() => {
-        clearFilters();
-        getHardwareWithFilters();
-    }, [clearFilters, getHardwareWithFilters]);
+        dispatch(clearFilters());
+        dispatch(getHardwareWithFilters());
+        dispatch(getCategories());
+    }, [dispatch, clearFilters, getHardwareWithFilters, getCategories]);
 
     return (
         <>
@@ -135,12 +135,4 @@ const UnconnectedInventory = ({
     );
 };
 
-const mapStateToProps = (state: RootState) => ({});
-
-const connector = connect(mapStateToProps, { clearFilters, getHardwareWithFilters });
-
-type ConnectedInventoryProps = ConnectedProps<typeof connector>;
-
-export const ConnectedInventory = connector(UnconnectedInventory);
-
-export default ConnectedInventory;
+export default Inventory;

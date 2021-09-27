@@ -6,10 +6,12 @@ import { createBrowserHistory } from "history";
 import userReducer, { userReducerName } from "slices/users/userSlice";
 import uiReducer, { uiReducerName } from "slices/ui/uiSlice";
 import hardwareReducer, { hardwareReducerName } from "slices/hardware/hardwareSlice";
+import categoryReducer, { categoryReducerName } from "slices/hardware/categorySlice";
 
 export const history = createBrowserHistory();
 
 const reducers = {
+    [categoryReducerName]: categoryReducer,
     [hardwareReducerName]: hardwareReducer,
     [userReducerName]: userReducer,
     [uiReducerName]: uiReducer,

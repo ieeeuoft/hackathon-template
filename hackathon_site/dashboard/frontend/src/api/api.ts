@@ -45,6 +45,11 @@ const makeConfig = () => ({
     withCredentials: true,
 });
 
+export const stripHostname = (url: string): string => {
+    const parsed = new URL(url);
+    return parsed.pathname + parsed.search + parsed.hash;
+};
+
 export const get = <T>(
     uri: string,
     params?: { [key: string]: any }

@@ -1939,6 +1939,13 @@
   dependencies:
     "@types/istanbul-lib-report" "*"
 
+"@types/jest-when@^2.7.3":
+  version "2.7.3"
+  resolved "https://registry.yarnpkg.com/@types/jest-when/-/jest-when-2.7.3.tgz#40735b320d8655ebff01123cb58afbdaf8274658"
+  integrity sha512-BdDZnKj3ZO1VsRlJFyRx6yLa0hG9++qetnBKhESjCGRVAm6S4aaKXXLm9xGFmtAQpzuMC44wxhvkG2cl6axvyQ==
+  dependencies:
+    "@types/jest" "*"
+
 "@types/jest@*":
   version "27.0.1"
   resolved "https://registry.yarnpkg.com/@types/jest/-/jest-27.0.1.tgz#fafcc997da0135865311bb1215ba16dba6bdf4ca"
@@ -7056,6 +7063,11 @@ jest-watcher@^26.3.0, jest-watcher@^26.6.2:
     chalk "^4.0.0"
     jest-util "^26.6.2"
     string-length "^4.0.1"
+
+jest-when@^3.4.0:
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/jest-when/-/jest-when-3.4.0.tgz#2f78b80371cb2920067cb4cf8d88ee009a5dabd8"
+  integrity sha512-c7cj+uwoqik7w+CDpsKb5B5A7DhDU6MN9/KcXC+K4WdZHyAdV8zWWy7F+M42TYcQIgQNI2iRtFIf0zXUmVBSOQ==
 
 jest-worker@^24.9.0:
   version "24.9.0"

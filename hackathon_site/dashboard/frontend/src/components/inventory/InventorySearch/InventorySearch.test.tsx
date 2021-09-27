@@ -11,7 +11,7 @@ import {
     initialState,
     HardwareState,
 } from "slices/hardware/hardwareSlice";
-import { makeStore, RootState } from "slices/store";
+import { RootState } from "slices/store";
 
 jest.mock("api/api");
 
