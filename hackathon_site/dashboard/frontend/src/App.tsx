@@ -1,11 +1,7 @@
 import React from "react";
 import { ConnectedRouter } from "connected-react-router";
 import { Route, Redirect, Switch } from "react-router-dom";
-import {
-    createMuiTheme,
-    StylesProvider,
-    ThemeProvider,
-} from "@material-ui/core/styles";
+import { createTheme, StylesProvider, ThemeProvider } from "@material-ui/core/styles";
 import { Provider as ReduxProvider } from "react-redux";
 import { SnackbarProvider } from "notistack";
 
@@ -41,7 +37,7 @@ export const makePalette = (): Palette => {
     return palette;
 };
 
-const theme = createMuiTheme({
+const theme = createTheme({
     palette: makePalette(),
 });
 

@@ -66,3 +66,38 @@ class LeaveTeamView(generics.GenericAPIView):
         response_serializer = TeamSerializer(profile.team)
         response_data = response_serializer.data
         return Response(data=response_data, status=status.HTTP_201_CREATED,)
+
+
+class JoinTeamView(generics.GenericAPIView, mixins.RetrieveModelMixin):
+    permission_classes = [UserHasProfile]
+    serializer_class = TeamSerializer
+    lookup_field = "team_code"
+    queryset = EventTeam.objects.all()
+
+    @transaction.atomic
+    def post(self, request, *args, **kwargs):
+
+        profile = request.user.profile
+        current_team = profile.team
+
+        team = self.get_object()
+
+        if team.profiles.count() >= EventTeam.MAX_MEMBERS:
+            raise ValidationError({"detail": "Team is full"})
+
+        active_orders = OrderItem.objects.filter(
+            ~Q(order__status="Cancelled"), Q(order__team=current_team),
+        )
+        if active_orders.exists():
+            raise ValidationError(
+                {"detail": "Cannot leave a team with already processed orders"},
+                code=status.HTTP_400_BAD_REQUEST,
+            )
+
+        profile.team = team
+        profile.save()
+        if not current_team.profiles.exists():
+            current_team.delete()
+        response_serializer = TeamSerializer(profile.team)
+        response_data = response_serializer.data
+        return Response(data=response_data, status=status.HTTP_200_OK,)
