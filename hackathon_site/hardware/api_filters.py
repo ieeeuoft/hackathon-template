@@ -2,7 +2,7 @@ from django import forms
 from django_filters import rest_framework as filters, widgets
 
 from hardware.models import Hardware, Order, Incident
-from hardware.serializers import HardwareSerializer, OrderListSerializer
+from hardware.serializers import HardwareSerializer, OrderListSerializer, IncidentSerializer
 
 
 class CSVInputIntegerField(forms.IntegerField):

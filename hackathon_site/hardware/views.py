@@ -1,8 +1,10 @@
+import logging
+
 from django_filters import rest_framework as filters
 from django.db import transaction
 from django.http import HttpResponseServerError
 from drf_yasg.utils import swagger_auto_schema
-import logging
+
 from rest_framework import generics, mixins, status, permissions
 from rest_framework.response import Response
 from rest_framework.filters import SearchFilter, OrderingFilter
@@ -75,7 +77,7 @@ class CategoryListView(mixins.ListModelMixin, generics.GenericAPIView):
 class OrderListView(generics.ListAPIView):
     queryset = (
         Order.objects.all().select_related("team")
-        # Causing problems with filtering, will figure out later:
+        # TODO: Causing problems with queryset aggregations, will figure out later:
         # .prefetch_related("hardware", "hardware__categories")
     )
     serializer_class = OrderListSerializer
