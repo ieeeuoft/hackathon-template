@@ -11,18 +11,17 @@ from django.views.generic.edit import FormView
 from django.conf import settings
 from django_filters import rest_framework as filters
 
+from rest_framework import generics, mixins
+from rest_framework.filters import SearchFilter
 
 from hackathon_site.utils import is_registration_open
 from registration.forms import JoinTeamForm
 from registration.models import Team as RegistrationTeam
 
-from rest_framework import generics, mixins
-from rest_framework.filters import SearchFilter
 
 from event.models import Team as EventTeam
 from event.serializers import TeamSerializer
 from event.api_filters import TeamFilter
-
 from event.permissions import FullDjangoModelPermissions
 
 
