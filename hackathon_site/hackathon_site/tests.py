@@ -26,6 +26,20 @@ class SetupUserMixin:
         self.client.login(username=self.user.username, password=self.password)
 
     @staticmethod
+    def _make_profile(user, team=None):
+        if team is None:
+            team = EventTeam.objects.create()
+
+        profile_data = {
+            "id_provided": True,
+            "attended": False,
+            "acknowledge_rules": True,
+            "e_signature": True,
+        }
+
+        return Profile.objects.create(user=user, team=team, **profile_data)
+
+    @staticmethod
     def _apply_as_user(user, team=None):
         if team is None:
             team = RegistrationTeam.objects.create()
@@ -62,74 +76,67 @@ class SetupUserMixin:
             email = f"{uuid[:10]}@{uuid[10:20]}.com"
         return email
 
-    def _make_full_registration_team(self, team=None, self_users=True):
+    def _create_user_set(self):
+        user1 = self.user
+        user2 = self.user2 = User.objects.create_user(
+            username="frank@johnston.com",
+            password="hellothere31415",
+            email="frank@johnston.com",
+            first_name="Frank",
+            last_name="Johnston",
+        )
+        user3 = self.user3 = User.objects.create_user(
+            username="franklin@carmichael.com",
+            password="supersecret456",
+            email="franklin@carmichael.com",
+            first_name="Franklin",
+            last_name="Carmichael",
+        )
+        user4 = self.user4 = User.objects.create_user(
+            username="lawren@harris.com",
+            password="wxyz7890",
+            email="lawren@harris.com",
+            first_name="Lawren",
+            last_name="Harris",
+        )
+        return [user1, user2, user3, user4]
+
+    def _make_full_registration_team(self, team=None, self_users=True, num_users=4):
         if team is None:
             team = RegistrationTeam.objects.create()
-
         if self_users:
-            user1 = self.user
-            user2 = self.user2 = User.objects.create_user(
-                username="frank@johnston.com",
-                password="hellothere31415",
-                email="frank@johnston.com",
-                first_name="Frank",
-                last_name="Johnston",
-            )
-            user3 = self.user3 = User.objects.create_user(
-                username="franklin@carmichael.com",
-                password="supersecret456",
-                email="franklin@carmichael.com",
-                first_name="Franklin",
-                last_name="Carmichael",
-            )
-            user4 = self.user4 = User.objects.create_user(
-                username="lawren@harris.com",
-                password="wxyz7890",
-                email="lawren@harris.com",
-                first_name="Lawren",
-                last_name="Harris",
-            )
+            for user in self._create_user_set():
+                self._apply_as_user(user, team)
         else:
-            # Make some random users
-            email1 = self._get_random_email()
-            email2 = self._get_random_email()
-            email3 = self._get_random_email()
-            email4 = self._get_random_email()
+            for user_number in range(1, num_users + 1):
+                random_email = self._get_random_email()
+                new_user = User.objects.create_user(
+                    username=random_email,
+                    password="foobar123",
+                    email=random_email,
+                    first_name=f"John{user_number}",
+                    last_name=f"Doe{user_number}",
+                )
+                self._apply_as_user(new_user, team)
+        return team
 
-            user1 = User.objects.create_user(
-                username=email1,
-                password="foobar123",
-                email=email1,
-                first_name="John1",
-                last_name="Doe1",
-            )
-            user2 = User.objects.create_user(
-                username=email2,
-                password="foobar123",
-                email=email2,
-                first_name="John2",
-                last_name="Doe2",
-            )
-            user3 = User.objects.create_user(
-                username=email3,
-                password="foobar123",
-                email=email3,
-                first_name="John3",
-                last_name="Doe3",
-            )
-            user4 = User.objects.create_user(
-                username=email4,
-                password="foobar123",
-                email=email4,
-                first_name="John4",
-                last_name="Doe4",
-            )
-
-        self._apply_as_user(user1, team)
-        self._apply_as_user(user2, team)
-        self._apply_as_user(user3, team)
-        self._apply_as_user(user4, team)
-
+    def _make_event_team(self, team=None, self_users=True, num_users=4):
+        if team is None:
+            team = EventTeam.objects.create()
+        if self_users:
+            for user in self._create_user_set():
+                self._make_profile(user, team)
+        else:
+            for user_number in range(1, num_users + 1):
+                random_email = self._get_random_email()
+                new_user = User.objects.create_user(
+                    username=random_email,
+                    password="foobar123",
+                    email=random_email,
+                    first_name=f"John{user_number}",
+                    last_name=f"Doe{user_number}",
+                )
+                self._make_profile(new_user, team)
         return team
 
     def _review(
