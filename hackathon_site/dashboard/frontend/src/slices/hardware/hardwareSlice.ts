@@ -67,7 +67,6 @@ export const getHardwareWithFilters = createAsyncThunk<
 );
 
 // Slice
-
 const hardwareSlice = createSlice({
     name: hardwareReducerName,
     initialState,
