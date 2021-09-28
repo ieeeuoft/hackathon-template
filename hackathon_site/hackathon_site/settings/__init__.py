@@ -136,6 +136,8 @@ DATABASES = {
     }
 }
 
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
+
 # Cache
 # https://docs.djangoproject.com/en/3.1/topics/cache/
 REDIS_URI = os.environ.get("REDIS_URI", "172.17.0.1:6379/1")
