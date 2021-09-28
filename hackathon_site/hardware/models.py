@@ -73,7 +73,7 @@ class Hardware(models.Model):
             setattr(self, field_name, getattr(db_instance, field_name))
 
     def __str__(self):
-        return self.name
+        return f"{self.name} | {self.manufacturer}"
 
 
 class OrderItem(models.Model):
@@ -92,6 +92,9 @@ class OrderItem(models.Model):
     part_returned_health = models.CharField(
         max_length=64, choices=HEALTH_CHOICES, null=True, blank=True
     )
+
+    def __str__(self):
+        return f"{self.hardware.name} | Team {self.order.team.team_code}"
 
 
 class Order(models.Model):
