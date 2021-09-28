@@ -13,4 +13,5 @@ urlpatterns = [
         name="join-team",
     ),
     path("teams/leave_team/", api_views.LeaveTeamView.as_view(), name="leave-team"),
+    path("teams/", views.TeamListView.as_view(), name="team-list"),
 ]
