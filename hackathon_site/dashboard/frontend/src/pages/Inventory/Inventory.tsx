@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { connect, ConnectedProps, useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Drawer from "@material-ui/core/Drawer";
 import Typography from "@material-ui/core/Typography";
 import Divider from "@material-ui/core/Divider";
@@ -17,13 +17,20 @@ import InventoryFilter from "components/inventory/InventoryFilter/InventoryFilte
 import InventoryGrid from "components/inventory/InventoryGrid/InventoryGrid";
 import ProductOverview from "components/inventory/ProductOverview/ProductOverview";
 
-import { clearFilters, getHardwareWithFilters } from "slices/hardware/hardwareSlice";
+import {
+    clearFilters,
+    getHardwareWithFilters,
+    hardwareCountSelector,
+    hardwareSelectors,
+} from "slices/hardware/hardwareSlice";
 import { getCategories } from "slices/hardware/categorySlice";
 
 import { productInformation } from "testing/mockData";
 
 const Inventory = () => {
     const dispatch = useDispatch();
+    const items = useSelector(hardwareSelectors.selectAll);
+    const count = useSelector(hardwareCountSelector);
 
     const [mobileOpen, setMobileOpen] = React.useState(false);
     const toggleFilter = () => {
@@ -107,7 +114,12 @@ const Inventory = () => {
                                 </Hidden>
 
                                 <div className={styles.inventoryBodyToolbarRefresh}>
-                                    <Typography variant="body2">123 items</Typography>
+                                    <Typography
+                                        variant="body2"
+                                        data-testid="inventory-total-count"
+                                    >
+                                        {count} items
+                                    </Typography>
                                     <IconButton color="primary" aria-label="Refresh">
                                         <RefreshIcon />
                                     </IconButton>
@@ -117,17 +129,21 @@ const Inventory = () => {
                         <InventoryGrid />
                         <Divider className={styles.inventoryLoadDivider} />
                         <Typography variant="subtitle2" align="center" paragraph>
-                            SHOWING 100 OF 123 ITEMS
+                            {count > 0
+                                ? `SHOWING ${items.length} OF ${count} ITEMS`
+                                : "NO ITEMS FOUND"}
                         </Typography>
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            size="large"
-                            fullWidth={true}
-                            disableElevation
-                        >
-                            Load more
-                        </Button>
+                        {count !== items.length && (
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                size="large"
+                                fullWidth={true}
+                                disableElevation
+                            >
+                                Load more
+                            </Button>
+                        )}
                     </div>
                 </div>
             </div>
