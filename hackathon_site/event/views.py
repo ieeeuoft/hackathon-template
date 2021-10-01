@@ -226,3 +226,43 @@ class TeamListView(mixins.ListModelMixin, generics.GenericAPIView):
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
+
+
+class MultipleFieldLookupMixin:
+    """
+    Apply this mixin to any view or viewset to get multiple field filtering
+    based on a `lookup_fields` attribute, instead of the default single field filtering.
+    """
+
+    def get_object(self, *args, **kwargs):
+        queryset = self.get_queryset()  # Get the base queryset
+        queryset = self.filter_queryset(queryset)  # Apply any filter backends
+        filter = {}
+        for field in self.lookup_fields:
+            if self.kwargs[field]:  # Ignore empty fields.
+                filter[field] = self.kwargs[field]
+        obj = get_object_or_404(queryset, **filter)  # Lookup the object
+        self.check_object_permissions(self.request, obj)
+        return obj
+
+
+class TeamCodeView(MultipleFieldLookupMixin, generics.GenericAPIView):
+    queryset = EventTeam.objects.all()
+    serializer_class = TeamSerializer
+    permission_classes = [FullDjangoModelPermissions]
+    lookup_fields = ["team_code"]
+
+    filter_backends = (filters.DjangoFilterBackend, SearchFilter)
+    filterset_class = TeamFilter
+    search_fields = (
+        "team_code",
+        "id",
+        "profiles__user__first_name",
+        "profiles__user__last_name",
+    )
+
+    def get(self, request, *args, **kwargs):
+        return Response(
+            TeamSerializer(self.get_object(request, *args, **kwargs)).data,
+            status=status.HTTP_200_OK,
+        )
