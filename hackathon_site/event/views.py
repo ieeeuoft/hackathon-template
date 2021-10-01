@@ -6,14 +6,15 @@ from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
-from django.conf import settings
+from django.shortcuts import get_object_or_404
 
 
 from django.conf import settings
 from django_filters import rest_framework as filters
 
-from rest_framework import generics, mixins
+from rest_framework import generics, mixins, status
 from rest_framework.filters import SearchFilter
+from rest_framework.response import Response
 
 from hackathon_site.utils import is_registration_open
 from registration.forms import JoinTeamForm
