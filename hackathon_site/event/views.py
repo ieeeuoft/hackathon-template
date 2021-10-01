@@ -6,13 +6,15 @@ from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
+from django.shortcuts import get_object_or_404
 
 
 from django.conf import settings
 from django_filters import rest_framework as filters
 
-from rest_framework import generics, mixins
+from rest_framework import generics, mixins, status
 from rest_framework.filters import SearchFilter
+from rest_framework.response import Response
 
 from hackathon_site.utils import is_registration_open
 from registration.forms import JoinTeamForm
@@ -225,3 +227,24 @@ class TeamListView(mixins.ListModelMixin, generics.GenericAPIView):
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
+
+
+class MultipleFieldLookupMixin:
+    """
+    Apply this mixin to any view or viewset to get multiple field filtering
+    based on a `lookup_fields` attribute, instead of the default single field filtering.
+    """
+    def get_object(self,  *args, **kwargs):
+        queryset = self.get_queryset()             # Get the base queryset
+        queryset = self.filter_queryset(queryset)  # Apply any filter backends
+        filter = {}
+        for field in self.lookup_fields:
+            if self.kwargs[field]: # Ignore empty fields.
+                filter[field] = self.kwargs[field]
+        obj = get_object_or_404(queryset, **filter)  # Lookup the object
+        self.check_object_permissions(self.request, obj)
+        return obj
+
+
+
+
