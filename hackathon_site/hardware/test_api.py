@@ -1,9 +1,11 @@
-from rest_framework.test import APITestCase
-from django.urls import reverse
-from django.conf import settings
-from rest_framework import status
 from datetime import datetime
 
+from django.contrib.auth.models import Permission
+from django.urls import reverse
+from django.conf import settings
+
+from rest_framework import status
+from rest_framework.test import APITestCase
 
 from event.models import Team
 from hardware.models import Hardware, Category, Order, OrderItem, Incident
@@ -434,6 +436,7 @@ class OrderListViewGetTestCase(SetupUserMixin, APITestCase):
     def setUp(self):
         super().setUp()
         self.team = Team.objects.create()
+        self.team2 = Team.objects.create(team_code="ABCDE")
         self.order = Order.objects.create(status="Cart", team=self.team)
         self.hardware = Hardware.objects.create(
             name="name",
@@ -467,14 +470,45 @@ class OrderListViewGetTestCase(SetupUserMixin, APITestCase):
         OrderItem.objects.create(
             order=self.order_2, hardware=self.other_hardware,
         )
+        self.order_3 = Order.objects.create(status="Cancelled", team=self.team2,)
+        OrderItem.objects.create(
+            order=self.order_3, hardware=self.hardware,
+        )
+        self.permissions = Permission.objects.filter(
+            content_type__app_label="hardware", codename="view_order"
+        )
         self.view = reverse("api:hardware:order-list")
+
+    def _build_filter_url(self, **kwargs):
+        return (
+            self.view + "?" + "&".join([f"{key}={val}" for key, val in kwargs.items()])
+        )
 
     def test_user_not_logged_in(self):
         response = self.client.get(self.view)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
-    def test_hardware_get_success(self):
+    def test_user_has_no_view_permissions(self):
         self._login()
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_user_has_view_permissions(self):
+        self._login(self.permissions)
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        queryset = Order.objects.all()
+
+        # need to provide a request in the serializer context to produce absolute url for image field
+        expected_response = OrderListSerializer(
+            queryset, many=True, context={"request": response.wsgi_request}
+        ).data
+        data = response.json()
+
+        self.assertEqual(expected_response, data["results"])
+
+    def test_hardware_get_success(self):
+        self._login(self.permissions)
 
         response = self.client.get(self.view)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -486,6 +520,85 @@ class OrderListViewGetTestCase(SetupUserMixin, APITestCase):
         data = response.json()
 
         self.assertEqual(expected_response, data["results"])
+
+    def test_team_id_filter(self):
+        self._login(self.permissions)
+
+        url = self._build_filter_url(team_id="1")
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.json()
+        results = data["results"]
+
+        returned_ids = [res["id"] for res in results]
+        self.assertCountEqual(returned_ids, [self.order.id, self.order_2.id])
+
+    def test_team_code_filter(self):
+        self._login(self.permissions)
+
+        url = self._build_filter_url(team_code="ABCDE")
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.json()
+        results = data["results"]
+
+        returned_ids = [res["id"] for res in results]
+        self.assertCountEqual(returned_ids, [self.order_3.id])
+
+    def test_status_filter(self):
+        self._login(self.permissions)
+
+        url = self._build_filter_url(status="Cart")
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.json()
+        results = data["results"]
+
+        returned_ids = [res["id"] for res in results]
+        self.assertCountEqual(returned_ids, [self.order.id])
+
+    def test_created_at_ordering_ascending(self):
+        self._login(self.permissions)
+
+        url = self._build_filter_url(ordering="created_at")
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.json()
+        results = data["results"]
+
+        returned_ids = [res["id"] for res in results]
+        self.assertEqual(
+            returned_ids, [self.order.id, self.order_2.id, self.order_3.id]
+        )
+
+    def test_created_at_ordering_descending(self):
+        self._login(self.permissions)
+
+        url = self._build_filter_url(ordering="-created_at")
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.json()
+        results = data["results"]
+
+        returned_ids = [res["id"] for res in results]
+        self.assertEqual(
+            returned_ids, [self.order_3.id, self.order_2.id, self.order.id]
+        )
+
+    def test_search_filter(self):
+        self._login(self.permissions)
+
+        url = self._build_filter_url(search="ABCDE")
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.json()
+        results = data["results"]
+
+        returned_ids = [res["id"] for res in results]
+        self.assertCountEqual(returned_ids, [self.order_3.id])
 
 
 class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
@@ -542,7 +655,7 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
 
         order = Order.objects.get(pk=1)
         self.assertEqual(order.items.count(), 1, "More than 1 order item created")
-        self.assertCountEqual(order.hardware_set.all(), [simple_hardware])
+        self.assertCountEqual(order.hardware.all(), [simple_hardware])
 
     def test_invalid_input_hardware_limit(self):
         self._login()
@@ -659,7 +772,7 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
 
         order = Order.objects.get(pk=2)
         self.assertEqual(order.items.count(), 4)
-        self.assertCountEqual(order.hardware_set.all(), [hardware])
+        self.assertCountEqual(order.hardware.all(), [hardware])
 
     def test_hardware_limit_cancelled_orders(self):
         self._login()
@@ -694,7 +807,7 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
 
         order = Order.objects.get(pk=2)
         self.assertEqual(order.items.all().count(), 1)
-        self.assertCountEqual(order.hardware_set.all(), [hardware])
+        self.assertCountEqual(order.hardware.all(), [hardware])
 
     def test_invalid_input_category_limit(self):
         self._login()
@@ -815,7 +928,7 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
 
         order = Order.objects.get(pk=2)
         self.assertEqual(order.items.count(), 4)
-        self.assertCountEqual(order.hardware_set.all(), [hardware])
+        self.assertCountEqual(order.hardware.all(), [hardware])
 
     def test_category_limit_cancelled_orders(self):
         self._login()
@@ -850,7 +963,7 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
 
         order = Order.objects.get(pk=2)
         self.assertEqual(order.items.count(), 1)
-        self.assertCountEqual(order.hardware_set.all(), [hardware])
+        self.assertCountEqual(order.hardware.all(), [hardware])
 
     def test_invalid_inputs_multiple_hardware(self):
         self._login()
@@ -961,7 +1074,7 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(response_json.get("errors"), [])
 
         order = Order.objects.get(pk=order_id)
-        self.assertCountEqual(order.hardware_set.all(), [hardware_1, hardware_2])
+        self.assertCountEqual(order.hardware.all(), [hardware_1, hardware_2])
         self.assertEqual(
             order.items.filter(hardware=hardware_1).count(), num_hardware_1_requested
         )
@@ -1012,7 +1125,7 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
 
         order = Order.objects.get(pk=1)
         self.assertEqual(order.items.all().count(), num_hardware_requested)
-        self.assertCountEqual(order.hardware_set.all(), [hardware])
+        self.assertCountEqual(order.hardware.all(), [hardware])
 
     def test_limited_by_remaining_quantities(self):
         # we won't test the other contributing causes for "remaining quantities"
@@ -1073,7 +1186,7 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(response.json(), expected_response)
 
         order = Order.objects.get(pk=2)
-        self.assertCountEqual(order.hardware_set.all(), [hardware])
+        self.assertCountEqual(order.hardware.all(), [hardware])
         self.assertEqual(
             order.items.filter(hardware=hardware).count(), num_expected_fulfilled
         )
