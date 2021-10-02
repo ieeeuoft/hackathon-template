@@ -4,6 +4,8 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 from hackathon_site.tests import SetupUserMixin
 from django.contrib.auth.models import Permission
+import json
+from collections import OrderedDict
 
 from event.models import Profile, User, Team
 from event.serializers import (
@@ -366,3 +368,47 @@ class EventTeamListsViewTestCase(SetupUserMixin, APITestCase):
         results = data["results"]
         returned_ids = [res["team_code"] for res in results]
         self.assertCountEqual(returned_ids, [self.team2.team_code])
+
+
+class EventTeamCodeListsViewTestCase(SetupUserMixin, APITestCase):
+    def setUp(self, **kwargs):
+
+        self.team = Team.objects.create()
+        self.team2 = Team.objects.create()
+        self.team3 = Team.objects.create()
+        self.permissions = Permission.objects.filter(
+            content_type__app_label="event", codename="view_team"
+        )
+        super().setUp()
+        self.view = reverse("api:event:team-code-detail", args=[self.team.team_code])
+
+    def _build_filter_url(self, **kwargs):
+        return self.view + "/".join(kwargs["team_code"])
+
+    def test_team_get_no_permissions(self):
+        self._login()
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_team_get_has_permissions(self):
+        self._login(self.permissions)
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        queryset = Team.objects.filter(team_code=self.team)
+
+        # need to provide a request in the serializer context to produce absolute url for image field
+        response_list_obj = json.dumps(
+            TeamSerializer(
+                queryset, many=True, context={"request": response.wsgi_request}
+            ).data
+        )
+
+        data = response.json()
+
+        expected_response = json.loads(response_list_obj)
+
+        self.assertEqual(expected_response[0], data)
+
+    def test_team_get_not_login(self):
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
