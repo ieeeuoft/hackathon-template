@@ -118,7 +118,7 @@ const Inventory = () => {
                                         variant="body2"
                                         data-testid="inventory-total-count"
                                     >
-                                        {count} items
+                                        {count} results
                                     </Typography>
                                     <IconButton color="primary" aria-label="Refresh">
                                         <RefreshIcon />

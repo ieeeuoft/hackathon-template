@@ -7,6 +7,7 @@ import { mockCategories, mockHardware } from "testing/mockData";
 
 import { get } from "api/api";
 import { within } from "@testing-library/react";
+import InventoryGrid from "../../components/inventory/InventoryGrid/InventoryGrid";
 
 jest.mock("api/api");
 const mockedGet = get as jest.MockedFunction<typeof get>;
@@ -35,22 +36,17 @@ describe("Inventory Page", () => {
             .calledWith(categoriesUri)
             .mockResolvedValue(categoryApiResponse);
 
-        const { getByText, queryByText } = render(<Inventory />);
+        const { getByText, getByTestId } = render(<Inventory />);
 
         await waitFor(() => {
             expect(getByText(mockHardware[0].name)).toBeInTheDocument();
             expect(getByText(mockCategories[0].name)).toBeInTheDocument();
         });
 
-        // by default the hardwareUri has a limit of 100
-        if (mockHardware.length <= 100) {
-            expect(queryByText(/load more/i)).not.toBeInTheDocument();
-        } else {
-            expect(getByText(/load more/i)).toBeInTheDocument();
-        }
+        expect(getByText(`${mockHardware.length} results`)).toBeInTheDocument();
     });
 
-    test("Hardware count", async () => {
+    it("Shows count and load more button when there is more hardware to fetch", async () => {
         // Mock hardware api response with a limit of mockHardware.length - 2
         const limit = mockHardware.length - 2;
         const hardwareApiResponse = makeMockApiListResponse(
@@ -64,19 +60,23 @@ describe("Inventory Page", () => {
             .calledWith(hardwareUri, {})
             .mockResolvedValue(hardwareApiResponse);
 
-        const { getByText, getByTestId } = render(<Inventory />);
-        const { getByText: getTotalCountText } = within(
-            getByTestId("inventory-total-count")
-        );
+        const { getByText } = render(<Inventory />);
 
         await waitFor(() => {
             expect(getByText(mockHardware[0].name)).toBeInTheDocument();
         });
 
-        expect(getTotalCountText(`${mockHardware.length} items`)).toBeInTheDocument();
         expect(
             getByText(`SHOWING ${limit} OF ${mockHardware.length} ITEMS`)
         ).toBeInTheDocument();
         expect(getByText(/load more/i)).toBeInTheDocument();
+    });
+
+    it("Shows count and no load more button when there is no more hardware to fetch", () => {});
+
+    it("Displays a message when no items found", () => {
+        const { getByText } = render(<InventoryGrid />);
+
+        expect(getByText(/no items found/i)).toBeInTheDocument();
     });
 });
