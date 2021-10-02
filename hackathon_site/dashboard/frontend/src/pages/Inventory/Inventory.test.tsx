@@ -6,8 +6,6 @@ import Inventory from "pages/Inventory/Inventory";
 import { mockCategories, mockHardware } from "testing/mockData";
 
 import { get } from "api/api";
-import { within } from "@testing-library/react";
-import InventoryGrid from "../../components/inventory/InventoryGrid/InventoryGrid";
 
 jest.mock("api/api");
 const mockedGet = get as jest.MockedFunction<typeof get>;
@@ -36,7 +34,7 @@ describe("Inventory Page", () => {
             .calledWith(categoriesUri)
             .mockResolvedValue(categoryApiResponse);
 
-        const { getByText, getByTestId } = render(<Inventory />);
+        const { getByText } = render(<Inventory />);
 
         await waitFor(() => {
             expect(getByText(mockHardware[0].name)).toBeInTheDocument();
@@ -55,28 +53,59 @@ describe("Inventory Page", () => {
             null,
             mockHardware.length
         );
+        const categoryApiResponse = makeMockApiListResponse(mockCategories);
 
         when(mockedGet)
             .calledWith(hardwareUri, {})
             .mockResolvedValue(hardwareApiResponse);
+        when(mockedGet)
+            .calledWith(categoriesUri)
+            .mockResolvedValue(categoryApiResponse);
 
-        const { getByText } = render(<Inventory />);
+        const { getByText, getByTestId } = render(<Inventory />);
 
         await waitFor(() => {
             expect(getByText(mockHardware[0].name)).toBeInTheDocument();
         });
 
+        expect(getByTestId("inventoryCountDivider")).toBeInTheDocument();
         expect(
             getByText(`SHOWING ${limit} OF ${mockHardware.length} ITEMS`)
         ).toBeInTheDocument();
         expect(getByText(/load more/i)).toBeInTheDocument();
+        expect(getByText(`${mockHardware.length} results`)).toBeInTheDocument();
     });
 
-    it("Shows count and no load more button when there is no more hardware to fetch", () => {});
+    it("Shows count and no load more button when there is no more hardware to fetch", async () => {
+        // Mock hardware api response
+        const hardwareApiResponse = makeMockApiListResponse(mockHardware);
+        const categoryApiResponse = makeMockApiListResponse(mockCategories);
 
-    it("Displays a message when no items found", () => {
-        const { getByText } = render(<InventoryGrid />);
+        when(mockedGet)
+            .calledWith(hardwareUri, {})
+            .mockResolvedValue(hardwareApiResponse);
+        when(mockedGet)
+            .calledWith(categoriesUri)
+            .mockResolvedValue(categoryApiResponse);
 
+        const { getByText, queryByText, getByTestId } = render(<Inventory />);
+
+        await waitFor(() => {
+            expect(getByText(mockHardware[0].name)).toBeInTheDocument();
+        });
+
+        expect(getByTestId("inventoryCountDivider")).toBeInTheDocument();
+        expect(
+            getByText(`SHOWING ${mockHardware.length} OF ${mockHardware.length} ITEMS`)
+        ).toBeInTheDocument();
+        expect(queryByText(/load more/i)).not.toBeInTheDocument();
+        expect(getByText(`${mockHardware.length} results`)).toBeInTheDocument();
+    });
+
+    it("Displays a message when no items are found", () => {
+        const { getByText, queryByTestId } = render(<Inventory />);
+
+        expect(queryByTestId("inventoryCountDivider")).not.toBeInTheDocument();
         expect(getByText(/no items found/i)).toBeInTheDocument();
     });
 });

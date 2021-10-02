@@ -114,10 +114,7 @@ const Inventory = () => {
                                 </Hidden>
 
                                 <div className={styles.inventoryBodyToolbarRefresh}>
-                                    <Typography
-                                        variant="body2"
-                                        data-testid="inventory-total-count"
-                                    >
+                                    <Typography variant="body2">
                                         {count} results
                                     </Typography>
                                     <IconButton color="primary" aria-label="Refresh">
@@ -127,7 +124,12 @@ const Inventory = () => {
                             </div>
                         </div>
                         <InventoryGrid />
-                        <Divider className={styles.inventoryLoadDivider} />
+                        {count > 0 && (
+                            <Divider
+                                className={styles.inventoryLoadDivider}
+                                data-testid="inventoryCountDivider"
+                            />
+                        )}
                         <Typography variant="subtitle2" align="center" paragraph>
                             {count > 0
                                 ? `SHOWING ${items.length} OF ${count} ITEMS`
