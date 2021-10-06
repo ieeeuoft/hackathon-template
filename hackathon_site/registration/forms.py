@@ -11,7 +11,7 @@ from hackathon_site.utils import is_registration_open
 from registration.models import Application, Team, User
 from registration.widgets import MaterialFileInput
 
-
+import re
 class SignUpForm(UserCreationForm):
     """
     Form for registering a new user account.
@@ -171,6 +171,7 @@ class ApplicationForm(forms.ModelForm):
 
         self.instance.user = self.user
         self.instance.team = team
+        self.instance.phone_number = re.sub("[^0-9]", "", self.instance.phone_number)
 
         if commit:
             self.instance.save()
