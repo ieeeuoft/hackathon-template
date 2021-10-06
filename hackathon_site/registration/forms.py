@@ -13,7 +13,6 @@ from registration.widgets import MaterialFileInput
 
 import re
 
-
 class SignUpForm(UserCreationForm):
     """
     Form for registering a new user account.
