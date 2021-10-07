@@ -381,6 +381,10 @@ class EventTeamCodeListsViewTestCase(SetupUserMixin, APITestCase):
         super().setUp()
         self.view = reverse("api:event:team-detail", args=[self.team.pk])
 
+    def test_team_get_not_login(self):
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
     def test_team_get_no_permissions(self):
         self._login()
         response = self.client.get(self.view)
@@ -405,6 +409,4 @@ class EventTeamCodeListsViewTestCase(SetupUserMixin, APITestCase):
 
         self.assertEqual(expected_response[0], data)
 
-    def test_team_get_not_login(self):
-        response = self.client.get(self.view)
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
