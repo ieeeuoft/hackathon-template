@@ -396,7 +396,6 @@ class EventTeamCodeListsViewTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         queryset = Team.objects.filter(team_code=self.team)
 
-        # need to provide a request in the serializer context to produce absolute url for image field
         response_list_obj = json.dumps(
             TeamSerializer(
                 queryset, many=True, context={"request": response.wsgi_request}
