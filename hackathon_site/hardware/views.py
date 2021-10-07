@@ -93,7 +93,7 @@ class OrderListView(generics.ListAPIView):
             # TODO: Causing problems with queryset aggregations, will figure out later:
             # .prefetch_related("hardware", "hardware__categories")
         )
-        if self.request.user.has_perm('hardware.change_order'):
+        if self.request.user.has_perm("hardware.change_order"):
             return queryset
         else:
             user_profile = Profile.objects.get(user_id=self.request.user.id)
@@ -109,7 +109,7 @@ class OrderListView(generics.ListAPIView):
         if self.request.method == "POST":
             return [UserHasProfile()]
         if self.request.method == "GET":
-            if self.request.user.has_perm('hardware.change_order'):
+            if self.request.user.has_perm("hardware.change_order"):
                 return [FullDjangoModelPermissions()]
             else:
                 return [UserHasProfile()]

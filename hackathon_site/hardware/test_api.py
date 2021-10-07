@@ -481,7 +481,9 @@ class OrderListViewGetTestCase(SetupUserMixin, APITestCase):
         self.view_permissions = Permission.objects.filter(
             content_type__app_label="hardware", codename="view_order"
         )
-        self.all_hardware_permissions = Permission.objects.filter(content_type__app_label="hardware")
+        self.all_hardware_permissions = Permission.objects.filter(
+            content_type__app_label="hardware"
+        )
         self.view = reverse("api:hardware:order-list")
 
     def _build_filter_url(self, **kwargs):
@@ -508,7 +510,7 @@ class OrderListViewGetTestCase(SetupUserMixin, APITestCase):
         self._login(self.view_permissions)
         response = self.client.get(self.view)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        queryset = Order.objects.all().filter(team_id = self.team.id)
+        queryset = Order.objects.all().filter(team_id=self.team.id)
 
         # need to provide a request in the serializer context to produce absolute url for image field
         expected_response = OrderListSerializer(
@@ -596,7 +598,8 @@ class OrderListViewGetTestCase(SetupUserMixin, APITestCase):
 
         returned_ids = [res["id"] for res in results]
         self.assertEqual(
-            returned_ids, [self.order.id, self.order_2.id, self.order_3.id, self.order_4.id]
+            returned_ids,
+            [self.order.id, self.order_2.id, self.order_3.id, self.order_4.id],
         )
 
     def test_created_at_ordering_descending(self):
@@ -610,7 +613,8 @@ class OrderListViewGetTestCase(SetupUserMixin, APITestCase):
 
         returned_ids = [res["id"] for res in results]
         self.assertEqual(
-            returned_ids, [self.order_4.id, self.order_3.id, self.order_2.id, self.order.id]
+            returned_ids,
+            [self.order_4.id, self.order_3.id, self.order_2.id, self.order.id],
         )
 
     def test_search_filter(self):
