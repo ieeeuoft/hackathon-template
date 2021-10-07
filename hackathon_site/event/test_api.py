@@ -1,5 +1,3 @@
-import json
-
 from django.contrib.auth.models import Group
 from django.urls import reverse
 from rest_framework import status
@@ -396,15 +394,13 @@ class EventTeamCodeListsViewTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         queryset = Team.objects.filter(team_code=self.team)
 
-        response_list_obj = json.dumps(
-            TeamSerializer(
+        expected_response = TeamSerializer(
                 queryset, many=True, context={"request": response.wsgi_request}
             ).data
-        )
+
 
         data = response.json()
 
-        expected_response = json.loads(response_list_obj)
 
         self.assertEqual(expected_response[0], data)
 
