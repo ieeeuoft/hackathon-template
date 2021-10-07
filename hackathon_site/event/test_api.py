@@ -303,8 +303,6 @@ class EventTeamListsViewTestCase(SetupUserMixin, APITestCase):
         super().setUp()
         self.view = reverse("api:event:team-list")
 
-
-
     def test_team_get_no_permissions(self):
         self._login()
         response = self.client.get(self.view)
@@ -395,13 +393,9 @@ class EventTeamCodeListsViewTestCase(SetupUserMixin, APITestCase):
         queryset = Team.objects.filter(team_code=self.team)
 
         expected_response = TeamSerializer(
-                queryset, many=True, context={"request": response.wsgi_request}
-            ).data
-
+            queryset, many=True, context={"request": response.wsgi_request}
+        ).data
 
         data = response.json()
 
-
         self.assertEqual(expected_response[0], data)
-
-

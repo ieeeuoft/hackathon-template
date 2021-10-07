@@ -8,7 +8,6 @@ from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
 
 
-
 from django.conf import settings
 from django_filters import rest_framework as filters
 
@@ -227,5 +226,3 @@ class TeamListView(mixins.ListModelMixin, generics.GenericAPIView):
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
-
-

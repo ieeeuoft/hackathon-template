@@ -17,7 +17,6 @@ from event.api_filters import TeamFilter
 from hardware.models import OrderItem
 
 
-
 class CurrentUserAPIView(generics.GenericAPIView, mixins.RetrieveModelMixin):
     """
     View to handle API interaction with the current user's Profile
@@ -107,7 +106,6 @@ class JoinTeamView(generics.GenericAPIView, mixins.RetrieveModelMixin):
         response_serializer = TeamSerializer(profile.team)
         response_data = response_serializer.data
         return Response(data=response_data, status=status.HTTP_200_OK,)
-
 
 
 class TeamIDView(mixins.RetrieveModelMixin, generics.GenericAPIView):
