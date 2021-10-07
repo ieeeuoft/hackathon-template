@@ -377,6 +377,11 @@ class EventTeamCodeListsViewTestCase(SetupUserMixin, APITestCase):
         super().setUp()
         self.view = reverse("api:event:team-detail", args=[self.team.pk])
 
+    def _build_filter_url(self, **kwargs):
+        return (
+            self.view + "?" + "&".join([f"{key}={val}" for key, val in kwargs.items()])
+        )
+
     def test_team_get_not_login(self):
         response = self.client.get(self.view)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
