@@ -10,6 +10,7 @@ from rest_framework.response import Response
 from rest_framework.filters import SearchFilter, OrderingFilter
 
 from event.permissions import UserHasProfile, FullDjangoModelPermissions
+from event.models import Profile
 from hardware.api_filters import HardwareFilter, OrderFilter, IncidentFilter
 from hardware.models import Hardware, Category, Order, Incident
 
@@ -75,11 +76,6 @@ class CategoryListView(mixins.ListModelMixin, generics.GenericAPIView):
 
 
 class OrderListView(generics.ListAPIView):
-    queryset = (
-        Order.objects.all().select_related("team")
-        # TODO: Causing problems with queryset aggregations, will figure out later:
-        # .prefetch_related("hardware", "hardware__categories")
-    )
     serializer_class = OrderListSerializer
     serializer_method_classes = {
         "GET": OrderListSerializer,
@@ -91,6 +87,18 @@ class OrderListView(generics.ListAPIView):
     ordering_fields = ("created_at",)
     search_fields = ("team__team_code", "id")
 
+    def get_queryset(self):
+        queryset = (
+            Order.objects.all().select_related("team")
+            # TODO: Causing problems with queryset aggregations, will figure out later:
+            # .prefetch_related("hardware", "hardware__categories")
+        )
+        if self.request.user.has_perm('hardware.change_order'):
+            return queryset
+        else:
+            user_profile = Profile.objects.get(user_id=self.request.user.id)
+            return queryset.filter(team_id=user_profile.team_id)
+
     def get_serializer_class(self):
         try:
             return self.serializer_method_classes[self.request.method]
@@ -101,7 +109,10 @@ class OrderListView(generics.ListAPIView):
         if self.request.method == "POST":
             return [UserHasProfile()]
         if self.request.method == "GET":
-            return [FullDjangoModelPermissions()]
+            if self.request.user.has_perm('hardware.change_order'):
+                return [FullDjangoModelPermissions()]
+            else:
+                return [UserHasProfile()]
         return [permissions.IsAuthenticated()]
 
     # TODO: make this admin only
