@@ -305,10 +305,7 @@ class EventTeamListsViewTestCase(SetupUserMixin, APITestCase):
         super().setUp()
         self.view = reverse("api:event:team-list")
 
-    def _build_filter_url(self, **kwargs):
-        return (
-            self.view + "?" + "&".join([f"{key}={val}" for key, val in kwargs.items()])
-        )
+
 
     def test_team_get_no_permissions(self):
         self._login()
@@ -382,10 +379,7 @@ class EventTeamCodeListsViewTestCase(SetupUserMixin, APITestCase):
             content_type__app_label="event", codename="view_team"
         )
         super().setUp()
-        self.view = reverse("api:event:team-code-detail", args=[self.team.team_code])
-
-    def _build_filter_url(self, **kwargs):
-        return self.view + "/".join(kwargs["team_code"])
+        self.view = reverse("api:event:team-detail", args=[self.team.pk])
 
     def test_team_get_no_permissions(self):
         self._login()
