@@ -193,13 +193,13 @@ class ApplicationFormTestCase(SetupUserMixin, TestCase):
 
     def test_phone_number_clean_up(self):
         unclean_to_clean_numbers = ("+1 (123) 246-7890", "11232467890")
-        
+
         data = self.data.copy()
         data["phone_number"] = unclean_to_clean_numbers[0]
         form = self._build_form(data=data)
         self.assertTrue(form.is_valid(), msg=form.errors)
-        application=form.save()
-       
+        application = form.save()
+
         self.assertEqual(application.phone_number, unclean_to_clean_numbers[1])
 
     def test_graduation_year_validator(self):
