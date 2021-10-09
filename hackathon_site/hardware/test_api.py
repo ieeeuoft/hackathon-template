@@ -1030,33 +1030,32 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(response.json(), expected_response)
 
 
-class OrderListPatchTestCase(SetupUserMixin, APITestCase):
-    def setUp(self):
-        super().setUp()
-        self.team = Team.objects.create()
-        self.view_name = "api:hardware:update-order"
-        hardware = Hardware.objects.create(
-            name="name",
-            model_number="model",
-            manufacturer="manufacturer",
-            datasheet="/datasheet/location/",
-            quantity_available=4,
-            max_per_team=1,
-            picture="/picture/location",
-        )
-        order = Order.objects.create(status="Cart", team=self.team)
-        OrderItem.objects.create(order=order,hardware=hardware)
-        self.order_id = order.id
-
-    def _build_view(self, order_id):
-        return reverse(self.view_name, kwargs={"order_id": order_id})
-
-
-    def test_successful_status_change(self):
-        self.client.patch(self._build_view(self.order_id))
-
-
-    def test_user_not_logged_in(self):
-        response = self.client.patch(self._build_view(self.order_id))
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-
+# class OrderListPatchTestCase(SetupUserMixin, APITestCase):
+#     def setUp(self):
+#         super().setUp()
+#         self.team = Team.objects.create()
+#         self.view_name = "api:hardware:update-order"
+#         hardware = Hardware.objects.create(
+#             name="name",
+#             model_number="model",
+#             manufacturer="manufacturer",
+#             datasheet="/datasheet/location/",
+#             quantity_available=4,
+#             max_per_team=1,
+#             picture="/picture/location",
+#         )
+#         order = Order.objects.create(status="Cart", team=self.team)
+#         OrderItem.objects.create(order=order,hardware=hardware)
+#         self.order_id = order.id
+#
+#     def _build_view(self, order_id):
+#         return reverse(self.view_name, kwargs={"order_id": order_id})
+#
+#
+#     def test_successful_status_change(self):
+#         self.client.patch(self._build_view(self.order_id))
+#
+#
+#     def test_user_not_logged_in(self):
+#         response = self.client.patch(self._build_view(self.order_id))
+#         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)

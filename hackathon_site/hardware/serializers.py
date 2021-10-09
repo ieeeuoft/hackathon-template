@@ -39,12 +39,28 @@ class CategorySerializer(serializers.ModelSerializer):
         return obj.hardware_set.annotate(Count("id", distinct=True)).count()
 
 
-class ChangeOrderStatusSerializer(serializers.ModelSerializer):
+class OrderChangeSerializer(serializers.ModelSerializer):
     hardware_set = HardwareSerializer(many=True, read_only=True)
 
     class Meta:
         model = Order
-        fields = ("id", "hardware_set", "team", "status", "created_at", "updated_at")
+        fields = "status"
+
+    def validate(self, data):
+        current_status = data["status"]
+        requested_status = self.context["request"].status
+        change_options = {
+            "Submitted": ["Cancelled", "Ready for Pickup"],
+            "Ready for Pickup": ["Picked Up"],
+        }
+        if current_status not in change_options:
+            raise serializers.ValidationError("Cannot change status for this order")
+        new_status_options = change_options[current_status]
+        if requested_status not in new_status_options:
+            raise serializers.ValidationError(
+                "Cannot change current status to requested status"
+            )
+        return data
 
 
 class OrderListSerializer(serializers.ModelSerializer):

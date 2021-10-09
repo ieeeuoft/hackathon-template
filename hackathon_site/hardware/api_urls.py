@@ -16,7 +16,7 @@ urlpatterns = [
     re_path(
         "hardware/(?P<order_id>[0-9]+)",
         views.HardwareListView.as_view(),
-        name="update-order"
+        name="update-order",
     )
     # re_path(r"^order/(?P<pk>[0-9]+)/$",
     #     views.UpdateOrderView.as_view(),

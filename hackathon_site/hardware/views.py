@@ -16,7 +16,7 @@ from hardware.serializers import (
     OrderListSerializer,
     OrderCreateSerializer,
     OrderCreateResponseSerializer,
-    ChangeOrderStatusSerializer,
+    OrderChangeSerializer,
 )
 
 
@@ -58,7 +58,7 @@ class OrderListView(generics.ListAPIView):
     serializer_method_classes = {
         "GET": OrderListSerializer,
         "POST": OrderCreateSerializer,
-        "PATCH": ChangeOrderStatusSerializer
+        "PATCH": OrderChangeSerializer,
     }
     lookup_field = "id"
 
@@ -93,10 +93,11 @@ class OrderListView(generics.ListAPIView):
     @transaction.atomic
     def patch(self, request, order_id, *args, **kwargs):
         order = self.get_object()
-        serializer = self.get_serializer_class()(order,status="Submitted",partial=True)
+        serializer = self.get_serializer_class()(
+            order, status="Submitted", partial=True
+        )
         if serializer.is_valid():
             serializer.save()
             return Response(data=serializer.data, status=status.HTTP_202_ACCEPTED)
         else:
             return Response(data=serializer.data, status=status.HTTP_400_BAD_REQUEST)
-
