@@ -105,6 +105,11 @@ class OrderListView(generics.ListAPIView):
             return [UserHasProfile()]
         if self.request.method == "GET":
             return [FullDjangoModelPermissions()]
+        if self.request.method == "PATCH":
+            if self.request.user.has_perm("hardware.change_order"):
+                return [FullDjangoModelPermissions()]
+            else:
+                return [UserHasProfile()]
         return [permissions.IsAuthenticated()]
 
     # TODO: make this admin only
@@ -124,14 +129,18 @@ class OrderListView(generics.ListAPIView):
         response_data = response_serializer.data
         return Response(response_data, status=status.HTTP_201_CREATED)
 
-    @transaction.atomic
     def patch(self, request, order_id, *args, **kwargs):
-        order = self.get_object()
-        serializer = self.get_serializer_class()(
-            order, status="Submitted", partial=True
-        )
-        if serializer.is_valid():
-            serializer.save()
-            return Response(data=serializer.data, status=status.HTTP_202_ACCEPTED)
+        if self.request.user.has_perm("hardware.change_order"):
+            order = self.get_object()
+            serializer = self.get_serializer_class()(
+                order, status="Submitted", partial=True
+            )
+            if serializer.is_valid():
+                serializer.save()
+                return Response(data=serializer.data, status=status.HTTP_202_ACCEPTED)
+            else:
+                return Response(
+                    data=serializer.data, status=status.HTTP_400_BAD_REQUEST
+                )
         else:
-            return Response(data=serializer.data, status=status.HTTP_400_BAD_REQUEST)
+            return Response(response_data, status=status.HTTP_403_FORBIDDEN)

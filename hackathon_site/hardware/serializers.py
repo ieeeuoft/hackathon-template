@@ -39,7 +39,6 @@ class CategorySerializer(serializers.ModelSerializer):
         return obj.hardware_set.annotate(Count("id", distinct=True)).count()
 
 
-
 class OrderChangeSerializer(serializers.ModelSerializer):
     hardware_set = HardwareSerializer(many=True, read_only=True)
 
@@ -62,6 +61,7 @@ class OrderChangeSerializer(serializers.ModelSerializer):
                 "Cannot change current status to requested status"
             )
         return data
+
 
 class OrderItemSerializer(serializers.ModelSerializer):
     class Meta:
