@@ -152,7 +152,7 @@ export const addCartTest = () => {
 };
 
 // Inventory
-export const inventoryCategories: Category[] = [
+export const mockCategories: Category[] = [
     { id: 1, name: "MCU", max_per_team: 12, unique_hardware_count: 10 },
     { id: 2, name: "MCU_limit_3", max_per_team: 3, unique_hardware_count: 6 },
     { id: 3, name: "FPGA", max_per_team: 2, unique_hardware_count: 9 },

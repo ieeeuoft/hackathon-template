@@ -3,11 +3,12 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 from hackathon_site.tests import SetupUserMixin
+from django.contrib.auth.models import Permission
 
 from event.models import Profile, User, Team
 from event.serializers import (
-    TeamSerializer,
     UserSerializer,
+    TeamSerializer,
 )
 from hardware.models import Hardware, Order, OrderItem
 
@@ -88,6 +89,99 @@ class CurrentTeamTestCase(SetupUserMixin, APITestCase):
         serializer = TeamSerializer(team_expected)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json(), serializer.data)
+
+
+class JoinTeamTestCase(SetupUserMixin, APITestCase):
+    def setUp(self):
+        super().setUp()
+        self.team = Team.objects.create()
+
+        self.profile = Profile.objects.create(user=self.user, team=self.team)
+        self.team_code = self.team.team_code
+        self.view_name = "api:event:join-team"
+
+    def _build_view(self, team_code):
+        return reverse(self.view_name, kwargs={"team_code": team_code})
+
+    def test_join_and_delete(self):
+        """
+        When a member wants to join a team, if their current team only includes
+        them, their current team is deleted..
+        """
+        self._login()
+
+        # A single-user team is created as part of the setup.
+        team = self._make_event_team(self_users=False, num_users=2)
+        self.client.post(self._build_view(team.team_code))
+        self.assertFalse(self.team.profiles.exists())
+
+    def test_invalid_key(self):
+        self._login()
+        response = self.client.post(self._build_view("56ABD"))
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_join_full_team(self):
+        self._login()
+        team = self._make_event_team(self_users=False)
+        response = self.client.post(self._build_view(team.team_code))
+        self.assertEqual(response.json(), {"detail": "Team is full"})
+
+    def test_user_not_logged_in(self):
+        response = self.client.post(self._build_view("56ABD"))
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_user_has_no_profile(self):
+        self.profile.delete()
+        self._login()
+        response = self.client.post(self._build_view("56ABD"))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def check_cannot_leave_active(self):
+        old_team = self.profile.team
+        sample_team = self._make_event_team(self_users=False, num_users=2)
+        response = self.client.post(self._build_view(sample_team.team_code))
+        self.user.refresh_from_db()
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(old_team.pk, self.user.profile.team.pk)
+
+    def check_can_leave_cancelled(self):
+        old_team = self.profile.team
+        sample_team = self._make_event_team(self_users=False, num_users=2)
+        response = self.client.post(self._build_view(sample_team.team_code))
+        self.user.refresh_from_db()
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["id"], self.user.profile.team.pk)
+        self.assertNotEqual(old_team.pk, self.user.profile.team.pk)
+        self.assertFalse(Team.objects.filter(team_code=old_team.team_code).exists())
+
+    def test_cannot_leave_with_order(self):
+        """
+        check user cannot join another team when there
+        are submitted orders, unless those orders are
+        cancelled.
+        """
+        self._login()
+
+        hardware = Hardware.objects.create(
+            name="name",
+            model_number="model",
+            manufacturer="manufacturer",
+            datasheet="/datasheet/location/",
+            quantity_available=4,
+            max_per_team=1,
+            picture="/picture/location",
+        )
+        order = Order.objects.create(status="Cart", team=self.team)
+        OrderItem.objects.create(order=order, hardware=hardware)
+
+        for _, status_choice in Order.STATUS_CHOICES:
+            order.status = status_choice
+            order.save()
+            if status_choice != "Cancelled":
+                self.check_cannot_leave_active()
+            else:
+                self.check_can_leave_cancelled()
 
 
 class LeaveTeamTestCase(SetupUserMixin, APITestCase):
@@ -193,3 +287,82 @@ class LeaveTeamTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(
             Team.objects.filter(team_code=old_team.team_code).exists(), True
         )
+
+
+class EventTeamListsViewTestCase(SetupUserMixin, APITestCase):
+    def setUp(self):
+
+        self.team = Team.objects.create()
+        self.team2 = Team.objects.create()
+        self.team3 = Team.objects.create()
+        self.permissions = Permission.objects.filter(
+            content_type__app_label="event", codename="view_team"
+        )
+        super().setUp()
+        self.view = reverse("api:event:team-list")
+
+    def _build_filter_url(self, **kwargs):
+        return (
+            self.view + "?" + "&".join([f"{key}={val}" for key, val in kwargs.items()])
+        )
+
+    def test_team_get_no_permissions(self):
+        self._login()
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_team_get_has_permissions(self):
+        self._login(self.permissions)
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        queryset = Team.objects.all()
+
+        # need to provide a request in the serializer context to produce absolute url for image field
+        expected_response = TeamSerializer(
+            queryset, many=True, context={"request": response.wsgi_request}
+        ).data
+        data = response.json()
+
+        self.assertEqual(expected_response, data["results"])
+
+    def test_team_get_not_login(self):
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_team_code_filter(self):
+        self._login(self.permissions)
+
+        url = self._build_filter_url(team_code=self.team.team_code)
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.json()
+        results = data["results"]
+
+        returned_ids = [res["team_code"] for res in results]
+        self.assertCountEqual(returned_ids, [self.team.team_code])
+
+    def test_team_id_filter(self):
+        self._login(self.permissions)
+
+        url = self._build_filter_url(team_ids="1,3")
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.json()
+        results = data["results"]
+
+        returned_ids = [res["id"] for res in results]
+        self.assertCountEqual(returned_ids, [1, 3])
+
+    def test_name_search_filter(self):
+        self._login(self.permissions)
+
+        url = self._build_filter_url(search=self.team2.team_code)
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.json()
+        results = data["results"]
+        returned_ids = [res["team_code"] for res in results]
+        self.assertCountEqual(returned_ids, [self.team2.team_code])

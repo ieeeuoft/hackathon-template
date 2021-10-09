@@ -11,14 +11,15 @@ import {
 
 import InventoryFilter from "components/inventory/InventoryFilter/InventoryFilter";
 import { get } from "api/api";
-import { inventoryCategories, mockHardware } from "testing/mockData";
-import { RootState } from "slices/store";
+import { mockCategories, mockHardware } from "testing/mockData";
+import { makeStore, RootState } from "slices/store";
 import {
     hardwareReducerName,
     HardwareState,
     initialState,
 } from "slices/hardware/hardwareSlice";
 import { HardwareFilters } from "api/types";
+import { getCategories } from "slices/hardware/categorySlice";
 
 jest.mock("api/api");
 const mockedGet = get as jest.MockedFunction<typeof get>;
@@ -41,29 +42,38 @@ describe("<InventoryFilter />", () => {
      * the level of the (mocked) API requests.
      */
 
+    const prepopulateStore = () => {
+        const apiResponse = makeMockApiListResponse(mockCategories);
+        mockedGet.mockResolvedValue(apiResponse);
+
+        const store = makeStore();
+        store.dispatch(getCategories());
+
+        return store;
+    };
+
     it("Submits selected filters", async () => {
-        const { getByText } = render(<InventoryFilter />);
+        const store = prepopulateStore();
+        const { getByText, findByText } = render(<InventoryFilter />, { store });
 
         const orderByNameButton = getByText("Z-A");
         const inStockCheckbox = getByText("In stock");
 
-        // TODO: Once categories are connected to the store,
-        //  some mocking will be required to populate this data
-        const mcuCheckbox = getByText("MCU_limit_3");
-        const FPGACheckbox = getByText("FPGA");
+        const firstCheckbox = await findByText(mockCategories[0].name);
+        const secondCheckbox = await findByText(mockCategories[1].name);
 
         const applyButton = getByText("Apply");
 
         fireEvent.click(orderByNameButton);
         fireEvent.click(inStockCheckbox);
-        fireEvent.click(mcuCheckbox);
-        fireEvent.click(FPGACheckbox);
+        fireEvent.click(firstCheckbox);
+        fireEvent.click(secondCheckbox);
         fireEvent.click(applyButton);
 
         const expectedFilters: HardwareFilters = {
             ordering: "-name",
             in_stock: true,
-            category_ids: [2, 3],
+            category_ids: [mockCategories[0].id, mockCategories[1].id],
         };
 
         await waitFor(() => {
@@ -72,19 +82,21 @@ describe("<InventoryFilter />", () => {
     });
 
     it("Clears filters when toggled", async () => {
-        const { getByText } = render(<InventoryFilter />);
+        const store = prepopulateStore();
+        const { getByText, findByText } = render(<InventoryFilter />, { store });
 
         const orderByNameButton = getByText("Z-A");
         const inStockCheckbox = getByText("In stock");
-        const FPGACheckbox = getByText("FPGA");
+        const firstCheckbox = await findByText(mockCategories[0].name);
+
         const applyButton = getByText("Apply");
 
         fireEvent.click(orderByNameButton);
         fireEvent.click(inStockCheckbox);
-        fireEvent.click(FPGACheckbox);
+        fireEvent.click(firstCheckbox);
 
         fireEvent.click(inStockCheckbox);
-        fireEvent.click(FPGACheckbox);
+        fireEvent.click(firstCheckbox);
         fireEvent.click(applyButton);
 
         const expectedFilters: HardwareFilters = {
@@ -142,11 +154,25 @@ describe("<InventoryFilter />", () => {
         });
     });
 
-    it("Renders options for each category", () => {
-        const { getByText } = render(<InventoryFilter />);
+    it("Renders loading bar, then options for each category", async () => {
+        const categoryApiResponse = makeMockApiListResponse(mockCategories);
+        mockedGet.mockReturnValue(promiseResolveWithDelay(categoryApiResponse, 500));
 
-        for (let c of inventoryCategories) {
-            expect(getByText(c.name)).toBeInTheDocument();
-        }
+        // Pre-populate the store by dispatching fetch categories action
+        const store = makeStore();
+        store.dispatch(getCategories());
+
+        const { getByText, queryByTestId } = render(<InventoryFilter />, { store });
+
+        await waitFor(() => {
+            expect(queryByTestId("categories-linear-progress")).toBeInTheDocument();
+        });
+
+        await waitFor(() => {
+            expect(queryByTestId("categories-linear-progress")).not.toBeInTheDocument();
+            for (let c of mockCategories) {
+                expect(getByText(c.name)).toBeInTheDocument();
+            }
+        });
     });
 });
