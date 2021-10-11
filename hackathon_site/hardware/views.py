@@ -93,11 +93,13 @@ class OrderListView(generics.ListAPIView):
             # TODO: Causing problems with queryset aggregations, will figure out later:
             # .prefetch_related("hardware", "hardware__categories")
         )
-        if self.request.user.has_perm("hardware.change_order"):
-            return queryset
+        if self.request.method == "GET":
+            if self.request.user.has_perm("hardware.view_order"):
+                return queryset
+            else:
+                return queryset.filter(team_id=self.request.user.profile.team_id)
         else:
-            user_profile = Profile.objects.get(user_id=self.request.user.id)
-            return queryset.filter(team_id=user_profile.team_id)
+            return queryset
 
     def get_serializer_class(self):
         try:
@@ -109,10 +111,7 @@ class OrderListView(generics.ListAPIView):
         if self.request.method == "POST":
             return [UserHasProfile()]
         if self.request.method == "GET":
-            if self.request.user.has_perm("hardware.change_order"):
-                return [FullDjangoModelPermissions()]
-            else:
-                return [UserHasProfile()]
+            return [(FullDjangoModelPermissions | UserHasProfile)()]
         return [permissions.IsAuthenticated()]
 
     # TODO: make this admin only

@@ -481,9 +481,6 @@ class OrderListViewGetTestCase(SetupUserMixin, APITestCase):
         self.view_permissions = Permission.objects.filter(
             content_type__app_label="hardware", codename="view_order"
         )
-        self.all_hardware_permissions = Permission.objects.filter(
-            content_type__app_label="hardware"
-        )
         self.view = reverse("api:hardware:order-list")
 
     def _build_filter_url(self, **kwargs):
@@ -495,22 +492,16 @@ class OrderListViewGetTestCase(SetupUserMixin, APITestCase):
         response = self.client.get(self.view)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
-    def test_user_has_no_view_permissions(self):
+    def test_user_has_no_view_permissions_or_profile(self):
         self._login()
         response = self.client.get(self.view)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_user_has_view_permissions_no_profile(self):
-        self._login(self.view_permissions)
-        response = self.client.get(self.view)
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
-    def test_user_has_view_permissions_with_profile(self):
-        Profile.objects.create(user=self.user, team=self.team)
+    def test_user_has_view_permissions_but_no_profile(self):
         self._login(self.view_permissions)
         response = self.client.get(self.view)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        queryset = Order.objects.all().filter(team_id=self.team.id)
+        queryset = Order.objects.all()
 
         # need to provide a request in the serializer context to produce absolute url for image field
         expected_response = OrderListSerializer(
@@ -520,8 +511,23 @@ class OrderListViewGetTestCase(SetupUserMixin, APITestCase):
 
         self.assertEqual(expected_response, data["results"])
 
-    def test_user_has_change_permissions(self):
-        self._login(self.all_hardware_permissions)
+    def test_user_has_no_view_permissions_with_profile(self):
+        Profile.objects.create(user=self.user, team=self.team)
+        self._login()
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        queryset = Order.objects.filter(team_id=self.team.id)
+
+        expected_response = OrderListSerializer(
+            queryset, many=True, context={"request": response.wsgi_request}
+        ).data
+        data = response.json()
+
+        self.assertEqual(expected_response, data["results"])
+
+    def test_user_has_view_permissions_and_profile(self):
+        Profile.objects.create(user=self.user, team=self.team)
+        self._login(self.view_permissions)
         response = self.client.get(self.view)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         queryset = Order.objects.all()
@@ -535,7 +541,7 @@ class OrderListViewGetTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(expected_response, data["results"])
 
     def test_hardware_get_success(self):
-        self._login(self.all_hardware_permissions)
+        self._login(self.view_permissions)
 
         response = self.client.get(self.view)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -549,7 +555,7 @@ class OrderListViewGetTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(expected_response, data["results"])
 
     def test_team_id_filter(self):
-        self._login(self.all_hardware_permissions)
+        self._login(self.view_permissions)
 
         url = self._build_filter_url(team_id="1")
 
@@ -562,7 +568,7 @@ class OrderListViewGetTestCase(SetupUserMixin, APITestCase):
         self.assertCountEqual(returned_ids, [self.order.id, self.order_2.id])
 
     def test_team_code_filter(self):
-        self._login(self.all_hardware_permissions)
+        self._login(self.view_permissions)
 
         url = self._build_filter_url(team_code="ABCDE")
 
@@ -575,7 +581,7 @@ class OrderListViewGetTestCase(SetupUserMixin, APITestCase):
         self.assertCountEqual(returned_ids, [self.order_3.id, self.order_4.id])
 
     def test_status_filter(self):
-        self._login(self.all_hardware_permissions)
+        self._login(self.view_permissions)
 
         url = self._build_filter_url(status="Cart")
 
@@ -588,7 +594,7 @@ class OrderListViewGetTestCase(SetupUserMixin, APITestCase):
         self.assertCountEqual(returned_ids, [self.order.id])
 
     def test_created_at_ordering_ascending(self):
-        self._login(self.all_hardware_permissions)
+        self._login(self.view_permissions)
 
         url = self._build_filter_url(ordering="created_at")
         response = self.client.get(url)
@@ -603,7 +609,7 @@ class OrderListViewGetTestCase(SetupUserMixin, APITestCase):
         )
 
     def test_created_at_ordering_descending(self):
-        self._login(self.all_hardware_permissions)
+        self._login(self.view_permissions)
 
         url = self._build_filter_url(ordering="-created_at")
         response = self.client.get(url)
@@ -618,7 +624,7 @@ class OrderListViewGetTestCase(SetupUserMixin, APITestCase):
         )
 
     def test_search_filter(self):
-        self._login(self.all_hardware_permissions)
+        self._login(self.view_permissions)
 
         url = self._build_filter_url(search="ABCDE")
         response = self.client.get(url)
@@ -628,33 +634,6 @@ class OrderListViewGetTestCase(SetupUserMixin, APITestCase):
 
         returned_ids = [res["id"] for res in results]
         self.assertCountEqual(returned_ids, [self.order_3.id, self.order_4.id])
-
-    def test_status_filter_with_only_view_permissions(self):
-        Profile.objects.create(user=self.user, team=self.team)
-        self._login(self.view_permissions)
-
-        url = self._build_filter_url(status="Submitted")
-
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        data = response.json()
-        results = data["results"]
-
-        returned_ids = [res["id"] for res in results]
-        self.assertCountEqual(returned_ids, [self.order_2.id])
-
-    def test_filter_from_another_team_with_only_view_permissions(self):
-        Profile.objects.create(user=self.user, team=self.team)
-        self._login(self.view_permissions)
-
-        url = self._build_filter_url(team_code="ABCDE")
-
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        data = response.json()
-        results = data["results"]
-
-        self.assertEqual(results, [])
 
 
 class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
