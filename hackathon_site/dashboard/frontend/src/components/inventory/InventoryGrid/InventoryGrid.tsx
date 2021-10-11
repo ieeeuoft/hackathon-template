@@ -5,7 +5,7 @@ import Item from "components/inventory/Item/Item";
 
 import { useSelector } from "react-redux";
 import { hardwareSelectors, isLoadingSelector } from "slices/hardware/hardwareSlice";
-import { LinearProgress, Typography } from "@material-ui/core";
+import { LinearProgress } from "@material-ui/core";
 
 export const InventoryGrid = () => {
     const items = useSelector(hardwareSelectors.selectAll);
