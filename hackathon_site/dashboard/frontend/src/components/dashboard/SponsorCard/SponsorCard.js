@@ -4,7 +4,7 @@ import Slider from "react-slick";
 import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
-import { sponsorsList } from "testing/mockData.js";
+import { sponsorsList } from "testing/mockData";
 
 let settings = {
     dots: true,

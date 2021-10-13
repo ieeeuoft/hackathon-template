@@ -1,4 +1,7 @@
+import copy
+
 from rest_framework import permissions
+from rest_framework.permissions import DjangoModelPermissions
 
 
 class UserHasProfile(permissions.IsAuthenticated):
@@ -12,3 +15,15 @@ class UserHasProfile(permissions.IsAuthenticated):
             and request.user
             and hasattr(request.user, "profile")
         )
+
+
+class FullDjangoModelPermissions(DjangoModelPermissions):
+    """
+    Adds view permission requirements, which are otherwise not checked by DjangoModelPermissions
+    """
+
+    def __init__(self):
+        self.perms_map = copy.deepcopy(self.perms_map)
+        self.perms_map["GET"] = ["%(app_label)s.view_%(model_name)s"]
+        self.perms_map["OPTIONS"] = ["%(app_label)s.view_%(model_name)s"]
+        self.perms_map["HEAD"] = ["%(app_label)s.view_%(model_name)s"]

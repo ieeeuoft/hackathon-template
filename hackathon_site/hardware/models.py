@@ -102,7 +102,7 @@ class Order(models.Model):
         ("Cancelled", "Cancelled"),
     ]
 
-    hardware_set = models.ManyToManyField(Hardware, through=OrderItem)
+    hardware = models.ManyToManyField(Hardware, through=OrderItem)
     team = models.ForeignKey(TeamEvent, on_delete=models.CASCADE, null=False)
     status = models.CharField(
         max_length=64, choices=STATUS_CHOICES, default="Submitted"

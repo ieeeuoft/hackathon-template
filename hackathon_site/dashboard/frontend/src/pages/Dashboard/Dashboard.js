@@ -58,7 +58,7 @@ const Dashboard = () => {
                 <Grid
                     container
                     direction="row"
-                    justify="flex-start"
+                    justifyContent="flex-start"
                     alignItems="flex-start"
                     spacing={2}
                     className={styles.dashboardGrid}

@@ -15,16 +15,16 @@ const uiSlice = createSlice({
     initialState: initialState,
     reducers: {
         toggleCheckedOutTable: (state) => {
-            state.dashboard.isCheckedOutTableVisible = !state.dashboard
-                .isCheckedOutTableVisible;
+            state.dashboard.isCheckedOutTableVisible =
+                !state.dashboard.isCheckedOutTableVisible;
         },
         toggleReturnedTable: (state) => {
-            state.dashboard.isReturnedTableVisible = !state.dashboard
-                .isReturnedTableVisible;
+            state.dashboard.isReturnedTableVisible =
+                !state.dashboard.isReturnedTableVisible;
         },
         togglePendingTable: (state) => {
-            state.dashboard.isPendingTableVisible = !state.dashboard
-                .isPendingTableVisible;
+            state.dashboard.isPendingTableVisible =
+                !state.dashboard.isPendingTableVisible;
         },
         displaySnackbar: (state, { payload: { message, options = {} } }) => {
             if (!options.key) {

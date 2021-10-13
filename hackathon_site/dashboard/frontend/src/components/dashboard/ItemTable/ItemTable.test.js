@@ -1,6 +1,8 @@
 import React from "react";
 import configureStore from "redux-mock-store";
-import { fireEvent, render } from "@testing-library/react";
+
+import { fireEvent, render } from "testing/utils";
+
 import {
     ChipStatus,
     PendingTable,
@@ -24,7 +26,6 @@ import {
     itemsReturned,
     itemsBroken,
 } from "testing/mockData";
-import { withStore } from "testing/helpers";
 
 const mockStore = configureStore();
 
@@ -232,9 +233,9 @@ describe("Connected tables", () => {
     });
 
     it("CheckedOutTable dispatches an action to toggle visibility when button clicked", async () => {
-        const { getByText } = render(
-            withStore(<CheckedOutTable items={itemsCheckedOut} />, store)
-        );
+        const { getByText } = render(<CheckedOutTable items={itemsCheckedOut} />, {
+            store,
+        });
         const button = getByText(/hide all/i);
 
         await fireEvent.click(button);
@@ -244,9 +245,9 @@ describe("Connected tables", () => {
     });
 
     it("ReturnedTable dispatches an action to toggle visibility when button clicked", async () => {
-        const { getByText } = render(
-            withStore(<ReturnedTable items={itemsReturned} />, store)
-        );
+        const { getByText } = render(<ReturnedTable items={itemsReturned} />, {
+            store,
+        });
         const button = getByText(/hide all/i);
 
         await fireEvent.click(button);
@@ -257,7 +258,8 @@ describe("Connected tables", () => {
 
     it("PendingTable dispatches an action to toggle visibility when button clicked", async () => {
         const { getByText } = render(
-            withStore(<PendingTable items={itemsPending} status="pending" />, store)
+            <PendingTable items={itemsPending} status="pending" />,
+            { store }
         );
         const button = getByText(/hide all/i);
 

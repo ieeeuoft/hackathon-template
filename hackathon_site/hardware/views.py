@@ -1,23 +1,26 @@
+import logging
+
 from django_filters import rest_framework as filters
 from django.db import transaction
 from django.http import HttpResponseServerError
 from drf_yasg.utils import swagger_auto_schema
-import logging
+
 from rest_framework import generics, mixins, status, permissions
 from rest_framework.response import Response
 from rest_framework.filters import SearchFilter, OrderingFilter
 
-from event.permissions import UserHasProfile
-from hardware.api_filters import HardwareFilter
-from hardware.models import Hardware, Category, Order
+from event.permissions import UserHasProfile, FullDjangoModelPermissions
+from hardware.api_filters import HardwareFilter, OrderFilter, IncidentFilter
+from hardware.models import Hardware, Category, Order, Incident
+
 from hardware.serializers import (
     CategorySerializer,
     HardwareSerializer,
+    IncidentSerializer,
     OrderListSerializer,
     OrderCreateSerializer,
     OrderCreateResponseSerializer,
 )
-
 
 logger = logging.getLogger(__name__)
 
@@ -43,6 +46,26 @@ class HardwareDetailView(mixins.RetrieveModelMixin, generics.GenericAPIView):
         return self.retrieve(request, *args, **kwargs)
 
 
+class IncidentListView(mixins.ListModelMixin, generics.GenericAPIView):
+    queryset = Incident.objects.all().select_related(
+        "order_item", "order_item__order__team", "order_item__hardware"
+    )
+    serializer_class = IncidentSerializer
+
+    search_fields = (
+        "state",
+        "order_item__order__team__team_code",
+        "order_item__hardware__name",
+        "order_item__hardware__manufacturer",
+    )
+
+    filter_backends = (filters.DjangoFilterBackend, SearchFilter)
+    filterset_class = IncidentFilter
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+
 class CategoryListView(mixins.ListModelMixin, generics.GenericAPIView):
     queryset = Category.objects.all().prefetch_related("hardware_set")
     serializer_class = CategorySerializer
@@ -52,12 +75,21 @@ class CategoryListView(mixins.ListModelMixin, generics.GenericAPIView):
 
 
 class OrderListView(generics.ListAPIView):
-    queryset = Order.objects.all()
+    queryset = (
+        Order.objects.all().select_related("team")
+        # TODO: Causing problems with queryset aggregations, will figure out later:
+        # .prefetch_related("hardware", "hardware__categories")
+    )
     serializer_class = OrderListSerializer
     serializer_method_classes = {
         "GET": OrderListSerializer,
         "POST": OrderCreateSerializer,
     }
+
+    filter_backends = (filters.DjangoFilterBackend, OrderingFilter, SearchFilter)
+    filterset_class = OrderFilter
+    ordering_fields = ("created_at",)
+    search_fields = ("team__team_code", "id")
 
     def get_serializer_class(self):
         try:
@@ -68,6 +100,8 @@ class OrderListView(generics.ListAPIView):
     def get_permissions(self):
         if self.request.method == "POST":
             return [UserHasProfile()]
+        if self.request.method == "GET":
+            return [FullDjangoModelPermissions()]
         return [permissions.IsAuthenticated()]
 
     # TODO: make this admin only

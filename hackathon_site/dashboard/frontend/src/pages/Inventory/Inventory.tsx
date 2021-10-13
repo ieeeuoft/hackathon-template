@@ -1,36 +1,33 @@
-import React from "react";
-import styles from "./Inventory.module.scss";
+import React, { useEffect } from "react";
+import { connect, ConnectedProps, useDispatch } from "react-redux";
 import Drawer from "@material-ui/core/Drawer";
-import Header from "components/general/Header/Header";
 import Typography from "@material-ui/core/Typography";
-import TextField from "@material-ui/core/TextField";
 import Divider from "@material-ui/core/Divider";
 import IconButton from "@material-ui/core/IconButton";
 import Hidden from "@material-ui/core/Hidden";
 import Button from "@material-ui/core/Button";
 import RefreshIcon from "@material-ui/icons/Refresh";
-import SearchIcon from "@material-ui/icons/Search";
 import CloseIcon from "@material-ui/icons/Close";
-import InputAdornment from "@material-ui/core/InputAdornment";
 import FilterListIcon from "@material-ui/icons/FilterList";
-import Grid from "@material-ui/core/Grid";
-import EnhancedInventoryFilter from "components/inventory/InventoryFilter/InventoryFilter";
-import Item from "components/inventory/Item/Item";
+import InventorySearch from "components/inventory/InventorySearch/InventorySearch";
+
+import styles from "./Inventory.module.scss";
+import Header from "components/general/Header/Header";
+import InventoryFilter from "components/inventory/InventoryFilter/InventoryFilter";
+import InventoryGrid from "components/inventory/InventoryGrid/InventoryGrid";
 import ProductOverview from "components/inventory/ProductOverview/ProductOverview";
-import { productInformation, inventoryItems } from "testing/mockData";
+
+import { clearFilters, getHardwareWithFilters } from "slices/hardware/hardwareSlice";
+import { getCategories } from "slices/hardware/categorySlice";
+
+import { productInformation } from "testing/mockData";
 
 const Inventory = () => {
+    const dispatch = useDispatch();
+
     const [mobileOpen, setMobileOpen] = React.useState(false);
     const toggleFilter = () => {
         setMobileOpen(!mobileOpen);
-    };
-
-    // Remove this later once filter data is able to be submitted
-    const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-    const onSubmitTemp = async ({ orderBy, inStock, inventoryCategories }) => {
-        await sleep(300);
-        alert(JSON.stringify({ orderBy, inStock, inventoryCategories }, null, 2));
-        setMobileOpen(false);
     };
 
     // Remove this later once items can be added to cart
@@ -39,15 +36,17 @@ const Inventory = () => {
         setItemOverviewId(null);
     };
 
-    const [itemOverviewId, setItemOverviewId] = React.useState(null);
+    const [itemOverviewId, setItemOverviewId] = React.useState<number | null>(null);
     const toggleMenu = () => {
         setItemOverviewId(null);
     };
 
-    // use itemOverviewId to fetch the info from the store
-    React.useEffect(() => console.log("itemOverviewId", itemOverviewId), [
-        itemOverviewId,
-    ]);
+    // When the page is loaded, clear filters and fetch fresh inventory data
+    useEffect(() => {
+        dispatch(clearFilters());
+        dispatch(getHardwareWithFilters());
+        dispatch(getCategories());
+    }, [dispatch, clearFilters, getHardwareWithFilters, getCategories]);
 
     return (
         <>
@@ -74,52 +73,20 @@ const Inventory = () => {
                             <CloseIcon />
                         </IconButton>
                     </div>
-                    <EnhancedInventoryFilter
-                        handleSubmit={onSubmitTemp}
-                        handleReset={onSubmitTemp}
-                        isApplyLoading={false}
-                        isClearLoading={false}
-                    />
+                    <InventoryFilter />
                 </Drawer>
 
                 <Typography variant="h1">Hardware Inventory</Typography>
 
                 <div className={styles.inventoryBody}>
                     <Hidden implementation="css" smDown>
-                        <EnhancedInventoryFilter
-                            handleSubmit={onSubmitTemp}
-                            handleReset={onSubmitTemp}
-                            isApplyLoading={false}
-                            isClearLoading={false}
-                        />
+                        <InventoryFilter />
                     </Hidden>
 
                     <div className={styles.inventoryBodyRight}>
                         <div className={styles.inventoryBodyToolbar}>
                             <div className={styles.inventoryBodyToolbarDiv}>
-                                <TextField
-                                    className={styles.inventoryBodyToolbarSearch}
-                                    id="search-input"
-                                    label="Search items"
-                                    variant="outlined"
-                                    type="text"
-                                    InputProps={{
-                                        endAdornment: (
-                                            <InputAdornment position="end">
-                                                <IconButton>
-                                                    <CloseIcon />
-                                                </IconButton>
-                                            </InputAdornment>
-                                        ),
-                                    }}
-                                />
-                                <IconButton
-                                    color="primary"
-                                    aria-label="Search"
-                                    variant="contained"
-                                >
-                                    <SearchIcon />
-                                </IconButton>
+                                <InventorySearch />
                             </div>
 
                             <Divider
@@ -141,38 +108,13 @@ const Inventory = () => {
 
                                 <div className={styles.inventoryBodyToolbarRefresh}>
                                     <Typography variant="body2">123 items</Typography>
-                                    <IconButton
-                                        color="primary"
-                                        aria-label="Refresh"
-                                        variant="contained"
-                                    >
+                                    <IconButton color="primary" aria-label="Refresh">
                                         <RefreshIcon />
                                     </IconButton>
                                 </div>
                             </div>
                         </div>
-                        <Grid direction="row" spacing={2} container>
-                            {inventoryItems.map((item) => (
-                                <Grid
-                                    xs={6}
-                                    sm={4}
-                                    md={3}
-                                    lg={2}
-                                    xl={1}
-                                    className={styles.Item}
-                                    key={item.id}
-                                    item
-                                    onClick={() => setItemOverviewId(item.id)}
-                                >
-                                    <Item
-                                        image={item.image}
-                                        title={item.title}
-                                        total={item.total}
-                                        currentStock={item.currentStock}
-                                    />
-                                </Grid>
-                            ))}
-                        </Grid>
+                        <InventoryGrid />
                         <Divider className={styles.inventoryLoadDivider} />
                         <Typography variant="subtitle2" align="center" paragraph>
                             SHOWING 100 OF 123 ITEMS

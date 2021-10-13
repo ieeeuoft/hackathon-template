@@ -1,8 +1,12 @@
 from django import forms
 from django_filters import rest_framework as filters, widgets
 
-from hardware.models import Hardware
-from hardware.serializers import HardwareSerializer
+from hardware.models import Hardware, Order, Incident
+from hardware.serializers import (
+    HardwareSerializer,
+    OrderListSerializer,
+    IncidentSerializer,
+)
 
 
 class CSVInputIntegerField(forms.IntegerField):
@@ -11,6 +15,14 @@ class CSVInputIntegerField(forms.IntegerField):
 
 class IntegerCSVFilter(filters.BaseInFilter):
     field_class = CSVInputIntegerField
+
+
+class IncidentFilter(filters.FilterSet):
+    queryset = Incident
+    serializer_class = IncidentSerializer
+
+    hardware_id = filters.NumberFilter(field_name="order_item__hardware__id")
+    team_id = filters.NumberFilter(field_name="order_item__order__team__id")
 
 
 class HardwareFilter(filters.FilterSet):
@@ -39,3 +51,16 @@ class HardwareFilter(filters.FilterSet):
         label="Comma separated list of category IDs",
         help_text="Comma separated list of category IDs",
     )
+
+
+class OrderFilter(filters.FilterSet):
+    queryset = Order
+    serializer_class = OrderListSerializer
+
+    team_id = IntegerCSVFilter(
+        field_name="team__id",
+        label="Comma separated list of team IDs",
+        help_text="Comma separated list of team IDs",
+    )
+    team_code = filters.CharFilter(field_name="team__team_code")
+    status = filters.CharFilter(field_name="status")
