@@ -2,28 +2,29 @@ from datetime import datetime, timedelta
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
+from django.http import HttpResponseForbidden
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
-from django.conf import settings
 
 
 from django.conf import settings
 from django_filters import rest_framework as filters
 
-from rest_framework import generics, mixins
+from rest_framework import generics, mixins, status, permissions
 from rest_framework.filters import SearchFilter
+from rest_framework.response import Response
 
 from hackathon_site.utils import is_registration_open
 from registration.forms import JoinTeamForm
 from registration.models import Team as RegistrationTeam
 
 
-from event.models import Team as EventTeam
-from event.serializers import TeamSerializer
+from event.models import Team as EventTeam, Profile
+from event.serializers import TeamSerializer, ProfileModifySerializer, ProfileSerializer
 from event.api_filters import TeamFilter
-from event.permissions import FullDjangoModelPermissions
+from event.permissions import FullDjangoModelPermissions, UserHasProfile
 
 
 def _now():
@@ -226,3 +227,33 @@ class TeamListView(mixins.ListModelMixin, generics.GenericAPIView):
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
+
+class ProfileDetailView(mixins.RetrieveModelMixin, generics.GenericAPIView):
+
+    queryset = Profile.objects.all()
+    serializer_class = ProfileModifySerializer
+    lookup_field = "id"
+    permission_classes = [FullDjangoModelPermissions | UserHasProfile]
+
+    @transaction.atomic
+    def patch(self, request, *args, **kwargs):
+        if self.request.user.has_perm("event.change_profile"):
+            profile = self.get_object()
+        elif request.user.profile:
+            profile = request.user.profile
+        else:
+            return HttpResponseForbidden()
+
+        data = request.data
+        profile.id_provided = data["id_provided"]
+        profile.attended = data["attended"]
+
+        if not profile.acknowledge_rules:
+            profile.acknowledge_rules = data["acknowledge_rules"]
+        if not profile.e_signature:
+            profile.e_signature = data["e_signature"]
+
+        profile.save()
+        response_serializer = ProfileSerializer(profile)
+        response_data = response_serializer.data
+        return Response(data=response_data, status=status.HTTP_200_OK,)

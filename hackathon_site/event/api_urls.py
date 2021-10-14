@@ -14,7 +14,7 @@ urlpatterns = [
     ),
     path("teams/leave_team/", api_views.LeaveTeamView.as_view(), name="leave-team"),
     re_path(
-        r"^profiles/(?P<pk>[0-9]+)/$",
+        r"^profiles/(?P<id>[0-9]+)/$",
         views.ProfileDetailView.as_view(),
         name="profile-detail",
     ),
