@@ -366,3 +366,118 @@ class EventTeamListsViewTestCase(SetupUserMixin, APITestCase):
         results = data["results"]
         returned_ids = [res["team_code"] for res in results]
         self.assertCountEqual(returned_ids, [self.team2.team_code])
+
+
+class ProfileDetailViewTestCase(SetupUserMixin, APITestCase):
+    def setUp(self):
+        super().setUp()
+        self.user_with_profile = User.objects.create_user(
+            username="foo2@bar.com",
+            password=self.password,
+            first_name="Test2",
+            last_name="Bar2",
+            email="foo2@bar.com",
+        )
+        self.profile = self._make_event_profile(user=self.user_with_profile)
+        self.request_body = {
+            "id_provided": True,
+            "attended": True,
+            "acknowledge_rules": True,
+            "e_signature": "user signature",
+        }
+        self.change_permissions = Permission.objects.filter(
+            content_type__app_label="event", codename="change_profile"
+        )
+
+    def _build_view(self, id):
+        return reverse("api:event:profile-detail", kwargs={"id": id})
+
+    def _get_expected_response(self, profile):
+        return {
+            "id": profile.id,
+            "id_provided": True,
+            "attended": True,
+            "acknowledge_rules": True,
+            "e_signature": "user signature",
+            "team": profile.team_id,
+        }
+
+    def test_user_not_logged_in(self):
+        response = self.client.patch(self._build_view(1), self.request_body)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_user_has_no_change_permissions_or_profile(self):
+        self._login()
+        response = self.client.patch(self._build_view(1), self.request_body)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_user_has_change_permissions_no_profile(self):
+        self._login(self.change_permissions)
+        response = self.client.patch(
+            self._build_view(self.profile.id), self.request_body
+        )
+        data = response.json()
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(self._get_expected_response(self.profile), data)
+
+    def test_user_has_only_profile(self):
+        profile = self._make_event_profile()
+        self._login()
+
+        # Testing to get user's own profile
+        response = self.client.patch(self._build_view(profile.id), self.request_body)
+        data = response.json()
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(self._get_expected_response(profile), data)
+
+        # Testing if user can see another user's profile
+        response2 = self.client.patch(
+            self._build_view(self.profile.id), self.request_body
+        )
+        data2 = response2.json()
+
+        # User can only see their own profile even if they query another user's profile id
+        self.assertEqual(response2.status_code, status.HTTP_200_OK)
+        self.assertEqual(self._get_expected_response(profile), data2)
+
+    def test_user_has_change_permissions_and_profile(self):
+        self._make_event_profile()
+        self._login(self.change_permissions)
+        response = self.client.patch(
+            self._build_view(self.profile.id), self.request_body
+        )
+        data = response.json()
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(self._get_expected_response(self.profile), data)
+
+    def test_modifying_acknowledge_rules_and_e_signature_twice(self):
+        self._login(self.change_permissions)
+
+        # First, normally update profile
+        response = self.client.patch(
+            self._build_view(self.profile.id), self.request_body
+        )
+        data = response.json()
+        expected_response = self._get_expected_response(self.profile)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(expected_response, data)
+
+        # Then update profile with a different request, changing acknowledge & e signature
+        new_request_body = {
+            "id_provided": False,
+            "attended": False,
+            "acknowledge_rules": False,
+            "e_signature": "new signature",
+        }
+        # acknowledge_rules and e_signature do not change
+        expected_response["id_provided"] = False
+        expected_response["attended"] = False
+        response2 = self.client.patch(
+            self._build_view(self.profile.id), new_request_body
+        )
+        data2 = response2.json()
+        self.assertEqual(response2.status_code, status.HTTP_200_OK)
+        self.assertEqual(expected_response, data2)

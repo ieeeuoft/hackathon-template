@@ -39,9 +39,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 class ProfileModifySerializer(serializers.Serializer):
     class Meta:
         model = Profile
-        fields = (
-            "id",
-        )
+        fields = ("id",)
 
     id_provided = serializers.BooleanField(required=False)
     attended = serializers.BooleanField(required=False)
