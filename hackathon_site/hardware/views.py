@@ -2,7 +2,7 @@ import logging
 
 from django_filters import rest_framework as filters
 from django.db import transaction
-from django.http import HttpResponseServerError
+from django.http import HttpResponseServerError, HttpResponseForbidden
 from drf_yasg.utils import swagger_auto_schema
 
 from rest_framework import generics, mixins, status, permissions
@@ -76,7 +76,6 @@ class CategoryListView(mixins.ListModelMixin, generics.GenericAPIView):
 
 
 class OrderListView(generics.ListAPIView):
-    serializer_class = OrderListSerializer
     serializer_method_classes = {
         "GET": OrderListSerializer,
         "POST": OrderCreateSerializer,
@@ -96,8 +95,10 @@ class OrderListView(generics.ListAPIView):
         if self.request.method == "GET":
             if self.request.user.has_perm("hardware.view_order"):
                 return queryset
-            else:
+            elif hasattr(self.request.user, "profile"):
                 return queryset.filter(team_id=self.request.user.profile.team_id)
+            else:
+                return queryset
         else:
             return queryset
 
@@ -110,7 +111,7 @@ class OrderListView(generics.ListAPIView):
     def get_permissions(self):
         if self.request.method == "POST":
             return [UserHasProfile()]
-        if self.request.method == "GET":
+        elif self.request.method == "GET":
             return [(FullDjangoModelPermissions | UserHasProfile)()]
         return [permissions.IsAuthenticated()]
 
