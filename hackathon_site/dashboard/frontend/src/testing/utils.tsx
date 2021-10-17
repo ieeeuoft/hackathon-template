@@ -10,7 +10,10 @@ import { makeStore, RootStore, RootState } from "slices/store";
 import { DeepPartial } from "redux";
 import { SnackbarProvider } from "notistack";
 import { AxiosResponse } from "axios";
-import { APIListResponse } from "api/types";
+import { APIListResponse, Category, Hardware } from "api/types";
+import { get } from "api/api";
+import { getHardwareWithFilters } from "slices/hardware/hardwareSlice";
+import { getCategories } from "slices/hardware/categorySlice";
 
 export const withRouter = (component: React.ComponentElement<any, any>) => (
     <BrowserRouter>{component}</BrowserRouter>
@@ -81,3 +84,37 @@ export const makeMockApiListResponse = <T extends unknown>(
 
 // Re-export everything from jest-when
 export * from "jest-when";
+
+export interface StoreEntities {
+    hardware?: Hardware[];
+    categories?: Category[];
+}
+
+/**
+ * Given a store, a collection of entities, and a mocked api.get function,
+ * prepopulate the store by emulating API responses.
+ *
+ * Due to the asynchronous nature of dispatches, tests using this function
+ * may need to wait after calling it for the store to be populated.
+ */
+export const fillStoreWithEntities = (
+    store: RootStore,
+    entities: StoreEntities,
+    mockedGet: jest.MockedFunction<typeof get>
+) => {
+    if (entities.hardware) {
+        const data = makeMockApiListResponse(entities.hardware);
+        mockedGet.mockResolvedValueOnce(data);
+
+        store.dispatch(getHardwareWithFilters());
+    }
+
+    if (entities.categories) {
+        const data = makeMockApiListResponse(entities.categories);
+        mockedGet.mockResolvedValueOnce(data);
+
+        store.dispatch(getCategories());
+    }
+
+    mockedGet.mockReset();
+};

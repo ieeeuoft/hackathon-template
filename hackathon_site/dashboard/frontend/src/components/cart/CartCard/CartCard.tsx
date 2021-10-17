@@ -80,8 +80,8 @@ export const CartCard = ({ hardware_id, quantity, error }: CartCardProps) => {
     const [numInCart, setNumInCart] = useState(quantity);
 
     // TODO: Are we guaranteed that the hardware will be in the state by this point?
-    const hardware = useSelector(
-        (state: RootState) => hardwareSelectors.selectById(state, hardware_id)!
+    const hardware = useSelector((state: RootState) =>
+        hardwareSelectors.selectById(state, hardware_id)
     );
 
     const handleChange = (event: ChangeEvent<{ name?: string; value: string }>) => {
@@ -92,7 +92,7 @@ export const CartCard = ({ hardware_id, quantity, error }: CartCardProps) => {
         alert(`Removing ${id}`);
     };
 
-    return (
+    return hardware ? (
         <Card className={styles.Cart} elevation={0}>
             <CardMedia
                 className={styles.CartPic}
@@ -128,7 +128,7 @@ export const CartCard = ({ hardware_id, quantity, error }: CartCardProps) => {
                 </IconButton>
             </CardActions>
         </Card>
-    );
+    ) : null;
 };
 
 export default CartCard;
