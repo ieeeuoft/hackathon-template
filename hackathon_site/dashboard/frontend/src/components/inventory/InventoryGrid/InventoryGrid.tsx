@@ -5,7 +5,7 @@ import Item from "components/inventory/Item/Item";
 
 import { useSelector } from "react-redux";
 import { hardwareSelectors, isLoadingSelector } from "slices/hardware/hardwareSlice";
-import { LinearProgress, Typography } from "@material-ui/core";
+import { LinearProgress } from "@material-ui/core";
 
 export const InventoryGrid = () => {
     const items = useSelector(hardwareSelectors.selectAll);
@@ -15,7 +15,7 @@ export const InventoryGrid = () => {
         <LinearProgress style={{ width: "100%" }} data-testid="linear-progress" />
     ) : (
         <Grid direction="row" spacing={2} container>
-            {items.length > 0 ? (
+            {items.length > 0 &&
                 items.map((item) => (
                     <Grid
                         xs={6}
@@ -36,12 +36,7 @@ export const InventoryGrid = () => {
                             currentStock={item.quantity_remaining}
                         />
                     </Grid>
-                ))
-            ) : (
-                <Grid xs={12} item className={styles.Item}>
-                    <Typography>No items found</Typography>
-                </Grid>
-            )}
+                ))}
         </Grid>
     );
 };
