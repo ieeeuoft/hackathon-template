@@ -2,7 +2,7 @@ import React from "react";
 
 import { render } from "testing/utils";
 
-import Cart from "./Cart";
+import Cart from "pages/Cart/Cart";
 
 import { cartItems } from "testing/mockData";
 
