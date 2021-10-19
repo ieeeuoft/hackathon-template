@@ -1,5 +1,3 @@
-from abc import ABC
-
 from django.contrib.auth.models import Group
 from rest_framework import serializers
 
@@ -36,15 +34,10 @@ class ProfileSerializer(serializers.ModelSerializer):
         )
 
 
-class ProfileModifySerializer(serializers.Serializer):
+class ProfileModifySerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
-        fields = ("id",)
-
-    id_provided = serializers.BooleanField(required=False)
-    attended = serializers.BooleanField(required=False)
-    acknowledge_rules = serializers.BooleanField(required=False)
-    e_signature = serializers.CharField(required=False)
+        fields = ("id","id_provided", "attended", "acknowledge_rules", "e_signature")
 
 
 class UserSerializer(serializers.ModelSerializer):

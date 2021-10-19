@@ -229,21 +229,15 @@ class TeamListView(mixins.ListModelMixin, generics.GenericAPIView):
         return self.list(request, *args, **kwargs)
 
 
-class ProfileDetailView(mixins.RetrieveModelMixin, generics.GenericAPIView):
+class ProfileDetailView(mixins.UpdateModelMixin, generics.GenericAPIView):
 
     queryset = Profile.objects.all()
     serializer_class = ProfileModifySerializer
-    lookup_field = "id"
-    permission_classes = [FullDjangoModelPermissions | UserHasProfile]
+    permission_classes = [FullDjangoModelPermissions]
 
     @transaction.atomic
     def patch(self, request, *args, **kwargs):
-        if self.request.user.has_perm("event.change_profile"):
-            profile = self.get_object()
-        elif request.user.profile:
-            profile = request.user.profile
-        else:
-            return HttpResponseForbidden()
+        profile = self.get_object()
 
         data = request.data
         profile.id_provided = data["id_provided"]

@@ -6,7 +6,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
 from event.models import User, Team as EventTeam
-from event.serializers import UserSerializer, TeamSerializer
+from event.serializers import UserSerializer, TeamSerializer, ProfileModifySerializer
 from event.permissions import UserHasProfile
 
 from hardware.models import OrderItem
@@ -99,5 +99,29 @@ class JoinTeamView(generics.GenericAPIView, mixins.RetrieveModelMixin):
         if not current_team.profiles.exists():
             current_team.delete()
         response_serializer = TeamSerializer(profile.team)
+        response_data = response_serializer.data
+        return Response(data=response_data, status=status.HTTP_200_OK,)
+
+class CurrentPorfileView(mixins.UpdateModelMixin, generics.GenericAPIView):
+
+    queryset = Profile.objects.all()
+    serializer_class = ProfileModifySerializer
+    permission_classes = [UserHasProfile]
+
+    @transaction.atomic
+    def patch(self, request, *args, **kwargs):
+        profile = request.user.profile
+
+        data = request.data
+        profile.id_provided = data["id_provided"]
+        profile.attended = data["attended"]
+
+        if not profile.acknowledge_rules:
+            profile.acknowledge_rules = data["acknowledge_rules"]
+        if not profile.e_signature:
+            profile.e_signature = data["e_signature"]
+
+        profile.save()
+        response_serializer = ProfileSerializer(profile)
         response_data = response_serializer.data
         return Response(data=response_data, status=status.HTTP_200_OK,)
