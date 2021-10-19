@@ -2,7 +2,7 @@ import logging
 
 from django_filters import rest_framework as filters
 from django.db import transaction
-from django.http import HttpResponseServerError, HttpResponseForbidden
+from django.http import HttpResponseServerError
 from drf_yasg.utils import swagger_auto_schema
 
 from rest_framework import generics, mixins, status, permissions
@@ -10,7 +10,6 @@ from rest_framework.response import Response
 from rest_framework.filters import SearchFilter, OrderingFilter
 
 from event.permissions import UserHasProfile, FullDjangoModelPermissions
-from event.models import Profile
 from hardware.api_filters import HardwareFilter, OrderFilter, IncidentFilter
 from hardware.models import Hardware, Category, Order, Incident
 
@@ -76,6 +75,11 @@ class CategoryListView(mixins.ListModelMixin, generics.GenericAPIView):
 
 
 class OrderListView(generics.ListAPIView):
+    queryset = (
+        Order.objects.all().select_related("team")
+        # TODO: Causing problems with queryset aggregations, will figure out later:
+        # .prefetch_related("hardware", "hardware__categories")
+    )
     serializer_method_classes = {
         "GET": OrderListSerializer,
         "POST": OrderCreateSerializer,
@@ -85,22 +89,6 @@ class OrderListView(generics.ListAPIView):
     filterset_class = OrderFilter
     ordering_fields = ("created_at",)
     search_fields = ("team__team_code", "id")
-
-    def get_queryset(self):
-        queryset = (
-            Order.objects.all().select_related("team")
-            # TODO: Causing problems with queryset aggregations, will figure out later:
-            # .prefetch_related("hardware", "hardware__categories")
-        )
-        if self.request.method == "GET":
-            if self.request.user.has_perm("hardware.view_order"):
-                return queryset
-            elif hasattr(self.request.user, "profile"):
-                return queryset.filter(team_id=self.request.user.profile.team_id)
-            else:
-                return queryset
-        else:
-            return queryset
 
     def get_serializer_class(self):
         try:
@@ -112,10 +100,9 @@ class OrderListView(generics.ListAPIView):
         if self.request.method == "POST":
             return [UserHasProfile()]
         elif self.request.method == "GET":
-            return [(FullDjangoModelPermissions | UserHasProfile)()]
+            return [FullDjangoModelPermissions()]
         return [permissions.IsAuthenticated()]
 
-    # TODO: make this admin only
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
 

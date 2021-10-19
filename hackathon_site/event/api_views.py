@@ -101,3 +101,11 @@ class JoinTeamView(generics.GenericAPIView, mixins.RetrieveModelMixin):
         response_serializer = TeamSerializer(profile.team)
         response_data = response_serializer.data
         return Response(data=response_data, status=status.HTTP_200_OK,)
+
+class CurrentTeamOrdersView(generics.GenericAPIView, mixins.RetrieveModelMixin):
+    queryset = Order.objects.filter(team_id=self.request.user.profile.team_id)
+    serializer_class = OrderListSerializer
+    permission_classes = [UserHasProfile]
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)

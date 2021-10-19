@@ -492,12 +492,12 @@ class OrderListViewGetTestCase(SetupUserMixin, APITestCase):
         response = self.client.get(self.view)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
-    def test_user_has_no_view_permissions_or_profile(self):
+    def test_user_has_no_view_permissions(self):
         self._login()
         response = self.client.get(self.view)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_user_has_view_permissions_but_no_profile(self):
+    def test_user_has_view_permissions(self):
         self._login(self.view_permissions)
         response = self.client.get(self.view)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -511,36 +511,7 @@ class OrderListViewGetTestCase(SetupUserMixin, APITestCase):
 
         self.assertEqual(expected_response, data["results"])
 
-    def test_user_has_no_view_permissions_with_profile(self):
-        Profile.objects.create(user=self.user, team=self.team)
-        self._login()
-        response = self.client.get(self.view)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        queryset = Order.objects.filter(team_id=self.team.id)
-
-        expected_response = OrderListSerializer(
-            queryset, many=True, context={"request": response.wsgi_request}
-        ).data
-        data = response.json()
-
-        self.assertEqual(expected_response, data["results"])
-
-    def test_user_has_view_permissions_and_profile(self):
-        Profile.objects.create(user=self.user, team=self.team)
-        self._login(self.view_permissions)
-        response = self.client.get(self.view)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        queryset = Order.objects.all()
-
-        # need to provide a request in the serializer context to produce absolute url for image field
-        expected_response = OrderListSerializer(
-            queryset, many=True, context={"request": response.wsgi_request}
-        ).data
-        data = response.json()
-
-        self.assertEqual(expected_response, data["results"])
-
-    def test_hardware_get_success(self):
+    def test_orders_get_success(self):
         self._login(self.view_permissions)
 
         response = self.client.get(self.view)
