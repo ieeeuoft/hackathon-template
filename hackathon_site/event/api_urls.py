@@ -20,7 +20,7 @@ urlpatterns = [
     ),
     path(
         "profiles/profile",
-        api_views.CurrentPorfileView.as_view(),
+        api_views.CurrentProfileView.as_view(),
         name="current-profile",
     ),
     path("teams/", views.TeamListView.as_view(), name="team-list"),

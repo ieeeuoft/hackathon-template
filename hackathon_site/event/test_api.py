@@ -409,9 +409,7 @@ class ProfileDetailViewTestCase(SetupUserMixin, APITestCase):
 
     def test_user_has_change_permissions(self):
         self._login(self.change_permissions)
-        response = self.client.patch(
-            self.view, self.request_body
-        )
+        response = self.client.patch(self.view, self.request_body)
         data = response.json()
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -421,9 +419,7 @@ class ProfileDetailViewTestCase(SetupUserMixin, APITestCase):
         self._login(self.change_permissions)
 
         # First, normally update profile
-        response = self.client.patch(
-            self.view, self.request_body
-        )
+        response = self.client.patch(self.view, self.request_body)
         data = response.json()
         expected_response = self.expected_response
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -439,12 +435,11 @@ class ProfileDetailViewTestCase(SetupUserMixin, APITestCase):
         # acknowledge_rules and e_signature do not change
         expected_response["id_provided"] = False
         expected_response["attended"] = False
-        response2 = self.client.patch(
-            self.view, new_request_body
-        )
+        response2 = self.client.patch(self.view, new_request_body)
         data2 = response2.json()
         self.assertEqual(response2.status_code, status.HTTP_200_OK)
         self.assertEqual(expected_response, data2)
+
 
 class CurrentProfileViewTestCase(SetupUserMixin, APITestCase):
     def setUp(self):
@@ -475,7 +470,7 @@ class CurrentProfileViewTestCase(SetupUserMixin, APITestCase):
         self._login()
         response = self.client.patch(self.view, self.request_body)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-    
+
     def test_user_has_profile(self):
         self._login()
 
@@ -485,14 +480,12 @@ class CurrentProfileViewTestCase(SetupUserMixin, APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(self.expected_response, data)
-    
+
     def test_modifying_acknowledge_rules_and_e_signature_twice(self):
         self._login()
 
         # First, normally update profile
-        response = self.client.patch(
-            self.view, self.request_body
-        )
+        response = self.client.patch(self.view, self.request_body)
         data = response.json()
         expected_response = self.expected_response
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -508,10 +501,7 @@ class CurrentProfileViewTestCase(SetupUserMixin, APITestCase):
         # acknowledge_rules and e_signature do not change
         expected_response["id_provided"] = False
         expected_response["attended"] = False
-        response2 = self.client.patch(
-            self.view, new_request_body
-        )
+        response2 = self.client.patch(self.view, new_request_body)
         data2 = response2.json()
         self.assertEqual(response2.status_code, status.HTTP_200_OK)
         self.assertEqual(expected_response, data2)
-

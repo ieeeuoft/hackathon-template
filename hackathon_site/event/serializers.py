@@ -37,7 +37,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 class ProfileModifySerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
-        fields = ("id","id_provided", "attended", "acknowledge_rules", "e_signature")
+        fields = ("id", "id_provided", "attended", "acknowledge_rules", "e_signature")
 
 
 class UserSerializer(serializers.ModelSerializer):

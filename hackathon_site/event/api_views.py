@@ -5,8 +5,13 @@ from rest_framework import generics, mixins, status
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
-from event.models import User, Team as EventTeam
-from event.serializers import UserSerializer, TeamSerializer, ProfileModifySerializer
+from event.models import User, Team as EventTeam, Profile
+from event.serializers import (
+    UserSerializer,
+    TeamSerializer,
+    ProfileModifySerializer,
+    ProfileSerializer,
+)
 from event.permissions import UserHasProfile
 
 from hardware.models import OrderItem
@@ -102,7 +107,8 @@ class JoinTeamView(generics.GenericAPIView, mixins.RetrieveModelMixin):
         response_data = response_serializer.data
         return Response(data=response_data, status=status.HTTP_200_OK,)
 
-class CurrentPorfileView(mixins.UpdateModelMixin, generics.GenericAPIView):
+
+class CurrentProfileView(mixins.UpdateModelMixin, generics.GenericAPIView):
 
     queryset = Profile.objects.all()
     serializer_class = ProfileModifySerializer
