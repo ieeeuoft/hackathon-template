@@ -5,7 +5,6 @@ from rest_framework.test import APITestCase
 from hackathon_site.tests import SetupUserMixin
 from django.contrib.auth.models import Permission
 
-from collections import OrderedDict
 
 from event.models import Profile, User, Team
 from event.serializers import (
@@ -370,7 +369,7 @@ class EventTeamListsViewTestCase(SetupUserMixin, APITestCase):
         self.assertCountEqual(returned_ids, [self.team2.team_code])
 
 
-class EventTeamDetailViewTestCase (SetupUserMixin, APITestCase):
+class EventTeamDetailViewTestCase(SetupUserMixin, APITestCase):
     def setUp(self, **kwargs):
 
         self.team = Team.objects.create()
