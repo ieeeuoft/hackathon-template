@@ -9,7 +9,8 @@ from event.models import User, Team as EventTeam
 from event.serializers import UserSerializer, TeamSerializer
 from event.permissions import UserHasProfile
 
-from hardware.models import OrderItem
+from hardware.models import OrderItem, Order
+from hardware.serializers import OrderListSerializer
 
 
 class CurrentUserAPIView(generics.GenericAPIView, mixins.RetrieveModelMixin):
@@ -102,10 +103,13 @@ class JoinTeamView(generics.GenericAPIView, mixins.RetrieveModelMixin):
         response_data = response_serializer.data
         return Response(data=response_data, status=status.HTTP_200_OK,)
 
-class CurrentTeamOrdersView(generics.GenericAPIView, mixins.RetrieveModelMixin):
-    queryset = Order.objects.filter(team_id=self.request.user.profile.team_id)
+
+class CurrentTeamOrderListView(generics.ListAPIView):
     serializer_class = OrderListSerializer
     permission_classes = [UserHasProfile]
+
+    def get_queryset(self):
+        return Order.objects.filter(team_id=self.request.user.profile.team_id)
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)

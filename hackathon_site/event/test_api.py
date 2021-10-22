@@ -11,6 +11,7 @@ from event.serializers import (
     TeamSerializer,
 )
 from hardware.models import Hardware, Order, OrderItem
+from hardware.serializers import OrderListSerializer
 
 
 class CurrentUserTestCase(SetupUserMixin, APITestCase):
@@ -368,7 +369,7 @@ class EventTeamListsViewTestCase(SetupUserMixin, APITestCase):
         self.assertCountEqual(returned_ids, [self.team2.team_code])
 
 
-class CurretnTeamOrderListViewTestCase(SetupUserMixin, APITestCase):
+class CurrentTeamOrderListViewTestCase(SetupUserMixin, APITestCase):
     def setUp(self):
         super().setUp()
         self.team = Team.objects.create()
@@ -398,18 +399,18 @@ class CurretnTeamOrderListViewTestCase(SetupUserMixin, APITestCase):
         OrderItem.objects.create(
             order=self.order, hardware=self.other_hardware,
         )
-        
+
         # making extra data to test if team data is being filtered
         self.team2 = Team.objects.create(team_code="ABCDE")
-        Order.objects.create(status="Submitted", team=self.team2)
+        self.order_2 = Order.objects.create(status="Submitted", team=self.team2)
         OrderItem.objects.create(
             order=self.order_2, hardware=self.hardware,
         )
         OrderItem.objects.create(
             order=self.order_2, hardware=self.other_hardware,
         )
-        
-        self.view = reverse("api:event:team-orders)
+
+        self.view = reverse("api:event:team-orders")
 
     def test_user_not_logged_in(self):
         response = self.client.get(self.view)
