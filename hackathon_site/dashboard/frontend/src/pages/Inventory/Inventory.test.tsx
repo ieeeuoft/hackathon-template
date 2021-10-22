@@ -6,6 +6,9 @@ import Inventory from "pages/Inventory/Inventory";
 import { mockCategories, mockHardware } from "testing/mockData";
 
 import { get } from "api/api";
+import { fireEvent } from "@testing-library/react";
+import { makeStore } from "../../slices/store";
+import { getHardwareNextPage } from "../../slices/hardware/hardwareSlice";
 
 jest.mock("api/api");
 const mockedGet = get as jest.MockedFunction<typeof get>;
@@ -107,5 +110,49 @@ describe("Inventory Page", () => {
 
         expect(queryByTestId("inventoryCountDivider")).not.toBeInTheDocument();
         expect(getByText(/no items found/i)).toBeInTheDocument();
+    });
+
+    it("Loads more hardware", async () => {
+        // Mock hardware api response with a limit of mockHardware.length - 2
+        const limit = mockHardware.length - 2;
+        const hardwareNextUri = hardwareUri + `?limit=${limit}&offset=${limit}`;
+        const hardwareApiResponse = makeMockApiListResponse(
+            mockHardware.slice(0, limit),
+            hardwareNextUri,
+            null,
+            mockHardware.length
+        );
+        const hardwareNextApiResponse = makeMockApiListResponse(
+            mockHardware.slice(limit),
+            null,
+            hardwareUri,
+            mockHardware.length
+        );
+        const categoryApiResponse = makeMockApiListResponse(mockCategories);
+
+        when(mockedGet)
+            .calledWith(hardwareUri, {})
+            .mockResolvedValue(hardwareApiResponse);
+        when(mockedGet)
+            .calledWith(hardwareNextUri, {})
+            .mockResolvedValue(hardwareNextApiResponse);
+        when(mockedGet)
+            .calledWith(categoriesUri)
+            .mockResolvedValue(categoryApiResponse);
+
+        const { getByText } = render(<Inventory />);
+
+        await waitFor(() => {
+            expect(getByText(mockHardware[0].name)).toBeInTheDocument();
+        });
+
+        fireEvent.click(getByText(/load more/i));
+        await waitFor(() => {
+            mockHardware
+                .slice(limit)
+                .forEach((hardware) =>
+                    expect(getByText(hardware.name)).toBeInTheDocument()
+                );
+        });
     });
 });

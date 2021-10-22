@@ -20,6 +20,7 @@ import ProductOverview from "components/inventory/ProductOverview/ProductOvervie
 import {
     clearFilters,
     getHardwareWithFilters,
+    getHardwareNextPage,
     hardwareCountSelector,
     hardwareSelectors,
 } from "slices/hardware/hardwareSlice";
@@ -46,6 +47,14 @@ const Inventory = () => {
     const [itemOverviewId, setItemOverviewId] = React.useState<number | null>(null);
     const toggleMenu = () => {
         setItemOverviewId(null);
+    };
+
+    const getMoreHardware = () => {
+        dispatch(getHardwareNextPage());
+    };
+
+    const refreshHardware = () => {
+        dispatch(getHardwareWithFilters());
     };
 
     // When the page is loaded, clear filters and fetch fresh inventory data
@@ -117,7 +126,11 @@ const Inventory = () => {
                                     <Typography variant="body2">
                                         {count} results
                                     </Typography>
-                                    <IconButton color="primary" aria-label="Refresh">
+                                    <IconButton
+                                        color="primary"
+                                        aria-label="Refresh"
+                                        onClick={refreshHardware}
+                                    >
                                         <RefreshIcon />
                                     </IconButton>
                                 </div>
@@ -142,6 +155,7 @@ const Inventory = () => {
                                 size="large"
                                 fullWidth={true}
                                 disableElevation
+                                onClick={getMoreHardware}
                             >
                                 Load more
                             </Button>

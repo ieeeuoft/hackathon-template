@@ -8,7 +8,7 @@ import {
 import { RootState, AppDispatch } from "slices/store";
 
 import { APIListResponse, Hardware, HardwareFilters } from "api/types";
-import { get } from "api/api";
+import {cleanURI, get, stripHostname} from "api/api";
 import { displaySnackbar } from "slices/ui/uiSlice";
 
 interface HardwareExtraState {
@@ -67,6 +67,32 @@ export const getHardwareWithFilters = createAsyncThunk<
         }
     }
 );
+
+export const getHardwareNextPage = createAsyncThunk<
+    APIListResponse<Hardware>,
+    void,
+    { state: RootState; rejectValue: RejectValue; dispatch: AppDispatch }
+    >(
+        `${hardwareReducerName}/getHardwareNextPage`,
+    async (_, { dispatch, getState, rejectWithValue }) => {
+        try {
+            const nextURL = stripHostname(hardwareNextSelector(getState()) ?? "")
+            const response = await get<APIListResponse<Hardware>>(nextURL);
+            return response.data;
+        } catch (e: any) {
+            dispatch(
+                displaySnackbar({
+                    message: `Failed to fetch hardware data: Error ${e.response.status}`,
+                    options: { variant: "error" },
+                })
+            );
+            return rejectWithValue({
+                status: e.response.status,
+                message: e.response.data,
+            });
+        }
+    }
+)
 
 // Slice
 const hardwareSlice = createSlice({
@@ -128,6 +154,23 @@ const hardwareSlice = createSlice({
             state.isLoading = false;
             state.error = payload?.message || "Something went wrong";
         });
+
+        builder.addCase(getHardwareNextPage.pending, (state) => {
+            state.isLoading = true;
+            state.error = null;
+        });
+
+        builder.addCase(getHardwareNextPage.fulfilled, (state, { payload }) => {
+            state.isLoading = false;
+            state.error = null;
+            state.next = payload.next;
+            hardwareAdapter.addMany(state, payload.results);
+        });
+
+        builder.addCase(getHardwareNextPage.rejected, (state, { payload }) => {
+            state.isLoading = false;
+            state.error = payload?.message || "Something went wrong";
+        });
     },
 });
 
@@ -155,3 +198,8 @@ export const hardwareFiltersSelector = createSelector(
     [hardwareSliceSelector],
     (hardwareSlice) => hardwareSlice.filters
 );
+
+const hardwareNextSelector = createSelector(
+    [hardwareSliceSelector],
+    (hardwareSlice) => hardwareSlice.next
+)
