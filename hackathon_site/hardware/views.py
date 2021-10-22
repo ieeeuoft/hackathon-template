@@ -16,10 +16,12 @@ from hardware.models import Hardware, Category, Order, Incident
 from hardware.serializers import (
     CategorySerializer,
     HardwareSerializer,
-    IncidentSerializer,
+    IncidentListSerializer,
+    IncidentCreateSerializer,
     OrderListSerializer,
     OrderCreateSerializer,
     OrderCreateResponseSerializer,
+    IncidentCreateResponseSerializer,
 )
 
 logger = logging.getLogger(__name__)
@@ -50,7 +52,12 @@ class IncidentListView(mixins.ListModelMixin, generics.GenericAPIView):
     queryset = Incident.objects.all().select_related(
         "order_item", "order_item__order__team", "order_item__hardware"
     )
-    serializer_class = IncidentSerializer
+    serializer_class = IncidentListSerializer
+
+    serializer_method_classes = {
+        "GET": IncidentListSerializer,
+        "POST": IncidentCreateSerializer,
+    }
 
     search_fields = (
         "state",
@@ -62,8 +69,30 @@ class IncidentListView(mixins.ListModelMixin, generics.GenericAPIView):
     filter_backends = (filters.DjangoFilterBackend, SearchFilter)
     filterset_class = IncidentFilter
 
+    def get_serializer_class(self):
+        try:
+            return self.serializer_method_classes[self.request.method]
+        except (KeyError, AttributeError):
+            return super().get_serializer_class()
+
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
+
+    @transaction.atomic
+    @swagger_auto_schema(responses={201: IncidentCreateResponseSerializer})
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        create_response = serializer.save()
+        response_serializer = IncidentCreateResponseSerializer(data=create_response)
+        if not response_serializer.is_valid():
+            logger.error(response_serializer.error_messages)
+            return HttpResponseServerError()
+        response_data = response_serializer.data
+        return Response(response_data, status=status.HTTP_201_CREATED)
+
+
+
 
 
 class CategoryListView(mixins.ListModelMixin, generics.GenericAPIView):

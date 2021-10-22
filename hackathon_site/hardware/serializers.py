@@ -45,7 +45,7 @@ class OrderItemSerializer(serializers.ModelSerializer):
         fields = ("id", "hardware", "order", "part_returned_health")
 
 
-class IncidentSerializer(serializers.ModelSerializer):
+class IncidentListSerializer(serializers.ModelSerializer):
 
     order_item = OrderItemSerializer()
     team_id = serializers.SerializerMethodField()
@@ -67,7 +67,6 @@ class IncidentSerializer(serializers.ModelSerializer):
     def get_team_id(obj: Incident):
         return obj.order_item.order.team.id
 
-
 class OrderListSerializer(serializers.ModelSerializer):
     hardware = HardwareSerializer(many=True, read_only=True)
     team_code = serializers.SerializerMethodField()
@@ -87,6 +86,111 @@ class OrderListSerializer(serializers.ModelSerializer):
     @staticmethod
     def get_team_code(obj: Order):
         return obj.team.team_code
+
+
+class IncidentCreateSerializer(serializers.Serializer):
+    class IncidentCreateOrderItemSerializer(serializers.Serializer):
+        id = serializers.PrimaryKeyRelatedField(
+            queryset=OrderItem.objects.all(), many=False, required=True
+        )
+        quantity = serializers.IntegerField(required=True)
+
+    hardware = IncidentCreateOrderItemSerializer(many=True, required=True)
+
+    @staticmethod
+    def merge_requests(hardware_requests):
+        # hardware_requests is a list where each element is an OrderedDict
+        # with key value pairs
+        # "id": <Hardware Object>, and
+        # "quantity": <Int>
+        return functools.reduce(
+            lambda x, y: x + y,
+            [Counter({e["id"]: e["quantity"]}) for e in hardware_requests],
+            Counter(),
+        )
+
+    # check that the requests are within per-team constraints
+    def validate(self, data):
+        try:
+            user_profile = self.context["request"].user.profile
+        except ObjectDoesNotExist:
+            raise serializers.ValidationError("User does not have profile")
+        # requested_hardware is a Counter where the keys are <Hardware Object>'s
+        # and values are <Int>'s
+        #order_item_query = OrderItem.objects.filter()
+        if error_messages:
+            raise serializers.ValidationError(error_messages)
+        return data
+
+    def create(self, validated_data):
+        # validated data should already satisfy all constraints
+        new_incident = Incident.objects.create(
+            state=self.context["request"].state
+        )
+
+        requested_hardware = self.merge_requests(
+            hardware_requests=validated_data["hardware"]
+        )
+        new_order = None
+        response_data = {"order_id": None, "hardware": [], "errors": []}
+        order_items = []
+        for (hardware, requested_quantity) in requested_hardware.items():
+            num_order_items = min(hardware.quantity_remaining, requested_quantity)
+            if num_order_items <= 0:
+                response_data["hardware"].append(
+                    {"hardware_id": hardware.id, "quantity_fulfilled": 0}
+                )
+                response_data["errors"].append(
+                    {
+                        "hardware_id": hardware.id,
+                        "message": "There are no {}s available".format(hardware.name),
+                    }
+                )
+                continue
+            if new_order is None:
+                new_order = Order.objects.create(
+                    team=self.context["request"].user.profile.team, status="Submitted"
+                )
+                response_data["order_id"] = new_order.id
+            order_items += [
+                OrderItem(order=new_order, hardware=hardware)
+                for _ in range(num_order_items)
+            ]
+            response_data["hardware"].append(
+                {"hardware_id": hardware.id, "quantity_fulfilled": num_order_items}
+            )
+            if num_order_items != requested_quantity:
+                response_data["errors"].append(
+                    {
+                        "hardware_id": hardware.id,
+                        "message": "Only {} of {} {}(s) were available".format(
+                            num_order_items, requested_quantity, hardware.name,
+                        ),
+                    }
+                )
+        return response_data
+
+
+class IncidentCreateResponseSerializer(serializers.Serializer):
+    class IncidentCreateResponseQuantitySerializer(serializers.Serializer):
+        hardware_id = serializers.PrimaryKeyRelatedField(
+            queryset=Hardware.objects.all(), many=False, required=True
+        )
+        quantity_fulfilled = serializers.IntegerField(required=True)
+
+    class IncidentCreateResponseErrorSerializer(serializers.Serializer):
+        hardware_id = serializers.PrimaryKeyRelatedField(
+            queryset=Hardware.objects.all(), many=False, required=True
+        )
+        message = serializers.CharField(
+            max_length=None, min_length=None, allow_blank=False
+        )
+
+    order_id = serializers.PrimaryKeyRelatedField(
+        queryset=Order.objects.all(), many=False, allow_null=True
+    )
+    hardware = IncidentCreateResponseQuantitySerializer(many=True, required=True)
+    errors = IncidentCreateResponseErrorSerializer(many=True, required=True)
 
 
 class OrderCreateSerializer(serializers.Serializer):

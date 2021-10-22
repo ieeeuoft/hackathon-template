@@ -13,7 +13,7 @@ from hardware.serializers import (
     HardwareSerializer,
     CategorySerializer,
     OrderListSerializer,
-    IncidentSerializer,
+    IncidentListSerializer,
 )
 from hackathon_site.tests import SetupUserMixin
 
@@ -385,7 +385,7 @@ class IncidentListsViewTestCase(SetupUserMixin, APITestCase):
 
         queryset = Incident.objects.all()
         # need to provide a request in the serializer context to produce absolute url for image field
-        expected_response = IncidentSerializer(
+        expected_response = IncidentListSerializer(
             queryset, many=True, context={"request": response.wsgi_request}
         ).data
         data = response.json()
@@ -430,6 +430,90 @@ class IncidentListsViewTestCase(SetupUserMixin, APITestCase):
         results = data["results"]
         returned_ids = [res["id"] for res in results]
         self.assertCountEqual(returned_ids, [2])
+
+
+class IncidentListViewPostTestCase(SetupUserMixin, APITestCase):
+    def setUp(self):
+        super().setUp()
+        self.team = Team.objects.create()
+        self.order = Order.objects.create(status="Cart", team=self.team)
+        self.hardware = Hardware.objects.create(
+            name="name",
+            model_number="model",
+            manufacturer="manufacturer",
+            datasheet="/datasheet/location/",
+            notes="notes",
+            quantity_available=4,
+            max_per_team=1,
+            picture="/picture/location",
+        )
+
+        self.other_hardware = Hardware.objects.create(
+            name="other",
+            model_number="otherModel",
+            manufacturer="otherManufacturer",
+            datasheet="/datasheet/location/other",
+            quantity_available=10,
+            max_per_team=10,
+            picture="/picture/location/other",
+        )
+        self.order_item = OrderItem.objects.create(
+            order=self.order, hardware=self.hardware,
+        )
+
+        self.order_item2 = OrderItem.objects.create(
+            order=self.order, hardware=self.other_hardware,
+        )
+
+
+
+        self.incident = Incident.objects.create(
+            state="Broken",
+            description="Description",
+            order_item=self.order_item,
+            time_occurred=datetime(2022, 8, 8, tzinfo=settings.TZ_INFO),
+        )
+
+        self.incident2 = Incident.objects.create(
+            state="Missing",
+            description="Description",
+            order_item=self.order_item2,
+            time_occurred=datetime(2022, 8, 8, tzinfo=settings.TZ_INFO),
+        )
+        self.view = reverse("api:hardware:incident-list")
+
+    def _build_filter_url(self, **kwargs):
+        return (
+            self.view + "?" + "&".join([f"{key}={val}" for key, val in kwargs.items()])
+        )
+
+    def test_incident_get_success(self):
+        self._login()
+
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        queryset = Incident.objects.all()
+        # need to provide a request in the serializer context to produce absolute url for image field
+        expected_response = IncidentListSerializer(
+            queryset, many=True, context={"request": response.wsgi_request}
+        ).data
+        data = response.json()
+
+        self.assertEqual(expected_response, data["results"])
+
+    def test_hardware_id_filter(self):
+        self._login()
+
+        url = self._build_filter_url(hardware_id="1")
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.json()
+        results = data["results"]
+
+        returned_ids = [res["id"] for res in results]
+        self.assertCountEqual(returned_ids, [1])
 
 
 class OrderListViewGetTestCase(SetupUserMixin, APITestCase):
