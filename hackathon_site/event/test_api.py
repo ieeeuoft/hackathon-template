@@ -370,7 +370,7 @@ class EventTeamListsViewTestCase(SetupUserMixin, APITestCase):
         self.assertCountEqual(returned_ids, [self.team2.team_code])
 
 
-class EventTeamCodeListsViewTestCase(SetupUserMixin, APITestCase):
+class EventTeamDetailViewTestCase (SetupUserMixin, APITestCase):
     def setUp(self, **kwargs):
 
         self.team = Team.objects.create()
