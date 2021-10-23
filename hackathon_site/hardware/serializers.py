@@ -117,9 +117,9 @@ class IncidentCreateSerializer(serializers.Serializer):
             raise serializers.ValidationError("User does not have profile")
         # requested_hardware is a Counter where the keys are <Hardware Object>'s
         # and values are <Int>'s
-        #order_item_query = OrderItem.objects.filter()
-        if error_messages:
-            raise serializers.ValidationError(error_messages)
+        order_item_query = Incident.objects.filter(order_item__id=self.kwargs["order_id"])
+        if order_item_query:
+            raise serializers.ValidationError("Incident for this order already exists")
         return data
 
     def create(self, validated_data):
