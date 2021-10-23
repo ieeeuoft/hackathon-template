@@ -7,6 +7,7 @@ from drf_yasg.utils import swagger_auto_schema
 
 from rest_framework import generics, mixins, status, permissions
 from rest_framework.response import Response
+from rest_framework.exceptions import ValidationError
 from rest_framework.filters import SearchFilter, OrderingFilter
 
 from event.permissions import UserHasProfile, FullDjangoModelPermissions
@@ -121,6 +122,7 @@ class OrderListView(generics.ListAPIView):
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+
         create_response = serializer.save()
         response_serializer = OrderCreateResponseSerializer(data=create_response)
         if not response_serializer.is_valid():
@@ -129,11 +131,11 @@ class OrderListView(generics.ListAPIView):
         response_data = response_serializer.data
         return Response(response_data, status=status.HTTP_201_CREATED)
 
-    def patch(self, request, order_id, *args, **kwargs):
+    def patch(self, request, *args, **kwargs):
         if self.request.user.has_perm("hardware.change_order"):
             order = self.get_object()
             serializer = self.get_serializer_class()(
-                order, status="Submitted", partial=True
+                order, status=request.data.order.status, partial=True
             )
             if serializer.is_valid():
                 serializer.save()
@@ -143,4 +145,7 @@ class OrderListView(generics.ListAPIView):
                     data=serializer.data, status=status.HTTP_400_BAD_REQUEST
                 )
         else:
-            return Response(response_data, status=status.HTTP_403_FORBIDDEN)
+            raise ValidationError(
+                {"detail": "The request has incorrect permissions to change the order"},
+                code=status.HTTP_403_FORBIDDEN
+            )

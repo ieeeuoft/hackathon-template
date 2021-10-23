@@ -44,10 +44,10 @@ class OrderChangeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
-        fields = "status"
+        fields = ("id", "status")
 
     def validate(self, data):
-        current_status = data["status"]
+        current_status = Order.objects.filter(id=self.context["request"].order.id).status
         requested_status = self.context["request"].status
         change_options = {
             "Submitted": ["Cancelled", "Ready for Pickup"],
