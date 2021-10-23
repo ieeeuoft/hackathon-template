@@ -108,7 +108,7 @@ class JoinTeamView(generics.GenericAPIView, mixins.RetrieveModelMixin):
         return Response(data=response_data, status=status.HTTP_200_OK,)
 
 
-class TeamIDView(mixins.RetrieveModelMixin, generics.GenericAPIView):
+class TeamDetailView(mixins.RetrieveModelMixin, generics.GenericAPIView):
     queryset = EventTeam.objects.all()
     serializer_class = TeamSerializer
     permission_classes = [FullDjangoModelPermissions]
