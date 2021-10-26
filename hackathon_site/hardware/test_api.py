@@ -7,7 +7,7 @@ from django.conf import settings
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from event.models import Team
+from event.models import Team, Profile, User
 from hardware.models import Hardware, Category, Order, OrderItem, Incident
 from hardware.serializers import (
     HardwareSerializer,
@@ -474,7 +474,11 @@ class OrderListViewGetTestCase(SetupUserMixin, APITestCase):
         OrderItem.objects.create(
             order=self.order_3, hardware=self.hardware,
         )
-        self.permissions = Permission.objects.filter(
+        self.order_4 = Order.objects.create(status="Submitted", team=self.team2,)
+        OrderItem.objects.create(
+            order=self.order_4, hardware=self.hardware,
+        )
+        self.view_permissions = Permission.objects.filter(
             content_type__app_label="hardware", codename="view_order"
         )
         self.view = reverse("api:hardware:order-list")
@@ -494,7 +498,7 @@ class OrderListViewGetTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_user_has_view_permissions(self):
-        self._login(self.permissions)
+        self._login(self.view_permissions)
         response = self.client.get(self.view)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         queryset = Order.objects.all()
@@ -507,8 +511,8 @@ class OrderListViewGetTestCase(SetupUserMixin, APITestCase):
 
         self.assertEqual(expected_response, data["results"])
 
-    def test_hardware_get_success(self):
-        self._login(self.permissions)
+    def test_orders_get_success(self):
+        self._login(self.view_permissions)
 
         response = self.client.get(self.view)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -522,7 +526,7 @@ class OrderListViewGetTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(expected_response, data["results"])
 
     def test_team_id_filter(self):
-        self._login(self.permissions)
+        self._login(self.view_permissions)
 
         url = self._build_filter_url(team_id="1")
 
@@ -535,7 +539,7 @@ class OrderListViewGetTestCase(SetupUserMixin, APITestCase):
         self.assertCountEqual(returned_ids, [self.order.id, self.order_2.id])
 
     def test_team_code_filter(self):
-        self._login(self.permissions)
+        self._login(self.view_permissions)
 
         url = self._build_filter_url(team_code="ABCDE")
 
@@ -545,10 +549,10 @@ class OrderListViewGetTestCase(SetupUserMixin, APITestCase):
         results = data["results"]
 
         returned_ids = [res["id"] for res in results]
-        self.assertCountEqual(returned_ids, [self.order_3.id])
+        self.assertCountEqual(returned_ids, [self.order_3.id, self.order_4.id])
 
     def test_status_filter(self):
-        self._login(self.permissions)
+        self._login(self.view_permissions)
 
         url = self._build_filter_url(status="Cart")
 
@@ -561,7 +565,7 @@ class OrderListViewGetTestCase(SetupUserMixin, APITestCase):
         self.assertCountEqual(returned_ids, [self.order.id])
 
     def test_created_at_ordering_ascending(self):
-        self._login(self.permissions)
+        self._login(self.view_permissions)
 
         url = self._build_filter_url(ordering="created_at")
         response = self.client.get(url)
@@ -571,11 +575,12 @@ class OrderListViewGetTestCase(SetupUserMixin, APITestCase):
 
         returned_ids = [res["id"] for res in results]
         self.assertEqual(
-            returned_ids, [self.order.id, self.order_2.id, self.order_3.id]
+            returned_ids,
+            [self.order.id, self.order_2.id, self.order_3.id, self.order_4.id],
         )
 
     def test_created_at_ordering_descending(self):
-        self._login(self.permissions)
+        self._login(self.view_permissions)
 
         url = self._build_filter_url(ordering="-created_at")
         response = self.client.get(url)
@@ -585,11 +590,12 @@ class OrderListViewGetTestCase(SetupUserMixin, APITestCase):
 
         returned_ids = [res["id"] for res in results]
         self.assertEqual(
-            returned_ids, [self.order_3.id, self.order_2.id, self.order.id]
+            returned_ids,
+            [self.order_4.id, self.order_3.id, self.order_2.id, self.order.id],
         )
 
     def test_search_filter(self):
-        self._login(self.permissions)
+        self._login(self.view_permissions)
 
         url = self._build_filter_url(search="ABCDE")
         response = self.client.get(url)
@@ -598,7 +604,7 @@ class OrderListViewGetTestCase(SetupUserMixin, APITestCase):
         results = data["results"]
 
         returned_ids = [res["id"] for res in results]
-        self.assertCountEqual(returned_ids, [self.order_3.id])
+        self.assertCountEqual(returned_ids, [self.order_3.id, self.order_4.id])
 
 
 class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
