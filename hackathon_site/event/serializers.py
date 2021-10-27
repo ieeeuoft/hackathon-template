@@ -32,12 +32,15 @@ class ProfileSerializer(serializers.ModelSerializer):
             "e_signature",
             "team",
         )
+        read_only_fields = ("id", "team")
 
 
-class ProfileModifySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Profile
-        fields = ("id", "id_provided", "attended", "acknowledge_rules", "e_signature")
+class UserProfileSerializer(ProfileSerializer):
+    class Meta(ProfileSerializer.Meta):
+        read_only_fields = ProfileSerializer.Meta.read_only_fields + (
+            "id_provided",
+            "attended",
+        )
 
 
 class UserSerializer(serializers.ModelSerializer):

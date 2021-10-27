@@ -9,10 +9,10 @@ from event.models import User, Team as EventTeam, Profile
 from event.serializers import (
     UserSerializer,
     TeamSerializer,
-    ProfileModifySerializer,
     ProfileSerializer,
+    UserProfileSerializer,
 )
-from event.permissions import UserHasProfile
+from event.permissions import UserHasProfile, FullDjangoModelPermissions
 
 from hardware.models import OrderItem
 
@@ -108,19 +108,44 @@ class JoinTeamView(generics.GenericAPIView, mixins.RetrieveModelMixin):
         return Response(data=response_data, status=status.HTTP_200_OK,)
 
 
-class CurrentProfileView(mixins.UpdateModelMixin, generics.GenericAPIView):
+class ProfileDetailView(mixins.UpdateModelMixin, generics.GenericAPIView):
 
     queryset = Profile.objects.all()
-    serializer_class = ProfileModifySerializer
-    permission_classes = [UserHasProfile]
+    serializer_class = ProfileSerializer
+    permission_classes = [FullDjangoModelPermissions]
 
     @transaction.atomic
     def patch(self, request, *args, **kwargs):
-        profile = request.user.profile
+        profile = self.get_object()
 
         data = request.data
         profile.id_provided = data["id_provided"]
         profile.attended = data["attended"]
+
+        if not profile.acknowledge_rules:
+            profile.acknowledge_rules = data["acknowledge_rules"]
+        if not profile.e_signature:
+            profile.e_signature = data["e_signature"]
+
+        profile.save()
+        response_serializer = ProfileSerializer(profile)
+        response_data = response_serializer.data
+        return Response(data=response_data, status=status.HTTP_200_OK,)
+
+
+class CurrentProfileView(mixins.UpdateModelMixin, generics.GenericAPIView):
+
+    queryset = Profile.objects.all()
+    serializer_class = UserProfileSerializer
+    permission_classes = [UserHasProfile]
+
+    def get_object(self):
+        return self.request.user.profile
+
+    def patch(self, request, *args, **kwargs):
+        profile = self.get_object()
+
+        data = request.data
 
         if not profile.acknowledge_rules:
             profile.acknowledge_rules = data["acknowledge_rules"]

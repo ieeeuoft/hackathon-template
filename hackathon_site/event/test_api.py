@@ -446,15 +446,13 @@ class CurrentProfileViewTestCase(SetupUserMixin, APITestCase):
         super().setUp()
         self.profile = self._make_event_profile(user=self.user)
         self.request_body = {
-            "id_provided": True,
-            "attended": True,
             "acknowledge_rules": True,
             "e_signature": "user signature",
         }
         self.expected_response = {
             "id": self.profile.id,
-            "id_provided": True,
-            "attended": True,
+            "id_provided": False,
+            "attended": False,
             "acknowledge_rules": True,
             "e_signature": "user signature",
             "team": self.profile.team_id,
@@ -493,14 +491,10 @@ class CurrentProfileViewTestCase(SetupUserMixin, APITestCase):
 
         # Then update profile with a different request, changing acknowledge & e signature
         new_request_body = {
-            "id_provided": False,
-            "attended": False,
             "acknowledge_rules": False,
             "e_signature": "new signature",
         }
         # acknowledge_rules and e_signature do not change
-        expected_response["id_provided"] = False
-        expected_response["attended"] = False
         response2 = self.client.patch(self.view, new_request_body)
         data2 = response2.json()
         self.assertEqual(response2.status_code, status.HTTP_200_OK)
