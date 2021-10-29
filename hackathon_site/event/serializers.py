@@ -30,7 +30,6 @@ class ProfileSerializer(serializers.ModelSerializer):
             "attended",
             "acknowledge_rules",
             "e_signature",
-            "team",
         )
 
 
