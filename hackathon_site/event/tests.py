@@ -1,6 +1,7 @@
 import re
 from unittest.mock import patch
 from datetime import datetime, timedelta
+import json
 
 from django.core import mail
 from django.contrib.auth.models import Group
@@ -17,6 +18,7 @@ from event.serializers import (
     UserSerializer,
     GroupSerializer,
     ProfileSerializer,
+    UserInSerializer,
 )
 
 
@@ -747,13 +749,16 @@ class ProfileSerializerTestCase(TestCase):
         team = EventTeam.objects.create()
 
         profile = Profile.objects.create(user=self.user, team=team)
-        profile_serialized = ProfileSerializer(profile).data
-        profile_expected = {
+        profile_serialized = json.dumps(ProfileSerializer(profile).data)
+        profile_expected_temp = {
             "id": profile.id,
             "id_provided": profile.id_provided,
             "attended": profile.attended,
             "acknowledge_rules": profile.acknowledge_rules,
             "e_signature": profile.e_signature,
-            "team": team.id,
+            "user": UserInSerializer(profile.user).data,
         }
+
+        profile_expected = json.dumps(profile_expected_temp)
+
         self.assertEqual(profile_expected, profile_serialized)
