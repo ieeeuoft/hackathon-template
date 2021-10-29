@@ -16,6 +16,7 @@ interface HardwareExtraState {
     error: string | null;
     next: string | null;
     filters: HardwareFilters;
+    count: number;
 }
 
 const extraState: HardwareExtraState = {
@@ -23,6 +24,7 @@ const extraState: HardwareExtraState = {
     error: null,
     next: null,
     filters: {},
+    count: 0,
 };
 
 export const hardwareReducerName = "hardware";
@@ -118,6 +120,7 @@ const hardwareSlice = createSlice({
             state.isLoading = false;
             state.error = null;
             state.next = payload.next;
+            state.count = payload.count;
             hardwareAdapter.setAll(state, payload.results);
         });
 
@@ -141,6 +144,11 @@ export const hardwareSelectors = hardwareAdapter.getSelectors(hardwareSliceSelec
 export const isLoadingSelector = createSelector(
     [hardwareSliceSelector],
     (hardwareSlice) => hardwareSlice.isLoading
+);
+
+export const hardwareCountSelector = createSelector(
+    [hardwareSliceSelector],
+    (hardwareSlice) => hardwareSlice.count
 );
 
 export const hardwareFiltersSelector = createSelector(

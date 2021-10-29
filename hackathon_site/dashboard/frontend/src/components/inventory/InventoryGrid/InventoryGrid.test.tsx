@@ -17,12 +17,6 @@ jest.mock("api/api");
 const mockedGet = get as jest.MockedFunction<typeof get>;
 
 describe("<InventoryGrid />", () => {
-    it("Displays a message when no items found", () => {
-        const { getByText } = render(<InventoryGrid />);
-
-        expect(getByText(/no items found/i)).toBeInTheDocument();
-    });
-
     it("Renders all hardware from the store", async () => {
         // To populate the store, dispatch a thunk while mocking the API response
         const apiResponse = makeMockApiListResponse(mockHardware);
