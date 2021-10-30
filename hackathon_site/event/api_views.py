@@ -5,16 +5,18 @@ from rest_framework import generics, mixins, status
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
-from event.models import User, Team as EventTeam, Profile
+
+from event.models import Profile
 from event.serializers import (
-    UserSerializer,
-    TeamSerializer,
     ProfileSerializer,
     CurrentProfileSerializer,
 )
+from event.models import User, Team as EventTeam
+from event.serializers import UserSerializer, TeamSerializer
 from event.permissions import UserHasProfile, FullDjangoModelPermissions
 
-from hardware.models import OrderItem
+from hardware.models import OrderItem, Order
+from hardware.serializers import OrderListSerializer
 
 
 class CurrentUserAPIView(generics.GenericAPIView, mixins.RetrieveModelMixin):
@@ -129,3 +131,23 @@ class CurrentProfileView(mixins.UpdateModelMixin, generics.GenericAPIView):
 
     def patch(self, request, *args, **kwargs):
         return self.partial_update(request, *args, **kwargs)
+
+
+class CurrentTeamOrderListView(generics.ListAPIView):
+    serializer_class = OrderListSerializer
+    permission_classes = [UserHasProfile]
+
+    def get_queryset(self):
+        return Order.objects.filter(team_id=self.request.user.profile.team_id)
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+
+class TeamDetailView(mixins.RetrieveModelMixin, generics.GenericAPIView):
+    queryset = EventTeam.objects.all()
+    serializer_class = TeamSerializer
+    permission_classes = [FullDjangoModelPermissions]
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)

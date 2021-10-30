@@ -24,4 +24,10 @@ urlpatterns = [
         name="current-profile",
     ),
     path("teams/", views.TeamListView.as_view(), name="team-list"),
+    path(
+        "teams/team/orders/",
+        api_views.CurrentTeamOrderListView.as_view(),
+        name="team-orders",
+    ),
+    path("teams/<int:pk>/", api_views.TeamDetailView.as_view(), name="team-detail"),
 ]
