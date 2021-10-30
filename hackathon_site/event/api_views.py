@@ -1,13 +1,18 @@
 from django.db import transaction
 from django.db.models import Q
+from django.shortcuts import get_object_or_404
+from django_filters import rest_framework as filters
 
 from rest_framework import generics, mixins, status
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
+from rest_framework.filters import SearchFilter
+
 
 from event.models import User, Team as EventTeam
 from event.serializers import UserSerializer, TeamSerializer
-from event.permissions import UserHasProfile
+from event.permissions import UserHasProfile, FullDjangoModelPermissions
+from event.api_filters import TeamFilter
 
 from hardware.models import OrderItem, Order
 from hardware.serializers import OrderListSerializer
@@ -113,3 +118,12 @@ class CurrentTeamOrderListView(generics.ListAPIView):
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
+
+
+class TeamDetailView(mixins.RetrieveModelMixin, generics.GenericAPIView):
+    queryset = EventTeam.objects.all()
+    serializer_class = TeamSerializer
+    permission_classes = [FullDjangoModelPermissions]
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)

@@ -19,4 +19,5 @@ urlpatterns = [
         api_views.CurrentTeamOrderListView.as_view(),
         name="team-orders",
     ),
+    path("teams/<int:pk>/", api_views.TeamDetailView.as_view(), name="team-detail"),
 ]
