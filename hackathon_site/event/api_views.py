@@ -10,7 +10,7 @@ from event.serializers import (
     UserSerializer,
     TeamSerializer,
     ProfileSerializer,
-    UserProfileSerializer,
+    CurrentProfileSerializer,
 )
 from event.permissions import UserHasProfile, FullDjangoModelPermissions
 
@@ -114,45 +114,18 @@ class ProfileDetailView(mixins.UpdateModelMixin, generics.GenericAPIView):
     serializer_class = ProfileSerializer
     permission_classes = [FullDjangoModelPermissions]
 
-    @transaction.atomic
     def patch(self, request, *args, **kwargs):
-        profile = self.get_object()
-
-        data = request.data
-        profile.id_provided = data["id_provided"]
-        profile.attended = data["attended"]
-
-        if not profile.acknowledge_rules:
-            profile.acknowledge_rules = data["acknowledge_rules"]
-        if not profile.e_signature:
-            profile.e_signature = data["e_signature"]
-
-        profile.save()
-        response_serializer = ProfileSerializer(profile)
-        response_data = response_serializer.data
-        return Response(data=response_data, status=status.HTTP_200_OK,)
+        return self.partial_update(request, *args, **kwargs)
 
 
 class CurrentProfileView(mixins.UpdateModelMixin, generics.GenericAPIView):
 
     queryset = Profile.objects.all()
-    serializer_class = UserProfileSerializer
+    serializer_class = CurrentProfileSerializer
     permission_classes = [UserHasProfile]
 
     def get_object(self):
         return self.request.user.profile
 
     def patch(self, request, *args, **kwargs):
-        profile = self.get_object()
-
-        data = request.data
-
-        if not profile.acknowledge_rules:
-            profile.acknowledge_rules = data["acknowledge_rules"]
-        if not profile.e_signature:
-            profile.e_signature = data["e_signature"]
-
-        profile.save()
-        response_serializer = ProfileSerializer(profile)
-        response_data = response_serializer.data
-        return Response(data=response_data, status=status.HTTP_200_OK,)
+        return self.partial_update(request, *args, **kwargs)

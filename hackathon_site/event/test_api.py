@@ -440,6 +440,25 @@ class ProfileDetailViewTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(response2.status_code, status.HTTP_200_OK)
         self.assertEqual(expected_response, data2)
 
+    def test_partially_modifying_profile(self):
+        self._login(self.change_permissions)
+
+        # only modifying id_provided
+        request_body = {"id_provided": True}
+        expected_response = {
+            "id": self.profile.id,
+            "id_provided": True,
+            "attended": False,
+            "acknowledge_rules": False,
+            "e_signature": None,
+            "team": self.profile.team_id,
+        }
+
+        response = self.client.patch(self.view, request_body)
+        data = response.json()
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(expected_response, data)
+
 
 class CurrentProfileViewTestCase(SetupUserMixin, APITestCase):
     def setUp(self):
@@ -499,3 +518,22 @@ class CurrentProfileViewTestCase(SetupUserMixin, APITestCase):
         data2 = response2.json()
         self.assertEqual(response2.status_code, status.HTTP_200_OK)
         self.assertEqual(expected_response, data2)
+
+    def test_partially_modifying_profile(self):
+        self._login()
+
+        # only modifying id_provided
+        request_body = {"acknowledge_rules": True}
+        expected_response = {
+            "id": self.profile.id,
+            "id_provided": False,
+            "attended": False,
+            "acknowledge_rules": True,
+            "e_signature": None,
+            "team": self.profile.team_id,
+        }
+
+        response = self.client.patch(self.view, request_body)
+        data = response.json()
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(expected_response, data)
