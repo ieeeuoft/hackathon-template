@@ -50,32 +50,36 @@ export const stripHostname = (url: string): string => {
     return parsed.pathname + parsed.search + parsed.hash;
 };
 
-export const stripHostnameReturnFilters = (url: string|null): {path: string, filters?: { [key: string]: any }} => {
+export const stripHostnameReturnFilters = (
+    url: string | null
+): { path: string; filters?: { [key: string]: any } } => {
     if (url) {
         const parsed = new URL(url);
         const filters: { [key: string]: any } = {};
         if (parsed.search && filters) {
-            parsed.searchParams.forEach((val, key) => filters[key] = val)
+            parsed.searchParams.forEach((val, key) => (filters[key] = val));
         }
-        return JSON.stringify(filters) !== '{}' ? {
-            path: parsed.pathname,
-            filters
-        } : {path: parsed.pathname}
+        return JSON.stringify(filters) !== "{}"
+            ? {
+                  path: parsed.pathname,
+                  filters,
+              }
+            : { path: parsed.pathname };
     }
-    return {path: ""}
+    return { path: "" };
 };
 
 export const get = <T>(
     uri: string,
     params?: { [key: string]: any }
 ): Promise<AxiosResponse<T>> => {
-    uri = cleanURI(uri)
+    uri = cleanURI(uri);
 
     if (params) {
         uri += "?" + new URLSearchParams(params).toString();
     }
 
-    console.log(uri)
+    console.log(uri);
     return axios.get<T>(`${SERVER_URL}/${uri}`, makeConfig());
 };
 

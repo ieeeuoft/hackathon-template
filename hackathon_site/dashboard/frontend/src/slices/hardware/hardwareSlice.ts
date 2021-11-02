@@ -8,7 +8,7 @@ import {
 import { RootState, AppDispatch } from "slices/store";
 
 import { APIListResponse, Hardware, HardwareFilters } from "api/types";
-import { get, stripHostname, stripHostnameReturnFilters} from "api/api";
+import { get, stripHostname, stripHostnameReturnFilters } from "api/api";
 import { displaySnackbar } from "slices/ui/uiSlice";
 
 interface HardwareExtraState {
@@ -74,13 +74,13 @@ export const getHardwareNextPage = createAsyncThunk<
     APIListResponse<Hardware>,
     void,
     { state: RootState; rejectValue: RejectValue; dispatch: AppDispatch }
-    >(
-        `${hardwareReducerName}/getHardwareNextPage`,
+>(
+    `${hardwareReducerName}/getHardwareNextPage`,
     async (_, { dispatch, getState, rejectWithValue }) => {
         try {
-            const nextFromState = hardwareNextSelector(getState()) ?? ""
+            const nextFromState = hardwareNextSelector(getState()) ?? "";
             if (nextFromState) {
-                const { path, filters } = stripHostnameReturnFilters(nextFromState)
+                const { path, filters } = stripHostnameReturnFilters(nextFromState);
                 const response = await get<APIListResponse<Hardware>>(path, filters);
                 return response.data;
             }
@@ -89,18 +89,20 @@ export const getHardwareNextPage = createAsyncThunk<
                 count: 0,
                 next: null,
                 previous: null,
-                results: [{
-                    id: 0,
-                    name: "",
-                    model_number: "",
-                    manufacturer: "",
-                    datasheet: "",
-                    quantity_available: 0,
-                    max_per_team: 0,
-                    picture: "",
-                    categories: [0],
-                    quantity_remaining: 0,
-                }]
+                results: [
+                    {
+                        id: 0,
+                        name: "",
+                        model_number: "",
+                        manufacturer: "",
+                        datasheet: "",
+                        quantity_available: 0,
+                        max_per_team: 0,
+                        picture: "",
+                        categories: [0],
+                        quantity_remaining: 0,
+                    },
+                ],
             };
         } catch (e: any) {
             dispatch(
@@ -115,7 +117,7 @@ export const getHardwareNextPage = createAsyncThunk<
             });
         }
     }
-)
+);
 
 // Slice
 const hardwareSlice = createSlice({
@@ -237,4 +239,4 @@ export const hardwareFiltersSelector = createSelector(
 export const hardwareNextSelector = createSelector(
     [hardwareSliceSelector],
     (hardwareSlice) => hardwareSlice.next
-)
+);
