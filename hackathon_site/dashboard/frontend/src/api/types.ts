@@ -62,8 +62,7 @@ export interface User {
 }
 
 type UserWithoutProfile = Omit<User, "profile" | "team">;
-type ProfileWithoutTeamNumber = Omit<Profile, "team">
-
+type ProfileWithoutTeamNumber = Omit<Profile, "team">;
 
 export interface Team {
     id: number;
@@ -73,7 +72,7 @@ export interface Team {
     profiles: ({ profile: ProfileWithoutTeamNumber } & { user: UserWithoutProfile })[];
 }
 
-/** Orders API **/
+/** Orders API */
 export type OrderStatus = "Submitted" | "Ready for Pickup" | "Picked Up" | "Cancelled";
 
 export interface Order {
