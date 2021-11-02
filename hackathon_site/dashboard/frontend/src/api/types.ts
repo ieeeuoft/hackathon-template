@@ -53,23 +53,24 @@ export interface Profile {
     team: number;
 }
 
-interface UserWithoutProfile {
+export interface User {
     id: number;
     first_name: string;
     last_name: string;
     email: string;
-}
-
-export interface User extends UserWithoutProfile {
     profile: Profile;
 }
+
+type UserWithoutProfile = Omit<User, "profile"| "team">;
+type ProfileWithoutTeamNumber = Omit<Profile, "team">
+
 
 export interface Team {
     id: number;
     team_code: string;
-    created_at: Date;
-    updated_at: Date;
-    profiles: Profile & { user: UserWithoutProfile }[];
+    created_at: string;
+    updated_at: string;
+    profiles: ({ profile: ProfileWithoutTeamNumber } & { user: UserWithoutProfile })[];
 }
 
 /** Orders API **/
@@ -81,6 +82,6 @@ export interface Order {
     team: number;
     team_code: string;
     status: OrderStatus;
-    created_at: Date;
-    updated_at: Date;
+    created_at: string;
+    updated_at: string;
 }
