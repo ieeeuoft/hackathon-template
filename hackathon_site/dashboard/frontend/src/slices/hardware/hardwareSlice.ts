@@ -8,11 +8,12 @@ import {
 import { RootState, AppDispatch } from "slices/store";
 
 import { APIListResponse, Hardware, HardwareFilters } from "api/types";
-import {cleanURI, get, stripHostname} from "api/api";
+import { get, stripHostname, stripHostnameReturnFilters} from "api/api";
 import { displaySnackbar } from "slices/ui/uiSlice";
 
 interface HardwareExtraState {
     isLoading: boolean;
+    isMoreLoading: boolean;
     error: string | null;
     next: string | null;
     filters: HardwareFilters;
@@ -21,6 +22,7 @@ interface HardwareExtraState {
 
 const extraState: HardwareExtraState = {
     isLoading: false,
+    isMoreLoading: false,
     error: null,
     next: null,
     filters: {},
@@ -76,9 +78,30 @@ export const getHardwareNextPage = createAsyncThunk<
         `${hardwareReducerName}/getHardwareNextPage`,
     async (_, { dispatch, getState, rejectWithValue }) => {
         try {
-            const nextURL = stripHostname(hardwareNextSelector(getState()) ?? "")
-            const response = await get<APIListResponse<Hardware>>(nextURL);
-            return response.data;
+            const nextFromState = hardwareNextSelector(getState()) ?? ""
+            if (nextFromState) {
+                const { path, filters } = stripHostnameReturnFilters(nextFromState)
+                const response = await get<APIListResponse<Hardware>>(path, filters);
+                return response.data;
+            }
+            // return empty response if there is no nextURL
+            return {
+                count: 0,
+                next: null,
+                previous: null,
+                results: [{
+                    id: 0,
+                    name: "",
+                    model_number: "",
+                    manufacturer: "",
+                    datasheet: "",
+                    quantity_available: 0,
+                    max_per_team: 0,
+                    picture: "",
+                    categories: [0],
+                    quantity_remaining: 0,
+                }]
+            };
         } catch (e: any) {
             dispatch(
                 displaySnackbar({
@@ -139,11 +162,13 @@ const hardwareSlice = createSlice({
     extraReducers: (builder) => {
         builder.addCase(getHardwareWithFilters.pending, (state) => {
             state.isLoading = true;
+            state.isMoreLoading = false;
             state.error = null;
         });
 
         builder.addCase(getHardwareWithFilters.fulfilled, (state, { payload }) => {
             state.isLoading = false;
+            state.isMoreLoading = false;
             state.error = null;
             state.next = payload.next;
             state.count = payload.count;
@@ -152,23 +177,28 @@ const hardwareSlice = createSlice({
 
         builder.addCase(getHardwareWithFilters.rejected, (state, { payload }) => {
             state.isLoading = false;
+            state.isMoreLoading = false;
             state.error = payload?.message || "Something went wrong";
         });
 
         builder.addCase(getHardwareNextPage.pending, (state) => {
-            state.isLoading = true;
+            state.isLoading = false;
+            state.isMoreLoading = true;
             state.error = null;
         });
 
         builder.addCase(getHardwareNextPage.fulfilled, (state, { payload }) => {
             state.isLoading = false;
+            state.isMoreLoading = false;
             state.error = null;
             state.next = payload.next;
+            state.count = payload.count;
             hardwareAdapter.addMany(state, payload.results);
         });
 
         builder.addCase(getHardwareNextPage.rejected, (state, { payload }) => {
             state.isLoading = false;
+            state.isMoreLoading = false;
             state.error = payload?.message || "Something went wrong";
         });
     },
@@ -189,6 +219,11 @@ export const isLoadingSelector = createSelector(
     (hardwareSlice) => hardwareSlice.isLoading
 );
 
+export const isMoreLoadingSelector = createSelector(
+    [hardwareSliceSelector],
+    (hardwareSlice) => hardwareSlice.isMoreLoading
+);
+
 export const hardwareCountSelector = createSelector(
     [hardwareSliceSelector],
     (hardwareSlice) => hardwareSlice.count
@@ -199,7 +234,7 @@ export const hardwareFiltersSelector = createSelector(
     (hardwareSlice) => hardwareSlice.filters
 );
 
-const hardwareNextSelector = createSelector(
+export const hardwareNextSelector = createSelector(
     [hardwareSliceSelector],
     (hardwareSlice) => hardwareSlice.next
 )

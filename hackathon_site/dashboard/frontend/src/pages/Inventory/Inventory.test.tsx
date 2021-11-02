@@ -1,17 +1,24 @@
 import React from "react";
 
-import { makeMockApiListResponse, render, waitFor, when } from "testing/utils";
+import {
+    makeMockApiListResponse,
+    render,
+    waitFor,
+    when,
+    fireEvent,
+} from "testing/utils";
 
 import Inventory from "pages/Inventory/Inventory";
 import { mockCategories, mockHardware } from "testing/mockData";
 
-import { get } from "api/api";
-import { fireEvent } from "@testing-library/react";
-import { makeStore } from "../../slices/store";
-import { getHardwareNextPage } from "../../slices/hardware/hardwareSlice";
+import { get, stripHostnameReturnFilters } from "api/api";
 
 jest.mock("api/api");
 const mockedGet = get as jest.MockedFunction<typeof get>;
+const mockStripHostnameReturnFilters =
+    stripHostnameReturnFilters as jest.MockedFunction<
+        typeof stripHostnameReturnFilters
+    >;
 
 const hardwareUri = "/api/hardware/hardware/";
 const categoriesUri = "/api/hardware/categories/";
@@ -115,10 +122,10 @@ describe("Inventory Page", () => {
     it("Loads more hardware", async () => {
         // Mock hardware api response with a limit of mockHardware.length - 2
         const limit = mockHardware.length - 2;
-        const hardwareNextUri = hardwareUri + `?limit=${limit}&offset=${limit}`;
+        const nextURL = `http://localhost:8000${hardwareUri}?offset=${limit}`;
         const hardwareApiResponse = makeMockApiListResponse(
             mockHardware.slice(0, limit),
-            hardwareNextUri,
+            nextURL,
             null,
             mockHardware.length
         );
@@ -133,18 +140,25 @@ describe("Inventory Page", () => {
         when(mockedGet)
             .calledWith(hardwareUri, {})
             .mockResolvedValue(hardwareApiResponse);
+        when(mockStripHostnameReturnFilters)
+            .calledWith(nextURL)
+            .mockReturnValue({ path: hardwareUri, filters: { offset: limit } });
         when(mockedGet)
-            .calledWith(hardwareNextUri, {})
+            .calledWith(hardwareUri, { offset: limit })
             .mockResolvedValue(hardwareNextApiResponse);
         when(mockedGet)
             .calledWith(categoriesUri)
             .mockResolvedValue(categoryApiResponse);
 
-        const { getByText } = render(<Inventory />);
+        const { getByText, queryByText } = render(<Inventory />);
 
         await waitFor(() => {
             expect(getByText(mockHardware[0].name)).toBeInTheDocument();
+            expect(queryByText(mockHardware[limit].name)).not.toBeInTheDocument();
         });
+        expect(
+            getByText(`SHOWING ${limit} OF ${mockHardware.length} ITEMS`)
+        ).toBeInTheDocument();
 
         fireEvent.click(getByText(/load more/i));
         await waitFor(() => {
@@ -154,5 +168,41 @@ describe("Inventory Page", () => {
                     expect(getByText(hardware.name)).toBeInTheDocument()
                 );
         });
+        expect(
+            getByText(`SHOWING ${mockHardware.length} OF ${mockHardware.length} ITEMS`)
+        ).toBeInTheDocument();
+    });
+
+    it("Can refresh hardware", async () => {
+        const hardwareApiResponse = makeMockApiListResponse(mockHardware);
+        const hardwareApiResponseAfterRefresh = makeMockApiListResponse(
+            mockHardware.slice(2)
+        );
+        const categoryApiResponse = makeMockApiListResponse(mockCategories);
+
+        // first mocked resolved value is the original hardware response
+        // second mock is after refresh
+        when(mockedGet)
+            .calledWith(hardwareUri, {})
+            .mockResolvedValueOnce(hardwareApiResponse)
+            .mockResolvedValue(hardwareApiResponseAfterRefresh);
+        when(mockedGet)
+            .calledWith(categoriesUri)
+            .mockResolvedValue(categoryApiResponse);
+
+        const { getByText, getByTestId, queryByText } = render(<Inventory />);
+        await waitFor(() => {
+            expect(getByText(mockHardware[0].name)).toBeInTheDocument();
+            expect(getByText(mockCategories[0].name)).toBeInTheDocument();
+        });
+        expect(getByText(`${mockHardware.length} results`)).toBeInTheDocument();
+
+        fireEvent.click(getByTestId("refreshInventory"));
+        await waitFor(() => {
+            expect(queryByText(mockHardware[0].name)).not.toBeInTheDocument();
+            expect(queryByText(mockHardware[1].name)).not.toBeInTheDocument();
+            expect(getByText(mockHardware[2].name)).toBeInTheDocument();
+        });
+        expect(getByText(`${mockHardware.length - 2} results`)).toBeInTheDocument();
     });
 });

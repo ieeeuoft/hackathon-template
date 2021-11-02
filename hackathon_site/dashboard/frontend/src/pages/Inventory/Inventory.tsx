@@ -10,6 +10,7 @@ import RefreshIcon from "@material-ui/icons/Refresh";
 import CloseIcon from "@material-ui/icons/Close";
 import FilterListIcon from "@material-ui/icons/FilterList";
 import InventorySearch from "components/inventory/InventorySearch/InventorySearch";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 import styles from "./Inventory.module.scss";
 import Header from "components/general/Header/Header";
@@ -23,6 +24,8 @@ import {
     getHardwareNextPage,
     hardwareCountSelector,
     hardwareSelectors,
+    isLoadingSelector,
+    isMoreLoadingSelector,
 } from "slices/hardware/hardwareSlice";
 import { getCategories } from "slices/hardware/categorySlice";
 
@@ -32,6 +35,7 @@ const Inventory = () => {
     const dispatch = useDispatch();
     const items = useSelector(hardwareSelectors.selectAll);
     const count = useSelector(hardwareCountSelector);
+    const isMoreLoading = useSelector(isMoreLoadingSelector);
 
     const [mobileOpen, setMobileOpen] = React.useState(false);
     const toggleFilter = () => {
@@ -130,6 +134,7 @@ const Inventory = () => {
                                         color="primary"
                                         aria-label="Refresh"
                                         onClick={refreshHardware}
+                                        data-testid="refreshInventory"
                                     >
                                         <RefreshIcon />
                                     </IconButton>
@@ -157,7 +162,11 @@ const Inventory = () => {
                                 disableElevation
                                 onClick={getMoreHardware}
                             >
-                                Load more
+                                {isMoreLoading ? (
+                                    <CircularProgress size={25} />
+                                ) : (
+                                    "Load more"
+                                )}
                             </Button>
                         )}
                     </div>
