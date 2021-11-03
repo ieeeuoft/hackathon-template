@@ -38,16 +38,16 @@ const createQuantityList = (number) => {
 };
 
 export const AddToCartForm = ({
-    quantityAvailable,
-    constraintMax,
+    quantity_available,
+    max_per_team,
     handleSubmit,
     handleChange,
     requestFailure,
     values: { quantity },
 }) => {
-    const dropdownNum = !constraintMax
-        ? quantityAvailable
-        : Math.min(quantityAvailable, constraintMax);
+    const dropdownNum = !max_per_team
+        ? quantity_available
+        : Math.min(quantity_available, max_per_team);
 
     return (
         <>
@@ -92,8 +92,8 @@ export const AddToCartForm = ({
 export const EnhancedAddToCartForm = ({
     handleSubmit,
     requestFailure,
-    quantityAvailable,
-    constraintMax,
+    quantity_available,
+    max_per_team,
 }) => {
     const onSubmit = (formikValues) => {
         handleSubmit(formikValues.quantity);
@@ -109,8 +109,8 @@ export const EnhancedAddToCartForm = ({
         >
             {(formikProps) => (
                 <AddToCartForm
-                    quantityAvailable={quantityAvailable}
-                    constraintMax={constraintMax}
+                    quantity_available={quantity_available}
+                    max_per_team={max_per_team}
                     handleSubmit={formikProps.handleSubmit}
                     handleChange={formikProps.handleChange}
                     requestFailure={requestFailure}
@@ -123,7 +123,7 @@ export const EnhancedAddToCartForm = ({
 
 const DetailInfoSection = ({
     manufacturer,
-    model_num,
+    model_number,
     datasheet,
     notes,
     constraints,
@@ -133,9 +133,10 @@ const DetailInfoSection = ({
             <Typography variant="body2" color="secondary" className={styles.heading}>
                 Constraints
             </Typography>
-            {constraints.map((constraint, i) => (
-                <Typography key={i}>{constraint}</Typography>
-            ))}
+            {constraints?.length > 0 &&
+                constraints.map((constraint, i) => (
+                    <Typography key={i}>{constraint}</Typography>
+                ))}
             <Typography variant="body2" className={styles.heading}>
                 Manufacturer
             </Typography>
@@ -143,7 +144,7 @@ const DetailInfoSection = ({
             <Typography variant="body2" className={styles.heading}>
                 Model Number
             </Typography>
-            <Typography>{model_num}</Typography>
+            <Typography>{model_number}</Typography>
             <Typography variant="body2" className={styles.heading}>
                 Datasheet
             </Typography>
@@ -165,13 +166,13 @@ const DetailInfoSection = ({
     );
 };
 
-const MainSection = ({ name, total, quantityAvailable, categories, img }) => {
+const MainSection = ({ name, total, quantity_available, categories, picture }) => {
     const availability =
-        quantityAvailable === 0 ? (
+        quantity_available === 0 ? (
             <Typography color="secondary">OUT OF STOCK</Typography>
         ) : (
             <Typography className={styles.quantityAvailable}>
-                {quantityAvailable} OF {total} IN STOCK
+                {quantity_available} OF {total} IN STOCK
             </Typography>
         );
 
@@ -184,17 +185,18 @@ const MainSection = ({ name, total, quantityAvailable, categories, img }) => {
                     Category
                 </Typography>
                 <div>
-                    {categories.map((category, i) => (
-                        <Chip
-                            label={category}
-                            size="small"
-                            className={styles.categoryItem}
-                            key={i}
-                        />
-                    ))}
+                    {categories?.length > 0 &&
+                        categories.map((category, i) => (
+                            <Chip
+                                label={category}
+                                size="small"
+                                className={styles.categoryItem}
+                                key={i}
+                            />
+                        ))}
                 </div>
             </div>
-            <img src={img} alt={name} />
+            <img src={picture} alt={name} />
         </div>
     );
 };
@@ -205,34 +207,36 @@ export const ProductOverview = ({ detail, addToCart, isVisible, handleClose }) =
         isVisible={isVisible}
         handleClose={handleClose}
     >
-        <div className={styles.productOverview}>
-            <div className={styles.productOverviewDiv}>
-                <MainSection
-                    type={detail.type}
-                    name={detail.name}
-                    total={detail.total}
-                    quantityAvailable={detail.quantityAvailable}
-                    categories={detail.category}
-                    img={detail.img}
-                />
-                <DetailInfoSection
-                    manufacturer={detail.manufacturer}
-                    model_num={detail.model_num}
-                    datasheet={detail.datasheet}
-                    notes={detail.notes}
-                    constraints={detail.constraints}
-                />
-            </div>
+        {detail && (
+            <div className={styles.productOverview}>
+                <div className={styles.productOverviewDiv}>
+                    <MainSection
+                        type={detail.type}
+                        name={detail.name}
+                        total={detail.quantity_available + detail.quantity_remaining}
+                        quantity_available={detail.quantity_available}
+                        categories={detail.categories}
+                        picture={detail.picture}
+                    />
+                    <DetailInfoSection
+                        manufacturer={detail.manufacturer}
+                        model_number={detail.model_number}
+                        datasheet={detail.datasheet}
+                        notes={detail.notes}
+                        constraints={detail.constraints}
+                    />
+                </div>
 
-            {addToCart && (
-                <EnhancedAddToCartForm
-                    handleSubmit={addToCart}
-                    requestFailure={false}
-                    quantityAvailable={detail.quantityAvailable}
-                    constraintMax={detail.constraintMax}
-                />
-            )}
-        </div>
+                {addToCart && (
+                    <EnhancedAddToCartForm
+                        handleSubmit={addToCart}
+                        requestFailure={false}
+                        quantity_available={detail.quantity_available}
+                        max_per_team={detail.max_per_team}
+                    />
+                )}
+            </div>
+        )}
     </SideSheetRight>
 );
 

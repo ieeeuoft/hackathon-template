@@ -2,12 +2,15 @@ import React from "react";
 import Grid from "@material-ui/core/Grid";
 import styles from "pages/Inventory/Inventory.module.scss";
 import Item from "components/inventory/Item/Item";
-
 import { useSelector } from "react-redux";
 import { hardwareSelectors, isLoadingSelector } from "slices/hardware/hardwareSlice";
 import { LinearProgress } from "@material-ui/core";
 
-export const InventoryGrid = () => {
+interface inventoryGridProps {
+    setItemOverviewId(id: number | null): void;
+}
+
+export const InventoryGrid = ({ setItemOverviewId }: inventoryGridProps) => {
     const items = useSelector(hardwareSelectors.selectAll);
     const isLoading = useSelector(isLoadingSelector);
 
@@ -26,8 +29,7 @@ export const InventoryGrid = () => {
                         className={styles.Item}
                         key={item.id}
                         item
-                        // onClick={() => setItemOverviewId(item.id)}
-                        onClick={() => alert(`Clicked ${item.name}`)}
+                        onClick={() => setItemOverviewId(item.id)}
                     >
                         <Item
                             image={item.picture}

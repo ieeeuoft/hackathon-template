@@ -25,8 +25,6 @@ import {
 } from "slices/hardware/hardwareSlice";
 import { getCategories } from "slices/hardware/categorySlice";
 
-import { productInformation } from "testing/mockData";
-
 const Inventory = () => {
     const dispatch = useDispatch();
     const items = useSelector(hardwareSelectors.selectAll);
@@ -59,7 +57,11 @@ const Inventory = () => {
         <>
             <Header />
             <ProductOverview
-                detail={productInformation}
+                detail={
+                    itemOverviewId
+                        ? items.find((item) => item.id === itemOverviewId)
+                        : null
+                }
                 addToCart={addToCart}
                 isVisible={typeof itemOverviewId == "number"}
                 handleClose={toggleMenu}
@@ -123,7 +125,7 @@ const Inventory = () => {
                                 </div>
                             </div>
                         </div>
-                        <InventoryGrid />
+                        <InventoryGrid setItemOverviewId={setItemOverviewId} />
                         {count > 0 && (
                             <Divider
                                 className={styles.inventoryLoadDivider}
