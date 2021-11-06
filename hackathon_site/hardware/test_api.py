@@ -432,7 +432,6 @@ class IncidentListsViewTestCase(SetupUserMixin, APITestCase):
         self.assertCountEqual(returned_ids, [2])
 
 
-
 class OrderListViewGetTestCase(SetupUserMixin, APITestCase):
     def setUp(self):
         super().setUp()
@@ -601,6 +600,7 @@ class OrderListViewGetTestCase(SetupUserMixin, APITestCase):
         returned_ids = [res["id"] for res in results]
         self.assertCountEqual(returned_ids, [self.order_3.id])
 
+
 class IncidentListViewPostTestCase(SetupUserMixin, APITestCase):
     def setUp(self):
         super().setUp()
@@ -642,14 +642,21 @@ class IncidentListViewPostTestCase(SetupUserMixin, APITestCase):
 
     def test_user_has_no_profile(self):
         self._login()
-        request_data = {'state': "Broken", 'time_occurred': datetime(2021, 5, 1), 'description': 'idk',
-                        'order_item': [{"id": self.order_item.id, "team": self.team.team_code,
-                                        "hardware": [{"id": self.hardware.id, "quantity": 1}],
-                                        "errors":[]}]}
+        request_data = {
+            "state": "Broken",
+            "time_occurred": datetime(2021, 5, 1),
+            "description": "idk",
+            "order_item": [
+                {
+                    "id": self.order_item.id,
+                    "team": self.team.team_code,
+                    "hardware": [{"id": self.hardware.id, "quantity": 1}],
+                    "errors": [],
+                }
+            ],
+        }
         response = self.client.post(self.view, request_data)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
-
 
 
 class OrderListViewPostTestCase(SetupUserMixin, APITestCase):

@@ -44,10 +44,12 @@ class HardwareDetailView(mixins.RetrieveModelMixin, generics.GenericAPIView):
     serializer_class = HardwareSerializer
 
     def get(self, request, *args, **kwargs):
-        return self.retrieve(request, *args, **kwargs) 
+        return self.retrieve(request, *args, **kwargs)
 
 
-class IncidentListView(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
+class IncidentListView(
+    mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView
+):
     queryset = Incident.objects.all().select_related(
         "order_item", "order_item__order__team", "order_item__hardware"
     )

@@ -67,6 +67,7 @@ class IncidentListSerializer(serializers.ModelSerializer):
     def get_team_id(obj: Incident):
         return obj.order_item.order.team.id
 
+
 class OrderListSerializer(serializers.ModelSerializer):
     hardware = HardwareSerializer(many=True, read_only=True)
     team_code = serializers.SerializerMethodField()
@@ -93,6 +94,7 @@ class IncidentCreateSerializer(IncidentListSerializer):
         model = Incident
         fields = IncidentListSerializer.Meta.fields
         read_only_fields = ("team_id",)
+
 
 class OrderCreateSerializer(serializers.Serializer):
     class OrderCreateHardwareSerializer(serializers.Serializer):
