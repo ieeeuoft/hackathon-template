@@ -248,6 +248,7 @@ class IncidentSerializerTestCase(TestCase):
         self.assertEqual(expected_response, data)
 
 
+
 class OrderListSerializerTestCase(TestCase):
     def setUp(self):
         self.team = Team.objects.create()

@@ -21,7 +21,6 @@ from hardware.serializers import (
     OrderListSerializer,
     OrderCreateSerializer,
     OrderCreateResponseSerializer,
-    IncidentCreateResponseSerializer,
 )
 
 logger = logging.getLogger(__name__)
@@ -45,10 +44,10 @@ class HardwareDetailView(mixins.RetrieveModelMixin, generics.GenericAPIView):
     serializer_class = HardwareSerializer
 
     def get(self, request, *args, **kwargs):
-        return self.retrieve(request, *args, **kwargs)
+        return self.retrieve(request, *args, **kwargs) 
 
 
-class IncidentListView(mixins.ListModelMixin, generics.GenericAPIView):
+class IncidentListView(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
     queryset = Incident.objects.all().select_related(
         "order_item", "order_item__order__team", "order_item__hardware"
     )
@@ -70,29 +69,16 @@ class IncidentListView(mixins.ListModelMixin, generics.GenericAPIView):
     filterset_class = IncidentFilter
 
     def get_serializer_class(self):
-        try:
-            return self.serializer_method_classes[self.request.method]
-        except (KeyError, AttributeError):
-            return super().get_serializer_class()
+        if self.request.method == "GET":
+            return IncidentListSerializer
+        elif self.request.method == "POST":
+            return IncidentCreateSerializer
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
 
-    @transaction.atomic
-    @swagger_auto_schema(responses={201: IncidentCreateResponseSerializer})
     def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        create_response = serializer.save()
-        response_serializer = IncidentCreateResponseSerializer(data=create_response)
-        if not response_serializer.is_valid():
-            logger.error(response_serializer.error_messages)
-            return HttpResponseServerError()
-        response_data = response_serializer.data
-        return Response(response_data, status=status.HTTP_201_CREATED)
-
-
-
+        return self.create(request, *args, **kwargs)
 
 
 class CategoryListView(mixins.ListModelMixin, generics.GenericAPIView):
