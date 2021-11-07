@@ -111,7 +111,7 @@ const hardwareSlice = createSlice({
         },
     },
     extraReducers: (builder) => {
-        builder.addCase(getHardwareWithFilters.pending, (state, action) => {
+        builder.addCase(getHardwareWithFilters.pending, (state) => {
             state.isLoading = true;
             state.error = null;
         });
