@@ -28,7 +28,7 @@ const extraState: HardwareExtraState = {
 };
 
 export const hardwareReducerName = "hardware";
-export const hardwareAdapter = createEntityAdapter<Hardware>();
+const hardwareAdapter = createEntityAdapter<Hardware>();
 export const initialState = hardwareAdapter.getInitialState(extraState);
 export type HardwareState = typeof initialState;
 

@@ -79,7 +79,6 @@ interface CartCardProps {
 export const CartCard = ({ hardware_id, quantity, error }: CartCardProps) => {
     const [numInCart, setNumInCart] = useState(quantity);
 
-    // TODO: Are we guaranteed that the hardware will be in the state by this point?
     const hardware = useSelector((state: RootState) =>
         hardwareSelectors.selectById(state, hardware_id)
     );
