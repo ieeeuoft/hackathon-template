@@ -68,27 +68,6 @@ export const getHardwareWithFilters = createAsyncThunk<
     }
 );
 
-export const getHardwareById = createAsyncThunk<Hardware, { id: number }, {}>(
-    `${hardwareReducerName}/getHardwareById`,
-    async ({ id }, { dispatch, rejectWithValue }) => {
-        try {
-            const response = await get<Hardware>(`/api/hardware/hardware/${id}/`);
-            return response.data;
-        } catch (e: any) {
-            dispatch(
-                displaySnackbar({
-                    message: `Failed to fetch hardware Data: Error ${e.response.status}`,
-                    options: { variant: "error" },
-                })
-            );
-            return rejectWithValue({
-                status: e.response.status,
-                message: e.response.data,
-            });
-        }
-    }
-);
-
 // Slice
 const hardwareSlice = createSlice({
     name: hardwareReducerName,
