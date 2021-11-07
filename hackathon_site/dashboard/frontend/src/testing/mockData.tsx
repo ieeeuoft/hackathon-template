@@ -308,7 +308,7 @@ export const mockHardware: Hardware[] = [
     },
 ];
 
-export const cartItems: CartItem[] = [
+export const mockCartItems: CartItem[] = [
     { hardware_id: 1, quantity: 3 },
     { hardware_id: 2, quantity: 1 },
     { hardware_id: 3, quantity: 2 },

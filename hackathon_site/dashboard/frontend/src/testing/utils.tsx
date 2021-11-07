@@ -11,8 +11,16 @@ import { makeStore, RootStore, RootState } from "slices/store";
 import { SnackbarProvider } from "notistack";
 import { AxiosResponse } from "axios";
 import { APIListResponse, Category, Hardware } from "api/types";
-import { hardwareReducerName, HardwareState } from "slices/hardware/hardwareSlice";
-import { categoryReducerName, CategoryState } from "slices/hardware/categorySlice";
+import {
+    hardwareReducerName,
+    HardwareState,
+    initialState as hardwareInitialState,
+} from "slices/hardware/hardwareSlice";
+import {
+    categoryReducerName,
+    CategoryState,
+    initialState as categoryInitialState,
+} from "slices/hardware/categorySlice";
 
 export const withRouter = (component: React.ComponentElement<any, any>) => (
     <BrowserRouter>{component}</BrowserRouter>
@@ -92,7 +100,8 @@ export interface StoreEntities {
 export const makeStoreWithEntities = (entities: StoreEntities) => {
     const preloadedState: DeepPartial<RootState> = {};
     if (entities.hardware) {
-        const hardwareState: Pick<HardwareState, "ids" | "entities"> = {
+        const hardwareState: HardwareState = {
+            ...hardwareInitialState,
             ids: [],
             entities: {},
         };
@@ -106,7 +115,8 @@ export const makeStoreWithEntities = (entities: StoreEntities) => {
     }
 
     if (entities.categories) {
-        const categoryState: Pick<CategoryState, "ids" | "entities"> = {
+        const categoryState: CategoryState = {
+            ...categoryInitialState,
             ids: [],
             entities: {},
         };

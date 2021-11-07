@@ -40,7 +40,7 @@ interface RejectValue {
 
 export const getHardwareWithFilters = createAsyncThunk<
     APIListResponse<Hardware>,
-    void,
+    { keepOld?: boolean } | undefined,
     { state: RootState; rejectValue: RejectValue; dispatch: AppDispatch }
 >(
     `${hardwareReducerName}/getHardwareWithFilters`,
@@ -57,6 +57,27 @@ export const getHardwareWithFilters = createAsyncThunk<
             dispatch(
                 displaySnackbar({
                     message: `Failed to fetch hardware data: Error ${e.response.status}`,
+                    options: { variant: "error" },
+                })
+            );
+            return rejectWithValue({
+                status: e.response.status,
+                message: e.response.data,
+            });
+        }
+    }
+);
+
+export const getHardwareById = createAsyncThunk<Hardware, { id: number }, {}>(
+    `${hardwareReducerName}/getHardwareById`,
+    async ({ id }, { dispatch, rejectWithValue }) => {
+        try {
+            const response = await get<Hardware>(`/api/hardware/hardware/${id}/`);
+            return response.data;
+        } catch (e: any) {
+            dispatch(
+                displaySnackbar({
+                    message: `Failed to fetch hardware Data: Error ${e.response.status}`,
                     options: { variant: "error" },
                 })
             );
@@ -111,18 +132,26 @@ const hardwareSlice = createSlice({
         },
     },
     extraReducers: (builder) => {
-        builder.addCase(getHardwareWithFilters.pending, (state) => {
+        builder.addCase(getHardwareWithFilters.pending, (state, action) => {
             state.isLoading = true;
             state.error = null;
         });
 
-        builder.addCase(getHardwareWithFilters.fulfilled, (state, { payload }) => {
-            state.isLoading = false;
-            state.error = null;
-            state.next = payload.next;
-            state.count = payload.count;
-            hardwareAdapter.setAll(state, payload.results);
-        });
+        builder.addCase(
+            getHardwareWithFilters.fulfilled,
+            (state, { payload, meta }) => {
+                state.isLoading = false;
+                state.error = null;
+                state.next = payload.next;
+                state.count = payload.count;
+
+                if (meta.arg?.keepOld) {
+                    hardwareAdapter.setMany(state, payload.results);
+                } else {
+                    hardwareAdapter.setAll(state, payload.results);
+                }
+            }
+        );
 
         builder.addCase(getHardwareWithFilters.rejected, (state, { payload }) => {
             state.isLoading = false;
@@ -154,4 +183,9 @@ export const hardwareCountSelector = createSelector(
 export const hardwareFiltersSelector = createSelector(
     [hardwareSliceSelector],
     (hardwareSlice) => hardwareSlice.filters
+);
+
+export const selectHardwareByIds = createSelector(
+    [hardwareSelectors.selectEntities, (state: RootState, ids: number[]) => ids],
+    (entities, ids) => ids.map((id) => entities?.[id])
 );
