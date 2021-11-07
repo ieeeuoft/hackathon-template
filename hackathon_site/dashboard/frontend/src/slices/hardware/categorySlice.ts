@@ -23,7 +23,7 @@ const extraState: CategoryExtraState = {
 };
 
 export const categoryReducerName = "category";
-const categoryAdapter = createEntityAdapter<Category>();
+export const categoryAdapter = createEntityAdapter<Category>();
 export const initialState = categoryAdapter.getInitialState(extraState);
 export type CategoryState = typeof initialState;
 

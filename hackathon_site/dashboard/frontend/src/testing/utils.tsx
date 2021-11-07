@@ -1,19 +1,18 @@
 import React from "react";
 import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
+import { DeepPartial } from "@reduxjs/toolkit";
 import {
     render as rtlRender,
     RenderOptions as RtlRenderOptions,
 } from "@testing-library/react";
 
 import { makeStore, RootStore, RootState } from "slices/store";
-import { DeepPartial } from "redux";
 import { SnackbarProvider } from "notistack";
 import { AxiosResponse } from "axios";
 import { APIListResponse, Category, Hardware } from "api/types";
-import { get } from "api/api";
-import { getHardwareWithFilters } from "slices/hardware/hardwareSlice";
-import { getCategories } from "slices/hardware/categorySlice";
+import { hardwareReducerName, HardwareState } from "slices/hardware/hardwareSlice";
+import { categoryReducerName, CategoryState } from "slices/hardware/categorySlice";
 
 export const withRouter = (component: React.ComponentElement<any, any>) => (
     <BrowserRouter>{component}</BrowserRouter>
@@ -90,31 +89,35 @@ export interface StoreEntities {
     categories?: Category[];
 }
 
-/**
- * Given a store, a collection of entities, and a mocked api.get function,
- * prepopulate the store by emulating API responses.
- *
- * Due to the asynchronous nature of dispatches, tests using this function
- * may need to wait after calling it for the store to be populated.
- */
-export const fillStoreWithEntities = (
-    store: RootStore,
-    entities: StoreEntities,
-    mockedGet: jest.MockedFunction<typeof get>
-) => {
+export const makeStoreWithEntities = (entities: StoreEntities) => {
+    const preloadedState: DeepPartial<RootState> = {};
     if (entities.hardware) {
-        const data = makeMockApiListResponse(entities.hardware);
-        mockedGet.mockResolvedValueOnce(data);
+        const hardwareState: Pick<HardwareState, "ids" | "entities"> = {
+            ids: [],
+            entities: {},
+        };
 
-        store.dispatch(getHardwareWithFilters());
+        for (const hardware of entities.hardware) {
+            hardwareState.ids.push(hardware.id);
+            hardwareState.entities[hardware.id] = hardware;
+        }
+
+        preloadedState[hardwareReducerName] = hardwareState;
     }
 
     if (entities.categories) {
-        const data = makeMockApiListResponse(entities.categories);
-        mockedGet.mockResolvedValueOnce(data);
+        const categoryState: Pick<CategoryState, "ids" | "entities"> = {
+            ids: [],
+            entities: {},
+        };
 
-        store.dispatch(getCategories());
+        for (const category of entities.categories) {
+            categoryState.ids.push(category.id);
+            categoryState.entities[category.id] = category;
+        }
+
+        preloadedState[categoryReducerName] = categoryState;
     }
 
-    mockedGet.mockReset();
+    return makeStore(preloadedState);
 };
