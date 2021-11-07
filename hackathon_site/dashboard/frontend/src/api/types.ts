@@ -18,6 +18,7 @@ export interface Hardware {
     picture: string;
     categories: number[];
     quantity_remaining: number;
+    notes: string,
 }
 
 export type HardwareOrdering =
@@ -33,6 +34,12 @@ export interface HardwareFilters {
     category_ids?: number[];
     search?: string;
     ordering?: HardwareOrdering;
+}
+
+/** Hardware Product Overview Types */
+export interface ProductOverviewItem extends Omit<Hardware, 'categories'> {
+    constraints: string[],
+    categories: string[],
 }
 
 /** Category API */

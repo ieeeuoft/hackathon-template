@@ -14,6 +14,7 @@ import * as Yup from "yup";
 import { Formik } from "formik";
 
 import styles from "./ProductOverview.module.scss";
+import { ProductOverviewItem } from "../../../api/types";
 
 export const ERROR_MESSAGES = {
     quantityMissing: "Quantity is required",
@@ -23,7 +24,7 @@ const addToCartFormSchema = Yup.object().shape({
     quantity: Yup.number().required(ERROR_MESSAGES.quantityMissing),
 });
 
-const createQuantityList = (number) => {
+const createQuantityList = (number: number) => {
     let entry = [];
 
     for (let i = 1; i <= number; i++) {
@@ -37,17 +38,25 @@ const createQuantityList = (number) => {
     return entry;
 };
 
+interface AddToCartFormProps {
+    quantityAvailable: number;
+    maxPerTeam: number;
+    handleSubmit(): any;
+    handleChange(): any;
+    requestFailure: { message: string } | false;
+    values: { quantity: number };
+}
 export const AddToCartForm = ({
-    quantity_available,
-    max_per_team,
+    quantityAvailable,
+    maxPerTeam,
     handleSubmit,
     handleChange,
     requestFailure,
     values: { quantity },
-}) => {
-    const dropdownNum = !max_per_team
-        ? quantity_available
-        : Math.min(quantity_available, max_per_team);
+}: AddToCartFormProps) => {
+    const dropdownNum = !maxPerTeam
+        ? quantityAvailable
+        : Math.min(quantityAvailable, maxPerTeam);
 
     return (
         <>
@@ -89,13 +98,19 @@ export const AddToCartForm = ({
     );
 };
 
+interface EnhancedAddToCartFormProps {
+    handleSubmit(quantity: string): any;
+    requestFailure: { message: string } | boolean;
+    quantityAvailable: number;
+    maxPerTeam: number;
+}
 export const EnhancedAddToCartForm = ({
     handleSubmit,
     requestFailure,
-    quantity_available,
-    max_per_team,
-}) => {
-    const onSubmit = (formikValues) => {
+    quantityAvailable,
+    maxPerTeam,
+}: EnhancedAddToCartFormProps) => {
+    const onSubmit = (formikValues: { quantity: string }) => {
         handleSubmit(formikValues.quantity);
     };
 
@@ -109,8 +124,8 @@ export const EnhancedAddToCartForm = ({
         >
             {(formikProps) => (
                 <AddToCartForm
-                    quantity_available={quantity_available}
-                    max_per_team={max_per_team}
+                    quantityAvailable={quantityAvailable}
+                    maxPerTeam={maxPerTeam}
                     handleSubmit={formikProps.handleSubmit}
                     handleChange={formikProps.handleChange}
                     requestFailure={requestFailure}
@@ -121,13 +136,20 @@ export const EnhancedAddToCartForm = ({
     );
 };
 
+interface DetailInfoSectionProps {
+    manufacturer: string;
+    modelNumber: string;
+    datasheet: string;
+    notes: string;
+    constraints: string[];
+}
 const DetailInfoSection = ({
     manufacturer,
-    model_number,
+    modelNumber,
     datasheet,
     notes,
     constraints,
-}) => {
+}: DetailInfoSectionProps) => {
     return (
         <>
             <Typography variant="body2" color="secondary" className={styles.heading}>
@@ -144,7 +166,7 @@ const DetailInfoSection = ({
             <Typography variant="body2" className={styles.heading}>
                 Model Number
             </Typography>
-            <Typography>{model_number}</Typography>
+            <Typography>{modelNumber}</Typography>
             <Typography variant="body2" className={styles.heading}>
                 Datasheet
             </Typography>
@@ -166,13 +188,26 @@ const DetailInfoSection = ({
     );
 };
 
-const MainSection = ({ name, total, quantity_available, categories, picture }) => {
+interface MainSectionProps {
+    name: string;
+    quantityAvailable: number;
+    quantityRemaining: number;
+    categories: string[];
+    picture: string;
+}
+const MainSection = ({
+    name,
+    quantityAvailable,
+    quantityRemaining,
+    categories,
+    picture,
+}: MainSectionProps) => {
     const availability =
-        quantity_available === 0 ? (
+        quantityRemaining === 0 ? (
             <Typography color="secondary">OUT OF STOCK</Typography>
         ) : (
             <Typography className={styles.quantityAvailable}>
-                {quantity_available} OF {total} IN STOCK
+                {quantityRemaining} OF {quantityAvailable} IN STOCK
             </Typography>
         );
 
@@ -201,7 +236,19 @@ const MainSection = ({ name, total, quantity_available, categories, picture }) =
     );
 };
 
-export const ProductOverview = ({ detail, addToCart, isVisible, handleClose }) => (
+interface ProductOverviewProps {
+    detail: ProductOverviewItem;
+    addToCart(): any;
+    isVisible: boolean;
+    handleClose(): any;
+}
+
+export const ProductOverview = ({
+    detail,
+    addToCart,
+    isVisible,
+    handleClose,
+}: ProductOverviewProps) => (
     <SideSheetRight
         title="Product Overview"
         isVisible={isVisible}
@@ -211,16 +258,15 @@ export const ProductOverview = ({ detail, addToCart, isVisible, handleClose }) =
             <div className={styles.productOverview}>
                 <div className={styles.productOverviewDiv}>
                     <MainSection
-                        type={detail.type}
                         name={detail.name}
-                        total={detail.quantity_available + detail.quantity_remaining}
-                        quantity_available={detail.quantity_available}
+                        quantityAvailable={detail.quantity_available}
+                        quantityRemaining={detail.quantity_remaining}
                         categories={detail.categories}
                         picture={detail.picture}
                     />
                     <DetailInfoSection
                         manufacturer={detail.manufacturer}
-                        model_number={detail.model_number}
+                        modelNumber={detail.model_number}
                         datasheet={detail.datasheet}
                         notes={detail.notes}
                         constraints={detail.constraints}
@@ -231,8 +277,8 @@ export const ProductOverview = ({ detail, addToCart, isVisible, handleClose }) =
                     <EnhancedAddToCartForm
                         handleSubmit={addToCart}
                         requestFailure={false}
-                        quantity_available={detail.quantity_available}
-                        max_per_team={detail.max_per_team}
+                        quantityAvailable={detail.quantity_available}
+                        maxPerTeam={detail.max_per_team}
                     />
                 )}
             </div>

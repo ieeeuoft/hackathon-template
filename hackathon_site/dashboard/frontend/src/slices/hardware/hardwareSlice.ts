@@ -7,7 +7,7 @@ import {
 } from "@reduxjs/toolkit";
 import { RootState, AppDispatch } from "slices/store";
 
-import { APIListResponse, Hardware, HardwareFilters } from "api/types";
+import {APIListResponse, Hardware, HardwareFilters, ProductOverviewItem} from "api/types";
 import { get } from "api/api";
 import { displaySnackbar } from "slices/ui/uiSlice";
 
@@ -155,3 +155,13 @@ export const hardwareFiltersSelector = createSelector(
     [hardwareSliceSelector],
     (hardwareSlice) => hardwareSlice.filters
 );
+
+export const hardwareItemSelector = createSelector(
+    [hardwareSliceSelector],
+    (hardwareSlice, itemId:number) => hardwareSlice.filters
+);
+
+export const hardwareItemSelector =  (itemId: number): ProductOverviewItem => {
+    const hardware = hardwareSelectors.selectById(state, itemId)
+
+}
