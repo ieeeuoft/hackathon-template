@@ -59,7 +59,7 @@ export const stripHostnameReturnFilters = (
         if (parsed.search && filters) {
             parsed.searchParams.forEach((val, key) => (filters[key] = val));
         }
-        return JSON.stringify(filters) !== "{}"
+        return Object.keys(filters).length > 0
             ? {
                   path: parsed.pathname,
                   filters,
@@ -79,7 +79,6 @@ export const get = <T>(
         uri += "?" + new URLSearchParams(params).toString();
     }
 
-    console.log(uri);
     return axios.get<T>(`${SERVER_URL}/${uri}`, makeConfig());
 };
 
