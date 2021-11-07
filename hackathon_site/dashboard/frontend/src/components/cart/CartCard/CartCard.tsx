@@ -16,20 +16,6 @@ import { useSelector } from "react-redux";
 import { RootState } from "slices/store";
 import { hardwareSelectors } from "slices/hardware/hardwareSlice";
 
-const makeSelections = (quantity_remaining: number) => {
-    const items = [];
-
-    for (let i = 1; i < quantity_remaining + 1; i++) {
-        items.push(
-            <MenuItem key={i} role="quantity" value={i}>
-                {i}
-            </MenuItem>
-        );
-    }
-
-    return items;
-};
-
 type SelectChangeEvent = ChangeEvent<{ value: string }>;
 
 interface QuantitySelectorProps {
@@ -64,7 +50,13 @@ const QuantitySelector = ({
                 onChange={handleChange as SelectProps["onChange"]}
                 name="quantity"
             >
-                {makeSelections(quantity_remaining)}
+                {[
+                    ...Array(quantity_remaining).map((i) => (
+                        <MenuItem key={i} role="quantity" value={i}>
+                            {i}
+                        </MenuItem>
+                    )),
+                ]}
             </Select>
         </FormControl>
     );
