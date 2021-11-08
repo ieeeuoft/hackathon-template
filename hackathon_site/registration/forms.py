@@ -1,5 +1,6 @@
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
+import re
 
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
@@ -10,8 +11,6 @@ from django.conf import settings
 from hackathon_site.utils import is_registration_open
 from registration.models import Application, Team, User
 from registration.widgets import MaterialFileInput
-
-import re
 
 
 class SignUpForm(UserCreationForm):
