@@ -69,7 +69,7 @@ export interface Team {
     team_code: string;
     created_at: string;
     updated_at: string;
-    profiles: ({ profile: ProfileWithoutTeamNumber } & { user: UserWithoutProfile })[];
+    profiles: (ProfileWithoutTeamNumber & { user: UserWithoutProfile })[];
 }
 
 /** Orders API */
