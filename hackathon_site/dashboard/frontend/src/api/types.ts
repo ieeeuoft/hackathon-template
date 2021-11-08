@@ -61,7 +61,7 @@ export interface User {
     profile: Profile;
 }
 
-type UserWithoutProfile = Omit<User, "profile" | "team">;
+type UserWithoutProfile = Omit<User, "profile">;
 type ProfileWithoutTeamNumber = Omit<Profile, "team">;
 
 export interface Team {
