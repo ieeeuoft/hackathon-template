@@ -208,6 +208,7 @@ export const mockHardware: Hardware[] = [
         picture: "https://i.imgur.com/iUpI1hC.jpg",
         categories: [1],
         quantity_remaining: 5,
+        notes: "",
     },
     {
         id: 2,
@@ -220,6 +221,7 @@ export const mockHardware: Hardware[] = [
         picture: "https://i.imgur.com/kOlrXto.jpg",
         categories: [3],
         quantity_remaining: 0,
+        notes: "",
     },
     {
         id: 3,
@@ -232,6 +234,7 @@ export const mockHardware: Hardware[] = [
         picture: "https://i.imgur.com/IO6e5a6.jpg",
         categories: [4],
         quantity_remaining: 12,
+        notes: "",
     },
     {
         id: 4,
@@ -244,6 +247,7 @@ export const mockHardware: Hardware[] = [
         picture: "https://i.imgur.com/IO6e5a6.jpg",
         categories: [2, 8, 9],
         quantity_remaining: 5,
+        notes: "",
     },
     {
         id: 5,
@@ -256,6 +260,7 @@ export const mockHardware: Hardware[] = [
         picture: "https://i.imgur.com/iUpI1hC.jpg",
         categories: [4],
         quantity_remaining: 1,
+        notes: "",
     },
     {
         id: 6,
@@ -268,6 +273,7 @@ export const mockHardware: Hardware[] = [
         picture: "https://i.imgur.com/iUpI1hC.jpg",
         categories: [3],
         quantity_remaining: 3,
+        notes: "",
     },
     {
         id: 7,
@@ -280,6 +286,7 @@ export const mockHardware: Hardware[] = [
         picture: "https://i.imgur.com/IO6e5a6.jpg",
         categories: [6],
         quantity_remaining: 7,
+        notes: "",
     },
     {
         id: 8,
@@ -292,6 +299,7 @@ export const mockHardware: Hardware[] = [
         picture: "https://i.imgur.com/IO6e5a6.jpg",
         categories: [6],
         quantity_remaining: 13,
+        notes: "",
     },
     {
         id: 9,
@@ -304,6 +312,7 @@ export const mockHardware: Hardware[] = [
         picture: "https://i.imgur.com/kOlrXto.jpg",
         categories: [1, 2],
         quantity_remaining: 16,
+        notes: "",
     },
 ];
 

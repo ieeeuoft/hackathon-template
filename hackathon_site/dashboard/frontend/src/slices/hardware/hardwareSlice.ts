@@ -155,13 +155,3 @@ export const hardwareFiltersSelector = createSelector(
     [hardwareSliceSelector],
     (hardwareSlice) => hardwareSlice.filters
 );
-
-export const hardwareItemSelector = createSelector(
-    [hardwareSliceSelector],
-    (hardwareSlice, itemId:number) => hardwareSlice.filters
-);
-
-export const hardwareItemSelector =  (itemId: number): ProductOverviewItem => {
-    const hardware = hardwareSelectors.selectById(state, itemId)
-
-}

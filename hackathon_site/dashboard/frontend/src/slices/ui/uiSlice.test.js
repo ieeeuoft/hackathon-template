@@ -1,5 +1,5 @@
 import {
-    uiSelector,
+    uiSliceSelector,
     isCheckedOutTableVisibleSelector,
     isReturnedTableVisibleSelector,
     isPendingTableVisibleSelector,
@@ -28,7 +28,7 @@ describe("Selectors", () => {
     });
 
     test("uiSelector returns the ui store", () => {
-        expect(uiSelector(mockState)).toEqual(mockState[uiReducerName]);
+        expect(uiSliceSelector(mockState)).toEqual(mockState[uiReducerName]);
     });
 
     test("isCheckedOutTableVisibleSelector", () => {

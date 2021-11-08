@@ -7,14 +7,20 @@ import Select from "@material-ui/core/Select";
 import LaunchIcon from "@material-ui/icons/Launch";
 import InputLabel from "@material-ui/core/InputLabel";
 import Chip from "@material-ui/core/Chip";
-import Alert from "@material-ui/lab/Alert";
 import SideSheetRight from "components/general/SideSheetRight/SideSheetRight";
 
 import * as Yup from "yup";
-import { Formik } from "formik";
+import { Formik, FormikValues } from "formik";
 
 import styles from "./ProductOverview.module.scss";
-import { ProductOverviewItem } from "../../../api/types";
+import {
+    hardwareBeingViewedSelector,
+    isProductOverviewVisibleSelector,
+    removeProductOverviewItem,
+} from "slices/ui/uiSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { categorySelectors } from "slices/hardware/categorySlice";
+import { Category, Hardware } from "api/types";
 
 export const ERROR_MESSAGES = {
     quantityMissing: "Quantity is required",
@@ -38,20 +44,15 @@ const createQuantityList = (number: number) => {
     return entry;
 };
 
-interface AddToCartFormProps {
+interface AddToCartFormProps extends FormikValues {
     quantityAvailable: number;
     maxPerTeam: number;
-    handleSubmit(): any;
-    handleChange(): any;
-    requestFailure: { message: string } | false;
-    values: { quantity: number };
 }
 export const AddToCartForm = ({
     quantityAvailable,
     maxPerTeam,
     handleSubmit,
     handleChange,
-    requestFailure,
     values: { quantity },
 }: AddToCartFormProps) => {
     const dropdownNum = !maxPerTeam
@@ -60,11 +61,6 @@ export const AddToCartForm = ({
 
     return (
         <>
-            {requestFailure && (
-                <Alert variant="filled" severity="error">
-                    {requestFailure.message}
-                </Alert>
-            )}
             <form className={styles.form} onSubmit={handleSubmit}>
                 <FormControl variant="outlined" className={styles.formControl}>
                     <InputLabel id="qtyLabel">Qty</InputLabel>
@@ -99,19 +95,16 @@ export const AddToCartForm = ({
 };
 
 interface EnhancedAddToCartFormProps {
-    handleSubmit(quantity: string): any;
-    requestFailure: { message: string } | boolean;
     quantityAvailable: number;
     maxPerTeam: number;
 }
 export const EnhancedAddToCartForm = ({
-    handleSubmit,
-    requestFailure,
     quantityAvailable,
     maxPerTeam,
 }: EnhancedAddToCartFormProps) => {
     const onSubmit = (formikValues: { quantity: string }) => {
-        handleSubmit(formikValues.quantity);
+        // TODO: add an item to cart store
+        alert(`Ordering ${formikValues.quantity} of this item`);
     };
 
     return (
@@ -128,7 +121,6 @@ export const EnhancedAddToCartForm = ({
                     maxPerTeam={maxPerTeam}
                     handleSubmit={formikProps.handleSubmit}
                     handleChange={formikProps.handleChange}
-                    requestFailure={requestFailure}
                     values={formikProps.values}
                 />
             )}
@@ -141,7 +133,7 @@ interface DetailInfoSectionProps {
     modelNumber: string;
     datasheet: string;
     notes: string;
-    constraints: string[];
+    constraints: (string | undefined)[];
 }
 const DetailInfoSection = ({
     manufacturer,
@@ -157,7 +149,7 @@ const DetailInfoSection = ({
             </Typography>
             {constraints?.length > 0 &&
                 constraints.map((constraint, i) => (
-                    <Typography key={i}>{constraint}</Typography>
+                    <Typography key={i}>- {constraint}</Typography>
                 ))}
             <Typography variant="body2" className={styles.heading}>
                 Manufacturer
@@ -192,7 +184,7 @@ interface MainSectionProps {
     name: string;
     quantityAvailable: number;
     quantityRemaining: number;
-    categories: string[];
+    categories: (string | undefined)[];
     picture: string;
 }
 const MainSection = ({
@@ -236,54 +228,73 @@ const MainSection = ({
     );
 };
 
-interface ProductOverviewProps {
-    detail: ProductOverviewItem;
-    addToCart(): any;
-    isVisible: boolean;
-    handleClose(): any;
-}
-
 export const ProductOverview = ({
-    detail,
-    addToCart,
-    isVisible,
-    handleClose,
-}: ProductOverviewProps) => (
-    <SideSheetRight
-        title="Product Overview"
-        isVisible={isVisible}
-        handleClose={handleClose}
-    >
-        {detail && (
-            <div className={styles.productOverview}>
-                <div className={styles.productOverviewDiv}>
-                    <MainSection
-                        name={detail.name}
-                        quantityAvailable={detail.quantity_available}
-                        quantityRemaining={detail.quantity_remaining}
-                        categories={detail.categories}
-                        picture={detail.picture}
-                    />
-                    <DetailInfoSection
-                        manufacturer={detail.manufacturer}
-                        modelNumber={detail.model_number}
-                        datasheet={detail.datasheet}
-                        notes={detail.notes}
-                        constraints={detail.constraints}
-                    />
-                </div>
+    showAddToCartButton,
+}: {
+    showAddToCartButton: boolean;
+}) => {
+    const dispatch = useDispatch();
 
-                {addToCart && (
-                    <EnhancedAddToCartForm
-                        handleSubmit={addToCart}
-                        requestFailure={false}
-                        quantityAvailable={detail.quantity_available}
-                        maxPerTeam={detail.max_per_team}
-                    />
-                )}
-            </div>
-        )}
-    </SideSheetRight>
-);
+    const isProductOverviewVisible: boolean = useSelector(
+        isProductOverviewVisibleSelector
+    );
+    const hardware: Hardware | null = useSelector(hardwareBeingViewedSelector);
+    const allCategories = useSelector(categorySelectors.selectEntities);
+
+    const categories: (Category | undefined)[] = hardware
+        ? hardware.categories.map((categoryId) => allCategories[categoryId])
+        : [];
+
+    const constraints: (string | undefined)[] =
+        categories.length > 0
+            ? [`Max ${hardware?.max_per_team} of this item`].concat(
+                  categories.map(
+                      (category) =>
+                          `Max ${category?.max_per_team} of items under category ${category?.name}`
+                  )
+              )
+            : [];
+
+    const categoryNames: (string | undefined)[] =
+        categories.length > 0 ? categories.map((category) => category?.name) : [];
+
+    const closeProductOverview = () => dispatch(removeProductOverviewItem());
+
+    return (
+        <SideSheetRight
+            title="Product Overview"
+            isVisible={isProductOverviewVisible}
+            handleClose={closeProductOverview}
+        >
+            {hardware && (
+                <div className={styles.productOverview}>
+                    <div className={styles.productOverviewDiv}>
+                        <MainSection
+                            name={hardware.name}
+                            quantityAvailable={hardware.quantity_available}
+                            quantityRemaining={hardware.quantity_remaining}
+                            categories={categoryNames}
+                            picture={hardware.picture}
+                        />
+                        <DetailInfoSection
+                            manufacturer={hardware.manufacturer}
+                            modelNumber={hardware.model_number}
+                            datasheet={hardware.datasheet}
+                            notes={hardware.notes}
+                            constraints={constraints}
+                        />
+                    </div>
+
+                    {showAddToCartButton && (
+                        <EnhancedAddToCartForm
+                            quantityAvailable={hardware.quantity_available}
+                            maxPerTeam={hardware.max_per_team}
+                        />
+                    )}
+                </div>
+            )}
+        </SideSheetRight>
+    );
+};
 
 export default ProductOverview;

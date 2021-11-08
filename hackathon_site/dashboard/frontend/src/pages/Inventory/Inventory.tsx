@@ -35,17 +35,6 @@ const Inventory = () => {
         setMobileOpen(!mobileOpen);
     };
 
-    // Remove this later once items can be added to cart
-    const addToCart = () => {
-        alert("Add to cart");
-        setItemOverviewId(null);
-    };
-
-    const [itemOverviewId, setItemOverviewId] = React.useState<number | null>(null);
-    const toggleMenu = () => {
-        setItemOverviewId(null);
-    };
-
     // When the page is loaded, clear filters and fetch fresh inventory data
     useEffect(() => {
         dispatch(clearFilters());
@@ -57,14 +46,16 @@ const Inventory = () => {
         <>
             <Header />
             <ProductOverview
-                detail={
-                    itemOverviewId
-                        ? items.find((item) => item.id === itemOverviewId)
-                        : null
-                }
-                addToCart={addToCart}
-                isVisible={typeof itemOverviewId == "number"}
-                handleClose={toggleMenu}
+                showAddToCartButton={true}
+                // hardware={
+                //     itemOverviewId
+                //         ? items.find((item) => item.id === itemOverviewId)
+                //         : null
+                // }
+                // addToCart={addToCart}
+                // isVisible={typeof itemOverviewId == "number"}
+                // handleClose={toggleMenu}
+                // add boolean prop to display add to cart button
             />
             <div className={styles.inventory}>
                 <Drawer
@@ -125,7 +116,7 @@ const Inventory = () => {
                                 </div>
                             </div>
                         </div>
-                        <InventoryGrid setItemOverviewId={setItemOverviewId} />
+                        <InventoryGrid />
                         {count > 0 && (
                             <Divider
                                 className={styles.inventoryLoadDivider}

@@ -9,7 +9,7 @@ describe("<ProductOverview />", () => {
 
         const { getByText } = render(
             <ProductOverview
-                detail={productInformation}
+                hardware={productInformation}
                 addToCart={addCartMock}
                 isVisible={true}
             />

@@ -48,7 +48,7 @@ const Dashboard = () => {
         <>
             <Header />
             <ProductOverview
-                detail={productInformation}
+                hardware={productInformation}
                 addToCart={addToCart}
                 isVisible={sideSheetOpen}
                 handleClose={toggleMenu}
