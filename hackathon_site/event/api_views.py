@@ -6,12 +6,11 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
 
-from event.models import Profile
 from event.serializers import (
     ProfileSerializer,
     CurrentProfileSerializer,
 )
-from event.models import User, Team as EventTeam
+from event.models import User, Team as EventTeam, Profile
 from event.serializers import UserSerializer, TeamSerializer
 from event.permissions import UserHasProfile, FullDjangoModelPermissions
 

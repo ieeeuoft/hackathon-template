@@ -32,29 +32,17 @@ class ProfileSerializer(serializers.ModelSerializer):
             "e_signature",
             "team",
         )
-        read_only_fields = ("id", "team")
+        read_only_fields = ("id", "team", "acknowledge_rules", "e_signature")
 
     def update(self, instance: Profile, validated_data):
-        id_provided = validated_data.pop("id_provided", False)
-        attended = validated_data.pop("attended", False)
-        acknowledge_rules = validated_data.pop("acknowledge_rules", False)
-        e_signature = validated_data.pop("e_signature", None)
-
-        if id_provided is not None:
-            instance.id_provided = id_provided
-        if attended is not None:
-            instance.attended = attended
-        if not instance.acknowledge_rules and acknowledge_rules:
-            instance.acknowledge_rules = acknowledge_rules
-        if not instance.e_signature and e_signature:
-            instance.e_signature = e_signature
-
         return super().update(instance, validated_data)
 
 
 class CurrentProfileSerializer(ProfileSerializer):
     class Meta(ProfileSerializer.Meta):
-        read_only_fields = ProfileSerializer.Meta.read_only_fields + (
+        read_only_fields = (
+            "id",
+            "team",
             "id_provided",
             "attended",
         )

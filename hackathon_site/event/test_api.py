@@ -384,8 +384,6 @@ class ProfileDetailViewTestCase(SetupUserMixin, APITestCase):
         self.request_body = {
             "id_provided": True,
             "attended": True,
-            "acknowledge_rules": True,
-            "e_signature": "user signature",
         }
         self.change_permissions = Permission.objects.filter(
             content_type__app_label="event", codename="change_profile"
@@ -394,8 +392,8 @@ class ProfileDetailViewTestCase(SetupUserMixin, APITestCase):
             "id": self.profile.id,
             "id_provided": True,
             "attended": True,
-            "acknowledge_rules": True,
-            "e_signature": "user signature",
+            "acknowledge_rules": False,
+            "e_signature": None,
             "team": self.profile.team_id,
         }
         self.view = reverse("api:event:profile-detail", kwargs={"pk": self.profile.id})
@@ -416,31 +414,6 @@ class ProfileDetailViewTestCase(SetupUserMixin, APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(self.expected_response, data)
-
-    def test_modifying_acknowledge_rules_and_e_signature_twice(self):
-        self._login(self.change_permissions)
-
-        # First, normally update profile
-        response = self.client.patch(self.view, self.request_body)
-        data = response.json()
-        expected_response = self.expected_response
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(expected_response, data)
-
-        # Then update profile with a different request, changing acknowledge & e signature
-        new_request_body = {
-            "id_provided": False,
-            "attended": False,
-            "acknowledge_rules": False,
-            "e_signature": "new signature",
-        }
-        # acknowledge_rules and e_signature do not change
-        expected_response["id_provided"] = False
-        expected_response["attended"] = False
-        response2 = self.client.patch(self.view, new_request_body)
-        data2 = response2.json()
-        self.assertEqual(response2.status_code, status.HTTP_200_OK)
-        self.assertEqual(expected_response, data2)
 
     def test_partially_modifying_profile(self):
         self._login(self.change_permissions)
@@ -524,7 +497,7 @@ class CurrentProfileViewTestCase(SetupUserMixin, APITestCase):
     def test_partially_modifying_profile(self):
         self._login()
 
-        # only modifying id_provided
+        # only modifying acknowledge_rules
         request_body = {"acknowledge_rules": True}
         expected_response = {
             "id": self.profile.id,
