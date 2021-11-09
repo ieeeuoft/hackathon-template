@@ -13,12 +13,11 @@ import { mockCategories, mockHardware } from "testing/mockData";
 
 import { get, stripHostnameReturnFilters } from "api/api";
 
-jest.mock("api/api");
+jest.mock("api/api", () => ({
+    ...jest.requireActual("api/api"),
+    get: jest.fn(),
+}));
 const mockedGet = get as jest.MockedFunction<typeof get>;
-const mockStripHostnameReturnFilters =
-    stripHostnameReturnFilters as jest.MockedFunction<
-        typeof stripHostnameReturnFilters
-    >;
 
 const hardwareUri = "/api/hardware/hardware/";
 const categoriesUri = "/api/hardware/categories/";
@@ -137,14 +136,13 @@ describe("Inventory Page", () => {
         );
         const categoryApiResponse = makeMockApiListResponse(mockCategories);
 
+        const { path, filters } = stripHostnameReturnFilters(nextURL);
+
         when(mockedGet)
             .calledWith(hardwareUri, {})
             .mockResolvedValue(hardwareApiResponse);
-        when(mockStripHostnameReturnFilters)
-            .calledWith(nextURL)
-            .mockReturnValue({ path: hardwareUri, filters: { offset: limit } });
         when(mockedGet)
-            .calledWith(hardwareUri, { offset: limit })
+            .calledWith(path, filters)
             .mockResolvedValue(hardwareNextApiResponse);
         when(mockedGet)
             .calledWith(categoriesUri)

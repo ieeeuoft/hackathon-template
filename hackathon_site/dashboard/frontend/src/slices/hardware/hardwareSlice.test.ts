@@ -84,3 +84,20 @@ describe("getHardwareWithFilters thunk", () => {
         );
     });
 });
+
+describe('getHardwareNextPage thunk', () =>{
+     it("Updates the store on API success", async () => {
+        const response = makeMockApiListResponse(mockHardware);
+        mockedGet.mockResolvedValueOnce(response);
+
+        const store = makeStore();
+        await store.dispatch(getHardwareWithFilters());
+
+        await waitFor(() => {
+            expect(mockedGet).toHaveBeenCalledWith("/api/hardware/hardware/", {});
+            expect(hardwareSelectors.selectIds(store.getState())).toEqual(
+                mockHardware.map(({ id }) => id)
+            );
+        });
+    });
+});

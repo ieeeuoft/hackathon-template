@@ -78,7 +78,7 @@ export const getHardwareNextPage = createAsyncThunk<
     `${hardwareReducerName}/getHardwareNextPage`,
     async (_, { dispatch, getState, rejectWithValue }) => {
         try {
-            const nextFromState = hardwareNextSelector(getState()) ?? "";
+            const nextFromState = hardwareNextSelector(getState());
             if (nextFromState) {
                 const { path, filters } = stripHostnameReturnFilters(nextFromState);
                 const response = await get<APIListResponse<Hardware>>(path, filters);
