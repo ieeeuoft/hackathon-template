@@ -66,7 +66,7 @@ const Inventory = () => {
         dispatch(clearFilters());
         dispatch(getHardwareWithFilters());
         dispatch(getCategories());
-    }, [dispatch, clearFilters, getHardwareWithFilters, getCategories]);
+    }, [dispatch]);
 
     return (
         <>

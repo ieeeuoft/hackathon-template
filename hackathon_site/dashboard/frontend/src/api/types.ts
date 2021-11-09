@@ -42,3 +42,45 @@ export interface Category {
     max_per_team: number;
     unique_hardware_count: number;
 }
+
+/** Event API */
+export interface Profile {
+    id: number;
+    id_provided: boolean;
+    attended: boolean;
+    acknowledge_rules: boolean;
+    e_signature: string;
+    team: number;
+}
+
+export interface User {
+    id: number;
+    first_name: string;
+    last_name: string;
+    email: string;
+    profile: Profile;
+}
+
+type UserWithoutProfile = Omit<User, "profile">;
+type ProfileWithoutTeamNumber = Omit<Profile, "team">;
+
+export interface Team {
+    id: number;
+    team_code: string;
+    created_at: string;
+    updated_at: string;
+    profiles: (ProfileWithoutTeamNumber & { user: UserWithoutProfile })[];
+}
+
+/** Orders API */
+export type OrderStatus = "Submitted" | "Ready for Pickup" | "Picked Up" | "Cancelled";
+
+export interface Order {
+    id: number;
+    hardware: Hardware[];
+    team: number;
+    team_code: string;
+    status: OrderStatus;
+    created_at: string;
+    updated_at: string;
+}
