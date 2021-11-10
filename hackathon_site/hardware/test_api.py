@@ -645,7 +645,7 @@ class IncidentCreateViewPostTestCase(SetupUserMixin, APITestCase):
         self.view = reverse("api:hardware:incident-list")
 
     def test_user_not_logged_in(self):
-        response = self.client.post(self.view, self.request_data)
+        response = self.client.post(self.view, self.request_data, format="json")
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_user_has_no_profile(self):
