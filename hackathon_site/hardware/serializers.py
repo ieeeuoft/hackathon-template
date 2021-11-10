@@ -95,6 +95,13 @@ class IncidentCreateSerializer(IncidentListSerializer):
         fields = IncidentListSerializer.Meta.fields
         read_only_fields = ("team_id",)
 
+    def create(self, validated_data):
+        order = OrderItem.objects.get(id=validated_data["order_item"]["order"].id)
+        new_data = validated_data
+        new_data['order_item'] = order
+        incident = Incident.objects.create(**new_data)
+        return incident
+
 
 class OrderCreateSerializer(serializers.Serializer):
     class OrderCreateHardwareSerializer(serializers.Serializer):
