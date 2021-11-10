@@ -432,7 +432,6 @@ class IncidentListsViewTestCase(SetupUserMixin, APITestCase):
         self.assertCountEqual(returned_ids, [2])
 
 
-
 class OrderListViewGetTestCase(SetupUserMixin, APITestCase):
     def setUp(self):
         super().setUp()
@@ -601,6 +600,7 @@ class OrderListViewGetTestCase(SetupUserMixin, APITestCase):
         returned_ids = [res["id"] for res in results]
         self.assertCountEqual(returned_ids, [self.order_3.id])
 
+
 class IncidentCreateViewPostTestCase(SetupUserMixin, APITestCase):
     def setUp(self):
         super().setUp()
@@ -634,11 +634,13 @@ class IncidentCreateViewPostTestCase(SetupUserMixin, APITestCase):
             order=self.order, hardware=self.other_hardware,
         )
 
-        self.request_data = {'state': 'Broken',
-                             'time_occurred': '2022-08-08T00:00:00-05:18',
-                             'description': 'Description',
-                             'order_item': {'hardware':1, 'order':1, 'part_returned_health':None},
-                             'team_id': 1}
+        self.request_data = {
+            "state": "Broken",
+            "time_occurred": "2022-08-08T00:00:00-05:18",
+            "description": "Description",
+            "order_item": {"hardware": 1, "order": 1, "part_returned_health": None},
+            "team_id": 1,
+        }
 
         self.view = reverse("api:hardware:incident-list")
 
@@ -648,10 +650,8 @@ class IncidentCreateViewPostTestCase(SetupUserMixin, APITestCase):
 
     def test_user_has_no_profile(self):
         self._login()
-        response = self.client.post(self.view, self.request_data,format='json')
+        response = self.client.post(self.view, self.request_data, format="json")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
-
 
 
 class OrderListViewPostTestCase(SetupUserMixin, APITestCase):

@@ -98,7 +98,7 @@ class IncidentCreateSerializer(IncidentListSerializer):
     def create(self, validated_data):
         order = OrderItem.objects.get(id=validated_data["order_item"]["order"].id)
         new_data = validated_data
-        new_data['order_item'] = order
+        new_data["order_item"] = order
         incident = Incident.objects.create(**new_data)
         return incident
 
