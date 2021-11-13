@@ -1,5 +1,6 @@
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
+import re
 
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
@@ -171,6 +172,7 @@ class ApplicationForm(forms.ModelForm):
 
         self.instance.user = self.user
         self.instance.team = team
+        self.instance.phone_number = re.sub("[^0-9]", "", self.instance.phone_number)
 
         if commit:
             self.instance.save()
