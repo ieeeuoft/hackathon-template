@@ -12,13 +12,12 @@ import CartSummary from "components/cart/CartSummary/CartSummary";
 import {
     clearFilters,
     getHardwareWithFilters,
-    hardwareSelectors,
     isLoadingSelector as isHardwareLoadingSelector,
     selectHardwareByIds,
     setFilters,
 } from "slices/hardware/hardwareSlice";
 import { RootState } from "slices/store";
-import { addToCart, cartSelectors } from "../../slices/hardware/cartSlice";
+import { addToCart, cartSelectors } from "slices/hardware/cartSlice";
 import Button from "@material-ui/core/Button";
 
 const Cart = () => {
@@ -73,7 +72,7 @@ const Cart = () => {
                         />
                     ) : cartQuantity === 0 ? (
                         <Typography variant="subtitle2" align="center" paragraph>
-                            NO ITEMS FOUND
+                            NO ITEMS IN CART
                         </Typography>
                     ) : (
                         cartItems.map(({ hardware_id, quantity }, i) => {
@@ -88,7 +87,7 @@ const Cart = () => {
                             );
                         })
                     )}
-
+                    {/*TODO: Remove this button when something else has been hooked up to the store*/}
                     <Button
                         color="primary"
                         variant="contained"

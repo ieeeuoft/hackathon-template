@@ -12,15 +12,17 @@ import { get } from "api/api";
 
 import Cart from "pages/Cart/Cart";
 import { Hardware } from "api/types";
+import { addToCart } from "../../slices/hardware/cartSlice";
 
 jest.mock("api/api");
 const mockedGet = get as jest.MockedFunction<typeof get>;
 
 describe("Cart Page", () => {
-    test("Cart items and Cart Summary card appears", async () => {
-        // TODO: Cart page currently loads all of mockCartItems. Update this test once
-        // the page pulls items from redux.
+    test("Cart items from store and Cart Summary card appears", async () => {
         const store = makeStoreWithEntities({ hardware: mockHardware });
+        mockCartItems.forEach((item) => {
+            store.dispatch(addToCart(item));
+        });
 
         const { getByText } = render(<Cart />, { store });
 
@@ -32,6 +34,11 @@ describe("Cart Page", () => {
         });
 
         expect(getByText("Cart Summary")).toBeInTheDocument();
+        const expectedQuantity = mockCartItems.reduce(
+            (sum, item) => sum + item.quantity,
+            0
+        );
+        expect(getByText(expectedQuantity)).toBeInTheDocument();
     });
 
     it("Fetches any missing hardware on load", async () => {
@@ -39,6 +46,9 @@ describe("Cart Page", () => {
             hardware: mockHardware.filter(
                 (hardware) => hardware.id === mockCartItems[0].hardware_id
             ),
+        });
+        mockCartItems.forEach((item) => {
+            store.dispatch(addToCart(item));
         });
 
         const hardwareIdsToFetch = new Set(
@@ -72,5 +82,15 @@ describe("Cart Page", () => {
         expect(mockedGet).toHaveBeenCalledWith("/api/hardware/hardware/", {
             hardware_ids: Array.from(hardwareIdsToFetch),
         });
+    });
+
+    test("No items in the cart", async () => {
+        const store = makeStoreWithEntities({ hardware: mockHardware });
+
+        const { getByText } = render(<Cart />, { store });
+
+        expect(getByText(/no items in cart/i)).toBeInTheDocument();
+        // Test for quantity
+        expect(getByText(0)).toBeInTheDocument();
     });
 });
