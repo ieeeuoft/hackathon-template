@@ -316,7 +316,6 @@ class EventTeamListsViewTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.json()
         results = data["results"]
-        print(results)
         returned_ids = [res["id"] for res in results]
         self.assertCountEqual(returned_ids, [1, 3])
 

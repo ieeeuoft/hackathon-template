@@ -1,6 +1,8 @@
 import re
 from unittest.mock import patch
 from datetime import datetime, timedelta
+import json
+
 
 from django.core import mail
 from django.contrib.auth.models import Group
@@ -17,6 +19,9 @@ from event.serializers import (
     UserSerializer,
     GroupSerializer,
     ProfileSerializer,
+    ProfileInUserSerializer,
+    ProfileInTeamSerializer,
+    UserInSerializer,
 )
 
 
@@ -756,4 +761,58 @@ class ProfileSerializerTestCase(TestCase):
             "e_signature": profile.e_signature,
             "team": team.id,
         }
+        self.assertEqual(profile_expected, profile_serialized)
+
+
+class ProfileInUserSerializerTestCase(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username="foo@bar.com",
+            password="foobar123",
+            first_name="Foo",
+            last_name="Bar",
+        )
+
+    def test_serializer(self):
+        team = EventTeam.objects.create()
+
+        profile = Profile.objects.create(user=self.user, team=team)
+        profile_serialized = ProfileInUserSerializer(profile).data
+
+        profile_expected = {
+            "id": profile.id,
+            "id_provided": profile.id_provided,
+            "attended": profile.attended,
+            "acknowledge_rules": profile.acknowledge_rules,
+            "e_signature": profile.e_signature,
+            "user": UserInSerializer(profile.user).data,
+        }
+
+        self.assertEqual(profile_expected, profile_serialized)
+
+
+class ProfileInTeamSerilializerTestCase(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username="foo@bar.com",
+            password="foobar123",
+            first_name="Foo",
+            last_name="Bar",
+        )
+
+    def test_serializer(self):
+        team = EventTeam.objects.create()
+
+        profile = Profile.objects.create(user=self.user, team=team)
+        profile_serialized = ProfileInTeamSerializer(profile).data
+
+        profile_expected = {
+            "id": profile.id,
+            "id_provided": profile.id_provided,
+            "attended": profile.attended,
+            "acknowledge_rules": profile.acknowledge_rules,
+            "e_signature": profile.e_signature,
+            "user": UserInSerializer(profile.user).data,
+        }
+
         self.assertEqual(profile_expected, profile_serialized)
