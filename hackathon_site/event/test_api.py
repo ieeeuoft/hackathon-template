@@ -472,6 +472,7 @@ class EventTeamDetailViewTestCase(SetupUserMixin, APITestCase):
 
         self.assertEqual(expected_response[0], data)
 
+
 class TeamOrderDetailViewTestCase(SetupUserMixin, APITestCase):
     def setUp(self):
         super().setUp()
@@ -510,7 +511,9 @@ class TeamOrderDetailViewTestCase(SetupUserMixin, APITestCase):
         response = self.client.patch(self._build_view(self.pk), request_data)
         self.assertEqual(
             response.json(),
-            {'detail': 'Cannot change the current status of the order to the desired order.'},
+            {
+                "detail": "Cannot change the current status of the order to the desired order."
+            },
         )
 
     def test_failed_beginning_status(self):
@@ -518,8 +521,7 @@ class TeamOrderDetailViewTestCase(SetupUserMixin, APITestCase):
         order = Order.objects.create(status="Picked Up", team=self.team)
         response = self.client.patch(self._build_view(order.id), self.request_data)
         self.assertEqual(
-            response.json(),
-            {'detail': 'Cannot change the status for this order.'},
+            response.json(), {"detail": "Cannot change the status for this order."},
         )
 
     def test_cannot_change_other_team_order(self):

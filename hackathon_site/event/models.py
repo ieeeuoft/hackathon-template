@@ -45,4 +45,3 @@ class Profile(models.Model):
 
     def __str__(self):
         return f"{self.id} | {self.user.first_name} {self.user.last_name}"
-

@@ -11,7 +11,7 @@ from event.serializers import UserSerializer, TeamSerializer
 from event.permissions import UserHasProfile, FullDjangoModelPermissions
 
 from hardware.models import OrderItem, Order
-from hardware.serializers import OrderListSerializer,OrderChangeSerializer
+from hardware.serializers import OrderListSerializer, OrderChangeSerializer
 
 
 class CurrentUserAPIView(generics.GenericAPIView, mixins.RetrieveModelMixin):
@@ -124,6 +124,7 @@ class TeamDetailView(mixins.RetrieveModelMixin, generics.GenericAPIView):
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
 
+
 class TeamOrderDetailView(mixins.UpdateModelMixin, generics.GenericAPIView):
     queryset = Order.objects.all()
     serializer_class = OrderChangeSerializer
@@ -131,9 +132,14 @@ class TeamOrderDetailView(mixins.UpdateModelMixin, generics.GenericAPIView):
 
     def patch(self, request, *args, **kwargs):
         order = self.get_object()
-        change_options = {"Submitted": ["Cancelled"],}
+        change_options = {
+            "Submitted": ["Cancelled"],
+        }
         current_status = order.status
-        order_team, user_team = order.team.team_code, request.user.profile.team.team_code
+        order_team, user_team = (
+            order.team.team_code,
+            request.user.profile.team.team_code,
+        )
 
         if order_team != user_team:
             raise ValidationError(
@@ -146,9 +152,11 @@ class TeamOrderDetailView(mixins.UpdateModelMixin, generics.GenericAPIView):
                 code=status.HTTP_400_BAD_REQUEST,
             )
         allowed_statuses = change_options[current_status]
-        if request.data['status'] not in allowed_statuses:
+        if request.data["status"] not in allowed_statuses:
             raise ValidationError(
-                {"detail": "Cannot change the current status of the order to the desired order."},
+                {
+                    "detail": "Cannot change the current status of the order to the desired order."
+                },
                 code=status.HTTP_400_BAD_REQUEST,
             )
         return self.partial_update(request, *args, **kwargs)

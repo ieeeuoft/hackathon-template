@@ -6,6 +6,7 @@ from rest_framework import serializers
 
 from hardware.models import Hardware, Category, OrderItem, Order, Incident
 
+
 class HardwareSerializer(serializers.ModelSerializer):
     quantity_remaining = serializers.IntegerField()
 

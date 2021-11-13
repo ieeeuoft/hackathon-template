@@ -131,7 +131,7 @@ class OrderDetailView(generics.GenericAPIView, mixins.UpdateModelMixin):
         order = self.get_object()
         change_options = {
             "Submitted": ["Cancelled", "Ready for Pickup"],
-            "Ready for Pickup": ["Picked Up"]
+            "Ready for Pickup": ["Picked Up"],
         }
         current_status = order.status
         if current_status not in change_options:
@@ -140,9 +140,11 @@ class OrderDetailView(generics.GenericAPIView, mixins.UpdateModelMixin):
                 code=status.HTTP_400_BAD_REQUEST,
             )
         allowed_statuses = change_options[current_status]
-        if request.data['status'] not in allowed_statuses:
+        if request.data["status"] not in allowed_statuses:
             raise ValidationError(
-                {"detail": "Cannot change the current status of the order to the desired order."},
+                {
+                    "detail": "Cannot change the current status of the order to the desired order."
+                },
                 code=status.HTTP_400_BAD_REQUEST,
             )
         return self.partial_update(request, *args, **kwargs)
