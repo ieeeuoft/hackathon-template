@@ -1272,7 +1272,7 @@ class OrderListPatchTestCase(SetupUserMixin, APITestCase):
             picture="/picture/location",
         )
         order = Order.objects.create(status="Submitted", team=self.team)
-        OrderItem.objects.create(order=order,hardware=hardware)
+        OrderItem.objects.create(order=order, hardware=hardware)
         self.pk = order.id
 
     def _build_view(self, pk):
@@ -1297,6 +1297,7 @@ class OrderListPatchTestCase(SetupUserMixin, APITestCase):
         self._login(self.change_permissions)
         request_data = {"status": "Picked Up"}
         response = self.client.patch(self._build_view(self.pk), request_data)
-        self.assertEqual(response.json(), {'non_field_errors': ['Cannot change current status to requested status']})
-
-
+        self.assertEqual(
+            response.json(),
+            {"non_field_errors": ["Cannot change current status to requested status"]},
+        )

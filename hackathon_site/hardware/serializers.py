@@ -96,7 +96,14 @@ class OrderChangeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = OrderListSerializer.Meta.fields
-        read_only_fields = ("id", "hardware", "team", "team_code", "created_at", "updated_at",)
+        read_only_fields = (
+            "id",
+            "hardware",
+            "team",
+            "team_code",
+            "created_at",
+            "updated_at",
+        )
 
     @staticmethod
     def get_team_code(obj: Order):
@@ -118,6 +125,7 @@ class OrderChangeSerializer(serializers.ModelSerializer):
             )
 
         return data
+
 
 class OrderCreateSerializer(serializers.Serializer):
     class OrderCreateHardwareSerializer(serializers.Serializer):
