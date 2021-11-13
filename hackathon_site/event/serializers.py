@@ -16,7 +16,22 @@ class UserInSerializer(serializers.ModelSerializer):
         fields = ("id", "first_name", "last_name", "email")
 
 
-class ProfileSerializer(serializers.ModelSerializer):
+class ProfileInUserSerializer(serializers.ModelSerializer):
+    user = UserInSerializer(read_only=True)
+
+    class Meta:
+        model = Profile
+        fields = (
+            "id",
+            "id_provided",
+            "attended",
+            "acknowledge_rules",
+            "e_signature",
+            "user",
+        )
+
+
+class ProfileInTeamSerializer(serializers.ModelSerializer):
     user = UserInSerializer(read_only=True)
 
     class Meta:
@@ -32,7 +47,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    profile = ProfileSerializer(read_only=True)
+    profile = ProfileInUserSerializer(read_only=True)
     groups = GroupSerializer(many=True, read_only=True)
 
     class Meta:
@@ -41,7 +56,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class TeamSerializer(serializers.ModelSerializer):
-    profiles = ProfileSerializer(many=True, read_only=True)
+    profiles = ProfileInTeamSerializer(many=True, read_only=True)
 
     class Meta:
         model = Team
@@ -52,7 +67,3 @@ class TeamSerializer(serializers.ModelSerializer):
             "updated_at",
             "profiles",
         )
-
-    @staticmethod
-    def get_team_code(obj: Profile):
-        return obj.user.name
