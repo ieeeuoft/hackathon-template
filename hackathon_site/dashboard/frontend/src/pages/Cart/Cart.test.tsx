@@ -12,7 +12,7 @@ import { get } from "api/api";
 
 import Cart from "pages/Cart/Cart";
 import { Hardware } from "api/types";
-import { addToCart } from "../../slices/hardware/cartSlice";
+import { addToCart } from "slices/hardware/cartSlice";
 
 jest.mock("api/api");
 const mockedGet = get as jest.MockedFunction<typeof get>;

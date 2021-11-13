@@ -4,6 +4,7 @@ import styles from "./Cart.module.scss";
 import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 import Divider from "@material-ui/core/Divider";
+import Button from "@material-ui/core/Button";
 import LinearProgress from "@material-ui/core/LinearProgress";
 
 import Header from "components/general/Header/Header";
@@ -18,7 +19,6 @@ import {
 } from "slices/hardware/hardwareSlice";
 import { RootState } from "slices/store";
 import { addToCart, cartSelectors } from "slices/hardware/cartSlice";
-import Button from "@material-ui/core/Button";
 
 const Cart = () => {
     const cartItems = useSelector(cartSelectors.selectAll);
@@ -57,7 +57,7 @@ const Cart = () => {
             dispatch(setFilters({ hardware_ids }));
             dispatch(getHardwareWithFilters({ keepOld: true }));
         }
-    }, [dispatch, hardware, isHardwareLoading]);
+    }, [dispatch, hardware, isHardwareLoading, cartItems]);
 
     return (
         <>
