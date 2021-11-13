@@ -714,7 +714,7 @@ class UserSerializerTestCase(TestCase):
         )
 
         user_serialized = UserSerializer(user).data
-        profile_serialized = ProfileSerializer(user.profile).data
+        profile_serialized = ProfileInUserSerializer(user.profile).data
         group_serialized = GroupSerializer(user.groups, many=True).data
 
         user_expected = {
@@ -725,6 +725,7 @@ class UserSerializerTestCase(TestCase):
             "profile": profile_serialized,
             "groups": group_serialized,
         }
+
         self.assertEqual(user_expected, user_serialized)
 
 
