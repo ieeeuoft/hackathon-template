@@ -16,6 +16,7 @@ interface HardwareExtraState {
     error: string | null;
     next: string | null;
     filters: HardwareFilters;
+    count: number;
 }
 
 const extraState: HardwareExtraState = {
@@ -23,6 +24,7 @@ const extraState: HardwareExtraState = {
     error: null,
     next: null,
     filters: {},
+    count: 0,
 };
 
 export const hardwareReducerName = "hardware";
@@ -38,7 +40,7 @@ interface RejectValue {
 
 export const getHardwareWithFilters = createAsyncThunk<
     APIListResponse<Hardware>,
-    void,
+    { keepOld?: boolean } | undefined,
     { state: RootState; rejectValue: RejectValue; dispatch: AppDispatch }
 >(
     `${hardwareReducerName}/getHardwareWithFilters`,
@@ -114,12 +116,21 @@ const hardwareSlice = createSlice({
             state.error = null;
         });
 
-        builder.addCase(getHardwareWithFilters.fulfilled, (state, { payload }) => {
-            state.isLoading = false;
-            state.error = null;
-            state.next = payload.next;
-            hardwareAdapter.setAll(state, payload.results);
-        });
+        builder.addCase(
+            getHardwareWithFilters.fulfilled,
+            (state, { payload, meta }) => {
+                state.isLoading = false;
+                state.error = null;
+                state.next = payload.next;
+                state.count = payload.count;
+
+                if (meta.arg?.keepOld) {
+                    hardwareAdapter.setMany(state, payload.results);
+                } else {
+                    hardwareAdapter.setAll(state, payload.results);
+                }
+            }
+        );
 
         builder.addCase(getHardwareWithFilters.rejected, (state, { payload }) => {
             state.isLoading = false;
@@ -143,7 +154,17 @@ export const isLoadingSelector = createSelector(
     (hardwareSlice) => hardwareSlice.isLoading
 );
 
+export const hardwareCountSelector = createSelector(
+    [hardwareSliceSelector],
+    (hardwareSlice) => hardwareSlice.count
+);
+
 export const hardwareFiltersSelector = createSelector(
     [hardwareSliceSelector],
     (hardwareSlice) => hardwareSlice.filters
+);
+
+export const selectHardwareByIds = createSelector(
+    [hardwareSelectors.selectEntities, (state: RootState, ids: number[]) => ids],
+    (entities, ids) => ids.map((id) => entities?.[id])
 );
