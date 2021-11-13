@@ -293,7 +293,6 @@ class LeaveTeamTestCase(SetupUserMixin, APITestCase):
 
 class EventTeamListsViewTestCase(SetupUserMixin, APITestCase):
     def setUp(self):
-
         self.team = Team.objects.create()
         self.team2 = Team.objects.create()
         self.team3 = Team.objects.create()
@@ -307,6 +306,19 @@ class EventTeamListsViewTestCase(SetupUserMixin, APITestCase):
         return (
             self.view + "?" + "&".join([f"{key}={val}" for key, val in kwargs.items()])
         )
+
+    def test_team_id_filter(self):
+        self._login(self.permissions)
+
+        url = self._build_filter_url(team_ids="1,3")
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.json()
+        results = data["results"]
+        print(results)
+        returned_ids = [res["id"] for res in results]
+        self.assertCountEqual(returned_ids, [1,3])
 
     def test_team_get_no_permissions(self):
         self._login()
@@ -344,18 +356,7 @@ class EventTeamListsViewTestCase(SetupUserMixin, APITestCase):
         returned_ids = [res["team_code"] for res in results]
         self.assertCountEqual(returned_ids, [self.team.team_code])
 
-    def test_team_id_filter(self):
-        self._login(self.permissions)
 
-        url = self._build_filter_url(team_ids="1,3")
-
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        data = response.json()
-        results = data["results"]
-
-        returned_ids = [res["id"] for res in results]
-        self.assertCountEqual(returned_ids, [1, 3])
 
     def test_name_search_filter(self):
         self._login(self.permissions)
@@ -471,3 +472,6 @@ class EventTeamDetailViewTestCase(SetupUserMixin, APITestCase):
         data = response.json()
 
         self.assertEqual(expected_response[0], data)
+
+
+
