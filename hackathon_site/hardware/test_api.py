@@ -7,7 +7,7 @@ from django.conf import settings
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from event.models import Team, Profile, User
+from event.models import Team
 from hardware.models import Hardware, Category, Order, OrderItem, Incident
 from hardware.serializers import (
     HardwareSerializer,
@@ -1303,7 +1303,14 @@ class OrderListPatchTestCase(SetupUserMixin, APITestCase):
         self._login(self.change_permissions)
         request_data = {"status": "Picked Up"}
         response = self.client.patch(self._build_view(self.pk), request_data)
+        self.assertEqual(response.json(), {'detail': 'Cannot change the current status of the order to the desired order.'})
+
+    def test_failed_beginning_status(self):
+        self._login(self.change_permissions)
+        request_data = {"status": "Cancelled"}
+        order = Order.objects.create(status="Picked Up", team=self.team)
+        response = self.client.patch(self._build_view(order.id), request_data)
         self.assertEqual(
             response.json(),
-            {"non_field_errors": ["Cannot change current status to requested status"]},
+            {'detail': 'Cannot change the status for this order.'},
         )

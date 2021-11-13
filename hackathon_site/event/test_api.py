@@ -471,3 +471,63 @@ class EventTeamDetailViewTestCase(SetupUserMixin, APITestCase):
         data = response.json()
 
         self.assertEqual(expected_response[0], data)
+
+class TeamOrderDetailViewTestCase(SetupUserMixin, APITestCase):
+    def setUp(self):
+        super().setUp()
+        self.team = Team.objects.create()
+        self.profile = Profile.objects.create(user=self.user, team=self.team)
+        self.view_name = "api:event:order-detail"
+        hardware = Hardware.objects.create(
+            name="name",
+            model_number="model",
+            manufacturer="manufacturer",
+            datasheet="/datasheet/location/",
+            quantity_available=4,
+            max_per_team=1,
+            picture="/picture/location",
+        )
+        order = Order.objects.create(status="Submitted", team=self.team)
+        OrderItem.objects.create(order=order, hardware=hardware)
+        self.pk = order.id
+        self.request_data = {"status": "Cancelled"}
+
+    def _build_view(self, pk):
+        return reverse(self.view_name, kwargs={"pk": pk})
+
+    def test_user_not_logged_in(self):
+        response = self.client.patch(self._build_view(self.pk), self.request_data)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_successful_status_change(self):
+        self._login()
+        response = self.client.patch(self._build_view(self.pk), self.request_data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_unallowed_status_change(self):
+        self._login()
+        request_data = {"status": "Picked Up"}
+        response = self.client.patch(self._build_view(self.pk), request_data)
+        self.assertEqual(
+            response.json(),
+            {'detail': 'Cannot change the current status of the order to the desired order.'},
+        )
+
+    def test_failed_beginning_status(self):
+        self._login()
+        order = Order.objects.create(status="Picked Up", team=self.team)
+        response = self.client.patch(self._build_view(order.id), self.request_data)
+        self.assertEqual(
+            response.json(),
+            {'detail': 'Cannot change the status for this order.'},
+        )
+
+    def test_cannot_change_other_team_order(self):
+        self._login()
+        self.team2 = Team.objects.create()
+        order = Order.objects.create(status="Submitted", team=self.team2)
+        response = self.client.patch(self._build_view(order.id), self.request_data)
+        self.assertEqual(
+            response.json(),
+            {"detail": "Cannot change the status for another team's order."},
+        )
