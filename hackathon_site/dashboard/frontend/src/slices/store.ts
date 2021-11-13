@@ -7,10 +7,12 @@ import userReducer, { userReducerName } from "slices/users/userSlice";
 import uiReducer, { uiReducerName } from "slices/ui/uiSlice";
 import hardwareReducer, { hardwareReducerName } from "slices/hardware/hardwareSlice";
 import categoryReducer, { categoryReducerName } from "slices/hardware/categorySlice";
+import cartReducer, { cartReducerName } from "slices/hardware/cartSlice";
 
 export const history = createBrowserHistory();
 
 const reducers = {
+    [cartReducerName]: cartReducer,
     [categoryReducerName]: categoryReducer,
     [hardwareReducerName]: hardwareReducer,
     [userReducerName]: userReducer,
