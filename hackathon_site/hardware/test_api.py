@@ -14,7 +14,6 @@ from hardware.serializers import (
     CategorySerializer,
     OrderListSerializer,
     IncidentSerializer,
-    OrderChangeSerializer,
 )
 from hackathon_site.tests import SetupUserMixin
 
@@ -1259,7 +1258,10 @@ class OrderListPatchTestCase(SetupUserMixin, APITestCase):
     def setUp(self):
         super().setUp()
         self.team = Team.objects.create()
-        self.view_name = "api:hardware:update-order"
+        self.view_name = "api:hardware:order-detail"
+        self.change_permissions = Permission.objects.filter(
+            content_type__app_label="hardware", codename="change_order"
+        )
         hardware = Hardware.objects.create(
             name="name",
             model_number="model",
@@ -1271,16 +1273,30 @@ class OrderListPatchTestCase(SetupUserMixin, APITestCase):
         )
         order = Order.objects.create(status="Submitted", team=self.team)
         OrderItem.objects.create(order=order,hardware=hardware)
-        self.order_id = order.id
+        self.pk = order.id
 
-    def _build_view(self, order_id):
-        return reverse(self.view_name, kwargs={"order_id": order_id})
-
-
-    def test_successful_status_change(self):
-        response = self.client.patch(self._build_view(self.order_id),OrderCa)
-        pass
+    def _build_view(self, pk):
+        return reverse(self.view_name, kwargs={"pk": pk})
 
     def test_user_not_logged_in(self):
-        response = self.client.patch(self._build_view(self.order_id))
+        response = self.client.patch(self._build_view(self.pk))
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_user_lack_perms(self):
+        self._login()
+        response = self.client.patch(self._build_view(self.pk))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_successful_status_change(self):
+        self._login(self.change_permissions)
+        request_data = {"status": "Ready for Pickup"}
+        response = self.client.patch(self._build_view(self.pk), request_data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_unallowed_status_change(self):
+        self._login(self.change_permissions)
+        request_data = {"status": "Picked Up"}
+        response = self.client.patch(self._build_view(self.pk), request_data)
+        self.assertEqual(response.json(), {'non_field_errors': ['Cannot change current status to requested status']})
+
+

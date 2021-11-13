@@ -39,30 +39,6 @@ class CategorySerializer(serializers.ModelSerializer):
         return obj.hardware_set.annotate(Count("id", distinct=True)).count()
 
 
-class OrderChangeSerializer(serializers.ModelSerializer):
-    hardware_set = HardwareSerializer(many=True, read_only=True)
-
-    class Meta:
-        model = Order
-        fields = ("id", "status")
-
-    def validate(self, data):
-        current_status = Order.objects.filter(id=self.context["request"].order.id).status
-        requested_status = self.context["request"].status
-        change_options = {
-            "Submitted": ["Cancelled", "Ready for Pickup"],
-            "Ready for Pickup": ["Picked Up"],
-        }
-        if current_status not in change_options:
-            raise serializers.ValidationError("Cannot change status for this order")
-        new_status_options = change_options[current_status]
-        if requested_status not in new_status_options:
-            raise serializers.ValidationError(
-                "Cannot change current status to requested status"
-            )
-        return data
-
-
 class OrderItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderItem
@@ -112,6 +88,36 @@ class OrderListSerializer(serializers.ModelSerializer):
     def get_team_code(obj: Order):
         return obj.team.team_code
 
+
+class OrderChangeSerializer(serializers.ModelSerializer):
+    hardware = HardwareSerializer(many=True, read_only=True)
+    team_code = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Order
+        fields = OrderListSerializer.Meta.fields
+        read_only_fields = ("id", "hardware", "team", "team_code", "created_at", "updated_at",)
+
+    @staticmethod
+    def get_team_code(obj: Order):
+        return obj.team.team_code
+
+    def validate(self, data):
+        current_status = Order.objects.get(id=self.instance.id).status
+        requested_status = self.context["request"].data["status"]
+        change_options = {
+            "Submitted": ["Cancelled", "Ready for Pickup"],
+            "Ready for Pickup": ["Picked Up"],
+        }
+        if current_status not in change_options:
+            raise serializers.ValidationError("Cannot change status for this order")
+        new_status_options = change_options[current_status]
+        if requested_status not in new_status_options:
+            raise serializers.ValidationError(
+                "Cannot change current status to requested status"
+            )
+
+        return data
 
 class OrderCreateSerializer(serializers.Serializer):
     class OrderCreateHardwareSerializer(serializers.Serializer):

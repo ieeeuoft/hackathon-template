@@ -7,7 +7,6 @@ from drf_yasg.utils import swagger_auto_schema
 
 from rest_framework import generics, mixins, status, permissions
 from rest_framework.response import Response
-from rest_framework.exceptions import ValidationError
 from rest_framework.filters import SearchFilter, OrderingFilter
 
 from event.permissions import UserHasProfile, FullDjangoModelPermissions
@@ -82,13 +81,10 @@ class OrderListView(generics.ListAPIView):
         # TODO: Causing problems with queryset aggregations, will figure out later:
         # .prefetch_related("hardware", "hardware__categories")
     )
-    serializer_class = OrderListSerializer
     serializer_method_classes = {
         "GET": OrderListSerializer,
         "POST": OrderCreateSerializer,
-        "PATCH": OrderChangeSerializer,
     }
-    lookup_field = "id"
 
     filter_backends = (filters.DjangoFilterBackend, OrderingFilter, SearchFilter)
     filterset_class = OrderFilter
@@ -104,16 +100,10 @@ class OrderListView(generics.ListAPIView):
     def get_permissions(self):
         if self.request.method == "POST":
             return [UserHasProfile()]
-        if self.request.method == "GET":
+        elif self.request.method == "GET":
             return [FullDjangoModelPermissions()]
-        if self.request.method == "PATCH":
-            if self.request.user.has_perm("hardware.change_order"):
-                return [FullDjangoModelPermissions()]
-            else:
-                return [UserHasProfile()]
         return [permissions.IsAuthenticated()]
 
-    # TODO: make this admin only
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
 
@@ -122,7 +112,6 @@ class OrderListView(generics.ListAPIView):
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-
         create_response = serializer.save()
         response_serializer = OrderCreateResponseSerializer(data=create_response)
         if not response_serializer.is_valid():
@@ -131,21 +120,11 @@ class OrderListView(generics.ListAPIView):
         response_data = response_serializer.data
         return Response(response_data, status=status.HTTP_201_CREATED)
 
+class OrderDetailView(generics.GenericAPIView,mixins.UpdateModelMixin):
+    queryset = Order.objects.all()
+    serializer_class = OrderChangeSerializer
+    permission_classes = [FullDjangoModelPermissions]
+
     def patch(self, request, *args, **kwargs):
-        if self.request.user.has_perm("hardware.change_order"):
-            order = self.get_object()
-            serializer = self.get_serializer_class()(
-                order, status=request.data.order.status, partial=True
-            )
-            if serializer.is_valid():
-                serializer.save()
-                return Response(data=serializer.data, status=status.HTTP_202_ACCEPTED)
-            else:
-                return Response(
-                    data=serializer.data, status=status.HTTP_400_BAD_REQUEST
-                )
-        else:
-            raise ValidationError(
-                {"detail": "The request has incorrect permissions to change the order"},
-                code=status.HTTP_403_FORBIDDEN
-            )
+        return self.partial_update(request, *args, **kwargs)
+
