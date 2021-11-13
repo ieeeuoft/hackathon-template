@@ -6,7 +6,6 @@ from rest_framework import serializers
 
 from hardware.models import Hardware, Category, OrderItem, Order, Incident
 
-
 class HardwareSerializer(serializers.ModelSerializer):
     quantity_remaining = serializers.IntegerField()
 
@@ -108,23 +107,6 @@ class OrderChangeSerializer(serializers.ModelSerializer):
     @staticmethod
     def get_team_code(obj: Order):
         return obj.team.team_code
-
-    def validate(self, data):
-        current_status = Order.objects.get(id=self.instance.id).status
-        requested_status = self.context["request"].data["status"]
-        change_options = {
-            "Submitted": ["Cancelled", "Ready for Pickup"],
-            "Ready for Pickup": ["Picked Up"],
-        }
-        if current_status not in change_options:
-            raise serializers.ValidationError("Cannot change status for this order")
-        new_status_options = change_options[current_status]
-        if requested_status not in new_status_options:
-            raise serializers.ValidationError(
-                "Cannot change current status to requested status"
-            )
-
-        return data
 
 
 class OrderCreateSerializer(serializers.Serializer):
