@@ -128,23 +128,4 @@ class OrderDetailView(generics.GenericAPIView, mixins.UpdateModelMixin):
     permission_classes = [FullDjangoModelPermissions]
 
     def patch(self, request, *args, **kwargs):
-        order = self.get_object()
-        change_options = {
-            "Submitted": ["Cancelled", "Ready for Pickup"],
-            "Ready for Pickup": ["Picked Up"],
-        }
-        current_status = order.status
-        if current_status not in change_options:
-            raise ValidationError(
-                {"detail": "Cannot change the status for this order."},
-                code=status.HTTP_400_BAD_REQUEST,
-            )
-        allowed_statuses = change_options[current_status]
-        if request.data["status"] not in allowed_statuses:
-            raise ValidationError(
-                {
-                    "detail": "Cannot change the current status of the order to the desired order."
-                },
-                code=status.HTTP_400_BAD_REQUEST,
-            )
         return self.partial_update(request, *args, **kwargs)

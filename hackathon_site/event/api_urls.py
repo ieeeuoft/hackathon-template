@@ -21,8 +21,8 @@ urlpatterns = [
     ),
     path("teams/<int:pk>/", api_views.TeamDetailView.as_view(), name="team-detail"),
     path(
-        "teams/team/order/<int:pk>/",
+        "teams/team/orders/<int:pk>/",
         api_views.TeamOrderDetailView.as_view(),
-        name="order-detail",
+        name="team-order-detail",
     ),
 ]

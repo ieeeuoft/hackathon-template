@@ -1,8 +1,8 @@
 from collections import Counter
 import functools
 from django.db.models import Count, Q
-from django.core.exceptions import ObjectDoesNotExist
-from rest_framework import serializers
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from rest_framework import serializers, status
 
 from hardware.models import Hardware, Category, OrderItem, Order, Incident
 
@@ -93,6 +93,11 @@ class OrderChangeSerializer(serializers.ModelSerializer):
     hardware = HardwareSerializer(many=True, read_only=True)
     team_code = serializers.SerializerMethodField()
 
+    change_options = {
+        "Submitted": ["Cancelled", "Ready for Pickup"],
+        "Ready for Pickup": ["Picked Up"],
+    }
+
     class Meta:
         model = Order
         fields = OrderListSerializer.Meta.fields
@@ -108,6 +113,30 @@ class OrderChangeSerializer(serializers.ModelSerializer):
     @staticmethod
     def get_team_code(obj: Order):
         return obj.team.team_code
+
+    def validate(self, data):
+        current_status = self.instance.status
+
+        if current_status not in self.change_options:
+            raise ValidationError(
+                {"detail": "Cannot change the status for this order."},
+                code=status.HTTP_403_FORBIDDEN,
+            )
+
+        if data["status"] not in self.change_options[current_status]:
+            raise ValidationError(
+                {
+                    "detail": "Cannot change the current status of the order to the desired order."
+                },
+                code=status.HTTP_400_BAD_REQUEST,
+            )
+        return data
+
+
+class TeamOrderChangeSerializer(OrderChangeSerializer):
+    change_options = {
+        "Submitted": ["Cancelled"],
+    }
 
 
 class OrderCreateSerializer(serializers.Serializer):

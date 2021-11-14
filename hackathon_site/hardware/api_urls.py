@@ -14,5 +14,5 @@ urlpatterns = [
         views.HardwareDetailView.as_view(),
         name="hardware-detail",
     ),
-    path("orders/<int:pk>", views.OrderDetailView.as_view(), name="order-detail",),
+    path("orders/<int:pk>/", views.OrderDetailView.as_view(), name="order-detail",),
 ]

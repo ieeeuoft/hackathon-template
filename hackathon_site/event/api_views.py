@@ -2,7 +2,7 @@ from django.db import transaction
 from django.db.models import Q
 
 from rest_framework import generics, mixins, status
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import ValidationError, PermissionDenied
 from rest_framework.response import Response
 
 
@@ -11,7 +11,7 @@ from event.serializers import UserSerializer, TeamSerializer
 from event.permissions import UserHasProfile, FullDjangoModelPermissions
 
 from hardware.models import OrderItem, Order
-from hardware.serializers import OrderListSerializer, OrderChangeSerializer
+from hardware.serializers import OrderListSerializer, TeamOrderChangeSerializer
 
 
 class CurrentUserAPIView(generics.GenericAPIView, mixins.RetrieveModelMixin):
@@ -127,36 +127,15 @@ class TeamDetailView(mixins.RetrieveModelMixin, generics.GenericAPIView):
 
 class TeamOrderDetailView(mixins.UpdateModelMixin, generics.GenericAPIView):
     queryset = Order.objects.all()
-    serializer_class = OrderChangeSerializer
+    serializer_class = TeamOrderChangeSerializer
     permission_classes = [UserHasProfile]
 
-    def patch(self, request, *args, **kwargs):
-        order = self.get_object()
-        change_options = {
-            "Submitted": ["Cancelled"],
-        }
-        current_status = order.status
-        order_team, user_team = (
-            order.team.team_code,
-            request.user.profile.team.team_code,
-        )
+    def check_object_permissions(self, request, obj: Order):
+        order_team = obj.team
+        user_team = request.user.profile.team
 
         if order_team != user_team:
-            raise ValidationError(
-                {"detail": "Cannot change the status for another team's order."},
-                code=status.HTTP_403_FORBIDDEN,
-            )
-        if current_status not in change_options:
-            raise ValidationError(
-                {"detail": "Cannot change the status for this order."},
-                code=status.HTTP_400_BAD_REQUEST,
-            )
-        allowed_statuses = change_options[current_status]
-        if request.data["status"] not in allowed_statuses:
-            raise ValidationError(
-                {
-                    "detail": "Cannot change the current status of the order to the desired order."
-                },
-                code=status.HTTP_400_BAD_REQUEST,
-            )
+            raise PermissionDenied("Can only change the status of your orders.")
+
+    def patch(self, request, *args, **kwargs):
         return self.partial_update(request, *args, **kwargs)

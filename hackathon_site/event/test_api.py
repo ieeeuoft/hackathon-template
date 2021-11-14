@@ -478,7 +478,7 @@ class TeamOrderDetailViewTestCase(SetupUserMixin, APITestCase):
         super().setUp()
         self.team = Team.objects.create()
         self.profile = Profile.objects.create(user=self.user, team=self.team)
-        self.view_name = "api:event:order-detail"
+        self.view_name = "api:event:team-order-detail"
         hardware = Hardware.objects.create(
             name="name",
             model_number="model",
@@ -512,7 +512,9 @@ class TeamOrderDetailViewTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(
             response.json(),
             {
-                "detail": "Cannot change the current status of the order to the desired order."
+                "detail": [
+                    "Cannot change the current status of the order to the desired order."
+                ]
             },
         )
 
@@ -521,7 +523,7 @@ class TeamOrderDetailViewTestCase(SetupUserMixin, APITestCase):
         order = Order.objects.create(status="Picked Up", team=self.team)
         response = self.client.patch(self._build_view(order.id), self.request_data)
         self.assertEqual(
-            response.json(), {"detail": "Cannot change the status for this order."},
+            response.json(), {"detail": ["Cannot change the status for this order."]},
         )
 
     def test_cannot_change_other_team_order(self):
@@ -530,6 +532,5 @@ class TeamOrderDetailViewTestCase(SetupUserMixin, APITestCase):
         order = Order.objects.create(status="Submitted", team=self.team2)
         response = self.client.patch(self._build_view(order.id), self.request_data)
         self.assertEqual(
-            response.json(),
-            {"detail": "Cannot change the status for another team's order."},
+            response.json(), {"detail": "Can only change the status of your orders."},
         )

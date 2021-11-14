@@ -1306,7 +1306,9 @@ class OrderListPatchTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(
             response.json(),
             {
-                "detail": "Cannot change the current status of the order to the desired order."
+                "detail": [
+                    "Cannot change the current status of the order to the desired order."
+                ]
             },
         )
 
@@ -1316,5 +1318,5 @@ class OrderListPatchTestCase(SetupUserMixin, APITestCase):
         order = Order.objects.create(status="Picked Up", team=self.team)
         response = self.client.patch(self._build_view(order.id), request_data)
         self.assertEqual(
-            response.json(), {"detail": "Cannot change the status for this order."},
+            response.json(), {"detail": ["Cannot change the status for this order."]},
         )
