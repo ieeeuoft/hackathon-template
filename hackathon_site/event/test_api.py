@@ -504,6 +504,9 @@ class TeamOrderDetailViewTestCase(SetupUserMixin, APITestCase):
         self._login()
         response = self.client.patch(self._build_view(self.pk), self.request_data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            self.request_data["status"], Order.objects.get(id=self.pk).status
+        )
 
     def test_unallowed_status_change(self):
         self._login()
@@ -517,6 +520,7 @@ class TeamOrderDetailViewTestCase(SetupUserMixin, APITestCase):
                 ]
             },
         )
+        self.assertFalse(request_data["status"] == Order.objects.get(id=self.pk).status)
 
     def test_failed_beginning_status(self):
         self._login()
@@ -524,6 +528,9 @@ class TeamOrderDetailViewTestCase(SetupUserMixin, APITestCase):
         response = self.client.patch(self._build_view(order.id), self.request_data)
         self.assertEqual(
             response.json(), {"detail": ["Cannot change the status for this order."]},
+        )
+        self.assertFalse(
+            self.request_data["status"] == Order.objects.get(id=self.pk).status
         )
 
     def test_cannot_change_other_team_order(self):
@@ -533,4 +540,7 @@ class TeamOrderDetailViewTestCase(SetupUserMixin, APITestCase):
         response = self.client.patch(self._build_view(order.id), self.request_data)
         self.assertEqual(
             response.json(), {"detail": "Can only change the status of your orders."},
+        )
+        self.assertFalse(
+            self.request_data["status"] == Order.objects.get(id=self.pk).status
         )

@@ -7,7 +7,6 @@ from drf_yasg.utils import swagger_auto_schema
 
 from rest_framework import generics, mixins, status, permissions
 from rest_framework.response import Response
-from rest_framework.exceptions import ValidationError
 from rest_framework.filters import SearchFilter, OrderingFilter
 
 from event.permissions import UserHasProfile, FullDjangoModelPermissions
