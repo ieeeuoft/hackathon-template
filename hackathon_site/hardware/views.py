@@ -76,6 +76,12 @@ class IncidentListView(
         elif self.request.method == "POST":
             return IncidentCreateSerializer
 
+    def get_permissions(self):
+        if self.request.method == "POST":
+            return [FullDjangoModelPermissions()]
+        return [permissions.IsAuthenticated()]
+
+
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
 

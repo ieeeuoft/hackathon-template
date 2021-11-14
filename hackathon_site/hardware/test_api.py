@@ -606,6 +606,10 @@ class IncidentCreateViewPostTestCase(SetupUserMixin, APITestCase):
         super().setUp()
         self.team = Team.objects.create()
         self.order = Order.objects.create(status="Cart", team=self.team)
+        self.permissions = Permission.objects.filter(
+            content_type__app_label="incidents", codename="create_incident"
+        )
+        a=1
         self.hardware = Hardware.objects.create(
             name="name",
             model_number="model",
@@ -648,7 +652,7 @@ class IncidentCreateViewPostTestCase(SetupUserMixin, APITestCase):
         response = self.client.post(self.view, self.request_data, format="json")
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
-    def test_user_has_no_profile(self):
+    def test_successful_post(self):
         self._login()
         response = self.client.post(self.view, self.request_data, format="json")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)

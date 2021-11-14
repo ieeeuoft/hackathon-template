@@ -10,7 +10,7 @@ urlpatterns = [
     path("categories/", views.CategoryListView.as_view(), name="category-list"),
     path("incidents/", views.IncidentListView.as_view(), name="incident-list"),
     re_path(
-        r"^hardware/(?P<pk>[0-9]+)/$",
+        r"^hardware//$",
         views.HardwareDetailView.as_view(),
         name="hardware-detail",
     ),
