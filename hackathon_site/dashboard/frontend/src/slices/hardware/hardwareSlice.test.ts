@@ -13,7 +13,7 @@ import {
 import { get, stripHostnameReturnFilters } from "api/api";
 import { AnyAction } from "redux";
 import { displaySnackbar } from "slices/ui/uiSlice";
-import {makeMockApiListResponse, makeStoreWithEntities, waitFor} from "testing/utils";
+import { makeMockApiListResponse, makeStoreWithEntities, waitFor } from "testing/utils";
 import { mockHardware } from "testing/mockData";
 
 jest.mock("api/api", () => ({
