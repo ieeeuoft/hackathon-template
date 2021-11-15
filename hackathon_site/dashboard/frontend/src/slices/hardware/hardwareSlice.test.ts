@@ -7,10 +7,14 @@ import {
     hardwareReducerName,
     initialState,
     getHardwareWithFilters,
-} from "./hardwareSlice";
+    isLoadingSelector,
+    hardwareSelectors,
+} from "slices/hardware/hardwareSlice";
 import { get } from "api/api";
 import { AnyAction } from "redux";
 import { displaySnackbar } from "slices/ui/uiSlice";
+import { makeMockApiListResponse, waitFor } from "testing/utils";
+import { mockHardware } from "testing/mockData";
 
 jest.mock("api/api");
 const mockedGet = get as jest.MockedFunction<typeof get>;
@@ -42,6 +46,21 @@ describe("Selectors", () => {
 });
 
 describe("getHardwareWithFilters thunk", () => {
+    it("Updates the store on API success", async () => {
+        const response = makeMockApiListResponse(mockHardware);
+        mockedGet.mockResolvedValueOnce(response);
+
+        const store = makeStore();
+        await store.dispatch(getHardwareWithFilters());
+
+        await waitFor(() => {
+            expect(mockedGet).toHaveBeenCalledWith("/api/hardware/hardware/", {});
+            expect(hardwareSelectors.selectIds(store.getState())).toEqual(
+                mockHardware.map(({ id }) => id)
+            );
+        });
+    });
+
     it("Dispatches a snackbar on API failure", async () => {
         const failureResponse = {
             response: {
