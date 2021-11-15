@@ -5,11 +5,7 @@ import {
     PayloadAction,
 } from "@reduxjs/toolkit";
 import { RootState } from "slices/store";
-
-export interface CartItem {
-    hardware_id: number;
-    quantity: number;
-}
+import { CartItem } from "api/types";
 
 interface CartExtraState {
     isLoading: boolean;
