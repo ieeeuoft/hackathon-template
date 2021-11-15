@@ -52,7 +52,6 @@ class CurrentProfileSerializer(ProfileSerializer):
     def update(self, instance: Profile, validated_data):
         if not validated_data:
             raise serializers.ValidationError("no modifiable fields provided")
-
         acknowledge_rules = validated_data.pop("acknowledge_rules", False)
         e_signature = validated_data.pop("e_signature", None)
 
@@ -61,7 +60,7 @@ class CurrentProfileSerializer(ProfileSerializer):
         if not instance.e_signature and e_signature:
             instance.e_signature = e_signature
 
-        return super().update(instance, validated_data)
+        return serializers.ModelSerializer.update(self, instance, validated_data)
 
 
 class UserSerializer(serializers.ModelSerializer):
