@@ -1,16 +1,26 @@
 import React from "react";
 import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
+import { DeepPartial } from "@reduxjs/toolkit";
 import {
     render as rtlRender,
     RenderOptions as RtlRenderOptions,
 } from "@testing-library/react";
 
 import { makeStore, RootStore, RootState } from "slices/store";
-import { DeepPartial } from "redux";
 import { SnackbarProvider } from "notistack";
 import { AxiosResponse } from "axios";
-import { APIListResponse } from "api/types";
+import { APIListResponse, Category, Hardware } from "api/types";
+import {
+    hardwareReducerName,
+    HardwareState,
+    initialState as hardwareInitialState,
+} from "slices/hardware/hardwareSlice";
+import {
+    categoryReducerName,
+    CategoryState,
+    initialState as categoryInitialState,
+} from "slices/hardware/categorySlice";
 
 export const withRouter = (component: React.ComponentElement<any, any>) => (
     <BrowserRouter>{component}</BrowserRouter>
@@ -81,3 +91,43 @@ export const makeMockApiListResponse = <T extends unknown>(
 
 // Re-export everything from jest-when
 export * from "jest-when";
+
+export interface StoreEntities {
+    hardware?: Hardware[];
+    categories?: Category[];
+}
+
+export const makeStoreWithEntities = (entities: StoreEntities) => {
+    const preloadedState: DeepPartial<RootState> = {};
+    if (entities.hardware) {
+        const hardwareState: HardwareState = {
+            ...hardwareInitialState,
+            ids: [],
+            entities: {},
+        };
+
+        for (const hardware of entities.hardware) {
+            hardwareState.ids.push(hardware.id);
+            hardwareState.entities[hardware.id] = hardware;
+        }
+
+        preloadedState[hardwareReducerName] = hardwareState;
+    }
+
+    if (entities.categories) {
+        const categoryState: CategoryState = {
+            ...categoryInitialState,
+            ids: [],
+            entities: {},
+        };
+
+        for (const category of entities.categories) {
+            categoryState.ids.push(category.id);
+            categoryState.entities[category.id] = category;
+        }
+
+        preloadedState[categoryReducerName] = categoryState;
+    }
+
+    return makeStore(preloadedState);
+};

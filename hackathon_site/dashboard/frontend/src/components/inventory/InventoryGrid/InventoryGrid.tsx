@@ -5,9 +5,8 @@ import Item from "components/inventory/Item/Item";
 import { useDispatch, useSelector } from "react-redux";
 import { hardwareSelectors, isLoadingSelector } from "slices/hardware/hardwareSlice";
 import { LinearProgress } from "@material-ui/core";
-import { setProductOverviewItem } from "../../../slices/ui/uiSlice";
-import { Hardware } from "../../../api/types";
-import { RootState } from "../../../slices/store";
+import { setProductOverviewItem } from "slices/ui/uiSlice";
+import { Hardware } from "api/types";
 
 export const InventoryGrid = () => {
     const dispatch = useDispatch();

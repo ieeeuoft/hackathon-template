@@ -3,6 +3,7 @@ import OpenInNew from "@material-ui/icons/OpenInNew";
 import GetApp from "@material-ui/icons/GetApp";
 import PinDrop from "@material-ui/icons/PinDrop";
 import { Category, Hardware } from "api/types";
+import { CartItem } from "slices/hardware/cartSlice";
 
 // For DashCard on Dashboard
 export const cardItems = [
@@ -132,19 +133,18 @@ export const cartQuantity = 5;
 export const userEmail = "graham@email.com";
 
 // Product Overview
-export const productInformation = {
+export const productInformation: Hardware = {
     id: 1,
     name: "Arduino",
-    total: 30,
-    quantityAvailable: 19,
-    img: "https://i.imgur.com/IO6e5a6.jpg",
-    category: ["MCU", "FPGA"],
+    quantity_available: 30,
+    quantity_remaining: 19,
+    picture: "https://i.imgur.com/IO6e5a6.jpg",
+    categories: [1, 2],
     manufacturer: "Canakit",
-    model_num: "Model 3B+",
+    model_number: "Model 3B+",
     datasheet: "https://www.facebook.com",
     notes: "- For micropython ask for image\n- randomnerdtutorials.com",
-    constraints: ["- Max 1 of this item", "- Max 3 microcontroller labelled red"],
-    constraintMax: 3, // Can also be null
+    max_per_team: 3, // Can also be null
 };
 
 export const addCartTest = () => {
@@ -316,29 +316,8 @@ export const mockHardware: Hardware[] = [
     },
 ];
 
-export const cartItems = [
-    {
-        id: 1,
-        image: "https://i.imgur.com/iUpI1hC.jpg",
-        title: "Arduino",
-        currentStock: 19,
-        checkedOutQuantity: 3,
-        isError: false,
-    },
-    {
-        id: 2,
-        image: "https://i.imgur.com/kOlrXto.jpg",
-        title: "Some Hardware 2",
-        currentStock: 0,
-        checkedOutQuantity: 1,
-        isError: false,
-    },
-    {
-        id: 3,
-        image: "https://i.imgur.com/IO6e5a6.jpg",
-        title: "Some Hardware 3",
-        currentStock: 12,
-        checkedOutQuantity: 2,
-        isError: false,
-    },
+export const mockCartItems: CartItem[] = [
+    { hardware_id: 1, quantity: 3 },
+    { hardware_id: 2, quantity: 1 },
+    { hardware_id: 3, quantity: 2 },
 ];

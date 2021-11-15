@@ -40,23 +40,12 @@ const Inventory = () => {
         dispatch(clearFilters());
         dispatch(getHardwareWithFilters());
         dispatch(getCategories());
-    }, [dispatch, clearFilters, getHardwareWithFilters, getCategories]);
+    }, [dispatch]);
 
     return (
         <>
             <Header />
-            <ProductOverview
-                showAddToCartButton={true}
-                // hardware={
-                //     itemOverviewId
-                //         ? items.find((item) => item.id === itemOverviewId)
-                //         : null
-                // }
-                // addToCart={addToCart}
-                // isVisible={typeof itemOverviewId == "number"}
-                // handleClose={toggleMenu}
-                // add boolean prop to display add to cart button
-            />
+            <ProductOverview showAddToCartButton={true} />
             <div className={styles.inventory}>
                 <Drawer
                     className={styles.inventoryFilterDrawer}

@@ -55,9 +55,10 @@ export const AddToCartForm = ({
     handleChange,
     values: { quantity },
 }: AddToCartFormProps) => {
-    const dropdownNum = !maxPerTeam
-        ? quantityAvailable
-        : Math.min(quantityAvailable, maxPerTeam);
+    const dropdownNum =
+        maxPerTeam === null
+            ? quantityAvailable
+            : Math.min(quantityAvailable, maxPerTeam);
 
     return (
         <>

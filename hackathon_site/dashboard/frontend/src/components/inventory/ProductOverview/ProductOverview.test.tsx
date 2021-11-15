@@ -5,15 +5,7 @@ import { productInformation } from "testing/mockData";
 
 describe("<ProductOverview />", () => {
     test("all 3 parts of the product overview is there", () => {
-        const addCartMock = jest.fn();
-
-        const { getByText } = render(
-            <ProductOverview
-                hardware={productInformation}
-                addToCart={addCartMock}
-                isVisible={true}
-            />
-        );
+        const { getByText } = render(<ProductOverview showAddToCartButton={true} />);
 
         // Check if the main section, detailInfoSection, and add to cart section works
         expect(getByText("Category")).toBeInTheDocument();

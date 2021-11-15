@@ -13,7 +13,7 @@ import { get, stripHostname } from "api/api";
 import { AnyAction } from "redux";
 import { displaySnackbar } from "slices/ui/uiSlice";
 import { mockCategories } from "testing/mockData";
-import { makeMockApiListResponse } from "testing/utils";
+import { makeMockApiListResponse, waitFor } from "testing/utils";
 
 jest.mock("api/api", () => ({
     ...jest.requireActual("api/api"),
@@ -39,6 +39,20 @@ describe("Selectors", () => {
 });
 
 describe("getCategories thunk", () => {
+    it("Updates the store on API success", async () => {
+        const response = makeMockApiListResponse(mockCategories);
+        mockedGet.mockResolvedValueOnce(response);
+
+        const store = makeStore();
+        await store.dispatch(getCategories());
+
+        await waitFor(() => {
+            expect(mockedGet).toHaveBeenCalledWith("/api/hardware/categories/");
+            expect(categorySelectors.selectIds(store.getState())).toEqual(
+                mockCategories.map(({ id }) => id)
+            );
+        });
+    });
     it("Dispatches a snackbar on API failure", async () => {
         const failureResponse = {
             response: {

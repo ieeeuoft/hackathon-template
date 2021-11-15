@@ -7,7 +7,7 @@ import {
 } from "@reduxjs/toolkit";
 import { RootState, AppDispatch } from "slices/store";
 
-import {APIListResponse, Hardware, HardwareFilters, ProductOverviewItem} from "api/types";
+import {APIListResponse, Hardware, HardwareFilters } from "api/types";
 import { get } from "api/api";
 import { displaySnackbar } from "slices/ui/uiSlice";
 
@@ -40,7 +40,7 @@ interface RejectValue {
 
 export const getHardwareWithFilters = createAsyncThunk<
     APIListResponse<Hardware>,
-    void,
+    { keepOld?: boolean } | undefined,
     { state: RootState; rejectValue: RejectValue; dispatch: AppDispatch }
 >(
     `${hardwareReducerName}/getHardwareWithFilters`,
@@ -116,13 +116,21 @@ const hardwareSlice = createSlice({
             state.error = null;
         });
 
-        builder.addCase(getHardwareWithFilters.fulfilled, (state, { payload }) => {
-            state.isLoading = false;
-            state.error = null;
-            state.next = payload.next;
-            state.count = payload.count;
-            hardwareAdapter.setAll(state, payload.results);
-        });
+        builder.addCase(
+            getHardwareWithFilters.fulfilled,
+            (state, { payload, meta }) => {
+                state.isLoading = false;
+                state.error = null;
+                state.next = payload.next;
+                state.count = payload.count;
+
+                if (meta.arg?.keepOld) {
+                    hardwareAdapter.setMany(state, payload.results);
+                } else {
+                    hardwareAdapter.setAll(state, payload.results);
+                }
+            }
+        );
 
         builder.addCase(getHardwareWithFilters.rejected, (state, { payload }) => {
             state.isLoading = false;
@@ -154,4 +162,9 @@ export const hardwareCountSelector = createSelector(
 export const hardwareFiltersSelector = createSelector(
     [hardwareSliceSelector],
     (hardwareSlice) => hardwareSlice.filters
+);
+
+export const selectHardwareByIds = createSelector(
+    [hardwareSelectors.selectEntities, (state: RootState, ids: number[]) => ids],
+    (entities, ids) => ids.map((id) => entities?.[id])
 );

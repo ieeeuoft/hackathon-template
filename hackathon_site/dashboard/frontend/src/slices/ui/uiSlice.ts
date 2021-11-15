@@ -1,5 +1,5 @@
 import {createSelector, createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {Hardware} from "../../api/types";
+import {Hardware} from "api/types";
 import {RootState} from "../store";
 
 // Slice
@@ -19,7 +19,7 @@ interface UIInitialState {
             key: number
         },
         dismissed: boolean,
-    })[] | []
+    })[]
 }
 export const uiReducerName = "ui";
 export const initialState:UIInitialState = {
