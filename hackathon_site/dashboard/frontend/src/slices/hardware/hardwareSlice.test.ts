@@ -13,7 +13,7 @@ import {
 import { get, stripHostnameReturnFilters } from "api/api";
 import { AnyAction } from "redux";
 import { displaySnackbar } from "slices/ui/uiSlice";
-import { makeMockApiListResponse, waitFor } from "testing/utils";
+import {makeMockApiListResponse, makeStoreWithEntities, waitFor} from "testing/utils";
 import { mockHardware } from "testing/mockData";
 
 jest.mock("api/api", () => ({
@@ -146,19 +146,9 @@ describe("getHardwareNextPage thunk", () => {
 
     it("Does not update store when next is null", async () => {
         const limit = mockHardware.length - 2;
-        const hardwareWithFiltersResponse = makeMockApiListResponse(
-            mockHardware.slice(0, limit),
-            null
-        );
-        mockedGet.mockResolvedValueOnce(hardwareWithFiltersResponse);
-        const store = makeStore();
-        await store.dispatch(getHardwareWithFilters());
-
-        await waitFor(() => {
-            expect(mockedGet).toHaveBeenCalledWith("/api/hardware/hardware/", {});
-            expect(hardwareSelectors.selectIds(store.getState())).toEqual(
-                mockHardware.slice(0, limit).map(({ id }) => id)
-            );
+        // by default next property is null
+        const store = makeStoreWithEntities({
+            hardware: mockHardware.slice(0, limit),
         });
 
         await store.dispatch(getHardwareNextPage());
