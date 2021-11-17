@@ -14,11 +14,11 @@ export interface Hardware {
     manufacturer: string;
     datasheet: string;
     quantity_available: number;
-    max_per_team: number | null;
-    picture: string | null;
+    max_per_team: number;
+    picture: string;
     categories: number[];
     quantity_remaining: number;
-    notes: string | null;
+    notes: string;
 }
 
 export type HardwareOrdering =
@@ -46,17 +46,17 @@ export interface ProductOverviewItem extends Omit<Hardware, "categories"> {
 export interface Category {
     id: number;
     name: string;
-    max_per_team: number | null;
-    unique_hardware_count: number | null;
+    max_per_team: number;
+    unique_hardware_count: number;
 }
 
 /** Event API */
 export interface Profile {
     id: number;
-    id_provided: boolean | null;
-    attended: boolean | null;
-    acknowledge_rules: boolean | null;
-    e_signature: string | null;
+    id_provided: boolean;
+    attended: boolean;
+    acknowledge_rules: boolean;
+    e_signature: string;
     team: number;
 }
 
