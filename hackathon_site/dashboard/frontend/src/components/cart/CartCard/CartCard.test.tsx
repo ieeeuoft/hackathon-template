@@ -3,11 +3,12 @@ import CartCard from "components/cart/CartCard/CartCard";
 
 import { render, makeStoreWithEntities, waitFor } from "testing/utils";
 import { mockHardware } from "testing/mockData";
+import { addToCart, cartSelectors } from "slices/hardware/cartSlice";
+import { fireEvent, getByRole } from "@testing-library/react";
 
 describe("<CartCard />", () => {
     /**
      * TODO: Additional required tests once the redux slice is ready:
-     *  - Test that the remove button removes the item from the store
      *  - Test that updating the quantity updates the store
      */
 
@@ -62,6 +63,44 @@ describe("<CartCard />", () => {
 
         await waitFor(() => {
             expect(getByText(error)).toBeInTheDocument();
+        });
+    });
+
+    test("removeFromCart button", async () => {
+        const store = makeStoreWithEntities({ hardware: mockHardware });
+
+        store.dispatch(
+            addToCart({
+                hardware_id: mockHardware[0].id,
+                quantity: mockHardware[0].quantity_available,
+            })
+        );
+        store.dispatch(
+            addToCart({
+                hardware_id: mockHardware[1].id,
+                quantity: mockHardware[1].quantity_available,
+            })
+        );
+
+        const { getByRole } = render(
+            <CartCard
+                hardware_id={mockHardware[0].id}
+                quantity={mockHardware[0].quantity_available}
+            />,
+            { store }
+        );
+
+        const removeButton = getByRole("remove");
+        fireEvent.click(removeButton);
+
+        await waitFor(() => {
+            expect(cartSelectors.selectAll(store.getState()).length).toEqual(1);
+            expect(cartSelectors.selectAll(store.getState())).toEqual([
+                {
+                    hardware_id: mockHardware[1].id,
+                    quantity: mockHardware[1].quantity_available,
+                },
+            ]);
         });
     });
 });

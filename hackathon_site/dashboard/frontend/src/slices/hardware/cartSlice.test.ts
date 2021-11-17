@@ -6,6 +6,7 @@ import {
     cartSliceSelector,
     isLoadingSelector,
     initialState,
+    removeFromCart,
 } from "slices/hardware/cartSlice";
 import { waitFor } from "testing/utils";
 
@@ -78,6 +79,19 @@ describe("addToCart action", () => {
                 hardware_id: 2,
                 quantity: 3,
             });
+        });
+    });
+});
+
+describe("removeFromCart action", () => {
+    test("removeFromCart removes existing item", async () => {
+        const store = makeStore();
+
+        store.dispatch(addToCart({ hardware_id: 2, quantity: 1 }));
+        store.dispatch(removeFromCart(2));
+
+        await waitFor(() => {
+            expect(cartSelectors.selectAll(store.getState()).length).toEqual(0);
         });
     });
 });

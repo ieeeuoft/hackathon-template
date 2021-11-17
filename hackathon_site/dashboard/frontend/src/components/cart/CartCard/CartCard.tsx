@@ -12,9 +12,10 @@ import MenuItem from "@material-ui/core/MenuItem";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
 
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "slices/store";
 import { hardwareSelectors } from "slices/hardware/hardwareSlice";
+import { removeFromCart } from "slices/hardware/cartSlice";
 
 const makeSelections = (quantity_remaining: number) => {
     const items = [];
@@ -87,8 +88,10 @@ export const CartCard = ({ hardware_id, quantity, error }: CartCardProps) => {
         setNumInCart(parseInt(event.target.value));
     };
 
+    const dispatch = useDispatch();
+
     const handleRemove = (id: number) => {
-        alert(`Removing ${id}`);
+        dispatch(removeFromCart(id));
     };
 
     return hardware ? (
@@ -119,7 +122,7 @@ export const CartCard = ({ hardware_id, quantity, error }: CartCardProps) => {
                     size="small"
                     className={styles.CartClose}
                     onClick={() => {
-                        handleRemove(hardware.id);
+                        handleRemove(hardware_id);
                     }}
                     role="remove"
                 >

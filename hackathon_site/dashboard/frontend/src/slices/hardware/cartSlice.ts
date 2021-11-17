@@ -40,12 +40,15 @@ const cartSlice = createSlice({
                 cartAdapter.addOne(state, payload);
             }
         },
+        removeFromCart: (state, { payload }: PayloadAction<number>) => {
+            cartAdapter.removeOne(state, payload);
+        },
     },
 });
 
 export const { actions, reducer } = cartSlice;
 export default reducer;
-export const { addToCart } = actions;
+export const { addToCart, removeFromCart } = actions;
 
 // Selectors
 export const cartSliceSelector = (state: RootState) => state[cartReducerName];
