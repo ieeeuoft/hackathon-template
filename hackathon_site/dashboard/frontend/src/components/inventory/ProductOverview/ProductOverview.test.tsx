@@ -1,11 +1,45 @@
 import React from "react";
 import ProductOverview, { EnhancedAddToCartForm } from "./ProductOverview";
-import { render, fireEvent, waitFor } from "@testing-library/react";
-import { productInformation } from "testing/mockData";
+import { mockCategories, mockHardware } from "testing/mockData";
+import { render, fireEvent, waitFor, makeStoreWithEntities } from "testing/utils";
+import { makeStore } from "slices/store";
 
 describe("<ProductOverview />", () => {
     test("all 3 parts of the product overview is there", () => {
-        const { getByText } = render(<ProductOverview showAddToCartButton={true} />);
+        const store = makeStore({
+            ui: {
+                inventory: {
+                    hardwareItemBeingViewed: mockHardware[0],
+                    isProductOverviewVisible: true,
+                },
+            },
+        });
+
+        const { getByText } = render(<ProductOverview showAddToCartButton={true} />, {
+            store,
+        });
+
+        // Check if the main section, detailInfoSection, and add to cart section works
+        expect(getByText("Category")).toBeInTheDocument();
+        expect(getByText("Datasheet")).toBeInTheDocument();
+        expect(getByText("Add to cart")).toBeInTheDocument();
+    });
+
+    test("minimum constraint between hardware and categories is used", () => {
+        const store = makeStoreWithEntities({
+            hardware: [mockHardware[0]],
+            categories: mockCategories,
+            ui: {
+                inventory: {
+                    hardwareItemBeingViewed: mockHardware[0],
+                    isProductOverviewVisible: true,
+                },
+            },
+        });
+
+        const { getByText } = render(<ProductOverview showAddToCartButton={true} />, {
+            store,
+        });
 
         // Check if the main section, detailInfoSection, and add to cart section works
         expect(getByText("Category")).toBeInTheDocument();
@@ -16,61 +50,14 @@ describe("<ProductOverview />", () => {
 
 describe("<EnhancedAddToCartForm />", () => {
     test("add to cart button calls the correct function", async () => {
-        const addCartMock = jest.fn();
-
-        const { getByText } = render(
-            <EnhancedAddToCartForm handleSubmit={addCartMock} quantityAvailable={3} />
-        );
+        // TODO: add to cart store is updated to the correct amount
+        const { getByText } = render(<EnhancedAddToCartForm quantityAvailable={3} />);
 
         const button = getByText("Add to cart");
 
         await waitFor(() => {
             fireEvent.click(button);
         });
-
-        expect(addCartMock).toHaveBeenCalledTimes(1);
-    });
-
-    test("handleSubmit called with the correct values", async () => {
-        const handleSubmit = jest.fn();
-        const quantityAvailable = 3;
-        const quantityToBeSelected = "2";
-
-        const { getByRole, getByText } = render(
-            <EnhancedAddToCartForm
-                handleSubmit={handleSubmit}
-                quantityAvailable={quantityAvailable}
-            />
-        );
-
-        // click the select
-        fireEvent.mouseDown(getByRole("button", { name: "Qty 1" }));
-
-        // select the quantity
-        const quantitySelected = getByText(quantityToBeSelected);
-        fireEvent.click(quantitySelected);
-
-        // wait for the click button to have been done
-        const button = getByText("Add to cart");
-        await waitFor(() => {
-            fireEvent.click(button);
-        });
-
-        expect(handleSubmit).toHaveBeenCalledWith(quantityToBeSelected);
-    });
-
-    test("requestFailure is passed in and rendered properly", () => {
-        const requestFailure = { message: "Failed" };
-        const quantityAvailable = 4;
-
-        const { getByText } = render(
-            <EnhancedAddToCartForm
-                requestFailure={requestFailure}
-                quantityAvailable={quantityAvailable}
-            />
-        );
-
-        expect(getByText(requestFailure.message)).toBeInTheDocument();
     });
 
     test("button and select are disabled if quantityAvailable is 0", () => {
@@ -85,9 +72,9 @@ describe("<EnhancedAddToCartForm />", () => {
         expect(select).toHaveClass("Mui-disabled");
     });
 
-    test("dropdown values are minimum between quantityAvailable and maxConstraint", () => {
+    test("dropdown values are minimum between quantityAvailable and max per team", () => {
         const { queryByText, getByText, getByRole } = render(
-            <EnhancedAddToCartForm quantityAvailable={3} constraintMax={2} />
+            <EnhancedAddToCartForm quantityAvailable={3} maxPerTeam={2} />
         );
 
         fireEvent.mouseDown(getByRole("button", { name: "Qty 1" }));

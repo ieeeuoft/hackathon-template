@@ -19,8 +19,8 @@ import {
     removeProductOverviewItem,
 } from "slices/ui/uiSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { categorySelectors } from "slices/hardware/categorySlice";
-import { Category, Hardware } from "api/types";
+import { selectCategoriesByIds } from "slices/hardware/categorySlice";
+import { RootState } from "slices/store";
 
 export const ERROR_MESSAGES = {
     quantityMissing: "Quantity is required",
@@ -46,7 +46,7 @@ const createQuantityList = (number: number) => {
 
 interface AddToCartFormProps extends FormikValues {
     quantityAvailable: number;
-    maxPerTeam: number;
+    maxPerTeam?: number;
 }
 export const AddToCartForm = ({
     quantityAvailable,
@@ -56,9 +56,9 @@ export const AddToCartForm = ({
     values: { quantity },
 }: AddToCartFormProps) => {
     const dropdownNum =
-        maxPerTeam === null
-            ? quantityAvailable
-            : Math.min(quantityAvailable, maxPerTeam);
+        maxPerTeam !== undefined
+            ? Math.min(quantityAvailable, maxPerTeam)
+            : quantityAvailable;
 
     return (
         <>
@@ -97,7 +97,7 @@ export const AddToCartForm = ({
 
 interface EnhancedAddToCartFormProps {
     quantityAvailable: number;
-    maxPerTeam: number;
+    maxPerTeam?: number;
 }
 export const EnhancedAddToCartForm = ({
     quantityAvailable,
@@ -134,7 +134,7 @@ interface DetailInfoSectionProps {
     modelNumber: string;
     datasheet: string;
     notes: string;
-    constraints: (string | undefined)[];
+    constraints: string[];
 }
 const DetailInfoSection = ({
     manufacturer,
@@ -185,7 +185,7 @@ interface MainSectionProps {
     name: string;
     quantityAvailable: number;
     quantityRemaining: number;
-    categories: (string | undefined)[];
+    categories: string[];
     picture: string;
 }
 const MainSection = ({
@@ -234,32 +234,40 @@ export const ProductOverview = ({
 }: {
     showAddToCartButton: boolean;
 }) => {
+    let categoryNames: string[] = [];
+    let maxPerTeam: number = Infinity;
+    let constraints: string[] = [];
+
     const dispatch = useDispatch();
+    const closeProductOverview = () => dispatch(removeProductOverviewItem());
 
     const isProductOverviewVisible: boolean = useSelector(
         isProductOverviewVisibleSelector
     );
-    const hardware: Hardware | null = useSelector(hardwareBeingViewedSelector);
-    const allCategories = useSelector(categorySelectors.selectEntities);
+    const hardware = useSelector(hardwareBeingViewedSelector);
+    const categories = useSelector((state: RootState) =>
+        selectCategoriesByIds(state, hardware?.categories || [])
+    );
+    if (categories.length > 0) {
+        categoryNames = categories.map(
+            (category) => category?.name ?? `Category ${category?.id}`
+        );
 
-    const categories: (Category | undefined)[] = hardware
-        ? hardware.categories.map((categoryId) => allCategories[categoryId])
-        : [];
-
-    const constraints: (string | undefined)[] =
-        categories.length > 0
-            ? [`Max ${hardware?.max_per_team} of this item`].concat(
-                  categories.map(
-                      (category) =>
-                          `Max ${category?.max_per_team} of items under category ${category?.name}`
-                  )
-              )
+        constraints = hardware?.max_per_team
+            ? [`Max ${hardware.max_per_team} of this item`]
             : [];
-
-    const categoryNames: (string | undefined)[] =
-        categories.length > 0 ? categories.map((category) => category?.name) : [];
-
-    const closeProductOverview = () => dispatch(removeProductOverviewItem());
+        maxPerTeam = hardware?.max_per_team ?? Infinity;
+        for (const category of categories) {
+            if (category?.max_per_team) {
+                constraints.push(
+                    `Max ${category.max_per_team} of items under category ${
+                        category?.name ?? category.id
+                    }`
+                );
+                maxPerTeam = Math.min(category.max_per_team, maxPerTeam);
+            }
+        }
+    }
 
     return (
         <SideSheetRight
@@ -289,7 +297,7 @@ export const ProductOverview = ({
                     {showAddToCartButton && (
                         <EnhancedAddToCartForm
                             quantityAvailable={hardware.quantity_available}
-                            maxPerTeam={hardware.max_per_team}
+                            maxPerTeam={maxPerTeam}
                         />
                     )}
                 </div>
