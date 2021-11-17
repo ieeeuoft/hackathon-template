@@ -35,8 +35,6 @@ class ProfileSerializer(serializers.ModelSerializer):
         read_only_fields = ("id", "team", "acknowledge_rules", "e_signature")
 
     def update(self, instance: Profile, validated_data):
-        if not validated_data:
-            raise serializers.ValidationError("no modifiable fields provided")
         return super().update(instance, validated_data)
 
 
@@ -50,8 +48,6 @@ class CurrentProfileSerializer(ProfileSerializer):
         )
 
     def update(self, instance: Profile, validated_data):
-        if not validated_data:
-            raise serializers.ValidationError("no modifiable fields provided")
         acknowledge_rules = validated_data.pop("acknowledge_rules", False)
         e_signature = validated_data.pop("e_signature", None)
 
@@ -60,6 +56,8 @@ class CurrentProfileSerializer(ProfileSerializer):
         if not instance.e_signature and e_signature:
             instance.e_signature = e_signature
 
+        # This uses the original model serializer update function because calling super().update() will call
+        # ProfileSerializer update function and we want to keep the logic between these two update functions separate.
         return serializers.ModelSerializer.update(self, instance, validated_data)
 
 

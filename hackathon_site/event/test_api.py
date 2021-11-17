@@ -434,21 +434,6 @@ class ProfileDetailViewTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(expected_response, data)
 
-    def test_modifying_read_only_fields(self):
-        self._login(self.change_permissions)
-
-        # creating request body with read-only fields
-        read_only_fields = (
-            {"id": 5},
-            {"team": "ABAFT"},
-            {"acknowledge_rules": True},
-            {"e_signature": "YuYing Liang"},
-        )
-        for request_body in read_only_fields:
-            response = self.client.patch(self.view, request_body)
-            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-            self.assertEqual(response.json(), ["no modifiable fields provided"])
-
 
 class CurrentProfileViewTestCase(SetupUserMixin, APITestCase):
     def setUp(self):
@@ -527,21 +512,6 @@ class CurrentProfileViewTestCase(SetupUserMixin, APITestCase):
         data = response.json()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(expected_response, data)
-
-    def test_modifying_read_only_fields(self):
-        self._login()
-
-        # creating request body with read-only fields
-        read_only_fields = (
-            {"id": 5},
-            {"team": "ABAFT"},
-            {"id_provided": True},
-            {"attended": True},
-        )
-        for request_body in read_only_fields:
-            response = self.client.patch(self.view, request_body)
-            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-            self.assertEqual(response.json(), ["no modifiable fields provided"])
 
 
 class CurrentTeamOrderListViewTestCase(SetupUserMixin, APITestCase):
