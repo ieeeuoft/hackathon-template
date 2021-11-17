@@ -91,3 +91,9 @@ export interface Order {
     created_at: string;
     updated_at: string;
 }
+
+/** Cart API */
+export interface CartItem {
+    hardware_id: number;
+    quantity: number;
+}
