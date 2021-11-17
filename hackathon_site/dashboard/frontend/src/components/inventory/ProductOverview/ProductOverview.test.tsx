@@ -37,14 +37,42 @@ describe("<ProductOverview />", () => {
             },
         });
 
+        const minConstraint: number = mockCategories
+            .map((category) => category.max_per_team)
+            .concat([mockHardware[0].max_per_team])
+            .reduce((prev, curr) => Math.min(prev, curr));
+
+        const { getByText, getByRole, queryByText } = render(
+            <ProductOverview showAddToCartButton={true} />,
+            {
+                store,
+            }
+        );
+
+        fireEvent.mouseDown(getByRole("button", { name: "Qty 1" }));
+
+        expect(queryByText(minConstraint + 1)).not.toBeInTheDocument();
+        expect(getByText(minConstraint)).toBeInTheDocument();
+    });
+
+    it("displays error message when unable to get hardware", () => {
+        const store = makeStore({
+            ui: {
+                inventory: {
+                    hardwareItemBeingViewed: null,
+                    isProductOverviewVisible: true,
+                },
+            },
+        });
+
         const { getByText } = render(<ProductOverview showAddToCartButton={true} />, {
             store,
         });
 
         // Check if the main section, detailInfoSection, and add to cart section works
-        expect(getByText("Category")).toBeInTheDocument();
-        expect(getByText("Datasheet")).toBeInTheDocument();
-        expect(getByText("Add to cart")).toBeInTheDocument();
+        expect(
+            getByText("Unable to display hardware. Please refresh page and try again.")
+        ).toBeInTheDocument();
     });
 });
 

@@ -27,7 +27,7 @@ import { getCategories } from "slices/hardware/categorySlice";
 
 const Inventory = () => {
     const dispatch = useDispatch();
-    const items = useSelector(hardwareSelectors.selectAll);
+    const itemsInStore = useSelector(hardwareSelectors.selectTotal);
     const count = useSelector(hardwareCountSelector);
 
     const [mobileOpen, setMobileOpen] = React.useState(false);
@@ -114,10 +114,10 @@ const Inventory = () => {
                         )}
                         <Typography variant="subtitle2" align="center" paragraph>
                             {count > 0
-                                ? `SHOWING ${items.length} OF ${count} ITEMS`
+                                ? `SHOWING ${itemsInStore} OF ${count} ITEMS`
                                 : "NO ITEMS FOUND"}
                         </Typography>
-                        {count !== items.length && (
+                        {count !== itemsInStore && (
                             <Button
                                 variant="contained"
                                 color="primary"

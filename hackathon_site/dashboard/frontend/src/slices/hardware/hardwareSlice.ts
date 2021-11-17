@@ -7,7 +7,7 @@ import {
 } from "@reduxjs/toolkit";
 import { RootState, AppDispatch } from "slices/store";
 
-import {APIListResponse, Hardware, HardwareFilters } from "api/types";
+import { APIListResponse, Hardware, HardwareFilters } from "api/types";
 import { get } from "api/api";
 import { displaySnackbar } from "slices/ui/uiSlice";
 

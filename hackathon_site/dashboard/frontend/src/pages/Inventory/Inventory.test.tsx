@@ -1,11 +1,19 @@
 import React from "react";
 
-import { makeMockApiListResponse, render, waitFor, when } from "testing/utils";
+import {
+    makeMockApiListResponse,
+    makeStoreWithEntities,
+    render,
+    waitFor,
+    when,
+} from "testing/utils";
 
 import Inventory from "pages/Inventory/Inventory";
 import { mockCategories, mockHardware } from "testing/mockData";
 
 import { get } from "api/api";
+import InventoryGrid from "../../components/inventory/InventoryGrid/InventoryGrid";
+import { fireEvent } from "@testing-library/react";
 
 jest.mock("api/api");
 const mockedGet = get as jest.MockedFunction<typeof get>;
@@ -107,5 +115,35 @@ describe("Inventory Page", () => {
 
         expect(queryByTestId("inventoryCountDivider")).not.toBeInTheDocument();
         expect(getByText(/no items found/i)).toBeInTheDocument();
+    });
+
+    it("Shows product overview when hardware item is clicked", async () => {
+        const store = makeStoreWithEntities({
+            hardware: mockHardware,
+            categories: mockCategories,
+        });
+
+        const { getByText } = render(<Inventory />, { store });
+
+        await waitFor(() => {
+            mockHardware.forEach((hardware) =>
+                expect(getByText(hardware.name)).toBeInTheDocument()
+            );
+        });
+
+        fireEvent.click(getByText(mockHardware[0].name));
+
+        expect(getByText("Product Overview")).toBeVisible();
+        expect(
+            getByText(`- Max ${mockHardware[0].max_per_team} of this item`)
+        ).toBeInTheDocument();
+        expect(
+            getByText(
+                `- Max ${mockCategories[0].max_per_team} of items under category ${mockCategories[0].name}`
+            )
+        ).toBeInTheDocument();
+        expect(getByText(mockHardware[0].model_number)).toBeInTheDocument();
+        expect(getByText(mockHardware[0].manufacturer)).toBeInTheDocument();
+        expect(getByText(mockHardware[0].notes)).toBeInTheDocument();
     });
 });

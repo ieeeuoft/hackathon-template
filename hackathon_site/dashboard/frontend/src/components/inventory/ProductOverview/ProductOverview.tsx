@@ -260,9 +260,7 @@ export const ProductOverview = ({
         for (const category of categories) {
             if (category?.max_per_team) {
                 constraints.push(
-                    `Max ${category.max_per_team} of items under category ${
-                        category?.name ?? category.id
-                    }`
+                    `Max ${category.max_per_team} of items under category ${category.name}`
                 );
                 maxPerTeam = Math.min(category.max_per_team, maxPerTeam);
             }
@@ -275,7 +273,7 @@ export const ProductOverview = ({
             isVisible={isProductOverviewVisible}
             handleClose={closeProductOverview}
         >
-            {hardware && (
+            {hardware ? (
                 <div className={styles.productOverview}>
                     <div className={styles.productOverviewDiv}>
                         <MainSection
@@ -301,6 +299,10 @@ export const ProductOverview = ({
                         />
                     )}
                 </div>
+            ) : (
+                <Typography variant="subtitle2" align="center" paragraph>
+                    Unable to display hardware. Please refresh page and try again.
+                </Typography>
             )}
         </SideSheetRight>
     );

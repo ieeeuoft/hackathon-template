@@ -1,28 +1,28 @@
-import {createSelector, createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {Hardware} from "api/types";
-import {RootState} from "../store";
+import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { Hardware } from "api/types";
+import { RootState } from "../store";
 
 // Slice
 interface UIInitialState {
     dashboard: {
-        isCheckedOutTableVisible: boolean,
-        isReturnedTableVisible: boolean,
-        isPendingTableVisible: boolean,
-    },
+        isCheckedOutTableVisible: boolean;
+        isReturnedTableVisible: boolean;
+        isPendingTableVisible: boolean;
+    };
     inventory: {
-        hardwareItemBeingViewed: Hardware | null,
-        isProductOverviewVisible: boolean,
-    },
-    snackbars: ({
-        message: string,
+        hardwareItemBeingViewed: Hardware | null;
+        isProductOverviewVisible: boolean;
+    };
+    snackbars: {
+        message: string;
         options: {
-            key: number
-        },
-        dismissed: boolean,
-    })[]
+            key: number;
+        };
+        dismissed: boolean;
+    }[];
 }
 export const uiReducerName = "ui";
-export const initialState:UIInitialState = {
+export const initialState: UIInitialState = {
     dashboard: {
         isCheckedOutTableVisible: true,
         isReturnedTableVisible: true,
@@ -51,7 +51,10 @@ const uiSlice = createSlice({
             state.dashboard.isPendingTableVisible =
                 !state.dashboard.isPendingTableVisible;
         },
-        setProductOverviewItem: (state: UIState, { payload }: PayloadAction<Hardware>) => {
+        setProductOverviewItem: (
+            state: UIState,
+            { payload }: PayloadAction<Hardware>
+        ) => {
             state.inventory.hardwareItemBeingViewed = payload;
             state.inventory.isProductOverviewVisible = true;
         },

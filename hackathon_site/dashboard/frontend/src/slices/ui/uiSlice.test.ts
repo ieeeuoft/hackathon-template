@@ -12,20 +12,23 @@ import {
     togglePendingTable,
     displaySnackbar,
     dismissSnackbar,
-    removeSnackbar, UIState,
+    removeSnackbar,
+    UIState,
 } from "./uiSlice";
-import {makeStore, RootState, RootStore} from "../store";
+import { makeStore, RootState, RootStore } from "../store";
 
 describe("Selectors", () => {
     let store: RootStore;
     const initialUIState: UIState = {
         ...initialState,
-        snackbars: [{ message: "Hi there", options: { key: 123456 }, dismissed: false }],
-    }
+        snackbars: [
+            { message: "Hi there", options: { key: 123456 }, dismissed: false },
+        ],
+    };
 
     beforeEach(() => {
         store = makeStore({
-            [uiReducerName]: initialUIState
+            [uiReducerName]: initialUIState,
         });
     });
 
@@ -57,7 +60,6 @@ describe("Selectors", () => {
 });
 
 describe("Reducers", () => {
-
     let store: RootStore;
     const initialUIState: UIState = {
         ...initialState,
@@ -65,42 +67,54 @@ describe("Reducers", () => {
             { message: "I am first", options: { key: 1 }, dismissed: false },
             { message: "I am second", options: { key: 2 }, dismissed: false },
         ],
-    }
+    };
 
     beforeEach(() => {
         store = makeStore({
             [uiReducerName]: initialUIState,
-        })
+        });
     });
 
     test("toggleCheckedOutTable() toggles the checked out table visibility", () => {
         const initialVisibility = initialUIState.dashboard.isCheckedOutTableVisible;
 
         store.dispatch(toggleCheckedOutTable());
-        expect(isCheckedOutTableVisibleSelector(store.getState())).toEqual(!initialVisibility);
+        expect(isCheckedOutTableVisibleSelector(store.getState())).toEqual(
+            !initialVisibility
+        );
 
         store.dispatch(toggleCheckedOutTable());
-        expect(isCheckedOutTableVisibleSelector(store.getState())).toEqual(initialVisibility);
+        expect(isCheckedOutTableVisibleSelector(store.getState())).toEqual(
+            initialVisibility
+        );
     });
 
     test("toggleReturnedTable() toggles the returned table visibility", () => {
         const initialVisibility = initialUIState.dashboard.isReturnedTableVisible;
 
         store.dispatch(toggleReturnedTable());
-        expect(isReturnedTableVisibleSelector(store.getState())).toEqual(!initialVisibility);
+        expect(isReturnedTableVisibleSelector(store.getState())).toEqual(
+            !initialVisibility
+        );
 
         store.dispatch(toggleReturnedTable());
-        expect(isReturnedTableVisibleSelector(store.getState())).toEqual(initialVisibility);
+        expect(isReturnedTableVisibleSelector(store.getState())).toEqual(
+            initialVisibility
+        );
     });
 
     test("togglePendingTable() toggles the Pending table visibility", () => {
-       const initialVisibility = initialUIState.dashboard.isPendingTableVisible;
+        const initialVisibility = initialUIState.dashboard.isPendingTableVisible;
 
         store.dispatch(togglePendingTable());
-        expect(isPendingTableVisibleSelector(store.getState())).toEqual(!initialVisibility);
+        expect(isPendingTableVisibleSelector(store.getState())).toEqual(
+            !initialVisibility
+        );
 
         store.dispatch(togglePendingTable());
-        expect(isPendingTableVisibleSelector(store.getState())).toEqual(initialVisibility);
+        expect(isPendingTableVisibleSelector(store.getState())).toEqual(
+            initialVisibility
+        );
     });
 
     test("displaySnackbar() enqueues a new snackbar with provided options", () => {
@@ -141,20 +155,26 @@ describe("Reducers", () => {
 
     test("dismissSnackbar() marks the snack with the right key as dismissed", () => {
         store.dispatch(dismissSnackbar({ key: 1 }));
-        store.getState()[uiReducerName].snackbars.map((snackbar) =>
-            expect(snackbar.dismissed).toBe(snackbar.options.key === 1)
-        );
+        store
+            .getState()
+            [uiReducerName].snackbars.map((snackbar) =>
+                expect(snackbar.dismissed).toBe(snackbar.options.key === 1)
+            );
     });
 
     test("dismissSnackbar() marks all snacks as dismissed if not given a key", () => {
         store.dispatch(dismissSnackbar({}));
-        store.getState()[uiReducerName].snackbars.map((snackbar) =>
-            expect(snackbar.dismissed).toBe(true)
-        );
+        store
+            .getState()
+            [uiReducerName].snackbars.map((snackbar) =>
+                expect(snackbar.dismissed).toBe(true)
+            );
     });
 
     test("removeSnackbar() removes the snackbar with the right key from the store", () => {
         store.dispatch(removeSnackbar({ key: 1 }));
-        expect(store.getState()[uiReducerName].snackbars).toEqual([initialUIState.snackbars[1]])
+        expect(store.getState()[uiReducerName].snackbars).toEqual([
+            initialUIState.snackbars[1],
+        ]);
     });
 });
