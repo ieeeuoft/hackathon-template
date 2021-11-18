@@ -14,4 +14,9 @@ urlpatterns = [
     ),
     path("teams/leave_team/", api_views.LeaveTeamView.as_view(), name="leave-team"),
     path("teams/", views.TeamListView.as_view(), name="team-list"),
+    path(
+        "teams/team/incidents",
+        api_views.IncidentListView.as_view(),
+        name="incident-list",
+    ),
 ]

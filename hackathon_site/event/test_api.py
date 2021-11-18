@@ -1,5 +1,8 @@
+from datetime import datetime
+
 from django.contrib.auth.models import Group
 from django.urls import reverse
+from django.conf import settings
 from rest_framework import status
 from rest_framework.test import APITestCase
 from hackathon_site.tests import SetupUserMixin
@@ -10,7 +13,8 @@ from event.serializers import (
     UserSerializer,
     TeamSerializer,
 )
-from hardware.models import Hardware, Order, OrderItem
+from hardware.serializers import IncidentCreateSerializer
+from hardware.models import Hardware, Order, OrderItem, Incident
 
 
 class CurrentUserTestCase(SetupUserMixin, APITestCase):
@@ -366,3 +370,77 @@ class EventTeamListsViewTestCase(SetupUserMixin, APITestCase):
         results = data["results"]
         returned_ids = [res["team_code"] for res in results]
         self.assertCountEqual(returned_ids, [self.team2.team_code])
+
+
+class IncidentListViewPostTestCase(SetupUserMixin, APITestCase):
+    def setUp(self):
+        super().setUp()
+        self.team = Team.objects.create()
+        self.order = Order.objects.create(status="Cart", team=self.team)
+
+        self.hardware = Hardware.objects.create(
+            name="name",
+            model_number="model",
+            manufacturer="manufacturer",
+            datasheet="/datasheet/location/",
+            notes="notes",
+            quantity_available=4,
+            max_per_team=1,
+            picture="/picture/location",
+        )
+        self.order_item = OrderItem.objects.create(
+            order=self.order, hardware=self.hardware,
+        )
+
+        self.incident = Incident.objects.create(
+            state="Broken",
+            description="Description",
+            order_item=self.order_item,
+            time_occurred=datetime(2022, 8, 8, tzinfo=settings.TZ_INFO),
+        )
+
+        self.request_data = IncidentCreateSerializer(self.incident).data
+        self.incident.delete()
+
+        self.view = reverse("api:event:incident-list")
+
+    def test_user_not_logged_in(self):
+        response = self.client.post(self.view, self.request_data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_user_no_profile(self):
+        self._login()
+        response = self.client.post(self.view, self.request_data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_post_another_team_incident(self):
+        self.team2 = Team.objects.create()
+        self.order2 = Order.objects.create(status="Cart", team=self.team2)
+
+        self.order_item2 = OrderItem.objects.create(
+            order=self.order2, hardware=self.hardware,
+        )
+
+        self.incident2 = Incident.objects.create(
+            state="Broken",
+            description="Description",
+            order_item=self.order_item2,
+            time_occurred=datetime(2022, 8, 8, tzinfo=settings.TZ_INFO),
+        )
+
+        request_data = IncidentCreateSerializer(self.incident2).data
+        self.incident2.delete()
+
+        self._login()
+        self.profile = Profile.objects.create(user=self.user, team=self.team)
+        response = self.client.post(self.view, request_data, format="json")
+        self.assertEqual(
+            response.json(), {"detail": "Can only post incidents for your own team."}
+        )
+        self.assertFalse(Incident.objects.filter(id=request_data["id"]).exists())
+
+    def test_successful_post(self):
+        self._login()
+        self.profile = Profile.objects.create(user=self.user, team=self.team)
+        response = self.client.post(self.view, self.request_data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)

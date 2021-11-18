@@ -1,5 +1,4 @@
 from datetime import datetime
-from event.permissions import FullDjangoModelPermissions
 
 from django.contrib.auth.models import Permission
 from django.urls import reverse
@@ -8,13 +7,14 @@ from django.conf import settings
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from event.models import Team
+from event.models import Team, Profile
 from hardware.models import Hardware, Category, Order, OrderItem, Incident
 from hardware.serializers import (
     HardwareSerializer,
     CategorySerializer,
     OrderListSerializer,
     IncidentListSerializer,
+    IncidentCreateSerializer,
 )
 from hackathon_site.tests import SetupUserMixin
 
@@ -602,12 +602,14 @@ class OrderListViewGetTestCase(SetupUserMixin, APITestCase):
         self.assertCountEqual(returned_ids, [self.order_3.id])
 
 
-class IncidentCreateViewPostTestCase(SetupUserMixin, APITestCase):
+class IncidentListViewPostTestCase(SetupUserMixin, APITestCase):
     def setUp(self):
         super().setUp()
         self.team = Team.objects.create()
         self.order = Order.objects.create(status="Cart", team=self.team)
-        self.permissions = FullDjangoModelPermissions()
+        self.permissions = Permission.objects.filter(
+            content_type__app_label="hardware", codename="add_incident"
+        )
 
         self.hardware = Hardware.objects.create(
             name="name",
@@ -620,30 +622,19 @@ class IncidentCreateViewPostTestCase(SetupUserMixin, APITestCase):
             picture="/picture/location",
         )
 
-        self.other_hardware = Hardware.objects.create(
-            name="other",
-            model_number="otherModel",
-            manufacturer="otherManufacturer",
-            datasheet="/datasheet/location/other",
-            quantity_available=10,
-            max_per_team=10,
-            picture="/picture/location/other",
-        )
         self.order_item = OrderItem.objects.create(
             order=self.order, hardware=self.hardware,
         )
 
-        self.order_item2 = OrderItem.objects.create(
-            order=self.order, hardware=self.other_hardware,
+        self.incident = Incident.objects.create(
+            state="Broken",
+            description="Description",
+            order_item=self.order_item,
+            time_occurred=datetime(2022, 8, 8, tzinfo=settings.TZ_INFO),
         )
 
-        self.request_data = {
-            "state": "Broken",
-            "time_occurred": "2022-08-08T00:00:00-05:18",
-            "description": "Description",
-            "order_item": {"hardware": 1, "order": 1, "part_returned_health": None},
-            "team_id": 1,
-        }
+        self.request_data = IncidentCreateSerializer(self.incident).data
+        self.incident.delete()
 
         self.view = reverse("api:hardware:incident-list")
 
@@ -651,10 +642,16 @@ class IncidentCreateViewPostTestCase(SetupUserMixin, APITestCase):
         response = self.client.post(self.view, self.request_data, format="json")
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
-    def test_successful_post(self):
-        self._login([self.permissions])
+    def test_incorrect_permissions(self):
+        self._login()
         response = self.client.post(self.view, self.request_data, format="json")
-        response
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_successful_post(self):
+        self._login(self.permissions)
+        self.profile = Profile.objects.create(user=self.user, team=self.team)
+        response = self.client.post(self.view, self.request_data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
 
 class OrderListViewPostTestCase(SetupUserMixin, APITestCase):

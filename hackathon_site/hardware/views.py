@@ -55,11 +55,6 @@ class IncidentListView(
     )
     serializer_class = IncidentListSerializer
 
-    serializer_method_classes = {
-        "GET": IncidentListSerializer,
-        "POST": IncidentCreateSerializer,
-    }
-
     search_fields = (
         "state",
         "order_item__order__team__team_code",
@@ -80,7 +75,6 @@ class IncidentListView(
         if self.request.method == "POST":
             return [FullDjangoModelPermissions()]
         return [permissions.IsAuthenticated()]
-
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
