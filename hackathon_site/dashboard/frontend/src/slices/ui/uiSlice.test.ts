@@ -6,7 +6,6 @@ import {
     snackbarSelector,
     initialState,
     uiReducerName,
-    reducer,
     toggleCheckedOutTable,
     toggleReturnedTable,
     togglePendingTable,
@@ -15,7 +14,7 @@ import {
     removeSnackbar,
     UIState,
 } from "./uiSlice";
-import { makeStore, RootState, RootStore } from "../store";
+import { makeStore, RootStore } from "../store";
 
 describe("Selectors", () => {
     let store: RootStore;
@@ -125,7 +124,7 @@ describe("Reducers", () => {
         };
 
         store.dispatch(displaySnackbar({ message, options }));
-        expect(store.getState()[uiReducerName].snackbars).toEqual([
+        expect(snackbarSelector(store.getState())).toEqual([
             ...initialUIState.snackbars,
             {
                 message,
@@ -141,7 +140,7 @@ describe("Reducers", () => {
         const message = "Hi there";
 
         store.dispatch(displaySnackbar({ message }));
-        expect(store.getState()[uiReducerName].snackbars).toEqual([
+        expect(snackbarSelector(store.getState())).toEqual([
             ...initialUIState.snackbars,
             {
                 message,
@@ -155,25 +154,21 @@ describe("Reducers", () => {
 
     test("dismissSnackbar() marks the snack with the right key as dismissed", () => {
         store.dispatch(dismissSnackbar({ key: 1 }));
-        store
-            .getState()
-            [uiReducerName].snackbars.map((snackbar) =>
-                expect(snackbar.dismissed).toBe(snackbar.options.key === 1)
-            );
+        snackbarSelector(store.getState()).map((snackbar) =>
+            expect(snackbar.dismissed).toBe(snackbar.options.key === 1)
+        );
     });
 
     test("dismissSnackbar() marks all snacks as dismissed if not given a key", () => {
         store.dispatch(dismissSnackbar({}));
-        store
-            .getState()
-            [uiReducerName].snackbars.map((snackbar) =>
-                expect(snackbar.dismissed).toBe(true)
-            );
+        snackbarSelector(store.getState()).map((snackbar) =>
+            expect(snackbar.dismissed).toBe(true)
+        );
     });
 
     test("removeSnackbar() removes the snackbar with the right key from the store", () => {
         store.dispatch(removeSnackbar({ key: 1 }));
-        expect(store.getState()[uiReducerName].snackbars).toEqual([
+        expect(snackbarSelector(store.getState())).toEqual([
             initialUIState.snackbars[1],
         ]);
     });

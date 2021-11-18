@@ -3,6 +3,7 @@ import ProductOverview, { EnhancedAddToCartForm } from "./ProductOverview";
 import { mockCategories, mockHardware } from "testing/mockData";
 import { render, fireEvent, waitFor, makeStoreWithEntities } from "testing/utils";
 import { makeStore } from "slices/store";
+import { addToCart, cartSelectors } from "slices/hardware/cartSlice";
 
 describe("<ProductOverview />", () => {
     test("all 3 parts of the product overview is there", () => {
@@ -15,7 +16,7 @@ describe("<ProductOverview />", () => {
             },
         });
 
-        const { getByText } = render(<ProductOverview showAddToCartButton={true} />, {
+        const { getByText } = render(<ProductOverview showAddToCartButton />, {
             store,
         });
 
@@ -65,7 +66,7 @@ describe("<ProductOverview />", () => {
             },
         });
 
-        const { getByText } = render(<ProductOverview showAddToCartButton={true} />, {
+        const { getByText } = render(<ProductOverview showAddToCartButton />, {
             store,
         });
 
@@ -74,23 +75,74 @@ describe("<ProductOverview />", () => {
             getByText("Unable to display hardware. Please refresh page and try again.")
         ).toBeInTheDocument();
     });
-});
 
-describe("<EnhancedAddToCartForm />", () => {
-    test("add to cart button calls the correct function", async () => {
-        // TODO: add to cart store is updated to the correct amount
-        const { getByText } = render(<EnhancedAddToCartForm quantityAvailable={3} />);
+    test("Add to Cart button adds hardware to cart store", async () => {
+        const store = makeStoreWithEntities({
+            hardware: [mockHardware[0]],
+            categories: mockCategories,
+            ui: {
+                inventory: {
+                    hardwareItemBeingViewed: mockHardware[0],
+                    isProductOverviewVisible: true,
+                },
+            },
+        });
+
+        const { getByText } = render(<ProductOverview showAddToCartButton />, {
+            store,
+        });
 
         const button = getByText("Add to cart");
 
         await waitFor(() => {
             fireEvent.click(button);
         });
+
+        expect(cartSelectors.selectAll(store.getState())).toEqual([
+            { hardware_id: mockHardware[0].id, quantity: 1 },
+        ]);
     });
 
+    test("Add to Cart button doesn't add hardware if user exceeds max per team limit", async () => {
+        const store = makeStoreWithEntities({
+            hardware: [mockHardware[0]],
+            categories: mockCategories,
+            ui: {
+                inventory: {
+                    hardwareItemBeingViewed: mockHardware[0],
+                    isProductOverviewVisible: true,
+                },
+            },
+        });
+
+        // TODO: remove and replace with prepopulated store
+        const initialCart = {
+            hardware_id: mockHardware[0].id,
+            quantity: mockHardware[0].max_per_team,
+        };
+        store.dispatch(addToCart(initialCart));
+        const { getByText } = render(<ProductOverview showAddToCartButton />, {
+            store,
+        });
+
+        const button = getByText("Add to cart");
+
+        await waitFor(() => {
+            fireEvent.click(button);
+        });
+
+        expect(cartSelectors.selectAll(store.getState())).toEqual([initialCart]);
+    });
+});
+
+describe("<EnhancedAddToCartForm />", () => {
     test("button and select are disabled if quantityAvailable is 0", () => {
         const { getByText, getByLabelText } = render(
-            <EnhancedAddToCartForm quantityAvailable={0} />
+            <EnhancedAddToCartForm
+                quantityAvailable={0}
+                hardwareId={1}
+                name="Arduino"
+            />
         );
 
         const button = getByText("Add to cart").closest("button");
@@ -102,7 +154,12 @@ describe("<EnhancedAddToCartForm />", () => {
 
     test("dropdown values are minimum between quantityAvailable and max per team", () => {
         const { queryByText, getByText, getByRole } = render(
-            <EnhancedAddToCartForm quantityAvailable={3} maxPerTeam={2} />
+            <EnhancedAddToCartForm
+                quantityAvailable={3}
+                maxPerTeam={2}
+                hardwareId={1}
+                name="Arduino"
+            />
         );
 
         fireEvent.mouseDown(getByRole("button", { name: "Qty 1" }));

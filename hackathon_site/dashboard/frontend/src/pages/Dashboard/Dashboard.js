@@ -47,12 +47,8 @@ const Dashboard = () => {
     return (
         <>
             <Header />
-            <ProductOverview
-                hardware={productInformation}
-                addToCart={addToCart}
-                isVisible={sideSheetOpen}
-                handleClose={toggleMenu}
-            />
+            {/* TODO: show product overview when order hardware item is clicked */}
+            <ProductOverview showAddToCartButton={false} />
             <div className={styles.dashboard}>
                 <Typography variant="h1">{hackathonName} Hardware Dashboard</Typography>
                 <Grid

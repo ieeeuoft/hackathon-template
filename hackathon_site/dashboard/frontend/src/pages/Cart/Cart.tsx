@@ -87,18 +87,6 @@ const Cart = () => {
                             );
                         })
                     )}
-                    {/*TODO: Remove this button when something else has been hooked up to the store*/}
-                    <Button
-                        color="primary"
-                        variant="contained"
-                        className={styles.btn}
-                        onClick={() => {
-                            dispatch(addToCart({ hardware_id: 1, quantity: 2 }));
-                        }}
-                        disableElevation
-                    >
-                        Add item to cart
-                    </Button>
                 </Grid>
                 <Grid xs={12} sm={12} md={5} item>
                     <CartSummary cartQuantity={cartQuantity} />

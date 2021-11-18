@@ -12,7 +12,6 @@ import Inventory from "pages/Inventory/Inventory";
 import { mockCategories, mockHardware } from "testing/mockData";
 
 import { get } from "api/api";
-import InventoryGrid from "../../components/inventory/InventoryGrid/InventoryGrid";
 import { fireEvent } from "@testing-library/react";
 
 jest.mock("api/api");

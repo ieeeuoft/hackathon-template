@@ -14,6 +14,7 @@ import { Formik, FormikValues } from "formik";
 
 import styles from "./ProductOverview.module.scss";
 import {
+    displaySnackbar,
     hardwareBeingViewedSelector,
     isProductOverviewVisibleSelector,
     removeProductOverviewItem,
@@ -21,6 +22,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { selectCategoriesByIds } from "slices/hardware/categorySlice";
 import { RootState } from "slices/store";
+import { addToCart, cartSelectors } from "slices/hardware/cartSlice";
 
 export const ERROR_MESSAGES = {
     quantityMissing: "Quantity is required",
@@ -97,15 +99,37 @@ export const AddToCartForm = ({
 
 interface EnhancedAddToCartFormProps {
     quantityAvailable: number;
+    hardwareId: number;
+    name: string;
     maxPerTeam?: number;
 }
 export const EnhancedAddToCartForm = ({
     quantityAvailable,
+    hardwareId,
+    name,
     maxPerTeam,
 }: EnhancedAddToCartFormProps) => {
+    const dispatch = useDispatch();
+    const currentQuantityInCart =
+        useSelector((state: RootState) => cartSelectors.selectById(state, hardwareId))
+            ?.quantity ?? 0;
+
     const onSubmit = (formikValues: { quantity: string }) => {
-        // TODO: add an item to cart store
-        alert(`Ordering ${formikValues.quantity} of this item`);
+        const numQuantity: number = parseInt(formikValues.quantity);
+        if (currentQuantityInCart + numQuantity <= (maxPerTeam || quantityAvailable)) {
+            dispatch(addToCart({ hardware_id: hardwareId, quantity: numQuantity }));
+            dispatch(
+                displaySnackbar({
+                    message: `Added ${numQuantity} ${name} item(s) to your cart.`,
+                })
+            );
+        } else {
+            dispatch(
+                displaySnackbar({
+                    message: `You've already added the maximum amount of this item to your cart.`,
+                })
+            );
+        }
     };
 
     return (
@@ -295,6 +319,8 @@ export const ProductOverview = ({
                     {showAddToCartButton && (
                         <EnhancedAddToCartForm
                             quantityAvailable={hardware.quantity_available}
+                            hardwareId={hardware.id}
+                            name={hardware.name}
                             maxPerTeam={maxPerTeam}
                         />
                     )}

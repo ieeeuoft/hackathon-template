@@ -67,10 +67,14 @@ const uiSlice = createSlice({
                 options.key = Math.random();
             }
 
-            state.snackbars = [
-                ...state.snackbars,
-                { message, options, dismissed: false },
-            ];
+            if (state.snackbars) {
+                state.snackbars = [
+                    ...state.snackbars,
+                    { message, options, dismissed: false },
+                ];
+            } else {
+                state.snackbars = [{ message, options, dismissed: false }];
+            }
         },
         dismissSnackbar: (state: UIState, { payload: { key } }) => {
             /* Mark an individual snackbar as dismissed by providing a key, or
