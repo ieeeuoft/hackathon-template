@@ -3,6 +3,7 @@ import OpenInNew from "@material-ui/icons/OpenInNew";
 import GetApp from "@material-ui/icons/GetApp";
 import PinDrop from "@material-ui/icons/PinDrop";
 import { Category, Hardware } from "api/types";
+import { CartItem } from "api/types";
 
 // For DashCard on Dashboard
 export const cardItems = [
@@ -307,29 +308,8 @@ export const mockHardware: Hardware[] = [
     },
 ];
 
-export const cartItems = [
-    {
-        id: 1,
-        image: "https://i.imgur.com/iUpI1hC.jpg",
-        title: "Arduino",
-        currentStock: 19,
-        checkedOutQuantity: 3,
-        isError: false,
-    },
-    {
-        id: 2,
-        image: "https://i.imgur.com/kOlrXto.jpg",
-        title: "Some Hardware 2",
-        currentStock: 0,
-        checkedOutQuantity: 1,
-        isError: false,
-    },
-    {
-        id: 3,
-        image: "https://i.imgur.com/IO6e5a6.jpg",
-        title: "Some Hardware 3",
-        currentStock: 12,
-        checkedOutQuantity: 2,
-        isError: false,
-    },
+export const mockCartItems: CartItem[] = [
+    { hardware_id: 1, quantity: 3 },
+    { hardware_id: 2, quantity: 1 },
+    { hardware_id: 3, quantity: 2 },
 ];

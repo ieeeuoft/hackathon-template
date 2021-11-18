@@ -8,12 +8,14 @@ from rest_framework.test import APITestCase
 from hackathon_site.tests import SetupUserMixin
 from django.contrib.auth.models import Permission
 
+
 from event.models import Profile, User, Team
 from event.serializers import (
     UserSerializer,
     TeamSerializer,
 )
-from hardware.serializers import IncidentCreateSerializer
+
+from hardware.serializers import IncidentCreateSerializer, OrderListSerializer
 from hardware.models import Hardware, Order, OrderItem, Incident
 
 
@@ -370,6 +372,108 @@ class EventTeamListsViewTestCase(SetupUserMixin, APITestCase):
         results = data["results"]
         returned_ids = [res["team_code"] for res in results]
         self.assertCountEqual(returned_ids, [self.team2.team_code])
+
+class CurrentTeamOrderListViewTestCase(SetupUserMixin, APITestCase):
+    def setUp(self):
+        super().setUp()
+        self.team = Team.objects.create()
+        self.order = Order.objects.create(status="Cart", team=self.team)
+        self.hardware = Hardware.objects.create(
+            name="name",
+            model_number="model",
+            manufacturer="manufacturer",
+            datasheet="/datasheet/location/",
+            notes="notes",
+            quantity_available=4,
+            max_per_team=1,
+            picture="/picture/location",
+        )
+        self.other_hardware = Hardware.objects.create(
+            name="other",
+            model_number="otherModel",
+            manufacturer="otherManufacturer",
+            datasheet="/datasheet/location/other",
+            quantity_available=10,
+            max_per_team=10,
+            picture="/picture/location/other",
+        )
+        OrderItem.objects.create(
+            order=self.order, hardware=self.hardware,
+        )
+        OrderItem.objects.create(
+            order=self.order, hardware=self.other_hardware,
+        )
+
+        # making extra data to test if team data is being filtered
+        self.team2 = Team.objects.create(team_code="ABCDE")
+        self.order_2 = Order.objects.create(status="Submitted", team=self.team2)
+        OrderItem.objects.create(
+            order=self.order_2, hardware=self.hardware,
+        )
+        OrderItem.objects.create(
+            order=self.order_2, hardware=self.other_hardware,
+        )
+
+        self.view = reverse("api:event:team-orders")
+
+    def test_user_not_logged_in(self):
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_user_has_no_profile(self):
+        self._login()
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_user_has_profile(self):
+        Profile.objects.create(user=self.user, team=self.team)
+        self._login()
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        queryset = Order.objects.filter(team_id=self.team.id)
+
+        expected_response = OrderListSerializer(
+            queryset, many=True, context={"request": response.wsgi_request}
+        ).data
+        data = response.json()
+
+        self.assertEqual(expected_response, data["results"])
+
+
+class EventTeamDetailViewTestCase(SetupUserMixin, APITestCase):
+    def setUp(self, **kwargs):
+
+        self.team = Team.objects.create()
+        self.team2 = Team.objects.create()
+        self.team3 = Team.objects.create()
+        self.permissions = Permission.objects.filter(
+            content_type__app_label="event", codename="view_team"
+        )
+        super().setUp()
+        self.view = reverse("api:event:team-detail", args=[self.team.pk])
+
+    def test_team_get_not_login(self):
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_team_get_no_permissions(self):
+        self._login()
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_team_get_has_permissions(self):
+        self._login(self.permissions)
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        queryset = Team.objects.filter(team_code=self.team)
+
+        expected_response = TeamSerializer(
+            queryset, many=True, context={"request": response.wsgi_request}
+        ).data
+
+        data = response.json()
+
+        self.assertEqual(expected_response[0], data)
 
 
 class IncidentListViewPostTestCase(SetupUserMixin, APITestCase):

@@ -97,7 +97,6 @@ class OrderListView(generics.ListAPIView):
         # TODO: Causing problems with queryset aggregations, will figure out later:
         # .prefetch_related("hardware", "hardware__categories")
     )
-    serializer_class = OrderListSerializer
     serializer_method_classes = {
         "GET": OrderListSerializer,
         "POST": OrderCreateSerializer,
@@ -117,11 +116,10 @@ class OrderListView(generics.ListAPIView):
     def get_permissions(self):
         if self.request.method == "POST":
             return [UserHasProfile()]
-        if self.request.method == "GET":
+        elif self.request.method == "GET":
             return [FullDjangoModelPermissions()]
         return [permissions.IsAuthenticated()]
 
-    # TODO: make this admin only
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
 

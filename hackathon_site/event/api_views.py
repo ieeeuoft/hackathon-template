@@ -1,16 +1,21 @@
 from django.db import transaction
 from django.db.models import Q
+from django.shortcuts import get_object_or_404
+from django_filters import rest_framework as filters
 
 from rest_framework import generics, mixins, status
 from rest_framework.exceptions import ValidationError, PermissionDenied
 from rest_framework.response import Response
+from rest_framework.filters import SearchFilter
+
 
 from event.models import User, Team as EventTeam
 from event.serializers import UserSerializer, TeamSerializer
-from hardware.serializers import IncidentCreateSerializer
-from event.permissions import UserHasProfile
+from event.api_filters import TeamFilter
+from hardware.serializers import IncidentCreateSerializer, OrderListSerializer
+from event.permissions import UserHasProfile, FullDjangoModelPermissions
 
-from hardware.models import OrderItem, Incident
+from hardware.models import OrderItem, Order, Incident
 
 
 class CurrentUserAPIView(generics.GenericAPIView, mixins.RetrieveModelMixin):
@@ -104,6 +109,7 @@ class JoinTeamView(generics.GenericAPIView, mixins.RetrieveModelMixin):
         return Response(data=response_data, status=status.HTTP_200_OK,)
 
 
+
 class IncidentListView(
     mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView
 ):
@@ -121,3 +127,23 @@ class IncidentListView(
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
+
+class CurrentTeamOrderListView(generics.ListAPIView):
+    serializer_class = OrderListSerializer
+    permission_classes = [UserHasProfile]
+
+    def get_queryset(self):
+        return Order.objects.filter(team_id=self.request.user.profile.team_id)
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+
+class TeamDetailView(mixins.RetrieveModelMixin, generics.GenericAPIView):
+    queryset = EventTeam.objects.all()
+    serializer_class = TeamSerializer
+    permission_classes = [FullDjangoModelPermissions]
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+
