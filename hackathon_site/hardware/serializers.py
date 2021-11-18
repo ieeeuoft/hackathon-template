@@ -101,12 +101,7 @@ class IncidentCreateSerializer(IncidentListSerializer):
         read_only_fields = ("team_id",)
 
     def create(self, validated_data):
-        intermediary = (
-            validated_data["order_item"]["order"]
-            if isinstance(validated_data, OrderedDict)
-            else validated_data.order_item.order
-        )
-        order = OrderItem.objects.get(id=intermediary.id)
+        order = OrderItem.objects.get(id=validated_data["order_item"]["order"].id)
         new_data = validated_data
         new_data["order_item"] = order
         incident = Incident.objects.create(**new_data)
