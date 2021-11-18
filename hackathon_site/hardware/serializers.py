@@ -124,7 +124,9 @@ class OrderChangeSerializer(serializers.ModelSerializer):
 
         if data["status"] not in self.change_options[current_status]:
             raise ValidationError(
-                {"detail": f"Cannot change the status of an order from {current_status} to {data['status']}."},
+                {
+                    "detail": f"Cannot change the status of an order from {current_status} to {data['status']}."
+                },
             )
         return data
 

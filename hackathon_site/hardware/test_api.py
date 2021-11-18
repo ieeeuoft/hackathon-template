@@ -1316,7 +1316,6 @@ class OrderListPatchTestCase(SetupUserMixin, APITestCase):
             },
         )
 
-
     def test_failed_beginning_status(self):
         """
         Test to ensure an order status that is not changeable is not changed.
