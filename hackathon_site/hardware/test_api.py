@@ -1306,17 +1306,21 @@ class OrderListPatchTestCase(SetupUserMixin, APITestCase):
         self._login(self.change_permissions)
         request_data = {"status": "Picked Up"}
         response = self.client.patch(self._build_view(self.pk), request_data)
+        self.assertFalse(request_data["status"] == Order.objects.get(id=self.pk).status)
         self.assertEqual(
             response.json(),
             {
                 "detail": [
-                    "Cannot change the current status of the order to the desired order."
+                    f"Cannot change the status of an order from {Order.objects.get(id=self.pk).status} to {request_data['status']}."
                 ]
             },
         )
-        self.assertFalse(request_data["status"] == Order.objects.get(id=self.pk).status)
+
 
     def test_failed_beginning_status(self):
+        """
+        Test to ensure an order status that is not changeable is not changed.
+        """
         self._login(self.change_permissions)
         request_data = {"status": "Cancelled"}
         order = Order.objects.create(status="Picked Up", team=self.team)

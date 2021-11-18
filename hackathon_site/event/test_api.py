@@ -512,15 +512,15 @@ class TeamOrderDetailViewTestCase(SetupUserMixin, APITestCase):
         self._login()
         request_data = {"status": "Picked Up"}
         response = self.client.patch(self._build_view(self.pk), request_data)
+        self.assertFalse(request_data["status"] == Order.objects.get(id=self.pk).status)
         self.assertEqual(
             response.json(),
             {
                 "detail": [
-                    "Cannot change the current status of the order to the desired order."
+                    f"Cannot change the status of an order from {Order.objects.get(id=self.pk).status} to {request_data['status']}."
                 ]
             },
         )
-        self.assertFalse(request_data["status"] == Order.objects.get(id=self.pk).status)
 
     def test_failed_beginning_status(self):
         self._login()

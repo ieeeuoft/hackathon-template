@@ -120,15 +120,11 @@ class OrderChangeSerializer(serializers.ModelSerializer):
         if current_status not in self.change_options:
             raise ValidationError(
                 {"detail": "Cannot change the status for this order."},
-                code=status.HTTP_403_FORBIDDEN,
             )
 
         if data["status"] not in self.change_options[current_status]:
             raise ValidationError(
-                {
-                    "detail": "Cannot change the current status of the order to the desired order."
-                },
-                code=status.HTTP_400_BAD_REQUEST,
+                {"detail": f"Cannot change the status of an order from {current_status} to {data['status']}."},
             )
         return data
 
