@@ -373,6 +373,7 @@ class EventTeamListsViewTestCase(SetupUserMixin, APITestCase):
         returned_ids = [res["team_code"] for res in results]
         self.assertCountEqual(returned_ids, [self.team2.team_code])
 
+
 class CurrentTeamOrderListViewTestCase(SetupUserMixin, APITestCase):
     def setUp(self):
         super().setUp()

@@ -109,7 +109,6 @@ class JoinTeamView(generics.GenericAPIView, mixins.RetrieveModelMixin):
         return Response(data=response_data, status=status.HTTP_200_OK,)
 
 
-
 class IncidentListView(
     mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView
 ):
@@ -127,6 +126,7 @@ class IncidentListView(
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
+
 
 class CurrentTeamOrderListView(generics.ListAPIView):
     serializer_class = OrderListSerializer
@@ -146,4 +146,3 @@ class TeamDetailView(mixins.RetrieveModelMixin, generics.GenericAPIView):
 
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
-
