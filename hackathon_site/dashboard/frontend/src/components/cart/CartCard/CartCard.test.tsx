@@ -7,6 +7,8 @@ import {
     waitFor,
     fireEvent,
     getByRole,
+    getByText,
+    queryByText,
 } from "testing/utils";
 import { mockCartItems, mockHardware } from "testing/mockData";
 import { addToCart, cartSelectors } from "slices/hardware/cartSlice";
@@ -72,7 +74,10 @@ describe("<CartCard />", () => {
     });
 
     test("removeFromCart button", async () => {
-        const store = makeStoreWithEntities({ cartItems: mockCartItems });
+        const store = makeStoreWithEntities({
+            hardware: mockHardware,
+            cartItems: mockCartItems,
+        });
 
         store.dispatch(
             addToCart({
@@ -80,6 +85,7 @@ describe("<CartCard />", () => {
                 quantity: mockCartItems[0].quantity,
             })
         );
+
         store.dispatch(
             addToCart({
                 hardware_id: mockCartItems[1].hardware_id,
@@ -87,7 +93,7 @@ describe("<CartCard />", () => {
             })
         );
 
-        const { getByRole } = render(
+        const { getByRole, queryByText } = render(
             <CartCard
                 hardware_id={mockCartItems[0].hardware_id}
                 quantity={mockCartItems[0].quantity}
@@ -99,13 +105,7 @@ describe("<CartCard />", () => {
         fireEvent.click(removeButton);
 
         await waitFor(() => {
-            expect(cartSelectors.selectAll(store.getState()).length).toEqual(1);
-            expect(cartSelectors.selectAll(store.getState())).toEqual([
-                {
-                    hardware_id: mockCartItems[1].hardware_id,
-                    quantity: mockCartItems[1].quantity,
-                },
-            ]);
+            expect(queryByText(mockHardware[0].picture)).not.toBeInTheDocument();
         });
     });
 });

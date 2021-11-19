@@ -88,10 +88,16 @@ describe("removeFromCart action", () => {
         const store = makeStore();
 
         store.dispatch(addToCart({ hardware_id: 2, quantity: 1 }));
+
         store.dispatch(removeFromCart(2));
+        store.dispatch(addToCart({ hardware_id: 2, quantity: 5 }));
 
         await waitFor(() => {
-            expect(cartSelectors.selectAll(store.getState()).length).toEqual(0);
+            expect(cartSelectors.selectAll(store.getState()).length).toEqual(1);
+            expect(cartSelectors.selectById(store.getState(), 2)).toEqual({
+                hardware_id: 2,
+                quantity: 5,
+            });
         });
     });
 });
