@@ -45,9 +45,7 @@ class OrderItemSerializer(serializers.ModelSerializer):
         fields = ("id", "hardware", "order", "part_returned_health")
 
 
-class IncidentListSerializer(serializers.ModelSerializer):
-
-    order_item = OrderItemSerializer()
+class IncidentCreateSerializer(serializers.ModelSerializer):
     team_id = serializers.SerializerMethodField()
 
     class Meta:
@@ -66,6 +64,10 @@ class IncidentListSerializer(serializers.ModelSerializer):
     @staticmethod
     def get_team_id(obj: Incident):
         return obj.order_item.order.team.id
+
+
+class IncidentListSerializer(IncidentCreateSerializer):
+    order_item = OrderItemSerializer()
 
 
 class OrderListSerializer(serializers.ModelSerializer):
