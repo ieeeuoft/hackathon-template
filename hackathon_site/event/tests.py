@@ -17,6 +17,7 @@ from event.serializers import (
     UserSerializer,
     GroupSerializer,
     ProfileSerializer,
+    CurrentProfileSerializer,
 )
 
 
@@ -757,3 +758,17 @@ class ProfileSerializerTestCase(TestCase):
             "team": team.id,
         }
         self.assertEqual(profile_expected, profile_serialized)
+
+    def test_readonly_serializer_fields(self):
+        self.assertEqual(
+            ProfileSerializer.Meta.read_only_fields,
+            ("id", "team", "acknowledge_rules", "e_signature"),
+        )
+
+
+class CurrentProfileSerializerTestCase(TestCase):
+    def test_readonly_serializer_fields(self):
+        self.assertEqual(
+            CurrentProfileSerializer.Meta.read_only_fields,
+            ("id", "team", "id_provided", "attended"),
+        )

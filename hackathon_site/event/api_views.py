@@ -6,7 +6,11 @@ from rest_framework.exceptions import ValidationError, PermissionDenied
 from rest_framework.response import Response
 
 
-from event.models import User, Team as EventTeam
+from event.serializers import (
+    ProfileSerializer,
+    CurrentProfileSerializer,
+)
+from event.models import User, Team as EventTeam, Profile
 from event.serializers import UserSerializer, TeamSerializer
 from hardware.serializers import IncidentCreateSerializer, OrderListSerializer
 from event.permissions import UserHasProfile, FullDjangoModelPermissions
@@ -104,7 +108,7 @@ class JoinTeamView(generics.GenericAPIView, mixins.RetrieveModelMixin):
         response_data = response_serializer.data
         return Response(data=response_data, status=status.HTTP_200_OK,)
 
-
+      
 class TeamIncidentListView(
     mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView
 ):
@@ -123,6 +127,29 @@ class TeamIncidentListView(
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
+
+
+class ProfileDetailView(mixins.UpdateModelMixin, generics.GenericAPIView):
+
+    queryset = Profile.objects.all()
+    serializer_class = ProfileSerializer
+    permission_classes = [FullDjangoModelPermissions]
+
+    def patch(self, request, *args, **kwargs):
+        return self.partial_update(request, *args, **kwargs)
+
+
+class CurrentProfileView(mixins.UpdateModelMixin, generics.GenericAPIView):
+
+    queryset = Profile.objects.all()
+    serializer_class = CurrentProfileSerializer
+    permission_classes = [UserHasProfile]
+
+    def get_object(self):
+        return self.request.user.profile
+
+    def patch(self, request, *args, **kwargs):
+        return self.partial_update(request, *args, **kwargs)
 
 
 class CurrentTeamOrderListView(generics.ListAPIView):
