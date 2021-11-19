@@ -1,7 +1,7 @@
 from collections import Counter
 import functools
 from django.db.models import Count, Q
-from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import serializers
 
 from hardware.models import Hardware, Category, OrderItem, Order, Incident
@@ -108,19 +108,17 @@ class OrderChangeSerializer(OrderListSerializer):
             "updated_at",
         )
 
-    def validate(self, data):
+    def validate_status(self, data):
         current_status = self.instance.status
 
         if current_status not in self.change_options:
-            raise ValidationError(
-                {"detail": "Cannot change the status for this order."},
+            raise serializers.ValidationError(
+                "Cannot change the status for this order."
             )
 
-        if data["status"] not in self.change_options[current_status]:
-            raise ValidationError(
-                {
-                    "detail": f"Cannot change the status of an order from {current_status} to {data['status']}."
-                },
+        if data not in self.change_options[current_status]:
+            raise serializers.ValidationError(
+                f"Cannot change the status of an order from {current_status} to {data}."
             )
         return data
 

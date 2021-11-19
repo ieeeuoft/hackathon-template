@@ -1310,7 +1310,7 @@ class OrderListPatchTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(
             response.json(),
             {
-                "detail": [
+                "status": [
                     f"Cannot change the status of an order from {Order.objects.get(id=self.pk).status} to {request_data['status']}."
                 ]
             },
@@ -1325,6 +1325,6 @@ class OrderListPatchTestCase(SetupUserMixin, APITestCase):
         order = Order.objects.create(status="Picked Up", team=self.team)
         response = self.client.patch(self._build_view(order.id), request_data)
         self.assertEqual(
-            response.json(), {"detail": ["Cannot change the status for this order."]},
+            response.json(), {"status": ["Cannot change the status for this order."]},
         )
         self.assertFalse(request_data["status"] == Order.objects.get(id=self.pk).status)
