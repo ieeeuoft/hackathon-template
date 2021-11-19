@@ -108,7 +108,7 @@ class JoinTeamView(generics.GenericAPIView, mixins.RetrieveModelMixin):
         response_data = response_serializer.data
         return Response(data=response_data, status=status.HTTP_200_OK,)
 
-      
+
 class TeamIncidentListView(
     mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView
 ):
