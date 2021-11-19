@@ -3,7 +3,7 @@ import OpenInNew from "@material-ui/icons/OpenInNew";
 import GetApp from "@material-ui/icons/GetApp";
 import PinDrop from "@material-ui/icons/PinDrop";
 import { Category, Hardware } from "api/types";
-import { CartItem } from "slices/hardware/cartSlice";
+import { CartItem } from "api/types";
 
 // For DashCard on Dashboard
 export const cardItems = [
