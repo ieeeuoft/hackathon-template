@@ -2,7 +2,7 @@ from collections import Counter
 import functools
 from django.db.models import Count, Q
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
-from rest_framework import serializers, status
+from rest_framework import serializers
 
 from hardware.models import Hardware, Category, OrderItem, Order, Incident
 
@@ -89,9 +89,7 @@ class OrderListSerializer(serializers.ModelSerializer):
         return obj.team.team_code
 
 
-class OrderChangeSerializer(serializers.ModelSerializer):
-    hardware = HardwareSerializer(many=True, read_only=True)
-    team_code = serializers.SerializerMethodField()
+class OrderChangeSerializer(OrderListSerializer):
 
     change_options = {
         "Submitted": ["Cancelled", "Ready for Pickup"],
@@ -109,10 +107,6 @@ class OrderChangeSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
         )
-
-    @staticmethod
-    def get_team_code(obj: Order):
-        return obj.team.team_code
 
     def validate(self, data):
         current_status = self.instance.status
