@@ -1,18 +1,18 @@
 from django.db import transaction
 from django.db.models import Q
-from django.shortcuts import get_object_or_404
-from django_filters import rest_framework as filters
 
 from rest_framework import generics, mixins, status
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
-from rest_framework.filters import SearchFilter
 
 
-from event.models import User, Team as EventTeam
+from event.serializers import (
+    ProfileSerializer,
+    CurrentProfileSerializer,
+)
+from event.models import User, Team as EventTeam, Profile
 from event.serializers import UserSerializer, TeamSerializer
 from event.permissions import UserHasProfile, FullDjangoModelPermissions
-from event.api_filters import TeamFilter
 
 from hardware.models import OrderItem, Order
 from hardware.serializers import OrderListSerializer
@@ -107,6 +107,29 @@ class JoinTeamView(generics.GenericAPIView, mixins.RetrieveModelMixin):
         response_serializer = TeamSerializer(profile.team)
         response_data = response_serializer.data
         return Response(data=response_data, status=status.HTTP_200_OK,)
+
+
+class ProfileDetailView(mixins.UpdateModelMixin, generics.GenericAPIView):
+
+    queryset = Profile.objects.all()
+    serializer_class = ProfileSerializer
+    permission_classes = [FullDjangoModelPermissions]
+
+    def patch(self, request, *args, **kwargs):
+        return self.partial_update(request, *args, **kwargs)
+
+
+class CurrentProfileView(mixins.UpdateModelMixin, generics.GenericAPIView):
+
+    queryset = Profile.objects.all()
+    serializer_class = CurrentProfileSerializer
+    permission_classes = [UserHasProfile]
+
+    def get_object(self):
+        return self.request.user.profile
+
+    def patch(self, request, *args, **kwargs):
+        return self.partial_update(request, *args, **kwargs)
 
 
 class CurrentTeamOrderListView(generics.ListAPIView):
