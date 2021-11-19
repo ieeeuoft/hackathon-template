@@ -50,11 +50,6 @@ class HardwareDetailView(mixins.RetrieveModelMixin, generics.GenericAPIView):
 class IncidentListView(
     mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView
 ):
-    queryset = Incident.objects.all().select_related(
-        "order_item", "order_item__order__team", "order_item__hardware"
-    )
-    serializer_class = IncidentListSerializer
-
     search_fields = (
         "state",
         "order_item__order__team__team_code",
@@ -64,6 +59,15 @@ class IncidentListView(
 
     filter_backends = (filters.DjangoFilterBackend, SearchFilter)
     filterset_class = IncidentFilter
+
+    def get_queryset(self):
+        queryset = Incident.objects.all()
+        if self.request.method == "GET":
+            return queryset.select_related(
+                "order_item", "order_item__order__team", "order_item__hardware"
+            )
+        elif self.request.method == "POST":
+            return queryset
 
     def get_serializer_class(self):
         if self.request.method == "GET":

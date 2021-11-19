@@ -7,14 +7,13 @@ from django.conf import settings
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from event.models import Team, Profile, User
+from event.models import Team
 from hardware.models import Hardware, Category, Order, OrderItem, Incident
 from hardware.serializers import (
     HardwareSerializer,
     CategorySerializer,
     OrderListSerializer,
     IncidentListSerializer,
-    IncidentCreateSerializer,
 )
 from hackathon_site.tests import SetupUserMixin
 
@@ -632,32 +631,40 @@ class IncidentListViewPostTestCase(SetupUserMixin, APITestCase):
             order=self.order, hardware=self.hardware,
         )
 
-        self.incident = Incident.objects.create(
-            state="Broken",
-            description="Description",
-            order_item=self.order_item,
-            time_occurred=datetime(2022, 8, 8, tzinfo=settings.TZ_INFO),
-        )
-
-        self.request_data = IncidentCreateSerializer(self.incident).data
-        self.incident.delete()
+        self.request_data = {
+            "state": "Broken",
+            "time_occurred": "2022-08-08T01:18:00-04:00",
+            "description": "Description",
+            "order_item": self.order_item.id,
+            "team_id": 1,
+        }
 
         self.view = reverse("api:hardware:incident-list")
 
     def test_user_not_logged_in(self):
-        response = self.client.post(self.view, self.request_data, format="json")
+        response = self.client.post(self.view, self.request_data)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_incorrect_permissions(self):
         self._login()
-        response = self.client.post(self.view, self.request_data, format="json")
+        response = self.client.post(self.view, self.request_data)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_successful_post(self):
         self._login(self.permissions)
-        self.profile = Profile.objects.create(user=self.user, team=self.team)
-        response = self.client.post(self.view, self.request_data, format="json")
+        response = self.client.post(self.view, self.request_data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        similar_attributes = [
+            "state",
+            "time_occurred",
+            "description",
+            "order_item",
+            "team_id",
+        ]
+        final_response = response.json()
+        del final_response["id"]
+        for attribute in similar_attributes:
+            self.assertEqual(final_response[attribute], self.request_data[attribute])
 
 
 class OrderListViewPostTestCase(SetupUserMixin, APITestCase):

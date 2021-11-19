@@ -1,17 +1,13 @@
 from django.db import transaction
 from django.db.models import Q
-from django.shortcuts import get_object_or_404
-from django_filters import rest_framework as filters
 
 from rest_framework import generics, mixins, status
 from rest_framework.exceptions import ValidationError, PermissionDenied
 from rest_framework.response import Response
-from rest_framework.filters import SearchFilter
 
 
 from event.models import User, Team as EventTeam
 from event.serializers import UserSerializer, TeamSerializer
-from event.api_filters import TeamFilter
 from hardware.serializers import IncidentCreateSerializer, OrderListSerializer
 from event.permissions import UserHasProfile, FullDjangoModelPermissions
 
@@ -109,7 +105,7 @@ class JoinTeamView(generics.GenericAPIView, mixins.RetrieveModelMixin):
         return Response(data=response_data, status=status.HTTP_200_OK,)
 
 
-class IncidentListView(
+class TeamIncidentListView(
     mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView
 ):
     queryset = Incident.objects.all()
@@ -118,11 +114,12 @@ class IncidentListView(
     permission_classes = [UserHasProfile]
 
     def perform_create(self, serializer):
-        incident_team = serializer.validated_data["order_item"]["order"].team
+        incident_team = serializer.validated_data["order_item"].order.team
         user_team = self.request.user.profile.team
 
         if incident_team != user_team:
             raise PermissionDenied("Can only post incidents for your own team.")
+        serializer.save()
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)

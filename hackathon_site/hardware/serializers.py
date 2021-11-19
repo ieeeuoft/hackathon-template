@@ -1,4 +1,4 @@
-from collections import Counter, OrderedDict
+from collections import Counter
 import functools
 from django.db.models import Count, Q
 from django.core.exceptions import ObjectDoesNotExist
@@ -65,12 +65,7 @@ class IncidentListSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def get_team_id(obj: Incident):
-        intermediary = (
-            obj["order_item"]["order"]
-            if isinstance(obj, OrderedDict)
-            else obj.order_item.order
-        )
-        return intermediary.team.id
+        return obj.order_item.order.team.id
 
 
 class OrderListSerializer(serializers.ModelSerializer):
@@ -94,18 +89,16 @@ class OrderListSerializer(serializers.ModelSerializer):
         return obj.team.team_code
 
 
-class IncidentCreateSerializer(IncidentListSerializer):
+class IncidentCreateSerializer(serializers.ModelSerializer):
+    team_id = serializers.SerializerMethodField()
+
     class Meta:
         model = Incident
         fields = IncidentListSerializer.Meta.fields
-        read_only_fields = ("team_id",)
 
-    def create(self, validated_data):
-        order = OrderItem.objects.get(id=validated_data["order_item"]["order"].id)
-        new_data = validated_data
-        new_data["order_item"] = order
-        incident = Incident.objects.create(**new_data)
-        return incident
+    @staticmethod
+    def get_team_id(obj: Incident):
+        return obj.order_item.order.team.id
 
 
 class OrderCreateSerializer(serializers.Serializer):
