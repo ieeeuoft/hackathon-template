@@ -1,10 +1,15 @@
 import React from "react";
 import CartCard from "components/cart/CartCard/CartCard";
 
-import { render, makeStoreWithEntities, waitFor } from "testing/utils";
-import { mockHardware } from "testing/mockData";
+import {
+    render,
+    makeStoreWithEntities,
+    waitFor,
+    fireEvent,
+    getByRole,
+} from "testing/utils";
+import { mockCartItems, mockHardware } from "testing/mockData";
 import { addToCart, cartSelectors } from "slices/hardware/cartSlice";
-import { fireEvent, getByRole } from "@testing-library/react";
 
 describe("<CartCard />", () => {
     /**
@@ -67,25 +72,25 @@ describe("<CartCard />", () => {
     });
 
     test("removeFromCart button", async () => {
-        const store = makeStoreWithEntities({ hardware: mockHardware });
+        const store = makeStoreWithEntities({ cartItems: mockCartItems });
 
         store.dispatch(
             addToCart({
-                hardware_id: mockHardware[0].id,
-                quantity: mockHardware[0].quantity_available,
+                hardware_id: mockCartItems[0].hardware_id,
+                quantity: mockCartItems[0].quantity,
             })
         );
         store.dispatch(
             addToCart({
-                hardware_id: mockHardware[1].id,
-                quantity: mockHardware[1].quantity_available,
+                hardware_id: mockCartItems[1].hardware_id,
+                quantity: mockCartItems[1].quantity,
             })
         );
 
         const { getByRole } = render(
             <CartCard
-                hardware_id={mockHardware[0].id}
-                quantity={mockHardware[0].quantity_available}
+                hardware_id={mockCartItems[0].hardware_id}
+                quantity={mockCartItems[0].quantity}
             />,
             { store }
         );
@@ -97,8 +102,8 @@ describe("<CartCard />", () => {
             expect(cartSelectors.selectAll(store.getState()).length).toEqual(1);
             expect(cartSelectors.selectAll(store.getState())).toEqual([
                 {
-                    hardware_id: mockHardware[1].id,
-                    quantity: mockHardware[1].quantity_available,
+                    hardware_id: mockCartItems[1].hardware_id,
+                    quantity: mockCartItems[1].quantity,
                 },
             ]);
         });

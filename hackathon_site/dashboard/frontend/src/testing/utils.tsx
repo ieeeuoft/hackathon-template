@@ -10,7 +10,7 @@ import {
 import { makeStore, RootStore, RootState } from "slices/store";
 import { SnackbarProvider } from "notistack";
 import { AxiosResponse } from "axios";
-import { APIListResponse, Category, Hardware } from "api/types";
+import { APIListResponse, CartItem, Category, Hardware } from "api/types";
 import {
     hardwareReducerName,
     HardwareState,
@@ -21,6 +21,11 @@ import {
     CategoryState,
     initialState as categoryInitialState,
 } from "slices/hardware/categorySlice";
+import {
+    cartReducerName,
+    CartItemState,
+    initialState as cartItemInitialState,
+} from "slices/hardware/cartSlice";
 
 export const withRouter = (component: React.ComponentElement<any, any>) => (
     <BrowserRouter>{component}</BrowserRouter>
@@ -95,6 +100,7 @@ export * from "jest-when";
 export interface StoreEntities {
     hardware?: Hardware[];
     categories?: Category[];
+    cartItems?: CartItem[];
 }
 
 export const makeStoreWithEntities = (entities: StoreEntities) => {
@@ -127,6 +133,21 @@ export const makeStoreWithEntities = (entities: StoreEntities) => {
         }
 
         preloadedState[categoryReducerName] = categoryState;
+    }
+
+    if (entities.cartItems) {
+        const cartItemState: CartItemState = {
+            ...cartItemInitialState,
+            ids: [],
+            entities: {},
+        };
+
+        for (const cartItem of entities.cartItems) {
+            cartItemState.ids.push(cartItem.hardware_id);
+            cartItemState.entities[cartItem.hardware_id] = cartItem;
+        }
+
+        preloadedState[cartReducerName] = cartItemState;
     }
 
     return makeStore(preloadedState);
