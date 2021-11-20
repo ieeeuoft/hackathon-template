@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="order",
             name="request",
-            field=models.JSONField(default=123),
+            field=models.JSONField(default={}),
             preserve_default=False,
         ),
     ]
