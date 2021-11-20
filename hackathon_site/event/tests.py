@@ -729,6 +729,28 @@ class UserSerializerTestCase(TestCase):
         self.assertEqual(user_expected, user_serialized)
 
 
+class UserInProfileSerializerTestCase(TestCase):
+    def test_serializer(self):
+        team = EventTeam.objects.create()
+
+        user = User.objects.create()
+
+        Profile.objects.create(
+            user=user, team=team,
+        )
+
+        user_serialized = UserInProfileSerializer(user).data
+
+        user_expected = {
+            "id": user.id,
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "email": user.email,
+        }
+
+        self.assertEqual(user_expected, user_serialized)
+
+
 class GroupSerializerTestCase(TestCase):
     def test_serializer(self):
         group = Group.objects.create(name="Test")
