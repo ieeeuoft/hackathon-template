@@ -59,7 +59,6 @@ class ProfileInTeamSerializer(serializers.ModelSerializer):
             "user",
         )
 
-
     def update(self, instance: Profile, validated_data):
         return super().update(instance, validated_data)
 
