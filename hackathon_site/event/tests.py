@@ -1,7 +1,7 @@
 import re
 from unittest.mock import patch
 from datetime import datetime, timedelta
-import json
+
 
 
 from django.core import mail
