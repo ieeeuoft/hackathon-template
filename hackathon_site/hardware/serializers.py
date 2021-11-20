@@ -1,8 +1,11 @@
+import json
 from collections import Counter
 import functools
 from django.db.models import Count, Q
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import serializers
+
+from collections import OrderedDict
 
 from hardware.models import Hardware, Category, OrderItem, Order, Incident
 
@@ -164,6 +167,24 @@ class OrderCreateSerializer(serializers.Serializer):
         )
         new_order = None
         response_data = {"order_id": None, "hardware": [], "errors": []}
+
+
+
+
+
+        # The reason why doing this is because the id field stores the hardware object, django cannot translate hardware object into JSON. Therefore, loop has been used to call Profile seriliazer and assign the JSON file to the validated_data filed.
+        counter = 0;
+        for item in validated_data['hardware']:
+
+            temp = HardwareSerializer(item['id']).data
+
+            validated_data['hardware'][counter] = temp
+            counter = counter +1
+
+
+
+
+
         order_items = []
         for (hardware, requested_quantity) in requested_hardware.items():
             num_order_items = min(hardware.quantity_remaining, requested_quantity)
@@ -180,7 +201,7 @@ class OrderCreateSerializer(serializers.Serializer):
                 continue
             if new_order is None:
                 new_order = Order.objects.create(
-                    team=self.context["request"].user.profile.team, status="Submitted"
+                    team=self.context["request"].user.profile.team, status="Submitted", request=validated_data
                 )
                 response_data["order_id"] = new_order.id
             order_items += [
