@@ -10,7 +10,7 @@ class GroupSerializer(serializers.ModelSerializer):
         fields = ("id", "name")
 
 
-class UserInSerializer(serializers.ModelSerializer):
+class UserInProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ("id", "first_name", "last_name", "email")
@@ -31,7 +31,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 
 
 class ProfileInUserSerializer(serializers.ModelSerializer):
-    user = UserInSerializer(read_only=True)
+    user = UserInProfileSerializer(read_only=True)
 
     class Meta:
         model = Profile
@@ -46,7 +46,7 @@ class ProfileInUserSerializer(serializers.ModelSerializer):
 
 
 class ProfileInTeamSerializer(serializers.ModelSerializer):
-    user = UserInSerializer(read_only=True)
+    user = UserInProfileSerializer(read_only=True)
 
     class Meta:
         model = Profile

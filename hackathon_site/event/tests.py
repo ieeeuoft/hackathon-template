@@ -3,7 +3,6 @@ from unittest.mock import patch
 from datetime import datetime, timedelta
 
 
-
 from django.core import mail
 from django.contrib.auth.models import Group
 from django.conf import settings
@@ -22,7 +21,7 @@ from event.serializers import (
     CurrentProfileSerializer,
     ProfileInUserSerializer,
     ProfileInTeamSerializer,
-    UserInSerializer,
+    UserInProfileSerializer,
 )
 
 
@@ -801,7 +800,7 @@ class ProfileInUserSerializerTestCase(TestCase):
             "attended": profile.attended,
             "acknowledge_rules": profile.acknowledge_rules,
             "e_signature": profile.e_signature,
-            "user": UserInSerializer(profile.user).data,
+            "user": UserInProfileSerializer(profile.user).data,
         }
 
         self.assertEqual(profile_expected, profile_serialized)
@@ -828,7 +827,7 @@ class ProfileInTeamSerilializerTestCase(TestCase):
             "attended": profile.attended,
             "acknowledge_rules": profile.acknowledge_rules,
             "e_signature": profile.e_signature,
-            "user": UserInSerializer(profile.user).data,
+            "user": UserInProfileSerializer(profile.user).data,
         }
 
         self.assertEqual(profile_expected, profile_serialized)
