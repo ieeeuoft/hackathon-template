@@ -85,6 +85,7 @@ class OrderListSerializer(serializers.ModelSerializer):
             "status",
             "created_at",
             "updated_at",
+            "request"
         )
 
     @staticmethod
