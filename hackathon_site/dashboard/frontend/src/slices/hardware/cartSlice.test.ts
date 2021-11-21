@@ -9,7 +9,7 @@ import {
     removeFromCart,
 } from "slices/hardware/cartSlice";
 import { makeStoreWithEntities, waitFor } from "testing/utils";
-import { mockCartItems, mockHardware } from "../../testing/mockData";
+import { mockCartItems, mockHardware } from "testing/mockData";
 
 const mockState: RootState = {
     ...store.getState(),
