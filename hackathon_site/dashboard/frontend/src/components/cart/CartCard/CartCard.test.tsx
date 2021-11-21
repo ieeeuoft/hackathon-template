@@ -1,17 +1,8 @@
 import React from "react";
 import CartCard from "components/cart/CartCard/CartCard";
 
-import {
-    render,
-    makeStoreWithEntities,
-    waitFor,
-    fireEvent,
-    getByRole,
-    getByText,
-    queryByText,
-} from "testing/utils";
-import { mockCartItems, mockHardware } from "testing/mockData";
-import { addToCart, cartSelectors } from "slices/hardware/cartSlice";
+import { render, makeStoreWithEntities, waitFor } from "testing/utils";
+import { mockHardware } from "testing/mockData";
 
 describe("<CartCard />", () => {
     /**
@@ -70,42 +61,6 @@ describe("<CartCard />", () => {
 
         await waitFor(() => {
             expect(getByText(error)).toBeInTheDocument();
-        });
-    });
-
-    test("removeFromCart button", async () => {
-        const store = makeStoreWithEntities({
-            hardware: mockHardware,
-            cartItems: mockCartItems,
-        });
-
-        store.dispatch(
-            addToCart({
-                hardware_id: mockCartItems[0].hardware_id,
-                quantity: mockCartItems[0].quantity,
-            })
-        );
-
-        store.dispatch(
-            addToCart({
-                hardware_id: mockCartItems[1].hardware_id,
-                quantity: mockCartItems[1].quantity,
-            })
-        );
-
-        const { getByRole, queryByText } = render(
-            <CartCard
-                hardware_id={mockCartItems[0].hardware_id}
-                quantity={mockCartItems[0].quantity}
-            />,
-            { store }
-        );
-
-        const removeButton = getByRole("remove");
-        fireEvent.click(removeButton);
-
-        await waitFor(() => {
-            expect(queryByText(mockHardware[0].picture)).not.toBeInTheDocument();
         });
     });
 });

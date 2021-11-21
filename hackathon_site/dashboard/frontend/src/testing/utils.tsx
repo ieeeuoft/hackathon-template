@@ -23,7 +23,7 @@ import {
 } from "slices/hardware/categorySlice";
 import {
     cartReducerName,
-    CartItemState,
+    CartState,
     initialState as cartItemInitialState,
 } from "slices/hardware/cartSlice";
 
@@ -136,7 +136,7 @@ export const makeStoreWithEntities = (entities: StoreEntities) => {
     }
 
     if (entities.cartItems) {
-        const cartItemState: CartItemState = {
+        const cartItemState: CartState = {
             ...cartItemInitialState,
             ids: [],
             entities: {},
