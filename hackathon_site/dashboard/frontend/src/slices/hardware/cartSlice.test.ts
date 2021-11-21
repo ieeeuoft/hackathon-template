@@ -8,7 +8,8 @@ import {
     initialState,
     removeFromCart,
 } from "slices/hardware/cartSlice";
-import { waitFor } from "testing/utils";
+import { makeStoreWithEntities, waitFor } from "testing/utils";
+import { mockCartItems, mockHardware } from "../../testing/mockData";
 
 const mockState: RootState = {
     ...store.getState(),
@@ -85,19 +86,24 @@ describe("addToCart action", () => {
 
 describe("removeFromCart action", () => {
     test("removeFromCart removes existing item", async () => {
-        const store = makeStore();
-
-        store.dispatch(addToCart({ hardware_id: 2, quantity: 1 }));
+        const store = makeStoreWithEntities({
+            hardware: mockHardware,
+            cartItems: mockCartItems,
+        });
 
         store.dispatch(removeFromCart(2));
-        store.dispatch(addToCart({ hardware_id: 2, quantity: 5 }));
 
         await waitFor(() => {
-            expect(cartSelectors.selectAll(store.getState()).length).toEqual(1);
-            expect(cartSelectors.selectById(store.getState(), 2)).toEqual({
-                hardware_id: 2,
-                quantity: 5,
+            expect(cartSelectors.selectAll(store.getState()).length).toEqual(2);
+            expect(cartSelectors.selectById(store.getState(), 1)).toEqual({
+                hardware_id: 1,
+                quantity: 3,
             });
+            expect(cartSelectors.selectById(store.getState(), 3)).toEqual({
+                hardware_id: 3,
+                quantity: 2,
+            });
+            expect(cartSelectors.selectById(store.getState(), 2)).toEqual(undefined);
         });
     });
 });

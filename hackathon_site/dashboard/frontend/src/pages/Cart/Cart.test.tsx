@@ -6,9 +6,6 @@ import {
     waitFor,
     promiseResolveWithDelay,
     makeMockApiListResponse,
-    getByTestId,
-    getByText,
-    queryByTestId,
     fireEvent,
 } from "testing/utils";
 import { mockCartItems, mockHardware } from "testing/mockData";
@@ -104,15 +101,17 @@ describe("Cart Page", () => {
             cartItems: mockCartItems,
         });
 
-        const { getByTestId, queryByTestId, getByText } = render(<Cart />, {
+        const { getByTestId, queryByText, getByText } = render(<Cart />, {
             store,
         });
 
-        const removeButton = getByTestId(mockCartItems[2].hardware_id.toString());
+        const removeButton = getByTestId(
+            "cart-item-" + mockCartItems[2].hardware_id.toString()
+        );
         fireEvent.click(removeButton);
 
         await waitFor(() => {
-            expect(queryByTestId(mockHardware[2].name)).not.toBeInTheDocument();
+            expect(queryByText(mockHardware[2].name)).not.toBeInTheDocument();
             expect(getByText(mockHardware[1].name)).toBeInTheDocument();
         });
     });

@@ -124,7 +124,7 @@ export const CartCard = ({ hardware_id, quantity, error }: CartCardProps) => {
                     onClick={() => {
                         handleRemove(hardware_id);
                     }}
-                    data-testid={hardware_id.toString()}
+                    data-testid={"cart-item-" + hardware_id.toString()}
                 >
                     <CloseIcon />
                 </IconButton>
