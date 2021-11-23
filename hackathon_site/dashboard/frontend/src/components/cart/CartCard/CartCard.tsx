@@ -15,7 +15,7 @@ import CloseIcon from "@material-ui/icons/Close";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "slices/store";
 import { hardwareSelectors } from "slices/hardware/hardwareSlice";
-import { removeFromCart } from "slices/hardware/cartSlice";
+import { removeFromCart, updateCart } from "slices/hardware/cartSlice";
 
 const makeSelections = (quantity_remaining: number) => {
     const items = [];
@@ -78,17 +78,20 @@ interface CartCardProps {
 }
 
 export const CartCard = ({ hardware_id, quantity, error }: CartCardProps) => {
-    const [numInCart, setNumInCart] = useState(quantity);
-
     const hardware = useSelector((state: RootState) =>
         hardwareSelectors.selectById(state, hardware_id)
     );
 
-    const handleChange = (event: ChangeEvent<{ name?: string; value: string }>) => {
-        setNumInCart(parseInt(event.target.value));
-    };
-
     const dispatch = useDispatch();
+
+    const handleChange = (event: ChangeEvent<{ name?: string; value: string }>) => {
+        dispatch(
+            updateCart({
+                id: hardware_id,
+                changes: { quantity: parseInt(event.target.value) },
+            })
+        );
+    };
 
     const handleRemove = (id: number) => {
         dispatch(removeFromCart(id));
@@ -114,7 +117,7 @@ export const CartCard = ({ hardware_id, quantity, error }: CartCardProps) => {
                 <QuantitySelector
                     quantity_remaining={hardware.quantity_remaining}
                     handleChange={handleChange}
-                    numInCart={numInCart}
+                    numInCart={quantity}
                 />
             </CardContent>
             <CardActions className={styles.CartAction}>
