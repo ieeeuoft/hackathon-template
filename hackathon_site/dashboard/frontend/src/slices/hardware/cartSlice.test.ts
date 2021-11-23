@@ -7,9 +7,10 @@ import {
     isLoadingSelector,
     initialState,
     removeFromCart,
+    updateCart,
 } from "slices/hardware/cartSlice";
 import { makeStoreWithEntities, waitFor } from "testing/utils";
-import { mockCartItems, mockHardware } from "testing/mockData";
+import { mockCartItems } from "testing/mockData";
 
 const mockState: RootState = {
     ...store.getState(),
@@ -87,7 +88,6 @@ describe("addToCart action", () => {
 describe("removeFromCart action", () => {
     test("removeFromCart removes existing item", async () => {
         const store = makeStoreWithEntities({
-            hardware: mockHardware,
             cartItems: mockCartItems,
         });
 
@@ -104,6 +104,26 @@ describe("removeFromCart action", () => {
                 quantity: 2,
             });
             expect(cartSelectors.selectById(store.getState(), 2)).toEqual(undefined);
+        });
+    });
+});
+
+describe("updateCart action", () => {
+    test("updateCart updates quantity of existing item", async () => {
+        const store = makeStoreWithEntities({
+            cartItems: mockCartItems,
+        });
+
+        store.dispatch(
+            updateCart({ id: mockCartItems[0].hardware_id, changes: { quantity: 25 } })
+        );
+
+        await waitFor(() => {
+            expect(cartSelectors.selectAll(store.getState()).length).toEqual(3);
+            expect(cartSelectors.selectById(store.getState(), 1)).toEqual({
+                hardware_id: mockCartItems[0].hardware_id,
+                quantity: 25,
+            });
         });
     });
 });
