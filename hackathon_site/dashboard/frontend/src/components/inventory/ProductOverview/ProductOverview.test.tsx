@@ -1,9 +1,11 @@
 import React from "react";
 import ProductOverview, { EnhancedAddToCartForm } from "./ProductOverview";
-import { mockCategories, mockHardware } from "testing/mockData";
+import { mockCartItems, mockCategories, mockHardware } from "testing/mockData";
 import { render, fireEvent, waitFor, makeStoreWithEntities } from "testing/utils";
 import { makeStore } from "slices/store";
 import { addToCart, cartSelectors } from "slices/hardware/cartSlice";
+import { SnackbarProvider } from "notistack";
+import SnackbarNotifier from "../../general/SnackbarNotifier/SnackbarNotifier";
 
 describe("<ProductOverview />", () => {
     test("all 3 parts of the product overview is there", () => {
@@ -70,7 +72,6 @@ describe("<ProductOverview />", () => {
             store,
         });
 
-        // Check if the main section, detailInfoSection, and add to cart section works
         expect(
             getByText("Unable to display hardware. Please refresh page and try again.")
         ).toBeInTheDocument();
@@ -88,10 +89,17 @@ describe("<ProductOverview />", () => {
             },
         });
 
-        const { getByText } = render(<ProductOverview showAddToCartButton />, {
-            store,
-        });
+        const { getByText } = render(
+            <SnackbarProvider>
+                <SnackbarNotifier />
+                <ProductOverview showAddToCartButton />
+            </SnackbarProvider>,
+            {
+                store,
+            }
+        );
 
+        // by default, quantity is 1
         const button = getByText("Add to cart");
 
         await waitFor(() => {
@@ -101,6 +109,9 @@ describe("<ProductOverview />", () => {
         expect(cartSelectors.selectAll(store.getState())).toEqual([
             { hardware_id: mockHardware[0].id, quantity: 1 },
         ]);
+        expect(
+            getByText(`Added 1 ${mockHardware[0].name} item(s) to your cart.`)
+        ).toBeInTheDocument();
     });
 
     test("Add to Cart button doesn't add hardware if user exceeds max per team limit", async () => {
@@ -113,25 +124,32 @@ describe("<ProductOverview />", () => {
                     isProductOverviewVisible: true,
                 },
             },
+            cartItems: mockCartItems,
         });
 
-        // TODO: remove and replace with prepopulated store
-        const initialCart = {
-            hardware_id: mockHardware[0].id,
-            quantity: mockHardware[0].max_per_team,
-        };
-        store.dispatch(addToCart(initialCart));
-        const { getByText } = render(<ProductOverview showAddToCartButton />, {
-            store,
-        });
+        const { getByText } = render(
+            <SnackbarProvider>
+                <SnackbarNotifier />
+                <ProductOverview showAddToCartButton />
+            </SnackbarProvider>,
+            {
+                store,
+            }
+        );
 
+        // by default, quantity is 1
         const button = getByText("Add to cart");
 
         await waitFor(() => {
             fireEvent.click(button);
         });
 
-        expect(cartSelectors.selectAll(store.getState())).toEqual([initialCart]);
+        expect(cartSelectors.selectAll(store.getState())).toEqual(mockCartItems);
+        expect(
+            getByText(
+                "You've already added the maximum amount of this item to your cart."
+            )
+        ).toBeInTheDocument();
     });
 });
 
@@ -166,5 +184,19 @@ describe("<EnhancedAddToCartForm />", () => {
 
         expect(queryByText("3")).not.toBeInTheDocument();
         expect(getByText("2")).toBeInTheDocument();
+    });
+
+    test("dropdown value defaults to quantityAvailable when maxPerTeam is undefined", () => {
+        const { getByText, getByRole } = render(
+            <EnhancedAddToCartForm
+                quantityAvailable={3}
+                hardwareId={1}
+                name="Arduino"
+            />
+        );
+
+        fireEvent.mouseDown(getByRole("button", { name: "Qty 1" }));
+
+        expect(getByText("3")).toBeInTheDocument();
     });
 });

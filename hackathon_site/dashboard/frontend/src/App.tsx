@@ -82,7 +82,7 @@ const ConnectedApp = () => (
                 <SnackbarProvider>
                     <SnackbarNotifier />
                     <ConnectedRouter history={history}>
-                        <UnconnectedApp />
+                        <UnconnectedApp />i
                     </ConnectedRouter>
                 </SnackbarProvider>
             </ThemeProvider>
