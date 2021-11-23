@@ -6,21 +6,21 @@
     &Black,
     &Pic {
         width: 100%;
-        &:hover {
-            cursor: pointer;
-        }
     }
 
     &Black {
         object-fit: cover;
         opacity: 0.2;
-        &:hover {
-            cursor: pointer;
-        }
     }
 
     &TextBox {
         padding: 10px;
+    }
+
+    &Grid {
+        &:hover {
+            cursor: pointer;
+        }
     }
 }
 
