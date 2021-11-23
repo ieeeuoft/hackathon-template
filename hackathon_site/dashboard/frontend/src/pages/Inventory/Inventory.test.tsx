@@ -6,6 +6,7 @@ import {
     waitFor,
     when,
     fireEvent,
+    promiseResolveWithDelay,
 } from "testing/utils";
 
 import Inventory from "pages/Inventory/Inventory";
@@ -202,5 +203,59 @@ describe("Inventory Page", () => {
             expect(getByText(mockHardware[2].name)).toBeInTheDocument();
         });
         expect(getByText(`${mockHardware.length - 2} results`)).toBeInTheDocument();
+    });
+
+    it("Renders loading icon on load more button, then displays hardware", async () => {
+        const limit = mockHardware.length - 2;
+        const nextURL = `http://localhost:8000${hardwareUri}?offset=${limit}`;
+        const hardwareApiResponse = makeMockApiListResponse(
+            mockHardware.slice(0, limit),
+            nextURL,
+            null,
+            mockHardware.length
+        );
+        const hardwareNextApiResponse = makeMockApiListResponse(
+            mockHardware.slice(limit),
+            null,
+            hardwareUri,
+            mockHardware.length
+        );
+        const categoryApiResponse = makeMockApiListResponse(mockCategories);
+
+        const { path, filters } = stripHostnameReturnFilters(nextURL);
+
+        when(mockedGet)
+            .calledWith(hardwareUri, {})
+            .mockResolvedValue(hardwareApiResponse);
+        when(mockedGet)
+            .calledWith(path, filters)
+            .mockReturnValue(promiseResolveWithDelay(hardwareNextApiResponse, 500));
+        when(mockedGet)
+            .calledWith(categoriesUri)
+            .mockResolvedValue(categoryApiResponse);
+
+        const { getByText, queryByText, queryByTestId } = render(<Inventory />);
+
+        await waitFor(() => {
+            expect(getByText(mockHardware[0].name)).toBeInTheDocument();
+            expect(queryByText(mockHardware[limit].name)).not.toBeInTheDocument();
+        });
+
+        fireEvent.click(getByText(/load more/i));
+
+        await waitFor(() => {
+            expect(
+                queryByTestId("load-more-hardware-circular-progress")
+            ).toBeInTheDocument();
+        });
+
+        await waitFor(() => {
+            expect(
+                queryByTestId("load-more-hardware-circular-progress")
+            ).not.toBeInTheDocument();
+            for (let hardware of mockHardware) {
+                expect(getByText(hardware.name)).toBeInTheDocument();
+            }
+        });
     });
 });

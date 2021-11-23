@@ -24,7 +24,6 @@ import {
     getHardwareNextPage,
     hardwareCountSelector,
     hardwareSelectors,
-    isLoadingSelector,
     isMoreLoadingSelector,
 } from "slices/hardware/hardwareSlice";
 import { getCategories } from "slices/hardware/categorySlice";
@@ -163,7 +162,10 @@ const Inventory = () => {
                                 onClick={getMoreHardware}
                             >
                                 {isMoreLoading ? (
-                                    <CircularProgress size={25} />
+                                    <CircularProgress
+                                        size={25}
+                                        data-testid="load-more-hardware-circular-progress"
+                                    />
                                 ) : (
                                     "Load more"
                                 )}
