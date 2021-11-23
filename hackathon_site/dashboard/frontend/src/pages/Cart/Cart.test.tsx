@@ -6,6 +6,7 @@ import {
     waitFor,
     promiseResolveWithDelay,
     makeMockApiListResponse,
+    fireEvent,
 } from "testing/utils";
 import { mockCartItems, mockHardware } from "testing/mockData";
 import { get } from "api/api";
@@ -92,5 +93,26 @@ describe("Cart Page", () => {
         expect(getByText(/no items in cart/i)).toBeInTheDocument();
         // Test for quantity
         expect(getByText(0)).toBeInTheDocument();
+    });
+
+    test("removeFromCart button", async () => {
+        const store = makeStoreWithEntities({
+            hardware: mockHardware,
+            cartItems: mockCartItems,
+        });
+
+        const { getByTestId, queryByText, getByText } = render(<Cart />, {
+            store,
+        });
+
+        const removeButton = getByTestId(
+            "cart-item-" + mockCartItems[2].hardware_id.toString()
+        );
+        fireEvent.click(removeButton);
+
+        await waitFor(() => {
+            expect(queryByText(mockHardware[2].name)).not.toBeInTheDocument();
+            expect(getByText(mockHardware[1].name)).toBeInTheDocument();
+        });
     });
 });

@@ -10,6 +10,7 @@ import RefreshIcon from "@material-ui/icons/Refresh";
 import CloseIcon from "@material-ui/icons/Close";
 import FilterListIcon from "@material-ui/icons/FilterList";
 import InventorySearch from "components/inventory/InventorySearch/InventorySearch";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 import styles from "./Inventory.module.scss";
 import Header from "components/general/Header/Header";
@@ -20,8 +21,10 @@ import ProductOverview from "components/inventory/ProductOverview/ProductOvervie
 import {
     clearFilters,
     getHardwareWithFilters,
+    getHardwareNextPage,
     hardwareCountSelector,
     hardwareSelectors,
+    isMoreLoadingSelector,
 } from "slices/hardware/hardwareSlice";
 import { getCategories } from "slices/hardware/categorySlice";
 
@@ -31,6 +34,7 @@ const Inventory = () => {
     const dispatch = useDispatch();
     const items = useSelector(hardwareSelectors.selectAll);
     const count = useSelector(hardwareCountSelector);
+    const isMoreLoading = useSelector(isMoreLoadingSelector);
 
     const [mobileOpen, setMobileOpen] = React.useState(false);
     const toggleFilter = () => {
@@ -46,6 +50,14 @@ const Inventory = () => {
     const [itemOverviewId, setItemOverviewId] = React.useState<number | null>(null);
     const toggleMenu = () => {
         setItemOverviewId(null);
+    };
+
+    const getMoreHardware = () => {
+        dispatch(getHardwareNextPage());
+    };
+
+    const refreshHardware = () => {
+        dispatch(getHardwareWithFilters());
     };
 
     // When the page is loaded, clear filters and fetch fresh inventory data
@@ -117,7 +129,12 @@ const Inventory = () => {
                                     <Typography variant="body2">
                                         {count} results
                                     </Typography>
-                                    <IconButton color="primary" aria-label="Refresh">
+                                    <IconButton
+                                        color="primary"
+                                        aria-label="Refresh"
+                                        onClick={refreshHardware}
+                                        data-testid="refreshInventory"
+                                    >
                                         <RefreshIcon />
                                     </IconButton>
                                 </div>
@@ -142,8 +159,16 @@ const Inventory = () => {
                                 size="large"
                                 fullWidth={true}
                                 disableElevation
+                                onClick={getMoreHardware}
                             >
-                                Load more
+                                {isMoreLoading ? (
+                                    <CircularProgress
+                                        size={25}
+                                        data-testid="load-more-hardware-circular-progress"
+                                    />
+                                ) : (
+                                    "Load more"
+                                )}
                             </Button>
                         )}
                     </div>

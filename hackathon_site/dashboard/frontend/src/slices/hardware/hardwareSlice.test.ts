@@ -7,16 +7,19 @@ import {
     hardwareReducerName,
     initialState,
     getHardwareWithFilters,
-    isLoadingSelector,
     hardwareSelectors,
+    getHardwareNextPage,
 } from "slices/hardware/hardwareSlice";
-import { get } from "api/api";
+import { get, stripHostnameReturnFilters } from "api/api";
 import { AnyAction } from "redux";
 import { displaySnackbar } from "slices/ui/uiSlice";
-import { makeMockApiListResponse, waitFor } from "testing/utils";
+import { makeMockApiListResponse, makeStoreWithEntities, waitFor } from "testing/utils";
 import { mockHardware } from "testing/mockData";
 
-jest.mock("api/api");
+jest.mock("api/api", () => ({
+    ...jest.requireActual("api/api"),
+    get: jest.fn(),
+}));
 const mockedGet = get as jest.MockedFunction<typeof get>;
 
 /**
@@ -101,5 +104,59 @@ describe("getHardwareWithFilters thunk", () => {
             "error",
             failureResponse.response.message
         );
+    });
+});
+
+describe("getHardwareNextPage thunk", () => {
+    it("Updates the store on API success", async () => {
+        const limit = mockHardware.length - 2;
+        const nextURL = `http://localhost:8000/api/hardware/hardware/?offset=${limit}`;
+        const { path, filters } = stripHostnameReturnFilters(nextURL);
+
+        const hardwareWithFiltersResponse = makeMockApiListResponse(
+            mockHardware.slice(0, limit),
+            nextURL
+        );
+        mockedGet.mockResolvedValueOnce(hardwareWithFiltersResponse);
+        const store = makeStore();
+        await store.dispatch(getHardwareWithFilters());
+
+        await waitFor(() => {
+            expect(mockedGet).toHaveBeenCalledWith("/api/hardware/hardware/", {});
+            expect(hardwareSelectors.selectIds(store.getState())).toEqual(
+                mockHardware.slice(0, limit).map(({ id }) => id)
+            );
+        });
+
+        const nextPageResponse = makeMockApiListResponse(
+            mockHardware.slice(limit),
+            null
+        );
+        mockedGet.mockResolvedValueOnce(nextPageResponse);
+
+        await store.dispatch(getHardwareNextPage());
+
+        await waitFor(() => {
+            expect(mockedGet).toHaveBeenCalledWith(path, filters);
+            expect(hardwareSelectors.selectIds(store.getState())).toEqual(
+                mockHardware.map(({ id }) => id)
+            );
+        });
+    });
+
+    it("Does not update store when next is null", async () => {
+        const limit = mockHardware.length - 2;
+        // by default next property is null
+        const store = makeStoreWithEntities({
+            hardware: mockHardware.slice(0, limit),
+        });
+
+        await store.dispatch(getHardwareNextPage());
+
+        await waitFor(() => {
+            expect(hardwareSelectors.selectIds(store.getState())).toEqual(
+                mockHardware.slice(0, limit).map(({ id }) => id)
+            );
+        });
     });
 });
