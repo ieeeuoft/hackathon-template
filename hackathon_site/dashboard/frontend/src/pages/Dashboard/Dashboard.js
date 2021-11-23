@@ -22,7 +22,6 @@ import {
     orderStatus,
     members,
     teamCode,
-    productInformation,
 } from "testing/mockData";
 import { hackathonName } from "constants.js";
 

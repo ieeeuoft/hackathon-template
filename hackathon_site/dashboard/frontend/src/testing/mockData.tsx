@@ -132,21 +132,6 @@ export const teamCode = "PAS3NLQ3";
 export const cartQuantity = 5;
 export const userEmail = "graham@email.com";
 
-// Product Overview
-export const productInformation: Hardware = {
-    id: 1,
-    name: "Arduino",
-    quantity_available: 30,
-    quantity_remaining: 19,
-    picture: "https://i.imgur.com/IO6e5a6.jpg",
-    categories: [1, 2],
-    manufacturer: "Canakit",
-    model_number: "Model 3B+",
-    datasheet: "https://www.facebook.com",
-    notes: "- For micropython ask for image\n- randomnerdtutorials.com",
-    max_per_team: 3, // Can also be null
-};
-
 export const addCartTest = () => {
     alert("Added to Cart");
 };

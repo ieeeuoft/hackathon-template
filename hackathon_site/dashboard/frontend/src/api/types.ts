@@ -36,12 +36,6 @@ export interface HardwareFilters {
     ordering?: HardwareOrdering;
 }
 
-/** Hardware Product Overview Types */
-export interface ProductOverviewItem extends Omit<Hardware, "categories"> {
-    constraints: string[];
-    categories: string[];
-}
-
 /** Category API */
 export interface Category {
     id: number;

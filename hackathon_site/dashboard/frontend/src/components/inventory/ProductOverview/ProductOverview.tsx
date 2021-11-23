@@ -48,7 +48,7 @@ const createQuantityList = (number: number) => {
 
 interface AddToCartFormProps extends FormikValues {
     quantityAvailable: number;
-    maxPerTeam?: number;
+    maxPerTeam: number | null;
 }
 export const AddToCartForm = ({
     quantityAvailable,
@@ -58,7 +58,7 @@ export const AddToCartForm = ({
     values: { quantity },
 }: AddToCartFormProps) => {
     const dropdownNum =
-        maxPerTeam !== undefined
+        maxPerTeam !== null
             ? Math.min(quantityAvailable, maxPerTeam)
             : quantityAvailable;
 
@@ -101,7 +101,7 @@ interface EnhancedAddToCartFormProps {
     quantityAvailable: number;
     hardwareId: number;
     name: string;
-    maxPerTeam?: number;
+    maxPerTeam: number | null;
 }
 export const EnhancedAddToCartForm = ({
     quantityAvailable,
@@ -121,12 +121,18 @@ export const EnhancedAddToCartForm = ({
             dispatch(
                 displaySnackbar({
                     message: `Added ${numQuantity} ${name} item(s) to your cart.`,
+                    options: {
+                        variant: "success",
+                    },
                 })
             );
         } else {
             dispatch(
                 displaySnackbar({
-                    message: `You've already added the maximum amount of this item to your cart.`,
+                    message: `Adding this amount to your cart will exceed the quantity limit for this item.`,
+                    options: {
+                        variant: "warning",
+                    },
                 })
             );
         }
@@ -141,13 +147,25 @@ export const EnhancedAddToCartForm = ({
             validationSchema={addToCartFormSchema}
         >
             {(formikProps) => (
-                <AddToCartForm
-                    quantityAvailable={quantityAvailable}
-                    maxPerTeam={maxPerTeam}
-                    handleSubmit={formikProps.handleSubmit}
-                    handleChange={formikProps.handleChange}
-                    values={formikProps.values}
-                />
+                <>
+                    {currentQuantityInCart > 0 && (
+                        <Typography
+                            variant="body2"
+                            color="primary"
+                            className={styles.heading}
+                        >
+                            You currently have {currentQuantityInCart} of this item in
+                            your cart.
+                        </Typography>
+                    )}
+                    <AddToCartForm
+                        quantityAvailable={quantityAvailable}
+                        maxPerTeam={maxPerTeam}
+                        handleSubmit={formikProps.handleSubmit}
+                        handleChange={formikProps.handleChange}
+                        values={formikProps.values}
+                    />
+                </>
             )}
         </Formik>
     );
@@ -259,7 +277,7 @@ export const ProductOverview = ({
     showAddToCartButton: boolean;
 }) => {
     let categoryNames: string[] = [];
-    let maxPerTeam: number = Infinity;
+    let maxPerTeam: number | null = null;
     let constraints: string[] = [];
 
     const dispatch = useDispatch();
@@ -276,6 +294,7 @@ export const ProductOverview = ({
         categoryNames = categories.map(
             (category) => category?.name ?? `Category ${category?.id}`
         );
+        categories.filter((category) => !!category).map((category) => category?.name);
 
         constraints = hardware?.max_per_team
             ? [`Max ${hardware.max_per_team} of this item`]
@@ -327,7 +346,7 @@ export const ProductOverview = ({
                 </div>
             ) : (
                 <Typography variant="subtitle2" align="center" paragraph>
-                    Unable to display hardware. Please refresh page and try again.
+                    Unable to display hardware. Please refresh the page and try again.
                 </Typography>
             )}
         </SideSheetRight>
