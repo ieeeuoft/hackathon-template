@@ -57,7 +57,7 @@ const Inventory = () => {
     return (
         <>
             <Header />
-            <ProductOverview showAddToCartButton={true} />
+            <ProductOverview showAddToCartButton />
             <div className={styles.inventory}>
                 <Drawer
                     className={styles.inventoryFilterDrawer}

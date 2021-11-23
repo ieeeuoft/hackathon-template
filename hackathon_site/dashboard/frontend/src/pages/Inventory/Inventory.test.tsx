@@ -121,12 +121,17 @@ describe("Inventory Page", () => {
     });
 
     it("Shows product overview when hardware item is clicked", async () => {
-        const store = makeStoreWithEntities({
-            hardware: mockHardware,
-            categories: mockCategories,
-        });
+        const hardwareApiResponse = makeMockApiListResponse(mockHardware);
+        const categoryApiResponse = makeMockApiListResponse(mockCategories);
 
-        const { getByText } = render(<Inventory />, { store });
+        when(mockedGet)
+            .calledWith(hardwareUri, {})
+            .mockResolvedValue(hardwareApiResponse);
+        when(mockedGet)
+            .calledWith(categoriesUri)
+            .mockResolvedValue(categoryApiResponse);
+
+        const { getByText } = render(<Inventory />);
 
         await waitFor(() => {
             mockHardware.forEach((hardware) =>
