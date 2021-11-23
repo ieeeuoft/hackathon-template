@@ -119,7 +119,9 @@ describe("updateCart action", () => {
         );
 
         await waitFor(() => {
-            expect(cartSelectors.selectAll(store.getState()).length).toEqual(mockCartItems.length);
+            expect(cartSelectors.selectAll(store.getState()).length).toEqual(
+                mockCartItems.length
+            );
             expect(cartSelectors.selectById(store.getState(), 1)).toEqual({
                 hardware_id: mockCartItems[0].hardware_id,
                 quantity: 25,
