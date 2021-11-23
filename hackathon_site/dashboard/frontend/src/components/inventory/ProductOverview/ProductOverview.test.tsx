@@ -45,12 +45,14 @@ describe("<ProductOverview />", () => {
             .concat([mockHardware[0].max_per_team])
             .reduce((prev, curr) => Math.min(prev, curr));
 
-        const { getByText, queryByText } = render(
+        const { getByText, queryByText, getByRole } = render(
             <ProductOverview showAddToCartButton={true} />,
             {
                 store,
             }
         );
+
+        fireEvent.mouseDown(getByRole("button", { name: "Qty 1" }));
 
         expect(queryByText(minConstraint + 1)).not.toBeInTheDocument();
         expect(getByText(minConstraint)).toBeInTheDocument();
