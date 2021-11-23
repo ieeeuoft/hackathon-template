@@ -2,6 +2,7 @@ import re
 from unittest.mock import patch
 from datetime import datetime, timedelta
 
+
 from django.core import mail
 from django.contrib.auth.models import Group
 from django.conf import settings
@@ -17,6 +18,10 @@ from event.serializers import (
     UserSerializer,
     GroupSerializer,
     ProfileSerializer,
+    CurrentProfileSerializer,
+    ProfileInUserSerializer,
+    ProfileInTeamSerializer,
+    UserInProfileSerializer,
 )
 
 
@@ -709,7 +714,7 @@ class UserSerializerTestCase(TestCase):
         )
 
         user_serialized = UserSerializer(user).data
-        profile_serialized = ProfileSerializer(user.profile).data
+        profile_serialized = ProfileInUserSerializer(user.profile).data
         group_serialized = GroupSerializer(user.groups, many=True).data
 
         user_expected = {
@@ -720,6 +725,29 @@ class UserSerializerTestCase(TestCase):
             "profile": profile_serialized,
             "groups": group_serialized,
         }
+
+        self.assertEqual(user_expected, user_serialized)
+
+
+class UserInProfileSerializerTestCase(TestCase):
+    def test_serializer(self):
+        team = EventTeam.objects.create()
+
+        user = User.objects.create()
+
+        Profile.objects.create(
+            user=user, team=team,
+        )
+
+        user_serialized = UserInProfileSerializer(user).data
+
+        user_expected = {
+            "id": user.id,
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "email": user.email,
+        }
+
         self.assertEqual(user_expected, user_serialized)
 
 
@@ -756,4 +784,72 @@ class ProfileSerializerTestCase(TestCase):
             "e_signature": profile.e_signature,
             "team": team.id,
         }
+        self.assertEqual(profile_expected, profile_serialized)
+
+    def test_readonly_serializer_fields(self):
+        self.assertEqual(
+            ProfileSerializer.Meta.read_only_fields,
+            ("id", "team", "acknowledge_rules", "e_signature"),
+        )
+
+
+class CurrentProfileSerializerTestCase(TestCase):
+    def test_readonly_serializer_fields(self):
+        self.assertEqual(
+            CurrentProfileSerializer.Meta.read_only_fields,
+            ("id", "team", "id_provided", "attended"),
+        )
+
+
+class ProfileInUserSerializerTestCase(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username="foo@bar.com",
+            password="foobar123",
+            first_name="Foo",
+            last_name="Bar",
+        )
+
+    def test_serializer(self):
+        team = EventTeam.objects.create()
+
+        profile = Profile.objects.create(user=self.user, team=team)
+        profile_serialized = ProfileInUserSerializer(profile).data
+
+        profile_expected = {
+            "id": profile.id,
+            "id_provided": profile.id_provided,
+            "attended": profile.attended,
+            "acknowledge_rules": profile.acknowledge_rules,
+            "e_signature": profile.e_signature,
+            "user": UserInProfileSerializer(profile.user).data,
+        }
+
+        self.assertEqual(profile_expected, profile_serialized)
+
+
+class ProfileInTeamSerilializerTestCase(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username="foo@bar.com",
+            password="foobar123",
+            first_name="Foo",
+            last_name="Bar",
+        )
+
+    def test_serializer(self):
+        team = EventTeam.objects.create()
+
+        profile = Profile.objects.create(user=self.user, team=team)
+        profile_serialized = ProfileInTeamSerializer(profile).data
+
+        profile_expected = {
+            "id": profile.id,
+            "id_provided": profile.id_provided,
+            "attended": profile.attended,
+            "acknowledge_rules": profile.acknowledge_rules,
+            "e_signature": profile.e_signature,
+            "user": UserInProfileSerializer(profile.user).data,
+        }
+
         self.assertEqual(profile_expected, profile_serialized)

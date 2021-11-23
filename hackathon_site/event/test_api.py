@@ -293,7 +293,6 @@ class LeaveTeamTestCase(SetupUserMixin, APITestCase):
 
 class EventTeamListsViewTestCase(SetupUserMixin, APITestCase):
     def setUp(self):
-
         self.team = Team.objects.create()
         self.team2 = Team.objects.create()
         self.team3 = Team.objects.create()
@@ -307,6 +306,18 @@ class EventTeamListsViewTestCase(SetupUserMixin, APITestCase):
         return (
             self.view + "?" + "&".join([f"{key}={val}" for key, val in kwargs.items()])
         )
+
+    def test_team_id_filter(self):
+        self._login(self.permissions)
+
+        url = self._build_filter_url(team_ids="1,3")
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.json()
+        results = data["results"]
+        returned_ids = [res["id"] for res in results]
+        self.assertCountEqual(returned_ids, [1, 3])
 
     def test_team_get_no_permissions(self):
         self._login()
@@ -344,19 +355,6 @@ class EventTeamListsViewTestCase(SetupUserMixin, APITestCase):
         returned_ids = [res["team_code"] for res in results]
         self.assertCountEqual(returned_ids, [self.team.team_code])
 
-    def test_team_id_filter(self):
-        self._login(self.permissions)
-
-        url = self._build_filter_url(team_ids="1,3")
-
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        data = response.json()
-        results = data["results"]
-
-        returned_ids = [res["id"] for res in results]
-        self.assertCountEqual(returned_ids, [1, 3])
-
     def test_name_search_filter(self):
         self._login(self.permissions)
 
@@ -368,6 +366,150 @@ class EventTeamListsViewTestCase(SetupUserMixin, APITestCase):
         results = data["results"]
         returned_ids = [res["team_code"] for res in results]
         self.assertCountEqual(returned_ids, [self.team2.team_code])
+
+
+class ProfileDetailViewTestCase(SetupUserMixin, APITestCase):
+    def setUp(self):
+        super().setUp()
+        self.user_with_profile = User.objects.create_user(
+            username="foo2@bar.com",
+            password=self.password,
+            first_name="Test2",
+            last_name="Bar2",
+            email="foo2@bar.com",
+        )
+        self.profile = self._make_event_profile(user=self.user_with_profile)
+        self.request_body = {
+            "id_provided": True,
+            "attended": True,
+        }
+        self.change_permissions = Permission.objects.filter(
+            content_type__app_label="event", codename="change_profile"
+        )
+        self.expected_response = {
+            "id": self.profile.id,
+            "id_provided": True,
+            "attended": True,
+            "acknowledge_rules": False,
+            "e_signature": None,
+            "team": self.profile.team_id,
+        }
+        self.view = reverse("api:event:profile-detail", kwargs={"pk": self.profile.id})
+
+    def test_user_not_logged_in(self):
+        response = self.client.patch(self.view, self.request_body)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_user_has_no_change_permissions(self):
+        self._login()
+        response = self.client.patch(self.view, self.request_body)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_user_has_change_permissions(self):
+        self._login(self.change_permissions)
+        response = self.client.patch(self.view, self.request_body)
+        data = response.json()
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(self.expected_response, data)
+
+    def test_partially_modifying_profile(self):
+        self._login(self.change_permissions)
+
+        # only modifying id_provided
+        request_body = {"id_provided": True}
+        expected_response = {
+            "id": self.profile.id,
+            "id_provided": True,
+            "attended": False,
+            "acknowledge_rules": False,
+            "e_signature": None,
+            "team": self.profile.team_id,
+        }
+
+        response = self.client.patch(self.view, request_body)
+        data = response.json()
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(expected_response, data)
+
+
+class CurrentProfileViewTestCase(SetupUserMixin, APITestCase):
+    def setUp(self):
+        super().setUp()
+        self.profile = self._make_event_profile(user=self.user)
+        self.request_body = {
+            "acknowledge_rules": True,
+            "e_signature": "user signature",
+        }
+        self.expected_response = {
+            "id": self.profile.id,
+            "id_provided": False,
+            "attended": False,
+            "acknowledge_rules": True,
+            "e_signature": "user signature",
+            "team": self.profile.team_id,
+        }
+        self.view = reverse("api:event:current-profile")
+
+    def test_user_not_logged_in(self):
+        response = self.client.patch(self.view, self.request_body)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_user_has_no_profile(self):
+        self.profile.delete()
+        self._login()
+        response = self.client.patch(self.view, self.request_body)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_user_has_profile(self):
+        self._login()
+
+        # Testing to get user's own profile
+        response = self.client.patch(self.view, self.request_body)
+        data = response.json()
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(self.expected_response, data)
+
+    def test_modifying_acknowledge_rules_and_e_signature_twice(self):
+        self._login()
+
+        # First, normally update profile
+        response = self.client.patch(self.view, self.request_body)
+        data = response.json()
+        expected_response = self.expected_response
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(expected_response, data)
+
+        # Then update profile with a different request, changing acknowledge & e signature
+        new_request_body = {
+            "acknowledge_rules": False,
+            "e_signature": "new signature",
+        }
+        # acknowledge_rules and e_signature do not change
+        response2 = self.client.patch(self.view, new_request_body)
+        data2 = response2.json()
+        self.assertEqual(response2.status_code, status.HTTP_200_OK)
+        self.assertEqual(expected_response, data2)
+
+    def test_partially_modifying_profile(self):
+        self._login()
+
+        # only modifying acknowledge_rules
+        request_body = {"acknowledge_rules": True}
+        expected_response = {
+            "id": self.profile.id,
+            "id_provided": False,
+            "attended": False,
+            "acknowledge_rules": True,
+            "e_signature": None,
+            "team": self.profile.team_id,
+        }
+
+        response = self.client.patch(self.view, request_body)
+        data = response.json()
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(expected_response, data)
 
 
 class CurrentTeamOrderListViewTestCase(SetupUserMixin, APITestCase):
