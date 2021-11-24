@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styles from "./Dashboard.module.scss";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
@@ -7,6 +7,7 @@ import TeamCard from "components/dashboard/TeamCard/TeamCard";
 import {
     PendingTable,
     CheckedOutTable,
+    ReturnedTable,
 } from "components/dashboard/ItemTable/ItemTable";
 import ProductOverview from "components/inventory/ProductOverview/ProductOverview";
 import Header from "components/general/Header/Header";
@@ -17,8 +18,11 @@ import {
     productInformation,
     mockPendingOrders,
     mockCheckedOutOrders,
+    mockReturnedItems,
 } from "testing/mockData";
 import { hackathonName } from "constants.js";
+import { useDispatch } from "react-redux";
+import { getHardwareWithFilters } from "../../slices/hardware/hardwareSlice";
 
 const Dashboard = () => {
     // TODO: change to open Product Overview Panel
@@ -31,6 +35,12 @@ const Dashboard = () => {
     const toggleMenu = () => {
         setSideSheetOpen(!sideSheetOpen);
     };
+
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(getHardwareWithFilters());
+    }, [dispatch]);
 
     return (
         <>
@@ -83,8 +93,7 @@ const Dashboard = () => {
                 {/* <BrokenTable items={itemsBroken} openReportAlert={openBrokenTable} /> */}
                 <PendingTable orders={mockPendingOrders} />
                 <CheckedOutTable orders={mockCheckedOutOrders} />
-                {/* TODO: add back in when we figure out returned items */}
-                {/*<ReturnedTable items={itemsReturned} />*/}
+                <ReturnedTable items={mockReturnedItems} />
             </div>
         </>
     );

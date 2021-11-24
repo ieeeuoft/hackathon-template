@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styles from "./ItemTable.module.scss";
 import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
@@ -20,10 +20,13 @@ import { useDispatch, useSelector } from "react-redux";
 import {
     isCheckedOutTableVisibleSelector,
     isPendingTableVisibleSelector,
+    isReturnedTableVisibleSelector,
     toggleCheckedOutTable,
     togglePendingTable,
+    toggleReturnedTable,
 } from "slices/ui/uiSlice";
-import { Hardware, Order, OrderStatus } from "api/types";
+import { Hardware, Incident, Order, OrderStatus } from "api/types";
+import { hardwareSelectors } from "../../../slices/hardware/hardwareSlice";
 
 export const ChipStatus = ({ status }: { status: OrderStatus | "Error" }) => {
     switch (status) {
@@ -187,95 +190,121 @@ TableProps) => {
     );
 };
 
-// TODO: requires more clarity on how we handle returned items
-// export const ReturnedTable = ({ orders } : TableProps) => {
-//
-//     const isVisible = useSelector(isReturnedTableVisibleSelector);
-//     const toggleVisibility = () => dispatch(toggleReturnedTable());
-//
-//     const returnedItemMap:{
-//         [key: number]: OrderItemTableRow
-//     } = {}
-//     for (const order of orders) {
-//         for (const hardware of order.hardware) {
-//             if (returnedItemMap[hardware.id]) returnedItemMap[hardware.id].quantityReceived += 1
-//             else returnedItemMap[hardware.id].quantityReceived = 1
-//         }
-//     }
-//     const returnedItems: OrderItemTableRow[] = Object.values(returnedItemMap);
-//
-//     return (
-//         <Container className={styles.tableContainer} maxWidth={false} disableGutters={true}>
-//             <div className={styles.title}>
-//                 <Typography variant="h2" className={styles.titleText}>
-//                     Returned items
-//                 </Typography>
-//                 <Button
-//                     onClick={toggleVisibility}
-//                     color="primary"
-//                 >
-//                     {isVisible ? "Hide all" : "Show all"}
-//                 </Button>
-//             </div>
-//
-//             {isVisible &&
-//             (!returnedItems.length ? (
-//                 <Paper elevation={2} className={styles.empty} square={true}>
-//                     Please bring items to the tech table and a tech team member will
-//                     assist you.
-//                 </Paper>
-//             ) : (
-//                 <TableContainer component={Paper} elevation={2} square={true}>
-//                     <Table
-//                         className={styles.table}
-//                         size="small"
-//                         aria-label="returned table"
-//                     >
-//                         <TableHead>
-//                             <TableRow>
-//                                 <TableCell className={styles.widthFixed}/>
-//                                 <TableCell className={styles.width6} align="left">
-//                                     Name
-//                                 </TableCell>
-//                                 <TableCell className={styles.widthFixed} align="right">
-//                                     Qty
-//                                 </TableCell>
-//                                 <TableCell className={styles.width4} align="right">
-//                                     Time
-//                                 </TableCell>
-//                                 <TableCell className={styles.width2} align="left">
-//                                     Condition
-//                                 </TableCell>
-//                             </TableRow>
-//                         </TableHead>
-//                         <TableBody>
-//                             {returnedItems.map((row) => (
-//                                 <TableRow key={row.id}>
-//                                     <TableCell align="left">
-//                                         <img
-//                                             className={styles.itemImg}
-//                                             src={row.picture}
-//                                             alt={row.name}
-//                                         />
-//                                     </TableCell>
-//                                     <TableCell align="left">{row.name}</TableCell>
-//                                     <TableCell align="right">{row.quantityReceived}</TableCell>
-//                                     <TableCell align="right" className={styles.noWrap}>
-//                                         {orde}
-//                                     </TableCell>
-//                                     {/* TODO: add back in when incident reports are finished */}
-//                                     {/*<TableCell align="left" className={styles.noWrap}>*/}
-//                                     {/*    {row.condition}*/}
-//                                     {/*</TableCell>*/}
-//                                 </TableRow>
-//                             ))}
-//                         </TableBody>
-//                     </Table>
-//                 </TableContainer>
-//             ))}
-//         </Container>
-//     );
-// }
+interface ReturnedItemTableRow extends Incident {
+    quantity: number;
+}
+
+interface ReturnedTableProps {
+    items: Incident[];
+}
+
+export const ReturnedTable = ({ items }: ReturnedTableProps) => {
+    const dispatch = useDispatch();
+    const hardware = useSelector(hardwareSelectors.selectEntities);
+    const isVisible = useSelector(isReturnedTableVisibleSelector);
+    const toggleVisibility = () => dispatch(toggleReturnedTable());
+
+    const returnedItemMap: {
+        [key: number]: ReturnedItemTableRow;
+    } = {};
+    for (const incidentItem of items) {
+        const hardware_id = incidentItem.order_item.hardware;
+        if (returnedItemMap[hardware_id]) returnedItemMap[hardware_id].quantity += 1;
+        else returnedItemMap[hardware_id] = { ...incidentItem, quantity: 1 };
+    }
+    const returnedItems: ReturnedItemTableRow[] = Object.values(returnedItemMap);
+
+    return (
+        <Container
+            className={styles.tableContainer}
+            maxWidth={false}
+            disableGutters={true}
+        >
+            <div className={styles.title}>
+                <Typography variant="h2" className={styles.titleText}>
+                    Returned items
+                </Typography>
+                <Button onClick={toggleVisibility} color="primary">
+                    {isVisible ? "Hide all" : "Show all"}
+                </Button>
+            </div>
+
+            {isVisible &&
+                (!returnedItems.length ? (
+                    <Paper elevation={2} className={styles.empty} square={true}>
+                        Please bring items to the tech table and a tech team member will
+                        assist you.
+                    </Paper>
+                ) : (
+                    <TableContainer component={Paper} elevation={2} square={true}>
+                        <Table
+                            className={styles.table}
+                            size="small"
+                            aria-label="returned table"
+                        >
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell className={styles.widthFixed} />
+                                    <TableCell className={styles.width6} align="left">
+                                        Name
+                                    </TableCell>
+                                    <TableCell
+                                        className={styles.widthFixed}
+                                        align="right"
+                                    >
+                                        Qty
+                                    </TableCell>
+                                    <TableCell className={styles.width4} align="right">
+                                        Time
+                                    </TableCell>
+                                    <TableCell className={styles.width2} align="left">
+                                        Condition
+                                    </TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {returnedItems.map((row) => (
+                                    <TableRow key={row.id}>
+                                        <TableCell align="left">
+                                            <img
+                                                className={styles.itemImg}
+                                                src={
+                                                    hardware[row.order_item.hardware]
+                                                        ?.picture
+                                                }
+                                                alt={
+                                                    hardware[row.order_item.hardware]
+                                                        ?.name
+                                                }
+                                            />
+                                        </TableCell>
+                                        <TableCell align="left">
+                                            {hardware[row.order_item.hardware]?.name}
+                                        </TableCell>
+                                        <TableCell align="right">
+                                            {row.quantity}
+                                        </TableCell>
+                                        <TableCell
+                                            align="right"
+                                            className={styles.noWrap}
+                                        >
+                                            {row.time_occurred}
+                                        </TableCell>
+                                        <TableCell
+                                            align="left"
+                                            className={styles.noWrap}
+                                        >
+                                            {row.order_item.part_returned_health}
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                ))}
+        </Container>
+    );
+};
 
 interface OrderInPendingTable {
     id: number;

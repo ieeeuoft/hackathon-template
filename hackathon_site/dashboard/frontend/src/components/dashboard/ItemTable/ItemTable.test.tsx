@@ -1,7 +1,7 @@
 import React from "react";
 import configureStore from "redux-mock-store";
 
-import { fireEvent, makeStoreWithEntities, render } from "testing/utils";
+import { fireEvent, render } from "testing/utils";
 
 import {
     ChipStatus,
@@ -9,17 +9,7 @@ import {
     CheckedOutTable,
 } from "components/dashboard/ItemTable/ItemTable";
 import {
-    uiReducerName,
-    initialState as uiInitialState,
-    toggleCheckedOutTable,
-    toggleReturnedTable,
-    togglePendingTable,
-} from "slices/ui/uiSlice";
-import {
     itemsCheckedOut,
-    itemsPending,
-    itemsReturned,
-    itemsBroken,
     mockPendingOrders,
     mockCheckedOutOrders,
 } from "testing/mockData";
@@ -57,9 +47,7 @@ describe("<PendingTable />", () => {
 
     // TODO: mock ui store
     it("Hides the pending table when isVisible is false", () => {
-        const { getByText, queryByText } = render(
-            <PendingTable orders={mockPendingOrders} />
-        );
+        const { getByText } = render(<PendingTable orders={mockPendingOrders} />);
 
         expect(getByText(/pending orders/i)).toBeInTheDocument();
         expect(getByText(/show all/i)).toBeInTheDocument();
@@ -74,9 +62,7 @@ describe("<PendingTable />", () => {
     });
 
     it("PendingTable dispatches an action to toggle visibility when button clicked", async () => {
-        const { getByText, queryByText } = render(
-            <PendingTable orders={mockPendingOrders} />
-        );
+        const { getByText } = render(<PendingTable orders={mockPendingOrders} />);
         const button = getByText(/hide all/i);
 
         fireEvent.click(button);

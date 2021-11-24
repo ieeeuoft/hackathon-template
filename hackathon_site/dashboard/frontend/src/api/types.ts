@@ -90,3 +90,31 @@ export interface CartItem {
     hardware_id: number;
     quantity: number;
 }
+
+/** Incidents API */
+export type IncidentState =
+    | "Heavily Used"
+    | "Broken"
+    | "Missing"
+    | "Minor Repair Required"
+    | "Major Repair Required"
+    | "Not Sure If Works";
+export type PartReturnedHealth = "Healthy" | "Heavily Used" | "Broken" | "Lost";
+
+export interface OrderItem {
+    id: number;
+    hardware: number;
+    order: number;
+    part_returned_health: PartReturnedHealth;
+}
+
+export interface Incident {
+    id: number;
+    state: IncidentState;
+    time_occurred: string;
+    description: string;
+    order_item: OrderItem;
+    team_id: string;
+    created_at: string;
+    updated_at: string;
+}

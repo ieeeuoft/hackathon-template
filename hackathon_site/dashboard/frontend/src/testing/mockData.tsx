@@ -2,7 +2,16 @@ import React from "react";
 import OpenInNew from "@material-ui/icons/OpenInNew";
 import GetApp from "@material-ui/icons/GetApp";
 import PinDrop from "@material-ui/icons/PinDrop";
-import { Category, Hardware, Order, OrderStatus } from "api/types";
+import {
+    Category,
+    Hardware,
+    Incident,
+    IncidentState,
+    Order,
+    OrderItem,
+    OrderStatus,
+    PartReturnedHealth,
+} from "api/types";
 import { CartItem } from "api/types";
 
 // For DashCard on Dashboard
@@ -351,6 +360,39 @@ export const mockCheckedOutOrders: Order[] = [
         team: 1,
         team_code: "IEEE",
         status: "Picked Up",
+        created_at: new Date().toDateString(),
+        updated_at: new Date().toDateString(),
+    },
+];
+
+export const mockReturnedItems: Incident[] = [
+    {
+        id: 0,
+        state: "Heavily Used",
+        time_occurred: "2021-11-24T16:26:58.404Z",
+        description: "Just a normal returned item.",
+        order_item: {
+            id: 0,
+            hardware: 2,
+            order: 5,
+            part_returned_health: "Healthy",
+        },
+        team_id: "IEEE",
+        created_at: new Date().toDateString(),
+        updated_at: new Date().toDateString(),
+    },
+    {
+        id: 1,
+        state: "Broken",
+        time_occurred: "2021-11-24T16:26:58.404Z",
+        description: "Got Smashed",
+        order_item: {
+            id: 2,
+            hardware: 1,
+            order: 5,
+            part_returned_health: "Broken",
+        },
+        team_id: "IEEE",
         created_at: new Date().toDateString(),
         updated_at: new Date().toDateString(),
     },
