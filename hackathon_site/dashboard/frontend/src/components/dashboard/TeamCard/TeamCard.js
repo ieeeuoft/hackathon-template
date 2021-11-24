@@ -5,7 +5,7 @@ import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import TitledPaper from "components/general/TitledPaper/TitledPaper";
 
-const TeamCard = ({ members, teamCode, handleEditTeam }) => {
+const TeamCard = ({ members, teamCode }) => {
     const title = teamCode === "" ? "Team" : "Team " + teamCode;
 
     return (
@@ -18,11 +18,12 @@ const TeamCard = ({ members, teamCode, handleEditTeam }) => {
                 </Container>
             ))}
 
-            <Container className={styles.lastRow}>
-                <Button color="primary" onClick={handleEditTeam}>
-                    Edit
-                </Button>
-            </Container>
+            {/* TODO: add back in when editing team is finished */}
+            {/*<Container className={styles.lastRow}>*/}
+            {/*    <Button color="primary" onClick={handleEditTeam}>*/}
+            {/*        Edit*/}
+            {/*    </Button>*/}
+            {/*</Container>*/}
         </TitledPaper>
     );
 };

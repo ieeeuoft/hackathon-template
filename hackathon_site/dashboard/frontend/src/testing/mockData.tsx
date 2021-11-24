@@ -2,7 +2,7 @@ import React from "react";
 import OpenInNew from "@material-ui/icons/OpenInNew";
 import GetApp from "@material-ui/icons/GetApp";
 import PinDrop from "@material-ui/icons/PinDrop";
-import { Category, Hardware } from "api/types";
+import { Category, Hardware, Order, OrderStatus } from "api/types";
 import { CartItem } from "api/types";
 
 // For DashCard on Dashboard
@@ -312,4 +312,46 @@ export const mockCartItems: CartItem[] = [
     { hardware_id: 1, quantity: 3 },
     { hardware_id: 2, quantity: 1 },
     { hardware_id: 3, quantity: 2 },
+];
+
+export const mockPendingOrders: Order[] = [
+    {
+        id: 1,
+        hardware: mockHardware.slice(0, 2),
+        team: 1,
+        team_code: "IEEE",
+        status: "Submitted",
+        created_at: new Date().toDateString(),
+        updated_at: new Date().toDateString(),
+    },
+    {
+        id: 2,
+        hardware: mockHardware.slice(2, 4),
+        team: 1,
+        team_code: "IEEE",
+        status: "Ready for Pickup",
+        created_at: new Date().toDateString(),
+        updated_at: new Date().toDateString(),
+    },
+];
+
+export const mockCheckedOutOrders: Order[] = [
+    {
+        id: 3,
+        hardware: mockHardware.slice(4, 6),
+        team: 1,
+        team_code: "IEEE",
+        status: "Picked Up",
+        created_at: new Date().toDateString(),
+        updated_at: new Date().toDateString(),
+    },
+    {
+        id: 4,
+        hardware: mockHardware.slice(6, 8),
+        team: 1,
+        team_code: "IEEE",
+        status: "Picked Up",
+        created_at: new Date().toDateString(),
+        updated_at: new Date().toDateString(),
+    },
 ];
