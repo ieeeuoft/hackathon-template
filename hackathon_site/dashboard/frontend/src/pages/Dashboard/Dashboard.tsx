@@ -60,7 +60,11 @@ const Dashboard = () => {
                         className={styles.dashboardGridItem}
                         key={0}
                     >
-                        <TeamCard members={members} teamCode={teamCode} />
+                        <TeamCard
+                            members={members}
+                            teamCode={teamCode}
+                            handleEditTeam={() => alert("Editing Team")}
+                        />
                     </Grid>
                     {cardItems.map(({ title, content }, i) => (
                         <Grid
