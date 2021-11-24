@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState } from "react";
+import React, { ChangeEvent } from "react";
 import styles from "./CartCard.module.scss";
 import Typography from "@material-ui/core/Typography";
 import Card from "@material-ui/core/Card";
@@ -38,8 +38,12 @@ interface QuantitySelectorProps {
     handleChange: (e: SelectChangeEvent) => void;
     numInCart: number;
 }
-
-const QuantitySelector = ({
+interface CartCardProps {
+    hardware_id: number;
+    quantity: number;
+    error?: string;
+}
+export const QuantitySelector = ({
     quantity_remaining,
     numInCart,
     handleChange,
@@ -54,28 +58,22 @@ const QuantitySelector = ({
 
     return (
         <FormControl variant="outlined" size="small" className={styles.CartFormControl}>
-            <InputLabel shrink={true} id="Quantity">
+            <InputLabel shrink={true} id="QuantityLabel">
                 Quantity
             </InputLabel>
             <Select
                 label="Quantity"
+                labelId="QuantityLabel"
                 value={numInCart}
                 // A bit of typescript hacking, since Select's onChange event has
                 // a value type of unknown and isn't a generic parameter.
                 onChange={handleChange as SelectProps["onChange"]}
-                name="quantity"
             >
                 {makeSelections(quantity_remaining)}
             </Select>
         </FormControl>
     );
 };
-
-interface CartCardProps {
-    hardware_id: number;
-    quantity: number;
-    error?: string;
-}
 
 export const CartCard = ({ hardware_id, quantity, error }: CartCardProps) => {
     const hardware = useSelector((state: RootState) =>
@@ -98,7 +96,11 @@ export const CartCard = ({ hardware_id, quantity, error }: CartCardProps) => {
     };
 
     return hardware ? (
-        <Card className={styles.Cart} elevation={0}>
+        <Card
+            className={styles.Cart}
+            elevation={0}
+            data-testid={`cart-item-${hardware_id}`}
+        >
             <CardMedia
                 className={styles.CartPic}
                 image={hardware.picture}
@@ -127,7 +129,7 @@ export const CartCard = ({ hardware_id, quantity, error }: CartCardProps) => {
                     onClick={() => {
                         handleRemove(hardware_id);
                     }}
-                    data-testid={"cart-item-" + hardware_id.toString()}
+                    data-testid="remove-cart-item"
                 >
                     <CloseIcon />
                 </IconButton>
