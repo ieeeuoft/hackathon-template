@@ -7,6 +7,7 @@ import {
     promiseResolveWithDelay,
     makeMockApiListResponse,
     fireEvent,
+    within,
 } from "testing/utils";
 import { mockCartItems, mockHardware } from "testing/mockData";
 import { get } from "api/api";
@@ -105,14 +106,43 @@ describe("Cart Page", () => {
             store,
         });
 
-        const removeButton = getByTestId(
-            "cart-item-" + mockCartItems[2].hardware_id.toString()
-        );
+        const removeButton = within(
+            getByTestId("cart-item-" + mockCartItems[2].hardware_id.toString())
+        ).getByTestId("remove-cart-item");
+
         fireEvent.click(removeButton);
 
         await waitFor(() => {
             expect(queryByText(mockHardware[2].name)).not.toBeInTheDocument();
             expect(getByText(mockHardware[1].name)).toBeInTheDocument();
+        });
+    });
+
+    test("updateCart action", async () => {
+        const quantityToBeSelected = "4";
+
+        const store = makeStoreWithEntities({
+            hardware: mockHardware,
+            cartItems: mockCartItems,
+        });
+
+        const { getByText, getByTestId } = render(<Cart />, {
+            store,
+        });
+
+        // click the select
+        const card = getByTestId(`cart-item-${mockCartItems[0].hardware_id}`);
+        const quantityDropdown = within(card).getByLabelText("Quantity");
+
+        fireEvent.mouseDown(quantityDropdown);
+
+        // select the quantity
+        const quantitySelected = getByText(quantityToBeSelected);
+        fireEvent.click(quantitySelected);
+
+        await waitFor(() => {
+            expect(getByTestId("cart-quantity-total")).toHaveTextContent("7");
+            expect(quantityDropdown).toHaveTextContent(quantityToBeSelected);
         });
     });
 });

@@ -9,7 +9,9 @@ const CartSummary = ({ cartQuantity }) => (
     <TitledPaper title="Cart Summary">
         <Container className={styles.qty}>
             <Typography variant="body2">Quantity</Typography>
-            <Typography variant="body2">{cartQuantity}</Typography>
+            <Typography variant="body2" data-testid="cart-quantity-total">
+                {cartQuantity}
+            </Typography>
         </Container>
         <Typography variant="body2" className={styles.msg}>
             Your entire team's order is here. Before you submit, refresh the page if
