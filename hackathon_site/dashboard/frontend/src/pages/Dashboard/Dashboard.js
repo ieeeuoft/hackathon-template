@@ -30,10 +30,6 @@ const Dashboard = () => {
         alert("Reports incident for component of id " + id);
     };
 
-    const addToCart = () => {
-        alert("Add to cart");
-    };
-
     const [sideSheetOpen, setSideSheetOpen] = React.useState(false);
 
     const toggleMenu = () => {

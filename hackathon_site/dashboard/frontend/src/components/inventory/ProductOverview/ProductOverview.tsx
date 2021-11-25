@@ -23,6 +23,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectCategoriesByIds } from "slices/hardware/categorySlice";
 import { RootState } from "slices/store";
 import { addToCart, cartSelectors } from "slices/hardware/cartSlice";
+import { Category } from "api/types";
 
 export const ERROR_MESSAGES = {
     quantityMissing: "Quantity is required",
@@ -116,7 +117,7 @@ export const EnhancedAddToCartForm = ({
 
     const onSubmit = (formikValues: { quantity: string }) => {
         const numQuantity: number = parseInt(formikValues.quantity);
-        if (currentQuantityInCart + numQuantity <= (maxPerTeam || quantityAvailable)) {
+        if (currentQuantityInCart + numQuantity <= (maxPerTeam ?? quantityAvailable)) {
             dispatch(addToCart({ hardware_id: hardwareId, quantity: numQuantity }));
             dispatch(
                 displaySnackbar({
@@ -291,21 +292,22 @@ export const ProductOverview = ({
         selectCategoriesByIds(state, hardware?.categories || [])
     );
     if (categories.length > 0) {
-        categoryNames = categories.map(
-            (category) => category?.name ?? `Category ${category?.id}`
-        );
-        categories.filter((category) => !!category).map((category) => category?.name);
-
+        categoryNames = categories
+            .filter((category): category is Category => !!category)
+            .map((category) => category.name);
         constraints = hardware?.max_per_team
             ? [`Max ${hardware.max_per_team} of this item`]
             : [];
-        maxPerTeam = hardware?.max_per_team ?? Infinity;
+        maxPerTeam = hardware?.max_per_team ?? null;
         for (const category of categories) {
             if (category?.max_per_team) {
                 constraints.push(
                     `Max ${category.max_per_team} of items under category ${category.name}`
                 );
-                maxPerTeam = Math.min(category.max_per_team, maxPerTeam);
+                maxPerTeam =
+                    maxPerTeam === null
+                        ? category.max_per_team
+                        : Math.min(category.max_per_team, maxPerTeam);
             }
         }
     }
