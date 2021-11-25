@@ -50,6 +50,25 @@ export const stripHostname = (url: string): string => {
     return parsed.pathname + parsed.search + parsed.hash;
 };
 
+export const stripHostnameReturnFilters = (
+    url: string | null
+): { path: string; filters?: { [key: string]: any } } => {
+    if (url) {
+        const parsed = new URL(url);
+        const filters: { [key: string]: any } = {};
+        if (parsed.search && filters) {
+            parsed.searchParams.forEach((val, key) => (filters[key] = val));
+        }
+        return Object.keys(filters).length > 0
+            ? {
+                  path: parsed.pathname,
+                  filters,
+              }
+            : { path: parsed.pathname };
+    }
+    return { path: "" };
+};
+
 export const get = <T>(
     uri: string,
     params?: { [key: string]: any }
