@@ -38,12 +38,8 @@ interface QuantitySelectorProps {
     handleChange: (e: SelectChangeEvent) => void;
     numInCart: number;
 }
-interface CartCardProps {
-    hardware_id: number;
-    quantity: number;
-    error?: string;
-}
-export const QuantitySelector = ({
+
+const QuantitySelector = ({
     quantity_remaining,
     numInCart,
     handleChange,
@@ -74,6 +70,12 @@ export const QuantitySelector = ({
         </FormControl>
     );
 };
+
+interface CartCardProps {
+    hardware_id: number;
+    quantity: number;
+    error?: string;
+}
 
 export const CartCard = ({ hardware_id, quantity, error }: CartCardProps) => {
     const hardware = useSelector((state: RootState) =>
