@@ -93,6 +93,46 @@ class OrderListSerializer(serializers.ModelSerializer):
         return obj.team.team_code
 
 
+class OrderChangeSerializer(OrderListSerializer):
+
+    change_options = {
+        "Submitted": ["Cancelled", "Ready for Pickup"],
+        "Ready for Pickup": ["Picked Up"],
+    }
+
+    class Meta:
+        model = Order
+        fields = OrderListSerializer.Meta.fields
+        read_only_fields = (
+            "id",
+            "hardware",
+            "team",
+            "team_code",
+            "created_at",
+            "updated_at",
+        )
+
+    def validate_status(self, data):
+        current_status = self.instance.status
+
+        if current_status not in self.change_options:
+            raise serializers.ValidationError(
+                "Cannot change the status for this order."
+            )
+
+        if data not in self.change_options[current_status]:
+            raise serializers.ValidationError(
+                f"Cannot change the status of an order from {current_status} to {data}."
+            )
+        return data
+
+
+class TeamOrderChangeSerializer(OrderChangeSerializer):
+    change_options = {
+        "Submitted": ["Cancelled"],
+    }
+
+
 class OrderCreateSerializer(serializers.Serializer):
     class OrderCreateHardwareSerializer(serializers.Serializer):
         id = serializers.PrimaryKeyRelatedField(

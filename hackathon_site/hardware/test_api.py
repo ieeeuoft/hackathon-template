@@ -7,7 +7,7 @@ from django.conf import settings
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from event.models import Team, Profile, User
+from event.models import Team
 from hardware.models import Hardware, Category, Order, OrderItem, Incident
 from hardware.serializers import (
     HardwareSerializer,
@@ -1324,3 +1324,73 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
             ],
         }
         self.assertEqual(response.json(), expected_response)
+
+
+class OrderListPatchTestCase(SetupUserMixin, APITestCase):
+    def setUp(self):
+        super().setUp()
+        self.team = Team.objects.create()
+        self.view_name = "api:hardware:order-detail"
+        self.change_permissions = Permission.objects.filter(
+            content_type__app_label="hardware", codename="change_order"
+        )
+        hardware = Hardware.objects.create(
+            name="name",
+            model_number="model",
+            manufacturer="manufacturer",
+            datasheet="/datasheet/location/",
+            quantity_available=4,
+            max_per_team=1,
+            picture="/picture/location",
+        )
+        order = Order.objects.create(status="Submitted", team=self.team)
+        OrderItem.objects.create(order=order, hardware=hardware)
+        self.pk = order.id
+
+    def _build_view(self, pk):
+        return reverse(self.view_name, kwargs={"pk": pk})
+
+    def test_user_not_logged_in(self):
+        request_data = {"status": "Ready for Pickup"}
+        response = self.client.patch(self._build_view(self.pk), request_data)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_user_lack_perms(self):
+        self._login()
+        request_data = {"status": "Ready for Pickup"}
+        response = self.client.patch(self._build_view(self.pk), request_data)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_successful_status_change(self):
+        self._login(self.change_permissions)
+        request_data = {"status": "Ready for Pickup"}
+        response = self.client.patch(self._build_view(self.pk), request_data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(request_data["status"], Order.objects.get(id=self.pk).status)
+
+    def test_unallowed_status_change(self):
+        self._login(self.change_permissions)
+        request_data = {"status": "Picked Up"}
+        response = self.client.patch(self._build_view(self.pk), request_data)
+        self.assertFalse(request_data["status"] == Order.objects.get(id=self.pk).status)
+        self.assertEqual(
+            response.json(),
+            {
+                "status": [
+                    f"Cannot change the status of an order from {Order.objects.get(id=self.pk).status} to {request_data['status']}."
+                ]
+            },
+        )
+
+    def test_failed_beginning_status(self):
+        """
+        Test to ensure an order status that is not changeable is not changed.
+        """
+        self._login(self.change_permissions)
+        request_data = {"status": "Cancelled"}
+        order = Order.objects.create(status="Picked Up", team=self.team)
+        response = self.client.patch(self._build_view(order.id), request_data)
+        self.assertEqual(
+            response.json(), {"status": ["Cannot change the status for this order."]},
+        )
+        self.assertFalse(request_data["status"] == Order.objects.get(id=self.pk).status)

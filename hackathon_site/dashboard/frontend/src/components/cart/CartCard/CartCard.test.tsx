@@ -7,7 +7,6 @@ import { mockHardware } from "testing/mockData";
 describe("<CartCard />", () => {
     /**
      * TODO: Additional required tests once the redux slice is ready:
-     *  - Test that the remove button removes the item from the store
      *  - Test that updating the quantity updates the store
      */
 

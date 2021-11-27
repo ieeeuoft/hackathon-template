@@ -6,8 +6,11 @@ import {
     cartSliceSelector,
     isLoadingSelector,
     initialState,
+    removeFromCart,
+    updateCart,
 } from "slices/hardware/cartSlice";
-import { waitFor } from "testing/utils";
+import { makeStoreWithEntities, waitFor } from "testing/utils";
+import { mockCartItems } from "testing/mockData";
 
 const mockState: RootState = {
     ...store.getState(),
@@ -77,6 +80,51 @@ describe("addToCart action", () => {
             expect(cartSelectors.selectById(store.getState(), 2)).toEqual({
                 hardware_id: 2,
                 quantity: 3,
+            });
+        });
+    });
+});
+
+describe("removeFromCart action", () => {
+    test("removeFromCart removes existing item", async () => {
+        const store = makeStoreWithEntities({
+            cartItems: mockCartItems,
+        });
+
+        store.dispatch(removeFromCart(2));
+
+        await waitFor(() => {
+            expect(cartSelectors.selectAll(store.getState()).length).toEqual(2);
+            expect(cartSelectors.selectById(store.getState(), 1)).toEqual({
+                hardware_id: 1,
+                quantity: 3,
+            });
+            expect(cartSelectors.selectById(store.getState(), 3)).toEqual({
+                hardware_id: 3,
+                quantity: 2,
+            });
+            expect(cartSelectors.selectById(store.getState(), 2)).toEqual(undefined);
+        });
+    });
+});
+
+describe("updateCart action", () => {
+    test("updateCart updates quantity of existing item", async () => {
+        const store = makeStoreWithEntities({
+            cartItems: mockCartItems,
+        });
+
+        store.dispatch(
+            updateCart({ id: mockCartItems[0].hardware_id, changes: { quantity: 25 } })
+        );
+
+        await waitFor(() => {
+            expect(cartSelectors.selectAll(store.getState()).length).toEqual(
+                mockCartItems.length
+            );
+            expect(cartSelectors.selectById(store.getState(), 1)).toEqual({
+                hardware_id: mockCartItems[0].hardware_id,
+                quantity: 25,
             });
         });
     });

@@ -20,6 +20,7 @@ from hardware.serializers import (
     OrderListSerializer,
     OrderCreateSerializer,
     OrderCreateResponseSerializer,
+    OrderChangeSerializer,
 )
 
 logger = logging.getLogger(__name__)
@@ -118,3 +119,12 @@ class OrderListView(generics.ListAPIView):
             return HttpResponseServerError()
         response_data = response_serializer.data
         return Response(response_data, status=status.HTTP_201_CREATED)
+
+
+class OrderDetailView(generics.GenericAPIView, mixins.UpdateModelMixin):
+    queryset = Order.objects.all()
+    serializer_class = OrderChangeSerializer
+    permission_classes = [FullDjangoModelPermissions]
+
+    def patch(self, request, *args, **kwargs):
+        return self.partial_update(request, *args, **kwargs)
