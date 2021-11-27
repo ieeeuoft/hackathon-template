@@ -1343,7 +1343,11 @@ class OrderListPatchTestCase(SetupUserMixin, APITestCase):
             max_per_team=1,
             picture="/picture/location",
         )
-        order = Order.objects.create(status="Submitted", team=self.team)
+        order = Order.objects.create(
+            status="Submitted",
+            team=self.team,
+            request={"hardware": [{"id": 1, "quantity": 2}]},
+        )
         OrderItem.objects.create(order=order, hardware=hardware)
         self.pk = order.id
 
@@ -1388,7 +1392,11 @@ class OrderListPatchTestCase(SetupUserMixin, APITestCase):
         """
         self._login(self.change_permissions)
         request_data = {"status": "Cancelled"}
-        order = Order.objects.create(status="Picked Up", team=self.team)
+        order = Order.objects.create(
+            status="Picked Up",
+            team=self.team,
+            request={"hardware": [{"id": 1, "quantity": 2}]},
+        )
         response = self.client.patch(self._build_view(order.id), request_data)
         self.assertEqual(
             response.json(), {"status": ["Cannot change the status for this order."]},

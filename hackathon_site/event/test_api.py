@@ -643,7 +643,11 @@ class TeamOrderDetailViewTestCase(SetupUserMixin, APITestCase):
             max_per_team=1,
             picture="/picture/location",
         )
-        order = Order.objects.create(status="Submitted", team=self.team)
+        order = Order.objects.create(
+            status="Submitted",
+            team=self.team,
+            request={"hardware": [{"id": 1, "quantity": 2}]},
+        )
         OrderItem.objects.create(order=order, hardware=hardware)
         self.pk = order.id
         self.request_data = {"status": "Cancelled"}
@@ -679,7 +683,11 @@ class TeamOrderDetailViewTestCase(SetupUserMixin, APITestCase):
 
     def test_failed_beginning_status(self):
         self._login()
-        order = Order.objects.create(status="Picked Up", team=self.team)
+        order = Order.objects.create(
+            status="Picked Up",
+            team=self.team,
+            request={"hardware": [{"id": 1, "quantity": 2}]},
+        )
         response = self.client.patch(self._build_view(order.id), self.request_data)
         self.assertEqual(
             response.json(), {"status": ["Cannot change the status for this order."]},
@@ -691,7 +699,11 @@ class TeamOrderDetailViewTestCase(SetupUserMixin, APITestCase):
     def test_cannot_change_other_team_order(self):
         self._login()
         self.team2 = Team.objects.create()
-        order = Order.objects.create(status="Submitted", team=self.team2)
+        order = Order.objects.create(
+            status="Submitted",
+            team=self.team2,
+            request={"hardware": [{"id": 1, "quantity": 2}]},
+        )
         response = self.client.patch(self._build_view(order.id), self.request_data)
         self.assertEqual(
             response.json(), {"detail": "Can only change the status of your orders."},
