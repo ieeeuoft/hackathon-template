@@ -295,12 +295,13 @@ export const ProductOverview = ({
         categoryNames = categories
             .filter((category): category is Category => !!category)
             .map((category) => category.name);
-        constraints = hardware?.max_per_team
-            ? [`Max ${hardware.max_per_team} of this item`]
-            : [];
+        constraints =
+            hardware?.max_per_team !== undefined
+                ? [`Max ${hardware.max_per_team} of this item`]
+                : [];
         maxPerTeam = hardware?.max_per_team ?? null;
         for (const category of categories) {
-            if (category?.max_per_team) {
+            if (category?.max_per_team !== undefined) {
                 constraints.push(
                     `Max ${category.max_per_team} of items under category ${category.name}`
                 );
