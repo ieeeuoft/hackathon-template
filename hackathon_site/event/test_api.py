@@ -293,7 +293,6 @@ class LeaveTeamTestCase(SetupUserMixin, APITestCase):
 
 class EventTeamListsViewTestCase(SetupUserMixin, APITestCase):
     def setUp(self):
-
         self.team = Team.objects.create()
         self.team2 = Team.objects.create()
         self.team3 = Team.objects.create()
@@ -307,6 +306,18 @@ class EventTeamListsViewTestCase(SetupUserMixin, APITestCase):
         return (
             self.view + "?" + "&".join([f"{key}={val}" for key, val in kwargs.items()])
         )
+
+    def test_team_id_filter(self):
+        self._login(self.permissions)
+
+        url = self._build_filter_url(team_ids="1,3")
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.json()
+        results = data["results"]
+        returned_ids = [res["id"] for res in results]
+        self.assertCountEqual(returned_ids, [1, 3])
 
     def test_team_get_no_permissions(self):
         self._login()
@@ -343,19 +354,6 @@ class EventTeamListsViewTestCase(SetupUserMixin, APITestCase):
 
         returned_ids = [res["team_code"] for res in results]
         self.assertCountEqual(returned_ids, [self.team.team_code])
-
-    def test_team_id_filter(self):
-        self._login(self.permissions)
-
-        url = self._build_filter_url(team_ids="1,3")
-
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        data = response.json()
-        results = data["results"]
-
-        returned_ids = [res["id"] for res in results]
-        self.assertCountEqual(returned_ids, [1, 3])
 
     def test_name_search_filter(self):
         self._login(self.permissions)
@@ -615,3 +613,76 @@ class EventTeamDetailViewTestCase(SetupUserMixin, APITestCase):
         data = response.json()
 
         self.assertEqual(expected_response[0], data)
+
+
+class TeamOrderDetailViewTestCase(SetupUserMixin, APITestCase):
+    def setUp(self):
+        super().setUp()
+        self.team = Team.objects.create()
+        self.profile = Profile.objects.create(user=self.user, team=self.team)
+        self.view_name = "api:event:team-order-detail"
+        hardware = Hardware.objects.create(
+            name="name",
+            model_number="model",
+            manufacturer="manufacturer",
+            datasheet="/datasheet/location/",
+            quantity_available=4,
+            max_per_team=1,
+            picture="/picture/location",
+        )
+        order = Order.objects.create(status="Submitted", team=self.team)
+        OrderItem.objects.create(order=order, hardware=hardware)
+        self.pk = order.id
+        self.request_data = {"status": "Cancelled"}
+
+    def _build_view(self, pk):
+        return reverse(self.view_name, kwargs={"pk": pk})
+
+    def test_user_not_logged_in(self):
+        response = self.client.patch(self._build_view(self.pk), self.request_data)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_successful_status_change(self):
+        self._login()
+        response = self.client.patch(self._build_view(self.pk), self.request_data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            self.request_data["status"], Order.objects.get(id=self.pk).status
+        )
+
+    def test_unallowed_status_change(self):
+        self._login()
+        request_data = {"status": "Picked Up"}
+        response = self.client.patch(self._build_view(self.pk), request_data)
+        self.assertFalse(request_data["status"] == Order.objects.get(id=self.pk).status)
+        self.assertEqual(
+            response.json(),
+            {
+                "status": [
+                    f"Cannot change the status of an order from {Order.objects.get(id=self.pk).status} to {request_data['status']}."
+                ]
+            },
+        )
+
+    def test_failed_beginning_status(self):
+        self._login()
+        order = Order.objects.create(status="Picked Up", team=self.team)
+        response = self.client.patch(self._build_view(order.id), self.request_data)
+        self.assertEqual(
+            response.json(), {"status": ["Cannot change the status for this order."]},
+        )
+        self.assertFalse(
+            self.request_data["status"] == Order.objects.get(id=self.pk).status
+        )
+
+    def test_cannot_change_other_team_order(self):
+        self._login()
+        self.team2 = Team.objects.create()
+        order = Order.objects.create(status="Submitted", team=self.team2)
+        response = self.client.patch(self._build_view(order.id), self.request_data)
+        self.assertEqual(
+            response.json(), {"detail": "Can only change the status of your orders."},
+        )
+        self.assertFalse(
+            self.request_data["status"] == Order.objects.get(id=self.pk).status
+        )
