@@ -259,6 +259,7 @@ class OrderListSerializerTestCase(TestCase):
             quantity_available=4,
             max_per_team=1,
             picture="/picture/location",
+
         )
         self.other_hardware = Hardware.objects.create(
             name="other",
@@ -271,7 +272,7 @@ class OrderListSerializerTestCase(TestCase):
         )
 
     def test_empty_order(self):
-        order = Order.objects.create(status="Cart", team=self.team)
+        order = Order.objects.create(status="Cart", team=self.team,request={"hardware": [{"id": 1, "quantity": 2}, {"id": 2, "quantity": 3}]},)
         order_serializer = OrderListSerializer(order).data
         expected_response = {
             "id": 1,
@@ -285,11 +286,13 @@ class OrderListSerializerTestCase(TestCase):
             "updated_at": serializers.DateTimeField().to_representation(
                 order.updated_at
             ),
+            "request" : {"hardware": [{"id": 1, "quantity": 2}, {"id": 2, "quantity": 3}]}
         }
+
         self.assertEqual(order_serializer, expected_response)
 
     def test_hardware_set(self):
-        order = Order.objects.create(status="Cart", team=self.team)
+        order = Order.objects.create(status="Cart", team=self.team,request={"hardware": [{"id": 1, "quantity": 2}, {"id": 2, "quantity": 3}]},)
         OrderItem.objects.create(
             order=order, hardware=self.hardware, part_returned_health="Healthy"
         )
@@ -314,5 +317,6 @@ class OrderListSerializerTestCase(TestCase):
             "updated_at": serializers.DateTimeField().to_representation(
                 order.updated_at
             ),
+            "request": {"hardware": [{"id": 1, "quantity": 2}, {"id": 2, "quantity": 3}]}
         }
         self.assertEqual(order_serializer, expected_response)
