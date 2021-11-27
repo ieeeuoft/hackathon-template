@@ -66,7 +66,17 @@ class HardwareListViewTestCase(SetupUserMixin, APITestCase):
         self.view = reverse("api:hardware:hardware-list")
 
         self.team = Team.objects.create()
-        self.order = Order.objects.create(status="Submitted", team=self.team)
+        self.order = Order.objects.create(
+            status="Submitted",
+            team=self.team,
+            request={
+                "hardware": [
+                    {"id": 1, "quantity": 2},
+                    {"id": 2, "quantity": 3},
+                    {"id": 3, "quantity": 2},
+                ]
+            },
+        )
 
     def _build_filter_url(self, **kwargs):
         return (
@@ -328,7 +338,11 @@ class IncidentListsViewTestCase(SetupUserMixin, APITestCase):
     def setUp(self):
         super().setUp()
         self.team = Team.objects.create()
-        self.order = Order.objects.create(status="Cart", team=self.team)
+        self.order = Order.objects.create(
+            status="Cart",
+            team=self.team,
+            request={"hardware": [{"id": 1, "quantity": 2}, {"id": 2, "quantity": 3}]},
+        )
         self.hardware = Hardware.objects.create(
             name="name",
             model_number="model",
@@ -437,7 +451,11 @@ class OrderListViewGetTestCase(SetupUserMixin, APITestCase):
         super().setUp()
         self.team = Team.objects.create()
         self.team2 = Team.objects.create(team_code="ABCDE")
-        self.order = Order.objects.create(status="Cart", team=self.team)
+        self.order = Order.objects.create(
+            status="Cart",
+            team=self.team,
+            request={"hardware": [{"id": 1, "quantity": 2}, {"id": 2, "quantity": 3}]},
+        )
         self.hardware = Hardware.objects.create(
             name="name",
             model_number="model",
@@ -463,18 +481,30 @@ class OrderListViewGetTestCase(SetupUserMixin, APITestCase):
         OrderItem.objects.create(
             order=self.order, hardware=self.other_hardware,
         )
-        self.order_2 = Order.objects.create(status="Submitted", team=self.team)
+        self.order_2 = Order.objects.create(
+            status="Submitted",
+            team=self.team,
+            request={"hardware": [{"id": 1, "quantity": 2}, {"id": 2, "quantity": 3}]},
+        )
         OrderItem.objects.create(
             order=self.order_2, hardware=self.hardware,
         )
         OrderItem.objects.create(
             order=self.order_2, hardware=self.other_hardware,
         )
-        self.order_3 = Order.objects.create(status="Cancelled", team=self.team2,)
+        self.order_3 = Order.objects.create(
+            status="Cancelled",
+            team=self.team2,
+            request={"hardware": [{"id": 1, "quantity": 2}, {"id": 2, "quantity": 3}]},
+        )
         OrderItem.objects.create(
             order=self.order_3, hardware=self.hardware,
         )
-        self.order_4 = Order.objects.create(status="Submitted", team=self.team2,)
+        self.order_4 = Order.objects.create(
+            status="Submitted",
+            team=self.team2,
+            request={"hardware": [{"id": 1, "quantity": 2}, {"id": 2, "quantity": 3}]},
+        )
         OrderItem.objects.create(
             order=self.order_4, hardware=self.hardware,
         )
@@ -704,21 +734,27 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
         hardware.categories.add(self.category_limit_10.pk)
 
         submitted_order = Order.objects.create(
-            team=self.user.profile.team, status="Submitted"
+            team=self.user.profile.team,
+            status="Submitted",
+            request={"hardware": [{"id": 1, "quantity": 2}]},
         )
         submitted_order_item = OrderItem.objects.create(
             order=submitted_order, hardware=hardware
         )
 
         ready_order = Order.objects.create(
-            team=self.user.profile.team, status="Ready for Pickup"
+            team=self.user.profile.team,
+            status="Ready for Pickup",
+            request={"hardware": [{"id": 1, "quantity": 2}]},
         )
         ready_order_item = OrderItem.objects.create(
             order=ready_order, hardware=hardware
         )
 
         picked_up_order = Order.objects.create(
-            team=self.user.profile.team, status="Picked Up"
+            team=self.user.profile.team,
+            status="Picked Up",
+            request={"hardware": [{"id": 1, "quantity": 2}]},
         )
         picked_up_order_item = OrderItem.objects.create(
             order=picked_up_order, hardware=hardware
@@ -749,7 +785,11 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
         )
         hardware.categories.add(self.category_limit_10.pk)
 
-        order = Order.objects.create(team=self.user.profile.team, status="Picked Up")
+        order = Order.objects.create(
+            team=self.user.profile.team,
+            status="Picked Up",
+            request={"hardware": [{"id": 1, "quantity": 2}]},
+        )
         healthy_order_item = OrderItem.objects.create(
             order=order, hardware=hardware, part_returned_health="Healthy"
         )
@@ -795,7 +835,11 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
         )
         hardware.categories.add(self.category_limit_10.pk)
 
-        order = Order.objects.create(team=self.user.profile.team, status="Cancelled")
+        order = Order.objects.create(
+            team=self.user.profile.team,
+            status="Cancelled",
+            request={"hardware": [{"id": 1, "quantity": 2}]},
+        )
         order_item = OrderItem.objects.create(order=order, hardware=hardware)
 
         request_data = {"hardware": [{"id": hardware.id, "quantity": 1}]}
@@ -858,21 +902,27 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
         hardware.categories.add(self.category_limit_4.pk)
 
         submitted_order = Order.objects.create(
-            team=self.user.profile.team, status="Submitted"
+            team=self.user.profile.team,
+            status="Submitted",
+            request={"hardware": [{"id": 1, "quantity": 2}]},
         )
         submitted_order_item = OrderItem.objects.create(
             order=submitted_order, hardware=hardware
         )
 
         ready_order = Order.objects.create(
-            team=self.user.profile.team, status="Ready for Pickup"
+            team=self.user.profile.team,
+            status="Ready for Pickup",
+            request={"hardware": [{"id": 1, "quantity": 2}]},
         )
         ready_order_item = OrderItem.objects.create(
             order=ready_order, hardware=hardware
         )
 
         picked_up_order = Order.objects.create(
-            team=self.user.profile.team, status="Picked Up"
+            team=self.user.profile.team,
+            status="Picked Up",
+            request={"hardware": [{"id": 1, "quantity": 2}]},
         )
         picked_up_order_item = OrderItem.objects.create(
             order=picked_up_order, hardware=hardware
@@ -905,7 +955,11 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
         )
         hardware.categories.add(self.category_limit_4.pk)
 
-        order = Order.objects.create(team=self.user.profile.team, status="Picked Up")
+        order = Order.objects.create(
+            team=self.user.profile.team,
+            status="Picked Up",
+            request={"hardware": [{"id": 1, "quantity": 2}, {"id": 2, "quantity": 3}]},
+        )
         healthy_order_item = OrderItem.objects.create(
             order=order, hardware=hardware, part_returned_health="Healthy"
         )
@@ -951,7 +1005,11 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
         )
         hardware.categories.add(self.category_limit_1.pk)
 
-        order = Order.objects.create(team=self.user.profile.team, status="Cancelled")
+        order = Order.objects.create(
+            team=self.user.profile.team,
+            status="Cancelled",
+            request={"hardware": [{"id": 1, "quantity": 2}]},
+        )
         order_item = OrderItem.objects.create(order=order, hardware=hardware)
 
         request_data = {"hardware": [{"id": hardware.id, "quantity": 1}]}
@@ -1157,7 +1215,11 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
         num_existing_orders = 3
         num_expected_fulfilled = 3
 
-        order = Order.objects.create(team=self.user.profile.team, status="Submitted")
+        order = Order.objects.create(
+            team=self.user.profile.team,
+            status="Submitted",
+            request={"hardware": [{"id": 1, "quantity": 2}]},
+        )
         OrderItem.objects.bulk_create(
             [
                 OrderItem(order=order, hardware=hardware)
@@ -1239,7 +1301,11 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
         )
         hardware.categories.add(self.category_limit_10.pk)
 
-        order = Order.objects.create(team=self.user.profile.team, status="Submitted")
+        order = Order.objects.create(
+            team=self.user.profile.team,
+            status="Submitted",
+            request={"hardware": [{"id": 1, "quantity": 2}]},
+        )
         order_item = OrderItem.objects.create(order=order, hardware=hardware)
 
         request_data = {"hardware": [{"id": hardware.id, "quantity": 1}]}

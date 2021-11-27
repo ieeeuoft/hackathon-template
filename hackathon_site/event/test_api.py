@@ -174,7 +174,12 @@ class JoinTeamTestCase(SetupUserMixin, APITestCase):
             max_per_team=1,
             picture="/picture/location",
         )
-        order = Order.objects.create(status="Cart", team=self.team)
+        order = Order.objects.create(
+            status="Cart",
+            team=self.team,
+            request={"hardware": [{"id": 1, "quantity": 2}]},
+        )
+
         OrderItem.objects.create(order=order, hardware=hardware)
 
         for _, status_choice in Order.STATUS_CHOICES:
@@ -249,7 +254,11 @@ class LeaveTeamTestCase(SetupUserMixin, APITestCase):
             max_per_team=1,
             picture="/picture/location",
         )
-        order = Order.objects.create(status="Cart", team=self.team)
+        order = Order.objects.create(
+            status="Cart",
+            team=self.team,
+            request={"hardware": [{"id": 1, "quantity": 2}]},
+        )
         OrderItem.objects.create(order=order, hardware=hardware)
 
         for _, status_choice in Order.STATUS_CHOICES:
@@ -518,7 +527,9 @@ class CurrentTeamOrderListViewTestCase(SetupUserMixin, APITestCase):
     def setUp(self):
         super().setUp()
         self.team = Team.objects.create()
-        self.order = Order.objects.create(status="Cart", team=self.team)
+        self.order = Order.objects.create(
+            status="Cart", team=self.team, request={"hardware": []}
+        )
         self.hardware = Hardware.objects.create(
             name="name",
             model_number="model",
@@ -547,7 +558,9 @@ class CurrentTeamOrderListViewTestCase(SetupUserMixin, APITestCase):
 
         # making extra data to test if team data is being filtered
         self.team2 = Team.objects.create(team_code="ABCDE")
-        self.order_2 = Order.objects.create(status="Submitted", team=self.team2)
+        self.order_2 = Order.objects.create(
+            status="Submitted", team=self.team2, request={"hardware": []}
+        )
         OrderItem.objects.create(
             order=self.order_2, hardware=self.hardware,
         )

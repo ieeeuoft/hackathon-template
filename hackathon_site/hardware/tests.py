@@ -51,7 +51,11 @@ class HardwareSerializerTestCase(TestCase):
 
     def test_some_items_cancelled(self):
         team = Team.objects.create()
-        order = Order.objects.create(status="Cancelled", team=team)
+        order = Order.objects.create(
+            status="Cancelled",
+            team=team,
+            request={"hardware": [{"id": 1, "quantity": 2}, {"id": 2, "quantity": 3}]},
+        )
         order_item_1 = OrderItem.objects.create(order=order, hardware=self.hardware,)
 
         self.hardware.refresh_from_db()
@@ -75,7 +79,11 @@ class HardwareSerializerTestCase(TestCase):
 
     def test_some_items_returned(self):
         team = Team.objects.create()
-        order = Order.objects.create(status="Picked Up", team=team)
+        order = Order.objects.create(
+            status="Picked Up",
+            team=team,
+            request={"hardware": [{"id": 1, "quantity": 2}]},
+        )
         order_item_1 = OrderItem.objects.create(
             order=order, hardware=self.hardware, part_returned_health="Healthy"
         )
@@ -120,7 +128,11 @@ class HardwareQuantityRemainingTestCase(TestCase):
 
     def test_some_items_none_returned(self):
         team = Team.objects.create()
-        order = Order.objects.create(status="Picked Up", team=team)
+        order = Order.objects.create(
+            status="Picked Up",
+            team=team,
+            request={"hardware": [{"id": 1, "quantity": 2}]},
+        )
         order_item_1 = OrderItem.objects.create(order=order, hardware=self.hardware,)
         order_item_2 = OrderItem.objects.create(order=order, hardware=self.hardware,)
         self.hardware.refresh_from_db()
@@ -129,7 +141,11 @@ class HardwareQuantityRemainingTestCase(TestCase):
 
     def test_some_items_returned(self):
         team = Team.objects.create()
-        order = Order.objects.create(status="Picked Up", team=team)
+        order = Order.objects.create(
+            status="Picked Up",
+            team=team,
+            request={"hardware": [{"id": 1, "quantity": 2}]},
+        )
         order_item_1 = OrderItem.objects.create(
             order=order, hardware=self.hardware, part_returned_health="Healthy"
         )
@@ -140,7 +156,11 @@ class HardwareQuantityRemainingTestCase(TestCase):
 
     def test_some_items_cancelled(self):
         team = Team.objects.create()
-        order = Order.objects.create(status="Cancelled", team=team)
+        order = Order.objects.create(
+            status="Cancelled",
+            team=team,
+            request={"hardware": [{"id": 1, "quantity": 2}, {"id": 2, "quantity": 3}]},
+        )
         order_item_1 = OrderItem.objects.create(order=order, hardware=self.hardware,)
         order_item_2 = OrderItem.objects.create(order=order, hardware=self.hardware,)
         self.hardware.refresh_from_db()
@@ -188,7 +208,11 @@ class CategorySerializerTestCase(TestCase):
 class IncidentSerializerTestCase(TestCase):
     def setUp(self):
         self.team = Team.objects.create()
-        self.order = Order.objects.create(status="Picked Up", team=self.team)
+        self.order = Order.objects.create(
+            status="Picked Up",
+            team=self.team,
+            request={"hardware": [{"id": 1, "quantity": 2}]},
+        )
 
         self.category = Category.objects.create(name="category", max_per_team=4)
         self.hardware = Hardware.objects.create(
@@ -259,7 +283,6 @@ class OrderListSerializerTestCase(TestCase):
             quantity_available=4,
             max_per_team=1,
             picture="/picture/location",
-
         )
         self.other_hardware = Hardware.objects.create(
             name="other",
@@ -272,7 +295,11 @@ class OrderListSerializerTestCase(TestCase):
         )
 
     def test_empty_order(self):
-        order = Order.objects.create(status="Cart", team=self.team,request={"hardware": [{"id": 1, "quantity": 2}, {"id": 2, "quantity": 3}]},)
+        order = Order.objects.create(
+            status="Cart",
+            team=self.team,
+            request={"hardware": [{"id": 1, "quantity": 2}, {"id": 2, "quantity": 3}]},
+        )
         order_serializer = OrderListSerializer(order).data
         expected_response = {
             "id": 1,
@@ -286,13 +313,19 @@ class OrderListSerializerTestCase(TestCase):
             "updated_at": serializers.DateTimeField().to_representation(
                 order.updated_at
             ),
-            "request" : {"hardware": [{"id": 1, "quantity": 2}, {"id": 2, "quantity": 3}]}
+            "request": {
+                "hardware": [{"id": 1, "quantity": 2}, {"id": 2, "quantity": 3}]
+            },
         }
 
         self.assertEqual(order_serializer, expected_response)
 
     def test_hardware_set(self):
-        order = Order.objects.create(status="Cart", team=self.team,request={"hardware": [{"id": 1, "quantity": 2}, {"id": 2, "quantity": 3}]},)
+        order = Order.objects.create(
+            status="Cart",
+            team=self.team,
+            request={"hardware": [{"id": 1, "quantity": 2}, {"id": 2, "quantity": 3}]},
+        )
         OrderItem.objects.create(
             order=order, hardware=self.hardware, part_returned_health="Healthy"
         )
@@ -317,6 +350,8 @@ class OrderListSerializerTestCase(TestCase):
             "updated_at": serializers.DateTimeField().to_representation(
                 order.updated_at
             ),
-            "request": {"hardware": [{"id": 1, "quantity": 2}, {"id": 2, "quantity": 3}]}
+            "request": {
+                "hardware": [{"id": 1, "quantity": 2}, {"id": 2, "quantity": 3}]
+            },
         }
         self.assertEqual(order_serializer, expected_response)
