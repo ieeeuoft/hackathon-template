@@ -1,6 +1,8 @@
 from django.contrib import admin
 from django.db.models import Count
+
 from event.models import Profile, Team as EventTeam
+from hardware.admin import OrderInline
 
 
 @admin.register(EventTeam)
@@ -16,6 +18,7 @@ class EventTeamAdmin(admin.ModelAdmin):
         "id",
         "team_code",
     )
+    inlines = (OrderInline,)
 
     def get_queryset(self, request):
         return (
