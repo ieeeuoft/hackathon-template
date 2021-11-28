@@ -18,6 +18,7 @@ export interface Hardware {
     picture: string;
     categories: number[];
     quantity_remaining: number;
+    notes: string;
 }
 
 export type HardwareOrdering =

@@ -27,42 +27,44 @@ export const UnconnectedSnackbarNotifier = ({
             setDisplayedSnackbars(displayedSnackbars);
         };
 
-        snackbars.forEach(({ message, options, dismissed }) => {
-            if (dismissed) {
-                closeSnackbar(options.key);
-                return;
-            }
+        if (snackbars?.length) {
+            snackbars.forEach(({ message, options, dismissed }) => {
+                if (dismissed) {
+                    closeSnackbar(options.key);
+                    return;
+                }
 
-            if (displayedSnackbars.has(options.key)) return;
+                if (displayedSnackbars.has(options.key)) return;
 
-            enqueueSnackbar(message, {
-                ...options,
-                onClose: (event, reason, myKey) => {
-                    if (options.onClose) {
-                        options.onClose(event, reason, myKey);
-                    }
-                },
-                onExited: (event, myKey) => {
-                    // Remove this snackbar from the redux store
-                    removeSnackbar({ key: myKey });
-                    removeDisplayed(myKey);
-                },
-                action: (myKey) => (
-                    // Actions shouldn't be stored in redux, since as functions
-                    // they aren't serializable. This gives us a default close
-                    // action on all snackbars.
-                    <IconButton
-                        onClick={() => {
-                            dismissSnackbar({ key: myKey });
-                        }}
-                    >
-                        <Close className={styles.close} />
-                    </IconButton>
-                ),
+                enqueueSnackbar(message, {
+                    ...options,
+                    onClose: (event, reason, myKey) => {
+                        if (options.onClose) {
+                            options.onClose(event, reason, myKey);
+                        }
+                    },
+                    onExited: (event, myKey) => {
+                        // Remove this snackbar from the redux store
+                        removeSnackbar({ key: myKey });
+                        removeDisplayed(myKey);
+                    },
+                    action: (myKey) => (
+                        // Actions shouldn't be stored in redux, since as functions
+                        // they aren't serializable. This gives us a default close
+                        // action on all snackbars.
+                        <IconButton
+                            onClick={() => {
+                                dismissSnackbar({ key: myKey });
+                            }}
+                        >
+                            <Close className={styles.close} />
+                        </IconButton>
+                    ),
+                });
+
+                storeDisplayed(options.key);
             });
-
-            storeDisplayed(options.key);
-        });
+        }
     }, [
         snackbars,
         displayedSnackbars,

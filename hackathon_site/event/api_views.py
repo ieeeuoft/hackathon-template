@@ -16,6 +16,7 @@ from hardware.serializers import IncidentCreateSerializer, OrderListSerializer
 from event.permissions import UserHasProfile, FullDjangoModelPermissions
 
 from hardware.models import OrderItem, Order, Incident
+from hardware.serializers import OrderListSerializer, TeamOrderChangeSerializer
 
 
 class CurrentUserAPIView(generics.GenericAPIView, mixins.RetrieveModelMixin):
@@ -170,3 +171,19 @@ class TeamDetailView(mixins.RetrieveModelMixin, generics.GenericAPIView):
 
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
+
+
+class TeamOrderDetailView(mixins.UpdateModelMixin, generics.GenericAPIView):
+    queryset = Order.objects.all()
+    serializer_class = TeamOrderChangeSerializer
+    permission_classes = [UserHasProfile]
+
+    def check_object_permissions(self, request, obj: Order):
+        order_team = obj.team
+        user_team = request.user.profile.team
+
+        if order_team != user_team:
+            raise PermissionDenied("Can only change the status of your orders.")
+
+    def patch(self, request, *args, **kwargs):
+        return self.partial_update(request, *args, **kwargs)
