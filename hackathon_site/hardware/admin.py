@@ -124,7 +124,16 @@ class OrderItemInline(admin.TabularInline):
 
     @staticmethod
     def quantity_remaining(obj: OrderItem):
-        return obj.hardware.quantity_remaining
+        """
+        Get the quantity remaining by querying the Hardware model, which has the
+        necessary annotations.
+
+        This is quite inefficient, as every order item will generate a database
+        hit. That admin site should not be used heavily, so that's fine. If
+        performance becomes an issue, the hardware queryset can be cached on
+        a per-request basis to use here (probably in OrderAdmin.get_queryset).
+        """
+        return Hardware.objects.get(id=obj.hardware_id).quantity_remaining
 
     @staticmethod
     def max_per_team(obj: OrderItem):
