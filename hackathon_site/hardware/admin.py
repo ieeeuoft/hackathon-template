@@ -1,6 +1,9 @@
+from client_side_image_cropping import ClientsideCroppingWidget, DcsicAdminMixin
 from django.contrib import admin
+from django.db import models
 from django.utils.html import mark_safe
-from .models import Hardware, Category, Order, Incident, OrderItem
+
+from hardware.models import Hardware, Category, Order, Incident, OrderItem
 
 # Register your models here.
 admin.site.register(Incident)
@@ -127,7 +130,7 @@ class CategoryAdmin(admin.ModelAdmin):
 
 
 @admin.register(Hardware)
-class HardwareAdmin(admin.ModelAdmin):
+class HardwareAdmin(DcsicAdminMixin, admin.ModelAdmin):
     list_display = (
         "id",
         "name",
@@ -141,6 +144,13 @@ class HardwareAdmin(admin.ModelAdmin):
     list_display_links = ("id", "name")
     search_fields = ("id", "name", "model_number", "manufacturer")
     autocomplete_fields = ("categories",)
+    formfield_overrides = {
+        models.ImageField: {
+            "widget": ClientsideCroppingWidget(
+                width=600, height=600, preview_width=150, preview_height=150
+            )
+        }
+    }
 
     @admin.display(ordering="quantity_remaining", description="Quantity Remaining")
     def get_quantity_remaining(self, obj):
