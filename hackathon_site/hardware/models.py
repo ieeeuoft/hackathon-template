@@ -94,7 +94,7 @@ class OrderItem(models.Model):
     )
 
     def __str__(self):
-        return f"{self.hardware.name} | Team {self.order.team.team_code}"
+        return f"{self.id} | {self.hardware.name} | Team {self.order.team.team_code}"
 
 
 class Order(models.Model):

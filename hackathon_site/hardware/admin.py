@@ -1,13 +1,10 @@
 from client_side_image_cropping import ClientsideCroppingWidget, DcsicAdminMixin
+from django import forms
 from django.contrib import admin
 from django.db import models
 from django.utils.html import mark_safe
 
 from hardware.models import Hardware, Category, Order, Incident, OrderItem
-
-# Register your models here.
-admin.site.register(Incident)
-admin.site.register(OrderItem)
 
 
 class OrderInline(admin.TabularInline):
@@ -64,11 +61,28 @@ class HardwareCategoryInline(admin.TabularInline):
         return obj.hardware.max_per_team
 
 
+class OrderItemForm(forms.ModelForm):
+    class Meta:
+        model = OrderItem
+        fields = ("hardware", "part_returned_health")
+
+    def clean_hardware(self):
+        value = self.cleaned_data["hardware"]
+        if self.instance and value != self.instance.hardware:
+            raise forms.ValidationError(
+                "Cannot change hardware after the order item is created. "
+                f"Change back to {self.instance.hardware}."
+            )
+        return value
+
+
 class OrderItemInline(admin.TabularInline):
     model = OrderItem
+    form = OrderItemForm
     extra = 0
     autocomplete_fields = ("hardware",)
     readonly_fields = (
+        "id",
         "name",
         "model_number",
         "manufacturer",
@@ -119,6 +133,38 @@ class OrderItemInline(admin.TabularInline):
     @staticmethod
     def categories(obj: OrderItem):
         return ", ".join(c.name for c in obj.hardware.categories.all())
+
+
+class IncidentInline(admin.TabularInline):
+    model = OrderItem
+    verbose_name = "Incident"
+    verbose_name_plural = "Incidents"
+    extra = 0
+    readonly_fields = ("hardware", "state", "description", "time_occurred")
+    exclude = ("part_returned_health",)
+
+    @staticmethod
+    def state(obj: OrderItem):
+        return obj.incident.state
+
+    @staticmethod
+    def description(obj: OrderItem):
+        return obj.incident.description
+
+    @staticmethod
+    def time_occurred(obj: OrderItem):
+        return obj.incident.time_occurred
+
+    def get_queryset(self, request):
+        return (
+            super()
+            .get_queryset(request)
+            .select_related("incident")
+            .filter(incident__isnull=False)
+        )
+
+    def has_add_permission(self, request, obj):
+        return False
 
 
 @admin.register(Category)
@@ -172,13 +218,45 @@ class OrderAdmin(admin.ModelAdmin):
     )
     fields = ("team", "status")
     search_fields = ("id", "team__team_code")
-    inlines = (OrderItemInline,)
+    inlines = (
+        OrderItemInline,
+        IncidentInline,
+    )
     list_select_related = True
     autocomplete_fields = ("team",)
 
     def get_queryset(self, request):
         return super().get_queryset(request).select_related("team")
 
-    @admin.display(ordering="team_code", description="Team Code")
+    @admin.display(description="Team Code")
     def get_team_code(self, obj: Order):
         return obj.team.team_code
+
+
+@admin.register(OrderItem)
+class OrderItemAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "order_id",
+        "hardware_id",
+        "part_returned_health",
+    )
+    search_fields = ("id", "order__team__team_code", "hardware__name")
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related("order__team", "hardware")
+
+
+@admin.register(Incident)
+class IncidentAdmin(admin.ModelAdmin):
+    list_display = ("id", "get_team_code", "state", "time_occurred")
+    list_display_links = ("id", "get_team_code")
+    list_filter = ("state",)
+    autocomplete_fields = ("order_item",)
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related("order_item__order__team")
+
+    @admin.display(description="Team Code")
+    def get_team_code(self, obj: Incident):
+        return obj.order_item.order.team.team_code
