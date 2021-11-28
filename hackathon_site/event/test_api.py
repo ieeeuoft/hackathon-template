@@ -701,6 +701,7 @@ class EventTeamDetailViewTestCase(SetupUserMixin, APITestCase):
 
         self.assertEqual(expected_response[0], data)
 
+
 class TeamOrderDetailViewTestCase(SetupUserMixin, APITestCase):
     def setUp(self):
         super().setUp()
