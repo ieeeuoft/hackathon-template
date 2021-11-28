@@ -16,6 +16,12 @@
     &TextBox {
         padding: 10px;
     }
+
+    &Grid {
+        &:hover {
+            cursor: pointer;
+        }
+    }
 }
 
 .outOfStock {

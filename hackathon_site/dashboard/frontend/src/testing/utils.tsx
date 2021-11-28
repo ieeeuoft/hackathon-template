@@ -21,6 +21,7 @@ import {
     CategoryState,
     initialState as categoryInitialState,
 } from "slices/hardware/categorySlice";
+import { uiReducerName, UIState } from "slices/ui/uiSlice";
 import {
     cartReducerName,
     CartState,
@@ -100,6 +101,7 @@ export * from "jest-when";
 export interface StoreEntities {
     hardware?: Hardware[];
     categories?: Category[];
+    ui?: Partial<UIState>;
     cartItems?: CartItem[];
 }
 
@@ -133,6 +135,10 @@ export const makeStoreWithEntities = (entities: StoreEntities) => {
         }
 
         preloadedState[categoryReducerName] = categoryState;
+    }
+
+    if (entities.ui) {
+        preloadedState[uiReducerName] = entities.ui;
     }
 
     if (entities.cartItems) {

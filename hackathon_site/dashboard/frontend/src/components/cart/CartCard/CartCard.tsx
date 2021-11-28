@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState } from "react";
+import React, { ChangeEvent } from "react";
 import styles from "./CartCard.module.scss";
 import Typography from "@material-ui/core/Typography";
 import Card from "@material-ui/core/Card";
@@ -15,7 +15,7 @@ import CloseIcon from "@material-ui/icons/Close";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "slices/store";
 import { hardwareSelectors } from "slices/hardware/hardwareSlice";
-import { removeFromCart } from "slices/hardware/cartSlice";
+import { removeFromCart, updateCart } from "slices/hardware/cartSlice";
 
 const makeSelections = (quantity_remaining: number) => {
     const items = [];
@@ -54,16 +54,16 @@ const QuantitySelector = ({
 
     return (
         <FormControl variant="outlined" size="small" className={styles.CartFormControl}>
-            <InputLabel shrink={true} id="Quantity">
+            <InputLabel shrink={true} id="QuantityLabel">
                 Quantity
             </InputLabel>
             <Select
                 label="Quantity"
+                labelId="QuantityLabel"
                 value={numInCart}
                 // A bit of typescript hacking, since Select's onChange event has
                 // a value type of unknown and isn't a generic parameter.
                 onChange={handleChange as SelectProps["onChange"]}
-                name="quantity"
             >
                 {makeSelections(quantity_remaining)}
             </Select>
@@ -78,24 +78,31 @@ interface CartCardProps {
 }
 
 export const CartCard = ({ hardware_id, quantity, error }: CartCardProps) => {
-    const [numInCart, setNumInCart] = useState(quantity);
-
     const hardware = useSelector((state: RootState) =>
         hardwareSelectors.selectById(state, hardware_id)
     );
 
-    const handleChange = (event: ChangeEvent<{ name?: string; value: string }>) => {
-        setNumInCart(parseInt(event.target.value));
-    };
-
     const dispatch = useDispatch();
+
+    const handleChange = (event: ChangeEvent<{ name?: string; value: string }>) => {
+        dispatch(
+            updateCart({
+                id: hardware_id,
+                changes: { quantity: parseInt(event.target.value) },
+            })
+        );
+    };
 
     const handleRemove = (id: number) => {
         dispatch(removeFromCart(id));
     };
 
     return hardware ? (
-        <Card className={styles.Cart} elevation={0}>
+        <Card
+            className={styles.Cart}
+            elevation={0}
+            data-testid={`cart-item-${hardware_id}`}
+        >
             <CardMedia
                 className={styles.CartPic}
                 image={hardware.picture}
@@ -114,7 +121,7 @@ export const CartCard = ({ hardware_id, quantity, error }: CartCardProps) => {
                 <QuantitySelector
                     quantity_remaining={hardware.quantity_remaining}
                     handleChange={handleChange}
-                    numInCart={numInCart}
+                    numInCart={quantity}
                 />
             </CardContent>
             <CardActions className={styles.CartAction}>
@@ -124,7 +131,7 @@ export const CartCard = ({ hardware_id, quantity, error }: CartCardProps) => {
                     onClick={() => {
                         handleRemove(hardware_id);
                     }}
-                    data-testid={"cart-item-" + hardware_id.toString()}
+                    data-testid="remove-cart-item"
                 >
                     <CloseIcon />
                 </IconButton>

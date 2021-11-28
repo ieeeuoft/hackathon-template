@@ -15,7 +15,6 @@ import {
     cardItems,
     members,
     teamCode,
-    productInformation,
     mockPendingOrders,
     mockCheckedOutOrders,
     mockReturnedItems,
@@ -25,17 +24,6 @@ import { useDispatch } from "react-redux";
 import { getHardwareWithFilters } from "../../slices/hardware/hardwareSlice";
 
 const Dashboard = () => {
-    // TODO: change to open Product Overview Panel
-    const addToCart = () => {
-        alert("Add to cart");
-    };
-
-    // TODO: remove these when new Product Overview is added
-    const [sideSheetOpen, setSideSheetOpen] = React.useState(false);
-    const toggleMenu = () => {
-        setSideSheetOpen(!sideSheetOpen);
-    };
-
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -45,13 +33,7 @@ const Dashboard = () => {
     return (
         <>
             <Header />
-            {/* TODO: replace with new ProductOverview*/}
-            <ProductOverview
-                detail={productInformation}
-                addToCart={addToCart}
-                isVisible={sideSheetOpen}
-                handleClose={toggleMenu}
-            />
+            <ProductOverview showAddToCartButton={false} />
             <div className={styles.dashboard}>
                 <Typography variant="h1">{hackathonName} Hardware Dashboard</Typography>
                 <Grid

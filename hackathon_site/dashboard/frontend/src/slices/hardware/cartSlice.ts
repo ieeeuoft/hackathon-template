@@ -3,6 +3,7 @@ import {
     createSelector,
     createSlice,
     PayloadAction,
+    Update,
 } from "@reduxjs/toolkit";
 import { RootState } from "slices/store";
 import { CartItem } from "api/types";
@@ -44,12 +45,15 @@ const cartSlice = createSlice({
         removeFromCart: (state, { payload }: PayloadAction<number>) => {
             cartAdapter.removeOne(state, payload);
         },
+        updateCart: (state, { payload }: PayloadAction<Update<CartItem>>) => {
+            cartAdapter.updateOne(state, payload);
+        },
     },
 });
 
 export const { actions, reducer } = cartSlice;
 export default reducer;
-export const { addToCart, removeFromCart } = actions;
+export const { addToCart, removeFromCart, updateCart } = actions;
 
 // Selectors
 export const cartSliceSelector = (state: RootState) => state[cartReducerName];
