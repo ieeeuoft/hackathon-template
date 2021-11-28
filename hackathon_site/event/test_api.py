@@ -605,7 +605,6 @@ class TeamIncidentListViewPostTestCase(SetupUserMixin, APITestCase):
             "time_occurred": "2022-08-08T01:18:00-04:00",
             "description": "Description",
             "order_item": self.order_item.id,
-            "team_id": 1,
         }
 
         self.view = reverse("api:event:incident-list")
@@ -646,7 +645,7 @@ class TeamIncidentListViewPostTestCase(SetupUserMixin, APITestCase):
         Profile.objects.create(user=self.user, team=self.team)
         response = self.client.post(self.view, request_data)
         self.assertEqual(
-            response.json(), {"detail": "Can only post incidents for your own team."}
+            response.json(), {"detail": "Can only create incidents for your own team."}
         )
 
     def test_successful_post(self):
