@@ -123,7 +123,7 @@ class TeamIncidentListView(
         user_team = self.request.user.profile.team
 
         if incident_team != user_team:
-            raise PermissionDenied("Can only post incidents for your own team.")
+            raise PermissionDenied("Can only create incidents for your own team.")
         serializer.save()
 
     def post(self, request, *args, **kwargs):
