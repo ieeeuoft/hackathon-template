@@ -2,6 +2,7 @@ import React from "react";
 
 import {
     makeMockApiListResponse,
+    makeStoreWithEntities,
     render,
     waitFor,
     when,
@@ -117,6 +118,41 @@ describe("Inventory Page", () => {
 
         expect(queryByTestId("inventoryCountDivider")).not.toBeInTheDocument();
         expect(getByText(/no items found/i)).toBeInTheDocument();
+    });
+
+    it("Shows product overview when hardware item is clicked", async () => {
+        const hardwareApiResponse = makeMockApiListResponse(mockHardware);
+        const categoryApiResponse = makeMockApiListResponse(mockCategories);
+
+        when(mockedGet)
+            .calledWith(hardwareUri, {})
+            .mockResolvedValue(hardwareApiResponse);
+        when(mockedGet)
+            .calledWith(categoriesUri)
+            .mockResolvedValue(categoryApiResponse);
+
+        const { getByText } = render(<Inventory />);
+
+        await waitFor(() => {
+            mockHardware.forEach((hardware) =>
+                expect(getByText(hardware.name)).toBeInTheDocument()
+            );
+        });
+
+        fireEvent.click(getByText(mockHardware[0].name));
+
+        expect(getByText("Product Overview")).toBeVisible();
+        expect(
+            getByText(`- Max ${mockHardware[0].max_per_team} of this item`)
+        ).toBeInTheDocument();
+        expect(
+            getByText(
+                `- Max ${mockCategories[0].max_per_team} of items under category ${mockCategories[0].name}`
+            )
+        ).toBeInTheDocument();
+        expect(getByText(mockHardware[0].model_number)).toBeInTheDocument();
+        expect(getByText(mockHardware[0].manufacturer)).toBeInTheDocument();
+        expect(getByText(mockHardware[0].notes)).toBeInTheDocument();
     });
 
     it("Loads more hardware", async () => {

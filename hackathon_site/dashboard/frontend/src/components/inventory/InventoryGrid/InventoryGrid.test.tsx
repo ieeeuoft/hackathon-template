@@ -5,6 +5,7 @@ import {
     waitFor,
     promiseResolveWithDelay,
     makeMockApiListResponse,
+    makeStoreWithEntities,
 } from "testing/utils";
 
 import InventoryGrid from "components/inventory/InventoryGrid/InventoryGrid";
@@ -12,6 +13,7 @@ import { get } from "api/api";
 import { mockHardware } from "testing/mockData";
 import { makeStore } from "slices/store";
 import { getHardwareWithFilters } from "slices/hardware/hardwareSlice";
+import { fireEvent } from "@testing-library/react";
 
 jest.mock("api/api");
 const mockedGet = get as jest.MockedFunction<typeof get>;
