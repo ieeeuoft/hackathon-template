@@ -59,7 +59,7 @@ class IncidentCreateSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
         )
-        read_only_fields = ("created_at", "updated_at")
+        read_only_fields = ("team_id", "created_at", "updated_at")
 
     @staticmethod
     def get_team_id(obj: Incident) -> int:
