@@ -324,9 +324,12 @@ class CategoryListViewTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(expected_unique_hardware_counts, actual_unique_hardware_counts)
 
 
-class IncidentListsViewTestCase(SetupUserMixin, APITestCase):
+class IncidentListViewTestCase(SetupUserMixin, APITestCase):
     def setUp(self):
         super().setUp()
+        self.permissions = Permission.objects.filter(
+            content_type__app_label="hardware", codename="view_incident"
+        )
         self.team = Team.objects.create()
         self.order = Order.objects.create(status="Cart", team=self.team)
         self.hardware = Hardware.objects.create(
@@ -377,8 +380,17 @@ class IncidentListsViewTestCase(SetupUserMixin, APITestCase):
             self.view + "?" + "&".join([f"{key}={val}" for key, val in kwargs.items()])
         )
 
-    def test_incident_get_success(self):
+    def test_user_not_logged_in(self):
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_user_has_no_view_permissions(self):
         self._login()
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_incident_get_success(self):
+        self._login(self.permissions)
 
         response = self.client.get(self.view)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -393,7 +405,7 @@ class IncidentListsViewTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(expected_response, data["results"])
 
     def test_hardware_id_filter(self):
-        self._login()
+        self._login(self.permissions)
 
         url = self._build_filter_url(hardware_id="1")
 
@@ -406,7 +418,7 @@ class IncidentListsViewTestCase(SetupUserMixin, APITestCase):
         self.assertCountEqual(returned_ids, [1])
 
     def test_team_id_filter(self):
-        self._login()
+        self._login(self.permissions)
 
         url = self._build_filter_url(team_id="1")
 
@@ -420,7 +432,7 @@ class IncidentListsViewTestCase(SetupUserMixin, APITestCase):
         self.assertCountEqual(returned_ids, [1, 2])
 
     def test_name_search_filter(self):
-        self._login()
+        self._login(self.permissions)
 
         url = self._build_filter_url(search="other")
 
@@ -636,7 +648,6 @@ class IncidentListViewPostTestCase(SetupUserMixin, APITestCase):
             "time_occurred": "2022-08-08T01:18:00-04:00",
             "description": "Description",
             "order_item": self.order_item.id,
-            "team_id": 1,
         }
 
         self.view = reverse("api:hardware:incident-list")
@@ -659,7 +670,6 @@ class IncidentListViewPostTestCase(SetupUserMixin, APITestCase):
             "time_occurred",
             "description",
             "order_item",
-            "team_id",
         ]
         final_response = response.json()
         del final_response["id"]

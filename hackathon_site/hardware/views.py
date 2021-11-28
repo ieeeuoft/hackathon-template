@@ -59,26 +59,14 @@ class IncidentListView(
 
     filter_backends = (filters.DjangoFilterBackend, SearchFilter)
     filterset_class = IncidentFilter
-
-    def get_queryset(self):
-        queryset = Incident.objects.all()
-        if self.request.method == "GET":
-            return queryset.select_related(
-                "order_item", "order_item__order__team", "order_item__hardware"
-            )
-        elif self.request.method == "POST":
-            return queryset
+    permission_classes = [FullDjangoModelPermissions]
+    queryset = Incident.objects.all().select_related("order_item__order__team")
 
     def get_serializer_class(self):
         if self.request.method == "GET":
             return IncidentListSerializer
         elif self.request.method == "POST":
             return IncidentCreateSerializer
-
-    def get_permissions(self):
-        if self.request.method == "POST":
-            return [FullDjangoModelPermissions()]
-        return [permissions.IsAuthenticated()]
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)

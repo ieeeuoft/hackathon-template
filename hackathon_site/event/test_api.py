@@ -678,7 +678,6 @@ class TeamIncidentListViewPostTestCase(SetupUserMixin, APITestCase):
             "time_occurred": "2022-08-08T01:18:00-04:00",
             "description": "Description",
             "order_item": self.order_item2.id,
-            "team_id": self.team.id,
         }
 
         self._login()
@@ -698,7 +697,6 @@ class TeamIncidentListViewPostTestCase(SetupUserMixin, APITestCase):
             "time_occurred",
             "description",
             "order_item",
-            "team_id",
         ]
         final_response = response.json()
         del final_response["id"]
