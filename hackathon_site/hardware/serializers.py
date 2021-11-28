@@ -44,6 +44,7 @@ class OrderItemSerializer(serializers.ModelSerializer):
         model = OrderItem
         fields = ("id", "hardware", "order", "part_returned_health")
 
+
 class IncidentCreateSerializer(serializers.ModelSerializer):
     team_id = serializers.SerializerMethodField()
 
@@ -68,6 +69,7 @@ class IncidentCreateSerializer(serializers.ModelSerializer):
 
 class IncidentListSerializer(IncidentCreateSerializer):
     order_item = OrderItemSerializer()
+
 
 class OrderListSerializer(serializers.ModelSerializer):
     hardware = HardwareSerializer(many=True, read_only=True)
