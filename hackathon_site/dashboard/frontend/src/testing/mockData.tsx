@@ -189,7 +189,7 @@ export const mockHardware: Hardware[] = [
         manufacturer: "Adafruit",
         datasheet: "https://example.com/datasheet",
         quantity_available: 10,
-        max_per_team: 7,
+        max_per_team: 2,
         picture: "https://i.imgur.com/iUpI1hC.jpg",
         categories: [1],
         quantity_remaining: 5,
