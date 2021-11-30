@@ -37,13 +37,19 @@ interface QuantitySelectorProps {
     quantity_remaining: number;
     handleChange: (e: SelectChangeEvent) => void;
     numInCart: number;
+    constraintMax: number;
 }
 
 const QuantitySelector = ({
     quantity_remaining,
     numInCart,
     handleChange,
+    constraintMax,
 }: QuantitySelectorProps) => {
+    const dropdownNum = !constraintMax
+        ? quantity_remaining
+        : Math.min(quantity_remaining, constraintMax);
+
     if (!quantity_remaining) {
         return (
             <Typography variant="caption" className={styles.CartError}>
@@ -60,12 +66,13 @@ const QuantitySelector = ({
             <Select
                 label="Quantity"
                 labelId="QuantityLabel"
-                value={numInCart}
+                value={dropdownNum === 0 ? "" : numInCart}
                 // A bit of typescript hacking, since Select's onChange event has
                 // a value type of unknown and isn't a generic parameter.
                 onChange={handleChange as SelectProps["onChange"]}
+                disabled={dropdownNum === 0}
             >
-                {makeSelections(quantity_remaining)}
+                {makeSelections(dropdownNum)}
             </Select>
         </FormControl>
     );
@@ -122,6 +129,7 @@ export const CartCard = ({ hardware_id, quantity, error }: CartCardProps) => {
                     quantity_remaining={hardware.quantity_remaining}
                     handleChange={handleChange}
                     numInCart={quantity}
+                    constraintMax={hardware.max_per_team}
                 />
             </CardContent>
             <CardActions className={styles.CartAction}>
