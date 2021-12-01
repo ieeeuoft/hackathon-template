@@ -3,8 +3,8 @@ import React from "react";
 import { fireEvent, render } from "testing/utils";
 
 import Navbar, { UnconnectedNavbar } from "./Navbar";
-import { styles } from "./Navbar.module.scss";
-import { cartQuantity } from "testing/mockData";
+import styles from "./Navbar.module.scss";
+import { cartQuantity, mockCartItems } from "testing/mockData";
 
 describe("<Navbar />", () => {
     const pagesAndPaths = [
@@ -13,16 +13,22 @@ describe("<Navbar />", () => {
         ["Teams", "/teams"],
         ["Reports", "/reports"],
         ["Inventory", "/inventory"],
-        [`Cart (${cartQuantity})`, "/cart"],
+        [`Cart (0)`, "/cart"],
     ];
+
+    const handleLogoutSpy = jest.fn();
 
     pagesAndPaths.map(([label, path]) => {
         it(`Adds the active class to ${label} when on ${path}`, () => {
             const { getByText, container } = render(
-                <Navbar cartQuantity={cartQuantity} pathname={path} />
+                <UnconnectedNavbar
+                    cartQuantity={cartQuantity}
+                    pathname={path}
+                    logout={handleLogoutSpy}
+                />
             );
 
-            expect(getByText(label).closest("button").className).toMatch(
+            expect(getByText(label).closest("button")!.className).toMatch(
                 new RegExp(styles.navActive)
             );
 
@@ -43,7 +49,7 @@ describe("<Navbar />", () => {
 
         // click logout button
         const logOutButton = getByText("Logout").closest("button");
-        fireEvent.click(logOutButton);
+        fireEvent.click(logOutButton!);
 
         // confirm that handler function was called
         expect(handleLogoutSpy).toHaveBeenCalledTimes(1);
