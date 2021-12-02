@@ -22,17 +22,12 @@ import {
     orderStatus,
     members,
     teamCode,
-    productInformation,
 } from "testing/mockData";
 import { hackathonName } from "constants.js";
 
 const Dashboard = () => {
     const reportIncident = (id) => {
         alert("Reports incident for component of id " + id);
-    };
-
-    const addToCart = () => {
-        alert("Add to cart");
     };
 
     const [sideSheetOpen, setSideSheetOpen] = React.useState(false);
@@ -47,12 +42,8 @@ const Dashboard = () => {
     return (
         <>
             <Header />
-            <ProductOverview
-                detail={productInformation}
-                addToCart={addToCart}
-                isVisible={sideSheetOpen}
-                handleClose={toggleMenu}
-            />
+            {/* TODO: show product overview when order hardware item is clicked */}
+            <ProductOverview showAddToCartButton={false} />
             <div className={styles.dashboard}>
                 <Typography variant="h1">{hackathonName} Hardware Dashboard</Typography>
                 <Grid

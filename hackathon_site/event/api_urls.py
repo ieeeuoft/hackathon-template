@@ -25,6 +25,11 @@ urlpatterns = [
     ),
     path("teams/", views.TeamListView.as_view(), name="team-list"),
     path(
+        "teams/team/incidents/",
+        api_views.TeamIncidentListView.as_view(),
+        name="incident-list",
+    ),
+    path(
         "teams/team/orders/",
         api_views.CurrentTeamOrderListView.as_view(),
         name="team-orders",

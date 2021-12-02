@@ -13,7 +13,7 @@ from hardware.serializers import (
     HardwareSerializer,
     CategorySerializer,
     OrderListSerializer,
-    IncidentSerializer,
+    IncidentListSerializer,
 )
 from hackathon_site.tests import SetupUserMixin
 
@@ -334,9 +334,12 @@ class CategoryListViewTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(expected_unique_hardware_counts, actual_unique_hardware_counts)
 
 
-class IncidentListsViewTestCase(SetupUserMixin, APITestCase):
+class IncidentListViewTestCase(SetupUserMixin, APITestCase):
     def setUp(self):
         super().setUp()
+        self.permissions = Permission.objects.filter(
+            content_type__app_label="hardware", codename="view_incident"
+        )
         self.team = Team.objects.create()
         self.order = Order.objects.create(
             status="Cart",
@@ -391,15 +394,24 @@ class IncidentListsViewTestCase(SetupUserMixin, APITestCase):
             self.view + "?" + "&".join([f"{key}={val}" for key, val in kwargs.items()])
         )
 
-    def test_incident_get_success(self):
+    def test_user_not_logged_in(self):
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_user_has_no_view_permissions(self):
         self._login()
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_incident_get_success(self):
+        self._login(self.permissions)
 
         response = self.client.get(self.view)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         queryset = Incident.objects.all()
         # need to provide a request in the serializer context to produce absolute url for image field
-        expected_response = IncidentSerializer(
+        expected_response = IncidentListSerializer(
             queryset, many=True, context={"request": response.wsgi_request}
         ).data
         data = response.json()
@@ -407,7 +419,7 @@ class IncidentListsViewTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(expected_response, data["results"])
 
     def test_hardware_id_filter(self):
-        self._login()
+        self._login(self.permissions)
 
         url = self._build_filter_url(hardware_id="1")
 
@@ -420,7 +432,7 @@ class IncidentListsViewTestCase(SetupUserMixin, APITestCase):
         self.assertCountEqual(returned_ids, [1])
 
     def test_team_id_filter(self):
-        self._login()
+        self._login(self.permissions)
 
         url = self._build_filter_url(team_id="1")
 
@@ -434,7 +446,7 @@ class IncidentListsViewTestCase(SetupUserMixin, APITestCase):
         self.assertCountEqual(returned_ids, [1, 2])
 
     def test_name_search_filter(self):
-        self._login()
+        self._login(self.permissions)
 
         url = self._build_filter_url(search="other")
 
@@ -635,6 +647,64 @@ class OrderListViewGetTestCase(SetupUserMixin, APITestCase):
 
         returned_ids = [res["id"] for res in results]
         self.assertCountEqual(returned_ids, [self.order_3.id, self.order_4.id])
+
+
+class IncidentListViewPostTestCase(SetupUserMixin, APITestCase):
+    def setUp(self):
+        super().setUp()
+        self.team = Team.objects.create()
+        self.order = Order.objects.create(status="Cart", team=self.team)
+        self.permissions = Permission.objects.filter(
+            content_type__app_label="hardware", codename="add_incident"
+        )
+
+        self.hardware = Hardware.objects.create(
+            name="name",
+            model_number="model",
+            manufacturer="manufacturer",
+            datasheet="/datasheet/location/",
+            notes="notes",
+            quantity_available=4,
+            max_per_team=1,
+            picture="/picture/location",
+        )
+
+        self.order_item = OrderItem.objects.create(
+            order=self.order, hardware=self.hardware,
+        )
+
+        self.request_data = {
+            "state": "Broken",
+            "time_occurred": "2022-08-08T01:18:00-04:00",
+            "description": "Description",
+            "order_item": self.order_item.id,
+        }
+
+        self.view = reverse("api:hardware:incident-list")
+
+    def test_user_not_logged_in(self):
+        response = self.client.post(self.view, self.request_data)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_incorrect_permissions(self):
+        self._login()
+        response = self.client.post(self.view, self.request_data)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_successful_post(self):
+        self._login(self.permissions)
+        response = self.client.post(self.view, self.request_data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        similar_attributes = [
+            "state",
+            "time_occurred",
+            "description",
+            "order_item",
+        ]
+        final_response = response.json()
+        del final_response["id"]
+        for attribute in similar_attributes:
+            self.assertEqual(final_response[attribute], self.request_data[attribute])
 
 
 class OrderListViewPostTestCase(SetupUserMixin, APITestCase):

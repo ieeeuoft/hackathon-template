@@ -12,9 +12,10 @@ from event.serializers import (
 )
 from event.models import User, Team as EventTeam, Profile
 from event.serializers import UserSerializer, TeamSerializer
+from hardware.serializers import IncidentCreateSerializer, OrderListSerializer
 from event.permissions import UserHasProfile, FullDjangoModelPermissions
 
-from hardware.models import OrderItem, Order
+from hardware.models import OrderItem, Order, Incident
 from hardware.serializers import OrderListSerializer, TeamOrderChangeSerializer
 
 
@@ -107,6 +108,26 @@ class JoinTeamView(generics.GenericAPIView, mixins.RetrieveModelMixin):
         response_serializer = TeamSerializer(profile.team)
         response_data = response_serializer.data
         return Response(data=response_data, status=status.HTTP_200_OK,)
+
+
+class TeamIncidentListView(
+    mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView
+):
+    queryset = Incident.objects.all()
+
+    serializer_class = IncidentCreateSerializer
+    permission_classes = [UserHasProfile]
+
+    def perform_create(self, serializer):
+        incident_team = serializer.validated_data["order_item"].order.team
+        user_team = self.request.user.profile.team
+
+        if incident_team != user_team:
+            raise PermissionDenied("Can only create incidents for your own team.")
+        serializer.save()
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
 
 
 class ProfileDetailView(mixins.UpdateModelMixin, generics.GenericAPIView):

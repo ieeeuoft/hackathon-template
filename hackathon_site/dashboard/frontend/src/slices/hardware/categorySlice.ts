@@ -102,3 +102,8 @@ export const isLoadingSelector = createSelector(
     [categorySliceSelector],
     (categorySlice) => categorySlice.isLoading
 );
+
+export const selectCategoriesByIds = createSelector(
+    [categorySelectors.selectEntities, (state: RootState, ids: number[]) => ids],
+    (entities, ids) => ids.map((id) => entities?.[id])
+);

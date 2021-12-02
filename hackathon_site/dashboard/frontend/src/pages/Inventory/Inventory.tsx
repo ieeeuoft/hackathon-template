@@ -28,28 +28,15 @@ import {
 } from "slices/hardware/hardwareSlice";
 import { getCategories } from "slices/hardware/categorySlice";
 
-import { productInformation } from "testing/mockData";
-
 const Inventory = () => {
     const dispatch = useDispatch();
-    const items = useSelector(hardwareSelectors.selectAll);
+    const itemsInStore = useSelector(hardwareSelectors.selectTotal);
     const count = useSelector(hardwareCountSelector);
     const isMoreLoading = useSelector(isMoreLoadingSelector);
 
     const [mobileOpen, setMobileOpen] = React.useState(false);
     const toggleFilter = () => {
         setMobileOpen(!mobileOpen);
-    };
-
-    // Remove this later once items can be added to cart
-    const addToCart = () => {
-        alert("Add to cart");
-        setItemOverviewId(null);
-    };
-
-    const [itemOverviewId, setItemOverviewId] = React.useState<number | null>(null);
-    const toggleMenu = () => {
-        setItemOverviewId(null);
     };
 
     const getMoreHardware = () => {
@@ -70,12 +57,7 @@ const Inventory = () => {
     return (
         <>
             <Header />
-            <ProductOverview
-                detail={productInformation}
-                addToCart={addToCart}
-                isVisible={typeof itemOverviewId == "number"}
-                handleClose={toggleMenu}
-            />
+            <ProductOverview showAddToCartButton />
             <div className={styles.inventory}>
                 <Drawer
                     className={styles.inventoryFilterDrawer}
@@ -149,10 +131,10 @@ const Inventory = () => {
                         )}
                         <Typography variant="subtitle2" align="center" paragraph>
                             {count > 0
-                                ? `SHOWING ${items.length} OF ${count} ITEMS`
+                                ? `SHOWING ${itemsInStore} OF ${count} ITEMS`
                                 : "NO ITEMS FOUND"}
                         </Typography>
-                        {count !== items.length && (
+                        {count !== itemsInStore && (
                             <Button
                                 variant="contained"
                                 color="primary"

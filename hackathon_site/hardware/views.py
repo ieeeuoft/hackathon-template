@@ -16,7 +16,8 @@ from hardware.models import Hardware, Category, Order, Incident
 from hardware.serializers import (
     CategorySerializer,
     HardwareSerializer,
-    IncidentSerializer,
+    IncidentListSerializer,
+    IncidentCreateSerializer,
     OrderListSerializer,
     OrderCreateSerializer,
     OrderCreateResponseSerializer,
@@ -47,12 +48,9 @@ class HardwareDetailView(mixins.RetrieveModelMixin, generics.GenericAPIView):
         return self.retrieve(request, *args, **kwargs)
 
 
-class IncidentListView(mixins.ListModelMixin, generics.GenericAPIView):
-    queryset = Incident.objects.all().select_related(
-        "order_item", "order_item__order__team", "order_item__hardware"
-    )
-    serializer_class = IncidentSerializer
-
+class IncidentListView(
+    mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView
+):
     search_fields = (
         "state",
         "order_item__order__team__team_code",
@@ -62,9 +60,20 @@ class IncidentListView(mixins.ListModelMixin, generics.GenericAPIView):
 
     filter_backends = (filters.DjangoFilterBackend, SearchFilter)
     filterset_class = IncidentFilter
+    permission_classes = [FullDjangoModelPermissions]
+    queryset = Incident.objects.all().select_related("order_item__order__team")
+
+    def get_serializer_class(self):
+        if self.request.method == "GET":
+            return IncidentListSerializer
+        elif self.request.method == "POST":
+            return IncidentCreateSerializer
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
 
 
 class CategoryListView(mixins.ListModelMixin, generics.GenericAPIView):
