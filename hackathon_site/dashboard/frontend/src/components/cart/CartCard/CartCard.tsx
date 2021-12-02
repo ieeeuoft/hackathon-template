@@ -16,6 +16,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "slices/store";
 import { hardwareSelectors } from "slices/hardware/hardwareSlice";
 import { removeFromCart, updateCart } from "slices/hardware/cartSlice";
+import { selectCategoriesByIds } from "slices/hardware/categorySlice";
 
 const makeSelections = (quantity_remaining: number) => {
     const items = [];
@@ -37,18 +38,19 @@ interface QuantitySelectorProps {
     quantity_remaining: number;
     handleChange: (e: SelectChangeEvent) => void;
     numInCart: number;
-    constraintMax: number;
+    maxPerTeam: number | null;
 }
 
 const QuantitySelector = ({
     quantity_remaining,
     numInCart,
     handleChange,
-    constraintMax,
+    maxPerTeam,
 }: QuantitySelectorProps) => {
-    const dropdownNum = !constraintMax
-        ? quantity_remaining
-        : Math.min(quantity_remaining, constraintMax);
+    const dropdownNum =
+        maxPerTeam !== null
+            ? Math.min(quantity_remaining, maxPerTeam)
+            : quantity_remaining;
 
     if (!quantity_remaining) {
         return (
@@ -88,6 +90,24 @@ export const CartCard = ({ hardware_id, quantity, error }: CartCardProps) => {
     const hardware = useSelector((state: RootState) =>
         hardwareSelectors.selectById(state, hardware_id)
     );
+
+    let maxPerTeam: number | null = null;
+
+    const categories = useSelector((state: RootState) =>
+        selectCategoriesByIds(state, hardware?.categories || [])
+    );
+
+    if (categories.length > 0) {
+        maxPerTeam = hardware?.max_per_team ?? null;
+        for (const category of categories) {
+            if (category?.max_per_team !== undefined) {
+                maxPerTeam =
+                    maxPerTeam === null
+                        ? category.max_per_team
+                        : Math.min(category.max_per_team, maxPerTeam);
+            }
+        }
+    }
 
     const dispatch = useDispatch();
 
@@ -129,7 +149,7 @@ export const CartCard = ({ hardware_id, quantity, error }: CartCardProps) => {
                     quantity_remaining={hardware.quantity_remaining}
                     handleChange={handleChange}
                     numInCart={quantity}
-                    constraintMax={hardware.max_per_team}
+                    maxPerTeam={maxPerTeam}
                 />
             </CardContent>
             <CardActions className={styles.CartAction}>

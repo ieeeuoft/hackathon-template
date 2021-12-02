@@ -143,6 +143,7 @@ describe("Cart Page", () => {
         await waitFor(() => {
             expect(getByTestId("cart-quantity-total")).toHaveTextContent("4");
             expect(quantityDropdown).toHaveTextContent(quantityToBeSelected);
+            expect(quantityDropdown).not.toHaveTextContent("3");
         });
     });
 });
