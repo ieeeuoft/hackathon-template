@@ -2,9 +2,8 @@ import React from "react";
 
 import { fireEvent, render } from "testing/utils";
 
-import Navbar, { UnconnectedNavbar } from "./Navbar";
+import { UnconnectedNavbar } from "./Navbar";
 import styles from "./Navbar.module.scss";
-import { cartQuantity, mockCartItems } from "testing/mockData";
 
 describe("<Navbar />", () => {
     const pagesAndPaths = [
@@ -21,11 +20,7 @@ describe("<Navbar />", () => {
     pagesAndPaths.map(([label, path]) => {
         it(`Adds the active class to ${label} when on ${path}`, () => {
             const { getByText, container } = render(
-                <UnconnectedNavbar
-                    cartQuantity={cartQuantity}
-                    pathname={path}
-                    logout={handleLogoutSpy}
-                />
+                <UnconnectedNavbar pathname={path} logout={handleLogoutSpy} />
             );
 
             expect(getByText(label).closest("button")!.className).toMatch(
@@ -40,11 +35,7 @@ describe("<Navbar />", () => {
         const handleLogoutSpy = jest.fn();
 
         const { getByText } = render(
-            <UnconnectedNavbar
-                cartQuantity={cartQuantity}
-                pathname={"/"}
-                logout={handleLogoutSpy}
-            />
+            <UnconnectedNavbar pathname={"/"} logout={handleLogoutSpy} />
         );
 
         // click logout button

@@ -14,17 +14,15 @@ import Button from "@material-ui/core/Button";
 
 import { logout } from "slices/users/userSlice";
 import { RootState } from "slices/store";
-import { cartSelectors } from "../../../slices/hardware/cartSlice";
+import { cartTotalSelector } from "slices/hardware/cartSlice";
 
 interface NavBarProps {
     logout: any;
-    cartQuantity: number;
     pathname: string;
 }
 
-export const UnconnectedNavbar = ({ logout, cartQuantity, pathname }: NavBarProps) => {
-    const cartItems = useSelector(cartSelectors.selectAll);
-    cartQuantity = cartItems.reduce((accum, item) => accum + item.quantity, 0);
+export const UnconnectedNavbar = ({ logout, pathname }: NavBarProps) => {
+    const cartQuantity = useSelector(cartTotalSelector);
 
     return (
         <nav className={styles.nav}>
