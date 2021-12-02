@@ -1,4 +1,3 @@
-import json
 from collections import Counter
 import functools
 from django.db.models import Count, Q
