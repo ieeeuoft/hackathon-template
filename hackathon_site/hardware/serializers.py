@@ -4,8 +4,6 @@ from django.db.models import Count, Q
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import serializers
 
-from collections import OrderedDict
-
 from hardware.models import Hardware, Category, OrderItem, Order, Incident
 
 
