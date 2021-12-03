@@ -38,3 +38,9 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 if not os.path.isdir(MEDIA_ROOT):
     os.makedirs(MEDIA_ROOT)
+
+# In testing, captchas should always pass. These are special keys
+# which will allow all verification requests to pass.
+RECAPTCHA_PUBLIC_KEY = "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
+RECAPTCHA_PRIVATE_KEY = "6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe"
+SILENCED_SYSTEM_CHECKS = ["captcha.recaptcha_test_key_error"]
