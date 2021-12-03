@@ -6,6 +6,8 @@ from django.db import transaction
 from django.urls import reverse, path
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
+from import_export import resources
+from import_export.admin import ExportMixin
 
 from django.http import HttpResponseRedirect
 
@@ -14,9 +16,52 @@ from review.forms import ReviewForm, ApplicationReviewInlineFormset
 from review.models import Review, TeamReview
 from review.views import MailerView
 
+class ReviewResource(resources.ModelResource):
+    class Meta:
+        model = Review
+        fields = (
+            "user__first_name",
+            "user__last_name",
+            "user__email",
+            "user__username",
+            "team__team_code",
+            "birthday",
+            "gender",
+            "ethnicity",
+            "school",
+            "study_level",
+            "graduation_year",
+            "review__status",
+            "rsvp",
+            "created_at",
+            "updated_at",
+        )
+        export_order = tuple(fields)
+
+    def get_export_headers(self):
+        export_headers = [
+            "first_name",
+            "last_name",
+            "email",
+            "username",
+            "team_code",
+            "birthday",
+            "gender",
+            "ethnicity",
+            "school",
+            "study_level",
+            "graduation_year",
+            "review_status",
+            "rsvp",
+            "created_at",
+            "updated_at",
+        ]
+        return export_headers
+
 
 @admin.register(Review)
 class ReviewAdmin(admin.ModelAdmin):
+    resource_class = ReviewResource
     list_display = ("get_user", "status", "decision_sent_date", "get_reviewer")
     list_filter = (
         "status",
