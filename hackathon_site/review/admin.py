@@ -16,6 +16,7 @@ from review.forms import ReviewForm, ApplicationReviewInlineFormset
 from review.models import Review, TeamReview
 from review.views import MailerView
 
+
 class ReviewResource(resources.ModelResource):
     class Meta:
         model = Review
