@@ -55,7 +55,7 @@ RECAPTCHA_DOMAIN = "www.recaptcha.net"
 RECAPTCHA_TEST_PUBLIC_KEY = "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
 RECAPTCHA_TEST_PRIVATE_KEY = "6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe"
 
-if DEBUG:
+if DEBUG or IN_TESTING:
     # These are special keys which will always allow requests to pass
     # verification
     RECAPTCHA_PUBLIC_KEY = RECAPTCHA_TEST_PUBLIC_KEY
