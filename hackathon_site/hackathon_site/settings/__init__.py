@@ -64,12 +64,8 @@ if DEBUG:
 else:
     # If the default test keys are used, the captcha package will create a system
     # check warning.
-    RECAPTCHA_PUBLIC_KEY = os.environ.get(
-        "RECAPTCHA_PUBLIC_KEY", RECAPTCHA_TEST_PUBLIC_KEY
-    )
-    RECAPTCHA_PRIVATE_KEY = os.environ.get(
-        "RECAPTCHA_PRIVATE_KEY", RECAPTCHA_TEST_PRIVATE_KEY
-    )
+    RECAPTCHA_PUBLIC_KEY = os.environ["RECAPTCHA_PUBLIC_KEY"]
+    RECAPTCHA_PRIVATE_KEY = os.environ["RECAPTCHA_PRIVATE_KEY"]
 
 # Application definition
 
