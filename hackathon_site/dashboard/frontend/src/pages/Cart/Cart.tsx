@@ -18,6 +18,7 @@ import {
 } from "slices/hardware/hardwareSlice";
 import { RootState } from "slices/store";
 import { cartSelectors, cartTotalSelector } from "slices/hardware/cartSlice";
+import { getCategories } from "slices/hardware/categorySlice";
 
 const Cart = () => {
     const cartItems = useSelector(cartSelectors.selectAll);
@@ -55,6 +56,7 @@ const Cart = () => {
             dispatch(clearFilters());
             dispatch(setFilters({ hardware_ids }));
             dispatch(getHardwareWithFilters({ keepOld: true }));
+            dispatch(getCategories());
         }
     }, [dispatch, hardware, isHardwareLoading, cartItems]);
 
