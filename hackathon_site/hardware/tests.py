@@ -278,7 +278,7 @@ class OrderListSerializerTestCase(TestCase):
             "team": self.team.id,
             "team_code": self.team.team_code,
             "status": "Cart",
-            "hardware": [],
+            "items": [],
             "created_at": serializers.DateTimeField().to_representation(
                 order.created_at
             ),
@@ -288,14 +288,12 @@ class OrderListSerializerTestCase(TestCase):
         }
         self.assertEqual(order_serializer, expected_response)
 
-    def test_hardware_set(self):
+    def test_order_with_items(self):
         order = Order.objects.create(status="Cart", team=self.team)
-        OrderItem.objects.create(
+        item_1 = OrderItem.objects.create(
             order=order, hardware=self.hardware, part_returned_health="Healthy"
         )
-        OrderItem.objects.create(
-            order=order, hardware=self.other_hardware,
-        )
+        item_2 = OrderItem.objects.create(order=order, hardware=self.other_hardware,)
         self.hardware.refresh_from_db()
         self.other_hardware.refresh_from_db()
         order_serializer = OrderListSerializer(order).data
@@ -304,9 +302,17 @@ class OrderListSerializerTestCase(TestCase):
             "team": self.team.id,
             "team_code": self.team.team_code,
             "status": "Cart",
-            "hardware": [
-                HardwareSerializer(self.hardware).data,
-                HardwareSerializer(self.other_hardware).data,
+            "items": [
+                {
+                    "id": item_1.id,
+                    "part_returned_health": "Healthy",
+                    "hardware": self.hardware.id,
+                },
+                {
+                    "id": item_2.id,
+                    "part_returned_health": None,
+                    "hardware": self.other_hardware.id,
+                },
             ],
             "created_at": serializers.DateTimeField().to_representation(
                 order.created_at

@@ -2,6 +2,7 @@ import logging
 
 from django_filters import rest_framework as filters
 from django.db import transaction
+from django.db.models import Prefetch, Count
 from django.http import HttpResponseServerError
 from drf_yasg.utils import swagger_auto_schema
 
@@ -11,7 +12,7 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 
 from event.permissions import UserHasProfile, FullDjangoModelPermissions
 from hardware.api_filters import HardwareFilter, OrderFilter, IncidentFilter
-from hardware.models import Hardware, Category, Order, Incident
+from hardware.models import Hardware, Category, Order, Incident, OrderItem
 
 from hardware.serializers import (
     CategorySerializer,
@@ -88,7 +89,9 @@ class OrderListView(generics.ListAPIView):
     queryset = (
         Order.objects.all().select_related("team")
         # TODO: Causing problems with queryset aggregations, will figure out later:
-        # .prefetch_related("hardware", "hardware__categories")
+        # .prefetch_related(
+        #     "items", "hardware", "hardware__categories", "items__hardware"
+        # )
     )
     serializer_method_classes = {
         "GET": OrderListSerializer,
@@ -99,6 +102,13 @@ class OrderListView(generics.ListAPIView):
     filterset_class = OrderFilter
     ordering_fields = ("created_at",)
     search_fields = ("team__team_code", "id")
+
+    # def get_queryset(self):
+    #     return Order.objects.all().select_related("team").prefetch_related(
+    #         Prefetch("items", queryset=OrderItem.objects.annotate(
+    #             quantity_checked_out=
+    #         ))
+    #     )
 
     def get_serializer_class(self):
         try:
