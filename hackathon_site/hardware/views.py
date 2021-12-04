@@ -2,7 +2,6 @@ import logging
 
 from django_filters import rest_framework as filters
 from django.db import transaction
-from django.db.models import Prefetch, Count
 from django.http import HttpResponseServerError
 from drf_yasg.utils import swagger_auto_schema
 
@@ -12,7 +11,7 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 
 from event.permissions import UserHasProfile, FullDjangoModelPermissions
 from hardware.api_filters import HardwareFilter, OrderFilter, IncidentFilter
-from hardware.models import Hardware, Category, Order, Incident, OrderItem
+from hardware.models import Hardware, Category, Order, Incident
 
 from hardware.serializers import (
     CategorySerializer,
