@@ -52,7 +52,7 @@ const QuantitySelector = ({
             ? Math.min(quantity_remaining, maxPerTeam)
             : quantity_remaining;
 
-    if (!quantity_remaining) {
+    if (!dropdownNum) {
         return (
             <Typography variant="caption" className={styles.CartError}>
                 Currently unavailable
