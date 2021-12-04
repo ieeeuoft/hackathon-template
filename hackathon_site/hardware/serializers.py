@@ -239,7 +239,7 @@ class OrderCreateSerializer(serializers.Serializer):
                 new_order = Order.objects.create(
                     team=self.context["request"].user.profile.team,
                     status="Submitted",
-                    request=validated_data,
+                    request=self.data,
                 )
                 response_data["order_id"] = new_order.id
             order_items += [
