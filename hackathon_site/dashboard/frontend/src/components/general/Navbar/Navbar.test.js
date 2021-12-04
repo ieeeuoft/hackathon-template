@@ -42,7 +42,7 @@ describe("<Navbar />", () => {
         );
 
         // click logout button
-        const logOutButton = getByText("Logout").closest("button");
+        const logOutButton = getByText("Logout");
         fireEvent.click(logOutButton);
 
         // confirm that handler function was called
