@@ -1,20 +1,22 @@
 import React from "react";
-import configureStore from "redux-mock-store";
-
-import { fireEvent, render } from "testing/utils";
-
+import { fireEvent, makeStoreWithEntities, render } from "testing/utils";
 import {
     ChipStatus,
     PendingTable,
     CheckedOutTable,
+    ReturnedTable,
 } from "components/dashboard/ItemTable/ItemTable";
 import {
     itemsCheckedOut,
     mockPendingOrders,
     mockCheckedOutOrders,
+    mockReturnedItems,
+    mockHardware,
+    mockCategories,
 } from "testing/mockData";
-
-const mockStore = configureStore();
+import { RootStore } from "slices/store";
+import { useSelector } from "react-redux";
+import { hardwareSelectors } from "../../../slices/hardware/hardwareSlice";
 
 describe("<ChipStatus />", () => {
     test("Ready status", () => {
@@ -45,14 +47,23 @@ describe("<PendingTable />", () => {
         });
     });
 
-    // TODO: mock ui store
     it("Hides the pending table when isVisible is false", () => {
-        const { getByText } = render(<PendingTable orders={mockPendingOrders} />);
+        const store = makeStoreWithEntities({
+            ui: {
+                dashboard: {
+                    isPendingTableVisible: false,
+                },
+            },
+        });
+        const { getByText, queryByText } = render(
+            <PendingTable orders={mockPendingOrders} />,
+            { store }
+        );
 
         expect(getByText(/pending orders/i)).toBeInTheDocument();
         expect(getByText(/show all/i)).toBeInTheDocument();
         mockPendingOrders.map(({ id }) => {
-            expect(getByText(`Order #${id}`)).toBeNull();
+            expect(queryByText(`Order #${id}`)).toBeNull();
         });
     });
 
@@ -62,15 +73,16 @@ describe("<PendingTable />", () => {
     });
 
     it("PendingTable dispatches an action to toggle visibility when button clicked", async () => {
-        const { getByText } = render(<PendingTable orders={mockPendingOrders} />);
+        const { getByText, queryByText } = render(
+            <PendingTable orders={mockPendingOrders} />
+        );
         const button = getByText(/hide all/i);
 
         fireEvent.click(button);
         expect(getByText(/show all/i)).toBeInTheDocument();
         mockPendingOrders.map(({ id }) => {
-            expect(getByText(`Order #${id}`)).toBeNull();
+            expect(queryByText(`Order #${id}`)).toBeNull();
         });
-        // TODO: check to see store updated
     });
 });
 
@@ -93,10 +105,17 @@ describe("<CheckedOutTable />", () => {
         );
     });
 
-    // TODO: mock ui store
     it("Hides the table when isVisible is false", () => {
+        const store = makeStoreWithEntities({
+            ui: {
+                dashboard: {
+                    isCheckedOutTableVisible: false,
+                },
+            },
+        });
         const { getByText, queryByText } = render(
-            <CheckedOutTable orders={mockCheckedOutOrders} />
+            <CheckedOutTable orders={mockCheckedOutOrders} />,
+            { store }
         );
         expect(getByText(/checked out items/i)).toBeInTheDocument();
         expect(getByText(/show all/i)).toBeInTheDocument();
@@ -117,7 +136,6 @@ describe("<CheckedOutTable />", () => {
         itemsCheckedOut.map(({ name }) => {
             expect(queryByText(name)).toBeNull();
         });
-        // TODO: check to see store updated
     });
 
     // TODO: implement when incidents are ready
@@ -147,52 +165,93 @@ describe("<CheckedOutTable />", () => {
     // });
 });
 
-// TODO: add back in when there is more clarity about returned items
-// describe("<UnconnectedReturnedTable />", () => {
-//     it("Shows a message when there's no returned items", () => {
-//         const { getByText } = render(
-//             <UnconnectedReturnedTable items={[]} isVisible={true} />
-//         );
-//         expect(
-//             getByText(
-//                 "Please bring items to the tech table and a tech team member will assist you."
-//             )
-//         ).toBeInTheDocument();
-//     });
-//
-//     it("Shows returned items", () => {
-//         const { getByText } = render(
-//             <UnconnectedReturnedTable items={itemsReturned} isVisible={true} />
-//         );
-//         expect(getByText(/returned items/i)).toBeInTheDocument();
-//         itemsReturned.map(({ name }) => {
-//             expect(getByText(name)).toBeInTheDocument();
-//         });
-//     });
-//
-//     it("Hides the table when isVisible is false", () => {
-//         const { getByText, queryByText } = render(
-//             <UnconnectedReturnedTable items={itemsReturned} isVisible={false} />
-//         );
-//         expect(getByText(/returned items/i)).toBeInTheDocument();
-//         expect(getByText(/show all/i)).toBeInTheDocument();
-//         itemsReturned.map(({ name }) => {
-//             expect(queryByText(name)).toBeNull();
-//         });
-//     });
-//
-//     it("ReturnedTable dispatches an action to toggle visibility when button clicked", async () => {
-//         const { getByText } = render(<ReturnedTable items={itemsReturned} />, {
-//             store,
-//         });
-//         const button = getByText(/hide all/i);
-//
-//         await fireEvent.click(button);
-//         expect(store.getActions()).toContainEqual(
-//             expect.objectContaining({ type: toggleReturnedTable.type })
-//         );
-//     });
-// });
+describe("<ReturnedTable />", () => {
+    let store: RootStore;
+
+    beforeEach(() => {
+        store = makeStoreWithEntities({
+            hardware: mockHardware,
+            ui: {
+                dashboard: {
+                    isReturnedTableVisible: true,
+                },
+            },
+        });
+    });
+
+    it("Shows a message when there's no returned items", () => {
+        const { getByText } = render(<ReturnedTable items={[]} />, { store });
+        expect(
+            getByText(
+                "Please bring items to the tech table and a tech team member will assist you."
+            )
+        ).toBeInTheDocument();
+    });
+
+    it("Shows returned items", () => {
+        const { getByText } = render(<ReturnedTable items={mockReturnedItems} />, {
+            store,
+        });
+        expect(getByText(/returned items/i)).toBeInTheDocument();
+        mockReturnedItems.map(({ hardware }) => {
+            expect(
+                getByText(
+                    mockHardware.find(({ id }) => id === hardware)?.name ?? "Not Found"
+                )
+            ).toBeInTheDocument();
+        });
+    });
+
+    it("Hides the table when isVisible is false", () => {
+        store = makeStoreWithEntities({
+            hardware: mockHardware,
+            ui: {
+                dashboard: {
+                    isReturnedTableVisible: false,
+                },
+            },
+        });
+        const { getByText, queryByText } = render(
+            <ReturnedTable items={mockReturnedItems} />,
+            { store }
+        );
+        expect(getByText(/returned items/i)).toBeInTheDocument();
+        expect(getByText(/show all/i)).toBeInTheDocument();
+        mockReturnedItems.map(({ hardware }) => {
+            expect(
+                queryByText(
+                    mockHardware.find(({ id }) => id === hardware)?.name ?? "Not Found"
+                )
+            ).toBeNull();
+        });
+    });
+
+    it("ReturnedTable dispatches an action to toggle visibility when button clicked", () => {
+        const { getByText, queryByText } = render(
+            <ReturnedTable items={mockReturnedItems} />,
+            {
+                store,
+            }
+        );
+        const button = getByText(/hide all/i);
+
+        mockReturnedItems.map(({ hardware }) => {
+            expect(
+                getByText(
+                    mockHardware.find(({ id }) => id === hardware)?.name ?? "Not Found"
+                )
+            ).toBeInTheDocument();
+        });
+        fireEvent.click(button);
+        mockReturnedItems.map(({ hardware }) => {
+            expect(
+                queryByText(
+                    mockHardware.find(({ id }) => id === hardware)?.name ?? "Not Found"
+                )
+            ).not.toBeInTheDocument();
+        });
+    });
+});
 
 // TODO: add back in when incidents are done
 // describe("<BrokenTable />", () => {

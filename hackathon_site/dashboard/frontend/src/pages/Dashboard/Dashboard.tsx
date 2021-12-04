@@ -21,14 +21,16 @@ import {
 } from "testing/mockData";
 import { hackathonName } from "constants.js";
 import { useDispatch } from "react-redux";
-import { getHardwareWithFilters } from "../../slices/hardware/hardwareSlice";
+import { getHardwareWithFilters } from "slices/hardware/hardwareSlice";
+import { getCategories } from "slices/hardware/categorySlice";
 
 const Dashboard = () => {
     const dispatch = useDispatch();
 
     useEffect(() => {
         dispatch(getHardwareWithFilters());
-    }, [dispatch]);
+        dispatch(getCategories());
+    });
 
     return (
         <>

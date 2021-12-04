@@ -107,6 +107,7 @@ export interface OrderItem {
     hardware: number;
     order: number;
     part_returned_health: PartReturnedHealth;
+    time_occurred: string;
 }
 
 export interface Incident {
@@ -114,7 +115,7 @@ export interface Incident {
     state: IncidentState;
     time_occurred: string;
     description: string;
-    order_item: OrderItem;
+    order_item: Omit<OrderItem, "time_occurred">;
     team_id: string;
     created_at: string;
     updated_at: string;

@@ -254,7 +254,7 @@ export const mockHardware: Hardware[] = [
         picture: "https://i.imgur.com/iUpI1hC.jpg",
         categories: [4],
         quantity_remaining: 1,
-        notes: "",
+        notes: "This is an interesting piece of hardware",
     },
     {
         id: 6,
@@ -319,7 +319,7 @@ export const mockCartItems: CartItem[] = [
 export const mockPendingOrders: Order[] = [
     {
         id: 1,
-        hardware: mockHardware.slice(0, 2),
+        hardware: mockHardware.slice(4, 6),
         team: 1,
         team_code: "IEEE",
         status: "Submitted",
@@ -340,7 +340,7 @@ export const mockPendingOrders: Order[] = [
 export const mockCheckedOutOrders: Order[] = [
     {
         id: 3,
-        hardware: mockHardware.slice(4, 6),
+        hardware: mockHardware.slice(0, 2),
         team: 1,
         team_code: "IEEE",
         status: "Picked Up",
@@ -358,35 +358,19 @@ export const mockCheckedOutOrders: Order[] = [
     },
 ];
 
-export const mockReturnedItems: Incident[] = [
+export const mockReturnedItems: OrderItem[] = [
     {
         id: 0,
-        state: "Heavily Used",
-        time_occurred: "2021-11-24T16:26:58.404Z",
-        description: "Just a normal returned item.",
-        order_item: {
-            id: 0,
-            hardware: 2,
-            order: 5,
-            part_returned_health: "Healthy",
-        },
-        team_id: "IEEE",
-        created_at: new Date().toDateString(),
-        updated_at: new Date().toDateString(),
+        hardware: 2,
+        order: 5,
+        part_returned_health: "Healthy",
+        time_occurred: new Date().toTimeString(),
     },
     {
         id: 1,
-        state: "Broken",
-        time_occurred: "2021-11-24T16:26:58.404Z",
-        description: "Got Smashed",
-        order_item: {
-            id: 2,
-            hardware: 1,
-            order: 5,
-            part_returned_health: "Broken",
-        },
-        team_id: "IEEE",
-        created_at: new Date().toDateString(),
-        updated_at: new Date().toDateString(),
+        hardware: 1,
+        order: 5,
+        part_returned_health: "Broken",
+        time_occurred: new Date().toTimeString(),
     },
 ];
