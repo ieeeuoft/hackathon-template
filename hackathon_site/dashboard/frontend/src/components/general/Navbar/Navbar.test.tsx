@@ -6,6 +6,8 @@ import { UnconnectedNavbar } from "./Navbar";
 import styles from "./Navbar.module.scss";
 
 describe("<Navbar />", () => {
+    const handleLogoutSpy = jest.fn();
+
     const pagesAndPaths = [
         ["Dashboard", "/"],
         ["Orders", "/orders"],
@@ -14,8 +16,6 @@ describe("<Navbar />", () => {
         ["Inventory", "/inventory"],
         [`Cart (0)`, "/cart"],
     ];
-
-    const handleLogoutSpy = jest.fn();
 
     pagesAndPaths.map(([label, path]) => {
         it(`Adds the active class to ${label} when on ${path}`, () => {
@@ -32,15 +32,13 @@ describe("<Navbar />", () => {
     });
 
     test("logout function is called when logout button is clicked", () => {
-        const handleLogoutSpy = jest.fn();
-
         const { getByText } = render(
             <UnconnectedNavbar pathname={"/"} logout={handleLogoutSpy} />
         );
 
         // click logout button
-        const logOutButton = getByText("Logout").closest("button");
-        fireEvent.click(logOutButton!);
+        const logOutButton = getByText("Logout");
+        fireEvent.click(logOutButton);
 
         // confirm that handler function was called
         expect(handleLogoutSpy).toHaveBeenCalledTimes(1);

@@ -17,11 +17,11 @@ import {
     setFilters,
 } from "slices/hardware/hardwareSlice";
 import { RootState } from "slices/store";
-import { cartSelectors } from "slices/hardware/cartSlice";
+import { cartSelectors, cartTotalSelector } from "slices/hardware/cartSlice";
 
 const Cart = () => {
     const cartItems = useSelector(cartSelectors.selectAll);
-    const cartQuantity = cartItems.reduce((accum, item) => accum + item.quantity, 0);
+    const cartQuantity = useSelector(cartTotalSelector);
 
     const dispatch = useDispatch();
     const hardware = useSelector((state: RootState) =>
