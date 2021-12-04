@@ -275,7 +275,7 @@ class OrderListSerializerTestCase(TestCase):
         order_serializer = OrderListSerializer(order).data
         expected_response = {
             "id": 1,
-            "team": self.team.id,
+            "team_id": self.team.id,
             "team_code": self.team.team_code,
             "status": "Cart",
             "items": [],
