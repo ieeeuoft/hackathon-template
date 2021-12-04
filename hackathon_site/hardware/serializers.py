@@ -76,7 +76,7 @@ class OrderItemInOrderSerializer(serializers.ModelSerializer):
         model = OrderItem
         fields = (
             "id",
-            "hardware",
+            "hardware_id",
             "part_returned_health",
         )
 
@@ -90,7 +90,7 @@ class OrderListSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "items",
-            "team",
+            "team_id",
             "team_code",
             "status",
             "created_at",

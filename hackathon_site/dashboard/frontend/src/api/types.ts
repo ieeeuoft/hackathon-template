@@ -78,8 +78,12 @@ export type OrderStatus = "Submitted" | "Ready for Pickup" | "Picked Up" | "Canc
 
 export interface Order {
     id: number;
-    hardware: Hardware[];
-    team: number;
+    items: {
+        id: number;
+        hardware_id: number;
+        part_returned_health: string | null;
+    }[];
+    team_id: number;
     team_code: string;
     status: OrderStatus;
     created_at: string;

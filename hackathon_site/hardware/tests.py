@@ -299,19 +299,19 @@ class OrderListSerializerTestCase(TestCase):
         order_serializer = OrderListSerializer(order).data
         expected_response = {
             "id": 1,
-            "team": self.team.id,
+            "team_id": self.team.id,
             "team_code": self.team.team_code,
             "status": "Cart",
             "items": [
                 {
                     "id": item_1.id,
                     "part_returned_health": "Healthy",
-                    "hardware": self.hardware.id,
+                    "hardware_id": self.hardware.id,
                 },
                 {
                     "id": item_2.id,
                     "part_returned_health": None,
-                    "hardware": self.other_hardware.id,
+                    "hardware_id": self.other_hardware.id,
                 },
             ],
             "created_at": serializers.DateTimeField().to_representation(
