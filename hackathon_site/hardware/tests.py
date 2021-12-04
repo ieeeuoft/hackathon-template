@@ -121,8 +121,12 @@ class HardwareQuantityRemainingTestCase(TestCase):
     def test_some_items_none_returned(self):
         team = Team.objects.create()
         order = Order.objects.create(status="Picked Up", team=team)
-        OrderItem.objects.create(order=order, hardware=self.hardware,)
-        OrderItem.objects.create(order=order, hardware=self.hardware,)
+        OrderItem.objects.create(
+            order=order, hardware=self.hardware,
+        )
+        OrderItem.objects.create(
+            order=order, hardware=self.hardware,
+        )
         self.hardware.refresh_from_db()
         hardware_serializer = HardwareSerializer(self.hardware)
         self.assertEqual(hardware_serializer.data["quantity_remaining"], 2)
@@ -133,7 +137,9 @@ class HardwareQuantityRemainingTestCase(TestCase):
         OrderItem.objects.create(
             order=order, hardware=self.hardware, part_returned_health="Healthy"
         )
-        OrderItem.objects.create(order=order, hardware=self.hardware,)
+        OrderItem.objects.create(
+            order=order, hardware=self.hardware,
+        )
         self.hardware.refresh_from_db()
         hardware_serializer = HardwareSerializer(self.hardware)
         self.assertEqual(hardware_serializer.data["quantity_remaining"], 3)
@@ -144,7 +150,9 @@ class HardwareQuantityRemainingTestCase(TestCase):
         OrderItem.objects.create(
             order=order, hardware=self.hardware, part_returned_health="Broken"
         )
-        OrderItem.objects.create(order=order, hardware=self.hardware,)
+        OrderItem.objects.create(
+            order=order, hardware=self.hardware,
+        )
         self.hardware.refresh_from_db()
         hardware_serializer = HardwareSerializer(self.hardware)
         self.assertEqual(hardware_serializer.data["quantity_remaining"], 2)
@@ -152,8 +160,12 @@ class HardwareQuantityRemainingTestCase(TestCase):
     def test_some_items_cancelled(self):
         team = Team.objects.create()
         order = Order.objects.create(status="Cancelled", team=team)
-        OrderItem.objects.create(order=order, hardware=self.hardware,)
-        OrderItem.objects.create(order=order, hardware=self.hardware,)
+        OrderItem.objects.create(
+            order=order, hardware=self.hardware,
+        )
+        OrderItem.objects.create(
+            order=order, hardware=self.hardware,
+        )
         self.hardware.refresh_from_db()
         hardware_serializer = HardwareSerializer(self.hardware)
         self.assertEqual(hardware_serializer.data["quantity_remaining"], 4)
