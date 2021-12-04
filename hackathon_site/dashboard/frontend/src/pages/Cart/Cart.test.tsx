@@ -119,7 +119,7 @@ describe("Cart Page", () => {
     });
 
     test("updateCart action", async () => {
-        const quantityToBeSelected = "4";
+        const quantityToBeSelected = "1";
 
         const store = makeStoreWithEntities({
             hardware: mockHardware,
@@ -141,8 +141,9 @@ describe("Cart Page", () => {
         fireEvent.click(quantitySelected);
 
         await waitFor(() => {
-            expect(getByTestId("cart-quantity-total")).toHaveTextContent("7");
+            expect(getByTestId("cart-quantity-total")).toHaveTextContent("4");
             expect(quantityDropdown).toHaveTextContent(quantityToBeSelected);
+            expect(quantityDropdown).not.toHaveTextContent("3");
         });
     });
 });

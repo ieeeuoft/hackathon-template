@@ -14,7 +14,7 @@ describe("<CartCard />", () => {
         const store = makeStoreWithEntities({ hardware: mockHardware });
 
         const item = mockHardware[0];
-        const quantity = item.quantity_remaining - 1;
+        const quantity = item.quantity_remaining - 3;
 
         const { getByText, getByAltText } = render(
             <CartCard hardware_id={item.id} quantity={quantity} />,
