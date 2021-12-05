@@ -23,7 +23,7 @@ describe("<Navbar />", () => {
                 <UnconnectedNavbar pathname={path} logout={handleLogoutSpy} />
             );
 
-            expect(getByText(label).closest("button")?.className).toMatch(
+            expect(getByText(label).closest("button").className).toMatch(
                 new RegExp(styles.navActive)
             );
 
