@@ -1,12 +1,16 @@
 import {
+    createAsyncThunk,
     createEntityAdapter,
     createSelector,
     createSlice,
     PayloadAction,
     Update,
 } from "@reduxjs/toolkit";
-import { RootState } from "slices/store";
-import { CartItem } from "api/types";
+import { AppDispatch, RootState } from "slices/store";
+import { APIListResponse, CartItem, Hardware } from "api/types";
+import { post } from "api/api";
+import { push } from "connected-react-router";
+import { displaySnackbar } from "slices/ui/uiSlice";
 
 interface CartExtraState {
     isLoading: boolean;
@@ -25,6 +29,47 @@ const cartAdapter = createEntityAdapter<CartItem>({
 export const cartReducerName = "cart";
 export const initialState = cartAdapter.getInitialState(extraState);
 export type CartState = typeof initialState;
+
+// Thunk
+interface RejectValue {
+    status: number;
+    message: any;
+}
+
+export const submitOrder = createAsyncThunk<
+    APIListResponse<Hardware>,
+    { keepOld?: boolean } | undefined,
+    { state: RootState; rejectValue: RejectValue; dispatch: AppDispatch }
+>(
+    `${cartReducerName}/submitOrder`,
+    async (_, { dispatch, getState, rejectWithValue }) => {
+        const cartItems = cartSelectors
+            .selectAll(getState())
+            .map(({ hardware_id, ...rest }) => ({
+                id: hardware_id,
+                ...rest,
+            }));
+
+        try {
+            const response = await post("/api/hardware/orders/", {
+                hardware: cartItems,
+            });
+            dispatch(push("/"));
+            return response.data;
+        } catch (e: any) {
+            dispatch(
+                displaySnackbar({
+                    message: `Failed to fetch hardware data: Error ${e.response.status}`,
+                    options: { variant: "error" },
+                })
+            );
+            return rejectWithValue({
+                status: e.response.status,
+                message: e.response.data,
+            });
+        }
+    }
+);
 
 // Slice
 const cartSlice = createSlice({
@@ -48,6 +93,20 @@ const cartSlice = createSlice({
         updateCart: (state, { payload }: PayloadAction<Update<CartItem>>) => {
             cartAdapter.updateOne(state, payload);
         },
+    },
+    extraReducers: (builder) => {
+        builder.addCase(submitOrder.pending, (state) => {
+            state.isLoading = true;
+            state.error = null;
+        });
+        builder.addCase(submitOrder.fulfilled, (state) => {
+            state.isLoading = false;
+            state.error = "Submitted";
+        });
+        builder.addCase(submitOrder.rejected, (state) => {
+            state.isLoading = false;
+            state.error = "Submitted order has been rejected";
+        });
     },
 });
 
