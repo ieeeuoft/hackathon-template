@@ -2,27 +2,28 @@ import React from "react";
 
 import { fireEvent, render } from "testing/utils";
 
-import Navbar, { UnconnectedNavbar } from "./Navbar";
-import { styles } from "./Navbar.module.scss";
-import { cartQuantity } from "testing/mockData";
+import { UnconnectedNavbar } from "./Navbar";
+import styles from "./Navbar.module.scss";
 
 describe("<Navbar />", () => {
+    const handleLogoutSpy = jest.fn();
+
     const pagesAndPaths = [
         ["Dashboard", "/"],
         ["Orders", "/orders"],
         ["Teams", "/teams"],
         ["Reports", "/reports"],
         ["Inventory", "/inventory"],
-        [`Cart (${cartQuantity})`, "/cart"],
+        [`Cart (0)`, "/cart"],
     ];
 
     pagesAndPaths.map(([label, path]) => {
         it(`Adds the active class to ${label} when on ${path}`, () => {
             const { getByText, container } = render(
-                <Navbar cartQuantity={cartQuantity} pathname={path} />
+                <UnconnectedNavbar pathname={path} logout={handleLogoutSpy} />
             );
 
-            expect(getByText(label).closest("button").className).toMatch(
+            expect(getByText(label).closest("button")?.className).toMatch(
                 new RegExp(styles.navActive)
             );
 
@@ -31,18 +32,12 @@ describe("<Navbar />", () => {
     });
 
     test("logout function is called when logout button is clicked", () => {
-        const handleLogoutSpy = jest.fn();
-
         const { getByText } = render(
-            <UnconnectedNavbar
-                cartQuantity={cartQuantity}
-                pathname={"/"}
-                logout={handleLogoutSpy}
-            />
+            <UnconnectedNavbar pathname={"/"} logout={handleLogoutSpy} />
         );
 
         // click logout button
-        const logOutButton = getByText("Logout").closest("button");
+        const logOutButton = getByText("Logout");
         fireEvent.click(logOutButton);
 
         // confirm that handler function was called
