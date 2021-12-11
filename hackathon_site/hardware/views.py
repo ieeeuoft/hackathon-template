@@ -85,11 +85,7 @@ class CategoryListView(mixins.ListModelMixin, generics.GenericAPIView):
 
 
 class OrderListView(generics.ListAPIView):
-    queryset = (
-        Order.objects.all().select_related("team")
-        # TODO: Causing problems with queryset aggregations, will figure out later:
-        # .prefetch_related("hardware", "hardware__categories")
-    )
+    queryset = Order.objects.all().select_related("team").prefetch_related("items",)
     serializer_method_classes = {
         "GET": OrderListSerializer,
         "POST": OrderCreateSerializer,
