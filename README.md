@@ -67,7 +67,8 @@ In order to run the django and react development servers locally (or run tests),
 | DB_NAME        |                                   | hackathon_site    | Postgres database name.                                                           |
 | REDIS_URI      |                                   | 172.17.0.1:6379/1 | Redis [URI](https://github.com/lettuce-io/lettuce-core/wiki/Redis-URI-and-connection-details#uri-syntax). `<host>:<port>/<database>`. |
 | **REACT_APP_DEV_SERVER_URL** | http://localhost:8000 |                 | Path to the django development server, used by React. Update the port if you aren't using the default 8000. |
-| RECAPTCHA_PUBLIC_KEY | Something | In development, a key that will skip the challenge | Key info: https://www.google.com/recaptcha/ |
+| RECAPTCHA_PUBLIC_KEY | Something | A recaptcha public key that will skip the challenge | Key info: https://www.google.com/recaptcha/ |
+| RECAPTCHA_PRIVATE_KEY | Something | A recaptcha private key that will skip the challenge | Key info: https://www.google.com/recaptcha/ |
 
 #### Testing
 Specifying `SECRET_KEY` is still required to run tests, because the settings file expects it to be set. `DEBUG` is forced to `False` by Django.
