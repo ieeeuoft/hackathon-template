@@ -26,14 +26,13 @@ class ReviewResource(resources.ModelResource):
             "application__user__email",
             "application__user__username",
             "application__team__team_code",
-            "birthday",
-            "gender",
-            "ethnicity",
-            "school",
-            "study_level",
-            "graduation_year",
-            "application__review__status",
-            "rsvp",
+            "reviewer__email",
+            "interest",
+            "experience",
+            "quality",
+            "reviewer_comments",
+            "status",
+            "decision_sent_date",
             "created_at",
             "updated_at",
         )
@@ -46,14 +45,13 @@ class ReviewResource(resources.ModelResource):
             "email",
             "username",
             "team_code",
-            "birthday",
-            "gender",
-            "ethnicity",
-            "school",
-            "study_level",
-            "graduation_year",
-            "review_status",
-            "rsvp",
+            "reviewer_email",
+            "interest",
+            "experience",
+            "quality",
+            "reviewer_comments",
+            "status",
+            "decision_sent_date",
             "created_at",
             "updated_at",
         ]
@@ -61,7 +59,7 @@ class ReviewResource(resources.ModelResource):
 
 
 @admin.register(Review)
-class ReviewAdmin(admin.ModelAdmin):
+class ReviewAdmin(ExportMixin, admin.ModelAdmin):
     resource_class = ReviewResource
     list_display = ("get_user", "status", "decision_sent_date", "get_reviewer")
     list_filter = (
