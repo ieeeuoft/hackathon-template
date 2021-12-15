@@ -94,11 +94,9 @@ describe("<CheckedOutTable />", () => {
         const { getByText } = render(<CheckedOutTable orders={mockCheckedOutOrders} />);
         expect(getByText(/checked out items/i)).toBeInTheDocument();
         expect(getByText(/hide all/i)).toBeInTheDocument();
-        mockCheckedOutOrders.map((order) =>
-            order.hardware.map(({ name }) =>
-                expect(getByText(name)).toBeInTheDocument()
-            )
-        );
+        mockCheckedOutOrders.map(({ id }) => {
+            expect(getByText(`Order #${id}`)).toBeInTheDocument();
+        });
     });
 
     it("Hides the table when isVisible is false", () => {
@@ -115,8 +113,8 @@ describe("<CheckedOutTable />", () => {
         );
         expect(getByText(/checked out items/i)).toBeInTheDocument();
         expect(getByText(/show all/i)).toBeInTheDocument();
-        itemsCheckedOut.map(({ name }) => {
-            expect(queryByText(name)).toBeNull();
+        mockCheckedOutOrders.map(({ id }) => {
+            expect(queryByText(`Order #${id}`)).toBeNull();
         });
     });
 
@@ -129,8 +127,8 @@ describe("<CheckedOutTable />", () => {
         fireEvent.click(button);
 
         expect(getByText(/show all/i)).toBeInTheDocument();
-        itemsCheckedOut.map(({ name }) => {
-            expect(queryByText(name)).toBeNull();
+        mockCheckedOutOrders.map(({ id }) => {
+            expect(queryByText(`Order #${id}`)).not.toBeInTheDocument();
         });
     });
 
@@ -163,8 +161,9 @@ describe("<CheckedOutTable />", () => {
 
 describe("<ReturnedTable />", () => {
     let store: RootStore;
-    const mockReturnedItems = mockCheckedOutOrders.flatMap((order) =>
-        order.items.flatMap((item) => item.part_returned_health !== null)
+    const mockOrdersWithReturnedItems = mockCheckedOutOrders.filter(
+        (order) =>
+            order.items.filter((item) => item.part_returned_health !== null).length > 0
     );
 
     beforeEach(() => {
@@ -192,13 +191,8 @@ describe("<ReturnedTable />", () => {
             store,
         });
         expect(getByText(/returned items/i)).toBeInTheDocument();
-        mockReturnedItems.map(({ hardware_id }) => {
-            expect(
-                getByText(
-                    mockHardware.find(({ id }) => id === hardware_id)?.name ??
-                        "Not Found"
-                )
-            ).toBeInTheDocument();
+        mockOrdersWithReturnedItems.map(({ id }) => {
+            expect(getByText(`Order #${id}`)).toBeInTheDocument();
         });
     });
 
@@ -212,18 +206,13 @@ describe("<ReturnedTable />", () => {
             },
         });
         const { getByText, queryByText } = render(
-            <ReturnedTable items={mockCheckedOutOrders} />,
+            <ReturnedTable orders={mockCheckedOutOrders} />,
             { store }
         );
         expect(getByText(/returned items/i)).toBeInTheDocument();
         expect(getByText(/show all/i)).toBeInTheDocument();
-        mockReturnedItems.map(({ hardware_id }) => {
-            expect(
-                queryByText(
-                    mockHardware.find(({ id }) => id === hardware_id)?.name ??
-                        "Not Found"
-                )
-            ).toBeNull();
+        mockOrdersWithReturnedItems.map(({ id }) => {
+            expect(queryByText(`Order #${id}`)).toBeNull();
         });
     });
 
@@ -236,22 +225,12 @@ describe("<ReturnedTable />", () => {
         );
         const button = getByText(/hide all/i);
 
-        mockReturnedItems.map(({ hardware_id }) => {
-            expect(
-                getByText(
-                    mockHardware.find(({ id }) => id === hardware_id)?.name ??
-                        "Not Found"
-                )
-            ).toBeInTheDocument();
+        mockOrdersWithReturnedItems.map(({ id }) => {
+            expect(getByText(`Order #${id}`)).toBeInTheDocument();
         });
         fireEvent.click(button);
-        mockReturnedItems.map(({ hardware_id }) => {
-            expect(
-                queryByText(
-                    mockHardware.find(({ id }) => id === hardware_id)?.name ??
-                        "Not Found"
-                )
-            ).not.toBeInTheDocument();
+        mockOrdersWithReturnedItems.map(({ id }) => {
+            expect(queryByText(`Order #${id}`)).not.toBeInTheDocument();
         });
     });
 });
