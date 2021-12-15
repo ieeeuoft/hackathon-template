@@ -17,18 +17,26 @@ import {
     teamCode,
     mockPendingOrders,
     mockCheckedOutOrders,
-    mockReturnedItems,
 } from "testing/mockData";
 import { hackathonName } from "constants.js";
 import { useDispatch } from "react-redux";
-import { getHardwareWithFilters } from "slices/hardware/hardwareSlice";
+import { getHardwareWithFilters, setFilters } from "slices/hardware/hardwareSlice";
 import { getCategories } from "slices/hardware/categorySlice";
 
 const Dashboard = () => {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        dispatch(getHardwareWithFilters());
+        const allOrders = mockPendingOrders.concat(mockCheckedOutOrders);
+        const hardware_ids = allOrders.flatMap((order) =>
+            order.items.map((item) => item.hardware_id)
+        );
+        dispatch(
+            setFilters({
+                hardware_ids,
+            })
+        );
+        dispatch(getHardwareWithFilters({ keepOld: true }));
         dispatch(getCategories());
     });
 
@@ -77,7 +85,7 @@ const Dashboard = () => {
                 {/* <BrokenTable items={itemsBroken} openReportAlert={openBrokenTable} /> */}
                 <PendingTable orders={mockPendingOrders} />
                 <CheckedOutTable orders={mockCheckedOutOrders} />
-                <ReturnedTable items={mockReturnedItems} />
+                <ReturnedTable orders={mockCheckedOutOrders} />
             </div>
         </>
     );

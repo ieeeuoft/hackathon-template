@@ -318,59 +318,91 @@ export const mockCartItems: CartItem[] = [
 
 export const mockPendingOrders: Order[] = [
     {
-        id: 1,
-        hardware: mockHardware.slice(4, 6),
-        team: 1,
-        team_code: "IEEE",
-        status: "Submitted",
-        created_at: new Date().toDateString(),
-        updated_at: new Date().toDateString(),
-    },
-    {
-        id: 2,
-        hardware: mockHardware.slice(2, 4),
-        team: 1,
+        id: 3,
+        items: [
+            {
+                id: 6,
+                hardware_id: 3,
+                part_returned_health: null,
+            },
+            {
+                id: 7,
+                hardware_id: 4,
+                part_returned_health: null,
+            },
+        ],
+        team_id: 2,
         team_code: "IEEE",
         status: "Ready for Pickup",
-        created_at: new Date().toDateString(),
-        updated_at: new Date().toDateString(),
+        created_at: "2021-10-17T18:28:44.691969-04:00",
+        updated_at: "2021-12-03T23:01:46.606892-05:00",
+    },
+    {
+        id: 4,
+        items: [
+            {
+                id: 8,
+                hardware_id: 4,
+                part_returned_health: null,
+            },
+            {
+                id: 9,
+                hardware_id: 1,
+                part_returned_health: null,
+            },
+        ],
+        team_id: 2,
+        team_code: "IEEE",
+        status: "Submitted",
+        created_at: "2021-10-17T18:28:44.691969-04:00",
+        updated_at: "2021-12-03T23:01:46.606892-05:00",
     },
 ];
 
 export const mockCheckedOutOrders: Order[] = [
     {
-        id: 3,
-        hardware: mockHardware.slice(0, 2),
-        team: 1,
-        team_code: "IEEE",
-        status: "Picked Up",
-        created_at: new Date().toDateString(),
-        updated_at: new Date().toDateString(),
-    },
-    {
-        id: 4,
-        hardware: mockHardware.slice(6, 8),
-        team: 1,
-        team_code: "IEEE",
-        status: "Picked Up",
-        created_at: new Date().toDateString(),
-        updated_at: new Date().toDateString(),
-    },
-];
-
-export const mockReturnedItems: OrderItem[] = [
-    {
-        id: 0,
-        hardware: 2,
-        order: 5,
-        part_returned_health: "Healthy",
-        time_occurred: new Date().toTimeString(),
-    },
-    {
         id: 1,
-        hardware: 1,
-        order: 5,
-        part_returned_health: "Broken",
-        time_occurred: new Date().toTimeString(),
+        items: [
+            {
+                id: 1,
+                hardware_id: 1,
+                part_returned_health: null,
+            },
+            {
+                id: 2,
+                hardware_id: 1,
+                part_returned_health: null,
+            },
+        ],
+        team_id: 2,
+        team_code: "IEEE",
+        status: "Picked Up",
+        created_at: "2021-10-17T18:28:44.691969-04:00",
+        updated_at: "2021-12-03T23:01:46.606892-05:00",
+    },
+    {
+        id: 2,
+        items: [
+            {
+                id: 3,
+                hardware_id: 1,
+                part_returned_health: "Healthy",
+            },
+            {
+                id: 4,
+                hardware_id: 1,
+                part_returned_health: null,
+            },
+            {
+                id: 5,
+                hardware_id: 2,
+                part_returned_health: "Broken",
+            },
+        ],
+        team_id: 2,
+        team_code: "IEEE",
+        status: "Picked Up",
+        created_at: "2021-10-17T18:28:44.691969-04:00",
+        updated_at: "2021-12-03T23:01:46.606892-05:00",
     },
 ];

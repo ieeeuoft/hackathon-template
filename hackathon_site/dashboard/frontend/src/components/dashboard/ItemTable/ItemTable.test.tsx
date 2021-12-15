@@ -10,13 +10,9 @@ import {
     itemsCheckedOut,
     mockPendingOrders,
     mockCheckedOutOrders,
-    mockReturnedItems,
     mockHardware,
-    mockCategories,
 } from "testing/mockData";
 import { RootStore } from "slices/store";
-import { useSelector } from "react-redux";
-import { hardwareSelectors } from "../../../slices/hardware/hardwareSlice";
 
 describe("<ChipStatus />", () => {
     test("Ready status", () => {
@@ -167,6 +163,9 @@ describe("<CheckedOutTable />", () => {
 
 describe("<ReturnedTable />", () => {
     let store: RootStore;
+    const mockReturnedItems = mockCheckedOutOrders.flatMap((order) =>
+        order.items.flatMap((item) => item.part_returned_health !== null)
+    );
 
     beforeEach(() => {
         store = makeStoreWithEntities({
@@ -180,7 +179,7 @@ describe("<ReturnedTable />", () => {
     });
 
     it("Shows a message when there's no returned items", () => {
-        const { getByText } = render(<ReturnedTable items={[]} />, { store });
+        const { getByText } = render(<ReturnedTable orders={[]} />, { store });
         expect(
             getByText(
                 "Please bring items to the tech table and a tech team member will assist you."
@@ -189,14 +188,15 @@ describe("<ReturnedTable />", () => {
     });
 
     it("Shows returned items", () => {
-        const { getByText } = render(<ReturnedTable items={mockReturnedItems} />, {
+        const { getByText } = render(<ReturnedTable orders={mockCheckedOutOrders} />, {
             store,
         });
         expect(getByText(/returned items/i)).toBeInTheDocument();
-        mockReturnedItems.map(({ hardware }) => {
+        mockReturnedItems.map(({ hardware_id }) => {
             expect(
                 getByText(
-                    mockHardware.find(({ id }) => id === hardware)?.name ?? "Not Found"
+                    mockHardware.find(({ id }) => id === hardware_id)?.name ??
+                        "Not Found"
                 )
             ).toBeInTheDocument();
         });
@@ -212,15 +212,16 @@ describe("<ReturnedTable />", () => {
             },
         });
         const { getByText, queryByText } = render(
-            <ReturnedTable items={mockReturnedItems} />,
+            <ReturnedTable items={mockCheckedOutOrders} />,
             { store }
         );
         expect(getByText(/returned items/i)).toBeInTheDocument();
         expect(getByText(/show all/i)).toBeInTheDocument();
-        mockReturnedItems.map(({ hardware }) => {
+        mockReturnedItems.map(({ hardware_id }) => {
             expect(
                 queryByText(
-                    mockHardware.find(({ id }) => id === hardware)?.name ?? "Not Found"
+                    mockHardware.find(({ id }) => id === hardware_id)?.name ??
+                        "Not Found"
                 )
             ).toBeNull();
         });
@@ -228,25 +229,27 @@ describe("<ReturnedTable />", () => {
 
     it("ReturnedTable dispatches an action to toggle visibility when button clicked", () => {
         const { getByText, queryByText } = render(
-            <ReturnedTable items={mockReturnedItems} />,
+            <ReturnedTable orders={mockCheckedOutOrders} />,
             {
                 store,
             }
         );
         const button = getByText(/hide all/i);
 
-        mockReturnedItems.map(({ hardware }) => {
+        mockReturnedItems.map(({ hardware_id }) => {
             expect(
                 getByText(
-                    mockHardware.find(({ id }) => id === hardware)?.name ?? "Not Found"
+                    mockHardware.find(({ id }) => id === hardware_id)?.name ??
+                        "Not Found"
                 )
             ).toBeInTheDocument();
         });
         fireEvent.click(button);
-        mockReturnedItems.map(({ hardware }) => {
+        mockReturnedItems.map(({ hardware_id }) => {
             expect(
                 queryByText(
-                    mockHardware.find(({ id }) => id === hardware)?.name ?? "Not Found"
+                    mockHardware.find(({ id }) => id === hardware_id)?.name ??
+                        "Not Found"
                 )
             ).not.toBeInTheDocument();
         });

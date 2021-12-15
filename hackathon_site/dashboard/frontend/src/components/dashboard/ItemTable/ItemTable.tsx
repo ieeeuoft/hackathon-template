@@ -26,7 +26,14 @@ import {
     togglePendingTable,
     toggleReturnedTable,
 } from "slices/ui/uiSlice";
-import { Hardware, Order, OrderItem, OrderStatus } from "api/types";
+import {
+    Hardware,
+    ItemsInOrder,
+    Order,
+    OrderItem,
+    OrderStatus,
+    PartReturnedHealth,
+} from "api/types";
 import { hardwareSelectors } from "slices/hardware/hardwareSlice";
 
 export const ChipStatus = ({ status }: { status: OrderStatus | "Error" }) => {
@@ -64,7 +71,8 @@ interface TableProps {
     orders: Order[];
 }
 
-interface OrderItemTableRow extends Hardware {
+interface OrderItemTableRow {
+    id: number;
     // TODO: add this when new order serializer is finished
     // quantityRequested: number,
     quantityGranted: number;
@@ -83,26 +91,35 @@ export const CheckedOutTable = ({
 // reportIncident,
 TableProps) => {
     const dispatch = useDispatch();
+    const hardware = useSelector(hardwareSelectors.selectEntities);
     const isVisible = useSelector(isCheckedOutTableVisibleSelector);
     const toggleVisibility = () => dispatch(toggleCheckedOutTable());
-    const openProductOverview = (hardware: Hardware) =>
-        dispatch(setProductOverviewItem(hardware));
+    const openProductOverview = (hardware: Hardware | undefined) => {
+        if (hardware) dispatch(setProductOverviewItem(hardware));
+    };
 
     const checkedOutOrders: OrderInTable[] = [];
     for (const order of orders) {
         const hardwareItems: {
             [key: number]: OrderItemTableRow;
         } = {};
-        for (const hardware of order.hardware) {
-            if (hardwareItems[hardware.id])
-                hardwareItems[hardware.id].quantityGranted += 1;
-            else hardwareItems[hardware.id] = { ...hardware, quantityGranted: 1 };
+        for (const item of order.items) {
+            if (hardwareItems[item.hardware_id])
+                hardwareItems[item.hardware_id].quantityGranted += 1;
+            else
+                hardwareItems[item.hardware_id] = {
+                    id: item.hardware_id,
+                    quantityGranted: 1,
+                };
         }
-        checkedOutOrders.push({
-            id: order.id,
-            hardwareInTableRow: Object.values(hardwareItems),
-            status: order.status,
-        });
+        const hardwareInTableRow = Object.values(hardwareItems);
+        if (hardwareInTableRow.length > 0) {
+            checkedOutOrders.push({
+                id: order.id,
+                hardwareInTableRow,
+                status: order.status,
+            });
+        }
     }
     // sort by most recent order
     checkedOutOrders.sort((a, b) => b.id - a.id);
@@ -189,12 +206,15 @@ TableProps) => {
                                                     <TableCell align="left">
                                                         <img
                                                             className={styles.itemImg}
-                                                            src={row.picture}
-                                                            alt={row.name}
+                                                            src={
+                                                                hardware[row.id]
+                                                                    ?.picture
+                                                            }
+                                                            alt={hardware[row.id]?.name}
                                                         />
                                                     </TableCell>
                                                     <TableCell align="left">
-                                                        {row.name}
+                                                        {hardware[row.id]?.name}
                                                     </TableCell>
                                                     <TableCell align="left">
                                                         <IconButton
@@ -202,7 +222,9 @@ TableProps) => {
                                                             aria-label="Info"
                                                             data-testid="info-button"
                                                             onClick={() =>
-                                                                openProductOverview(row)
+                                                                openProductOverview(
+                                                                    hardware[row.id]
+                                                                )
                                                             }
                                                         >
                                                             <Info />
@@ -237,29 +259,45 @@ TableProps) => {
     );
 };
 
-interface ReturnedItemTableRow extends OrderItem {
+interface ReturnedItemTableRow extends ItemsInOrder {
     quantity: number;
 }
 
-interface ReturnedTableProps {
-    items: OrderItem[];
+interface ReturnOrderInTable {
+    id: number;
+    hardwareInOrder: ReturnedItemTableRow[];
 }
 
-export const ReturnedTable = ({ items }: ReturnedTableProps) => {
+interface ReturnedTableProps {
+    orders: Order[];
+}
+
+export const ReturnedTable = ({ orders }: ReturnedTableProps) => {
     const dispatch = useDispatch();
     const hardware = useSelector(hardwareSelectors.selectEntities);
     const isVisible = useSelector(isReturnedTableVisibleSelector);
     const toggleVisibility = () => dispatch(toggleReturnedTable());
 
-    const returnedItemMap: {
-        [key: number]: ReturnedItemTableRow;
-    } = {};
-    for (const returnedItem of items) {
-        const hardware_id = returnedItem.hardware;
-        if (returnedItemMap[hardware_id]) returnedItemMap[hardware_id].quantity += 1;
-        else returnedItemMap[hardware_id] = { ...returnedItem, quantity: 1 };
+    const ordersWithReturnedItems: ReturnOrderInTable[] = [];
+    for (const order of orders) {
+        const returnedItemMap: {
+            [key: string]: ReturnedItemTableRow;
+        } = {};
+        for (const returnedItem of order.items) {
+            if (returnedItem.part_returned_health) {
+                const id: string = `${returnedItem.hardware_id}_${returnedItem.part_returned_health}`;
+                if (returnedItemMap[id]) returnedItemMap[id].quantity += 1;
+                else returnedItemMap[id] = { ...returnedItem, quantity: 1 };
+            }
+        }
+        const hardwareInOrder = Object.values(returnedItemMap);
+        if (hardwareInOrder.length > 0) {
+            ordersWithReturnedItems.push({
+                id: order.id,
+                hardwareInOrder,
+            });
+        }
     }
-    const returnedItems: ReturnedItemTableRow[] = Object.values(returnedItemMap);
 
     return (
         <Container
@@ -277,71 +315,106 @@ export const ReturnedTable = ({ items }: ReturnedTableProps) => {
             </div>
 
             {isVisible &&
-                (!returnedItems.length ? (
+                (!ordersWithReturnedItems.length ? (
                     <Paper elevation={2} className={styles.empty} square={true}>
                         Please bring items to the tech table and a tech team member will
                         assist you.
                     </Paper>
                 ) : (
-                    <TableContainer component={Paper} elevation={2} square={true}>
-                        <Table
-                            className={styles.table}
-                            size="small"
-                            aria-label="returned table"
-                        >
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell className={styles.widthFixed} />
-                                    <TableCell className={styles.width6} align="left">
-                                        Name
-                                    </TableCell>
-                                    <TableCell
-                                        className={styles.widthFixed}
-                                        align="right"
-                                    >
-                                        Qty
-                                    </TableCell>
-                                    <TableCell className={styles.width4} align="right">
-                                        Time
-                                    </TableCell>
-                                    <TableCell className={styles.width2} align="left">
-                                        Condition
-                                    </TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {returnedItems.map((row) => (
-                                    <TableRow key={row.id}>
-                                        <TableCell align="left">
-                                            <img
-                                                className={styles.itemImg}
-                                                src={hardware[row.hardware]?.picture}
-                                                alt={hardware[row.hardware]?.name}
-                                            />
-                                        </TableCell>
-                                        <TableCell align="left">
-                                            {hardware[row.hardware]?.name}
-                                        </TableCell>
-                                        <TableCell align="right">
-                                            {row.quantity}
-                                        </TableCell>
-                                        <TableCell
-                                            align="right"
-                                            className={styles.noWrap}
-                                        >
-                                            {row.time_occurred}
-                                        </TableCell>
-                                        <TableCell
-                                            align="left"
-                                            className={styles.noWrap}
-                                        >
-                                            {row.part_returned_health}
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
+                    ordersWithReturnedItems.map((order) => (
+                        <div key={order.id}>
+                            <Container
+                                className={styles.titleChip}
+                                maxWidth={false}
+                                disableGutters={true}
+                            >
+                                <Typography
+                                    variant="h2"
+                                    className={styles.titleChipText}
+                                >
+                                    Order #{order.id}
+                                </Typography>
+                            </Container>
+                            <TableContainer
+                                component={Paper}
+                                elevation={2}
+                                square={true}
+                            >
+                                <Table
+                                    className={styles.table}
+                                    size="small"
+                                    aria-label="returned table"
+                                >
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell className={styles.widthFixed} />
+                                            <TableCell
+                                                className={styles.width6}
+                                                align="left"
+                                            >
+                                                Name
+                                            </TableCell>
+                                            <TableCell
+                                                className={styles.widthFixed}
+                                                align="right"
+                                            >
+                                                Qty
+                                            </TableCell>
+                                            <TableCell
+                                                className={styles.width4}
+                                                align="right"
+                                            >
+                                                Time
+                                            </TableCell>
+                                            <TableCell
+                                                align="left"
+                                                className={styles.width2}
+                                            >
+                                                Condition
+                                            </TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        {order.hardwareInOrder.map((row) => (
+                                            <TableRow key={row.id}>
+                                                <TableCell align="left">
+                                                    <img
+                                                        className={styles.itemImg}
+                                                        src={
+                                                            hardware[row.hardware_id]
+                                                                ?.picture
+                                                        }
+                                                        alt={
+                                                            hardware[row.hardware_id]
+                                                                ?.name
+                                                        }
+                                                    />
+                                                </TableCell>
+                                                <TableCell align="left">
+                                                    {hardware[row.hardware_id]?.name}
+                                                </TableCell>
+                                                <TableCell align="right">
+                                                    {row.quantity}
+                                                </TableCell>
+                                                <TableCell
+                                                    align="right"
+                                                    className={styles.noWrap}
+                                                >
+                                                    Time Occurred
+                                                </TableCell>
+                                                <TableCell
+                                                    align="left"
+                                                    className={styles.noWrap}
+                                                >
+                                                    {row.part_returned_health}
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
+                        </div>
+                    ))
                 ))}
         </Container>
     );
@@ -349,6 +422,7 @@ export const ReturnedTable = ({ items }: ReturnedTableProps) => {
 
 export const PendingTable = ({ orders }: TableProps) => {
     const dispatch = useDispatch();
+    const hardware = useSelector(hardwareSelectors.selectEntities);
     const isVisible = useSelector(isPendingTableVisibleSelector);
     const toggleVisibility = () => dispatch(togglePendingTable());
 
@@ -357,17 +431,25 @@ export const PendingTable = ({ orders }: TableProps) => {
         const hardwareItems: {
             [key: number]: OrderItemTableRow;
         } = {};
-        for (const hardware of order.hardware) {
-            if (hardwareItems[hardware.id])
-                hardwareItems[hardware.id].quantityGranted += 1;
-            else hardwareItems[hardware.id] = { ...hardware, quantityGranted: 1 };
+        for (const item of order.items) {
+            if (hardwareItems[item.hardware_id])
+                hardwareItems[item.hardware_id].quantityGranted += 1;
+            else
+                hardwareItems[item.hardware_id] = {
+                    id: item.hardware_id,
+                    quantityGranted: 1,
+                };
         }
-        pendingOrders.push({
-            id: order.id,
-            hardwareInTableRow: Object.values(hardwareItems),
-            status: order.status,
-        });
+        const hardwareInTableRow = Object.values(hardwareItems);
+        if (hardwareInTableRow.length > 0) {
+            pendingOrders.push({
+                id: order.id,
+                hardwareInTableRow,
+                status: order.status,
+            });
+        }
     }
+
     // sort by most recent order
     pendingOrders.sort((a, b) => b.id - a.id);
 
@@ -445,12 +527,12 @@ export const PendingTable = ({ orders }: TableProps) => {
                                             <TableCell align="left">
                                                 <img
                                                     className={styles.itemImg}
-                                                    src={row.picture}
-                                                    alt={row.name}
+                                                    src={hardware[row.id]?.picture}
+                                                    alt={hardware[row.id]?.name}
                                                 />
                                             </TableCell>
                                             <TableCell align="left">
-                                                {row.name}
+                                                {hardware[row.id]?.name}
                                             </TableCell>
                                             <TableCell align="right">
                                                 1 {/* quantity requested */}
