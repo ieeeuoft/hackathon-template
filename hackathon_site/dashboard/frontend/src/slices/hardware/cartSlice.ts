@@ -126,6 +126,7 @@ const cartSlice = createSlice({
         builder.addCase(submitOrder.fulfilled, (state) => {
             state.isLoading = false;
             state.error = null;
+            cartAdapter.removeAll(state);
         });
         builder.addCase(submitOrder.rejected, (state, payload) => {
             state.isLoading = false;

@@ -11,6 +11,7 @@ import {
     cartReducerName,
     submitOrder,
     cartSliceSelector,
+    cartSelectors,
 } from "slices/hardware/cartSlice";
 import { post } from "api/api";
 import { displaySnackbar } from "slices/ui/uiSlice";
@@ -62,6 +63,9 @@ describe("submitOrder Thunk and Reducer", () => {
             expect(mockedPost).toBeCalledWith("/api/hardware/orders/", {
                 hardware: [],
             });
+            // Cart should be empty when the order is submitted
+            const cartItems = cartSelectors.selectAll(store.getState());
+            expect(cartItems).toEqual([]);
         });
     });
 
