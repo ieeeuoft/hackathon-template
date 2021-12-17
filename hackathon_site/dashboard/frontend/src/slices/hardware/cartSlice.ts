@@ -7,12 +7,12 @@ import {
     Update,
 } from "@reduxjs/toolkit";
 import { AppDispatch, RootState } from "slices/store";
-import { APIListResponse, CartItem, Hardware } from "api/types";
+import { APIListResponse, CartItem } from "api/types";
 import { post } from "api/api";
 import { push } from "connected-react-router";
 import { displaySnackbar } from "slices/ui/uiSlice";
 
-interface CartExtraState {
+export interface CartExtraState {
     isLoading: boolean;
     error: string | null;
 }
@@ -33,12 +33,28 @@ export type CartState = typeof initialState;
 // Thunk
 interface RejectValue {
     status: number;
-    message: any;
+    message: string[];
+}
+
+export interface OrderResponse {
+    order_id: number;
+    hardware: [
+        {
+            hardware_id: number;
+            quantity_fulfilled: number;
+        }
+    ];
+    errors: [
+        {
+            hardware_id: number;
+            message: string;
+        }
+    ];
 }
 
 export const submitOrder = createAsyncThunk<
-    APIListResponse<Hardware>,
-    { keepOld?: boolean } | undefined,
+    APIListResponse<OrderResponse>,
+    null,
     { state: RootState; rejectValue: RejectValue; dispatch: AppDispatch }
 >(
     `${cartReducerName}/submitOrder`,
@@ -55,6 +71,14 @@ export const submitOrder = createAsyncThunk<
                 hardware: cartItems,
             });
             dispatch(push("/"));
+            dispatch(
+                displaySnackbar({
+                    message: `Order has been submitted.`,
+                    options: {
+                        variant: "success",
+                    },
+                })
+            );
             return response.data;
         } catch (e: any) {
             dispatch(
@@ -101,11 +125,11 @@ const cartSlice = createSlice({
         });
         builder.addCase(submitOrder.fulfilled, (state) => {
             state.isLoading = false;
-            state.error = "Submitted";
+            state.error = null;
         });
-        builder.addCase(submitOrder.rejected, (state) => {
+        builder.addCase(submitOrder.rejected, (state, payload) => {
             state.isLoading = false;
-            state.error = "Submitted order has been rejected";
+            state.error = payload.error.message!;
         });
     },
 });

@@ -7,10 +7,14 @@ import TitledPaper from "components/general/TitledPaper/TitledPaper";
 import { useDispatch } from "react-redux";
 import { submitOrder } from "slices/hardware/cartSlice";
 
-const CartSummary = ({ cartQuantity }) => {
+interface CartQuantity {
+    cartQuantity: number;
+}
+
+const CartSummary = ({ cartQuantity }: CartQuantity) => {
     const dispatch = useDispatch();
     const onSubmit = () => {
-        dispatch(submitOrder());
+        dispatch(submitOrder(null));
     };
     return (
         <TitledPaper title="Cart Summary">
