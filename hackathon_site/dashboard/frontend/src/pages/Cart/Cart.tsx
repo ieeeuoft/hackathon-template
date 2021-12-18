@@ -17,11 +17,12 @@ import {
     setFilters,
 } from "slices/hardware/hardwareSlice";
 import { RootState } from "slices/store";
-import { cartSelectors } from "slices/hardware/cartSlice";
+import { cartSelectors, cartTotalSelector } from "slices/hardware/cartSlice";
+import { getCategories } from "slices/hardware/categorySlice";
 
 const Cart = () => {
     const cartItems = useSelector(cartSelectors.selectAll);
-    const cartQuantity = cartItems.reduce((accum, item) => accum + item.quantity, 0);
+    const cartQuantity = useSelector(cartTotalSelector);
 
     const dispatch = useDispatch();
     const hardware = useSelector((state: RootState) =>
@@ -55,6 +56,7 @@ const Cart = () => {
             dispatch(clearFilters());
             dispatch(setFilters({ hardware_ids }));
             dispatch(getHardwareWithFilters({ keepOld: true }));
+            dispatch(getCategories());
         }
     }, [dispatch, hardware, isHardwareLoading, cartItems]);
 

@@ -64,3 +64,8 @@ export const isLoadingSelector = createSelector(
     [cartSliceSelector],
     (cartSlice) => cartSlice.isLoading
 );
+
+export const cartTotalSelector = createSelector(
+    [cartSelectors.selectAll],
+    (cartItems) => cartItems.reduce((accum, item) => accum + item.quantity, 0)
+);

@@ -71,16 +71,26 @@ class IncidentListSerializer(IncidentCreateSerializer):
     order_item = OrderItemSerializer()
 
 
+class OrderItemInOrderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrderItem
+        fields = (
+            "id",
+            "hardware_id",
+            "part_returned_health",
+        )
+
+
 class OrderListSerializer(serializers.ModelSerializer):
-    hardware = HardwareSerializer(many=True, read_only=True)
+    items = OrderItemInOrderSerializer(many=True, read_only=True)
     team_code = serializers.SerializerMethodField()
 
     class Meta:
         model = Order
         fields = (
             "id",
-            "hardware",
-            "team",
+            "items",
+            "team_id",
             "team_code",
             "status",
             "created_at",

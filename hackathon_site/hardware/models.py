@@ -27,7 +27,7 @@ class AnnotatedHardwareManager(models.Manager):
                 quantity_checked_out=Count(
                     "order_items",
                     filter=(
-                        Q(order_items__part_returned_health__isnull=True)
+                        ~Q(order_items__part_returned_health="Healthy")
                         & ~Q(order_items__order__status="Cancelled")
                     ),
                     distinct=True,
