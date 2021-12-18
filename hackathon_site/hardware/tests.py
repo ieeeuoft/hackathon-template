@@ -156,7 +156,11 @@ class HardwareQuantityRemainingTestCase(TestCase):
 
     def test_some_items_returned_not_healthy(self):
         team = Team.objects.create()
-        order = Order.objects.create(status="Picked Up", team=team,  request={"hardware": [{"id": 1, "quantity": 2}]})
+        order = Order.objects.create(
+            status="Picked Up",
+            team=team,
+            request={"hardware": [{"id": 1, "quantity": 2}]},
+        )
         OrderItem.objects.create(
             order=order, hardware=self.hardware, part_returned_health="Broken"
         )
