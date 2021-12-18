@@ -653,7 +653,7 @@ class IncidentListViewPostTestCase(SetupUserMixin, APITestCase):
     def setUp(self):
         super().setUp()
         self.team = Team.objects.create()
-        self.order = Order.objects.create(status="Cart", team=self.team)
+        self.order = Order.objects.create(status="Cart", team=self.team, request={"hardware": [{"id": 1, "quantity": 2}]},)
         self.permissions = Permission.objects.filter(
             content_type__app_label="hardware", codename="add_incident"
         )

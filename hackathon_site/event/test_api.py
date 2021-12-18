@@ -597,7 +597,7 @@ class TeamIncidentListViewPostTestCase(SetupUserMixin, APITestCase):
     def setUp(self):
         super().setUp()
         self.team = Team.objects.create()
-        self.order = Order.objects.create(status="Cart", team=self.team)
+        self.order = Order.objects.create(status="Cart", team=self.team,  request={"hardware": [{"id": 1, "quantity": 2}]})
 
         self.hardware = Hardware.objects.create(
             name="name",
@@ -642,21 +642,33 @@ class TeamIncidentListViewPostTestCase(SetupUserMixin, APITestCase):
             max_per_team=10,
             picture="/picture/location/other",
         )
-        self.order2 = Order.objects.create(status="Cart", team=self.team2)
+        self.order2 = Order.objects.create(status="Cart", team=self.team2, request={"hardware": [{"id": 1, "quantity": 2}]})
         self.order_item2 = OrderItem.objects.create(
             order=self.order2, hardware=self.other_hardware,
         )
+
+
 
         request_data = {
             "state": "Broken",
             "time_occurred": "2022-08-08T01:18:00-04:00",
             "description": "Description",
             "order_item": self.order_item2.id,
+
         }
+
+
+
 
         self._login()
         Profile.objects.create(user=self.user, team=self.team)
+
+
         response = self.client.post(self.view, request_data)
+
+        print(response)
+        print(request_data)
+
         self.assertEqual(
             response.json(), {"detail": "Can only create incidents for your own team."}
         )
