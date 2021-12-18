@@ -2,12 +2,16 @@ import React from "react";
 import styles from "./TeamCard.module.scss";
 import Container from "@material-ui/core/Container";
 import Typography from "@material-ui/core/Typography";
-import Button from "@material-ui/core/Button";
 import TitledPaper from "components/general/TitledPaper/TitledPaper";
 
-const TeamCard = ({ members, teamCode, handleEditTeam }) => {
-    const title = teamCode === "" ? "Team" : "Team " + teamCode;
+interface TeamProps {
+    members: string[];
+    teamCode: string;
+}
 
+const TeamCard = ({ members, teamCode }: TeamProps) => {
+    const title = teamCode === "" ? "Team" : "Team " + teamCode;
+    // waiting for the team store
     return (
         <TitledPaper title={title}>
             {members.map((member, i) => (
@@ -17,12 +21,6 @@ const TeamCard = ({ members, teamCode, handleEditTeam }) => {
                     </Typography>
                 </Container>
             ))}
-
-            <Container className={styles.lastRow}>
-                <Button color="primary" onClick={handleEditTeam}>
-                    Edit
-                </Button>
-            </Container>
         </TitledPaper>
     );
 };
