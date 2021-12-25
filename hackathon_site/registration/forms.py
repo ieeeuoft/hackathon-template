@@ -1,7 +1,7 @@
-from datetime import datetime
 from dateutil.relativedelta import relativedelta
 import re
 
+from captcha.fields import ReCaptchaField
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.utils.translation import gettext_lazy as _
@@ -23,6 +23,7 @@ class SignUpForm(UserCreationForm):
     simpler than creating a custom user model to use email as username.
     """
 
+    captcha = ReCaptchaField(label="")
     error_css_class = "invalid"
 
     class Meta(UserCreationForm.Meta):
