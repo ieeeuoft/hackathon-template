@@ -1,4 +1,4 @@
-from datetime import date, timedelta
+from datetime import date
 from dateutil.relativedelta import relativedelta
 
 from io import BytesIO
@@ -56,6 +56,7 @@ class SignUpFormTestCase(TestCase):
             "last_name": "Bar",
             "password1": "abcdef456",
             "password2": "abcdef456",
+            "g-recaptcha-response": "PASSED",
         }
 
         form = SignUpForm(data=data)
@@ -69,6 +70,7 @@ class SignUpFormTestCase(TestCase):
             "last_name": "Bar",
             "password1": "abcdef456",
             "password2": "abcdef456",
+            "g-recaptcha-response": "PASSED",
         }
         form = SignUpForm(data=data)
         self.assertTrue(form.is_valid())
