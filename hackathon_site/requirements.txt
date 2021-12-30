@@ -12,6 +12,7 @@ django-cors-headers==3.3.0
 django-debug-toolbar==2.2.1
 django-filter==2.4.0
 django-import-export==2.5.0
+django-recaptcha==2.0.6
 django-redis==4.12.1
 django-registration==3.1.2
 djangorestframework==3.11.2
