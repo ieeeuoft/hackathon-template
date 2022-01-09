@@ -10,7 +10,7 @@ import {
 import { makeStore, RootStore, RootState } from "slices/store";
 import { SnackbarProvider } from "notistack";
 import { AxiosResponse } from "axios";
-import { APIListResponse, CartItem, Category, Hardware } from "api/types";
+import { APIListResponse, CartItem, Category, Hardware, Team } from "api/types";
 import {
     hardwareReducerName,
     HardwareState,
@@ -21,6 +21,13 @@ import {
     CategoryState,
     initialState as categoryInitialState,
 } from "slices/hardware/categorySlice";
+
+import {
+    teamReducerName,
+    TeamState,
+    initialState as teamInitialState,
+} from "slices/event/teamSlice";
+
 import { uiReducerName, UIState } from "slices/ui/uiSlice";
 import {
     cartReducerName,
@@ -103,6 +110,7 @@ export interface StoreEntities {
     categories?: Category[];
     ui?: Partial<UIState>;
     cartItems?: CartItem[];
+    team?: Team[];
 }
 
 export const makeStoreWithEntities = (entities: StoreEntities) => {
@@ -155,6 +163,21 @@ export const makeStoreWithEntities = (entities: StoreEntities) => {
 
         preloadedState[cartReducerName] = cartItemState;
     }
+
+    // if (entities.team) {
+    //     const cartItemState: CartState = {
+    //         ...cartItemInitialState,
+    //         ids: [],
+    //         entities: {},
+    //     };
+    //
+    //     for (const cartItem of entities.cartItems) {
+    //         cartItemState.ids.push(cartItem.hardware_id);
+    //         cartItemState.entities[cartItem.hardware_id] = cartItem;
+    //     }
+    //
+    //     preloadedState[cartReducerName] = cartItemState;
+    // }
 
     return makeStore(preloadedState);
 };
