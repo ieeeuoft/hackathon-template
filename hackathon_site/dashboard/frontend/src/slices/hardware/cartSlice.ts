@@ -54,7 +54,7 @@ export interface OrderResponse {
 
 export const submitOrder = createAsyncThunk<
     APIListResponse<OrderResponse>,
-    null,
+    void,
     { state: RootState; rejectValue: RejectValue; dispatch: AppDispatch }
 >(
     `${cartReducerName}/submitOrder`,

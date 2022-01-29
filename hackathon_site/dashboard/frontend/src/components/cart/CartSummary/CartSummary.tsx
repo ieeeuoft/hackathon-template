@@ -4,17 +4,14 @@ import Container from "@material-ui/core/Container";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import TitledPaper from "components/general/TitledPaper/TitledPaper";
-import { useDispatch } from "react-redux";
-import { submitOrder } from "slices/hardware/cartSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { cartTotalSelector, submitOrder } from "slices/hardware/cartSlice";
 
-interface CartQuantity {
-    cartQuantity: number;
-}
-
-const CartSummary = ({ cartQuantity }: CartQuantity) => {
+const CartSummary = () => {
+    const cartQuantity = useSelector(cartTotalSelector);
     const dispatch = useDispatch();
     const onSubmit = () => {
-        dispatch(submitOrder(null));
+        dispatch(submitOrder());
     };
     return (
         <TitledPaper title="Cart Summary">
@@ -34,6 +31,7 @@ const CartSummary = ({ cartQuantity }: CartQuantity) => {
                 className={styles.btn}
                 onClick={onSubmit}
                 disableElevation
+                data-testid="submit-order-button"
             >
                 Submit order
             </Button>

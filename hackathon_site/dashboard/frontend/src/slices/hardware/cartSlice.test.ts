@@ -8,9 +8,15 @@ import {
     initialState,
     removeFromCart,
     updateCart,
+    submitOrder,
 } from "slices/hardware/cartSlice";
-import { makeStoreWithEntities, waitFor } from "testing/utils";
+import { makeMockApiListResponse, makeStoreWithEntities, waitFor } from "testing/utils";
 import { mockCartItems } from "testing/mockData";
+import { displaySnackbar } from "../ui/uiSlice";
+import { post } from "../../api/api";
+import thunk, { ThunkDispatch } from "redux-thunk";
+import { AnyAction } from "redux";
+import configureStore from "redux-mock-store";
 
 const mockState: RootState = {
     ...store.getState(),
@@ -127,5 +133,76 @@ describe("updateCart action", () => {
                 quantity: 25,
             });
         });
+    });
+});
+
+jest.mock("api/api", () => ({
+    ...jest.requireActual("api/api"),
+    post: jest.fn(),
+}));
+
+const mockedPost = post as jest.MockedFunction<typeof post>;
+
+type DispatchExts = ThunkDispatch<RootState, void, AnyAction>;
+const mockStore = configureStore<RootState, DispatchExts>([thunk]);
+
+describe("submitOrder Thunk and Reducer", () => {
+    test("Updates the store on API success", async () => {
+        const response = makeMockApiListResponse(mockCartItems);
+        mockedPost.mockResolvedValueOnce(response);
+
+        const store = makeStore();
+        await store.dispatch(submitOrder());
+
+        await waitFor(() => {
+            expect(mockedPost).toBeCalledWith("/api/hardware/orders/", {
+                hardware: [],
+            });
+            // Cart should be empty when the order is submitted
+            const cartItems = cartSelectors.selectAll(store.getState());
+            expect(cartItems).toEqual([]);
+        });
+    });
+
+    test("Dispatches a snackbar on API failure", async () => {
+        const failureResponse = {
+            response: {
+                status: 500,
+                message: "Something went wrong",
+            },
+        };
+
+        mockedPost.mockRejectedValue(failureResponse);
+
+        const store = mockStore(mockState);
+        await store.dispatch(submitOrder());
+
+        const actions = store.getActions();
+
+        expect(actions).toContainEqual(
+            displaySnackbar({
+                message: "Failed to fetch hardware data: Error 500",
+                options: { variant: "error" },
+            })
+        );
+    });
+
+    it("Updates the store on API failure", async () => {
+        const failureResponse = {
+            response: {
+                status: 500,
+                message: "Rejected",
+            },
+        };
+
+        mockedPost.mockRejectedValue(failureResponse);
+
+        const store = makeStore();
+        await store.dispatch(submitOrder());
+
+        expect(cartSliceSelector(store.getState())).toHaveProperty(
+            "error",
+            failureResponse.response.message
+        );
     });
 });

@@ -6,29 +6,10 @@ import store, { makeStore, RootState } from "slices/store";
 import { Provider } from "react-redux";
 import configureStore from "redux-mock-store";
 import thunk, { ThunkDispatch } from "redux-thunk";
-import {
-    initialState,
-    cartReducerName,
-    submitOrder,
-    cartSliceSelector,
-    cartSelectors,
-} from "slices/hardware/cartSlice";
+import { initialState, cartReducerName } from "slices/hardware/cartSlice";
 import { post } from "api/api";
-import { displaySnackbar } from "slices/ui/uiSlice";
-import { makeMockApiListResponse } from "testing/utils";
+import { fireEvent, makeMockApiListResponse, when } from "testing/utils";
 import { AnyAction } from "redux";
-
-it(`Renders correctly when it reads the number ${cartQuantity}`, async () => {
-    const store = makeStore();
-    const { getByText } = render(
-        <Provider store={store}>
-            <CartSummary cartQuantity={cartQuantity} />
-        </Provider>
-    );
-    await waitFor(() => {
-        expect(getByText(cartQuantity.toString())).toBeInTheDocument();
-    });
-});
 
 jest.mock("api/api", () => ({
     ...jest.requireActual("api/api"),
@@ -36,6 +17,7 @@ jest.mock("api/api", () => ({
 }));
 
 const mockedPost = post as jest.MockedFunction<typeof post>;
+const orderUri = "/api/hardware/orders/";
 
 const mockState: RootState = {
     ...store.getState(),
@@ -45,69 +27,36 @@ const mockState: RootState = {
 type DispatchExts = ThunkDispatch<RootState, void, AnyAction>;
 const mockStore = configureStore<RootState, DispatchExts>([thunk]);
 
-describe("Selectors", () => {
-    test("cartSliceSelector returns the cart store", () => {
-        expect(cartSliceSelector(mockState)).toEqual(mockState[cartReducerName]);
-    });
-});
-
-describe("submitOrder Thunk and Reducer", () => {
-    test("Updates the store on API success", async () => {
-        const response = makeMockApiListResponse(mockCartItems);
-        mockedPost.mockResolvedValueOnce(response);
-
+describe("Render cartQuantity", () => {
+    it(`Renders correctly when it reads the number ${cartQuantity}`, async () => {
         const store = makeStore();
-        await store.dispatch(submitOrder(null));
-
+        const { getByText } = render(
+            <Provider store={store}>
+                <CartSummary />
+            </Provider>
+        );
         await waitFor(() => {
-            expect(mockedPost).toBeCalledWith("/api/hardware/orders/", {
-                hardware: [],
-            });
-            // Cart should be empty when the order is submitted
-            const cartItems = cartSelectors.selectAll(store.getState());
-            expect(cartItems).toEqual([]);
+            expect(getByText(cartQuantity.toString())).toBeInTheDocument();
         });
     });
+    test("Checks for correct POST request", async () => {
+        const response = makeMockApiListResponse(mockCartItems);
 
-    test("Dispatches a snackbar on API failure", async () => {
-        const failureResponse = {
-            response: {
-                status: 500,
-                message: "Something went wrong",
-            },
-        };
-
-        mockedPost.mockRejectedValue(failureResponse);
+        when(mockedPost).calledWith(orderUri, {}).mockResolvedValue(response);
 
         const store = mockStore(mockState);
-        await store.dispatch(submitOrder(null));
-
-        const actions = store.getActions();
-
-        expect(actions).toContainEqual(
-            displaySnackbar({
-                message: "Failed to fetch hardware data: Error 500",
-                options: { variant: "error" },
-            })
+        const { getByTestId } = render(
+            <Provider store={store}>
+                <CartSummary />
+            </Provider>
         );
-    });
 
-    it("Updates the store on API failure", async () => {
-        const failureResponse = {
-            response: {
-                status: 500,
-                message: "Rejected",
-            },
-        };
+        const submitOrderBtn = getByTestId("submit-order-button");
 
-        mockedPost.mockRejectedValue(failureResponse);
+        fireEvent.click(submitOrderBtn);
 
-        const store = makeStore();
-        await store.dispatch(submitOrder(null));
-
-        expect(cartSliceSelector(store.getState())).toHaveProperty(
-            "error",
-            failureResponse.response.message
-        );
+        await waitFor(() => {
+            expect(getByTestId("cart-quantity-total")).toHaveTextContent("0");
+        });
     });
 });
