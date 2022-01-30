@@ -40,7 +40,7 @@ it("Opens Product Overview with the correct hardware information", async () => {
     const { getByTestId, getByText } = render(<Dashboard />);
 
     const hardware = mockHardware.find(
-        ({ id }) => id === mockCheckedOutOrders[0].hardware[0].id
+        ({ id }) => id === mockCheckedOutOrders[0].items[0].hardware_id
     );
     const category = mockCategories.find(({ id }) => id === hardware?.categories[0]);
 
