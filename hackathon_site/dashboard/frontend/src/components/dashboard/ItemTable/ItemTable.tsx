@@ -94,8 +94,10 @@ TableProps) => {
     const hardware = useSelector(hardwareSelectors.selectEntities);
     const isVisible = useSelector(isCheckedOutTableVisibleSelector);
     const toggleVisibility = () => dispatch(toggleCheckedOutTable());
-    const openProductOverview = (hardware: Hardware | undefined) => {
-        if (hardware) dispatch(setProductOverviewItem(hardware));
+    const openProductOverview = (hardwareItem: Hardware | undefined) => {
+        if (hardwareItem) {
+            dispatch(setProductOverviewItem(hardwareItem));
+        }
     };
 
     const checkedOutOrders: OrderInTable[] = [];
@@ -221,11 +223,11 @@ TableProps) => {
                                                             color="inherit"
                                                             aria-label="Info"
                                                             data-testid="info-button"
-                                                            onClick={() =>
+                                                            onClick={() => {
                                                                 openProductOverview(
                                                                     hardware[row.id]
-                                                                )
-                                                            }
+                                                                );
+                                                            }}
                                                         >
                                                             <Info />
                                                         </IconButton>

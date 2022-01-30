@@ -1,15 +1,22 @@
 import React from "react";
 import Dashboard from "pages/Dashboard/Dashboard";
 
-import { makeMockApiListResponse, render, waitFor, when } from "testing/utils";
+import {
+    makeMockApiListResponse,
+    render,
+    waitFor,
+    when,
+    fireEvent,
+    within,
+} from "testing/utils";
 import {
     cardItems,
     mockCategories,
     mockCheckedOutOrders,
     mockHardware,
+    mockPendingOrders,
 } from "testing/mockData";
 import { get } from "api/api";
-import { fireEvent, within } from "@testing-library/react";
 
 jest.mock("api/api", () => ({
     ...jest.requireActual("api/api"),
@@ -34,7 +41,13 @@ it("Opens Product Overview with the correct hardware information", async () => {
     const hardwareApiResponse = makeMockApiListResponse(mockHardware);
     const categoryApiResponse = makeMockApiListResponse(mockCategories);
 
-    when(mockedGet).calledWith(hardwareUri, {}).mockResolvedValue(hardwareApiResponse);
+    const allOrders = mockPendingOrders.concat(mockCheckedOutOrders);
+    const hardware_ids = allOrders.flatMap((order) =>
+        order.items.map((item) => item.hardware_id)
+    );
+    when(mockedGet)
+        .calledWith(hardwareUri, { hardware_ids })
+        .mockResolvedValue(hardwareApiResponse);
     when(mockedGet).calledWith(categoriesUri).mockResolvedValue(categoryApiResponse);
 
     const { getByTestId, getByText } = render(<Dashboard />);
@@ -45,14 +58,13 @@ it("Opens Product Overview with the correct hardware information", async () => {
     const category = mockCategories.find(({ id }) => id === hardware?.categories[0]);
 
     if (hardware && category) {
-        const infoButton = within(
-            getByTestId(
-                `checked-out-hardware-${hardware.id}-${mockCheckedOutOrders[0].id}`
-            )
-        ).getByTestId("info-button");
-        fireEvent.click(infoButton);
-
         await waitFor(() => {
+            const infoButton = within(
+                getByTestId(
+                    `checked-out-hardware-${hardware.id}-${mockCheckedOutOrders[0].id}`
+                )
+            ).getByTestId("info-button");
+            fireEvent.click(infoButton);
             expect(getByText("Product Overview")).toBeVisible();
             expect(
                 getByText(`- Max ${hardware.max_per_team} of this item`)
