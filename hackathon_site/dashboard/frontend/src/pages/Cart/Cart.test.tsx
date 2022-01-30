@@ -8,13 +8,19 @@ import {
     makeMockApiListResponse,
     fireEvent,
     within,
+    when,
 } from "testing/utils";
 import { mockCartItems, mockHardware } from "testing/mockData";
-import { get } from "api/api";
+import { get, post } from "api/api";
 
 import Cart from "pages/Cart/Cart";
 import { Hardware } from "api/types";
-import { addToCart } from "slices/hardware/cartSlice";
+import { addToCart, cartReducerName, initialState } from "slices/hardware/cartSlice";
+import { Provider } from "react-redux";
+import store, { RootState } from "../../slices/store";
+import thunk, { ThunkDispatch } from "redux-thunk";
+import { AnyAction } from "redux";
+import configureStore from "redux-mock-store";
 
 jest.mock("api/api");
 const mockedGet = get as jest.MockedFunction<typeof get>;
@@ -144,6 +150,46 @@ describe("Cart Page", () => {
             expect(getByTestId("cart-quantity-total")).toHaveTextContent("4");
             expect(quantityDropdown).toHaveTextContent(quantityToBeSelected);
             expect(quantityDropdown).not.toHaveTextContent("3");
+        });
+    });
+
+    jest.mock("api/api", () => ({
+        ...jest.requireActual("api/api"),
+        post: jest.fn(),
+    }));
+
+    const mockedPost = post as jest.MockedFunction<typeof post>;
+    const orderUri = "/api/hardware/orders/";
+
+    const mockState: RootState = {
+        ...store.getState(),
+        [cartReducerName]: initialState,
+    };
+
+    type DispatchExts = ThunkDispatch<RootState, void, AnyAction>;
+    const mockStore = configureStore<RootState, DispatchExts>([thunk]);
+
+    test("Checks for correct POST request", async () => {
+        const response = makeMockApiListResponse(mockCartItems);
+        when(mockedPost).calledWith(orderUri).mockResolvedValue(response);
+
+        const store = mockStore(mockState);
+        const { getByTestId, getByText } = render(
+            <Provider store={store}>
+                <Cart />
+            </Provider>
+        );
+
+        const submitOrderBtn = getByTestId("submit-order-button");
+
+        fireEvent.click(submitOrderBtn);
+
+        await waitFor(() => {
+            expect(getByTestId("cart-quantity-total")).toHaveTextContent("0");
+            expect(getByText(/no items in cart/i)).toBeInTheDocument();
+            expect(mockedPost).toHaveBeenCalledWith(orderUri, {
+                hardware: [],
+            });
         });
     });
 });

@@ -129,7 +129,7 @@ export const members = [
 export const teamCode = "PAS3NLQ3";
 
 // Navbar
-export const cartQuantity = 5;
+export const cartQuantity = 0;
 export const userEmail = "graham@email.com";
 
 export const addCartTest = () => {
