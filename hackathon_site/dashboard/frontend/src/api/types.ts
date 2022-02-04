@@ -75,14 +75,13 @@ export interface Team {
 
 /** Orders API */
 export type OrderStatus = "Submitted" | "Ready for Pickup" | "Picked Up" | "Cancelled";
+export type PartReturnedHealth = "Healthy" | "Heavily Used" | "Broken" | "Lost";
+
+export type ItemsInOrder = Omit<OrderItem, "order" | "time_occurred">;
 
 export interface Order {
     id: number;
-    items: {
-        id: number;
-        hardware_id: number;
-        part_returned_health: string | null;
-    }[];
+    items: ItemsInOrder[];
     team_id: number;
     team_code: string;
     status: OrderStatus;
@@ -94,4 +93,32 @@ export interface Order {
 export interface CartItem {
     hardware_id: number;
     quantity: number;
+}
+
+/** Incidents API */
+export type IncidentState =
+    | "Heavily Used"
+    | "Broken"
+    | "Missing"
+    | "Minor Repair Required"
+    | "Major Repair Required"
+    | "Not Sure If Works";
+
+export interface OrderItem {
+    id: number;
+    hardware_id: number;
+    order: number;
+    part_returned_health: PartReturnedHealth | null;
+    time_occurred: string;
+}
+
+export interface Incident {
+    id: number;
+    state: IncidentState;
+    time_occurred: string;
+    description: string;
+    order_item: Omit<OrderItem, "time_occurred">;
+    team_id: string;
+    created_at: string;
+    updated_at: string;
 }
