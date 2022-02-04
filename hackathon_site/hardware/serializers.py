@@ -223,7 +223,7 @@ class OrderCreateSerializer(serializers.Serializer):
         new_order = None
         response_data = {"order_id": None, "hardware": [], "errors": []}
 
-        # The reason why doing this is because the id field stores the hardware object, django cannot translate hardware object into JSON. Therefore, loop has been used to call Profile seriliazer and assign the JSON file to the validated_data filed.
+        # The reason why doing this is because the id field stores the hardware object, django cannot translate hardware object into JSON. Therefore, loop has been used to call Hardware seriliazer and assign the JSON file to the validated_data filed.
         for i, item in enumerate(validated_data_copy["hardware"]):
             validated_data_copy["hardware"][i] = HardwareSerializer(item["id"]).data
 
