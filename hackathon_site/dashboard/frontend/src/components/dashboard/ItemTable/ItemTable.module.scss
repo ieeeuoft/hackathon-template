@@ -17,6 +17,7 @@
         margin-bottom: 10px;
     }
     &Chip {
+        margin: 20px 0 5px 0;
         display: flex;
         &Space {
             @include flexPosition($jusCon: space-between);
