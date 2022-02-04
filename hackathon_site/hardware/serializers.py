@@ -214,7 +214,7 @@ class OrderCreateSerializer(serializers.Serializer):
     def create(self, validated_data):
 
         # make a copy of validated_data
-        validated_data_copy = validated_data
+        validated_data_copy = validated_data.copy()
         # validated data should already satisfy all constraints
         requested_hardware = self.merge_requests(
             hardware_requests=validated_data["hardware"]
