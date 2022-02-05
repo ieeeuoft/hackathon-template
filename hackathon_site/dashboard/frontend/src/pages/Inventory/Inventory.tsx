@@ -10,6 +10,7 @@ import RefreshIcon from "@material-ui/icons/Refresh";
 import CloseIcon from "@material-ui/icons/Close";
 import FilterListIcon from "@material-ui/icons/FilterList";
 import InventorySearch from "components/inventory/InventorySearch/InventorySearch";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 import styles from "./Inventory.module.scss";
 import Header from "components/general/Header/Header";
@@ -20,32 +21,30 @@ import ProductOverview from "components/inventory/ProductOverview/ProductOvervie
 import {
     clearFilters,
     getHardwareWithFilters,
+    getHardwareNextPage,
     hardwareCountSelector,
     hardwareSelectors,
+    isMoreLoadingSelector,
 } from "slices/hardware/hardwareSlice";
 import { getCategories } from "slices/hardware/categorySlice";
 
-import { productInformation } from "testing/mockData";
-
 const Inventory = () => {
     const dispatch = useDispatch();
-    const items = useSelector(hardwareSelectors.selectAll);
+    const itemsInStore = useSelector(hardwareSelectors.selectTotal);
     const count = useSelector(hardwareCountSelector);
+    const isMoreLoading = useSelector(isMoreLoadingSelector);
 
     const [mobileOpen, setMobileOpen] = React.useState(false);
     const toggleFilter = () => {
         setMobileOpen(!mobileOpen);
     };
 
-    // Remove this later once items can be added to cart
-    const addToCart = () => {
-        alert("Add to cart");
-        setItemOverviewId(null);
+    const getMoreHardware = () => {
+        dispatch(getHardwareNextPage());
     };
 
-    const [itemOverviewId, setItemOverviewId] = React.useState<number | null>(null);
-    const toggleMenu = () => {
-        setItemOverviewId(null);
+    const refreshHardware = () => {
+        dispatch(getHardwareWithFilters());
     };
 
     // When the page is loaded, clear filters and fetch fresh inventory data
@@ -58,12 +57,7 @@ const Inventory = () => {
     return (
         <>
             <Header />
-            <ProductOverview
-                detail={productInformation}
-                addToCart={addToCart}
-                isVisible={typeof itemOverviewId == "number"}
-                handleClose={toggleMenu}
-            />
+            <ProductOverview showAddToCartButton />
             <div className={styles.inventory}>
                 <Drawer
                     className={styles.inventoryFilterDrawer}
@@ -117,7 +111,12 @@ const Inventory = () => {
                                     <Typography variant="body2">
                                         {count} results
                                     </Typography>
-                                    <IconButton color="primary" aria-label="Refresh">
+                                    <IconButton
+                                        color="primary"
+                                        aria-label="Refresh"
+                                        onClick={refreshHardware}
+                                        data-testid="refreshInventory"
+                                    >
                                         <RefreshIcon />
                                     </IconButton>
                                 </div>
@@ -132,18 +131,26 @@ const Inventory = () => {
                         )}
                         <Typography variant="subtitle2" align="center" paragraph>
                             {count > 0
-                                ? `SHOWING ${items.length} OF ${count} ITEMS`
+                                ? `SHOWING ${itemsInStore} OF ${count} ITEMS`
                                 : "NO ITEMS FOUND"}
                         </Typography>
-                        {count !== items.length && (
+                        {count !== itemsInStore && (
                             <Button
                                 variant="contained"
                                 color="primary"
                                 size="large"
                                 fullWidth={true}
                                 disableElevation
+                                onClick={getMoreHardware}
                             >
-                                Load more
+                                {isMoreLoading ? (
+                                    <CircularProgress
+                                        size={25}
+                                        data-testid="load-more-hardware-circular-progress"
+                                    />
+                                ) : (
+                                    "Load more"
+                                )}
                             </Button>
                         )}
                     </div>

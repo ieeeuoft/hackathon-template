@@ -4,7 +4,6 @@ import styles from "./Cart.module.scss";
 import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 import Divider from "@material-ui/core/Divider";
-import Button from "@material-ui/core/Button";
 import LinearProgress from "@material-ui/core/LinearProgress";
 
 import Header from "components/general/Header/Header";
@@ -18,11 +17,12 @@ import {
     setFilters,
 } from "slices/hardware/hardwareSlice";
 import { RootState } from "slices/store";
-import { addToCart, cartSelectors } from "slices/hardware/cartSlice";
+import { cartSelectors, cartTotalSelector } from "slices/hardware/cartSlice";
+import { getCategories } from "slices/hardware/categorySlice";
 
 const Cart = () => {
     const cartItems = useSelector(cartSelectors.selectAll);
-    const cartQuantity = cartItems.reduce((accum, item) => accum + item.quantity, 0);
+    const cartQuantity = useSelector(cartTotalSelector);
 
     const dispatch = useDispatch();
     const hardware = useSelector((state: RootState) =>
@@ -56,6 +56,7 @@ const Cart = () => {
             dispatch(clearFilters());
             dispatch(setFilters({ hardware_ids }));
             dispatch(getHardwareWithFilters({ keepOld: true }));
+            dispatch(getCategories());
         }
     }, [dispatch, hardware, isHardwareLoading, cartItems]);
 
@@ -87,18 +88,6 @@ const Cart = () => {
                             );
                         })
                     )}
-                    {/*TODO: Remove this button when something else has been hooked up to the store*/}
-                    <Button
-                        color="primary"
-                        variant="contained"
-                        className={styles.btn}
-                        onClick={() => {
-                            dispatch(addToCart({ hardware_id: 1, quantity: 2 }));
-                        }}
-                        disableElevation
-                    >
-                        Add item to cart
-                    </Button>
                 </Grid>
                 <Grid xs={12} sm={12} md={5} item>
                     <CartSummary cartQuantity={cartQuantity} />

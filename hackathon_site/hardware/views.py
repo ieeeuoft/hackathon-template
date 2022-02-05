@@ -16,10 +16,12 @@ from hardware.models import Hardware, Category, Order, Incident
 from hardware.serializers import (
     CategorySerializer,
     HardwareSerializer,
-    IncidentSerializer,
+    IncidentListSerializer,
+    IncidentCreateSerializer,
     OrderListSerializer,
     OrderCreateSerializer,
     OrderCreateResponseSerializer,
+    OrderChangeSerializer,
 )
 
 logger = logging.getLogger(__name__)
@@ -46,12 +48,9 @@ class HardwareDetailView(mixins.RetrieveModelMixin, generics.GenericAPIView):
         return self.retrieve(request, *args, **kwargs)
 
 
-class IncidentListView(mixins.ListModelMixin, generics.GenericAPIView):
-    queryset = Incident.objects.all().select_related(
-        "order_item", "order_item__order__team", "order_item__hardware"
-    )
-    serializer_class = IncidentSerializer
-
+class IncidentListView(
+    mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView
+):
     search_fields = (
         "state",
         "order_item__order__team__team_code",
@@ -61,9 +60,20 @@ class IncidentListView(mixins.ListModelMixin, generics.GenericAPIView):
 
     filter_backends = (filters.DjangoFilterBackend, SearchFilter)
     filterset_class = IncidentFilter
+    permission_classes = [FullDjangoModelPermissions]
+    queryset = Incident.objects.all().select_related("order_item__order__team")
+
+    def get_serializer_class(self):
+        if self.request.method == "GET":
+            return IncidentListSerializer
+        elif self.request.method == "POST":
+            return IncidentCreateSerializer
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
 
 
 class CategoryListView(mixins.ListModelMixin, generics.GenericAPIView):
@@ -75,11 +85,7 @@ class CategoryListView(mixins.ListModelMixin, generics.GenericAPIView):
 
 
 class OrderListView(generics.ListAPIView):
-    queryset = (
-        Order.objects.all().select_related("team")
-        # TODO: Causing problems with queryset aggregations, will figure out later:
-        # .prefetch_related("hardware", "hardware__categories")
-    )
+    queryset = Order.objects.all().select_related("team").prefetch_related("items",)
     serializer_method_classes = {
         "GET": OrderListSerializer,
         "POST": OrderCreateSerializer,
@@ -118,3 +124,12 @@ class OrderListView(generics.ListAPIView):
             return HttpResponseServerError()
         response_data = response_serializer.data
         return Response(response_data, status=status.HTTP_201_CREATED)
+
+
+class OrderDetailView(generics.GenericAPIView, mixins.UpdateModelMixin):
+    queryset = Order.objects.all()
+    serializer_class = OrderChangeSerializer
+    permission_classes = [FullDjangoModelPermissions]
+
+    def patch(self, request, *args, **kwargs):
+        return self.partial_update(request, *args, **kwargs)

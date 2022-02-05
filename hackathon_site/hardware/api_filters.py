@@ -5,7 +5,7 @@ from hardware.models import Hardware, Order, Incident
 from hardware.serializers import (
     HardwareSerializer,
     OrderListSerializer,
-    IncidentSerializer,
+    IncidentListSerializer,
 )
 
 
@@ -19,7 +19,7 @@ class IntegerCSVFilter(filters.BaseInFilter):
 
 class IncidentFilter(filters.FilterSet):
     queryset = Incident
-    serializer_class = IncidentSerializer
+    serializer_class = IncidentListSerializer
 
     hardware_id = filters.NumberFilter(field_name="order_item__hardware__id")
     team_id = filters.NumberFilter(field_name="order_item__order__team__id")

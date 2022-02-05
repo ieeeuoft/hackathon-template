@@ -12,7 +12,7 @@ const Item = ({ image, title, total, currentStock }) => {
     const coverStyle = !currentStock ? styles.itemBlack : styles.itemBox;
 
     return (
-        <>
+        <div className={styles.itemGrid}>
             <Card className={coverStyle} elevation={2} square={true}>
                 <CardMedia
                     className={styles.itemPic}
@@ -27,7 +27,7 @@ const Item = ({ image, title, total, currentStock }) => {
                     {stock}
                 </Typography>
             </div>
-        </>
+        </div>
     );
 };
 

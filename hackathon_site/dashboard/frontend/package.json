@@ -11,6 +11,7 @@
     "@types/node": "^15.0.2",
     "@types/react": "^17.0.5",
     "@types/react-dom": "^17.0.3",
+    "@types/yup": "^0.29.13",
     "axios": "^0.21.1",
     "connected-react-router": "^6.8.0",
     "formik": "^2.1.4",
@@ -76,6 +77,6 @@
     }
   },
   "lint-staged": {
-    "src/**/*.{tsx,js,scss,css}": "prettier --write"
+    "src/**/*.{tsx,ts,js,scss,css}": "prettier --write"
   }
 }

@@ -45,9 +45,7 @@ class OrderItemSerializer(serializers.ModelSerializer):
         fields = ("id", "hardware", "order", "part_returned_health")
 
 
-class IncidentSerializer(serializers.ModelSerializer):
-
-    order_item = OrderItemSerializer()
+class IncidentCreateSerializer(serializers.ModelSerializer):
     team_id = serializers.SerializerMethodField()
 
     class Meta:
@@ -62,22 +60,37 @@ class IncidentSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
         )
+        read_only_fields = ("team_id", "created_at", "updated_at")
 
     @staticmethod
-    def get_team_id(obj: Incident):
+    def get_team_id(obj: Incident) -> int:
         return obj.order_item.order.team.id
 
 
+class IncidentListSerializer(IncidentCreateSerializer):
+    order_item = OrderItemSerializer()
+
+
+class OrderItemInOrderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrderItem
+        fields = (
+            "id",
+            "hardware_id",
+            "part_returned_health",
+        )
+
+
 class OrderListSerializer(serializers.ModelSerializer):
-    hardware = HardwareSerializer(many=True, read_only=True)
+    items = OrderItemInOrderSerializer(many=True, read_only=True)
     team_code = serializers.SerializerMethodField()
 
     class Meta:
         model = Order
         fields = (
             "id",
-            "hardware",
-            "team",
+            "items",
+            "team_id",
             "team_code",
             "status",
             "created_at",
@@ -87,6 +100,46 @@ class OrderListSerializer(serializers.ModelSerializer):
     @staticmethod
     def get_team_code(obj: Order):
         return obj.team.team_code
+
+
+class OrderChangeSerializer(OrderListSerializer):
+
+    change_options = {
+        "Submitted": ["Cancelled", "Ready for Pickup"],
+        "Ready for Pickup": ["Picked Up"],
+    }
+
+    class Meta:
+        model = Order
+        fields = OrderListSerializer.Meta.fields
+        read_only_fields = (
+            "id",
+            "hardware",
+            "team",
+            "team_code",
+            "created_at",
+            "updated_at",
+        )
+
+    def validate_status(self, data):
+        current_status = self.instance.status
+
+        if current_status not in self.change_options:
+            raise serializers.ValidationError(
+                "Cannot change the status for this order."
+            )
+
+        if data not in self.change_options[current_status]:
+            raise serializers.ValidationError(
+                f"Cannot change the status of an order from {current_status} to {data}."
+            )
+        return data
+
+
+class TeamOrderChangeSerializer(OrderChangeSerializer):
+    change_options = {
+        "Submitted": ["Cancelled"],
+    }
 
 
 class OrderCreateSerializer(serializers.Serializer):

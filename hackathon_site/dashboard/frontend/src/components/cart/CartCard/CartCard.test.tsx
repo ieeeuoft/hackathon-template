@@ -7,7 +7,6 @@ import { mockHardware } from "testing/mockData";
 describe("<CartCard />", () => {
     /**
      * TODO: Additional required tests once the redux slice is ready:
-     *  - Test that the remove button removes the item from the store
      *  - Test that updating the quantity updates the store
      */
 
@@ -15,7 +14,7 @@ describe("<CartCard />", () => {
         const store = makeStoreWithEntities({ hardware: mockHardware });
 
         const item = mockHardware[0];
-        const quantity = item.quantity_remaining - 1;
+        const quantity = item.quantity_remaining - 3;
 
         const { getByText, getByAltText } = render(
             <CartCard hardware_id={item.id} quantity={quantity} />,

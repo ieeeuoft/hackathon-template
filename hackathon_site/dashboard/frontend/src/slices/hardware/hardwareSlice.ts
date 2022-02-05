@@ -8,11 +8,12 @@ import {
 import { RootState, AppDispatch } from "slices/store";
 
 import { APIListResponse, Hardware, HardwareFilters } from "api/types";
-import { get } from "api/api";
+import { get, stripHostnameReturnFilters } from "api/api";
 import { displaySnackbar } from "slices/ui/uiSlice";
 
 interface HardwareExtraState {
     isLoading: boolean;
+    isMoreLoading: boolean;
     error: string | null;
     next: string | null;
     filters: HardwareFilters;
@@ -21,6 +22,7 @@ interface HardwareExtraState {
 
 const extraState: HardwareExtraState = {
     isLoading: false,
+    isMoreLoading: false,
     error: null,
     next: null,
     filters: {},
@@ -53,6 +55,37 @@ export const getHardwareWithFilters = createAsyncThunk<
                 filters
             );
             return response.data;
+        } catch (e: any) {
+            dispatch(
+                displaySnackbar({
+                    message: `Failed to fetch hardware data: Error ${e.response.status}`,
+                    options: { variant: "error" },
+                })
+            );
+            return rejectWithValue({
+                status: e.response.status,
+                message: e.response.data,
+            });
+        }
+    }
+);
+
+export const getHardwareNextPage = createAsyncThunk<
+    APIListResponse<Hardware> | null,
+    void,
+    { state: RootState; rejectValue: RejectValue; dispatch: AppDispatch }
+>(
+    `${hardwareReducerName}/getHardwareNextPage`,
+    async (_, { dispatch, getState, rejectWithValue }) => {
+        try {
+            const nextFromState = hardwareNextSelector(getState());
+            if (nextFromState) {
+                const { path, filters } = stripHostnameReturnFilters(nextFromState);
+                const response = await get<APIListResponse<Hardware>>(path, filters);
+                return response.data;
+            }
+            // return empty response if there is no nextURL
+            return null;
         } catch (e: any) {
             dispatch(
                 displaySnackbar({
@@ -133,7 +166,28 @@ const hardwareSlice = createSlice({
         );
 
         builder.addCase(getHardwareWithFilters.rejected, (state, { payload }) => {
+            state.isMoreLoading = false;
+            state.error = payload?.message || "Something went wrong";
+        });
+
+        builder.addCase(getHardwareNextPage.pending, (state) => {
             state.isLoading = false;
+            state.isMoreLoading = true;
+            state.error = null;
+        });
+
+        builder.addCase(getHardwareNextPage.fulfilled, (state, { payload }) => {
+            state.isMoreLoading = false;
+            state.error = null;
+            if (payload) {
+                state.next = payload.next;
+                state.count = payload.count;
+                hardwareAdapter.addMany(state, payload.results);
+            }
+        });
+
+        builder.addCase(getHardwareNextPage.rejected, (state, { payload }) => {
+            state.isMoreLoading = false;
             state.error = payload?.message || "Something went wrong";
         });
     },
@@ -154,6 +208,11 @@ export const isLoadingSelector = createSelector(
     (hardwareSlice) => hardwareSlice.isLoading
 );
 
+export const isMoreLoadingSelector = createSelector(
+    [hardwareSliceSelector],
+    (hardwareSlice) => hardwareSlice.isMoreLoading
+);
+
 export const hardwareCountSelector = createSelector(
     [hardwareSliceSelector],
     (hardwareSlice) => hardwareSlice.count
@@ -162,6 +221,11 @@ export const hardwareCountSelector = createSelector(
 export const hardwareFiltersSelector = createSelector(
     [hardwareSliceSelector],
     (hardwareSlice) => hardwareSlice.filters
+);
+
+export const hardwareNextSelector = createSelector(
+    [hardwareSliceSelector],
+    (hardwareSlice) => hardwareSlice.next
 );
 
 export const selectHardwareByIds = createSelector(
