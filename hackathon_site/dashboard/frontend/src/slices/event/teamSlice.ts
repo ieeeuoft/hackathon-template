@@ -142,7 +142,7 @@ const teamSlice = createSlice({
 
 export const { actions, reducer } = teamSlice;
 export default reducer;
-export const { addToCart, removeFromCart, updateCart } = actions;
+export const { addToTeam, removeFromTeam, updateTeam } = actions;
 
 // Selectors
 export const teamSliceSelector = (state: RootState) => state[teamReducerName];
