@@ -27,7 +27,7 @@ class AnnotatedHardwareManager(models.Manager):
                 quantity_checked_out=Count(
                     "order_items",
                     filter=(
-                        Q(order_items__part_returned_health__isnull=True)
+                        ~Q(order_items__part_returned_health="Healthy")
                         & ~Q(order_items__order__status="Cancelled")
                     ),
                     distinct=True,
@@ -107,6 +107,7 @@ class Order(models.Model):
     status = models.CharField(
         max_length=64, choices=STATUS_CHOICES, default="Submitted"
     )
+    request = models.JSONField(null=False)
 
     created_at = models.DateTimeField(auto_now_add=True, null=False)
     updated_at = models.DateTimeField(auto_now=True, null=False)
