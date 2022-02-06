@@ -110,6 +110,7 @@ class Order(models.Model):
     status = models.CharField(
         max_length=64, choices=STATUS_CHOICES, default="Submitted"
     )
+    request = models.JSONField(null=False)
 
     created_at = models.DateTimeField(auto_now_add=True, null=False)
     updated_at = models.DateTimeField(auto_now=True, null=False)
