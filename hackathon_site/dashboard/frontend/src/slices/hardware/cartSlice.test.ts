@@ -12,8 +12,8 @@ import {
 } from "slices/hardware/cartSlice";
 import { makeStoreWithEntities, waitFor } from "testing/utils";
 import { mockCartItems } from "testing/mockData";
-import { displaySnackbar } from "../ui/uiSlice";
-import { post } from "../../api/api";
+import { displaySnackbar } from "slices/ui/uiSlice";
+import { post } from "api/api";
 import thunk, { ThunkDispatch } from "redux-thunk";
 import { AnyAction } from "redux";
 import configureStore from "redux-mock-store";

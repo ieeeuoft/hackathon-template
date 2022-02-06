@@ -160,8 +160,16 @@ describe("Cart Page", () => {
                 order_id: 1,
                 hardware: [
                     {
-                        hardware_id: mockCartItems[0].hardware_id,
-                        quantity_fulfilled: mockCartItems[0].quantity,
+                        hardware_id: 1,
+                        quantity_fulfilled: 3,
+                    },
+                    {
+                        hardware_id: 2,
+                        quantity_fulfilled: 1,
+                    },
+                    {
+                        hardware_id: 3,
+                        quantity_fulfilled: 2,
                     },
                 ],
                 errors: [],

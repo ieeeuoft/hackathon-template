@@ -7,10 +7,11 @@ import {
     Update,
 } from "@reduxjs/toolkit";
 import { AppDispatch, RootState } from "slices/store";
-import { APIListResponse, CartItem } from "api/types";
+import { CartItem } from "api/types";
 import { post } from "api/api";
 import { push } from "connected-react-router";
 import { displaySnackbar } from "slices/ui/uiSlice";
+import { AxiosResponse } from "axios";
 
 export interface CartExtraState {
     isLoading: boolean;
@@ -55,7 +56,7 @@ export interface OrderResponse {
 }
 
 export const submitOrder = createAsyncThunk<
-    APIListResponse<OrderResponse>,
+    AxiosResponse<OrderResponse>,
     void,
     { state: RootState; rejectValue: RejectValue; dispatch: AppDispatch }
 >(
