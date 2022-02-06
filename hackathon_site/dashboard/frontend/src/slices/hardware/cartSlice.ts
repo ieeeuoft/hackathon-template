@@ -1,14 +1,19 @@
 import {
+    createAsyncThunk,
     createEntityAdapter,
     createSelector,
     createSlice,
     PayloadAction,
     Update,
 } from "@reduxjs/toolkit";
-import { RootState } from "slices/store";
+import { AppDispatch, RootState } from "slices/store";
 import { CartItem } from "api/types";
+import { post } from "api/api";
+import { push } from "connected-react-router";
+import { displaySnackbar } from "slices/ui/uiSlice";
+import { AxiosResponse } from "axios";
 
-interface CartExtraState {
+export interface CartExtraState {
     isLoading: boolean;
     error: string | null;
 }
@@ -25,6 +30,64 @@ const cartAdapter = createEntityAdapter<CartItem>({
 export const cartReducerName = "cart";
 export const initialState = cartAdapter.getInitialState(extraState);
 export type CartState = typeof initialState;
+
+// Thunk
+interface RejectValue {
+    status: number;
+    message: string[];
+}
+
+export interface OrderResponse {
+    order_id: number;
+    hardware: {
+        hardware_id: number;
+        quantity_fulfilled: number;
+    }[];
+    errors: { hardware_id: number; message: string }[];
+}
+
+export const submitOrder = createAsyncThunk<
+    AxiosResponse<OrderResponse>,
+    void,
+    { state: RootState; rejectValue: RejectValue; dispatch: AppDispatch }
+>(
+    `${cartReducerName}/submitOrder`,
+    async (_, { dispatch, getState, rejectWithValue }) => {
+        const cartItems = cartSelectors
+            .selectAll(getState())
+            .map(({ hardware_id, ...rest }) => ({
+                id: hardware_id,
+                ...rest,
+            }));
+
+        try {
+            const response = await post("/api/hardware/orders/", {
+                hardware: cartItems,
+            });
+            dispatch(push("/"));
+            dispatch(
+                displaySnackbar({
+                    message: `Order has been submitted.`,
+                    options: {
+                        variant: "success",
+                    },
+                })
+            );
+            return response.data;
+        } catch (e: any) {
+            dispatch(
+                displaySnackbar({
+                    message: `Failed to fetch hardware data: Error ${e.response.status}`,
+                    options: { variant: "error" },
+                })
+            );
+            return rejectWithValue({
+                status: e.response.status,
+                message: e.response.data,
+            });
+        }
+    }
+);
 
 // Slice
 const cartSlice = createSlice({
@@ -48,6 +111,21 @@ const cartSlice = createSlice({
         updateCart: (state, { payload }: PayloadAction<Update<CartItem>>) => {
             cartAdapter.updateOne(state, payload);
         },
+    },
+    extraReducers: (builder) => {
+        builder.addCase(submitOrder.pending, (state) => {
+            state.isLoading = true;
+            state.error = null;
+        });
+        builder.addCase(submitOrder.fulfilled, (state) => {
+            state.isLoading = false;
+            state.error = null;
+            cartAdapter.removeAll(state);
+        });
+        builder.addCase(submitOrder.rejected, (state, payload) => {
+            state.isLoading = false;
+            state.error = payload.error.message!;
+        });
     },
 });
 

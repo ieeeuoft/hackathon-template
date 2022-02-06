@@ -175,7 +175,12 @@ class JoinTeamTestCase(SetupUserMixin, APITestCase):
             max_per_team=1,
             picture="/picture/location",
         )
-        order = Order.objects.create(status="Cart", team=self.team)
+        order = Order.objects.create(
+            status="Cart",
+            team=self.team,
+            request={"hardware": [{"id": 1, "quantity": 2}]},
+        )
+
         OrderItem.objects.create(order=order, hardware=hardware)
 
         for _, status_choice in Order.STATUS_CHOICES:
@@ -250,7 +255,11 @@ class LeaveTeamTestCase(SetupUserMixin, APITestCase):
             max_per_team=1,
             picture="/picture/location",
         )
-        order = Order.objects.create(status="Cart", team=self.team)
+        order = Order.objects.create(
+            status="Cart",
+            team=self.team,
+            request={"hardware": [{"id": 1, "quantity": 2}]},
+        )
         OrderItem.objects.create(order=order, hardware=hardware)
 
         for _, status_choice in Order.STATUS_CHOICES:
@@ -517,7 +526,9 @@ class CurrentTeamOrderListViewTestCase(SetupUserMixin, APITestCase):
     def setUp(self):
         super().setUp()
         self.team = Team.objects.create()
-        self.order = Order.objects.create(status="Cart", team=self.team)
+        self.order = Order.objects.create(
+            status="Cart", team=self.team, request={"hardware": []}
+        )
         self.hardware = Hardware.objects.create(
             name="name",
             model_number="model",
@@ -546,7 +557,9 @@ class CurrentTeamOrderListViewTestCase(SetupUserMixin, APITestCase):
 
         # making extra data to test if team data is being filtered
         self.team2 = Team.objects.create(team_code="ABCDE")
-        self.order_2 = Order.objects.create(status="Submitted", team=self.team2)
+        self.order_2 = Order.objects.create(
+            status="Submitted", team=self.team2, request={"hardware": []}
+        )
         OrderItem.objects.create(
             order=self.order_2, hardware=self.hardware,
         )
@@ -584,7 +597,11 @@ class TeamIncidentListViewPostTestCase(SetupUserMixin, APITestCase):
     def setUp(self):
         super().setUp()
         self.team = Team.objects.create()
-        self.order = Order.objects.create(status="Cart", team=self.team)
+        self.order = Order.objects.create(
+            status="Cart",
+            team=self.team,
+            request={"hardware": [{"id": 1, "quantity": 2}]},
+        )
 
         self.hardware = Hardware.objects.create(
             name="name",
@@ -629,7 +646,11 @@ class TeamIncidentListViewPostTestCase(SetupUserMixin, APITestCase):
             max_per_team=10,
             picture="/picture/location/other",
         )
-        self.order2 = Order.objects.create(status="Cart", team=self.team2)
+        self.order2 = Order.objects.create(
+            status="Cart",
+            team=self.team2,
+            request={"hardware": [{"id": 1, "quantity": 2}]},
+        )
         self.order_item2 = OrderItem.objects.create(
             order=self.order2, hardware=self.other_hardware,
         )
@@ -643,7 +664,12 @@ class TeamIncidentListViewPostTestCase(SetupUserMixin, APITestCase):
 
         self._login()
         Profile.objects.create(user=self.user, team=self.team)
+
         response = self.client.post(self.view, request_data)
+
+        print(response)
+        print(request_data)
+
         self.assertEqual(
             response.json(), {"detail": "Can only create incidents for your own team."}
         )
@@ -716,7 +742,11 @@ class TeamOrderDetailViewTestCase(SetupUserMixin, APITestCase):
             max_per_team=1,
             picture="/picture/location",
         )
-        order = Order.objects.create(status="Submitted", team=self.team)
+        order = Order.objects.create(
+            status="Submitted",
+            team=self.team,
+            request={"hardware": [{"id": 1, "quantity": 2}]},
+        )
         OrderItem.objects.create(order=order, hardware=hardware)
         self.pk = order.id
         self.request_data = {"status": "Cancelled"}
@@ -752,7 +782,11 @@ class TeamOrderDetailViewTestCase(SetupUserMixin, APITestCase):
 
     def test_failed_beginning_status(self):
         self._login()
-        order = Order.objects.create(status="Picked Up", team=self.team)
+        order = Order.objects.create(
+            status="Picked Up",
+            team=self.team,
+            request={"hardware": [{"id": 1, "quantity": 2}]},
+        )
         response = self.client.patch(self._build_view(order.id), self.request_data)
         self.assertEqual(
             response.json(), {"status": ["Cannot change the status for this order."]},
@@ -764,7 +798,11 @@ class TeamOrderDetailViewTestCase(SetupUserMixin, APITestCase):
     def test_cannot_change_other_team_order(self):
         self._login()
         self.team2 = Team.objects.create()
-        order = Order.objects.create(status="Submitted", team=self.team2)
+        order = Order.objects.create(
+            status="Submitted",
+            team=self.team2,
+            request={"hardware": [{"id": 1, "quantity": 2}]},
+        )
         response = self.client.patch(self._build_view(order.id), self.request_data)
         self.assertEqual(
             response.json(), {"detail": "Can only change the status of your orders."},

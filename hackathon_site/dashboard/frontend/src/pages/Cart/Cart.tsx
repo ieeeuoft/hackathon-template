@@ -90,7 +90,7 @@ const Cart = () => {
                     )}
                 </Grid>
                 <Grid xs={12} sm={12} md={5} item>
-                    <CartSummary cartQuantity={cartQuantity} />
+                    <CartSummary />
                 </Grid>
             </Grid>
         </>
