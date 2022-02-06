@@ -155,6 +155,7 @@ describe("Cart Page", () => {
     });
 
     test("Checks for POST and updates store", async () => {
+        // checks all mock cart items
         const orderResponse = {
             data: {
                 order_id: 1,
