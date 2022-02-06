@@ -156,7 +156,11 @@ describe("Cart Page", () => {
 
     test("Checks for POST and updates store", async () => {
         // checks all mock cart items
-        const orderResponse = {
+        const orderResponse: AxiosResponse<OrderResponse> = {
+            config: {},
+            headers: {},
+            status: 200,
+            statusText: "OK",
             data: {
                 order_id: 1,
                 hardware: [
@@ -176,7 +180,7 @@ describe("Cart Page", () => {
                 errors: [],
             },
         };
-        mockedPost.mockResolvedValueOnce(orderResponse as AxiosResponse<OrderResponse>);
+        mockedPost.mockResolvedValueOnce(orderResponse);
 
         const store = makeStoreWithEntities({
             hardware: mockHardware,

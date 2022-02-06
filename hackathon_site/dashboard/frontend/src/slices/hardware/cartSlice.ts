@@ -39,13 +39,11 @@ interface RejectValue {
 
 export interface OrderResponse {
     order_id: number;
-    hardware: [
-        {
-            hardware_id: number;
-            quantity_fulfilled: number;
-        }
-    ];
-    errors: { hardware_id: number; message: string }[] | [];
+    hardware: {
+        hardware_id: number;
+        quantity_fulfilled: number;
+    }[];
+    errors: { hardware_id: number; message: string }[];
 }
 
 export const submitOrder = createAsyncThunk<
