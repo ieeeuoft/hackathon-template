@@ -11,7 +11,9 @@ const CartSummary = () => {
     const cartQuantity = useSelector(cartTotalSelector);
     const dispatch = useDispatch();
     const onSubmit = () => {
-        dispatch(submitOrder());
+        if (cartQuantity > 0) {
+            dispatch(submitOrder());
+        }
     };
     return (
         <TitledPaper title="Cart Summary">
@@ -29,6 +31,7 @@ const CartSummary = () => {
                 color="primary"
                 variant="contained"
                 className={styles.btn}
+                disabled={cartQuantity === 0}
                 onClick={onSubmit}
                 disableElevation
                 data-testid="submit-order-button"

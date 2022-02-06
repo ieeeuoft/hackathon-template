@@ -10,7 +10,7 @@ import {
     updateCart,
     submitOrder,
 } from "slices/hardware/cartSlice";
-import { makeMockApiListResponse, makeStoreWithEntities, waitFor } from "testing/utils";
+import { makeStoreWithEntities, waitFor } from "testing/utils";
 import { mockCartItems } from "testing/mockData";
 import { displaySnackbar } from "../ui/uiSlice";
 import { post } from "../../api/api";
@@ -22,6 +22,16 @@ const mockState: RootState = {
     ...store.getState(),
     [cartReducerName]: initialState,
 };
+
+jest.mock("api/api", () => ({
+    ...jest.requireActual("api/api"),
+    post: jest.fn(),
+}));
+
+const mockedPost = post as jest.MockedFunction<typeof post>;
+
+type DispatchExts = ThunkDispatch<RootState, void, AnyAction>;
+const mockStore = configureStore<RootState, DispatchExts>([thunk]);
 
 describe("Selectors", () => {
     test("cartSliceSelector returns the cart store", () => {
@@ -136,34 +146,7 @@ describe("updateCart action", () => {
     });
 });
 
-jest.mock("api/api", () => ({
-    ...jest.requireActual("api/api"),
-    post: jest.fn(),
-}));
-
-const mockedPost = post as jest.MockedFunction<typeof post>;
-
-type DispatchExts = ThunkDispatch<RootState, void, AnyAction>;
-const mockStore = configureStore<RootState, DispatchExts>([thunk]);
-
 describe("submitOrder Thunk and Reducer", () => {
-    test("Updates the store on API success", async () => {
-        const response = makeMockApiListResponse(mockCartItems);
-        mockedPost.mockResolvedValueOnce(response);
-
-        const store = makeStore();
-        await store.dispatch(submitOrder());
-
-        await waitFor(() => {
-            expect(mockedPost).toBeCalledWith("/api/hardware/orders/", {
-                hardware: [],
-            });
-            // Cart should be empty when the order is submitted
-            const cartItems = cartSelectors.selectAll(store.getState());
-            expect(cartItems).toEqual([]);
-        });
-    });
-
     test("Dispatches a snackbar on API failure", async () => {
         const failureResponse = {
             response: {

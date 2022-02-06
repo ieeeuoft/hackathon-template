@@ -44,12 +44,14 @@ export interface OrderResponse {
             quantity_fulfilled: number;
         }
     ];
-    errors: [
-        {
-            hardware_id: number;
-            message: string;
-        }
-    ];
+    errors:
+        | [
+              {
+                  hardware_id: number;
+                  message: string;
+              }
+          ]
+        | [];
 }
 
 export const submitOrder = createAsyncThunk<
