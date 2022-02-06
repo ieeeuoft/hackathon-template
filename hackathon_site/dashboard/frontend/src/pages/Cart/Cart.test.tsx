@@ -17,15 +17,14 @@ import { Hardware } from "api/types";
 import { addToCart, cartSelectors, OrderResponse } from "slices/hardware/cartSlice";
 import { AxiosResponse } from "axios";
 
-jest.mock("api/api");
-const mockedGet = get as jest.MockedFunction<typeof get>;
-
 jest.mock("api/api", () => ({
     ...jest.requireActual("api/api"),
+    get: jest.fn(),
     post: jest.fn(),
 }));
 
 const mockedPost = post as jest.MockedFunction<typeof post>;
+const mockedGet = get as jest.MockedFunction<typeof get>;
 
 describe("Cart Page", () => {
     test("Cart items from store and Cart Summary card appears", async () => {
