@@ -215,6 +215,7 @@ describe("Cart Page", () => {
             const cartItems = cartSelectors.selectAll(store.getState());
             expect(cartItems).toEqual([]);
 
+            // test if each cart item is missing
             mockCartItems.forEach((cartItem) => {
                 expect(
                     queryByTestId("cart-item-" + cartItem.hardware_id.toString())
