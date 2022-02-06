@@ -1,48 +1,48 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styles from "./Dashboard.module.scss";
 import Grid from "@material-ui/core/Grid";
-import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import DashCard from "components/dashboard/DashCard/DashCard";
 import TeamCard from "components/dashboard/TeamCard/TeamCard";
 import {
     PendingTable,
-    ReturnedTable,
     CheckedOutTable,
-    BrokenTable,
+    ReturnedTable,
 } from "components/dashboard/ItemTable/ItemTable";
 import ProductOverview from "components/inventory/ProductOverview/ProductOverview";
 import Header from "components/general/Header/Header";
 import {
     cardItems,
-    itemsCheckedOut,
-    itemsPending,
-    itemsReturned,
-    itemsBroken,
-    orderStatus,
     members,
     teamCode,
+    mockPendingOrders,
+    mockCheckedOutOrders,
 } from "testing/mockData";
 import { hackathonName } from "constants.js";
+import { useDispatch } from "react-redux";
+import { getHardwareWithFilters, setFilters } from "slices/hardware/hardwareSlice";
+import { getCategories } from "slices/hardware/categorySlice";
 
 const Dashboard = () => {
-    const reportIncident = (id) => {
-        alert("Reports incident for component of id " + id);
-    };
+    const dispatch = useDispatch();
 
-    const [sideSheetOpen, setSideSheetOpen] = React.useState(false);
+    useEffect(() => {
+        const allOrders = mockPendingOrders.concat(mockCheckedOutOrders);
+        const hardware_ids = allOrders.flatMap((order) =>
+            order.items.map((item) => item.hardware_id)
+        );
+        dispatch(
+            setFilters({
+                hardware_ids,
+            })
+        );
+        dispatch(getHardwareWithFilters({ keepOld: true }));
+        dispatch(getCategories());
+    });
 
-    const toggleMenu = () => {
-        setSideSheetOpen(!sideSheetOpen);
-    };
-
-    const openBrokenTable = (id) => {
-        alert("This would open the report for item of id " + id);
-    };
     return (
         <>
             <Header />
-            {/* TODO: show product overview when order hardware item is clicked */}
             <ProductOverview showAddToCartButton={false} />
             <div className={styles.dashboard}>
                 <Typography variant="h1">{hackathonName} Hardware Dashboard</Typography>
@@ -62,7 +62,11 @@ const Dashboard = () => {
                         className={styles.dashboardGridItem}
                         key={0}
                     >
-                        <TeamCard members={members} teamCode={teamCode} />
+                        <TeamCard
+                            members={members}
+                            teamCode={teamCode}
+                            handleEditTeam={() => alert("Editing Team")}
+                        />
                     </Grid>
                     {cardItems.map(({ title, content }, i) => (
                         <Grid
@@ -77,17 +81,11 @@ const Dashboard = () => {
                         </Grid>
                     ))}
                 </Grid>
-                <BrokenTable items={itemsBroken} openReportAlert={openBrokenTable} />
-                <PendingTable items={itemsPending} status={orderStatus} />
-                <CheckedOutTable
-                    items={itemsCheckedOut}
-                    reportIncident={reportIncident}
-                />
-                <ReturnedTable items={itemsReturned} />
-
-                <Button variant="contained" onClick={toggleMenu} disableElevation>
-                    Open product overview
-                </Button>
+                {/* TODO: add back in when incident reports are completed on the frontend */}
+                {/* <BrokenTable items={itemsBroken} openReportAlert={openBrokenTable} /> */}
+                <PendingTable orders={mockPendingOrders} />
+                <CheckedOutTable orders={mockCheckedOutOrders} />
+                <ReturnedTable orders={mockCheckedOutOrders} />
             </div>
         </>
     );

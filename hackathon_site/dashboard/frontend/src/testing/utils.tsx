@@ -101,7 +101,7 @@ export * from "jest-when";
 export interface StoreEntities {
     hardware?: Hardware[];
     categories?: Category[];
-    ui?: Partial<UIState>;
+    ui?: DeepPartial<UIState>;
     cartItems?: CartItem[];
 }
 

@@ -95,6 +95,7 @@ class OrderListSerializer(serializers.ModelSerializer):
             "status",
             "created_at",
             "updated_at",
+            "request",
         )
 
     @staticmethod
@@ -211,12 +212,21 @@ class OrderCreateSerializer(serializers.Serializer):
         return data
 
     def create(self, validated_data):
+
+        # make a copy of validated_data
+        validated_data_copy = validated_data.copy()
         # validated data should already satisfy all constraints
         requested_hardware = self.merge_requests(
             hardware_requests=validated_data["hardware"]
         )
+
         new_order = None
         response_data = {"order_id": None, "hardware": [], "errors": []}
+
+        # The reason why doing this is because the id field stores the hardware object, django cannot translate hardware object into JSON. Therefore, loop has been used to call Hardware seriliazer and assign the JSON file to the validated_data filed.
+        for i, item in enumerate(validated_data_copy["hardware"]):
+            validated_data_copy["hardware"][i] = HardwareSerializer(item["id"]).data
+
         order_items = []
         for (hardware, requested_quantity) in requested_hardware.items():
             num_order_items = min(hardware.quantity_remaining, requested_quantity)
@@ -233,7 +243,9 @@ class OrderCreateSerializer(serializers.Serializer):
                 continue
             if new_order is None:
                 new_order = Order.objects.create(
-                    team=self.context["request"].user.profile.team, status="Submitted"
+                    team=self.context["request"].user.profile.team,
+                    status="Submitted",
+                    request=validated_data_copy,
                 )
                 response_data["order_id"] = new_order.id
             order_items += [
