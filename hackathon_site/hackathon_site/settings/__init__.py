@@ -88,6 +88,7 @@ INSTALLED_APPS = [
     "drf_yasg",
     "import_export",
     "django_filters",
+    "client_side_image_cropping",
     "captcha",
     "dashboard",
     "registration",
