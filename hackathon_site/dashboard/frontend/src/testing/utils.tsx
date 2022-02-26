@@ -164,20 +164,5 @@ export const makeStoreWithEntities = (entities: StoreEntities) => {
         preloadedState[cartReducerName] = cartItemState;
     }
 
-    // if (entities.team) {
-    //     const cartItemState: CartState = {
-    //         ...cartItemInitialState,
-    //         ids: [],
-    //         entities: {},
-    //     };
-    //
-    //     for (const cartItem of entities.cartItems) {
-    //         cartItemState.ids.push(cartItem.hardware_id);
-    //         cartItemState.entities[cartItem.hardware_id] = cartItem;
-    //     }
-    //
-    //     preloadedState[cartReducerName] = cartItemState;
-    // }
-
     return makeStore(preloadedState);
 };
