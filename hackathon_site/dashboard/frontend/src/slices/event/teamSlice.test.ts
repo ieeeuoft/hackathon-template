@@ -7,9 +7,9 @@ import {
     initialState,
     getCurrentTeam,
 } from "slices/event/teamSlice";
-import { makeMockApiListResponse, makeStoreWithEntities, waitFor } from "testing/utils";
-import { mockHardware, mockTeam } from "testing/mockData";
-import { get } from "../../api/api";
+import { waitFor } from "testing/utils";
+import { mockTeam } from "testing/mockData";
+import { get } from "api/api";
 import { AxiosResponse } from "axios";
 import { Team } from "api/types";
 
