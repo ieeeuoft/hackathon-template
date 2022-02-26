@@ -8,13 +8,16 @@ import uiReducer, { uiReducerName } from "slices/ui/uiSlice";
 import hardwareReducer, { hardwareReducerName } from "slices/hardware/hardwareSlice";
 import categoryReducer, { categoryReducerName } from "slices/hardware/categorySlice";
 import cartReducer, { cartReducerName } from "slices/hardware/cartSlice";
+import teamReducer, { teamReducerName } from "./event/teamSlice";
 
 export const history = createBrowserHistory();
 
 const reducers = {
     [cartReducerName]: cartReducer,
+    [teamReducerName]: teamReducer,
     [categoryReducerName]: categoryReducer,
     [hardwareReducerName]: hardwareReducer,
+
     [userReducerName]: userReducer,
     [uiReducerName]: uiReducer,
     router: connectRouter(history),

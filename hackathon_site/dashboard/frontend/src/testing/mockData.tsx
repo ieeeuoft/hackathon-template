@@ -11,8 +11,10 @@ import {
     OrderItem,
     OrderStatus,
     PartReturnedHealth,
+    Team,
 } from "api/types";
 import { CartItem } from "api/types";
+import exp from "constants";
 
 // For DashCard on Dashboard
 export const cardItems = [
@@ -186,6 +188,29 @@ export const mockUser = {
         {
             id: 2,
             name: "Admins",
+        },
+    ],
+};
+
+// Team Detail
+export const mockTeam: Team = {
+    id: 1,
+    team_code: "A48E5",
+    created_at: "2021-11-12T22:37:54.106311-05:00",
+    updated_at: "2021-11-12T22:37:54.106323-05:00",
+    profiles: [
+        {
+            id: 1,
+            id_provided: false,
+            attended: false,
+            acknowledge_rules: false,
+            e_signature: null,
+            user: {
+                id: 1,
+                first_name: "Foo",
+                last_name: "Bar",
+                email: "foo@bar.com",
+            },
         },
     ],
 };
