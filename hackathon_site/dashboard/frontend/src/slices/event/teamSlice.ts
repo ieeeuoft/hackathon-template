@@ -13,13 +13,11 @@ import { displaySnackbar } from "slices/ui/uiSlice";
 interface TeamExtraState {
     isLoading: boolean;
     error: string | null;
-    currentTeam: Team | null;
 }
 
 const extraState: TeamExtraState = {
     isLoading: false,
     error: null,
-    currentTeam: null,
 };
 
 const teamAdapter = createEntityAdapter<Team>({
@@ -73,7 +71,7 @@ const teamSlice = createSlice({
             getCurrentTeam.fulfilled,
             (state, { payload }: PayloadAction<Team>) => {
                 if (payload) {
-                    state.currentTeam = payload;
+                    teamAdapter.addOne(state, payload);
                     state.isLoading = false;
                     state.error = null;
                 }

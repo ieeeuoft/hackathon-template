@@ -193,7 +193,7 @@ export const mockUser = {
 };
 
 // Team Detail
-export const mockTeam = {
+export const mockTeam: Team = {
     id: 1,
     team_code: "A48E5",
     created_at: "2021-11-12T22:37:54.106311-05:00",
