@@ -10,7 +10,7 @@ import {
 import { makeStore, RootStore, RootState } from "slices/store";
 import { SnackbarProvider } from "notistack";
 import { AxiosResponse } from "axios";
-import { APIListResponse, CartItem, Category, Hardware, Team } from "api/types";
+import { APIListResponse, CartItem, Category, Hardware } from "api/types";
 import {
     hardwareReducerName,
     HardwareState,
@@ -21,12 +21,6 @@ import {
     CategoryState,
     initialState as categoryInitialState,
 } from "slices/hardware/categorySlice";
-
-import {
-    teamReducerName,
-    TeamState,
-    initialState as teamInitialState,
-} from "slices/event/teamSlice";
 
 import { uiReducerName, UIState } from "slices/ui/uiSlice";
 import {
@@ -110,7 +104,6 @@ export interface StoreEntities {
     categories?: Category[];
     ui?: DeepPartial<UIState>;
     cartItems?: CartItem[];
-    team?: Team[];
 }
 
 export const makeStoreWithEntities = (entities: StoreEntities) => {
