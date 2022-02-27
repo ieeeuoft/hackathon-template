@@ -48,11 +48,11 @@ const createQuantityList = (number: number) => {
 };
 
 interface AddToCartFormProps extends FormikValues {
-    quantityAvailable: number;
+    quantityRemaining: number;
     maxPerTeam: number | null;
 }
 export const AddToCartForm = ({
-    quantityAvailable,
+    quantityRemaining,
     maxPerTeam,
     handleSubmit,
     handleChange,
@@ -60,8 +60,8 @@ export const AddToCartForm = ({
 }: AddToCartFormProps) => {
     const dropdownNum =
         maxPerTeam !== null
-            ? Math.min(quantityAvailable, maxPerTeam)
-            : quantityAvailable;
+            ? Math.min(quantityRemaining, maxPerTeam)
+            : quantityRemaining;
 
     return (
         <>
@@ -99,13 +99,13 @@ export const AddToCartForm = ({
 };
 
 interface EnhancedAddToCartFormProps {
-    quantityAvailable: number;
+    quantityRemaining: number;
     hardwareId: number;
     name: string;
     maxPerTeam: number | null;
 }
 export const EnhancedAddToCartForm = ({
-    quantityAvailable,
+    quantityRemaining,
     hardwareId,
     name,
     maxPerTeam,
@@ -117,7 +117,7 @@ export const EnhancedAddToCartForm = ({
 
     const onSubmit = (formikValues: { quantity: string }) => {
         const numQuantity: number = parseInt(formikValues.quantity);
-        if (currentQuantityInCart + numQuantity <= (maxPerTeam ?? quantityAvailable)) {
+        if (currentQuantityInCart + numQuantity <= (maxPerTeam ?? quantityRemaining)) {
             dispatch(addToCart({ hardware_id: hardwareId, quantity: numQuantity }));
             dispatch(
                 displaySnackbar({
@@ -160,7 +160,7 @@ export const EnhancedAddToCartForm = ({
                         </Typography>
                     )}
                     <AddToCartForm
-                        quantityAvailable={quantityAvailable}
+                        quantityRemaining={quantityRemaining}
                         maxPerTeam={maxPerTeam}
                         handleSubmit={formikProps.handleSubmit}
                         handleChange={formikProps.handleChange}
@@ -340,7 +340,7 @@ export const ProductOverview = ({
 
                     {showAddToCartButton && (
                         <EnhancedAddToCartForm
-                            quantityAvailable={hardware.quantity_available}
+                            quantityRemaining={hardware.quantity_remaining}
                             hardwareId={hardware.id}
                             name={hardware.name}
                             maxPerTeam={maxPerTeam}

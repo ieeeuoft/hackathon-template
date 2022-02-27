@@ -19,12 +19,15 @@ import {
     mockCheckedOutOrders,
 } from "testing/mockData";
 import { hackathonName } from "constants.js";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getHardwareWithFilters, setFilters } from "slices/hardware/hardwareSlice";
 import { getCategories } from "slices/hardware/categorySlice";
+import { fulfillmentErrorSelector } from "../../slices/hardware/cartSlice";
+import { Alert, AlertTitle } from "@material-ui/lab";
 
 const Dashboard = () => {
     const dispatch = useDispatch();
+    const orderFulfillmentError = useSelector(fulfillmentErrorSelector);
 
     useEffect(() => {
         const allOrders = mockPendingOrders.concat(mockCheckedOutOrders);
@@ -40,6 +43,7 @@ const Dashboard = () => {
         dispatch(getCategories());
     });
 
+    console.log(orderFulfillmentError);
     return (
         <>
             <Header />
@@ -81,6 +85,19 @@ const Dashboard = () => {
                         </Grid>
                     ))}
                 </Grid>
+                {orderFulfillmentError && (
+                    <Alert severity="info" style={{ margin: "15px 0px" }}>
+                        <AlertTitle>
+                            There were modifications made to order{" "}
+                            {orderFulfillmentError.order_id}{" "}
+                        </AlertTitle>
+                        <ul style={{ marginLeft: "20px" }}>
+                            {orderFulfillmentError.errors.map((error) => (
+                                <li>{error.message}</li>
+                            ))}
+                        </ul>
+                    </Alert>
+                )}
                 {/* TODO: add back in when incident reports are completed on the frontend */}
                 {/* <BrokenTable items={itemsBroken} openReportAlert={openBrokenTable} /> */}
                 <PendingTable orders={mockPendingOrders} />
