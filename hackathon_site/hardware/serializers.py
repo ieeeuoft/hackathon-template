@@ -80,6 +80,25 @@ class OrderItemInOrderSerializer(serializers.ModelSerializer):
             "part_returned_health",
         )
 
+class OrderItemListSerializer(serializers.ModelSerializer):
+    team_code = serializers.SerializerMethodField()
+    order_id = serializers.SerializerMethodField()
+
+    class Meta:
+        model = OrderItem
+        fields = (
+            "order_id"
+            "team_code"
+        )
+
+    @staticmethod
+    def get_team_code(obj: OrderItem):
+        return obj.order.team.team_code
+
+    @staticmethod
+    def get_order_id(obj: OrderItem):
+        return obj.order.id
+
 
 class OrderListSerializer(serializers.ModelSerializer):
     items = OrderItemInOrderSerializer(many=True, read_only=True)
