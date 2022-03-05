@@ -72,10 +72,3 @@ class OrderFilter(filters.FilterSet):
     )
     team_code = filters.CharFilter(field_name="team__team_code")
     status = filters.CharFilter(field_name="status")
-
-class OrderItemFilter(filters.FilterSet):
-    queryset = OrderItem
-    serializer_class = IncidentListSerializer
-
-    hardware_id = filters.NumberFilter(field_name="order_item__hardware__id")
-    team_id = filters.NumberFilter(field_name="order_item__order__team__id")
