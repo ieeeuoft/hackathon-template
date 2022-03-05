@@ -93,7 +93,7 @@ export const submitOrder = createAsyncThunk<
             return response.data;
         } catch (e: any) {
             // order reached quantity limits
-            const errorData = e.response.data.non_field_errors;
+            const errorData = e.response?.data?.non_field_errors;
 
             dispatch(
                 displaySnackbar({
@@ -107,7 +107,7 @@ export const submitOrder = createAsyncThunk<
             );
             return rejectWithValue({
                 status: e.response.status,
-                message: errorData ?? e.response.data,
+                message: errorData ?? e.response.message,
             });
         }
     }

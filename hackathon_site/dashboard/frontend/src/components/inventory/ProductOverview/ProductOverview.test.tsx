@@ -3,9 +3,9 @@ import ProductOverview, { EnhancedAddToCartForm } from "./ProductOverview";
 import { mockCartItems, mockCategories, mockHardware } from "testing/mockData";
 import { render, fireEvent, waitFor, makeStoreWithEntities } from "testing/utils";
 import { makeStore } from "slices/store";
-import { addToCart, cartSelectors } from "slices/hardware/cartSlice";
+import { cartSelectors } from "slices/hardware/cartSlice";
 import { SnackbarProvider } from "notistack";
-import SnackbarNotifier from "../../general/SnackbarNotifier/SnackbarNotifier";
+import SnackbarNotifier from "components/general/SnackbarNotifier/SnackbarNotifier";
 
 describe("<ProductOverview />", () => {
     test("all 3 parts of the product overview is there", () => {

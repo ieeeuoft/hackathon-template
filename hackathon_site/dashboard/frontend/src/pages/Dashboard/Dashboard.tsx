@@ -43,7 +43,6 @@ const Dashboard = () => {
         dispatch(getCategories());
     });
 
-    console.log(orderFulfillmentError);
     return (
         <>
             <Header />
@@ -88,8 +87,7 @@ const Dashboard = () => {
                 {orderFulfillmentError && (
                     <Alert severity="info" style={{ margin: "15px 0px" }}>
                         <AlertTitle>
-                            There were modifications made to order{" "}
-                            {orderFulfillmentError.order_id}{" "}
+                            {`There were modifications made to order ${orderFulfillmentError.order_id}`}
                         </AlertTitle>
                         <ul style={{ marginLeft: "20px" }}>
                             {orderFulfillmentError.errors.map((error) => (

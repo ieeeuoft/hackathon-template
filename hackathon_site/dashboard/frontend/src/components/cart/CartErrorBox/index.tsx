@@ -20,8 +20,8 @@ const CartErrorBox = () => {
                                     Unable to submit your order because:
                                 </AlertTitle>
                                 <ul style={{ marginLeft: "20px" }}>
-                                    {orderSubmissionError?.map((error) => (
-                                        <li>{error}</li>
+                                    {orderSubmissionError?.map((error, index) => (
+                                        <li key={index}>{error}</li>
                                     ))}
                                 </ul>
                             </>
