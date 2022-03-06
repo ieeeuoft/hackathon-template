@@ -1158,7 +1158,7 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
                 self.category_limit_1.name, self.category_limit_1.max_per_team
             ),
             "Maximum number of items for the Hardware {} is reached (limit of {} items per team)".format(
-                self.limited_hardware.name, self.limited_hardware.max_per_team
+                limited_hardware.name, limited_hardware.max_per_team
             ),
         ]
         self.assertCountEqual(
