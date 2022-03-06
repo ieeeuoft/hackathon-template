@@ -769,7 +769,7 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
 
     def test_invalid_input_hardware_limit(self):
         self._login()
-        profile = self._make_event_profile()
+        self._make_event_profile()
         hardware = Hardware.objects.create(
             name="name",
             model_number="model",
@@ -788,7 +788,7 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
         expected_response = {
-            "non_field_errors": ["Hardware {} limit reached".format(hardware.name)]
+            "non_field_errors": ["Maximum number of items for Hardware {} is reached (limit of {} per team)".format(hardware.name, hardware.max_per_team)]
         }
         self.assertEqual(response.json(), expected_response)
 
@@ -840,7 +840,9 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
         expected_response = {
-            "non_field_errors": ["Hardware {} limit reached".format(hardware.name)]
+            "non_field_errors": [
+                "Maximum number of items for Hardware {} is reached (limit of {} per team)".format(hardware.name,
+                                                                                                   hardware.max_per_team)]
         }
         self.assertEqual(response.json(), expected_response)
 
@@ -955,7 +957,7 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
 
         expected_response = {
             "non_field_errors": [
-                "Category {} limit reached".format(self.category_limit_1.name)
+                "Maximum number of items for the Category {} is reached (limit of {} items per team)".format(self.category_limit_1.name, self.category_limit_1.max_per_team)
             ]
         }
         self.assertEqual(response.json(), expected_response)
@@ -1009,7 +1011,7 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
 
         expected_response = {
             "non_field_errors": [
-                "Category {} limit reached".format(self.category_limit_4.name)
+                "Maximum number of items for the Category {} is reached (limit of {} items per team)".format(self.category_limit_4.name, self.category_limit_4.max_per_team)
             ]
         }
         self.assertEqual(response.json(), expected_response)
@@ -1142,8 +1144,9 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
         expected_error_messages = [
-            "Category {} limit reached".format(self.category_limit_1.name),
-            "Hardware {} limit reached".format(limited_hardware.name),
+            "Maximum number of items for the Category {} is reached (limit of {} items per team)".format(self.category_limit_1.name, self.category_limit_1.max_per_team),
+            "Maximum number of items for the Hardware {} is reached (limit of {} items per team)".format(
+                self.limited_hardware.name, self.limited_hardware.max_per_team)
         ]
         self.assertCountEqual(
             response.json().get("non_field_errors"), expected_error_messages
