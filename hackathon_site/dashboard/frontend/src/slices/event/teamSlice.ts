@@ -13,19 +13,16 @@ import { displaySnackbar } from "slices/ui/uiSlice";
 interface TeamExtraState {
     isLoading: boolean;
     error: string | null;
+    team: Team | null;
 }
 
-const extraState: TeamExtraState = {
+export const initialState: TeamExtraState = {
     isLoading: false,
     error: null,
+    team: null,
 };
 
-const teamAdapter = createEntityAdapter<Team>({
-    selectId: (entity) => entity.id,
-});
-
 export const teamReducerName = "team";
-export const initialState = teamAdapter.getInitialState(extraState);
 export type TeamState = typeof initialState;
 
 // Thunks
@@ -71,9 +68,9 @@ const teamSlice = createSlice({
             getCurrentTeam.fulfilled,
             (state, { payload }: PayloadAction<Team>) => {
                 if (payload) {
-                    teamAdapter.addOne(state, payload);
                     state.isLoading = false;
                     state.error = null;
+                    state.team = payload;
                 }
             }
         );
@@ -90,9 +87,12 @@ export default reducer;
 // Selectors
 export const teamSliceSelector = (state: RootState) => state[teamReducerName];
 
-export const teamSelectors = teamAdapter.getSelectors(teamSliceSelector);
-
 export const isLoadingSelector = createSelector(
     [teamSliceSelector],
     (teamSlice) => teamSlice.isLoading
+);
+
+export const teamSelector = createSelector(
+    [teamSliceSelector],
+    (teamSlice) => teamSlice.team
 );
