@@ -77,6 +77,7 @@ describe("Render cartQuantity", () => {
 
         await waitFor(() => {
             expect(getByTestId("order-loading-icon")).toBeInTheDocument();
+            expect(getByTestId("submit-order-button")).toBeDisabled();
         });
 
         await waitFor(() => {
