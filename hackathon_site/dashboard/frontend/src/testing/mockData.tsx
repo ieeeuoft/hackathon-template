@@ -2,8 +2,19 @@ import React from "react";
 import OpenInNew from "@material-ui/icons/OpenInNew";
 import GetApp from "@material-ui/icons/GetApp";
 import PinDrop from "@material-ui/icons/PinDrop";
-import { Category, Hardware } from "api/types";
+import {
+    Category,
+    Hardware,
+    Incident,
+    IncidentState,
+    Order,
+    OrderItem,
+    OrderStatus,
+    PartReturnedHealth,
+    Team,
+} from "api/types";
 import { CartItem } from "api/types";
+import exp from "constants";
 
 // For DashCard on Dashboard
 export const cardItems = [
@@ -129,7 +140,7 @@ export const members = [
 export const teamCode = "PAS3NLQ3";
 
 // Navbar
-export const cartQuantity = 5;
+export const cartQuantity = 0;
 export const userEmail = "graham@email.com";
 
 export const addCartTest = () => {
@@ -177,6 +188,29 @@ export const mockUser = {
         {
             id: 2,
             name: "Admins",
+        },
+    ],
+};
+
+// Team Detail
+export const mockTeam: Team = {
+    id: 1,
+    team_code: "A48E5",
+    created_at: "2021-11-12T22:37:54.106311-05:00",
+    updated_at: "2021-11-12T22:37:54.106323-05:00",
+    profiles: [
+        {
+            id: 1,
+            id_provided: false,
+            attended: false,
+            acknowledge_rules: false,
+            e_signature: null,
+            user: {
+                id: 1,
+                first_name: "Foo",
+                last_name: "Bar",
+                email: "foo@bar.com",
+            },
         },
     ],
 };
@@ -245,7 +279,7 @@ export const mockHardware: Hardware[] = [
         picture: "https://i.imgur.com/iUpI1hC.jpg",
         categories: [4],
         quantity_remaining: 1,
-        notes: "",
+        notes: "This is an interesting piece of hardware",
     },
     {
         id: 6,
@@ -305,4 +339,95 @@ export const mockCartItems: CartItem[] = [
     { hardware_id: 1, quantity: 3 },
     { hardware_id: 2, quantity: 1 },
     { hardware_id: 3, quantity: 2 },
+];
+
+export const mockPendingOrders: Order[] = [
+    {
+        id: 3,
+        items: [
+            {
+                id: 6,
+                hardware_id: 3,
+                part_returned_health: null,
+            },
+            {
+                id: 7,
+                hardware_id: 4,
+                part_returned_health: null,
+            },
+        ],
+        team_id: 2,
+        team_code: "IEEE",
+        status: "Ready for Pickup",
+        created_at: "2021-10-17T18:28:44.691969-04:00",
+        updated_at: "2021-12-03T23:01:46.606892-05:00",
+    },
+    {
+        id: 4,
+        items: [
+            {
+                id: 8,
+                hardware_id: 4,
+                part_returned_health: null,
+            },
+            {
+                id: 9,
+                hardware_id: 1,
+                part_returned_health: null,
+            },
+        ],
+        team_id: 2,
+        team_code: "IEEE",
+        status: "Submitted",
+        created_at: "2021-10-17T18:28:44.691969-04:00",
+        updated_at: "2021-12-03T23:01:46.606892-05:00",
+    },
+];
+
+export const mockCheckedOutOrders: Order[] = [
+    {
+        id: 1,
+        items: [
+            {
+                id: 1,
+                hardware_id: 1,
+                part_returned_health: null,
+            },
+            {
+                id: 2,
+                hardware_id: 1,
+                part_returned_health: null,
+            },
+        ],
+        team_id: 2,
+        team_code: "IEEE",
+        status: "Picked Up",
+        created_at: "2021-10-17T18:28:44.691969-04:00",
+        updated_at: "2021-12-03T23:01:46.606892-05:00",
+    },
+    {
+        id: 2,
+        items: [
+            {
+                id: 3,
+                hardware_id: 1,
+                part_returned_health: "Healthy",
+            },
+            {
+                id: 4,
+                hardware_id: 1,
+                part_returned_health: null,
+            },
+            {
+                id: 5,
+                hardware_id: 2,
+                part_returned_health: "Broken",
+            },
+        ],
+        team_id: 2,
+        team_code: "IEEE",
+        status: "Picked Up",
+        created_at: "2021-10-17T18:28:44.691969-04:00",
+        updated_at: "2021-12-03T23:01:46.606892-05:00",
+    },
 ];

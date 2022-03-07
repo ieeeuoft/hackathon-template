@@ -21,6 +21,7 @@ import {
     CategoryState,
     initialState as categoryInitialState,
 } from "slices/hardware/categorySlice";
+
 import { uiReducerName, UIState } from "slices/ui/uiSlice";
 import {
     cartReducerName,
@@ -101,7 +102,7 @@ export * from "jest-when";
 export interface StoreEntities {
     hardware?: Hardware[];
     categories?: Category[];
-    ui?: Partial<UIState>;
+    ui?: DeepPartial<UIState>;
     cartItems?: CartItem[];
 }
 
