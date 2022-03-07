@@ -1,6 +1,5 @@
 import {
     createAsyncThunk,
-    createEntityAdapter,
     createSelector,
     createSlice,
     PayloadAction,

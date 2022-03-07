@@ -11,22 +11,28 @@ import {
 } from "components/dashboard/ItemTable/ItemTable";
 import ProductOverview from "components/inventory/ProductOverview/ProductOverview";
 import Header from "components/general/Header/Header";
-import {
-    cardItems,
-    members,
-    teamCode,
-    mockPendingOrders,
-    mockCheckedOutOrders,
-} from "testing/mockData";
+import { cardItems, mockPendingOrders, mockCheckedOutOrders } from "testing/mockData";
 import { hackathonName } from "constants.js";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getHardwareWithFilters, setFilters } from "slices/hardware/hardwareSlice";
 import { getCategories } from "slices/hardware/categorySlice";
+import {
+    getCurrentTeam,
+    isLoadingSelector,
+    teamSelector,
+} from "slices/event/teamSlice";
+import LinearProgress from "@material-ui/core/LinearProgress";
 
 const Dashboard = () => {
     const dispatch = useDispatch();
+    const currentTeam = useSelector(teamSelector);
+    const memberNames = currentTeam?.profiles.flatMap(
+        (member) => member.user.first_name + " " + member.user.last_name
+    );
+    const isTeamLoading = useSelector(isLoadingSelector);
 
     useEffect(() => {
+        if (isTeamLoading) return;
         const allOrders = mockPendingOrders.concat(mockCheckedOutOrders);
         const hardware_ids = allOrders.flatMap((order) =>
             order.items.map((item) => item.hardware_id)
@@ -38,7 +44,8 @@ const Dashboard = () => {
         );
         dispatch(getHardwareWithFilters({ keepOld: true }));
         dispatch(getCategories());
-    });
+        dispatch(getCurrentTeam());
+    }, [dispatch]);
 
     return (
         <>
@@ -62,11 +69,17 @@ const Dashboard = () => {
                         className={styles.dashboardGridItem}
                         key={0}
                     >
-                        <TeamCard
-                            members={members}
-                            teamCode={teamCode}
-                            handleEditTeam={() => alert("Editing Team")}
-                        />
+                        {isTeamLoading ? (
+                            <LinearProgress
+                                style={{ width: "100%", marginTop: "10%" }}
+                                data-testid="cart-linear-progress"
+                            />
+                        ) : (
+                            <TeamCard
+                                members={memberNames}
+                                teamCode={currentTeam?.team_code}
+                            />
+                        )}
                     </Grid>
                     {cardItems.map(({ title, content }, i) => (
                         <Grid
