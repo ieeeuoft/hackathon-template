@@ -45,7 +45,7 @@ const Dashboard = () => {
         dispatch(getHardwareWithFilters({ keepOld: true }));
         dispatch(getCategories());
         dispatch(getCurrentTeam());
-    }, [dispatch]);
+    }, [dispatch, isTeamLoading]);
 
     return (
         <>
@@ -68,6 +68,7 @@ const Dashboard = () => {
                         xs={6}
                         className={styles.dashboardGridItem}
                         key={0}
+                        data-testid="team"
                     >
                         {isTeamLoading ? (
                             <LinearProgress
@@ -78,6 +79,7 @@ const Dashboard = () => {
                             <TeamCard
                                 members={memberNames}
                                 teamCode={currentTeam?.team_code}
+                                data-testid="teamCard"
                             />
                         )}
                     </Grid>

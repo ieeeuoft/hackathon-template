@@ -8,15 +8,26 @@ import {
     when,
     fireEvent,
     within,
+    makeStoreWithEntities,
+    promiseResolveWithDelay,
 } from "testing/utils";
 import {
     cardItems,
+    members,
+    mockCartItems,
     mockCategories,
     mockCheckedOutOrders,
     mockHardware,
     mockPendingOrders,
+    mockTeam,
+    mockUser,
 } from "testing/mockData";
 import { get } from "api/api";
+import { AxiosResponse } from "axios";
+import { Team } from "../../api/types";
+import { makeStore } from "../../slices/store";
+import { getCurrentTeam, teamReducerName } from "../../slices/event/teamSlice";
+import { getByTestId } from "@testing-library/react";
 
 jest.mock("api/api", () => ({
     ...jest.requireActual("api/api"),
@@ -26,6 +37,7 @@ const mockedGet = get as jest.MockedFunction<typeof get>;
 
 const hardwareUri = "/api/hardware/hardware/";
 const categoriesUri = "/api/hardware/categories/";
+const teamUri = "/api/event/teams/team/";
 
 it("Renders correctly when the dashboard appears 4 cards and 3 tables", () => {
     const { queryByText, getByText } = render(<Dashboard />);
@@ -56,6 +68,7 @@ it("Opens Product Overview with the correct hardware information", async () => {
         ({ id }) => id === mockCheckedOutOrders[0].items[0].hardware_id
     );
     const category = mockCategories.find(({ id }) => id === hardware?.categories[0]);
+    // expect(getByText(mockUser.last_name)).toBeInTheDocument();
 
     if (hardware && category) {
         await waitFor(() => {
@@ -77,6 +90,25 @@ it("Opens Product Overview with the correct hardware information", async () => {
             expect(getByText(hardware.model_number)).toBeInTheDocument();
             expect(getByText(hardware.manufacturer)).toBeInTheDocument();
             expect(getByText(hardware.notes)).toBeInTheDocument();
+            //
         });
     }
+});
+
+it("get info on the current team", async () => {
+    const response = { data: mockTeam } as AxiosResponse<Team>;
+    if (response === null) {
+        return null;
+    }
+    mockedGet.mockResolvedValueOnce(response);
+    const store = makeStore({ team: mockTeam });
+    store.dispatch(getCurrentTeam());
+
+    const { getByText, getByTestId, queryByTestId } = render(<Dashboard />, { store });
+    await waitFor(() => {
+        expect(queryByTestId("cart-linear-progress")).toBeInTheDocument();
+    });
+    await waitFor(() => {
+        expect(getByTestId("teamCard")).toHaveTextContent(mockUser.first_name);
+    });
 });
