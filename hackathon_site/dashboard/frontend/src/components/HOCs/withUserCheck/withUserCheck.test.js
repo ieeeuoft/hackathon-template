@@ -8,7 +8,8 @@ import { mockUser } from "testing/mockData";
 
 import { userReducerName, fetchUserData } from "slices/users/userSlice";
 import { displaySnackbar } from "slices/ui/uiSlice";
-import withParticipantCheck from "./withParticipantCheck";
+import withUserCheck from "components/HOCs/withUserCheck/withUserCheck";
+import { adminPages } from "constants.js";
 
 jest.mock("api/api"); // To make sure that fetchUserData() doesn't actually do anything
 
@@ -17,7 +18,7 @@ const mockStore = configureStore([thunk]);
 describe("withAuthenticationCheck", () => {
     const content = "Hello there";
     const ComponentToWrap = ({ children }) => <div>{children}</div>;
-    const WrappedComponent = withParticipantCheck(ComponentToWrap);
+    const WrappedComponent = withUserCheck(ComponentToWrap);
 
     it("calls fetchUserData() if the user is missing and displays a loading bar", () => {
         const mockState = {
@@ -44,7 +45,7 @@ describe("withAuthenticationCheck", () => {
         ]);
     });
 
-    it("Displays a snackbar and pushes to the 404 page if the user has no profile", () => {
+    it("Displays a snackbar and pushes to the 404 page if the user has no profile or admin access", () => {
         // Used by displaySnackbar
         jest.spyOn(global.Math, "random").mockReturnValue(0.45526621894095487);
 
@@ -75,6 +76,86 @@ describe("withAuthenticationCheck", () => {
         ]);
 
         global.Math.random.mockRestore();
+    });
+
+    it("Allow user to access page with admin permissions", () => {
+        const mockState = {
+            [userReducerName]: {
+                userData: {
+                    user: {
+                        ...mockUser,
+                        groups: [
+                            {
+                                id: 1,
+                                name: "MakeUofTAdmins",
+                            },
+                        ],
+                        profile: null,
+                    },
+                },
+            },
+        };
+
+        const store = mockStore(mockState);
+
+        const { getByText } = render(<WrappedComponent>{content}</WrappedComponent>, {
+            store,
+        });
+
+        expect(getByText(content)).toBeInTheDocument();
+    });
+
+    it("Display SecondaryComponent when user has admin access", () => {
+        const mockState = {
+            [userReducerName]: {
+                userData: {
+                    user: {
+                        ...mockUser,
+                        groups: [
+                            {
+                                id: 1,
+                                name: "MakeUofTAdmins",
+                            },
+                        ],
+                        profile: null,
+                    },
+                },
+            },
+        };
+
+        const store = mockStore(mockState);
+
+        const SecondaryComponent = () => <div>Secondary</div>;
+        const DoubleComponents = withUserCheck(ComponentToWrap, SecondaryComponent);
+        const { getByText } = render(<DoubleComponents>{content}</DoubleComponents>, {
+            store,
+        });
+
+        expect(getByText("Secondary")).toBeInTheDocument();
+    });
+
+    it("Do not display SecondaryComponent when user only has profile", () => {
+        const mockState = {
+            [userReducerName]: {
+                userData: {
+                    user: mockUser,
+                },
+            },
+        };
+
+        const store = mockStore(mockState);
+
+        const SecondaryComponent = () => <div>Secondary</div>;
+        const DoubleComponents = withUserCheck(ComponentToWrap, SecondaryComponent);
+        const { queryByText, getByText } = render(
+            <DoubleComponents>{content}</DoubleComponents>,
+            {
+                store,
+            }
+        );
+
+        expect(queryByText("Secondary")).not.toBeInTheDocument();
+        expect(getByText(content)).toBeInTheDocument();
     });
 
     it("Renders the component with passed through props when the profile is set", () => {

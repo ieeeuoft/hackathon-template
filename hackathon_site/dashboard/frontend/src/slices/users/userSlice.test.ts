@@ -1,5 +1,5 @@
 import configureStore from "redux-mock-store";
-import thunk from "redux-thunk";
+import thunk, { ThunkDispatch } from "redux-thunk";
 import { push } from "connected-react-router";
 
 import { post, get } from "api/api";
@@ -17,15 +17,29 @@ import {
     logIn,
     logout,
     fetchUserData,
-} from "./userSlice";
+    userTypeSelector,
+} from "slices/users/userSlice";
+import rootStore, { RootState } from "slices/store";
+import { AnyAction } from "redux";
+import { makeMockApiResponse, when } from "testing/utils";
+import { AxiosResponse } from "axios";
+import { User } from "api/types";
 
-jest.mock("api/api");
+jest.mock("api/api", () => ({
+    ...jest.requireActual("api/api"),
+    get: jest.fn(),
+    post: jest.fn(),
+}));
+const mockedGet = get as jest.MockedFunction<typeof get>;
+const mockedPost = post as jest.MockedFunction<typeof post>;
 
-const mockStore = configureStore([thunk]);
-
-const mockState = {
+const mockState: RootState = {
+    ...rootStore.getState(),
     [userReducerName]: initialState,
 };
+
+type DispatchExts = ThunkDispatch<RootState, void, AnyAction>;
+const mockStore = configureStore<RootState, DispatchExts>([thunk]);
 
 describe("Selectors", () => {
     test("userSliceSelector returns the user store", () => {
@@ -44,6 +58,47 @@ describe("Selectors", () => {
         );
     });
 
+    test("userTypeSelector returns the correct user type", () => {
+        expect(userTypeSelector(mockState)).toEqual("none");
+    });
+
+    test("userTypeSelector returns participant user type", () => {
+        const mockParticipantState: RootState = {
+            ...rootStore.getState(),
+            [userReducerName]: {
+                ...initialState,
+                userData: {
+                    ...initialState.userData,
+                    user: mockUser,
+                },
+            },
+        };
+        expect(userTypeSelector(mockParticipantState)).toEqual("participant");
+    });
+
+    test("userTypeSelector returns admin user type", () => {
+        const mockParticipantState: RootState = {
+            ...rootStore.getState(),
+            [userReducerName]: {
+                ...initialState,
+                userData: {
+                    ...initialState.userData,
+                    user: {
+                        ...mockUser,
+                        profile: null,
+                        groups: [
+                            {
+                                id: 1,
+                                name: "MakeUofTAdmins",
+                            },
+                        ],
+                    },
+                },
+            },
+        };
+        expect(userTypeSelector(mockParticipantState)).toEqual("admin");
+    });
+
     test("loginSelector returns the login object", () => {
         expect(loginSelector(mockState)).toEqual(mockState[userReducerName].login);
     });
@@ -54,22 +109,17 @@ describe("Selectors", () => {
 });
 
 describe("fetchUserData Thunk and Reducer", () => {
-    let store;
-
-    beforeEach(() => {
-        store = mockStore(mockState);
-    });
-
     describe("Reducers", () => {
         test("Pending", () => {
             expect(
-                reducer(initialState, fetchUserData.pending()).userData.isLoading
+                reducer(initialState, fetchUserData.pending).userData.isLoading
             ).toBe(true);
         });
 
         test("Fulfilled", () => {
             expect(
-                reducer(initialState, fetchUserData.fulfilled(mockUser)).userData
+                reducer(initialState, fetchUserData.fulfilled(mockUser, "fulfilled"))
+                    .userData
             ).toEqual({
                 user: mockUser,
                 isLoading: false,
@@ -80,7 +130,10 @@ describe("fetchUserData Thunk and Reducer", () => {
         test("Rejected by rejectWithValue", () => {
             const expectedFailureResponse = { status: 999, message: "Some message" };
             const action = fetchUserData.rejected(
-                "Rejected", // createAsyncThunk will always have {message: "Rejected"} for rejectWithValue
+                {
+                    message: "Rejected",
+                    name: "Error",
+                }, // createAsyncThunk will always have {message: "Rejected"} for rejectWithValue
                 "some-id",
                 undefined, // Arg passed to the thunk
                 expectedFailureResponse
@@ -95,8 +148,10 @@ describe("fetchUserData Thunk and Reducer", () => {
 
     test("Successfully fetch user data", async () => {
         const response = { data: mockUser };
-        get.mockImplementationOnce(() => Promise.resolve(response));
 
+        mockedGet.mockResolvedValue(response as AxiosResponse<User>);
+
+        const store = mockStore(mockState);
         await store.dispatch(fetchUserData());
 
         const actions = store.getActions();
@@ -110,13 +165,13 @@ describe("fetchUserData Thunk and Reducer", () => {
     });
 
     describe("Failed to fetch user data", () => {
-        beforeAll(() => {
+        beforeEach(() => {
             // Used by displaySnackbar
             jest.spyOn(global.Math, "random").mockReturnValue(0.45526621894095487);
         });
 
-        afterAll(() => {
-            global.Math.random.mockRestore();
+        afterEach(() => {
+            jest.spyOn(global.Math, "random").mockRestore();
         });
 
         test("Failed because the user was unauthenticated", async () => {
@@ -128,8 +183,9 @@ describe("fetchUserData Thunk and Reducer", () => {
                     },
                 },
             };
-            get.mockImplementationOnce(() => Promise.reject(error));
+            mockedGet.mockRejectedValueOnce(error);
 
+            const store = mockStore(mockState);
             await store.dispatch(fetchUserData());
 
             const actions = store.getActions();
@@ -148,10 +204,14 @@ describe("fetchUserData Thunk and Reducer", () => {
 
         test("Failed for some other reason with a response", async () => {
             const error = {
-                response: { status: 999, data: "Something went wrong" },
+                response: {
+                    status: 999,
+                    data: "Something went wrong",
+                },
             };
-            get.mockImplementationOnce(() => Promise.reject(error));
+            mockedGet.mockRejectedValueOnce(error);
 
+            const store = mockStore(mockState);
             await store.dispatch(fetchUserData());
 
             const actions = store.getActions();
@@ -175,8 +235,9 @@ describe("fetchUserData Thunk and Reducer", () => {
             const error = {
                 message: "Something really went wrong",
             };
-            get.mockImplementationOnce(() => Promise.reject(error));
+            mockedGet.mockRejectedValueOnce(error);
 
+            const store = mockStore(mockState);
             await store.dispatch(fetchUserData());
 
             const actions = store.getActions();
@@ -191,7 +252,7 @@ describe("fetchUserData Thunk and Reducer", () => {
                 }),
                 expect.objectContaining({
                     type: fetchUserData.rejected.type,
-                    payload: { status: null, message: error.message },
+                    payload: { status: 500, message: error.message },
                 }),
             ]);
         });
@@ -200,19 +261,14 @@ describe("fetchUserData Thunk and Reducer", () => {
 
 describe("logIn Thunk and Reducer", () => {
     const body = { email: "foo@bar.com", password: "foobar123" };
-    let store;
-
-    beforeEach(() => {
-        store = mockStore(mockState);
-    });
 
     describe("Reducers", () => {
         test("Pending", () => {
-            expect(reducer(initialState, logIn.pending()).login.isLoading).toBe(true);
+            expect(reducer(initialState, logIn.pending).login.isLoading).toBe(true);
         });
 
         test("Fulfilled", () => {
-            expect(reducer(initialState, logIn.fulfilled())).toEqual(
+            expect(reducer(initialState, logIn.fulfilled)).toEqual(
                 expect.objectContaining({
                     isAuthenticated: true,
                     login: { isLoading: false, failure: null },
@@ -223,7 +279,7 @@ describe("logIn Thunk and Reducer", () => {
         test("Rejected by rejectWithValue", () => {
             const expectedFailureResponse = { status: 999, message: "Some message" };
             const action = logIn.rejected(
-                "Rejected",
+                { name: "not allowed", message: "Rejected" },
                 "some-id",
                 body,
                 expectedFailureResponse // This becomes action.payload
@@ -238,9 +294,10 @@ describe("logIn Thunk and Reducer", () => {
     });
 
     test("Successful login", async () => {
-        const response = { data: { key: "abc123" } };
-        post.mockImplementationOnce(() => Promise.resolve(response));
+        const response: AxiosResponse = makeMockApiResponse({ key: "abc123" });
+        mockedPost.mockResolvedValueOnce(response);
 
+        const store = mockStore(mockState);
         await store.dispatch(logIn(body));
 
         const actions = store.getActions();
@@ -271,8 +328,9 @@ describe("logIn Thunk and Reducer", () => {
                 message: "Invalid credentials",
             };
 
-            post.mockImplementationOnce(() => Promise.reject(error));
+            mockedPost.mockRejectedValueOnce(error);
 
+            const store = mockStore(mockState);
             await store.dispatch(logIn(body));
 
             const actions = store.getActions();
@@ -297,8 +355,9 @@ describe("logIn Thunk and Reducer", () => {
                 message: "Invalid CSRF Token",
             };
 
-            post.mockImplementationOnce(() => Promise.reject(error));
+            mockedPost.mockRejectedValueOnce(error);
 
+            const store = mockStore(mockState);
             await store.dispatch(logIn(body));
 
             const actions = store.getActions();
@@ -323,8 +382,9 @@ describe("logIn Thunk and Reducer", () => {
                 message: error.response.data,
             };
 
-            post.mockImplementationOnce(() => Promise.reject(error));
+            mockedPost.mockRejectedValueOnce(error);
 
+            const store = mockStore(mockState);
             await store.dispatch(logIn(body));
 
             const actions = store.getActions();
@@ -340,24 +400,18 @@ describe("logIn Thunk and Reducer", () => {
 });
 
 describe("logOut Thunk and Reducer", () => {
-    let store;
-
-    beforeEach(() => {
-        store = mockStore(mockState);
-    });
-
     describe("Reducers", () => {
         test("Pending", () => {
-            expect(reducer(initialState, logout.pending()).logout.isLoading).toBe(true);
+            expect(reducer(initialState, logout.pending).logout.isLoading).toBe(true);
         });
 
         test("Fulfilled", () => {
             const resultState = reducer(
                 reducer(
-                    reducer(initialState, logIn.fulfilled()),
-                    fetchUserData.fulfilled(mockUser)
+                    reducer(initialState, logIn.fulfilled),
+                    fetchUserData.fulfilled(mockUser, "fulfilled")
                 ),
-                logout.fulfilled()
+                logout.fulfilled
             );
             expect(resultState).toEqual(
                 expect.objectContaining({
@@ -371,9 +425,9 @@ describe("logOut Thunk and Reducer", () => {
         test("Rejected by rejectWithValue", () => {
             const expectedFailureResponse = { status: 999, message: "Some message" };
             const action = logout.rejected(
-                "Rejected",
+                { message: "Rejected", name: "forbidden" },
                 "some-id",
-                null,
+                undefined,
                 expectedFailureResponse
             );
             expect(reducer(initialState, action)).toEqual(
@@ -385,9 +439,10 @@ describe("logOut Thunk and Reducer", () => {
     });
 
     test("Successful logout", async () => {
-        const response = { data: { key: "abc123" } };
-        post.mockImplementationOnce(() => Promise.resolve(response));
+        const response: AxiosResponse = makeMockApiResponse({ key: "abc123" });
+        mockedPost.mockResolvedValueOnce(response);
 
+        const store = mockStore(mockState);
         await store.dispatch(logout());
 
         const actions = store.getActions();
@@ -405,8 +460,9 @@ describe("logOut Thunk and Reducer", () => {
         const error = {
             response: { status: 999, data: { detail: "Something went wrong" } },
         };
-        post.mockImplementationOnce(() => Promise.reject(error));
+        mockedPost.mockRejectedValueOnce(error);
 
+        const store = mockStore(mockState);
         await store.dispatch(logout());
 
         const actions = store.getActions();

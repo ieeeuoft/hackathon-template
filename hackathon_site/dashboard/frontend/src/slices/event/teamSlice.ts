@@ -1,6 +1,5 @@
 import {
     createAsyncThunk,
-    createEntityAdapter,
     createSelector,
     createSlice,
     PayloadAction,
@@ -22,7 +21,7 @@ export const initialState: TeamExtraState = {
     team: null,
 };
 
-export const teamReducerName = "team";
+export const teamReducerName = "participantTeam";
 export type TeamState = typeof initialState;
 
 // Thunks
