@@ -250,7 +250,7 @@ class TeamReviewChangeAdminTestCase(SetupUserMixin, TestCase):
         )
 
         self.reviewer_group = Group.objects.get(name="Application Reviewers")
-        self.hardware_site_admin_group = Group.objects.get(name='Hardware Site Admins')
+        self.hardware_site_admin_group = Group.objects.get(name="Hardware Site Admins")
 
         self.user.is_staff = True
         self.user.save()
@@ -324,7 +324,8 @@ class TeamReviewChangeAdminTestCase(SetupUserMixin, TestCase):
         )
 
         self.assertEqual(
-            self.hardware_site_admin_group.permissions.count(), len(HARDWARE_SITE_ADMIN_PERMISSIONS)
+            self.hardware_site_admin_group.permissions.count(),
+            len(HARDWARE_SITE_ADMIN_PERMISSIONS),
         )
 
         group_perms = self.hardware_site_admin_group.permissions.all()
