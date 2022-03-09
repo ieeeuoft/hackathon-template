@@ -4,7 +4,7 @@ import thunk from "redux-thunk";
 import { push } from "connected-react-router";
 
 import { render } from "testing/utils";
-import { mockUser } from "testing/mockData";
+import { mockAdminUser, mockUser } from "testing/mockData";
 
 import { userReducerName, fetchUserData } from "slices/users/userSlice";
 import { displaySnackbar } from "slices/ui/uiSlice";
@@ -82,16 +82,7 @@ describe("withAuthenticationCheck", () => {
         const mockState = {
             [userReducerName]: {
                 userData: {
-                    user: {
-                        ...mockUser,
-                        groups: [
-                            {
-                                id: 1,
-                                name: "MakeUofTAdmins",
-                            },
-                        ],
-                        profile: null,
-                    },
+                    user: mockAdminUser,
                 },
             },
         };
@@ -109,16 +100,7 @@ describe("withAuthenticationCheck", () => {
         const mockState = {
             [userReducerName]: {
                 userData: {
-                    user: {
-                        ...mockUser,
-                        groups: [
-                            {
-                                id: 1,
-                                name: "MakeUofTAdmins",
-                            },
-                        ],
-                        profile: null,
-                    },
+                    user: mockAdminUser,
                 },
             },
         };

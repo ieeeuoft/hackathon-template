@@ -3,8 +3,9 @@ import { push } from "connected-react-router";
 
 import { get, post } from "api/api";
 import { displaySnackbar } from "slices/ui/uiSlice";
-import { AppDispatch, RootState } from "../store";
+import { AppDispatch, RootState } from "slices/store";
 import { User } from "api/types";
+import { adminGroup } from "constants.js";
 
 interface LoginResponse {
     username?: string;
@@ -238,7 +239,7 @@ export const userSelector = createSelector(
 export const userTypeSelector = createSelector([userSelector], (user) =>
     user?.profile
         ? "participant"
-        : user?.groups.some((group) => group.name === "MakeUofTAdmins")
+        : user?.groups.some((group) => group.name === adminGroup)
         ? "admin"
         : "none"
 );

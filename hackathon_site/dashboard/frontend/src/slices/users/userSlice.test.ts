@@ -3,7 +3,7 @@ import thunk, { ThunkDispatch } from "redux-thunk";
 import { push } from "connected-react-router";
 
 import { post, get } from "api/api";
-import { mockUser } from "testing/mockData";
+import { mockAdminUser, mockUser } from "testing/mockData";
 import { displaySnackbar } from "slices/ui/uiSlice";
 import {
     userSliceSelector,
@@ -83,16 +83,7 @@ describe("Selectors", () => {
                 ...initialState,
                 userData: {
                     ...initialState.userData,
-                    user: {
-                        ...mockUser,
-                        profile: null,
-                        groups: [
-                            {
-                                id: 1,
-                                name: "MakeUofTAdmins",
-                            },
-                        ],
-                    },
+                    user: mockAdminUser,
                 },
             },
         };

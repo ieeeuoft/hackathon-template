@@ -4,6 +4,7 @@ import GetApp from "@material-ui/icons/GetApp";
 import PinDrop from "@material-ui/icons/PinDrop";
 import { Category, Hardware, Order, Team, User } from "api/types";
 import { CartItem } from "api/types";
+import { adminGroup } from "constants.js";
 
 // For DashCard on Dashboard
 export const cardItems = [
@@ -182,6 +183,17 @@ export const mockUser: User = {
         {
             id: 2,
             name: "Admins",
+        },
+    ],
+};
+
+export const mockAdminUser: User = {
+    ...mockUser,
+    profile: null,
+    groups: [
+        {
+            id: 1,
+            name: adminGroup,
         },
     ],
 };
