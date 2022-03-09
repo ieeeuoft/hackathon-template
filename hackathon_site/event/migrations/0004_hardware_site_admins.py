@@ -44,8 +44,6 @@ def apply_migration(apps, schema_editor):
 
     for permission_name in HARDWARE_SITE_ADMINS:
         app_label, codename = permission_name.split(".", 1)
-        print(app_label)
-        print(codename)
         permission = Permission.objects.get(
             content_type__app_label=app_label, codename=codename
         )
