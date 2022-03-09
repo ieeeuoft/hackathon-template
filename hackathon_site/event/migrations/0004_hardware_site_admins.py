@@ -44,6 +44,8 @@ def apply_migration(apps, schema_editor):
 
     for permission_name in HARDWARE_SITE_ADMINS:
         app_label, codename = permission_name.split(".", 1)
+        print(app_label)
+        print(codename)
         permission = Permission.objects.get(
             content_type__app_label=app_label, codename=codename
         )
@@ -60,5 +62,6 @@ def revert_migration(apps, schema_editor):
 class Migration(migrations.Migration):
     dependencies = [
         ("event", "0003_remove_profile_status"),
+        ("hardware", "0007_order_request"),
     ]
     operations = [migrations.RunPython(apply_migration, revert_migration)]
