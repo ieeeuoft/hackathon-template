@@ -9,7 +9,7 @@ import {
     getCategories,
     categorySelectors,
 } from "slices/hardware/categorySlice";
-import { get, stripHostname } from "api/api";
+import { get, stripHostnameReturnFilters } from "api/api";
 import { AnyAction } from "redux";
 import { displaySnackbar } from "slices/ui/uiSlice";
 import { mockCategories } from "testing/mockData";
@@ -112,6 +112,8 @@ describe("getCategories thunk", () => {
             4
         );
 
+        const { path: nextPath, filters } = stripHostnameReturnFilters(next);
+
         mockedGet
             .mockResolvedValueOnce(apiResponse1)
             .mockResolvedValueOnce(apiResponse2);
@@ -123,7 +125,7 @@ describe("getCategories thunk", () => {
         expect(categories).toEqual(categories.slice(0, 4));
 
         expect(mockedGet).toHaveBeenCalledTimes(2);
-        expect(mockedGet).toHaveBeenCalledWith("/api/hardware/categories/");
-        expect(mockedGet).toHaveBeenCalledWith(stripHostname(next));
+        expect(mockedGet).toHaveBeenCalledWith("/api/hardware/categories/", {});
+        expect(mockedGet).toHaveBeenCalledWith(nextPath, filters);
     });
 });
