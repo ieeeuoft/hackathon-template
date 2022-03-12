@@ -32,7 +32,6 @@ const Dashboard = () => {
     const isTeamLoading = useSelector(isLoadingSelector);
 
     useEffect(() => {
-        if (isTeamLoading) return;
         const allOrders = mockPendingOrders.concat(mockCheckedOutOrders);
         const hardware_ids = allOrders.flatMap((order) =>
             order.items.map((item) => item.hardware_id)
@@ -45,7 +44,7 @@ const Dashboard = () => {
         dispatch(getHardwareWithFilters({ keepOld: true }));
         dispatch(getCategories());
         dispatch(getCurrentTeam());
-    }, [dispatch, isTeamLoading]);
+    }, [dispatch]);
 
     return (
         <>
@@ -53,49 +52,48 @@ const Dashboard = () => {
             <ProductOverview showAddToCartButton={false} />
             <div className={styles.dashboard}>
                 <Typography variant="h1">{hackathonName} Hardware Dashboard</Typography>
-                <Grid
-                    container
-                    direction="row"
-                    justifyContent="flex-start"
-                    alignItems="flex-start"
-                    spacing={2}
-                    className={styles.dashboardGrid}
-                >
+                {isTeamLoading ? (
+                    <LinearProgress
+                        style={{ width: "100%", marginTop: 25 }}
+                        data-testid="team-linear-progress"
+                    />
+                ) : (
                     <Grid
-                        item
-                        md={3}
-                        sm={4}
-                        xs={6}
-                        className={styles.dashboardGridItem}
-                        key={0}
-                        data-testid="team"
+                        container
+                        direction="row"
+                        justifyContent="flex-start"
+                        alignItems="flex-start"
+                        spacing={2}
+                        className={styles.dashboardGrid}
                     >
-                        {isTeamLoading ? (
-                            <LinearProgress
-                                style={{ width: "100%", marginTop: "10%" }}
-                                data-testid="cart-linear-progress"
-                            />
-                        ) : (
-                            <TeamCard
-                                members={memberNames}
-                                teamCode={currentTeam?.team_code}
-                                data-testid="teamCard"
-                            />
-                        )}
-                    </Grid>
-                    {cardItems.map(({ title, content }, i) => (
                         <Grid
                             item
                             md={3}
                             sm={4}
                             xs={6}
                             className={styles.dashboardGridItem}
-                            key={i + 1}
+                            key={0}
+                            data-testid="team"
                         >
-                            <DashCard title={title} content={content} />
+                            <TeamCard
+                                members={memberNames}
+                                teamCode={currentTeam?.team_code}
+                            />
                         </Grid>
-                    ))}
-                </Grid>
+                        {cardItems.map(({ title, content }, i) => (
+                            <Grid
+                                item
+                                md={3}
+                                sm={4}
+                                xs={6}
+                                className={styles.dashboardGridItem}
+                                key={i + 1}
+                            >
+                                <DashCard title={title} content={content} />
+                            </Grid>
+                        ))}
+                    </Grid>
+                )}
                 {/* TODO: add back in when incident reports are completed on the frontend */}
                 {/* <BrokenTable items={itemsBroken} openReportAlert={openBrokenTable} /> */}
                 <PendingTable orders={mockPendingOrders} />

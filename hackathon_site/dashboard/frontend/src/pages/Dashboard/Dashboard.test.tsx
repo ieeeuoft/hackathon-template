@@ -24,10 +24,8 @@ import {
 } from "testing/mockData";
 import { get } from "api/api";
 import { AxiosResponse } from "axios";
-import { Team } from "../../api/types";
-import { makeStore } from "../../slices/store";
-import { getCurrentTeam, teamReducerName } from "../../slices/event/teamSlice";
-import { getByTestId } from "@testing-library/react";
+import { Team } from "api/types";
+import { getByTestId, queryByText } from "@testing-library/react";
 
 jest.mock("api/api", () => ({
     ...jest.requireActual("api/api"),
@@ -68,7 +66,6 @@ it("Opens Product Overview with the correct hardware information", async () => {
         ({ id }) => id === mockCheckedOutOrders[0].items[0].hardware_id
     );
     const category = mockCategories.find(({ id }) => id === hardware?.categories[0]);
-    // expect(getByText(mockUser.last_name)).toBeInTheDocument();
 
     if (hardware && category) {
         await waitFor(() => {
@@ -97,18 +94,18 @@ it("Opens Product Overview with the correct hardware information", async () => {
 
 it("get info on the current team", async () => {
     const response = { data: mockTeam } as AxiosResponse<Team>;
-    if (response === null) {
-        return null;
-    }
-    mockedGet.mockResolvedValueOnce(response);
-    const store = makeStore({ team: mockTeam });
-    store.dispatch(getCurrentTeam());
+    when(mockedGet)
+        .calledWith(teamUri)
+        .mockResolvedValue(promiseResolveWithDelay(response, 500));
 
-    const { getByText, getByTestId, queryByTestId } = render(<Dashboard />, { store });
+    const { getByText, getByTestId, queryByTestId } = render(<Dashboard />);
     await waitFor(() => {
-        expect(queryByTestId("cart-linear-progress")).toBeInTheDocument();
+        expect(getByTestId("team-linear-progress")).toBeInTheDocument();
     });
     await waitFor(() => {
-        expect(getByTestId("teamCard")).toHaveTextContent(mockUser.first_name);
+        expect(queryByTestId("team-linear-progress")).not.toBeInTheDocument();
+        expect(getByText(/foo bar/i)).toBeInTheDocument();
+        expect(getByText(/A48E5/i)).toBeInTheDocument();
+        expect(mockedGet).toHaveBeenCalledWith("/api/event/teams/team/");
     });
 });
