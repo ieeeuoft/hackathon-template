@@ -29,8 +29,10 @@ class OrderItemFilter(filters.FilterSet):
     queryset = OrderItem
     serializer_class = OrderItemListSerializer
 
-    hardware_id = filters.NumberFilter(field_name="order__id")
-    team_id = filters.NumberFilter(field_name="order__team_code")
+    order_id = IntegerCSVFilter(field_name="order__id",
+        label="Comma separated list of team IDs",
+        help_text="Comma separated list of team IDs",)
+    team_code = filters.NumberFilter(field_name="order__team__team_code")
 
 
 class HardwareFilter(filters.FilterSet):

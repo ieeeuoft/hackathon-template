@@ -84,11 +84,19 @@ class OrderItemListSerializer(serializers.ModelSerializer):
     team_code = serializers.SerializerMethodField()
     order_id = serializers.SerializerMethodField()
 
+    created_at = serializers.CharField(source='order.created_at')
+    updated_at = serializers.CharField(source='order.updated_at')
+
+
     class Meta:
         model = OrderItem
         fields = (
-            "order_id"
-            "team_code"
+            "order_id",
+            "team_code",
+            "created_at",
+            "updated_at",
+            "part_returned_health",
+            "hardware"
         )
 
     @staticmethod

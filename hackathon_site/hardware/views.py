@@ -76,31 +76,12 @@ class IncidentListView(
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
 
-
-class IncidentListView(
-    mixins.ListModelMixin, generics.GenericAPIView
-):
-    search_fields = (
-        "state",
-        "order_item__order__team__team_code",
-        "order_item__hardware__name",
-        "order_item__hardware__manufacturer",
-    )
-
-    filter_backends = (filters.DjangoFilterBackend, SearchFilter)
-    filterset_class = IncidentFilter
-    permission_classes = [FullDjangoModelPermissions]
-    queryset = Incident.objects.all().select_related("order_item__order__team")
-    serializer_class = IncidentListSerializer
-
-    def get(self, request, *args, **kwargs):
-        return self.list(request, *args, **kwargs)
-
-
 class OrderItemListView(mixins.ListModelMixin, generics.GenericAPIView):
-    search_fields = ("order__team", "order__id")
+    search_fields = ("order__team__team_code", "order__id")
+    filter_backends = (filters.DjangoFilterBackend, SearchFilter)
+    filterset_class = OrderItemFilter
     permission_classes = [FullDjangoModelPermissions]
-    queryset = OrderItem.objects.all().select_related("order__team")
+    queryset = OrderItem.objects.all().select_related("order__team__team_code")
     serializer_class = OrderItemListSerializer
 
     def get(self, request, *args, **kwargs):
