@@ -8,24 +8,19 @@ import {
     when,
     fireEvent,
     within,
-    makeStoreWithEntities,
     promiseResolveWithDelay,
 } from "testing/utils";
 import {
     cardItems,
-    members,
-    mockCartItems,
     mockCategories,
     mockCheckedOutOrders,
     mockHardware,
     mockPendingOrders,
     mockTeam,
-    mockUser,
 } from "testing/mockData";
 import { get } from "api/api";
 import { AxiosResponse } from "axios";
 import { Team } from "api/types";
-import { getByTestId, queryByText } from "@testing-library/react";
 
 jest.mock("api/api", () => ({
     ...jest.requireActual("api/api"),
@@ -38,13 +33,15 @@ const categoriesUri = "/api/hardware/categories/";
 const teamUri = "/api/event/teams/team/";
 
 it("Renders correctly when the dashboard appears 4 cards and 3 tables", () => {
-    const { queryByText, getByText } = render(<Dashboard />);
-    for (let e of cardItems) {
-        expect(queryByText(e.title)).toBeTruthy();
-    }
-    expect(getByText("Checked out items")).toBeInTheDocument();
-    expect(getByText("Pending Orders")).toBeInTheDocument();
-    // TODO: add check for returned items and broken items when those are ready
+    const { getByText, queryByText } = render(<Dashboard />);
+    waitFor(() => {
+        for (let e of cardItems) {
+            expect(queryByText(e.title)).toBeTruthy();
+        }
+        expect(getByText("Checked out items")).toBeInTheDocument();
+        expect(getByText("Pending Orders")).toBeInTheDocument();
+        // TODO: add check for returned items and broken items when those ar
+    });
 });
 
 it("Opens Product Overview with the correct hardware information", async () => {
