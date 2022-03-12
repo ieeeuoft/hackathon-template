@@ -2,7 +2,7 @@ import React from "react";
 import OpenInNew from "@material-ui/icons/OpenInNew";
 import GetApp from "@material-ui/icons/GetApp";
 import PinDrop from "@material-ui/icons/PinDrop";
-import { Category, Hardware } from "api/types";
+import {Category, Hardware, OrderStatus} from "api/types";
 import { CartItem } from "api/types";
 
 // For DashCard on Dashboard
@@ -301,8 +301,24 @@ export const mockHardware: Hardware[] = [
     },
 ];
 
+
+
 export const mockCartItems: CartItem[] = [
     { hardware_id: 1, quantity: 3 },
     { hardware_id: 2, quantity: 1 },
     { hardware_id: 3, quantity: 2 },
 ];
+
+export const mockOrder = {
+    id: 1,
+    items: [{
+        id: 2,
+        hardware_id: 3,
+        part_returned_health: "OK"
+    }],
+    team_id: number,
+    team_code: string,
+    status: OrderStatus,
+    created_at: string,
+    updated_at: string;
+}
