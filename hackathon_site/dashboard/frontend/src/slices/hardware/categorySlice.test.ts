@@ -47,7 +47,7 @@ describe("getCategories thunk", () => {
         await store.dispatch(getCategories());
 
         await waitFor(() => {
-            expect(mockedGet).toHaveBeenCalledWith("/api/hardware/categories/");
+            expect(mockedGet).toHaveBeenCalledWith("/api/hardware/categories/", {});
             expect(categorySelectors.selectIds(store.getState())).toEqual(
                 mockCategories.map(({ id }) => id)
             );
