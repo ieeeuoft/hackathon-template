@@ -81,7 +81,7 @@ class OrderItemListView(mixins.ListModelMixin, generics.GenericAPIView):
     filter_backends = (filters.DjangoFilterBackend, SearchFilter)
     filterset_class = OrderItemFilter
     permission_classes = [FullDjangoModelPermissions]
-    queryset = OrderItem.objects.all().select_related("order__team__team_code")
+    queryset = OrderItem.objects.all().select_related("order__team")
     serializer_class = OrderItemListSerializer
 
     def get(self, request, *args, **kwargs):

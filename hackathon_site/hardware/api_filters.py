@@ -32,7 +32,7 @@ class OrderItemFilter(filters.FilterSet):
     order_id = IntegerCSVFilter(field_name="order__id",
         label="Comma separated list of team IDs",
         help_text="Comma separated list of team IDs",)
-    team_code = filters.NumberFilter(field_name="order__team__team_code")
+    team_code = filters.CharFilter(field_name="order__team__team_code")
 
 
 class HardwareFilter(filters.FilterSet):
