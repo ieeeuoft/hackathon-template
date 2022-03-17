@@ -50,7 +50,7 @@ export interface Profile {
     id_provided: boolean;
     attended: boolean;
     acknowledge_rules: boolean;
-    e_signature: string;
+    e_signature: string | null;
     team: number;
 }
 
@@ -70,7 +70,9 @@ export interface Team {
     team_code: string;
     created_at: string;
     updated_at: string;
-    profiles: (ProfileWithoutTeamNumber & { user: UserWithoutProfile })[];
+    profiles: (ProfileWithoutTeamNumber & {
+        user: UserWithoutProfile;
+    })[];
 }
 
 /** Orders API */
