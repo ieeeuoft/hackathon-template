@@ -522,7 +522,7 @@ class OrderListViewGetTestCase(SetupUserMixin, APITestCase):
             order=self.order_4, hardware=self.hardware,
         )
         self.view_permissions = Permission.objects.filter(
-            content_type__app_label="hardware", codename="view_orderitem"
+            content_type__app_label="hardware", codename="view_order"
         )
         self.view = reverse("api:hardware:order-list")
 
