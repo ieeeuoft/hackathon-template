@@ -7,6 +7,8 @@ import {
 } from "@reduxjs/toolkit";
 import { Order } from "api/types";
 import { get } from "api/api";
+import { RootState } from "../store";
+import { cartReducerName } from "../hardware/cartSlice";
 
 interface OrderExtraState {
     isLoading: boolean;
@@ -31,8 +33,22 @@ interface RejectValue {
     message: any;
 }
 
-/*
+const orderSlice = createSlice({
+    name: orderReducerName,
+    initialState,
+    reducers: {},
+});
 
+export const { actions, reducer } = orderSlice;
+export default reducer;
+//export const { addToCart, removeFromCart, updateCart } = actions;
 
+// Selectors
+export const orderSliceSelector = (state: RootState) => state[orderReducerName];
 
- */
+export const orderSelectors = orderAdapter.getSelectors(orderSliceSelector);
+
+export const isLoadingSelector = createSelector(
+    [orderSliceSelector],
+    (orderSlice) => orderSlice.isLoading
+);
