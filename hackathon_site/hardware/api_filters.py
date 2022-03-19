@@ -6,7 +6,7 @@ from hardware.serializers import (
     HardwareSerializer,
     OrderListSerializer,
     IncidentListSerializer,
-    OrderItemListSerializer
+    OrderItemListSerializer,
 )
 
 
@@ -25,13 +25,16 @@ class IncidentFilter(filters.FilterSet):
     hardware_id = filters.NumberFilter(field_name="order_item__hardware__id")
     team_id = filters.NumberFilter(field_name="order_item__order__team__id")
 
+
 class OrderItemFilter(filters.FilterSet):
     queryset = OrderItem
     serializer_class = OrderItemListSerializer
 
-    order_id = IntegerCSVFilter(field_name="order__id",
-        label="Comma separated list of team IDs",
-        help_text="Comma separated list of team IDs",)
+    order_id = IntegerCSVFilter(
+        field_name="order__id",
+        label="Comma separated list of order IDs",
+        help_text="Comma separated list of order IDs",
+    )
     team_code = filters.CharFilter(field_name="order__team__team_code")
 
 

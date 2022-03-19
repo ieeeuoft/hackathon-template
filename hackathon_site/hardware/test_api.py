@@ -649,6 +649,7 @@ class OrderListViewGetTestCase(SetupUserMixin, APITestCase):
         returned_ids = [res["id"] for res in results]
         self.assertCountEqual(returned_ids, [self.order_3.id, self.order_4.id])
 
+
 class OrderItemListViewGetTestCase(SetupUserMixin, APITestCase):
     def setUp(self):
         super().setUp()
@@ -718,60 +719,45 @@ class OrderItemListViewGetTestCase(SetupUserMixin, APITestCase):
 
     def _build_filter_url(self, **kwargs):
         return (
-                self.view + "?" + "&".join([f"{key}={val}" for key, val in kwargs.items()])
+            self.view + "?" + "&".join([f"{key}={val}" for key, val in kwargs.items()])
         )
 
-    # def test_user_not_logged_in(self):
-    #     response = self.client.get(self.view)
-    #     self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-    #
-    # def test_user_has_no_view_permissions(self):
-    #     self._login()
-    #     response = self.client.get(self.view)
-    #     self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-    #
-    # def test_user_has_view_permissions(self):
-    #     self._login(self.view_permissions)
-    #     response = self.client.get(self.view)
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     queryset = OrderItem.objects.all()
-    #
-    #     # need to provide a request in the serializer context to produce absolute url for image field
-    #     expected_response = OrderItemListSerializer(
-    #         queryset, many=True, context={"request": response.wsgi_request}
-    #     ).data
-    #     data = response.json()
-    #
-    #     self.assertEqual(expected_response, data["results"])
-    #
-    # def test_order_items_get_success(self):
-    #     self._login(self.view_permissions)
-    #
-    #     response = self.client.get(self.view)
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #
-    #     queryset = OrderItem.objects.all()
-    #     expected_response = OrderItemListSerializer(
-    #         queryset, many=True, context={"request": response.wsgi_request}
-    #     ).data
-    #     data = response.json()
-    #
-    #     self.assertEqual(expected_response, data["results"])
+    def test_user_not_logged_in(self):
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
-    def test_team_id_filter(self):
+    def test_user_has_no_view_permissions(self):
+        self._login()
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_user_has_view_permissions(self):
+        self._login(self.view_permissions)
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        queryset = OrderItem.objects.all()
+
+        # need to provide a request in the serializer context to produce absolute url for image field
+        expected_response = OrderItemListSerializer(
+            queryset, many=True, context={"request": response.wsgi_request}
+        ).data
+        data = response.json()
+
+        self.assertEqual(expected_response, data["results"])
+
+    def test_order_items_get_success(self):
         self._login(self.view_permissions)
 
-        url = self._build_filter_url(team_code="ABCDE")
-
-        response = self.client.get(url)
-        response
+        response = self.client.get(self.view)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        data = response.json()
-        results = data["results"]
-        print(1)
 
-        returned_ids = [res["id"] for res in results]
-        self.assertCountEqual(returned_ids, [self.order.id, self.order_2.id])
+        queryset = OrderItem.objects.all()
+        expected_response = OrderItemListSerializer(
+            queryset, many=True, context={"request": response.wsgi_request}
+        ).data
+        data = response.json()
+
+        self.assertEqual(expected_response, data["results"])
 
     def test_team_code_filter(self):
         self._login(self.view_permissions)
@@ -782,51 +768,23 @@ class OrderItemListViewGetTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.json()
         results = data["results"]
-
         returned_ids = [res["id"] for res in results]
-        self.assertCountEqual(returned_ids, [self.order_3.id, self.order_4.id])
-
-    def test_status_filter(self):
-        self._login(self.view_permissions)
-
-        url = self._build_filter_url(status="Cart")
-
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        data = response.json()
-        results = data["results"]
-
-        returned_ids = [res["id"] for res in results]
-        self.assertCountEqual(returned_ids, [self.order.id])
-
-    def test_created_at_ordering_ascending(self):
-        self._login(self.view_permissions)
-
-        url = self._build_filter_url(ordering="created_at")
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        data = response.json()
-        results = data["results"]
-
-        returned_ids = [res["id"] for res in results]
-        self.assertEqual(
-            returned_ids,
-            [self.order.id, self.order_2.id, self.order_3.id, self.order_4.id],
+        self.assertCountEqual(
+            returned_ids, [self.order_item_5.id, self.order_item_6.id]
         )
 
-    def test_created_at_ordering_descending(self):
+    def test_order_id_filter(self):
         self._login(self.view_permissions)
 
-        url = self._build_filter_url(ordering="-created_at")
+        url = self._build_filter_url(order_id=1)
+
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.json()
         results = data["results"]
-
         returned_ids = [res["id"] for res in results]
-        self.assertEqual(
-            returned_ids,
-            [self.order_4.id, self.order_3.id, self.order_2.id, self.order.id],
+        self.assertCountEqual(
+            returned_ids, [self.order_item_1.id, self.order_item_2.id]
         )
 
     def test_search_filter(self):
@@ -839,8 +797,9 @@ class OrderItemListViewGetTestCase(SetupUserMixin, APITestCase):
         results = data["results"]
 
         returned_ids = [res["id"] for res in results]
-        self.assertCountEqual(returned_ids, [self.order_3.id, self.order_4.id])
-
+        self.assertCountEqual(
+            returned_ids, [self.order_item_5.id, self.order_item_6.id]
+        )
 
 
 class IncidentListViewPostTestCase(SetupUserMixin, APITestCase):
