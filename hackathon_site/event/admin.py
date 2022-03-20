@@ -9,7 +9,6 @@ from hardware.admin import OrderInline
 
 admin.site.unregister(User)
 
-
 class UserResource(resources.ModelResource):
     class Meta:
         model = User
@@ -18,19 +17,36 @@ class UserResource(resources.ModelResource):
             "last_name",
             "email",
             "is_active",
+            "application__id",
+            "application__review__status",
         )
         export_order = tuple(fields)
 
     def get_export_headers(self):
-        export_headers = ["First Name", "Last Name", "Email", "Account Confirmed"]
+        export_headers = ["First Name", "Last Name", "Email", "Account Confirmed", "Application ID", "Review Status"]
         return export_headers
 
 
 @admin.register(User)
 class EnhancedUser(ExportMixin, UserAdmin):
+    list_display = UserAdmin.list_display + ("is_active", "get_application_status", "get_review_status")
     resource_class = UserResource
-    list_display = UserAdmin.list_display + ("is_active",)
 
+    def get_application_status(self, obj):
+        return "Applied" if obj.application.id is not None else "Not Applied"
+
+    get_application_status.short_description = "Application Status"
+
+    def get_review_status(self, obj):
+        return obj.application.review.status
+
+    get_review_status.short_description = "Review Status"
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related("application", "application__review")
+
+    def get_export_queryset(self, request):
+        return super().get_queryset(request).select_related("application", "application__review")
 
 @admin.register(EventTeam)
 class EventTeamAdmin(admin.ModelAdmin):
