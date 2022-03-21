@@ -1,11 +1,11 @@
 import store, { makeStore, RootState } from "slices/store";
 import {
     teamReducerName,
-    teamSelectors,
     teamSliceSelector,
     isLoadingSelector,
     initialState,
     getCurrentTeam,
+    teamSelector,
 } from "slices/event/teamSlice";
 import { waitFor } from "testing/utils";
 import { mockTeam } from "testing/mockData";
@@ -29,7 +29,7 @@ describe("Selectors", () => {
         expect(teamSliceSelector(mockState)).toEqual(mockState[teamReducerName]);
     });
 
-    test("isLoadingSelector", () => {
+    test("isLoading Selector", () => {
         const loadingTrueState = {
             ...mockState,
             [teamReducerName]: {
@@ -47,6 +47,18 @@ describe("Selectors", () => {
         expect(isLoadingSelector(loadingTrueState)).toEqual(true);
         expect(isLoadingSelector(loadingFalseState)).toEqual(false);
     });
+
+    test("teamSelector returns the team", () => {
+        const teamState = {
+            ...mockState,
+            [teamReducerName]: {
+                ...initialState,
+                isLoading: false,
+                team: mockTeam,
+            },
+        };
+        expect(teamSelector(teamState)).toEqual(mockTeam);
+    });
 });
 
 describe("getCurrentTeam action", () => {
@@ -58,7 +70,7 @@ describe("getCurrentTeam action", () => {
         await store.dispatch(getCurrentTeam());
         await waitFor(() => {
             expect(mockedGet).toHaveBeenCalledWith("/api/event/teams/team/");
-            expect(teamSelectors.selectById(store.getState(), 1)).toEqual(mockTeam);
+            expect(store.getState()[teamReducerName].team).toEqual(mockTeam);
         });
     });
 });
