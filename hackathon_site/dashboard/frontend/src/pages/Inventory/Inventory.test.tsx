@@ -112,12 +112,23 @@ describe("Inventory Page", () => {
         expect(getByText(`${mockHardware.length} results`)).toBeInTheDocument();
     });
 
-    it("Displays a message when no items are found", () => {
+    it("Displays a message when no items are found", async () => {
+        // Mock hardware api response
+        const hardwareApiResponse = makeMockApiListResponse([]);
+        const categoryApiResponse = makeMockApiListResponse(mockCategories);
+
+        when(mockedGet)
+            .calledWith(hardwareUri, {})
+            .mockResolvedValue(hardwareApiResponse);
+        when(mockedGet)
+            .calledWith(categoriesUri, {})
+            .mockResolvedValue(categoryApiResponse);
+
         const { getByText, queryByTestId } = render(<Inventory />);
 
         expect(queryByTestId("inventoryCountDivider")).not.toBeInTheDocument();
         expect(getByText(/loading/i)).toBeInTheDocument();
-        waitFor(() => {
+        await waitFor(() => {
             expect(getByText(/no items found/i)).toBeInTheDocument();
         });
     });
