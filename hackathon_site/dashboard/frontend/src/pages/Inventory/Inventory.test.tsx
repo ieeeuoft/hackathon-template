@@ -116,7 +116,10 @@ describe("Inventory Page", () => {
         const { getByText, queryByTestId } = render(<Inventory />);
 
         expect(queryByTestId("inventoryCountDivider")).not.toBeInTheDocument();
-        expect(getByText(/no items found/i)).toBeInTheDocument();
+        expect(getByText(/loading/i)).toBeInTheDocument();
+        waitFor(() => {
+            expect(getByText(/no items found/i)).toBeInTheDocument();
+        });
     });
 
     it("Shows product overview when hardware item is clicked", async () => {
