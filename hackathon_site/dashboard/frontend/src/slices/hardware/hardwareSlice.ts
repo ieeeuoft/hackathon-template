@@ -138,7 +138,7 @@ const hardwareSlice = createSlice({
 
             state.filters = {};
 
-            if (payload?.saveSearch) {
+            if (payload?.saveSearch && search) {
                 state.filters.search = search;
             }
         },
