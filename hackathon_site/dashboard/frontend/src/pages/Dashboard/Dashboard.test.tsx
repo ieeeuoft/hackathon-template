@@ -84,7 +84,6 @@ it("Opens Product Overview with the correct hardware information", async () => {
             expect(getByText(hardware.model_number)).toBeInTheDocument();
             expect(getByText(hardware.manufacturer)).toBeInTheDocument();
             expect(getByText(hardware.notes)).toBeInTheDocument();
-            //
         });
     }
 });

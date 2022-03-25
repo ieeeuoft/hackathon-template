@@ -19,16 +19,15 @@ import { getCategories } from "slices/hardware/categorySlice";
 import {
     getCurrentTeam,
     isLoadingSelector,
-    teamSelector,
+    teamCodeSelector,
+    teamMemberNamesSelector,
 } from "slices/event/teamSlice";
 import LinearProgress from "@material-ui/core/LinearProgress";
 
 const Dashboard = () => {
     const dispatch = useDispatch();
-    const currentTeam = useSelector(teamSelector);
-    const memberNames = currentTeam?.profiles.flatMap(
-        (member) => member.user.first_name + " " + member.user.last_name
-    );
+    const memberNames = useSelector(teamMemberNamesSelector);
+    const teamCode = useSelector(teamCodeSelector);
     const isTeamLoading = useSelector(isLoadingSelector);
 
     useEffect(() => {
@@ -77,7 +76,8 @@ const Dashboard = () => {
                         >
                             <TeamCard
                                 members={memberNames}
-                                teamCode={currentTeam?.team_code}
+                                teamCode={teamCode}
+                                handleEditTeam={() => alert("Editing Team")}
                             />
                         </Grid>
                         {cardItems.map(({ title, content }, i) => (
