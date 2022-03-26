@@ -81,6 +81,34 @@ class OrderItemInOrderSerializer(serializers.ModelSerializer):
         )
 
 
+class OrderItemListSerializer(serializers.ModelSerializer):
+    team_code = serializers.SerializerMethodField()
+    order_id = serializers.SerializerMethodField()
+
+    created_at = serializers.CharField(source="order.created_at")
+    updated_at = serializers.CharField(source="order.updated_at")
+
+    class Meta:
+        model = OrderItem
+        fields = (
+            "id",
+            "order_id",
+            "team_code",
+            "created_at",
+            "updated_at",
+            "part_returned_health",
+            "hardware",
+        )
+
+    @staticmethod
+    def get_team_code(obj: OrderItem):
+        return obj.order.team.team_code
+
+    @staticmethod
+    def get_order_id(obj: OrderItem):
+        return obj.order.id
+
+
 class OrderListSerializer(serializers.ModelSerializer):
     items = OrderItemInOrderSerializer(many=True, read_only=True)
     team_code = serializers.SerializerMethodField()
