@@ -10,8 +10,13 @@ from rest_framework.response import Response
 from rest_framework.filters import SearchFilter, OrderingFilter
 
 from event.permissions import UserHasProfile, FullDjangoModelPermissions
-from hardware.api_filters import HardwareFilter, OrderFilter, IncidentFilter
-from hardware.models import Hardware, Category, Order, Incident
+from hardware.api_filters import (
+    HardwareFilter,
+    OrderFilter,
+    IncidentFilter,
+    OrderItemFilter,
+)
+from hardware.models import Hardware, Category, Order, Incident, OrderItem
 
 from hardware.serializers import (
     CategorySerializer,
@@ -22,6 +27,7 @@ from hardware.serializers import (
     OrderCreateSerializer,
     OrderCreateResponseSerializer,
     OrderChangeSerializer,
+    OrderItemListSerializer,
 )
 
 logger = logging.getLogger(__name__)
@@ -74,6 +80,18 @@ class IncidentListView(
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
+
+
+class OrderItemListView(mixins.ListModelMixin, generics.GenericAPIView):
+    search_fields = ("order__team__team_code", "order__id")
+    filter_backends = (filters.DjangoFilterBackend, SearchFilter)
+    filterset_class = OrderItemFilter
+    permission_classes = [FullDjangoModelPermissions]
+    queryset = OrderItem.objects.all().select_related("order__team")
+    serializer_class = OrderItemListSerializer
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
 
 
 class CategoryListView(mixins.ListModelMixin, generics.GenericAPIView):
