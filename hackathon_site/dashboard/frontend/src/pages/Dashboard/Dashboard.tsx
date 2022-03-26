@@ -16,18 +16,11 @@ import { hackathonName } from "constants.js";
 import { useDispatch, useSelector } from "react-redux";
 import { getHardwareWithFilters, setFilters } from "slices/hardware/hardwareSlice";
 import { getCategories } from "slices/hardware/categorySlice";
-import {
-    getCurrentTeam,
-    isLoadingSelector,
-    teamCodeSelector,
-    teamMemberNamesSelector,
-} from "slices/event/teamSlice";
+import { getCurrentTeam, isLoadingSelector } from "slices/event/teamSlice";
 import LinearProgress from "@material-ui/core/LinearProgress";
 
 const Dashboard = () => {
     const dispatch = useDispatch();
-    const memberNames = useSelector(teamMemberNamesSelector);
-    const teamCode = useSelector(teamCodeSelector);
     const isTeamLoading = useSelector(isLoadingSelector);
 
     useEffect(() => {
@@ -74,11 +67,7 @@ const Dashboard = () => {
                             key={0}
                             data-testid="team"
                         >
-                            <TeamCard
-                                members={memberNames}
-                                teamCode={teamCode}
-                                handleEditTeam={() => alert("Editing Team")}
-                            />
+                            <TeamCard handleEditTeam={() => alert("Editing Team")} />
                         </Grid>
                         {cardItems.map(({ title, content }, i) => (
                             <Grid
