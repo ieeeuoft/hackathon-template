@@ -17,8 +17,13 @@ import {
     setFilters,
 } from "slices/hardware/hardwareSlice";
 import { RootState } from "slices/store";
-import { cartSelectors, cartTotalSelector } from "slices/hardware/cartSlice";
+import {
+    cartSelectors,
+    cartTotalSelector,
+    errorSelector,
+} from "slices/hardware/cartSlice";
 import { getCategories } from "slices/hardware/categorySlice";
+import CartErrorBox from "components/cart/CartErrorBox";
 
 const Cart = () => {
     const cartItems = useSelector(cartSelectors.selectAll);
@@ -64,6 +69,7 @@ const Cart = () => {
         <>
             <Header />
             <Typography variant="h1">Cart</Typography>
+            <CartErrorBox />
             <Grid direction="row" spacing={6} className={styles.cart} container>
                 <Grid xs={12} sm={12} md={7} item>
                     {isHardwareLoading ? (

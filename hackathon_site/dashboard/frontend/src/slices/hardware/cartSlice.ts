@@ -11,16 +11,22 @@ import { CartItem } from "api/types";
 import { post } from "api/api";
 import { push } from "connected-react-router";
 import { displaySnackbar } from "slices/ui/uiSlice";
-import { AxiosResponse } from "axios";
+
+type fulfillmentError = { hardware_id: number; message: string };
 
 export interface CartExtraState {
     isLoading: boolean;
-    error: string | null;
+    error: string | string[] | null;
+    fulfillmentError: {
+        order_id: number;
+        errors: fulfillmentError[];
+    } | null;
 }
 
 const extraState: CartExtraState = {
     isLoading: false,
     error: null,
+    fulfillmentError: null,
 };
 
 const cartAdapter = createEntityAdapter<CartItem>({
@@ -43,11 +49,11 @@ export interface OrderResponse {
         hardware_id: number;
         quantity_fulfilled: number;
     }[];
-    errors: { hardware_id: number; message: string }[];
+    errors: fulfillmentError[];
 }
 
 export const submitOrder = createAsyncThunk<
-    AxiosResponse<OrderResponse>,
+    OrderResponse,
     void,
     { state: RootState; rejectValue: RejectValue; dispatch: AppDispatch }
 >(
@@ -61,29 +67,47 @@ export const submitOrder = createAsyncThunk<
             }));
 
         try {
-            const response = await post("/api/hardware/orders/", {
+            const response = await post<OrderResponse>("/api/hardware/orders/", {
                 hardware: cartItems,
             });
             dispatch(push("/"));
-            dispatch(
-                displaySnackbar({
-                    message: `Order has been submitted.`,
-                    options: {
-                        variant: "success",
-                    },
-                })
-            );
+            if (response.data?.errors?.length > 0) {
+                dispatch(
+                    displaySnackbar({
+                        message: "Order has been submitted with modifications",
+                        options: {
+                            variant: "info",
+                        },
+                    })
+                );
+            } else {
+                dispatch(
+                    displaySnackbar({
+                        message: `Order has been submitted.`,
+                        options: {
+                            variant: "success",
+                        },
+                    })
+                );
+            }
             return response.data;
         } catch (e: any) {
+            // order reached quantity limits
+            const errorData = e.response?.data?.non_field_errors;
+
             dispatch(
                 displaySnackbar({
-                    message: `Failed to fetch hardware data: Error ${e.response.status}`,
+                    message: `Failed to submit order: ${
+                        errorData
+                            ? "Hardware and/or Category limits reached"
+                            : `Error ${e.response.status}`
+                    }`,
                     options: { variant: "error" },
                 })
             );
             return rejectWithValue({
                 status: e.response.status,
-                message: e.response.data,
+                message: errorData ?? e.response.message,
             });
         }
     }
@@ -104,27 +128,43 @@ const cartSlice = createSlice({
             } else {
                 cartAdapter.addOne(state, payload);
             }
+            state.fulfillmentError = null;
+            state.error = null;
         },
         removeFromCart: (state, { payload }: PayloadAction<number>) => {
             cartAdapter.removeOne(state, payload);
+            state.error = null;
+            state.fulfillmentError = null;
         },
         updateCart: (state, { payload }: PayloadAction<Update<CartItem>>) => {
             cartAdapter.updateOne(state, payload);
+            state.error = null;
+            state.fulfillmentError = null;
         },
     },
     extraReducers: (builder) => {
         builder.addCase(submitOrder.pending, (state) => {
             state.isLoading = true;
             state.error = null;
+            state.fulfillmentError = null;
         });
-        builder.addCase(submitOrder.fulfilled, (state) => {
+        builder.addCase(submitOrder.fulfilled, (state, { payload }) => {
             state.isLoading = false;
             state.error = null;
             cartAdapter.removeAll(state);
+            if (payload?.errors?.length > 0) {
+                state.fulfillmentError = {
+                    order_id: payload.order_id,
+                    errors: payload.errors,
+                };
+            }
         });
-        builder.addCase(submitOrder.rejected, (state, payload) => {
+        builder.addCase(submitOrder.rejected, (state, { payload }) => {
             state.isLoading = false;
-            state.error = payload.error.message!;
+            state.error =
+                payload === undefined
+                    ? "An internal server error has occurred, please inform hackathon organizers if this continues to happen."
+                    : payload.message;
         });
     },
 });
@@ -146,4 +186,14 @@ export const isLoadingSelector = createSelector(
 export const cartTotalSelector = createSelector(
     [cartSelectors.selectAll],
     (cartItems) => cartItems.reduce((accum, item) => accum + item.quantity, 0)
+);
+
+export const errorSelector = createSelector(
+    [cartSliceSelector],
+    (cartSlice) => cartSlice.error
+);
+
+export const fulfillmentErrorSelector = createSelector(
+    [cartSliceSelector],
+    (cartSlice) => cartSlice.fulfillmentError
 );
