@@ -3,9 +3,9 @@ import ProductOverview, { EnhancedAddToCartForm } from "./ProductOverview";
 import { mockCartItems, mockCategories, mockHardware } from "testing/mockData";
 import { render, fireEvent, waitFor, makeStoreWithEntities } from "testing/utils";
 import { makeStore } from "slices/store";
-import { addToCart, cartSelectors } from "slices/hardware/cartSlice";
+import { cartSelectors } from "slices/hardware/cartSlice";
 import { SnackbarProvider } from "notistack";
-import SnackbarNotifier from "../../general/SnackbarNotifier/SnackbarNotifier";
+import SnackbarNotifier from "components/general/SnackbarNotifier/SnackbarNotifier";
 
 describe("<ProductOverview />", () => {
     test("all 3 parts of the product overview is there", () => {
@@ -165,7 +165,7 @@ describe("<EnhancedAddToCartForm />", () => {
     test("button and select are disabled if quantityAvailable is 0", () => {
         const { getByText, getByLabelText } = render(
             <EnhancedAddToCartForm
-                quantityAvailable={0}
+                quantityRemaining={0}
                 maxPerTeam={null}
                 hardwareId={1}
                 name="Arduino"
@@ -182,7 +182,7 @@ describe("<EnhancedAddToCartForm />", () => {
     test("button and select are disabled if minimum constraint is 0", () => {
         const { getByText, getByLabelText } = render(
             <EnhancedAddToCartForm
-                quantityAvailable={3}
+                quantityRemaining={3}
                 maxPerTeam={0}
                 hardwareId={1}
                 name="Arduino"
@@ -199,7 +199,7 @@ describe("<EnhancedAddToCartForm />", () => {
     test("dropdown values are minimum between quantityAvailable and max per team", () => {
         const { queryByText, getByText, getByRole } = render(
             <EnhancedAddToCartForm
-                quantityAvailable={3}
+                quantityRemaining={3}
                 maxPerTeam={2}
                 hardwareId={1}
                 name="Arduino"
@@ -215,7 +215,7 @@ describe("<EnhancedAddToCartForm />", () => {
     test("dropdown value defaults to quantityAvailable when maxPerTeam is null", () => {
         const { getByText, getByRole } = render(
             <EnhancedAddToCartForm
-                quantityAvailable={3}
+                quantityRemaining={3}
                 maxPerTeam={null}
                 hardwareId={1}
                 name="Arduino"

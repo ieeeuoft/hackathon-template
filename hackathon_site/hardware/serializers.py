@@ -81,6 +81,34 @@ class OrderItemInOrderSerializer(serializers.ModelSerializer):
         )
 
 
+class OrderItemListSerializer(serializers.ModelSerializer):
+    team_code = serializers.SerializerMethodField()
+    order_id = serializers.SerializerMethodField()
+
+    created_at = serializers.CharField(source="order.created_at")
+    updated_at = serializers.CharField(source="order.updated_at")
+
+    class Meta:
+        model = OrderItem
+        fields = (
+            "id",
+            "order_id",
+            "team_code",
+            "created_at",
+            "updated_at",
+            "part_returned_health",
+            "hardware",
+        )
+
+    @staticmethod
+    def get_team_code(obj: OrderItem):
+        return obj.order.team.team_code
+
+    @staticmethod
+    def get_order_id(obj: OrderItem):
+        return obj.order.id
+
+
 class OrderListSerializer(serializers.ModelSerializer):
     items = OrderItemInOrderSerializer(many=True, read_only=True)
     team_code = serializers.SerializerMethodField()
@@ -197,7 +225,11 @@ class OrderCreateSerializer(serializers.Serializer):
             team_hardware = team_unreturned_orders.get(id=hardware.id)
             team_hardware_count = getattr(team_hardware, "past_order_count", 0)
             if (team_hardware_count + requested_quantity) > hardware.max_per_team:
-                error_messages.append("Hardware {} limit reached".format(hardware.name))
+                error_messages.append(
+                    "Maximum number of items for Hardware {} is reached (limit of {} per team)".format(
+                        hardware.name, hardware.max_per_team
+                    )
+                )
             for category in hardware.categories.all():
                 category_counts[category] = (
                     category_counts.get(category, 0)
@@ -206,7 +238,11 @@ class OrderCreateSerializer(serializers.Serializer):
                 )
         for (category, count) in category_counts.items():
             if count > category.max_per_team:
-                error_messages.append("Category {} limit reached".format(category.name))
+                error_messages.append(
+                    "Maximum number of items for the Category {} is reached (limit of {} items per team)".format(
+                        category.name, category.max_per_team
+                    )
+                )
         if error_messages:
             raise serializers.ValidationError(error_messages)
         return data
