@@ -15,20 +15,19 @@ export const TeamCard = ({ handleEditTeam }: TeamProps) => {
     const members = useSelector(teamMemberNamesSelector);
     const teamCode = useSelector(teamCodeSelector);
 
-    const title = teamCode === null ? "Team" : "Team " + teamCode;
+    const title = teamCode === null ? "No Team" : "Team " + teamCode;
     // waiting for the team store
-    if (!members) {
-        return null;
-    }
     return (
         <TitledPaper title={title}>
-            {members?.map((member, i) => (
-                <Container className={styles.name} key={i}>
-                    <Typography variant="body2" noWrap>
-                        {member}
-                    </Typography>
-                </Container>
-            ))}
+            {members?.length
+                ? members?.map((member, i) => (
+                      <Container className={styles.name} key={i}>
+                          <Typography variant="body2" noWrap>
+                              {member}
+                          </Typography>
+                      </Container>
+                  ))
+                : null}
             <Container className={styles.lastRow}>
                 <Button
                     color="primary"

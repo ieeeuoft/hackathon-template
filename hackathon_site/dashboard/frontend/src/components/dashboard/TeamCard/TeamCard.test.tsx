@@ -31,4 +31,17 @@ describe("TeamCard", () => {
             expect(handleEditTeamSpy).toHaveBeenCalled();
         });
     });
+    test("prints No Team if user does not have a team", async () => {
+        const store = makeStoreWithEntities({});
+        const { getByText, getByTestId } = render(<TeamCard />, {
+            store,
+        });
+        await waitFor(() => {
+            expect(getByTestId("teamCardBtn")).toBeInTheDocument();
+        });
+
+        await waitFor(() => {
+            expect(getByText(/No Team/i)).toBeInTheDocument();
+        });
+    });
 });

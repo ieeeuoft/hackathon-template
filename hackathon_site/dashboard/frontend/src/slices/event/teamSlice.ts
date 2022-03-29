@@ -96,9 +96,8 @@ export const teamSelector = createSelector(
     (teamSlice) => teamSlice.team
 );
 
-export const teamCodeSelector = createSelector(
-    [teamSliceSelector],
-    (teamSlice) => teamSlice.team?.team_code
+export const teamCodeSelector = createSelector([teamSliceSelector], (teamSlice) =>
+    teamSlice.team ? teamSlice.team.team_code : null
 );
 
 export const teamMemberNamesSelector = createSelector(
