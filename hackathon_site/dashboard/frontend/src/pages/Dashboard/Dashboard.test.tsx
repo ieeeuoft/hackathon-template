@@ -91,22 +91,22 @@ describe("Dashboard Page", () => {
             });
         }
     });
-});
 
-it("get info on the current team", async () => {
-    const response = { data: mockTeam } as AxiosResponse<Team>;
-    when(mockedGet)
-        .calledWith(teamUri)
-        .mockResolvedValue(promiseResolveWithDelay(response, 500));
+    it("get info on the current team", async () => {
+        const response = { data: mockTeam } as AxiosResponse<Team>;
+        when(mockedGet)
+            .calledWith(teamUri)
+            .mockResolvedValue(promiseResolveWithDelay(response, 500));
 
-    const { getByText, getByTestId, queryByTestId } = render(<Dashboard />);
-    await waitFor(() => {
-        expect(getByTestId("team-linear-progress")).toBeInTheDocument();
-    });
-    await waitFor(() => {
-        expect(queryByTestId("team-linear-progress")).not.toBeInTheDocument();
-        expect(getByText(/foo bar/i)).toBeInTheDocument();
-        expect(getByText(/A48E5/i)).toBeInTheDocument();
-        expect(mockedGet).toHaveBeenCalledWith("/api/event/teams/team/");
+        const { getByText, getByTestId, queryByTestId } = render(<Dashboard />);
+        await waitFor(() => {
+            expect(getByTestId("team-linear-progress")).toBeInTheDocument();
+        });
+        await waitFor(() => {
+            expect(queryByTestId("team-linear-progress")).not.toBeInTheDocument();
+            expect(getByText(/foo bar/i)).toBeInTheDocument();
+            expect(getByText(/A48E5/i)).toBeInTheDocument();
+            expect(mockedGet).toHaveBeenCalledWith("/api/event/teams/team/");
+        });
     });
 });
