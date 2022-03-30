@@ -38,7 +38,7 @@ class SignUpViewTestCase(SetupUserMixin, TestCase):
         missing error is the simplest
         """
         response = self.client.post(self.view, {})
-        self.assertContains(response, "This field is required", count=5)
+        self.assertContains(response, "This field is required", count=6)
 
     def test_valid_submit_redirect(self):
         data = {
@@ -47,6 +47,7 @@ class SignUpViewTestCase(SetupUserMixin, TestCase):
             "last_name": "Bar",
             "password1": "abcdef456",
             "password2": "abcdef456",
+            "g-recaptcha-response": "PASSED",
         }
         response = self.client.post(self.view, data)
         self.assertRedirects(response, reverse("registration:signup_complete"))
@@ -60,6 +61,7 @@ class SignUpViewTestCase(SetupUserMixin, TestCase):
             "last_name": "Bar",
             "password1": "abcdef456",
             "password2": "abcdef456",
+            "g-recaptcha-response": "PASSED",
         }
         self.client.post(self.view, data)
         self.assertTrue(

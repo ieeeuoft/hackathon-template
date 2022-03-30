@@ -3,6 +3,8 @@ import { ConnectedRouter } from "connected-react-router";
 import { Route, Redirect, Switch } from "react-router-dom";
 import { createTheme, StylesProvider, ThemeProvider } from "@material-ui/core/styles";
 import { Provider as ReduxProvider } from "react-redux";
+import { persistStore } from "redux-persist";
+import { PersistGate } from "redux-persist/integration/react";
 import { SnackbarProvider } from "notistack";
 
 import styles from "assets/abstracts/_exports.scss";
@@ -41,6 +43,8 @@ const theme = createTheme({
     palette: makePalette(),
 });
 
+const persistor = persistStore(store);
+
 const UnconnectedApp = () => {
     return (
         <div className="App">
@@ -77,16 +81,18 @@ const UnconnectedApp = () => {
 
 const ConnectedApp = () => (
     <ReduxProvider store={store}>
-        <StylesProvider injectFirst>
-            <ThemeProvider theme={theme}>
-                <SnackbarProvider>
-                    <SnackbarNotifier />
-                    <ConnectedRouter history={history}>
-                        <UnconnectedApp />
-                    </ConnectedRouter>
-                </SnackbarProvider>
-            </ThemeProvider>
-        </StylesProvider>
+        <PersistGate persistor={persistor}>
+            <StylesProvider injectFirst>
+                <ThemeProvider theme={theme}>
+                    <SnackbarProvider>
+                        <SnackbarNotifier />
+                        <ConnectedRouter history={history}>
+                            <UnconnectedApp />
+                        </ConnectedRouter>
+                    </SnackbarProvider>
+                </ThemeProvider>
+            </StylesProvider>
+        </PersistGate>
     </ReduxProvider>
 );
 
