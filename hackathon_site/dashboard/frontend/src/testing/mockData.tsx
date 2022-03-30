@@ -337,27 +337,11 @@ export const mockHardware: Hardware[] = [
     },
 ];
 
-
-
 export const mockCartItems: CartItem[] = [
     { hardware_id: 1, quantity: 3 },
     { hardware_id: 2, quantity: 1 },
     { hardware_id: 3, quantity: 2 },
 ];
-
-export const mockOrder = {
-    id: 1,
-    items: [{
-        id: 2,
-        hardware_id: 3,
-        part_returned_health: "OK"
-    }],
-    team_id: number,
-    team_code: string,
-    status: OrderStatus,
-    created_at: string,
-    updated_at: string;
-}
 
 export const mockPendingOrders: Order[] = [
     {
