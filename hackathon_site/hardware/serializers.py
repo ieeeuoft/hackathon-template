@@ -225,7 +225,11 @@ class OrderCreateSerializer(serializers.Serializer):
             team_hardware = team_unreturned_orders.get(id=hardware.id)
             team_hardware_count = getattr(team_hardware, "past_order_count", 0)
             if (team_hardware_count + requested_quantity) > hardware.max_per_team:
-                error_messages.append("Hardware {} limit reached".format(hardware.name))
+                error_messages.append(
+                    "Maximum number of items for Hardware {} is reached (limit of {} per team)".format(
+                        hardware.name, hardware.max_per_team
+                    )
+                )
             for category in hardware.categories.all():
                 category_counts[category] = (
                     category_counts.get(category, 0)
@@ -234,7 +238,11 @@ class OrderCreateSerializer(serializers.Serializer):
                 )
         for (category, count) in category_counts.items():
             if count > category.max_per_team:
-                error_messages.append("Category {} limit reached".format(category.name))
+                error_messages.append(
+                    "Maximum number of items for the Category {} is reached (limit of {} items per team)".format(
+                        category.name, category.max_per_team
+                    )
+                )
         if error_messages:
             raise serializers.ValidationError(error_messages)
         return data
