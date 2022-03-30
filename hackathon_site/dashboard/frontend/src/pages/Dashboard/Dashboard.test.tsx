@@ -9,6 +9,7 @@ import {
     fireEvent,
     within,
     promiseResolveWithDelay,
+    makeStoreWithEntities,
 } from "testing/utils";
 import {
     cardItems,
@@ -109,20 +110,22 @@ describe("Dashboard Page", () => {
             expect(mockedGet).toHaveBeenCalledWith("/api/event/teams/team/");
         });
     });
-});
 
-it("Renders order info box when there are fulfillment errors", () => {
-    const store = makeStoreWithEntities({
-        cartState: {
-            fulfillmentError: {
-                order_id: 1,
-                errors: [{ hardware_id: 1, message: "No sensors left in inventory" }],
+    it("Renders order info box when there are fulfillment errors", () => {
+        const store = makeStoreWithEntities({
+            cartState: {
+                fulfillmentError: {
+                    order_id: 1,
+                    errors: [
+                        { hardware_id: 1, message: "No sensors left in inventory" },
+                    ],
+                },
             },
-        },
-        cartItems: [],
-    });
-    const { getByText } = render(<Dashboard />, { store });
+            cartItems: [],
+        });
+        const { getByText } = render(<Dashboard />, { store });
 
-    getByText(/there were modifications made to order 1/i);
-    getByText(/no sensors left in inventory/i);
+        getByText(/there were modifications made to order 1/i);
+        getByText(/no sensors left in inventory/i);
+    });
 });

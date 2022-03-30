@@ -85,6 +85,7 @@ const Dashboard = () => {
                             </Grid>
                         ))}
                     </Grid>
+                )}
                 {orderFulfillmentError && (
                     <Alert severity="info" style={{ margin: "15px 0px" }}>
                         <AlertTitle>
