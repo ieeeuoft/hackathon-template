@@ -73,7 +73,7 @@ class Hardware(models.Model):
             setattr(self, field_name, getattr(db_instance, field_name))
 
     def __str__(self):
-        return self.name
+        return f"{self.name} | {self.manufacturer}"
 
 
 class OrderItem(models.Model):
@@ -93,6 +93,9 @@ class OrderItem(models.Model):
         max_length=64, choices=HEALTH_CHOICES, null=True, blank=True
     )
 
+    def __str__(self):
+        return f"{self.id} | {self.hardware.name} | Team {self.order.team.team_code}"
+
 
 class Order(models.Model):
     STATUS_CHOICES = [
@@ -107,6 +110,7 @@ class Order(models.Model):
     status = models.CharField(
         max_length=64, choices=STATUS_CHOICES, default="Submitted"
     )
+    request = models.JSONField(null=False)
 
     created_at = models.DateTimeField(auto_now_add=True, null=False)
     updated_at = models.DateTimeField(auto_now=True, null=False)

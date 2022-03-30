@@ -2,7 +2,6 @@ import React from "react";
 
 import {
     makeMockApiListResponse,
-    makeStoreWithEntities,
     render,
     waitFor,
     when,
@@ -29,7 +28,7 @@ describe("Inventory Page", () => {
         render(<Inventory />);
 
         expect(get).toHaveBeenCalledWith(hardwareUri, {});
-        expect(get).toHaveBeenCalledWith(categoriesUri);
+        expect(get).toHaveBeenCalledWith(categoriesUri, {});
     });
 
     it("Has necessary page elements", async () => {
@@ -42,7 +41,7 @@ describe("Inventory Page", () => {
             .calledWith(hardwareUri, {})
             .mockResolvedValue(hardwareApiResponse);
         when(mockedGet)
-            .calledWith(categoriesUri)
+            .calledWith(categoriesUri, {})
             .mockResolvedValue(categoryApiResponse);
 
         const { getByText } = render(<Inventory />);
@@ -70,7 +69,7 @@ describe("Inventory Page", () => {
             .calledWith(hardwareUri, {})
             .mockResolvedValue(hardwareApiResponse);
         when(mockedGet)
-            .calledWith(categoriesUri)
+            .calledWith(categoriesUri, {})
             .mockResolvedValue(categoryApiResponse);
 
         const { getByText, getByTestId } = render(<Inventory />);
@@ -96,7 +95,7 @@ describe("Inventory Page", () => {
             .calledWith(hardwareUri, {})
             .mockResolvedValue(hardwareApiResponse);
         when(mockedGet)
-            .calledWith(categoriesUri)
+            .calledWith(categoriesUri, {})
             .mockResolvedValue(categoryApiResponse);
 
         const { getByText, queryByText, getByTestId } = render(<Inventory />);
@@ -128,7 +127,7 @@ describe("Inventory Page", () => {
             .calledWith(hardwareUri, {})
             .mockResolvedValue(hardwareApiResponse);
         when(mockedGet)
-            .calledWith(categoriesUri)
+            .calledWith(categoriesUri, {})
             .mockResolvedValue(categoryApiResponse);
 
         const { getByText } = render(<Inventory />);
@@ -182,7 +181,7 @@ describe("Inventory Page", () => {
             .calledWith(path, filters)
             .mockResolvedValue(hardwareNextApiResponse);
         when(mockedGet)
-            .calledWith(categoriesUri)
+            .calledWith(categoriesUri, {})
             .mockResolvedValue(categoryApiResponse);
 
         const { getByText, queryByText } = render(<Inventory />);
@@ -222,7 +221,7 @@ describe("Inventory Page", () => {
             .mockResolvedValueOnce(hardwareApiResponse)
             .mockResolvedValue(hardwareApiResponseAfterRefresh);
         when(mockedGet)
-            .calledWith(categoriesUri)
+            .calledWith(categoriesUri, {})
             .mockResolvedValue(categoryApiResponse);
 
         const { getByText, getByTestId, queryByText } = render(<Inventory />);
@@ -267,7 +266,7 @@ describe("Inventory Page", () => {
             .calledWith(path, filters)
             .mockReturnValue(promiseResolveWithDelay(hardwareNextApiResponse, 500));
         when(mockedGet)
-            .calledWith(categoriesUri)
+            .calledWith(categoriesUri, {})
             .mockResolvedValue(categoryApiResponse);
 
         const { getByText, queryByText, queryByTestId } = render(<Inventory />);

@@ -10,13 +10,20 @@ import {
     within,
 } from "testing/utils";
 import { mockCartItems, mockHardware } from "testing/mockData";
-import { get } from "api/api";
+import { get, post } from "api/api";
 
 import Cart from "pages/Cart/Cart";
 import { Hardware } from "api/types";
-import { addToCart } from "slices/hardware/cartSlice";
+import { addToCart, cartSelectors, OrderResponse } from "slices/hardware/cartSlice";
+import { AxiosResponse } from "axios";
 
-jest.mock("api/api");
+jest.mock("api/api", () => ({
+    ...jest.requireActual("api/api"),
+    get: jest.fn(),
+    post: jest.fn(),
+}));
+
+const mockedPost = post as jest.MockedFunction<typeof post>;
 const mockedGet = get as jest.MockedFunction<typeof get>;
 
 describe("Cart Page", () => {
@@ -145,5 +152,89 @@ describe("Cart Page", () => {
             expect(quantityDropdown).toHaveTextContent(quantityToBeSelected);
             expect(quantityDropdown).not.toHaveTextContent("3");
         });
+    });
+
+    test("Checks for POST and updates store", async () => {
+        // checks all mock cart items
+        const orderResponse: AxiosResponse<OrderResponse> = {
+            config: {},
+            headers: {},
+            status: 200,
+            statusText: "OK",
+            data: {
+                order_id: 1,
+                hardware: [
+                    {
+                        hardware_id: 1,
+                        quantity_fulfilled: 3,
+                    },
+                    {
+                        hardware_id: 2,
+                        quantity_fulfilled: 1,
+                    },
+                    {
+                        hardware_id: 3,
+                        quantity_fulfilled: 2,
+                    },
+                ],
+                errors: [],
+            },
+        };
+        mockedPost.mockResolvedValueOnce(orderResponse);
+
+        const store = makeStoreWithEntities({
+            hardware: mockHardware,
+            cartItems: mockCartItems,
+        });
+
+        const { getByTestId, queryByTestId } = render(<Cart />, { store });
+
+        mockCartItems.forEach((cartItem) => {
+            expect(
+                getByTestId("cart-item-" + cartItem.hardware_id.toString())
+            ).toBeInTheDocument();
+        });
+
+        const submitOrderBtn = getByTestId("submit-order-button");
+        fireEvent.click(submitOrderBtn);
+
+        await waitFor(() => {
+            expect(mockedPost).toBeCalledWith("/api/hardware/orders/", {
+                hardware: [
+                    {
+                        id: 1,
+                        quantity: 3,
+                    },
+                    {
+                        id: 2,
+                        quantity: 1,
+                    },
+                    {
+                        id: 3,
+                        quantity: 2,
+                    },
+                ],
+            });
+            // Cart should be empty when the order is submitted
+            const cartItems = cartSelectors.selectAll(store.getState());
+            expect(cartItems).toEqual([]);
+
+            // test if each cart item is missing
+            mockCartItems.forEach((cartItem) => {
+                expect(
+                    queryByTestId("cart-item-" + cartItem.hardware_id.toString())
+                ).not.toBeInTheDocument();
+            });
+            expect(getByTestId("cart-quantity-total")).toHaveTextContent("0");
+        });
+    });
+
+    test("Checks if submit order button is disabled when cart is empty", async () => {
+        const store = makeStoreWithEntities({ hardware: mockHardware });
+
+        const { getByTestId } = render(<Cart />, { store });
+
+        const submitOrderBtn = getByTestId("submit-order-button");
+        expect(submitOrderBtn).toBeDisabled();
     });
 });
