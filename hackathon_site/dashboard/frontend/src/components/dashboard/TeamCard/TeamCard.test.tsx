@@ -24,8 +24,8 @@ describe("TeamCard", () => {
             expect(getByTestId("teamCardBtn")).toBeInTheDocument();
         });
 
-        const thebutton = getByText("Edit");
-        fireEvent.click(thebutton);
+        const editBtn = getByText("Edit");
+        fireEvent.click(editBtn);
 
         await waitFor(() => {
             expect(handleEditTeamSpy).toHaveBeenCalled();
