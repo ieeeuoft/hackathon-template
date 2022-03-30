@@ -29,6 +29,8 @@ import {
     initialState as cartItemInitialState,
 } from "slices/hardware/cartSlice";
 
+import { teamReducerName, TeamState } from "slices/event/teamSlice";
+
 export const withRouter = (component: React.ComponentElement<any, any>) => (
     <BrowserRouter>{component}</BrowserRouter>
 );
@@ -112,6 +114,7 @@ export interface StoreEntities {
     categories?: Category[];
     ui?: DeepPartial<UIState>;
     cartItems?: CartItem[];
+    team?: DeepPartial<TeamState>;
     cartState?: DeepPartial<CartState>;
 }
 
@@ -165,6 +168,10 @@ export const makeStoreWithEntities = (entities: StoreEntities) => {
         }
 
         preloadedState[cartReducerName] = cartItemState;
+    }
+
+    if (entities.team) {
+        preloadedState[teamReducerName] = entities.team;
     }
 
     return makeStore(preloadedState);

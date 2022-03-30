@@ -95,3 +95,15 @@ export const teamSelector = createSelector(
     [teamSliceSelector],
     (teamSlice) => teamSlice.team
 );
+
+export const teamCodeSelector = createSelector([teamSliceSelector], (teamSlice) =>
+    teamSlice.team ? teamSlice.team.team_code : null
+);
+
+export const teamMemberNamesSelector = createSelector(
+    [teamSliceSelector],
+    (currentTeam) =>
+        currentTeam.team?.profiles.flatMap(
+            (member) => member.user.first_name + " " + member.user.last_name
+        )
+);
