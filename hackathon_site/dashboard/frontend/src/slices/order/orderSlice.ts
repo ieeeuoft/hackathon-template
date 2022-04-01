@@ -1,14 +1,6 @@
-import {
-    createAsyncThunk,
-    createEntityAdapter,
-    createSelector,
-    createSlice,
-    PayloadAction,
-} from "@reduxjs/toolkit";
+import { createEntityAdapter, createSelector, createSlice } from "@reduxjs/toolkit";
 import { Order } from "api/types";
-import { get } from "api/api";
-import { RootState } from "../store";
-import { cartReducerName } from "../hardware/cartSlice";
+import { RootState } from "slices/store";
 
 interface OrderExtraState {
     isLoading: boolean;
@@ -20,11 +12,9 @@ const extraState: OrderExtraState = {
     error: null,
 };
 
-const orderAdapter = createEntityAdapter<Order>({
-    selectId: (entity) => entity.id,
-});
+const orderAdapter = createEntityAdapter<Order>();
 
-export const orderReducerName = "order";
+export const orderReducerName = "participantOrder";
 export const initialState = orderAdapter.getInitialState(extraState);
 export type OrderState = typeof initialState;
 
@@ -41,7 +31,6 @@ const orderSlice = createSlice({
 
 export const { actions, reducer } = orderSlice;
 export default reducer;
-//export const { addToCart, removeFromCart, updateCart } = actions;
 
 // Selectors
 export const orderSliceSelector = (state: RootState) => state[orderReducerName];
@@ -51,4 +40,9 @@ export const orderSelectors = orderAdapter.getSelectors(orderSliceSelector);
 export const isLoadingSelector = createSelector(
     [orderSliceSelector],
     (orderSlice) => orderSlice.isLoading
+);
+
+export const orderErrorSelector = createSelector(
+    [orderSliceSelector],
+    (orderSlice) => orderSlice.error
 );

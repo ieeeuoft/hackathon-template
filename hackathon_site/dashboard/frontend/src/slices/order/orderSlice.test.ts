@@ -1,11 +1,11 @@
 import store, { makeStore, RootState } from "slices/store";
 import {
     orderReducerName,
-    orderSelectors,
     orderSliceSelector,
     isLoadingSelector,
+    orderErrorSelector,
     initialState,
-} from "./orderSlice";
+} from "slices/order/orderSlice";
 
 const mockState: RootState = {
     ...store.getState(),
@@ -13,7 +13,7 @@ const mockState: RootState = {
 };
 
 describe("Selectors", () => {
-    test("teamSliceSelector returns the team store", () => {
+    test("orderSliceSelector returns the team store", () => {
         expect(orderSliceSelector(mockState)).toEqual(mockState[orderReducerName]);
     });
 
@@ -34,5 +34,24 @@ describe("Selectors", () => {
         };
         expect(isLoadingSelector(loadingTrueState)).toEqual(true);
         expect(isLoadingSelector(loadingFalseState)).toEqual(false);
+    });
+
+    test("orderErrorSelector", () => {
+        const errorExistsState = {
+            ...mockState,
+            [orderReducerName]: {
+                ...initialState,
+                error: "exists",
+            },
+        };
+        const errorNullState = {
+            ...mockState,
+            [orderReducerName]: {
+                ...initialState,
+                error: null,
+            },
+        };
+        expect(isLoadingSelector(errorExistsState)).toEqual("exists");
+        expect(isLoadingSelector(errorNullState)).toEqual(null);
     });
 });
