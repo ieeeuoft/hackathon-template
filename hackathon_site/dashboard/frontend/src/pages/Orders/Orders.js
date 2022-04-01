@@ -5,11 +5,11 @@ import Typography from "@material-ui/core/Typography";
 
 const Orders = () => {
     return (
-        <div>
+        <>
             <Header />
             <Typography variant="h1">Orders</Typography>
             <p>IEEEEEE</p>
-        </div>
+        </>
     );
 };
 

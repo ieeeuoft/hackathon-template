@@ -54,16 +54,28 @@ export interface Profile {
     team: number;
 }
 
-export interface User {
+type ProfileWithoutTeamNumber = Omit<Profile, "team">;
+
+export type Group = {
+    id: number;
+    name: string;
+};
+
+interface UserWithoutProfile {
     id: number;
     first_name: string;
     last_name: string;
     email: string;
-    profile: Profile;
 }
 
-type UserWithoutProfile = Omit<User, "profile">;
-type ProfileWithoutTeamNumber = Omit<Profile, "team">;
+export interface User extends UserWithoutProfile {
+    profile:
+        | (ProfileWithoutTeamNumber & {
+              user: UserWithoutProfile;
+          })
+        | null;
+    groups: Group[];
+}
 
 export interface Team {
     id: number;
