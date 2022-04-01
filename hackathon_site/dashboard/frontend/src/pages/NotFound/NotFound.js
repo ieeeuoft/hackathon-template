@@ -5,10 +5,10 @@ import Typography from "@material-ui/core/Typography";
 
 const NotFound = () => {
     return (
-        <div>
+        <>
             <Header />
             <Typography variant="h1">Error 404</Typography>
-        </div>
+        </>
     );
 };
 

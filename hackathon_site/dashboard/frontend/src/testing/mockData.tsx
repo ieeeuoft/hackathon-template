@@ -2,19 +2,9 @@ import React from "react";
 import OpenInNew from "@material-ui/icons/OpenInNew";
 import GetApp from "@material-ui/icons/GetApp";
 import PinDrop from "@material-ui/icons/PinDrop";
-import {
-    Category,
-    Hardware,
-    Incident,
-    IncidentState,
-    Order,
-    OrderItem,
-    OrderStatus,
-    PartReturnedHealth,
-    Team,
-} from "api/types";
+import { Category, Hardware, Order, Team, User } from "api/types";
 import { CartItem } from "api/types";
-import exp from "constants";
+import { adminGroup } from "constants.js";
 
 // For DashCard on Dashboard
 export const cardItems = [
@@ -167,18 +157,23 @@ export const mockCategories: Category[] = [
 ];
 
 // User details
-export const mockUser = {
+export const mockUser: User = {
     id: 1,
     first_name: "Foo",
     last_name: "Bar",
     email: "foo@bar.com",
     profile: {
         id: 1,
-        status: "Accepted",
         id_provided: false,
         attended: false,
         acknowledge_rules: false,
         e_signature: null,
+        user: {
+            id: 1,
+            first_name: "Foo",
+            last_name: "Bar",
+            email: "foo@bar.com",
+        },
     },
     groups: [
         {
@@ -188,6 +183,17 @@ export const mockUser = {
         {
             id: 2,
             name: "Admins",
+        },
+    ],
+};
+
+export const mockAdminUser: User = {
+    ...mockUser,
+    profile: null,
+    groups: [
+        {
+            id: 1,
+            name: adminGroup,
         },
     ],
 };

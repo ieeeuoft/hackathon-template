@@ -26,14 +26,7 @@ import {
     togglePendingTable,
     toggleReturnedTable,
 } from "slices/ui/uiSlice";
-import {
-    Hardware,
-    ItemsInOrder,
-    Order,
-    OrderItem,
-    OrderStatus,
-    PartReturnedHealth,
-} from "api/types";
+import { Hardware, ItemsInOrder, Order, OrderStatus } from "api/types";
 import { hardwareSelectors } from "slices/hardware/hardwareSlice";
 
 export const ChipStatus = ({ status }: { status: OrderStatus | "Error" }) => {

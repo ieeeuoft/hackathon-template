@@ -250,6 +250,7 @@ class TeamReviewChangeAdminTestCase(SetupUserMixin, TestCase):
         )
 
         self.reviewer_group = Group.objects.get(name="Application Reviewers")
+        self.hardware_site_admin_group = Group.objects.get(name="Hardware Site Admins")
 
         self.user.is_staff = True
         self.user.save()
@@ -289,6 +290,47 @@ class TeamReviewChangeAdminTestCase(SetupUserMixin, TestCase):
         group_perms = self.reviewer_group.permissions.all()
 
         for permission_name in REVIEWER_PERMISSIONS:
+            app_label, codename = permission_name.split(".", 1)
+            permission = Permission.objects.get(
+                content_type__app_label=app_label, codename=codename
+            )
+            self.assertTrue(permission in group_perms)
+
+    def test_reviewer_group_correct_permissions(self):
+        """
+        Ensure the reviewer group has all the permissions it is supposed to and nothing else.
+        """
+        HARDWARE_SITE_ADMIN_PERMISSIONS = (
+            "event.view_team",
+            "event.change_team",
+            "event.delete_team",
+            "hardware.view_category",
+            "hardware.change_category",
+            "hardware.add_category",
+            "hardware.delete_category",
+            "hardware.view_hardware",
+            "hardware.change_hardware",
+            "hardware.add_hardware",
+            "hardware.delete_hardware",
+            "hardware.view_incident",
+            "hardware.change_incident",
+            "hardware.add_incident",
+            "hardware.delete_incident",
+            "hardware.view_order",
+            "hardware.change_order",
+            "hardware.delete_order",
+            "hardware.view_orderitem",
+            "hardware.change_orderitem",
+        )
+
+        self.assertEqual(
+            self.hardware_site_admin_group.permissions.count(),
+            len(HARDWARE_SITE_ADMIN_PERMISSIONS),
+        )
+
+        group_perms = self.hardware_site_admin_group.permissions.all()
+
+        for permission_name in HARDWARE_SITE_ADMIN_PERMISSIONS:
             app_label, codename = permission_name.split(".", 1)
             permission = Permission.objects.get(
                 content_type__app_label=app_label, codename=codename

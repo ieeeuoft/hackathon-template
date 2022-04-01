@@ -12,7 +12,7 @@ import { ReactComponent as Inventory } from "assets/images/icons/Hardware.svg";
 // Components
 import Button from "@material-ui/core/Button";
 
-import { logout } from "slices/users/userSlice";
+import { logout, userTypeSelector } from "slices/users/userSlice";
 import { RootState } from "slices/store";
 import { cartTotalSelector } from "slices/hardware/cartSlice";
 
@@ -23,74 +23,99 @@ interface NavBarProps {
 
 export const UnconnectedNavbar = ({ logout, pathname }: NavBarProps) => {
     const cartQuantity = useSelector(cartTotalSelector);
+    const userType = useSelector(userTypeSelector);
+
+    const isParticipant = userType === "participant";
+    const isAdmin = userType === "admin";
+    const isParticipantOrAdmin = isParticipant || isAdmin;
 
     return (
         <nav className={styles.nav}>
             <div className={styles.navFlexDiv}>
-                <Link to={"/"}>
-                    <Button
-                        className={pathname === "/" ? styles.navActive : styles.navBtn}
-                        aria-label="Dashboard"
-                        startIcon={<DashboardIcon />}
-                    >
-                        Dashboard
-                    </Button>
-                </Link>
-                <Link to={"/orders"}>
-                    <Button
-                        className={
-                            pathname === "/orders" ? styles.navActive : styles.navBtn
-                        }
-                        aria-label="Orders"
-                        startIcon={<ListAlt />}
-                    >
-                        Orders
-                    </Button>
-                </Link>
-                <Link to={"/teams"}>
-                    <Button
-                        className={
-                            pathname === "/teams" ? styles.navActive : styles.navBtn
-                        }
-                        aria-label="Teams"
-                        startIcon={<AccountBoxIcon />}
-                    >
-                        Teams
-                    </Button>
-                </Link>
-                <Link to={"/reports"}>
-                    <Button
-                        className={
-                            pathname === "/reports" ? styles.navActive : styles.navBtn
-                        }
-                        aria-label="Reports"
-                        startIcon={<InsertChartOutlined />}
-                    >
-                        Reports
-                    </Button>
-                </Link>
-                <Link to={"/inventory"}>
-                    <Button
-                        className={
-                            pathname === "/inventory" ? styles.navActive : styles.navBtn
-                        }
-                        aria-label="Inventory"
-                        startIcon={<Inventory fill="currentColor" width="20px" />}
-                    >
-                        Inventory
-                    </Button>
-                </Link>
-                <Link to={"/cart"}>
-                    <Button
-                        className={
-                            pathname === "/cart" ? styles.navActive : styles.navBtn
-                        }
-                        aria-label="Cart"
-                        startIcon={<LocalMallIcon />}
-                    >
-                        Cart ({cartQuantity})
-                    </Button>
-                </Link>
+                {isParticipantOrAdmin && (
+                    <Link to={"/"}>
+                        <Button
+                            className={
+                                pathname === "/" ? styles.navActive : styles.navBtn
+                            }
+                            aria-label="Dashboard"
+                            startIcon={<DashboardIcon />}
+                        >
+                            Dashboard
+                        </Button>
+                    </Link>
+                )}
+                {isAdmin && (
+                    <Link to={"/orders"}>
+                        <Button
+                            className={
+                                pathname === "/orders"
+                                    ? styles.navActive
+                                    : styles.navBtn
+                            }
+                            aria-label="Orders"
+                            startIcon={<ListAlt />}
+                        >
+                            Orders
+                        </Button>
+                    </Link>
+                )}
+                {isAdmin && (
+                    <Link to={"/teams"}>
+                        <Button
+                            className={
+                                pathname === "/teams" ? styles.navActive : styles.navBtn
+                            }
+                            aria-label="Teams"
+                            startIcon={<AccountBoxIcon />}
+                        >
+                            Teams
+                        </Button>
+                    </Link>
+                )}
+                {isAdmin && (
+                    <Link to={"/reports"}>
+                        <Button
+                            className={
+                                pathname === "/reports"
+                                    ? styles.navActive
+                                    : styles.navBtn
+                            }
+                            aria-label="Reports"
+                            startIcon={<InsertChartOutlined />}
+                        >
+                            Reports
+                        </Button>
+                    </Link>
+                )}
+                {isParticipantOrAdmin && (
+                    <Link to={"/inventory"}>
+                        <Button
+                            className={
+                                pathname === "/inventory"
+                                    ? styles.navActive
+                                    : styles.navBtn
+                            }
+                            aria-label="Inventory"
+                            startIcon={<Inventory fill="currentColor" width="20px" />}
+                        >
+                            Inventory
+                        </Button>
+                    </Link>
+                )}
+                {isParticipant && (
+                    <Link to={"/cart"}>
+                        <Button
+                            className={
+                                pathname === "/cart" ? styles.navActive : styles.navBtn
+                            }
+                            aria-label="Cart"
+                            startIcon={<LocalMallIcon />}
+                        >
+                            Cart ({cartQuantity})
+                        </Button>
+                    </Link>
+                )}
             </div>
             <Button
                 aria-label="Logout"
