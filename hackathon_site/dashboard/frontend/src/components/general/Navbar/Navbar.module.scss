@@ -36,7 +36,7 @@
         &Btn,
         &Active {
             width: 100%;
-            @include flexPosition($jusCon: start);
+            @include flexPosition($jusCon: flex-start);
             padding: 13px 120px 13px 15px;
             border-radius: 0;
             svg {

@@ -4,11 +4,14 @@ import { fireEvent, render } from "testing/utils";
 
 import { UnconnectedNavbar } from "./Navbar";
 import styles from "./Navbar.module.scss";
+import { makeStore } from "slices/store";
+import { initialState, userReducerName } from "slices/users/userSlice";
+import { mockAdminUser, mockUser } from "testing/mockData";
 
 describe("<Navbar />", () => {
     const handleLogoutSpy = jest.fn();
 
-    const pagesAndPaths = [
+    const adminPaths = [
         ["Dashboard", "/"],
         ["Orders", "/orders"],
         ["Teams", "/teams"],
@@ -17,10 +20,20 @@ describe("<Navbar />", () => {
         [`Cart (0)`, "/cart"],
     ];
 
-    pagesAndPaths.map(([label, path]) => {
+    adminPaths.map(([label, path]) => {
         it(`Adds the active class to ${label} when on ${path}`, () => {
+            const store = makeStore({
+                [userReducerName]: {
+                    ...initialState,
+                    userData: {
+                        ...initialState.userData,
+                        user: path === "/cart" ? mockUser : mockAdminUser,
+                    },
+                },
+            });
             const { getByText, container } = render(
-                <UnconnectedNavbar pathname={path} logout={handleLogoutSpy} />
+                <UnconnectedNavbar pathname={path} logout={handleLogoutSpy} />,
+                { store }
             );
 
             expect(getByText(label).closest("button")?.className).toMatch(

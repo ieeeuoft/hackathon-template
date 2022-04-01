@@ -34,9 +34,12 @@ const categoriesUri = "/api/hardware/categories/";
 const teamUri = "/api/event/teams/team/";
 
 describe("Dashboard Page", () => {
-    it("Renders correctly when the dashboard appears 4 cards and 3 tables", () => {
+    it("Renders correctly when the dashboard appears 4 cards and 3 tables", async () => {
+        const response = { data: mockTeam } as AxiosResponse<Team>;
+        when(mockedGet).calledWith(teamUri).mockResolvedValue(response);
+
         const { queryByText, getByText } = render(<Dashboard />);
-        waitFor(() => {
+        await waitFor(() => {
             for (let e of cardItems) {
                 expect(queryByText(e.title)).toBeTruthy();
             }

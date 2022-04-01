@@ -3,14 +3,14 @@ import React from "react";
 import Header from "components/general/Header/Header";
 import Typography from "@material-ui/core/Typography";
 
-const Cart = () => {
+const IncidentForm = () => {
     return (
-        <div>
+        <>
             <Header />
             <Typography variant="h1">Broken/Lost Item Incident</Typography>
             <p>IEEEEEE</p>
-        </div>
+        </>
     );
 };
 
-export default Cart;
+export default IncidentForm;
