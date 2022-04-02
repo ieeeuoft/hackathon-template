@@ -51,7 +51,7 @@ describe("Selectors", () => {
                 error: null,
             },
         };
-        expect(isLoadingSelector(errorExistsState)).toEqual("exists");
-        expect(isLoadingSelector(errorNullState)).toEqual(null);
+        expect(orderErrorSelector(errorExistsState)).toEqual("exists");
+        expect(orderErrorSelector(errorNullState)).toEqual(null);
     });
 });
