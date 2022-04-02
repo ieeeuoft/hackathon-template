@@ -5,11 +5,11 @@ import Typography from "@material-ui/core/Typography";
 
 const Reports = () => {
     return (
-        <div>
+        <>
             <Header />
             <Typography variant="h1">Reports</Typography>
             <p>IEEEEEE</p>
-        </div>
+        </>
     );
 };
 
