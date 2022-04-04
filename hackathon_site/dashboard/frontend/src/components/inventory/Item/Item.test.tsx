@@ -1,5 +1,5 @@
 import React from "react";
-import Item from "./Item";
+import Item from "components/inventory/Item/Item";
 import { render } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
 

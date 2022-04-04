@@ -14,11 +14,11 @@ export interface Hardware {
     manufacturer: string;
     datasheet: string;
     quantity_available: number;
-    max_per_team: number;
-    picture: string;
+    max_per_team?: number;
+    picture: string | null;
     categories: number[];
     quantity_remaining: number;
-    notes: string;
+    notes?: string;
 }
 
 export type HardwareOrdering =
@@ -40,8 +40,8 @@ export interface HardwareFilters {
 export interface Category {
     id: number;
     name: string;
-    max_per_team: number;
-    unique_hardware_count: number;
+    max_per_team?: number;
+    unique_hardware_count?: number;
 }
 
 /** Event API */

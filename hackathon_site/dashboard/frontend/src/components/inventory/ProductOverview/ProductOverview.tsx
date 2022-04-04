@@ -24,6 +24,7 @@ import { selectCategoriesByIds } from "slices/hardware/categorySlice";
 import { RootState } from "slices/store";
 import { addToCart, cartSelectors } from "slices/hardware/cartSlice";
 import { Category } from "api/types";
+import hardwareImagePlaceholder from "assets/images/placeholders/no-hardware-image.svg";
 
 export const ERROR_MESSAGES = {
     quantityMissing: "Quantity is required",
@@ -176,7 +177,7 @@ interface DetailInfoSectionProps {
     manufacturer: string;
     modelNumber: string;
     datasheet: string;
-    notes: string;
+    notes?: string;
     constraints: string[];
 }
 const DetailInfoSection = ({
@@ -214,12 +215,16 @@ const DetailInfoSection = ({
             >
                 Link
             </Button>
-            <Typography variant="body2" className={styles.heading}>
-                Notes
-            </Typography>
-            {notes.split("\n").map((note, i) => (
-                <Typography key={i}>{note}</Typography>
-            ))}
+            {notes && (
+                <>
+                    <Typography variant="body2" className={styles.heading}>
+                        Notes
+                    </Typography>
+                    {notes.split("\n").map((note, i) => (
+                        <Typography key={i}>{note}</Typography>
+                    ))}
+                </>
+            )}
         </>
     );
 };
@@ -327,7 +332,7 @@ export const ProductOverview = ({
                             quantityAvailable={hardware.quantity_available}
                             quantityRemaining={hardware.quantity_remaining}
                             categories={categoryNames}
-                            picture={hardware.picture}
+                            picture={hardware.picture ?? hardwareImagePlaceholder}
                         />
                         <DetailInfoSection
                             manufacturer={hardware.manufacturer}

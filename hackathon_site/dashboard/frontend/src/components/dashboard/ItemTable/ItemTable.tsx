@@ -28,6 +28,7 @@ import {
 } from "slices/ui/uiSlice";
 import { Hardware, ItemsInOrder, Order, OrderStatus } from "api/types";
 import { hardwareSelectors } from "slices/hardware/hardwareSlice";
+import hardwareImagePlaceholder from "assets/images/placeholders/no-hardware-image.svg";
 
 export const ChipStatus = ({ status }: { status: OrderStatus | "Error" }) => {
     switch (status) {
@@ -203,7 +204,8 @@ TableProps) => {
                                                             className={styles.itemImg}
                                                             src={
                                                                 hardware[row.id]
-                                                                    ?.picture
+                                                                    ?.picture ??
+                                                                hardwareImagePlaceholder
                                                             }
                                                             alt={hardware[row.id]?.name}
                                                         />
@@ -377,7 +379,8 @@ export const ReturnedTable = ({ orders }: ReturnedTableProps) => {
                                                         className={styles.itemImg}
                                                         src={
                                                             hardware[row.hardware_id]
-                                                                ?.picture
+                                                                ?.picture ??
+                                                            hardwareImagePlaceholder
                                                         }
                                                         alt={
                                                             hardware[row.hardware_id]
@@ -522,7 +525,10 @@ export const PendingTable = ({ orders }: TableProps) => {
                                             <TableCell align="left">
                                                 <img
                                                     className={styles.itemImg}
-                                                    src={hardware[row.id]?.picture}
+                                                    src={
+                                                        hardware[row.id]?.picture ??
+                                                        hardwareImagePlaceholder
+                                                    }
                                                     alt={hardware[row.id]?.name}
                                                 />
                                             </TableCell>
