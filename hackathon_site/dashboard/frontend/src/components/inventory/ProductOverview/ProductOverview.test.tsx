@@ -41,8 +41,11 @@ describe("<ProductOverview />", () => {
         });
 
         const minConstraint: number = mockCategories
-            .map((category) => category.max_per_team)
-            .concat([mockHardware[0].max_per_team])
+            .map(
+                (category) =>
+                    category.max_per_team ?? mockHardware[0].quantity_remaining
+            )
+            .concat(mockHardware[0].max_per_team ? [mockHardware[0].max_per_team] : [])
             .reduce((prev, curr) => Math.min(prev, curr));
 
         const { getByText, queryByText, getByRole } = render(

@@ -151,7 +151,8 @@ describe("Inventory Page", () => {
         ).toBeInTheDocument();
         expect(getByText(mockHardware[0].model_number)).toBeInTheDocument();
         expect(getByText(mockHardware[0].manufacturer)).toBeInTheDocument();
-        expect(getByText(mockHardware[0].notes)).toBeInTheDocument();
+        if (mockHardware[0].notes)
+            expect(getByText(mockHardware[0].notes)).toBeInTheDocument();
     });
 
     it("Loads more hardware", async () => {

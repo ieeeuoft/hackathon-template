@@ -91,7 +91,8 @@ describe("Dashboard Page", () => {
                 ).toBeInTheDocument();
                 expect(getByText(hardware.model_number)).toBeInTheDocument();
                 expect(getByText(hardware.manufacturer)).toBeInTheDocument();
-                expect(getByText(hardware.notes)).toBeInTheDocument();
+                if (hardware.notes)
+                    expect(getByText(hardware.notes)).toBeInTheDocument();
             });
         }
     });
