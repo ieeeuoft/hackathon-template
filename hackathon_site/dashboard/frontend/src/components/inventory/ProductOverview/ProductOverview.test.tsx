@@ -6,6 +6,7 @@ import { makeStore } from "slices/store";
 import { cartSelectors } from "slices/hardware/cartSlice";
 import { SnackbarProvider } from "notistack";
 import SnackbarNotifier from "components/general/SnackbarNotifier/SnackbarNotifier";
+import { queryByText } from "@testing-library/react";
 
 describe("<ProductOverview />", () => {
     test("all 3 parts of the product overview is there", () => {
@@ -26,6 +27,30 @@ describe("<ProductOverview />", () => {
         expect(getByText("Category")).toBeInTheDocument();
         expect(getByText("Datasheet")).toBeInTheDocument();
         expect(getByText("Add to cart")).toBeInTheDocument();
+    });
+
+    test("all 3 parts of the product overview is there when hardware has no optional fields", () => {
+        const store = makeStore({
+            ui: {
+                inventory: {
+                    hardwareItemBeingViewed: mockHardware[9],
+                    isProductOverviewVisible: true,
+                },
+            },
+        });
+
+        const { getByText, queryByText } = render(
+            <ProductOverview showAddToCartButton />,
+            {
+                store,
+            }
+        );
+
+        // Check if the main section, detailInfoSection, and add to cart section works
+        expect(getByText("Category")).toBeInTheDocument();
+        expect(getByText("Datasheet")).toBeInTheDocument();
+        expect(getByText("Add to cart")).toBeInTheDocument();
+        expect(queryByText("Notes")).not.toBeInTheDocument();
     });
 
     test("minimum constraint between hardware and categories is used", () => {

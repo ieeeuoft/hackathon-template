@@ -339,6 +339,16 @@ export const mockHardware: Hardware[] = [
         quantity_remaining: 16,
         notes: "",
     },
+    {
+        id: 10,
+        name: "Hardware with no optional fields",
+        model_number: "ABCD",
+        manufacturer: "Nobody",
+        datasheet: "https://example.com/datasheet",
+        quantity_available: 20,
+        categories: [1],
+        quantity_remaining: 16,
+    },
 ];
 
 export const mockCartItems: CartItem[] = [
@@ -388,6 +398,21 @@ export const mockPendingOrders: Order[] = [
         created_at: "2021-10-17T18:28:44.691969-04:00",
         updated_at: "2021-12-03T23:01:46.606892-05:00",
     },
+    {
+        id: 5,
+        items: [
+            {
+                id: 10,
+                hardware_id: 10,
+                part_returned_health: null,
+            },
+        ],
+        team_id: 1,
+        team_code: "IEEE",
+        status: "Ready for Pickup",
+        created_at: "2021-10-17T18:28:44.691969-04:00",
+        updated_at: "2021-12-03T23:01:46.606892-05:00",
+    },
 ];
 
 export const mockCheckedOutOrders: Order[] = [
@@ -433,6 +458,21 @@ export const mockCheckedOutOrders: Order[] = [
         team_id: 2,
         team_code: "IEEE",
         status: "Picked Up",
+        created_at: "2021-10-17T18:28:44.691969-04:00",
+        updated_at: "2021-12-03T23:01:46.606892-05:00",
+    },
+    {
+        id: 5,
+        items: [
+            {
+                id: 10,
+                hardware_id: 10,
+                part_returned_health: null,
+            },
+        ],
+        team_id: 1,
+        team_code: "IEEE",
+        status: "Submitted",
         created_at: "2021-10-17T18:28:44.691969-04:00",
         updated_at: "2021-12-03T23:01:46.606892-05:00",
     },
