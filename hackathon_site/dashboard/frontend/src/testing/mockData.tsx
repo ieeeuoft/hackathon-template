@@ -2,6 +2,7 @@ import React from "react";
 import OpenInNew from "@material-ui/icons/OpenInNew";
 import GetApp from "@material-ui/icons/GetApp";
 import PinDrop from "@material-ui/icons/PinDrop";
+
 import { Category, Hardware, Order, Team, User } from "api/types";
 import { CartItem } from "api/types";
 import { adminGroup } from "constants.js";
