@@ -26,7 +26,14 @@ import {
     togglePendingTable,
     toggleReturnedTable,
 } from "slices/ui/uiSlice";
-import { Hardware, ItemsInOrder, Order, OrderStatus } from "api/types";
+import {
+    Hardware,
+    ItemsInOrder,
+    Order,
+    OrderInTable,
+    OrderStatus,
+    ReturnOrderInTable,
+} from "api/types";
 import { hardwareSelectors } from "slices/hardware/hardwareSlice";
 
 export const ChipStatus = ({ status }: { status: OrderStatus | "Error" }) => {
@@ -61,20 +68,7 @@ export const ChipStatus = ({ status }: { status: OrderStatus | "Error" }) => {
 };
 
 interface TableProps {
-    orders: Order[];
-}
-
-interface OrderItemTableRow {
-    id: number;
-    // TODO: add this when new order serializer is finished
-    // quantityRequested: number,
-    quantityGranted: number;
-}
-
-interface OrderInTable {
-    id: number;
-    hardwareInTableRow: OrderItemTableRow[];
-    status: OrderStatus;
+    orders: OrderInTable[];
 }
 
 export const CheckedOutTable = ({
@@ -92,32 +86,8 @@ TableProps) => {
             dispatch(setProductOverviewItem(hardwareItem));
         }
     };
-
-    const checkedOutOrders: OrderInTable[] = [];
-    for (const order of orders) {
-        const hardwareItems: {
-            [key: number]: OrderItemTableRow;
-        } = {};
-        for (const item of order.items) {
-            if (hardwareItems[item.hardware_id])
-                hardwareItems[item.hardware_id].quantityGranted += 1;
-            else
-                hardwareItems[item.hardware_id] = {
-                    id: item.hardware_id,
-                    quantityGranted: 1,
-                };
-        }
-        const hardwareInTableRow = Object.values(hardwareItems);
-        if (hardwareInTableRow.length > 0) {
-            checkedOutOrders.push({
-                id: order.id,
-                hardwareInTableRow,
-                status: order.status,
-            });
-        }
-    }
     // sort by most recent order
-    checkedOutOrders.sort((a, b) => b.id - a.id);
+    orders.sort((a, b) => b.id - a.id);
 
     return (
         <Container
@@ -135,12 +105,12 @@ TableProps) => {
             </div>
 
             {isVisible &&
-                (!checkedOutOrders.length ? (
+                (!orders.length ? (
                     <Paper elevation={2} className={styles.empty} square={true}>
                         You have no items checked out yet. View our inventory.
                     </Paper>
                 ) : (
-                    checkedOutOrders.map((checkedOutOrder) => (
+                    orders.map((checkedOutOrder) => (
                         <div key={checkedOutOrder.id}>
                             <Container
                                 className={styles.titleChip}
@@ -254,17 +224,8 @@ TableProps) => {
     );
 };
 
-interface ReturnedItemTableRow extends ItemsInOrder {
-    quantity: number;
-}
-
-interface ReturnOrderInTable {
-    id: number;
-    hardwareInOrder: ReturnedItemTableRow[];
-}
-
 interface ReturnedTableProps {
-    orders: Order[];
+    orders: ReturnOrderInTable[];
 }
 
 export const ReturnedTable = ({ orders }: ReturnedTableProps) => {
@@ -272,27 +233,6 @@ export const ReturnedTable = ({ orders }: ReturnedTableProps) => {
     const hardware = useSelector(hardwareSelectors.selectEntities);
     const isVisible = useSelector(isReturnedTableVisibleSelector);
     const toggleVisibility = () => dispatch(toggleReturnedTable());
-
-    const ordersWithReturnedItems: ReturnOrderInTable[] = [];
-    for (const order of orders) {
-        const returnedItemMap: {
-            [key: string]: ReturnedItemTableRow;
-        } = {};
-        for (const returnedItem of order.items) {
-            if (returnedItem.part_returned_health) {
-                const id: string = `${returnedItem.hardware_id}_${returnedItem.part_returned_health}`;
-                if (returnedItemMap[id]) returnedItemMap[id].quantity += 1;
-                else returnedItemMap[id] = { ...returnedItem, quantity: 1 };
-            }
-        }
-        const hardwareInOrder = Object.values(returnedItemMap);
-        if (hardwareInOrder.length > 0) {
-            ordersWithReturnedItems.push({
-                id: order.id,
-                hardwareInOrder,
-            });
-        }
-    }
 
     return (
         <Container
@@ -310,13 +250,13 @@ export const ReturnedTable = ({ orders }: ReturnedTableProps) => {
             </div>
 
             {isVisible &&
-                (!ordersWithReturnedItems.length ? (
+                (!orders.length ? (
                     <Paper elevation={2} className={styles.empty} square={true}>
                         Please bring items to the tech table and a tech team member will
                         assist you.
                     </Paper>
                 ) : (
-                    ordersWithReturnedItems.map((order) => (
+                    orders.map((order) => (
                         <div key={order.id}>
                             <Container
                                 className={styles.titleChip}
@@ -395,7 +335,7 @@ export const ReturnedTable = ({ orders }: ReturnedTableProps) => {
                                                     align="right"
                                                     className={styles.noWrap}
                                                 >
-                                                    Time Occurred
+                                                    {row.time}
                                                 </TableCell>
                                                 <TableCell
                                                     align="left"
@@ -421,32 +361,8 @@ export const PendingTable = ({ orders }: TableProps) => {
     const isVisible = useSelector(isPendingTableVisibleSelector);
     const toggleVisibility = () => dispatch(togglePendingTable());
 
-    const pendingOrders: OrderInTable[] = [];
-    for (const order of orders) {
-        const hardwareItems: {
-            [key: number]: OrderItemTableRow;
-        } = {};
-        for (const item of order.items) {
-            if (hardwareItems[item.hardware_id])
-                hardwareItems[item.hardware_id].quantityGranted += 1;
-            else
-                hardwareItems[item.hardware_id] = {
-                    id: item.hardware_id,
-                    quantityGranted: 1,
-                };
-        }
-        const hardwareInTableRow = Object.values(hardwareItems);
-        if (hardwareInTableRow.length > 0) {
-            pendingOrders.push({
-                id: order.id,
-                hardwareInTableRow,
-                status: order.status,
-            });
-        }
-    }
-
     // sort by most recent order
-    pendingOrders.sort((a, b) => b.id - a.id);
+    orders.sort((a, b) => b.id - a.id);
 
     return (
         <Container
@@ -454,7 +370,7 @@ export const PendingTable = ({ orders }: TableProps) => {
             maxWidth={false}
             disableGutters={true}
         >
-            {pendingOrders.length && (
+            {orders.length && (
                 <div className={styles.title}>
                     <Typography variant="h2" className={styles.titleText}>
                         Pending Orders
@@ -466,8 +382,8 @@ export const PendingTable = ({ orders }: TableProps) => {
             )}
 
             {isVisible &&
-                pendingOrders.length &&
-                pendingOrders.map((pendingOrder) => (
+                orders.length &&
+                orders.map((pendingOrder) => (
                     <div key={pendingOrder.id}>
                         <Container
                             className={styles.titleChip}
@@ -530,7 +446,7 @@ export const PendingTable = ({ orders }: TableProps) => {
                                                 {hardware[row.id]?.name}
                                             </TableCell>
                                             <TableCell align="right">
-                                                1 {/* quantity requested */}
+                                                {row.quantityRequested}
                                             </TableCell>
                                             <TableCell align="right">
                                                 {row.quantityGranted}

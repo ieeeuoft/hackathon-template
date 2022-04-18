@@ -152,6 +152,7 @@ const hardwareSlice = createSlice({
         builder.addCase(
             getHardwareWithFilters.fulfilled,
             (state, { payload, meta }) => {
+                console.log(payload.results);
                 state.isLoading = false;
                 state.error = null;
                 state.next = payload.next;

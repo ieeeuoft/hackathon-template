@@ -3,7 +3,15 @@ import OpenInNew from "@material-ui/icons/OpenInNew";
 import GetApp from "@material-ui/icons/GetApp";
 import PinDrop from "@material-ui/icons/PinDrop";
 
-import { Category, Hardware, Order, Team, User } from "api/types";
+import {
+    Category,
+    Hardware,
+    Order,
+    OrderInTable,
+    ReturnOrderInTable,
+    Team,
+    User,
+} from "api/types";
 import { CartItem } from "api/types";
 import { adminGroup } from "constants.js";
 
@@ -368,6 +376,16 @@ export const mockPendingOrders: Order[] = [
         status: "Ready for Pickup",
         created_at: "2021-10-17T18:28:44.691969-04:00",
         updated_at: "2021-12-03T23:01:46.606892-05:00",
+        request: [
+            {
+                id: 3,
+                requested_quantity: 1,
+            },
+            {
+                id: 4,
+                requested_quantity: 1,
+            },
+        ],
     },
     {
         id: 4,
@@ -388,6 +406,16 @@ export const mockPendingOrders: Order[] = [
         status: "Submitted",
         created_at: "2021-10-17T18:28:44.691969-04:00",
         updated_at: "2021-12-03T23:01:46.606892-05:00",
+        request: [
+            {
+                id: 1,
+                requested_quantity: 1,
+            },
+            {
+                id: 4,
+                requested_quantity: 1,
+            },
+        ],
     },
 ];
 
@@ -411,6 +439,12 @@ export const mockCheckedOutOrders: Order[] = [
         status: "Picked Up",
         created_at: "2021-10-17T18:28:44.691969-04:00",
         updated_at: "2021-12-03T23:01:46.606892-05:00",
+        request: [
+            {
+                id: 1,
+                requested_quantity: 2,
+            },
+        ],
     },
     {
         id: 2,
@@ -436,5 +470,114 @@ export const mockCheckedOutOrders: Order[] = [
         status: "Picked Up",
         created_at: "2021-10-17T18:28:44.691969-04:00",
         updated_at: "2021-12-03T23:01:46.606892-05:00",
+        request: [
+            {
+                id: 1,
+                requested_quantity: 2,
+            },
+            {
+                id: 2,
+                requested_quantity: 1,
+            },
+        ],
+    },
+];
+
+export const mockPendingOrdersInTable: OrderInTable[] = [
+    {
+        id: 3,
+        hardwareInTableRow: [
+            {
+                id: 3,
+                quantityRequested: 1,
+                quantityGranted: 1,
+            },
+            {
+                id: 4,
+                quantityRequested: 1,
+                quantityGranted: 1,
+            },
+        ],
+        status: "Ready for Pickup",
+    },
+    {
+        id: 4,
+        hardwareInTableRow: [
+            {
+                id: 3,
+                quantityRequested: 1,
+                quantityGranted: 1,
+            },
+            {
+                id: 4,
+                quantityRequested: 1,
+                quantityGranted: 1,
+            },
+        ],
+        status: "Submitted",
+    },
+];
+
+export const mockCheckedOutOrdersInTable: OrderInTable[] = [
+    {
+        id: 1,
+        hardwareInTableRow: [
+            {
+                id: 1,
+                quantityRequested: 2,
+                quantityGranted: 2,
+            },
+        ],
+        status: "Picked Up",
+    },
+    {
+        id: 2,
+        hardwareInTableRow: [
+            {
+                id: 1,
+                quantityRequested: 2,
+                quantityGranted: 2,
+            },
+            {
+                id: 2,
+                quantityRequested: 1,
+                quantityGranted: 1,
+            },
+        ],
+        status: "Picked Up",
+    },
+];
+
+export const mockReturnedOrdersInTable: ReturnOrderInTable[] = [
+    {
+        id: 1,
+        hardwareInOrder: [
+            {
+                id: 1,
+                hardware_id: 1,
+                part_returned_health: "Heavily Used",
+                quantity: 2,
+                time: "11:01:45 PM (Fri Dec 03 2021)",
+            },
+        ],
+    },
+    {
+        id: 2,
+        hardwareInOrder: [
+            {
+                id: 3,
+                hardware_id: 1,
+                part_returned_health: "Healthy",
+                quantity: 2,
+                time: "11:01:46 PM (Fri Dec 03 2021)",
+            },
+            {
+                id: 4,
+                hardware_id: 2,
+                part_returned_health: "Broken",
+                quantity: 1,
+                time: "11:01:47 PM (Fri Dec 03 2021)",
+            },
+        ],
     },
 ];

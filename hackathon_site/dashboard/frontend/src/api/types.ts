@@ -99,8 +99,31 @@ export interface Order {
     team_id: number;
     team_code: string;
     status: OrderStatus;
+    request: {
+        id: number;
+        requested_quantity: number;
+    }[];
     created_at: string;
     updated_at: string;
+}
+
+/** Sanitized Orders */
+export interface OrderItemTableRow {
+    id: number;
+    quantityRequested: number;
+    quantityGranted: number;
+}
+
+export interface OrderInTable {
+    id: number;
+    hardwareInTableRow: OrderItemTableRow[];
+    status: OrderStatus;
+}
+
+export type ReturnedItem = ItemsInOrder & { quantity: number; time: string };
+export interface ReturnOrderInTable {
+    id: number;
+    hardwareInOrder: ReturnedItem[];
 }
 
 /** Cart API */
