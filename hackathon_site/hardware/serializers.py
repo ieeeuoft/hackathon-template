@@ -261,12 +261,11 @@ class OrderCreateSerializer(serializers.Serializer):
         response_data = {"order_id": None, "hardware": [], "errors": []}
 
         # The reason why doing this is because the id field stores the hardware object, django cannot translate hardware object into JSON. Therefore, loop has been used to get the hardware id and quantity requested
-        serialized_requested_hardware = [];
+        serialized_requested_hardware = []
         for (hardware, requested_quantity) in requested_hardware.items():
-            serialized_requested_hardware.append({
-                "id": hardware.id,
-                "requested_quantity": requested_quantity
-            });
+            serialized_requested_hardware.append(
+                {"id": hardware.id, "requested_quantity": requested_quantity}
+            )
 
         order_items = []
         for (hardware, requested_quantity) in requested_hardware.items():
