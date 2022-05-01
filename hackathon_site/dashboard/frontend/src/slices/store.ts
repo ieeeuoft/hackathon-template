@@ -17,6 +17,7 @@ import {
 import userReducer, { userReducerName } from "slices/users/userSlice";
 import uiReducer, { uiReducerName } from "slices/ui/uiSlice";
 import hardwareReducer, { hardwareReducerName } from "slices/hardware/hardwareSlice";
+import orderReducer, { orderReducerName } from "slices/order/orderSlice";
 import categoryReducer, { categoryReducerName } from "slices/hardware/categorySlice";
 import cartReducer, { cartReducerName } from "slices/hardware/cartSlice";
 import teamReducer, { teamReducerName } from "./event/teamSlice";
@@ -28,7 +29,7 @@ const reducers = {
     [teamReducerName]: teamReducer,
     [categoryReducerName]: categoryReducer,
     [hardwareReducerName]: hardwareReducer,
-
+    [orderReducerName]: orderReducer,
     [userReducerName]: userReducer,
     [uiReducerName]: uiReducer,
     router: connectRouter(history),
