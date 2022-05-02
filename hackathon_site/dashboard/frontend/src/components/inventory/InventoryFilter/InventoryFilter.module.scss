@@ -29,12 +29,12 @@
         }
     }
     &Btns {
-        @include flexPosition($jusCon: space-between, $alIte: center);
+        @include flexPosition($jusCon: center, $alIte: center);
         width: 100%;
         padding: 15px 10px;
         &Apply {
             width: auto;
-            margin-bottom: 0;
+            margin: 0 0 0 10px;
         }
     }
 
