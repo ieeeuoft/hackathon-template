@@ -7,7 +7,7 @@ import {
 import { RootState, AppDispatch } from "slices/store";
 
 import { APIListResponse, Category } from "api/types";
-import { get, stripHostname, stripHostnameReturnFilters } from "api/api";
+import { get, stripHostnameReturnFilters } from "api/api";
 import { displaySnackbar } from "slices/ui/uiSlice";
 
 interface CategoryExtraState {

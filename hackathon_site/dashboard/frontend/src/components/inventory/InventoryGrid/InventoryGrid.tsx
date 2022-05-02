@@ -7,6 +7,7 @@ import { hardwareSelectors, isLoadingSelector } from "slices/hardware/hardwareSl
 import { LinearProgress } from "@material-ui/core";
 import { setProductOverviewItem } from "slices/ui/uiSlice";
 import { Hardware } from "api/types";
+import hardwareImagePlaceholder from "assets/images/placeholders/no-hardware-image.svg";
 
 export const InventoryGrid = () => {
     const dispatch = useDispatch();
@@ -37,7 +38,7 @@ export const InventoryGrid = () => {
                         onClick={() => openProductOverview(item)}
                     >
                         <Item
-                            image={item.picture}
+                            image={item.picture ?? hardwareImagePlaceholder}
                             title={item.name}
                             total={item.quantity_available}
                             currentStock={item.quantity_remaining}

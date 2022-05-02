@@ -17,11 +17,7 @@ import {
     setFilters,
 } from "slices/hardware/hardwareSlice";
 import { RootState } from "slices/store";
-import {
-    cartSelectors,
-    cartTotalSelector,
-    errorSelector,
-} from "slices/hardware/cartSlice";
+import { cartSelectors, cartTotalSelector } from "slices/hardware/cartSlice";
 import { getCategories } from "slices/hardware/categorySlice";
 import CartErrorBox from "components/cart/CartErrorBox";
 
