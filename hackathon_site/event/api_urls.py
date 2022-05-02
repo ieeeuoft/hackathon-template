@@ -6,7 +6,7 @@ app_name = "event"
 
 urlpatterns = [
     path("users/user/", api_views.CurrentUserAPIView.as_view(), name="current-user"),
-    path("teams/team/", views.CurrentTeamAPIView.as_view(), name="current-team"),
+    path("teams/team/", api_views.CurrentTeamAPIView.as_view(), name="current-team"),
     re_path(
         "teams/join/(?P<team_code>[A-Z0-9]{5})/",
         api_views.JoinTeamView.as_view(),
