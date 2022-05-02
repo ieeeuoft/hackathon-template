@@ -14,6 +14,7 @@ import {
 } from "slices/hardware/hardwareSlice";
 import { connect, ConnectedProps } from "react-redux";
 import { RootState } from "slices/store";
+import { Box } from "@material-ui/core";
 
 interface SearchValues {
     search: string;
@@ -26,33 +27,38 @@ export const InventorySearch = ({
     values: { search },
 }: FormikValues) => (
     <form onReset={handleReset} onSubmit={handleSubmit} autoComplete="off">
-        <TextField
-            className={styles.inventoryBodyToolbarSearch}
-            id="search-input"
-            name="search"
-            label="Search items"
-            variant="outlined"
-            type="text"
-            InputProps={{
-                endAdornment: (
-                    <InputAdornment position="end">
-                        <IconButton onClick={handleReset} data-testid="clear-button">
-                            <CloseIcon />
-                        </IconButton>
-                    </InputAdornment>
-                ),
-            }}
-            value={search}
-            onChange={handleChange}
-        />
-        <IconButton
-            color="primary"
-            aria-label="Search"
-            onClick={handleSubmit}
-            data-testid="search-button"
-        >
-            <SearchIcon />
-        </IconButton>
+        <Box display="flex" flexDirection="row">
+            <TextField
+                className={styles.inventoryBodyToolbarSearch}
+                id="search-input"
+                name="search"
+                label="Search items"
+                variant="outlined"
+                type="text"
+                InputProps={{
+                    endAdornment: (
+                        <InputAdornment position="end">
+                            <IconButton
+                                onClick={handleReset}
+                                data-testid="clear-button"
+                            >
+                                <CloseIcon />
+                            </IconButton>
+                        </InputAdornment>
+                    ),
+                }}
+                value={search}
+                onChange={handleChange}
+            />
+            <IconButton
+                color="primary"
+                aria-label="Search"
+                onClick={handleSubmit}
+                data-testid="search-button"
+            >
+                <SearchIcon />
+            </IconButton>
+        </Box>
     </form>
 );
 

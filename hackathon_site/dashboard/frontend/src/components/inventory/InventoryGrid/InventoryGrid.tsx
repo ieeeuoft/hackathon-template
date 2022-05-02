@@ -17,7 +17,10 @@ export const InventoryGrid = () => {
         dispatch(setProductOverviewItem(hardware));
 
     return isLoading ? (
-        <LinearProgress style={{ width: "100%" }} data-testid="linear-progress" />
+        <LinearProgress
+            style={{ width: "100%", marginBottom: "10px" }}
+            data-testid="linear-progress"
+        />
     ) : (
         <Grid direction="row" spacing={2} container>
             {items.length > 0 &&
