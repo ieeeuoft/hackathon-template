@@ -5,6 +5,7 @@
     display: flex;
     flex-direction: column;
     max-width: 1800px;
+    width: 100%;
 
     &Body {
         display: flex;
@@ -13,7 +14,7 @@
         &Toolbar {
             @include flexPosition($jusCon: flex-end);
             width: 100%;
-            margin-bottom: 15px;
+            margin-bottom: 25px;
 
             &Div {
                 @include flexPosition($jusCon: space-between, $alIte: center);
@@ -34,10 +35,6 @@
                 @include flexPosition($jusCon: space-between, $alIte: center);
                 white-space: nowrap;
             }
-        }
-
-        &Right {
-            margin-left: 25px;
         }
 
         @include responsive(sm-down) {
@@ -65,10 +62,6 @@
 
         @include responsive(md-down) {
             margin-top: 15px;
-
-            &Right {
-                margin-left: 0;
-            }
 
             &Toolbar {
                 &Refresh {

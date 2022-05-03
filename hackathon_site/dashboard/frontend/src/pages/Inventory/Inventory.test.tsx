@@ -112,11 +112,25 @@ describe("Inventory Page", () => {
         expect(getByText(`${mockHardware.length} results`)).toBeInTheDocument();
     });
 
-    it("Displays a message when no items are found", () => {
+    it("Displays a message when no items are found", async () => {
+        // Mock hardware api response
+        const hardwareApiResponse = makeMockApiListResponse([]);
+        const categoryApiResponse = makeMockApiListResponse(mockCategories);
+
+        when(mockedGet)
+            .calledWith(hardwareUri, {})
+            .mockResolvedValue(hardwareApiResponse);
+        when(mockedGet)
+            .calledWith(categoriesUri, {})
+            .mockResolvedValue(categoryApiResponse);
+
         const { getByText, queryByTestId } = render(<Inventory />);
 
         expect(queryByTestId("inventoryCountDivider")).not.toBeInTheDocument();
-        expect(getByText(/no items found/i)).toBeInTheDocument();
+        expect(getByText(/loading/i)).toBeInTheDocument();
+        await waitFor(() => {
+            expect(getByText(/no items found/i)).toBeInTheDocument();
+        });
     });
 
     it("Shows product overview when hardware item is clicked", async () => {
@@ -151,7 +165,8 @@ describe("Inventory Page", () => {
         ).toBeInTheDocument();
         expect(getByText(mockHardware[0].model_number)).toBeInTheDocument();
         expect(getByText(mockHardware[0].manufacturer)).toBeInTheDocument();
-        expect(getByText(mockHardware[0].notes)).toBeInTheDocument();
+        if (mockHardware[0].notes)
+            expect(getByText(mockHardware[0].notes)).toBeInTheDocument();
     });
 
     it("Loads more hardware", async () => {

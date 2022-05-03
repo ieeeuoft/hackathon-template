@@ -46,29 +46,6 @@ class IndexView(TemplateView):
         return context
 
 
-class CurrentTeamAPIView(generics.GenericAPIView, mixins.RetrieveModelMixin):
-    """
-    View to handle API interaction with the current logged in user's EventTeam
-    """
-
-    queryset = EventTeam.objects.all()
-    serializer_class = TeamSerializer
-
-    def get_object(self):
-        queryset = self.get_queryset()
-
-        return generics.get_object_or_404(
-            queryset, profiles__user_id=self.request.user.id
-        )
-
-    def get(self, request, *args, **kwargs):
-        """
-        Get the current users team profile and team details
-        Reads the profile of the current logged in team.
-        """
-        return self.retrieve(request, *args, **kwargs)
-
-
 class DashboardView(LoginRequiredMixin, FormView):
     template_name = "event/dashboard_base.html"
     # Form submits should take the user back to the dashboard
