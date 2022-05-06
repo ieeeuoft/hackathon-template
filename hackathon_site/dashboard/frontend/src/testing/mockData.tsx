@@ -660,6 +660,9 @@ export const mockCheckedOutOrdersInTable: OrderInTable[] = [
     },
 ];
 
+const timeForOrderItem3 = new Date(mockCheckedOutOrders[1].updated_at);
+const timeForOrderItem11 = new Date(mockCheckedOutOrders[2].updated_at);
+
 export const mockReturnedOrdersInTable: ReturnOrderInTable[] = [
     {
         id: 2,
@@ -669,7 +672,7 @@ export const mockReturnedOrdersInTable: ReturnOrderInTable[] = [
                 hardware_id: 1,
                 part_returned_health: "Healthy",
                 quantity: 1,
-                time: "11:01:45 PM (Fri Dec 03 2021)",
+                time: `${timeForOrderItem3.toLocaleTimeString()} (${timeForOrderItem3.toDateString()})`,
             },
         ],
     },
@@ -681,7 +684,7 @@ export const mockReturnedOrdersInTable: ReturnOrderInTable[] = [
                 hardware_id: 10,
                 part_returned_health: "Heavily Used",
                 quantity: 1,
-                time: "11:01:46 PM (Fri Dec 03 2021)",
+                time: `${timeForOrderItem11.toLocaleTimeString()} (${timeForOrderItem11.toDateString()})`,
             },
         ],
     },
