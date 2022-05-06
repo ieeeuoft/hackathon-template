@@ -17,7 +17,7 @@ export const teamOrderListSerialization = (
     const pendingOrders: OrderInTable[] = [];
     const checkedOutOrders: OrderInTable[] = [];
     const returnedOrders: ReturnOrderInTable[] = [];
-    const hardwareIdsToFetch: number[] = [];
+    const hardwareIdsToFetch: Record<number, number> = {};
     orders.forEach((order) => {
         if (order.status !== "Cancelled") {
             const hardwareItems: Record<number, OrderItemTableRow> = {};
@@ -52,7 +52,7 @@ export const teamOrderListSerialization = (
                             quantityRequested: hardwareRequested[hardware_id],
                         };
                 }
-                hardwareIdsToFetch.push(hardware_id);
+                hardwareIdsToFetch[hardware_id] = hardware_id;
             });
             const returnedHardware = Object.values(returnedItems);
             if (returnedHardware.length)
@@ -71,9 +71,9 @@ export const teamOrderListSerialization = (
         }
     });
     return {
-        pendingOrders,
-        checkedOutOrders,
+        pendingOrders: [...pendingOrders].sort((a, b) => b.id - a.id),
+        checkedOutOrders: [...checkedOutOrders].sort((a, b) => b.id - a.id),
         returnedOrders,
-        hardwareIdsToFetch,
+        hardwareIdsToFetch: Object.values(hardwareIdsToFetch),
     };
 };

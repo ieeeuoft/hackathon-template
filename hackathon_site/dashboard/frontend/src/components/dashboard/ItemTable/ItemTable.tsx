@@ -26,16 +26,15 @@ import {
     togglePendingTable,
     toggleReturnedTable,
 } from "slices/ui/uiSlice";
-import {
-    Hardware,
-    ItemsInOrder,
-    Order,
-    OrderInTable,
-    OrderStatus,
-    ReturnOrderInTable,
-} from "api/types";
+import { Hardware, OrderStatus } from "api/types";
 import { hardwareSelectors } from "slices/hardware/hardwareSlice";
 import hardwareImagePlaceholder from "assets/images/placeholders/no-hardware-image.svg";
+import {
+    checkedOutOrdersSelector,
+    orderErrorSelector,
+    pendingOrderSelectors,
+    returnedOrdersSelector,
+} from "slices/order/orderSlice";
 
 export const ChipStatus = ({ status }: { status: OrderStatus | "Error" }) => {
     switch (status) {
@@ -68,170 +67,169 @@ export const ChipStatus = ({ status }: { status: OrderStatus | "Error" }) => {
     }
 };
 
-interface TableProps {
-    orders: OrderInTable[];
-}
+export const CheckedOutTable = () =>
+    // TODO: for incident reports
+    // { push,
+    // reportIncident, }
+    {
+        const dispatch = useDispatch();
+        const orders = useSelector(checkedOutOrdersSelector);
+        const hardware = useSelector(hardwareSelectors.selectEntities);
+        const isVisible = useSelector(isCheckedOutTableVisibleSelector);
+        const fetchOrdersError = useSelector(orderErrorSelector);
+        const toggleVisibility = () => dispatch(toggleCheckedOutTable());
+        const openProductOverview = (hardwareItem: Hardware | undefined) =>
+            hardwareItem ? dispatch(setProductOverviewItem(hardwareItem)) : null;
 
-export const CheckedOutTable = ({
-    orders,
-}: // TODO: for incident reports
-// push,
-// reportIncident,
-TableProps) => {
-    const dispatch = useDispatch();
-    const hardware = useSelector(hardwareSelectors.selectEntities);
-    const isVisible = useSelector(isCheckedOutTableVisibleSelector);
-    const toggleVisibility = () => dispatch(toggleCheckedOutTable());
-    const openProductOverview = (hardwareItem: Hardware | undefined) => {
-        if (hardwareItem) {
-            dispatch(setProductOverviewItem(hardwareItem));
-        }
-    };
-    // sort by most recent order
-    orders.sort((a, b) => b.id - a.id);
+        return (
+            <Container
+                className={styles.tableContainer}
+                maxWidth={false}
+                disableGutters={true}
+            >
+                <div className={styles.title}>
+                    <Typography variant="h2" className={styles.titleText}>
+                        Checked out items
+                    </Typography>
+                    <Button onClick={toggleVisibility} color="primary">
+                        {isVisible ? "Hide all" : "Show all"}
+                    </Button>
+                </div>
 
-    return (
-        <Container
-            className={styles.tableContainer}
-            maxWidth={false}
-            disableGutters={true}
-        >
-            <div className={styles.title}>
-                <Typography variant="h2" className={styles.titleText}>
-                    Checked out items
-                </Typography>
-                <Button onClick={toggleVisibility} color="primary">
-                    {isVisible ? "Hide all" : "Show all"}
-                </Button>
-            </div>
-
-            {isVisible &&
-                (!orders.length ? (
-                    <Paper elevation={2} className={styles.empty} square={true}>
-                        You have no items checked out yet. View our inventory.
-                    </Paper>
-                ) : (
-                    orders.map((checkedOutOrder) => (
-                        <div key={checkedOutOrder.id}>
-                            <Container
-                                className={styles.titleChip}
-                                maxWidth={false}
-                                disableGutters={true}
-                            >
-                                <Typography
-                                    variant="h2"
-                                    className={styles.titleChipText}
+                {isVisible &&
+                    (!orders.length || fetchOrdersError ? (
+                        <Paper elevation={2} className={styles.empty} square={true}>
+                            {fetchOrdersError
+                                ? `Unable to view checked out items.`
+                                : "You have no items checked out yet. View our inventory."}
+                        </Paper>
+                    ) : (
+                        orders.map((checkedOutOrder) => (
+                            <div key={checkedOutOrder.id}>
+                                <Container
+                                    className={styles.titleChip}
+                                    maxWidth={false}
+                                    disableGutters={true}
                                 >
-                                    Order #{checkedOutOrder.id}
-                                </Typography>
-                            </Container>
-                            <TableContainer
-                                component={Paper}
-                                elevation={2}
-                                square={true}
-                            >
-                                <Table
-                                    className={styles.table}
-                                    size="small"
-                                    aria-label="checkout table"
+                                    <Typography
+                                        variant="h2"
+                                        className={styles.titleChipText}
+                                    >
+                                        Order #{checkedOutOrder.id}
+                                    </Typography>
+                                </Container>
+                                <TableContainer
+                                    component={Paper}
+                                    elevation={2}
+                                    square={true}
                                 >
-                                    <TableHead>
-                                        <TableRow>
-                                            <TableCell className={styles.widthFixed} />
-                                            <TableCell
-                                                className={styles.width6}
-                                                align="left"
-                                            >
-                                                Name
-                                            </TableCell>
-                                            <TableCell
-                                                className={styles.widthFixed}
-                                                align="center"
-                                            >
-                                                Info
-                                            </TableCell>
-                                            <TableCell
-                                                className={styles.widthFixed}
-                                                align="right"
-                                            >
-                                                Qty
-                                            </TableCell>
-                                            <TableCell
-                                                align="right"
-                                                className={styles.width6}
-                                            />
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {checkedOutOrder.hardwareInTableRow.map(
-                                            (row) => (
-                                                <TableRow
-                                                    key={row.id}
-                                                    data-testid={`checked-out-hardware-${row.id}-${checkedOutOrder.id}`}
+                                    <Table
+                                        className={styles.table}
+                                        size="small"
+                                        aria-label="checkout table"
+                                    >
+                                        <TableHead>
+                                            <TableRow>
+                                                <TableCell
+                                                    className={styles.widthFixed}
+                                                />
+                                                <TableCell
+                                                    className={styles.width6}
+                                                    align="left"
                                                 >
-                                                    <TableCell align="left">
-                                                        <img
-                                                            className={styles.itemImg}
-                                                            src={
-                                                                hardware[row.id]
-                                                                    ?.picture ??
-                                                                hardwareImagePlaceholder
-                                                            }
-                                                            alt={hardware[row.id]?.name}
-                                                        />
-                                                    </TableCell>
-                                                    <TableCell align="left">
-                                                        {hardware[row.id]?.name}
-                                                    </TableCell>
-                                                    <TableCell align="left">
-                                                        <IconButton
-                                                            color="inherit"
-                                                            aria-label="Info"
-                                                            data-testid="info-button"
-                                                            onClick={() => {
-                                                                openProductOverview(
+                                                    Name
+                                                </TableCell>
+                                                <TableCell
+                                                    className={styles.widthFixed}
+                                                    align="center"
+                                                >
+                                                    Info
+                                                </TableCell>
+                                                <TableCell
+                                                    className={styles.widthFixed}
+                                                    align="right"
+                                                >
+                                                    Qty
+                                                </TableCell>
+                                                <TableCell
+                                                    align="right"
+                                                    className={styles.width6}
+                                                />
+                                            </TableRow>
+                                        </TableHead>
+                                        <TableBody>
+                                            {checkedOutOrder.hardwareInTableRow.map(
+                                                (row) => (
+                                                    <TableRow
+                                                        key={row.id}
+                                                        data-testid={`checked-out-hardware-${row.id}-${checkedOutOrder.id}`}
+                                                    >
+                                                        <TableCell align="left">
+                                                            <img
+                                                                className={
+                                                                    styles.itemImg
+                                                                }
+                                                                src={
                                                                     hardware[row.id]
-                                                                );
-                                                            }}
-                                                        >
-                                                            <Info />
-                                                        </IconButton>
-                                                    </TableCell>
-                                                    <TableCell align="right">
-                                                        {row.quantityGranted}
-                                                    </TableCell>
-                                                    <TableCell align="right">
-                                                        {/* TODO: Add back in when incident reports are being used*/}
-                                                        {/*<Button*/}
-                                                        {/*    color="secondary"*/}
-                                                        {/*    size="small"*/}
-                                                        {/*    onClick={() => {*/}
-                                                        {/*        reportIncident(row.id);*/}
-                                                        {/*        push("/incident-form");*/}
-                                                        {/*    }}*/}
-                                                        {/*>*/}
-                                                        {/*    Report broken/lost*/}
-                                                        {/*</Button>*/}
-                                                    </TableCell>
-                                                </TableRow>
-                                            )
-                                        )}
-                                    </TableBody>
-                                </Table>
-                            </TableContainer>
-                        </div>
-                    ))
-                ))}
-        </Container>
-    );
-};
+                                                                        ?.picture ??
+                                                                    hardwareImagePlaceholder
+                                                                }
+                                                                alt={
+                                                                    hardware[row.id]
+                                                                        ?.name
+                                                                }
+                                                            />
+                                                        </TableCell>
+                                                        <TableCell align="left">
+                                                            {hardware[row.id]?.name}
+                                                        </TableCell>
+                                                        <TableCell align="left">
+                                                            <IconButton
+                                                                color="inherit"
+                                                                aria-label="Info"
+                                                                data-testid="info-button"
+                                                                onClick={() => {
+                                                                    openProductOverview(
+                                                                        hardware[row.id]
+                                                                    );
+                                                                }}
+                                                            >
+                                                                <Info />
+                                                            </IconButton>
+                                                        </TableCell>
+                                                        <TableCell align="right">
+                                                            {row.quantityGranted}
+                                                        </TableCell>
+                                                        <TableCell align="right">
+                                                            {/* TODO: Add back in when incident reports are being used*/}
+                                                            {/*<Button*/}
+                                                            {/*    color="secondary"*/}
+                                                            {/*    size="small"*/}
+                                                            {/*    onClick={() => {*/}
+                                                            {/*        reportIncident(row.id);*/}
+                                                            {/*        push("/incident-form");*/}
+                                                            {/*    }}*/}
+                                                            {/*>*/}
+                                                            {/*    Report broken/lost*/}
+                                                            {/*</Button>*/}
+                                                        </TableCell>
+                                                    </TableRow>
+                                                )
+                                            )}
+                                        </TableBody>
+                                    </Table>
+                                </TableContainer>
+                            </div>
+                        ))
+                    ))}
+            </Container>
+        );
+    };
 
-interface ReturnedTableProps {
-    orders: ReturnOrderInTable[];
-}
-
-export const ReturnedTable = ({ orders }: ReturnedTableProps) => {
+export const ReturnedTable = () => {
     const dispatch = useDispatch();
+    const orders = useSelector(returnedOrdersSelector);
+    const fetchOrdersError = useSelector(orderErrorSelector);
     const hardware = useSelector(hardwareSelectors.selectEntities);
     const isVisible = useSelector(isReturnedTableVisibleSelector);
     const toggleVisibility = () => dispatch(toggleReturnedTable());
@@ -252,10 +250,11 @@ export const ReturnedTable = ({ orders }: ReturnedTableProps) => {
             </div>
 
             {isVisible &&
-                (!orders.length ? (
+                (!orders.length || fetchOrdersError ? (
                     <Paper elevation={2} className={styles.empty} square={true}>
-                        Please bring items to the tech table and a tech team member will
-                        assist you.
+                        {fetchOrdersError
+                            ? `Unable to view returned items.`
+                            : "Please bring items to the tech table and a tech team member will assist you."}
                     </Paper>
                 ) : (
                     orders.map((order) => (
@@ -358,14 +357,12 @@ export const ReturnedTable = ({ orders }: ReturnedTableProps) => {
     );
 };
 
-export const PendingTable = ({ orders }: TableProps) => {
+export const PendingTable = () => {
     const dispatch = useDispatch();
+    const orders = useSelector(pendingOrderSelectors.selectAll);
     const hardware = useSelector(hardwareSelectors.selectEntities);
     const isVisible = useSelector(isPendingTableVisibleSelector);
     const toggleVisibility = () => dispatch(togglePendingTable());
-
-    // sort by most recent order
-    orders.sort((a, b) => b.id - a.id);
 
     return (
         <Container

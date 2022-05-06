@@ -410,6 +410,11 @@ export const mockPendingOrders: Order[] = [
                 hardware_id: 1,
                 part_returned_health: null,
             },
+            {
+                id: 11,
+                hardware_id: 1,
+                part_returned_health: null,
+            },
         ],
         team_id: 2,
         team_code: "IEEE",
@@ -419,7 +424,7 @@ export const mockPendingOrders: Order[] = [
         request: [
             {
                 id: 1,
-                requested_quantity: 1,
+                requested_quantity: 2,
             },
             {
                 id: 4,
@@ -441,6 +446,33 @@ export const mockPendingOrders: Order[] = [
         status: "Ready for Pickup",
         created_at: "2021-10-17T18:28:44.691969-04:00",
         updated_at: "2021-12-03T23:01:46.606892-05:00",
+        request: [
+            {
+                id: 10,
+                requested_quantity: 2,
+            },
+        ],
+    },
+    {
+        id: 6,
+        items: [
+            {
+                id: 12,
+                hardware_id: 10,
+                part_returned_health: null,
+            },
+        ],
+        team_id: 1,
+        team_code: "IEEE",
+        status: "Cancelled",
+        created_at: "2021-10-17T18:28:44.691969-04:00",
+        updated_at: "2021-12-03T23:01:46.606892-05:00",
+        request: [
+            {
+                id: 10,
+                requested_quantity: 2,
+            },
+        ],
     },
 ];
 
@@ -487,14 +519,14 @@ export const mockCheckedOutOrders: Order[] = [
             {
                 id: 5,
                 hardware_id: 2,
-                part_returned_health: "Broken",
+                part_returned_health: null,
             },
         ],
         team_id: 2,
         team_code: "IEEE",
         status: "Picked Up",
         created_at: "2021-10-17T18:28:44.691969-04:00",
-        updated_at: "2021-12-03T23:01:46.606892-05:00",
+        updated_at: "2021-12-03T23:01:45.606892-05:00",
         request: [
             {
                 id: 1,
@@ -506,9 +538,69 @@ export const mockCheckedOutOrders: Order[] = [
             },
         ],
     },
+    {
+        id: 3,
+        items: [
+            {
+                id: 10,
+                hardware_id: 10,
+                part_returned_health: null,
+            },
+            {
+                id: 11,
+                hardware_id: 10,
+                part_returned_health: "Heavily Used",
+            },
+            {
+                id: 12,
+                hardware_id: 10,
+                part_returned_health: null,
+            },
+        ],
+        team_id: 1,
+        team_code: "IEEE",
+        status: "Picked Up",
+        created_at: "2021-10-17T18:28:44.691969-04:00",
+        updated_at: "2021-12-03T23:01:46.606892-05:00",
+        request: [
+            {
+                id: 10,
+                requested_quantity: 3,
+            },
+        ],
+    },
 ];
 
+export const mockOrders: Order[] = mockCheckedOutOrders.concat(mockPendingOrders);
+
 export const mockPendingOrdersInTable: OrderInTable[] = [
+    {
+        id: 5,
+        hardwareInTableRow: [
+            {
+                id: 10,
+                quantityRequested: 2,
+                quantityGranted: 1,
+            },
+        ],
+        status: "Ready for Pickup",
+    },
+    {
+        id: 4,
+        hardwareInTableRow: [
+            {
+                id: 1,
+                quantityRequested: 2,
+                quantityGranted: 2,
+            },
+            {
+                id: 4,
+                quantityRequested: 1,
+                quantityGranted: 1,
+            },
+        ],
+        status: "Submitted",
+    },
     {
         id: 3,
         hardwareInTableRow: [
@@ -525,31 +617,15 @@ export const mockPendingOrdersInTable: OrderInTable[] = [
         ],
         status: "Ready for Pickup",
     },
-    {
-        id: 4,
-        hardwareInTableRow: [
-            {
-                id: 3,
-                quantityRequested: 1,
-                quantityGranted: 1,
-            },
-            {
-                id: 4,
-                quantityRequested: 1,
-                quantityGranted: 1,
-            },
-        ],
-        status: "Submitted",
-    },
 ];
 
 export const mockCheckedOutOrdersInTable: OrderInTable[] = [
     {
-        id: 1,
+        id: 3,
         hardwareInTableRow: [
             {
-                id: 1,
-                quantityRequested: 2,
+                id: 10,
+                quantityRequested: 3,
                 quantityGranted: 2,
             },
         ],
@@ -561,7 +637,7 @@ export const mockCheckedOutOrdersInTable: OrderInTable[] = [
             {
                 id: 1,
                 quantityRequested: 2,
-                quantityGranted: 2,
+                quantityGranted: 1,
             },
             {
                 id: 2,
@@ -571,21 +647,20 @@ export const mockCheckedOutOrdersInTable: OrderInTable[] = [
         ],
         status: "Picked Up",
     },
+    {
+        id: 1,
+        hardwareInTableRow: [
+            {
+                id: 1,
+                quantityRequested: 2,
+                quantityGranted: 2,
+            },
+        ],
+        status: "Picked Up",
+    },
 ];
 
 export const mockReturnedOrdersInTable: ReturnOrderInTable[] = [
-    {
-        id: 1,
-        hardwareInOrder: [
-            {
-                id: 1,
-                hardware_id: 1,
-                part_returned_health: "Heavily Used",
-                quantity: 2,
-                time: "11:01:45 PM (Fri Dec 03 2021)",
-            },
-        ],
-    },
     {
         id: 2,
         hardwareInOrder: [
@@ -593,31 +668,21 @@ export const mockReturnedOrdersInTable: ReturnOrderInTable[] = [
                 id: 3,
                 hardware_id: 1,
                 part_returned_health: "Healthy",
-                quantity: 2,
-                time: "11:01:46 PM (Fri Dec 03 2021)",
-            },
-            {
-                id: 4,
-                hardware_id: 2,
-                part_returned_health: "Broken",
                 quantity: 1,
-                time: "11:01:47 PM (Fri Dec 03 2021)",
+                time: "11:01:45 PM (Fri Dec 03 2021)",
             },
         ],
     },
     {
-        id: 5,
-        items: [
+        id: 3,
+        hardwareInOrder: [
             {
-                id: 10,
+                id: 11,
                 hardware_id: 10,
-                part_returned_health: null,
+                part_returned_health: "Heavily Used",
+                quantity: 1,
+                time: "11:01:46 PM (Fri Dec 03 2021)",
             },
         ],
-        team_id: 1,
-        team_code: "IEEE",
-        status: "Submitted",
-        created_at: "2021-10-17T18:28:44.691969-04:00",
-        updated_at: "2021-12-03T23:01:46.606892-05:00",
     },
 ];

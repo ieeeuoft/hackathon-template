@@ -19,30 +19,34 @@ import { fulfillmentErrorSelector } from "slices/hardware/cartSlice";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import { Alert, AlertTitle } from "@material-ui/lab";
 import {
-    checkedOutOrdersSelector,
     getTeamOrders,
-    pendingOrderSelectors,
-    returnedOrdersSelector,
+    hardwareInOrdersSelector,
+    orderErrorSelector,
 } from "slices/order/orderSlice";
-import { getHardwareWithFilters } from "slices/hardware/hardwareSlice";
+import { getHardwareWithFilters, setFilters } from "slices/hardware/hardwareSlice";
 import { getCategories } from "slices/hardware/categorySlice";
+import AlertBox from "../../components/general/AlertBox/AlertBox";
 
 const Dashboard = () => {
     const dispatch = useDispatch();
     const isTeamLoading = useSelector(isLoadingSelector);
     const orderFulfillmentError = useSelector(fulfillmentErrorSelector);
-    const pendingOrders = useSelector(pendingOrderSelectors.selectAll);
-    const checkedOutOrders = useSelector(checkedOutOrdersSelector);
-    const returnedOrders = useSelector(returnedOrdersSelector);
+    const fetchOrderError = useSelector(orderErrorSelector);
+    const hardwareInOrders = useSelector(hardwareInOrdersSelector);
 
     useEffect(() => {
-        dispatch(getTeamOrders());
-        dispatch(getHardwareWithFilters());
-        dispatch(getCategories());
         dispatch(getCurrentTeam());
+        dispatch(getCategories());
+        dispatch(getTeamOrders());
     }, [dispatch]);
 
-    console.log(pendingOrders);
+    useEffect(() => {
+        if (hardwareInOrders) {
+            dispatch(setFilters({ hardware_ids: hardwareInOrders }));
+            dispatch(getHardwareWithFilters());
+        }
+    }, [dispatch, hardwareInOrders]);
+
     return (
         <>
             <Header />
@@ -89,22 +93,19 @@ const Dashboard = () => {
                     </Grid>
                 )}
                 {orderFulfillmentError && (
-                    <Alert severity="info" style={{ margin: "15px 0px" }}>
-                        <AlertTitle>
-                            {`There were modifications made to order ${orderFulfillmentError.order_id}`}
-                        </AlertTitle>
-                        <ul style={{ marginLeft: "20px" }}>
-                            {orderFulfillmentError.errors.map((error) => (
-                                <li>{error.message}</li>
-                            ))}
-                        </ul>
-                    </Alert>
+                    <AlertBox
+                        error={orderFulfillmentError.errors.map(
+                            ({ message }) => message
+                        )}
+                        title={`There were modifications made to order ${orderFulfillmentError.order_id}`}
+                    />
                 )}
+                {fetchOrderError && <AlertBox error={fetchOrderError} />}
                 {/* TODO: add back in when incident reports are completed on the frontend */}
                 {/* <BrokenTable items={itemsBroken} openReportAlert={openBrokenTable} /> */}
-                <PendingTable orders={pendingOrders} />
-                <CheckedOutTable orders={checkedOutOrders} />
-                <ReturnedTable orders={returnedOrders} />
+                <PendingTable />
+                <CheckedOutTable />
+                <ReturnedTable />
             </div>
         </>
     );

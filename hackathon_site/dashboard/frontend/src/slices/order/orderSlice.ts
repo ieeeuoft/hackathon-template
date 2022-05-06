@@ -7,13 +7,13 @@ import {
 import { APIListResponse, Order, OrderInTable, ReturnOrderInTable } from "api/types";
 import { AppDispatch, RootState } from "slices/store";
 import { get } from "api/api";
-import { setFilters } from "slices/hardware/hardwareSlice";
 import { teamOrderListSerialization } from "api/helpers";
 
 interface OrderExtraState {
     isLoading: boolean;
     error: string | null;
     next: string | null;
+    hardwareInOrders: number[] | null;
     returnedOrders: ReturnOrderInTable[];
     checkedOutOrders: OrderInTable[];
 }
@@ -22,6 +22,7 @@ const extraState: OrderExtraState = {
     isLoading: false,
     error: null,
     next: null,
+    hardwareInOrders: null,
     returnedOrders: [],
     checkedOutOrders: [],
 };
@@ -50,7 +51,7 @@ export const getTeamOrders = createAsyncThunk<
     } catch (e: any) {
         return rejectWithValue({
             status: e.response.status,
-            message: e.response.data,
+            message: e.response.message ?? e.response.data,
         });
     }
 });
@@ -79,12 +80,14 @@ const orderSlice = createSlice({
             pendingOrderAdapter.setAll(state, pendingOrders);
             state.checkedOutOrders = checkedOutOrders;
             state.returnedOrders = returnedOrders;
-            setFilters({ hardware_ids: hardwareIdsToFetch });
+            state.hardwareInOrders = hardwareIdsToFetch;
         });
 
         builder.addCase(getTeamOrders.rejected, (state, { payload }) => {
             state.isLoading = false;
-            state.error = payload?.message || "Something went wrong";
+            state.error =
+                payload?.message ||
+                "There was a problem retrieving orders. If this continues please contact hackathon organizers.";
         });
     },
 });
@@ -116,4 +119,9 @@ export const checkedOutOrdersSelector = createSelector(
 export const returnedOrdersSelector = createSelector(
     [orderSliceSelector],
     (orderSlice) => orderSlice.returnedOrders
+);
+
+export const hardwareInOrdersSelector = createSelector(
+    [orderSliceSelector],
+    (orderSlice) => orderSlice.hardwareInOrders
 );
