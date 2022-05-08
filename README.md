@@ -2,6 +2,14 @@
 
 A website template for hackathons run by [IEEE University of Toronto Student Branch](https://ieee.utoronto.ca/).
 
+## IEEE Web Team 2022-2023
+#### Directors
+- YuYing Liang
+- Leo Haocheng Li
+- Mustafa Abdulrahman (PM)
+#### Associates
+- your name here!
+
 ## Contents
 - [Requirements](#requirements)
 - [Getting Started](#getting-started)
