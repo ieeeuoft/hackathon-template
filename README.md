@@ -8,7 +8,6 @@ A website template for hackathons run by [IEEE University of Toronto Student Bra
 - Leo Haocheng Li
 - Mustafa Abdulrahman (PM)
 #### Associates
-- your name here!
 
 ## Contents
 - [Requirements](#requirements)
