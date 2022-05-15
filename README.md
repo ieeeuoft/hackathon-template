@@ -9,7 +9,7 @@ A website template for hackathons run by [IEEE University of Toronto Student Bra
 - Mustafa Abdulrahman (PM)
 
 #### Associates
-- Ethan Hugh
+- Ethan Hugh, Karandeep Lubana
 
 ## Contents
 - [Requirements](#requirements)
