@@ -7,8 +7,10 @@ A website template for hackathons run by [IEEE University of Toronto Student Bra
 - YuYing Liang
 - Leo Haocheng Li
 - Mustafa Abdulrahman (PM)
+
 #### Associates
 - Dana Al Shekerchi
+- Ethan Hugh
 
 ## Contents
 - [Requirements](#requirements)
