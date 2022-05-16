@@ -10,6 +10,7 @@ A website template for hackathons run by [IEEE University of Toronto Student Bra
 
 #### Associates
 - Ethan Hugh
+- Eric Ji
 
 ## Contents
 - [Requirements](#requirements)
