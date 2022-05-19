@@ -13,6 +13,7 @@ A website template for hackathons run by [IEEE University of Toronto Student Bra
 - Ethan Hugh
 - Luke Cheseldine
 - Karandeep Lubana
+- Arsh Kadakia
 
 ## Contents
 - [Requirements](#requirements)
