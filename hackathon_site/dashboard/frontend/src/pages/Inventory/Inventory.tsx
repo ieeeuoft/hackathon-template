@@ -25,14 +25,17 @@ import {
     hardwareCountSelector,
     hardwareSelectors,
     isMoreLoadingSelector,
+    isLoadingSelector,
 } from "slices/hardware/hardwareSlice";
 import { getCategories } from "slices/hardware/categorySlice";
+import { Grid } from "@material-ui/core";
 
 const Inventory = () => {
     const dispatch = useDispatch();
     const itemsInStore = useSelector(hardwareSelectors.selectTotal);
     const count = useSelector(hardwareCountSelector);
     const isMoreLoading = useSelector(isMoreLoadingSelector);
+    const isLoading = useSelector(isLoadingSelector);
 
     const [mobileOpen, setMobileOpen] = React.useState(false);
     const toggleFilter = () => {
@@ -79,12 +82,14 @@ const Inventory = () => {
 
                 <Typography variant="h1">Hardware Inventory</Typography>
 
-                <div className={styles.inventoryBody}>
-                    <Hidden implementation="css" smDown>
-                        <InventoryFilter />
-                    </Hidden>
+                <Grid container spacing={2} className={styles.inventoryBody}>
+                    <Grid item md={3} xl={2}>
+                        <Hidden implementation="css" smDown>
+                            <InventoryFilter />
+                        </Hidden>
+                    </Grid>
 
-                    <div className={styles.inventoryBodyRight}>
+                    <Grid item md={9} xl={10}>
                         <div className={styles.inventoryBodyToolbar}>
                             <div className={styles.inventoryBodyToolbarDiv}>
                                 <InventorySearch />
@@ -129,9 +134,16 @@ const Inventory = () => {
                                 data-testid="inventoryCountDivider"
                             />
                         )}
-                        <Typography variant="subtitle2" align="center" paragraph>
+                        <Typography
+                            variant="subtitle2"
+                            align="center"
+                            paragraph
+                            style={{ marginTop: count <= 0 ? "30px" : 0 }}
+                        >
                             {count > 0
                                 ? `SHOWING ${itemsInStore} OF ${count} ITEMS`
+                                : isLoading
+                                ? "LOADING"
                                 : "NO ITEMS FOUND"}
                         </Typography>
                         {count !== itemsInStore && (
@@ -153,8 +165,8 @@ const Inventory = () => {
                                 )}
                             </Button>
                         )}
-                    </div>
-                </div>
+                    </Grid>
+                </Grid>
             </div>
         </>
     );

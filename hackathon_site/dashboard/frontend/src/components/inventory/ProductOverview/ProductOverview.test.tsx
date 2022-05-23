@@ -3,9 +3,10 @@ import ProductOverview, { EnhancedAddToCartForm } from "./ProductOverview";
 import { mockCartItems, mockCategories, mockHardware } from "testing/mockData";
 import { render, fireEvent, waitFor, makeStoreWithEntities } from "testing/utils";
 import { makeStore } from "slices/store";
-import { addToCart, cartSelectors } from "slices/hardware/cartSlice";
+import { cartSelectors } from "slices/hardware/cartSlice";
 import { SnackbarProvider } from "notistack";
-import SnackbarNotifier from "../../general/SnackbarNotifier/SnackbarNotifier";
+import SnackbarNotifier from "components/general/SnackbarNotifier/SnackbarNotifier";
+import { queryByText } from "@testing-library/react";
 
 describe("<ProductOverview />", () => {
     test("all 3 parts of the product overview is there", () => {
@@ -28,6 +29,30 @@ describe("<ProductOverview />", () => {
         expect(getByText("Add to cart")).toBeInTheDocument();
     });
 
+    test("all 3 parts of the product overview is there when hardware has no optional fields", () => {
+        const store = makeStore({
+            ui: {
+                inventory: {
+                    hardwareItemBeingViewed: mockHardware[9],
+                    isProductOverviewVisible: true,
+                },
+            },
+        });
+
+        const { getByText, queryByText } = render(
+            <ProductOverview showAddToCartButton />,
+            {
+                store,
+            }
+        );
+
+        // Check if the main section, detailInfoSection, and add to cart section works
+        expect(getByText("Category")).toBeInTheDocument();
+        expect(getByText("Datasheet")).toBeInTheDocument();
+        expect(getByText("Add to cart")).toBeInTheDocument();
+        expect(queryByText("Notes")).not.toBeInTheDocument();
+    });
+
     test("minimum constraint between hardware and categories is used", () => {
         const store = makeStoreWithEntities({
             hardware: [mockHardware[0]],
@@ -41,8 +66,11 @@ describe("<ProductOverview />", () => {
         });
 
         const minConstraint: number = mockCategories
-            .map((category) => category.max_per_team)
-            .concat([mockHardware[0].max_per_team])
+            .map(
+                (category) =>
+                    category.max_per_team ?? mockHardware[0].quantity_remaining
+            )
+            .concat(mockHardware[0].max_per_team ? [mockHardware[0].max_per_team] : [])
             .reduce((prev, curr) => Math.min(prev, curr));
 
         const { getByText, queryByText, getByRole } = render(
@@ -165,7 +193,7 @@ describe("<EnhancedAddToCartForm />", () => {
     test("button and select are disabled if quantityAvailable is 0", () => {
         const { getByText, getByLabelText } = render(
             <EnhancedAddToCartForm
-                quantityAvailable={0}
+                quantityRemaining={0}
                 maxPerTeam={null}
                 hardwareId={1}
                 name="Arduino"
@@ -182,7 +210,7 @@ describe("<EnhancedAddToCartForm />", () => {
     test("button and select are disabled if minimum constraint is 0", () => {
         const { getByText, getByLabelText } = render(
             <EnhancedAddToCartForm
-                quantityAvailable={3}
+                quantityRemaining={3}
                 maxPerTeam={0}
                 hardwareId={1}
                 name="Arduino"
@@ -199,7 +227,7 @@ describe("<EnhancedAddToCartForm />", () => {
     test("dropdown values are minimum between quantityAvailable and max per team", () => {
         const { queryByText, getByText, getByRole } = render(
             <EnhancedAddToCartForm
-                quantityAvailable={3}
+                quantityRemaining={3}
                 maxPerTeam={2}
                 hardwareId={1}
                 name="Arduino"
@@ -215,7 +243,7 @@ describe("<EnhancedAddToCartForm />", () => {
     test("dropdown value defaults to quantityAvailable when maxPerTeam is null", () => {
         const { getByText, getByRole } = render(
             <EnhancedAddToCartForm
-                quantityAvailable={3}
+                quantityRemaining={3}
                 maxPerTeam={null}
                 hardwareId={1}
                 name="Arduino"

@@ -11,6 +11,7 @@ import styles from "assets/abstracts/_exports.scss";
 import store, { history } from "slices/store";
 
 import "App.scss";
+import AdminDashboard from "pages/AdminDashboard/AdminDashboard";
 import Dashboard from "pages/Dashboard/Dashboard";
 import Footer from "components/general/Footer/Footer";
 import Login from "pages/Login/Login";
@@ -21,9 +22,9 @@ import Inventory from "pages/Inventory/Inventory";
 import Cart from "pages/Cart/Cart";
 import IncidentForm from "pages/IncidentForm/IncidentForm";
 import NotFound from "pages/NotFound/NotFound";
-import SnackbarNotifier from "components/general/SnackbarNotifier/SnackbarNotifier";
 
-import withParticipantCheck from "components/HOCs/withParticipantCheck/withParticipantCheck";
+import SnackbarNotifier from "components/general/SnackbarNotifier/SnackbarNotifier";
+import withUserCheck from "components/HOCs/withUserCheck/withUserCheck";
 
 type Palette = {
     primary?: { main: string };
@@ -50,25 +51,25 @@ const UnconnectedApp = () => {
         <div className="App">
             <div className="AppPadding">
                 <Switch>
-                    <Route exact path="/" component={withParticipantCheck(Dashboard)} />
-                    <Route exact path="/login" component={Login} />
                     <Route
                         exact
-                        path="/orders"
-                        component={withParticipantCheck(Orders)}
+                        path="/"
+                        component={withUserCheck(Dashboard, AdminDashboard)}
                     />
-                    <Route exact path="/teams" component={Teams} />
-                    <Route exact path="/reports" component={Reports} />
+                    <Route exact path="/login" component={Login} />
+                    <Route exact path="/orders" component={withUserCheck(Orders)} />
+                    <Route exact path="/teams" component={withUserCheck(Teams)} />
+                    <Route exact path="/reports" component={withUserCheck(Reports)} />
                     <Route
                         exact
                         path="/inventory"
-                        component={withParticipantCheck(Inventory)}
+                        component={withUserCheck(Inventory)}
                     />
-                    <Route exact path="/cart" component={withParticipantCheck(Cart)} />
+                    <Route exact path="/cart" component={withUserCheck(Cart)} />
                     <Route
                         exact
                         path="/incident-form"
-                        component={withParticipantCheck(IncidentForm)}
+                        component={withUserCheck(IncidentForm)}
                     />
                     <Route exact path="/404" component={NotFound} />
                     <Redirect to="/404" />

@@ -17,6 +17,7 @@ import { RootState } from "slices/store";
 import { hardwareSelectors } from "slices/hardware/hardwareSlice";
 import { removeFromCart, updateCart } from "slices/hardware/cartSlice";
 import { selectCategoriesByIds } from "slices/hardware/categorySlice";
+import hardwareImagePlaceholder from "assets/images/placeholders/no-hardware-image.svg";
 
 const makeSelections = (quantity_remaining: number) => {
     const items = [];
@@ -132,7 +133,7 @@ export const CartCard = ({ hardware_id, quantity, error }: CartCardProps) => {
         >
             <CardMedia
                 className={styles.CartPic}
-                image={hardware.picture}
+                image={hardware.picture ?? hardwareImagePlaceholder}
                 alt={hardware.name}
                 component="img"
             />

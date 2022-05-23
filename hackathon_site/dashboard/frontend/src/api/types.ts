@@ -14,11 +14,11 @@ export interface Hardware {
     manufacturer: string;
     datasheet: string;
     quantity_available: number;
-    max_per_team: number;
-    picture: string;
+    max_per_team?: number;
+    picture?: string;
     categories: number[];
     quantity_remaining: number;
-    notes: string;
+    notes?: string;
 }
 
 export type HardwareOrdering =
@@ -40,8 +40,8 @@ export interface HardwareFilters {
 export interface Category {
     id: number;
     name: string;
-    max_per_team: number;
-    unique_hardware_count: number;
+    max_per_team?: number;
+    unique_hardware_count?: number;
 }
 
 /** Event API */
@@ -54,16 +54,28 @@ export interface Profile {
     team: number;
 }
 
-export interface User {
+type ProfileWithoutTeamNumber = Omit<Profile, "team">;
+
+export type Group = {
+    id: number;
+    name: string;
+};
+
+interface UserWithoutProfile {
     id: number;
     first_name: string;
     last_name: string;
     email: string;
-    profile: Profile;
 }
 
-type UserWithoutProfile = Omit<User, "profile">;
-type ProfileWithoutTeamNumber = Omit<Profile, "team">;
+export interface User extends UserWithoutProfile {
+    profile:
+        | (ProfileWithoutTeamNumber & {
+              user: UserWithoutProfile;
+          })
+        | null;
+    groups: Group[];
+}
 
 export interface Team {
     id: number;

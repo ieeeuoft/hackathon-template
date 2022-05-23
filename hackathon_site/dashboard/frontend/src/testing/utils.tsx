@@ -29,6 +29,8 @@ import {
     initialState as cartItemInitialState,
 } from "slices/hardware/cartSlice";
 
+import { teamReducerName, TeamState } from "slices/event/teamSlice";
+
 export const withRouter = (component: React.ComponentElement<any, any>) => (
     <BrowserRouter>{component}</BrowserRouter>
 );
@@ -96,6 +98,14 @@ export const makeMockApiListResponse = <T extends unknown>(
         },
     } as AxiosResponse<APIListResponse<T>>);
 
+export const makeMockApiResponse = (data: object, status?: number): AxiosResponse => ({
+    config: {},
+    headers: {},
+    status: status ?? 200,
+    statusText: "OK",
+    data,
+});
+
 // Re-export everything from jest-when
 export * from "jest-when";
 
@@ -104,6 +114,8 @@ export interface StoreEntities {
     categories?: Category[];
     ui?: DeepPartial<UIState>;
     cartItems?: CartItem[];
+    team?: DeepPartial<TeamState>;
+    cartState?: DeepPartial<CartState>;
 }
 
 export const makeStoreWithEntities = (entities: StoreEntities) => {
@@ -142,19 +154,24 @@ export const makeStoreWithEntities = (entities: StoreEntities) => {
         preloadedState[uiReducerName] = entities.ui;
     }
 
-    if (entities.cartItems) {
-        const cartItemState: CartState = {
-            ...cartItemInitialState,
-            ids: [],
-            entities: {},
-        };
+    const cartItemState: CartState = {
+        ...cartItemInitialState,
+        ...entities.cartState,
+        ids: [],
+        entities: {},
+    };
 
+    if (entities.cartItems) {
         for (const cartItem of entities.cartItems) {
             cartItemState.ids.push(cartItem.hardware_id);
             cartItemState.entities[cartItem.hardware_id] = cartItem;
         }
 
         preloadedState[cartReducerName] = cartItemState;
+    }
+
+    if (entities.team) {
+        preloadedState[teamReducerName] = entities.team;
     }
 
     return makeStore(preloadedState);

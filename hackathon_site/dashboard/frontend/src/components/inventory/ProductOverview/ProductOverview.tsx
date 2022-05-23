@@ -24,6 +24,7 @@ import { selectCategoriesByIds } from "slices/hardware/categorySlice";
 import { RootState } from "slices/store";
 import { addToCart, cartSelectors } from "slices/hardware/cartSlice";
 import { Category } from "api/types";
+import hardwareImagePlaceholder from "assets/images/placeholders/no-hardware-image.svg";
 
 export const ERROR_MESSAGES = {
     quantityMissing: "Quantity is required",
@@ -48,11 +49,11 @@ const createQuantityList = (number: number) => {
 };
 
 interface AddToCartFormProps extends FormikValues {
-    quantityAvailable: number;
+    quantityRemaining: number;
     maxPerTeam: number | null;
 }
 export const AddToCartForm = ({
-    quantityAvailable,
+    quantityRemaining,
     maxPerTeam,
     handleSubmit,
     handleChange,
@@ -60,8 +61,8 @@ export const AddToCartForm = ({
 }: AddToCartFormProps) => {
     const dropdownNum =
         maxPerTeam !== null
-            ? Math.min(quantityAvailable, maxPerTeam)
-            : quantityAvailable;
+            ? Math.min(quantityRemaining, maxPerTeam)
+            : quantityRemaining;
 
     return (
         <>
@@ -99,13 +100,13 @@ export const AddToCartForm = ({
 };
 
 interface EnhancedAddToCartFormProps {
-    quantityAvailable: number;
+    quantityRemaining: number;
     hardwareId: number;
     name: string;
     maxPerTeam: number | null;
 }
 export const EnhancedAddToCartForm = ({
-    quantityAvailable,
+    quantityRemaining,
     hardwareId,
     name,
     maxPerTeam,
@@ -117,7 +118,7 @@ export const EnhancedAddToCartForm = ({
 
     const onSubmit = (formikValues: { quantity: string }) => {
         const numQuantity: number = parseInt(formikValues.quantity);
-        if (currentQuantityInCart + numQuantity <= (maxPerTeam ?? quantityAvailable)) {
+        if (currentQuantityInCart + numQuantity <= (maxPerTeam ?? quantityRemaining)) {
             dispatch(addToCart({ hardware_id: hardwareId, quantity: numQuantity }));
             dispatch(
                 displaySnackbar({
@@ -160,7 +161,7 @@ export const EnhancedAddToCartForm = ({
                         </Typography>
                     )}
                     <AddToCartForm
-                        quantityAvailable={quantityAvailable}
+                        quantityRemaining={quantityRemaining}
                         maxPerTeam={maxPerTeam}
                         handleSubmit={formikProps.handleSubmit}
                         handleChange={formikProps.handleChange}
@@ -176,7 +177,7 @@ interface DetailInfoSectionProps {
     manufacturer: string;
     modelNumber: string;
     datasheet: string;
-    notes: string;
+    notes?: string;
     constraints: string[];
 }
 const DetailInfoSection = ({
@@ -214,12 +215,16 @@ const DetailInfoSection = ({
             >
                 Link
             </Button>
-            <Typography variant="body2" className={styles.heading}>
-                Notes
-            </Typography>
-            {notes.split("\n").map((note, i) => (
-                <Typography key={i}>{note}</Typography>
-            ))}
+            {notes && (
+                <>
+                    <Typography variant="body2" className={styles.heading}>
+                        Notes
+                    </Typography>
+                    {notes.split("\n").map((note, i) => (
+                        <Typography key={i}>{note}</Typography>
+                    ))}
+                </>
+            )}
         </>
     );
 };
@@ -327,7 +332,7 @@ export const ProductOverview = ({
                             quantityAvailable={hardware.quantity_available}
                             quantityRemaining={hardware.quantity_remaining}
                             categories={categoryNames}
-                            picture={hardware.picture}
+                            picture={hardware.picture ?? hardwareImagePlaceholder}
                         />
                         <DetailInfoSection
                             manufacturer={hardware.manufacturer}
@@ -340,7 +345,7 @@ export const ProductOverview = ({
 
                     {showAddToCartButton && (
                         <EnhancedAddToCartForm
-                            quantityAvailable={hardware.quantity_available}
+                            quantityRemaining={hardware.quantity_remaining}
                             hardwareId={hardware.id}
                             name={hardware.name}
                             maxPerTeam={maxPerTeam}

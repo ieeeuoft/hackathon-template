@@ -34,8 +34,8 @@ export const orderByOptions: OrderByOptions = [
     { value: "", label: "Default" },
     { value: "name", label: "A-Z" },
     { value: "-name", label: "Z-A" },
-    { value: "quantity_remaining", label: "Stock remaining: high to low" },
-    { value: "-quantity_remaining", label: "Stock remaining: low to high" },
+    { value: "-quantity_remaining", label: "Stock remaining: high to low" },
+    { value: "quantity_remaining", label: "Stock remaining: low to high" },
 ];
 
 const RadioOrderBy = ({ field, options }: FieldProps & { options: OrderByOptions }) => (

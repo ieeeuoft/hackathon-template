@@ -2,19 +2,10 @@ import React from "react";
 import OpenInNew from "@material-ui/icons/OpenInNew";
 import GetApp from "@material-ui/icons/GetApp";
 import PinDrop from "@material-ui/icons/PinDrop";
-import {
-    Category,
-    Hardware,
-    Incident,
-    IncidentState,
-    Order,
-    OrderItem,
-    OrderStatus,
-    PartReturnedHealth,
-    Team,
-} from "api/types";
+
+import { Category, Hardware, Order, Team, User } from "api/types";
 import { CartItem } from "api/types";
-import exp from "constants";
+import { adminGroup } from "constants.js";
 
 // For DashCard on Dashboard
 export const cardItems = [
@@ -167,18 +158,23 @@ export const mockCategories: Category[] = [
 ];
 
 // User details
-export const mockUser = {
+export const mockUser: User = {
     id: 1,
     first_name: "Foo",
     last_name: "Bar",
     email: "foo@bar.com",
     profile: {
         id: 1,
-        status: "Accepted",
         id_provided: false,
         attended: false,
         acknowledge_rules: false,
         e_signature: null,
+        user: {
+            id: 1,
+            first_name: "Foo",
+            last_name: "Bar",
+            email: "foo@bar.com",
+        },
     },
     groups: [
         {
@@ -188,6 +184,17 @@ export const mockUser = {
         {
             id: 2,
             name: "Admins",
+        },
+    ],
+};
+
+export const mockAdminUser: User = {
+    ...mockUser,
+    profile: null,
+    groups: [
+        {
+            id: 1,
+            name: adminGroup,
         },
     ],
 };
@@ -333,6 +340,16 @@ export const mockHardware: Hardware[] = [
         quantity_remaining: 16,
         notes: "",
     },
+    {
+        id: 10,
+        name: "Hardware with no optional fields",
+        model_number: "ABCD",
+        manufacturer: "Nobody",
+        datasheet: "https://example.com/datasheet",
+        quantity_available: 20,
+        categories: [1],
+        quantity_remaining: 16,
+    },
 ];
 
 export const mockCartItems: CartItem[] = [
@@ -382,6 +399,21 @@ export const mockPendingOrders: Order[] = [
         created_at: "2021-10-17T18:28:44.691969-04:00",
         updated_at: "2021-12-03T23:01:46.606892-05:00",
     },
+    {
+        id: 5,
+        items: [
+            {
+                id: 10,
+                hardware_id: 10,
+                part_returned_health: null,
+            },
+        ],
+        team_id: 1,
+        team_code: "IEEE",
+        status: "Ready for Pickup",
+        created_at: "2021-10-17T18:28:44.691969-04:00",
+        updated_at: "2021-12-03T23:01:46.606892-05:00",
+    },
 ];
 
 export const mockCheckedOutOrders: Order[] = [
@@ -427,6 +459,21 @@ export const mockCheckedOutOrders: Order[] = [
         team_id: 2,
         team_code: "IEEE",
         status: "Picked Up",
+        created_at: "2021-10-17T18:28:44.691969-04:00",
+        updated_at: "2021-12-03T23:01:46.606892-05:00",
+    },
+    {
+        id: 5,
+        items: [
+            {
+                id: 10,
+                hardware_id: 10,
+                part_returned_health: null,
+            },
+        ],
+        team_id: 1,
+        team_code: "IEEE",
+        status: "Submitted",
         created_at: "2021-10-17T18:28:44.691969-04:00",
         updated_at: "2021-12-03T23:01:46.606892-05:00",
     },

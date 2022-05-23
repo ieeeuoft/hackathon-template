@@ -13,6 +13,7 @@ from hardware.serializers import (
     HardwareSerializer,
     CategorySerializer,
     OrderListSerializer,
+    OrderItemListSerializer,
     IncidentListSerializer,
 )
 from hackathon_site.tests import SetupUserMixin
@@ -649,6 +650,158 @@ class OrderListViewGetTestCase(SetupUserMixin, APITestCase):
         self.assertCountEqual(returned_ids, [self.order_3.id, self.order_4.id])
 
 
+class OrderItemListViewGetTestCase(SetupUserMixin, APITestCase):
+    def setUp(self):
+        super().setUp()
+        self.team = Team.objects.create()
+        self.team2 = Team.objects.create(team_code="ABCDE")
+        self.order = Order.objects.create(
+            status="Cart",
+            team=self.team,
+            request={"hardware": [{"id": 1, "quantity": 2}, {"id": 2, "quantity": 3}]},
+        )
+        self.hardware = Hardware.objects.create(
+            name="name",
+            model_number="model",
+            manufacturer="manufacturer",
+            datasheet="/datasheet/location/",
+            notes="notes",
+            quantity_available=4,
+            max_per_team=1,
+            picture="/picture/location",
+        )
+        self.other_hardware = Hardware.objects.create(
+            name="other",
+            model_number="otherModel",
+            manufacturer="otherManufacturer",
+            datasheet="/datasheet/location/other",
+            quantity_available=10,
+            max_per_team=10,
+            picture="/picture/location/other",
+        )
+        self.order_item_1 = OrderItem.objects.create(
+            order=self.order, hardware=self.hardware,
+        )
+        self.order_item_2 = OrderItem.objects.create(
+            order=self.order, hardware=self.other_hardware,
+        )
+        self.order_2 = Order.objects.create(
+            status="Submitted",
+            team=self.team,
+            request={"hardware": [{"id": 1, "quantity": 2}, {"id": 2, "quantity": 3}]},
+        )
+        self.order_item_3 = OrderItem.objects.create(
+            order=self.order_2, hardware=self.hardware,
+        )
+        self.order_item_4 = OrderItem.objects.create(
+            order=self.order_2, hardware=self.other_hardware,
+        )
+        self.order_3 = Order.objects.create(
+            status="Cancelled",
+            team=self.team2,
+            request={"hardware": [{"id": 1, "quantity": 2}, {"id": 2, "quantity": 3}]},
+        )
+        self.order_item_5 = OrderItem.objects.create(
+            order=self.order_3, hardware=self.hardware,
+        )
+        self.order_4 = Order.objects.create(
+            status="Submitted",
+            team=self.team2,
+            request={"hardware": [{"id": 1, "quantity": 2}, {"id": 2, "quantity": 3}]},
+        )
+        self.order_item_6 = OrderItem.objects.create(
+            order=self.order_4, hardware=self.hardware,
+        )
+        self.view_permissions = Permission.objects.filter(
+            content_type__app_label="hardware", codename="view_orderitem"
+        )
+        self.view = reverse("api:hardware:order-item-list")
+
+    def _build_filter_url(self, **kwargs):
+        return (
+            self.view + "?" + "&".join([f"{key}={val}" for key, val in kwargs.items()])
+        )
+
+    def test_user_not_logged_in(self):
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_user_has_no_view_permissions(self):
+        self._login()
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_user_has_view_permissions(self):
+        self._login(self.view_permissions)
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        queryset = OrderItem.objects.all()
+
+        # need to provide a request in the serializer context to produce absolute url for image field
+        expected_response = OrderItemListSerializer(
+            queryset, many=True, context={"request": response.wsgi_request}
+        ).data
+        data = response.json()
+
+        self.assertEqual(expected_response, data["results"])
+
+    def test_order_items_get_success(self):
+        self._login(self.view_permissions)
+
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        queryset = OrderItem.objects.all()
+        expected_response = OrderItemListSerializer(
+            queryset, many=True, context={"request": response.wsgi_request}
+        ).data
+        data = response.json()
+
+        self.assertEqual(expected_response, data["results"])
+
+    def test_team_code_filter(self):
+        self._login(self.view_permissions)
+
+        url = self._build_filter_url(team_code="ABCDE")
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.json()
+        results = data["results"]
+        returned_ids = [res["id"] for res in results]
+        self.assertCountEqual(
+            returned_ids, [self.order_item_5.id, self.order_item_6.id]
+        )
+
+    def test_order_id_filter(self):
+        self._login(self.view_permissions)
+
+        url = self._build_filter_url(order_id=1)
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.json()
+        results = data["results"]
+        returned_ids = [res["id"] for res in results]
+        self.assertCountEqual(
+            returned_ids, [self.order_item_1.id, self.order_item_2.id]
+        )
+
+    def test_search_filter(self):
+        self._login(self.view_permissions)
+
+        url = self._build_filter_url(search="ABCDE")
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.json()
+        results = data["results"]
+
+        returned_ids = [res["id"] for res in results]
+        self.assertCountEqual(
+            returned_ids, [self.order_item_5.id, self.order_item_6.id]
+        )
+
+
 class IncidentListViewPostTestCase(SetupUserMixin, APITestCase):
     def setUp(self):
         super().setUp()
@@ -769,7 +922,7 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
 
     def test_invalid_input_hardware_limit(self):
         self._login()
-        profile = self._make_event_profile()
+        self._make_event_profile()
         hardware = Hardware.objects.create(
             name="name",
             model_number="model",
@@ -788,7 +941,11 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
         expected_response = {
-            "non_field_errors": ["Hardware {} limit reached".format(hardware.name)]
+            "non_field_errors": [
+                "Maximum number of items for Hardware {} is reached (limit of {} per team)".format(
+                    hardware.name, hardware.max_per_team
+                )
+            ]
         }
         self.assertEqual(response.json(), expected_response)
 
@@ -840,7 +997,11 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
         expected_response = {
-            "non_field_errors": ["Hardware {} limit reached".format(hardware.name)]
+            "non_field_errors": [
+                "Maximum number of items for Hardware {} is reached (limit of {} per team)".format(
+                    hardware.name, hardware.max_per_team
+                )
+            ]
         }
         self.assertEqual(response.json(), expected_response)
 
@@ -955,7 +1116,9 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
 
         expected_response = {
             "non_field_errors": [
-                "Category {} limit reached".format(self.category_limit_1.name)
+                "Maximum number of items for the Category {} is reached (limit of {} items per team)".format(
+                    self.category_limit_1.name, self.category_limit_1.max_per_team
+                )
             ]
         }
         self.assertEqual(response.json(), expected_response)
@@ -1009,7 +1172,9 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
 
         expected_response = {
             "non_field_errors": [
-                "Category {} limit reached".format(self.category_limit_4.name)
+                "Maximum number of items for the Category {} is reached (limit of {} items per team)".format(
+                    self.category_limit_4.name, self.category_limit_4.max_per_team
+                )
             ]
         }
         self.assertEqual(response.json(), expected_response)
@@ -1142,8 +1307,12 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
         expected_error_messages = [
-            "Category {} limit reached".format(self.category_limit_1.name),
-            "Hardware {} limit reached".format(limited_hardware.name),
+            "Maximum number of items for the Category {} is reached (limit of {} items per team)".format(
+                self.category_limit_1.name, self.category_limit_1.max_per_team
+            ),
+            "Maximum number of items for Hardware {} is reached (limit of {} per team)".format(
+                limited_hardware.name, limited_hardware.max_per_team
+            ),
         ]
         self.assertCountEqual(
             response.json().get("non_field_errors"), expected_error_messages

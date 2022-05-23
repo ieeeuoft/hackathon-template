@@ -7,7 +7,7 @@ import {
 import { RootState, AppDispatch } from "slices/store";
 
 import { APIListResponse, Category } from "api/types";
-import { get, stripHostname } from "api/api";
+import { get, stripHostnameReturnFilters } from "api/api";
 import { displaySnackbar } from "slices/ui/uiSlice";
 
 interface CategoryExtraState {
@@ -43,11 +43,16 @@ export const getCategories = createAsyncThunk<
         let data: APIListResponse<Category> | undefined = undefined;
 
         let path: string = "/api/hardware/categories/";
+        let params: { [key: string]: any } = {};
 
         do {
-            path = data?.next ? stripHostname(data.next) : path;
-            const response = await get<APIListResponse<Category>>(path);
+            const response = await get<APIListResponse<Category>>(path, params);
             data = response.data;
+            if (data?.next) {
+                const nextURLData = stripHostnameReturnFilters(data.next);
+                path = nextURLData.path;
+                params = nextURLData.filters ?? {};
+            }
             categories.push(...data.results);
         } while (data?.next);
 

@@ -1,10 +1,17 @@
-import React from "react";
+import React, { ReactElement } from "react";
 import Typography from "@material-ui/core/Typography";
 import styles from "./Item.module.scss";
 import Card from "@material-ui/core/Card";
 import CardMedia from "@material-ui/core/CardMedia";
 
-const Item = ({ image, title, total, currentStock }) => {
+interface ItemProps {
+    image: string;
+    title: string;
+    total: number;
+    currentStock: number;
+}
+
+const Item = ({ image, title, total, currentStock }: ItemProps): ReactElement => {
     const stock = !currentStock
         ? "OUT OF STOCK"
         : currentStock + " OF " + total + " IN STOCK";

@@ -5,11 +5,6 @@ import { render, makeStoreWithEntities, waitFor } from "testing/utils";
 import { mockHardware } from "testing/mockData";
 
 describe("<CartCard />", () => {
-    /**
-     * TODO: Additional required tests once the redux slice is ready:
-     *  - Test that updating the quantity updates the store
-     */
-
     it("Selects hardware from the store and renders", async () => {
         const store = makeStoreWithEntities({ hardware: mockHardware });
 

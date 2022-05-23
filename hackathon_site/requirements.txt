@@ -7,7 +7,7 @@ click==7.1.2
 coreapi==2.3.3
 coreschema==0.0.4
 dj-rest-auth==1.0.6
-Django==3.2.11
+Django==3.2.13
 django-client-side-image-cropping==0.1.9
 django-cors-headers==3.3.0
 django-debug-toolbar==2.2.1
@@ -26,7 +26,7 @@ Jinja2==2.11.3
 MarkupSafe==1.1.1
 packaging==20.4
 pathspec==0.8.0
-Pillow==9.0.0
+Pillow==9.0.1
 psycopg2-binary==2.8.6
 python-dateutil==2.8.2
 pyparsing==2.4.7

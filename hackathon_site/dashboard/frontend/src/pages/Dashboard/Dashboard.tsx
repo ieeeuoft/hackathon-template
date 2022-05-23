@@ -11,20 +11,20 @@ import {
 } from "components/dashboard/ItemTable/ItemTable";
 import ProductOverview from "components/inventory/ProductOverview/ProductOverview";
 import Header from "components/general/Header/Header";
-import {
-    cardItems,
-    members,
-    teamCode,
-    mockPendingOrders,
-    mockCheckedOutOrders,
-} from "testing/mockData";
+import { cardItems, mockPendingOrders, mockCheckedOutOrders } from "testing/mockData";
 import { hackathonName } from "constants.js";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getHardwareWithFilters, setFilters } from "slices/hardware/hardwareSlice";
 import { getCategories } from "slices/hardware/categorySlice";
+import { getCurrentTeam, isLoadingSelector } from "slices/event/teamSlice";
+import { fulfillmentErrorSelector } from "slices/hardware/cartSlice";
+import LinearProgress from "@material-ui/core/LinearProgress";
+import { Alert, AlertTitle } from "@material-ui/lab";
 
 const Dashboard = () => {
     const dispatch = useDispatch();
+    const isTeamLoading = useSelector(isLoadingSelector);
+    const orderFulfillmentError = useSelector(fulfillmentErrorSelector);
 
     useEffect(() => {
         const allOrders = mockPendingOrders.concat(mockCheckedOutOrders);
@@ -38,7 +38,8 @@ const Dashboard = () => {
         );
         dispatch(getHardwareWithFilters({ keepOld: true }));
         dispatch(getCategories());
-    });
+        dispatch(getCurrentTeam());
+    }, [dispatch]);
 
     return (
         <>
@@ -46,41 +47,57 @@ const Dashboard = () => {
             <ProductOverview showAddToCartButton={false} />
             <div className={styles.dashboard}>
                 <Typography variant="h1">{hackathonName} Hardware Dashboard</Typography>
-                <Grid
-                    container
-                    direction="row"
-                    justifyContent="flex-start"
-                    alignItems="flex-start"
-                    spacing={2}
-                    className={styles.dashboardGrid}
-                >
+                {isTeamLoading ? (
+                    <LinearProgress
+                        style={{ width: "100%", marginTop: 25 }}
+                        data-testid="team-linear-progress"
+                    />
+                ) : (
                     <Grid
-                        item
-                        md={3}
-                        sm={4}
-                        xs={6}
-                        className={styles.dashboardGridItem}
-                        key={0}
+                        container
+                        direction="row"
+                        justifyContent="flex-start"
+                        alignItems="flex-start"
+                        spacing={2}
+                        className={styles.dashboardGrid}
                     >
-                        <TeamCard
-                            members={members}
-                            teamCode={teamCode}
-                            handleEditTeam={() => alert("Editing Team")}
-                        />
-                    </Grid>
-                    {cardItems.map(({ title, content }, i) => (
                         <Grid
                             item
                             md={3}
                             sm={4}
                             xs={6}
                             className={styles.dashboardGridItem}
-                            key={i + 1}
+                            key={0}
+                            data-testid="team"
                         >
-                            <DashCard title={title} content={content} />
+                            <TeamCard handleEditTeam={() => alert("Editing Team")} />
                         </Grid>
-                    ))}
-                </Grid>
+                        {cardItems.map(({ title, content }, i) => (
+                            <Grid
+                                item
+                                md={3}
+                                sm={4}
+                                xs={6}
+                                className={styles.dashboardGridItem}
+                                key={i + 1}
+                            >
+                                <DashCard title={title} content={content} />
+                            </Grid>
+                        ))}
+                    </Grid>
+                )}
+                {orderFulfillmentError && (
+                    <Alert severity="info" style={{ margin: "15px 0px" }}>
+                        <AlertTitle>
+                            {`There were modifications made to order ${orderFulfillmentError.order_id}`}
+                        </AlertTitle>
+                        <ul style={{ marginLeft: "20px" }}>
+                            {orderFulfillmentError.errors.map((error) => (
+                                <li>{error.message}</li>
+                            ))}
+                        </ul>
+                    </Alert>
+                )}
                 {/* TODO: add back in when incident reports are completed on the frontend */}
                 {/* <BrokenTable items={itemsBroken} openReportAlert={openBrokenTable} /> */}
                 <PendingTable orders={mockPendingOrders} />
