@@ -1,0 +1,64 @@
+@import "./../../../assets/abstracts/mixins";
+@import "./../../../assets/abstracts/variables";
+
+.heading {
+    margin-top: 20px;
+    font-weight: 500;
+}
+
+.productOverview {
+    height: 100%;
+    width: 100%;
+    @include flexPosition($jusCon: space-between, $alIte: flex-start, $dir: column);
+
+    &Div {
+        width: 100%;
+    }
+}
+
+.mainSection {
+    @include flexPosition($jusCon: space-between);
+    width: 100%;
+
+    h6 {
+        font-weight: 400;
+    }
+
+    .quantityAvailable {
+        color: color(grey);
+    }
+
+    .categoryItem {
+        background-color: color(blueLight);
+        margin: 2.5px 5px 2.5px 0;
+    }
+    img {
+        margin-left: 50px;
+        width: 40%;
+        max-width: 200px;
+    }
+}
+
+.form {
+    width: 100%;
+
+    &Control {
+        margin: 20px 0;
+        width: 120px;
+    }
+
+    &Button {
+        background-color: color(light2);
+        width: calc(100% + 100px);
+        margin-left: -50px;
+        margin-bottom: -45px;
+        padding: 30px 50px;
+
+        @include responsive(sm-down) {
+            width: calc(100% + 60px);
+            margin-left: -30px;
+            margin-bottom: -25px;
+            padding: 20px 30px;
+        }
+    }
+}
