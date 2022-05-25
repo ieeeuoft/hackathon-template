@@ -42,7 +42,7 @@ export const getTeamOrders = createAsyncThunk<
     APIListResponse<Order>,
     undefined,
     { state: RootState; rejectValue: RejectValue; dispatch: AppDispatch }
->(`${orderReducerName}/geTeamOrders`, async (_, { rejectWithValue }) => {
+>(`${orderReducerName}/getTeamOrders`, async (_, { rejectWithValue }) => {
     try {
         const response = await get<APIListResponse<Order>>(
             "/api/event/teams/team/orders/"

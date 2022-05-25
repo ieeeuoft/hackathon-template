@@ -370,7 +370,7 @@ export const PendingTable = () => {
             maxWidth={false}
             disableGutters={true}
         >
-            {orders.length && (
+            {orders.length > 0 && (
                 <div className={styles.title}>
                     <Typography variant="h2" className={styles.titleText}>
                         Pending Orders
@@ -382,7 +382,7 @@ export const PendingTable = () => {
             )}
 
             {isVisible &&
-                orders.length &&
+                orders.length > 0 &&
                 orders.map((pendingOrder) => (
                     <div key={pendingOrder.id}>
                         <Container

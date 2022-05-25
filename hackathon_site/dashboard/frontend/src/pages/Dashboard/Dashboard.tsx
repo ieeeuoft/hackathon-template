@@ -17,7 +17,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { getCurrentTeam, isLoadingSelector } from "slices/event/teamSlice";
 import { fulfillmentErrorSelector } from "slices/hardware/cartSlice";
 import LinearProgress from "@material-ui/core/LinearProgress";
-import { Alert, AlertTitle } from "@material-ui/lab";
 import {
     getTeamOrders,
     hardwareInOrdersSelector,
@@ -25,7 +24,7 @@ import {
 } from "slices/order/orderSlice";
 import { getHardwareWithFilters, setFilters } from "slices/hardware/hardwareSlice";
 import { getCategories } from "slices/hardware/categorySlice";
-import AlertBox from "../../components/general/AlertBox/AlertBox";
+import AlertBox from "components/general/AlertBox/AlertBox";
 
 const Dashboard = () => {
     const dispatch = useDispatch();

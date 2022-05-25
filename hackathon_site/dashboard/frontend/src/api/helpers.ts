@@ -4,7 +4,7 @@ import {
     OrderItemTableRow,
     ReturnedItem,
     ReturnOrderInTable,
-} from "./types";
+} from "api/types";
 
 export const teamOrderListSerialization = (
     orders: Order[]
