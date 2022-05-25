@@ -9,11 +9,6 @@ urlpatterns = [
     path("categories/", views.CategoryListView.as_view(), name="category-list"),
     path("incidents/", views.IncidentListView.as_view(), name="incident-list"),
     path(
-        "teams/team/incidents/<int:pk>/",
-        views.IncidentDetailView.as_view(),
-        name="incident-detail",
-    ),
-    path(
         "hardware/<int:pk>/",
         views.HardwareDetailView.as_view(),
         name="hardware-detail",

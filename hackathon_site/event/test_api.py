@@ -1,10 +1,12 @@
+from datetime import datetime
+
 from django.contrib.auth.models import Group
 from django.urls import reverse
+from django.conf import settings
 from rest_framework import status
 from rest_framework.test import APITestCase
 from hackathon_site.tests import SetupUserMixin
 from django.contrib.auth.models import Permission
-
 
 from event.models import Profile, User, Team
 from event.serializers import (
@@ -12,8 +14,8 @@ from event.serializers import (
     TeamSerializer,
 )
 
-from hardware.serializers import OrderListSerializer
-from hardware.models import Hardware, Order, OrderItem
+from hardware.serializers import OrderListSerializer, IncidentListSerializer
+from hardware.models import Hardware, Order, OrderItem, Incident
 
 
 class CurrentUserTestCase(SetupUserMixin, APITestCase):
@@ -314,7 +316,7 @@ class EventTeamListsViewTestCase(SetupUserMixin, APITestCase):
 
     def _build_filter_url(self, **kwargs):
         return (
-            self.view + "?" + "&".join([f"{key}={val}" for key, val in kwargs.items()])
+                self.view + "?" + "&".join([f"{key}={val}" for key, val in kwargs.items()])
         )
 
     def test_team_id_filter(self):
@@ -691,9 +693,88 @@ class TeamIncidentListViewPostTestCase(SetupUserMixin, APITestCase):
             self.assertEqual(final_response[attribute], self.request_data[attribute])
 
 
+class TeamIncidentDetailViewGetTestCase(SetupUserMixin, APITestCase):
+    def setUp(self):
+        super().setUp()
+        self.permissions = Permission.objects.filter(
+            content_type__app_label="hardware", codename="view_incident"
+        )
+        self.team = Team.objects.create()
+        self.order = Order.objects.create(
+            status="Cart",
+            team=self.team,
+            request={"hardware": [{"id": 1, "quantity": 2}, {"id": 2, "quantity": 3}]},
+        )
+        self.hardware = Hardware.objects.create(
+            name="name",
+            model_number="model",
+            manufacturer="manufacturer",
+            datasheet="/datasheet/location/",
+            notes="notes",
+            quantity_available=4,
+            max_per_team=1,
+            picture="/picture/location",
+        )
+
+        self.other_hardware = Hardware.objects.create(
+            name="other",
+            model_number="otherModel",
+            manufacturer="otherManufacturer",
+            datasheet="/datasheet/location/other",
+            quantity_available=10,
+            max_per_team=10,
+            picture="/picture/location/other",
+        )
+        self.order_item = OrderItem.objects.create(
+            order=self.order, hardware=self.hardware,
+        )
+
+        self.order_item2 = OrderItem.objects.create(
+            order=self.order, hardware=self.other_hardware,
+        )
+
+        self.incident = Incident.objects.create(
+            state="Broken",
+            description="Description",
+            order_item=self.order_item,
+            time_occurred=datetime(2022, 8, 8, tzinfo=settings.TZ_INFO),
+        )
+
+        self.another_incident = Incident.objects.create(
+            state="Missing",
+            description="Description",
+            order_item=self.order_item2,
+            time_occurred=datetime(2022, 1, 1, tzinfo=settings.TZ_INFO),
+        )
+        # api: event:incident - list
+        self.view = reverse("api:event:incident-detail", args=[self.incident.id])
+
+    def test_user_not_logged_in(self):
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_user_has_no_view_permissions(self):
+        self._login()
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_incident_get_success(self):
+        self._login(self.permissions)
+
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        queryset = Incident.objects.get(id=self.incident.id)
+        # need to provide a request in the serializer context to produce absolute url for image field
+        expected_response = IncidentListSerializer(
+            queryset, context={"request": response.wsgi_request}
+        ).data
+        data = response.json()
+        self.assertEqual(expected_response, data)
+
+
 class EventTeamDetailViewTestCase(SetupUserMixin, APITestCase):
     def setUp(self, **kwargs):
-
         self.team = Team.objects.create()
         self.team2 = Team.objects.create()
         self.team3 = Team.objects.create()

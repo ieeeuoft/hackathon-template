@@ -30,6 +30,11 @@ urlpatterns = [
         name="incident-list",
     ),
     path(
+        "teams/team/incidents/<int:pk>/",
+        views.TeamIncidentDetailView.as_view(),
+        name="incident-detail",
+    ),
+    path(
         "teams/team/orders/",
         api_views.CurrentTeamOrderListView.as_view(),
         name="team-orders",
