@@ -316,7 +316,7 @@ class EventTeamListsViewTestCase(SetupUserMixin, APITestCase):
 
     def _build_filter_url(self, **kwargs):
         return (
-                self.view + "?" + "&".join([f"{key}={val}" for key, val in kwargs.items()])
+            self.view + "?" + "&".join([f"{key}={val}" for key, val in kwargs.items()])
         )
 
     def test_team_id_filter(self):

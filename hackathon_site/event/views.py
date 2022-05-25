@@ -206,6 +206,7 @@ class TeamListView(mixins.ListModelMixin, generics.GenericAPIView):
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
 
+
 class TeamIncidentDetailView(mixins.RetrieveModelMixin, generics.GenericAPIView):
     queryset = Incident.objects.all()
 
