@@ -31,7 +31,7 @@ urlpatterns = [
     ),
     path(
         "teams/team/incidents/<int:pk>/",
-        views.TeamIncidentDetailView.as_view(),
+        api_views.TeamIncidentDetailView.as_view(),
         name="incident-detail",
     ),
     path(

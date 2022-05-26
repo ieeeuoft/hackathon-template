@@ -21,7 +21,7 @@ from hardware.models import Hardware, Category, Order, Incident, OrderItem
 from hardware.serializers import (
     CategorySerializer,
     HardwareSerializer,
-    IncidentListSerializer,
+    IncidentSerializer,
     IncidentCreateSerializer,
     OrderListSerializer,
     OrderCreateSerializer,
@@ -71,7 +71,7 @@ class IncidentListView(
 
     def get_serializer_class(self):
         if self.request.method == "GET":
-            return IncidentListSerializer
+            return IncidentSerializer
         elif self.request.method == "POST":
             return IncidentCreateSerializer
 

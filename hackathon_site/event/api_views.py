@@ -5,14 +5,13 @@ from rest_framework import generics, mixins, status
 from rest_framework.exceptions import ValidationError, PermissionDenied
 from rest_framework.response import Response
 
-
 from event.serializers import (
     ProfileSerializer,
     CurrentProfileSerializer,
 )
 from event.models import User, Team as EventTeam, Profile
 from event.serializers import UserSerializer, TeamSerializer
-from hardware.serializers import IncidentCreateSerializer, OrderListSerializer
+from hardware.serializers import IncidentCreateSerializer, OrderListSerializer, IncidentSerializer
 from event.permissions import UserHasProfile, FullDjangoModelPermissions
 
 from hardware.models import OrderItem, Order, Incident
@@ -95,7 +94,7 @@ class LeaveTeamView(generics.GenericAPIView):
         # Construct response data
         response_serializer = TeamSerializer(profile.team)
         response_data = response_serializer.data
-        return Response(data=response_data, status=status.HTTP_201_CREATED,)
+        return Response(data=response_data, status=status.HTTP_201_CREATED, )
 
 
 class JoinTeamView(generics.GenericAPIView, mixins.RetrieveModelMixin):
@@ -130,7 +129,7 @@ class JoinTeamView(generics.GenericAPIView, mixins.RetrieveModelMixin):
             current_team.delete()
         response_serializer = TeamSerializer(profile.team)
         response_data = response_serializer.data
-        return Response(data=response_data, status=status.HTTP_200_OK,)
+        return Response(data=response_data, status=status.HTTP_200_OK, )
 
 
 class TeamIncidentListView(
@@ -153,8 +152,17 @@ class TeamIncidentListView(
         return self.create(request, *args, **kwargs)
 
 
-class ProfileDetailView(mixins.UpdateModelMixin, generics.GenericAPIView):
+class TeamIncidentDetailView(mixins.RetrieveModelMixin, generics.GenericAPIView):
+    queryset = Incident.objects.all()
 
+    serializer_class = IncidentSerializer
+    permission_classes = [UserHasProfile]
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+
+
+class ProfileDetailView(mixins.UpdateModelMixin, generics.GenericAPIView):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
     permission_classes = [FullDjangoModelPermissions]
@@ -164,7 +172,6 @@ class ProfileDetailView(mixins.UpdateModelMixin, generics.GenericAPIView):
 
 
 class CurrentProfileView(mixins.UpdateModelMixin, generics.GenericAPIView):
-
     queryset = Profile.objects.all()
     serializer_class = CurrentProfileSerializer
     permission_classes = [UserHasProfile]

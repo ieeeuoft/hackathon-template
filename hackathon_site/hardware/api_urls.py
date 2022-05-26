@@ -1,6 +1,7 @@
 from django.urls import path
 from hardware import views
 
+
 app_name = "hardware"
 
 urlpatterns = [

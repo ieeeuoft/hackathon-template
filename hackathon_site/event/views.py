@@ -17,7 +17,7 @@ from rest_framework.filters import SearchFilter
 
 from hackathon_site.utils import is_registration_open
 from hardware.models import Incident
-from hardware.serializers import IncidentListSerializer
+from hardware.serializers import IncidentSerializer
 from registration.forms import JoinTeamForm
 from registration.models import Team as RegistrationTeam
 
@@ -206,12 +206,3 @@ class TeamListView(mixins.ListModelMixin, generics.GenericAPIView):
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
 
-
-class TeamIncidentDetailView(mixins.RetrieveModelMixin, generics.GenericAPIView):
-    queryset = Incident.objects.all()
-
-    serializer_class = IncidentListSerializer
-    permission_classes = [FullDjangoModelPermissions]
-
-    def get(self, request, *args, **kwargs):
-        return self.retrieve(request, *args, **kwargs)

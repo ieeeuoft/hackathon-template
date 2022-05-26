@@ -14,7 +14,7 @@ from hardware.serializers import (
     CategorySerializer,
     OrderListSerializer,
     OrderItemListSerializer,
-    IncidentListSerializer,
+    IncidentSerializer,
 )
 from hackathon_site.tests import SetupUserMixin
 
@@ -412,7 +412,7 @@ class IncidentListViewTestCase(SetupUserMixin, APITestCase):
 
         queryset = Incident.objects.all()
         # need to provide a request in the serializer context to produce absolute url for image field
-        expected_response = IncidentListSerializer(
+        expected_response = IncidentSerializer(
             queryset, many=True, context={"request": response.wsgi_request}
         ).data
         data = response.json()

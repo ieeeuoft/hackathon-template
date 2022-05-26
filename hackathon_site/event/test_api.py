@@ -14,7 +14,7 @@ from event.serializers import (
     TeamSerializer,
 )
 
-from hardware.serializers import OrderListSerializer, IncidentListSerializer
+from hardware.serializers import OrderListSerializer, IncidentSerializer
 from hardware.models import Hardware, Order, OrderItem, Incident
 
 
@@ -697,7 +697,7 @@ class TeamIncidentDetailViewGetTestCase(SetupUserMixin, APITestCase):
     def setUp(self):
         super().setUp()
         self.permissions = Permission.objects.filter(
-            content_type__app_label="hardware", codename="view_incident"
+            content_type__app_label="event", codename="view_incident"
         )
         self.team = Team.objects.create()
         self.order = Order.objects.create(
@@ -746,12 +746,29 @@ class TeamIncidentDetailViewGetTestCase(SetupUserMixin, APITestCase):
             order_item=self.order_item2,
             time_occurred=datetime(2022, 1, 1, tzinfo=settings.TZ_INFO),
         )
-        # api: event:incident - list
+
         self.view = reverse("api:event:incident-detail", args=[self.incident.id])
 
     def test_user_not_logged_in(self):
         response = self.client.get(self.view)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_user_no_profile(self):
+        self._login()
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_user_has_profile(self):
+        """
+        When user has a profile and attempts to access the team, then the user
+        should get the correct response.
+        """
+        self._login()
+        response = self.client.get(self.view)
+        team_expected = Team.objects.get(pk=self.team.pk)
+        serializer = TeamSerializer(team_expected)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.json(), serializer.data)
 
     def test_user_has_no_view_permissions(self):
         self._login()
@@ -766,7 +783,7 @@ class TeamIncidentDetailViewGetTestCase(SetupUserMixin, APITestCase):
 
         queryset = Incident.objects.get(id=self.incident.id)
         # need to provide a request in the serializer context to produce absolute url for image field
-        expected_response = IncidentListSerializer(
+        expected_response = IncidentSerializer(
             queryset, context={"request": response.wsgi_request}
         ).data
         data = response.json()
