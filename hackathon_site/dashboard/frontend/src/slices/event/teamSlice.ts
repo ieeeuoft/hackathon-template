@@ -107,3 +107,7 @@ export const teamMemberNamesSelector = createSelector(
             (member) => member.user.first_name + " " + member.user.last_name
         )
 );
+
+export const teamSizeSelector = createSelector([teamSliceSelector], (teamSlice) =>
+    teamSlice.team ? teamSlice.team.profiles.length : 0
+);
