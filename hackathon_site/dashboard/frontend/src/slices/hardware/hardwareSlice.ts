@@ -4,6 +4,7 @@ import {
     PayloadAction,
     createSelector,
     createAsyncThunk,
+    Update,
 } from "@reduxjs/toolkit";
 import { RootState, AppDispatch } from "slices/store";
 
@@ -101,6 +102,35 @@ export const getHardwareNextPage = createAsyncThunk<
     }
 );
 
+export const getUpdatedHardwareDetails = createAsyncThunk<
+    APIListResponse<Hardware> | null,
+    void,
+    { state: RootState; rejectValue: RejectValue; dispatch: AppDispatch }
+>(
+    `${hardwareReducerName}/getHardwareDetails`,
+    async (_, { dispatch, getState, rejectWithValue }) => {
+        // const nextFromState = selectHardwareByIds(getState());
+
+        try {
+            const response = await get<APIListResponse<Hardware>>(
+                `/api/hardware/${"hello world"}/`
+            );
+            return response.data;
+        } catch (e: any) {
+            dispatch(
+                displaySnackbar({
+                    message: `Failed to fetch hardware data: Error ${e.response.status}`,
+                    options: { variant: "error" },
+                })
+            );
+            return rejectWithValue({
+                status: e.response.status,
+                message: e.response.data,
+            });
+        }
+    }
+);
+
 // Slice
 const hardwareSlice = createSlice({
     name: hardwareReducerName,
@@ -141,6 +171,14 @@ const hardwareSlice = createSlice({
             if (payload?.saveSearch && search) {
                 state.filters.search = search;
             }
+        },
+
+        updateHardwareDetails: (
+            state: HardwareState,
+            { payload }: PayloadAction<Update<Hardware>>
+        ) => {
+            hardwareAdapter.updateOne(state, payload);
+            state.error = null;
         },
     },
     extraReducers: (builder) => {
@@ -188,6 +226,24 @@ const hardwareSlice = createSlice({
 
         builder.addCase(getHardwareNextPage.rejected, (state, { payload }) => {
             state.isMoreLoading = false;
+            state.error = payload?.message || "Something went wrong";
+        });
+
+        builder.addCase(getUpdatedHardwareDetails.pending, (state) => {
+            state.isLoading = true;
+            state.error = null;
+        });
+
+        builder.addCase(getUpdatedHardwareDetails.fulfilled, (state, { payload }) => {
+            if (payload) {
+                state.isLoading = false;
+                state.error = null;
+                hardwareAdapter.updateOne(state, payload.results);
+            }
+        });
+
+        builder.addCase(getUpdatedHardwareDetails.rejected, (state, { payload }) => {
+            state.isLoading = false;
             state.error = payload?.message || "Something went wrong";
         });
     },

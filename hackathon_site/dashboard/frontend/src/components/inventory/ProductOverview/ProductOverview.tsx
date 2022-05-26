@@ -25,6 +25,7 @@ import { RootState } from "slices/store";
 import { addToCart, cartSelectors } from "slices/hardware/cartSlice";
 import { Category } from "api/types";
 import hardwareImagePlaceholder from "assets/images/placeholders/no-hardware-image.svg";
+import { getUpdatedHardwareDetails } from "slices/hardware/hardwareSlice";
 
 export const ERROR_MESSAGES = {
     quantityMissing: "Quantity is required",
@@ -293,6 +294,11 @@ export const ProductOverview = ({
         isProductOverviewVisibleSelector
     );
     const hardware = useSelector(hardwareBeingViewedSelector);
+
+    if (hardware) {
+        dispatch(getUpdatedHardwareDetails());
+    }
+
     const categories = useSelector((state: RootState) =>
         selectCategoriesByIds(state, hardware?.categories || [])
     );
