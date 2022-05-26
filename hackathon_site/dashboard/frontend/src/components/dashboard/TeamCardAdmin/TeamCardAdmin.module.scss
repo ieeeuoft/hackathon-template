@@ -1,0 +1,11 @@
+@import "./../../../assets/abstracts/mixins";
+@import "./../../../assets/abstracts/variables";
+
+.name {
+    padding: 12px 20px;
+}
+
+.lastRow {
+    @include flexPosition($jusCon: flex-end);
+    padding-top: 6px;
+}
