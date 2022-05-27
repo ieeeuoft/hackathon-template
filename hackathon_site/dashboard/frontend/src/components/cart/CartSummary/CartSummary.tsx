@@ -39,7 +39,7 @@ const CartSummary = () => {
                 color="primary"
                 variant="contained"
                 className={styles.btn}
-                disabled={cartQuantity === 0 || cartOrderLoading || teamSizeValid}
+                disabled={cartQuantity === 0 || cartOrderLoading || !teamSizeValid}
                 onClick={onSubmit}
                 disableElevation
                 data-testid="submit-order-button"
