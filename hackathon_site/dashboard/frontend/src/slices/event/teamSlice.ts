@@ -8,6 +8,7 @@ import { AppDispatch, RootState } from "slices/store";
 import { Team } from "api/types";
 import { get } from "api/api";
 import { displaySnackbar } from "slices/ui/uiSlice";
+import { maxTeamSize, minTeamSize } from "../../constants";
 
 interface TeamExtraState {
     isLoading: boolean;
@@ -110,6 +111,7 @@ export const teamMemberNamesSelector = createSelector(
 
 export const teamSizeValidSelector = createSelector([teamSliceSelector], (teamSlice) =>
     teamSlice.team
-        ? teamSlice.team.profiles.length > 1 && teamSlice.team.profiles.length < 5
+        ? teamSlice.team.profiles.length >= minTeamSize &&
+          teamSlice.team.profiles.length <= maxTeamSize
         : false
 );
