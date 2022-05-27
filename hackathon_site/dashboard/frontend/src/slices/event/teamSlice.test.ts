@@ -8,6 +8,7 @@ import {
     teamSelector,
     teamCodeSelector,
     teamMemberNamesSelector,
+    teamSizeSelector,
 } from "slices/event/teamSlice";
 import { waitFor } from "testing/utils";
 import { mockTeam } from "testing/mockData";
@@ -72,6 +73,18 @@ describe("Selectors", () => {
             },
         };
         expect(teamCodeSelector(teamState)).toEqual(mockTeam.team_code);
+    });
+
+    test("teamSizeSelector returns the team size", () => {
+        const teamState = {
+            ...mockState,
+            [teamReducerName]: {
+                ...initialState,
+                isLoading: false,
+                team: mockTeam,
+            },
+        };
+        expect(teamSizeSelector(teamState)).toEqual(mockTeam.profiles.length);
     });
 
     test("teamMemberNamesSelector returns the member names", () => {

@@ -11,12 +11,12 @@ import {
     submitOrder,
 } from "slices/hardware/cartSlice";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import { teamSizeSelector } from "slices/event/teamSlice";
+import { teamSizeValidSelector } from "slices/event/teamSlice";
 
 const CartSummary = () => {
     const cartQuantity = useSelector(cartTotalSelector);
     const cartOrderLoading = useSelector(isLoadingSelector);
-    const teamSize = useSelector(teamSizeSelector);
+    const teamSizeValid = useSelector(teamSizeValidSelector);
     const dispatch = useDispatch();
     const onSubmit = () => {
         if (cartQuantity > 0) {
@@ -39,12 +39,7 @@ const CartSummary = () => {
                 color="primary"
                 variant="contained"
                 className={styles.btn}
-                disabled={
-                    cartQuantity === 0 ||
-                    cartOrderLoading ||
-                    teamSize < 2 ||
-                    teamSize > 4
-                }
+                disabled={cartQuantity === 0 || cartOrderLoading || teamSizeValid}
                 onClick={onSubmit}
                 disableElevation
                 data-testid="submit-order-button"
