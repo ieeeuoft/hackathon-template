@@ -1,6 +1,11 @@
 import React from "react";
 import CartSummary from "components/cart/CartSummary/CartSummary";
-import { cartQuantity, mockCartItems, mockHardware } from "testing/mockData";
+import {
+    cartQuantity,
+    mockCartItems,
+    mockHardware,
+    mockValidTeam,
+} from "testing/mockData";
 import store from "slices/store";
 import { Provider } from "react-redux";
 import {
@@ -11,14 +16,18 @@ import {
     promiseResolveWithDelay,
     when,
 } from "testing/utils";
-import { post } from "api/api";
+import { get, post } from "api/api";
+import { AxiosResponse } from "axios";
+import { Team } from "api/types";
 
 jest.mock("api/api", () => ({
     ...jest.requireActual("api/api"),
     post: jest.fn(),
+    get: jest.fn(),
 }));
 
 const mockedPost = post as jest.MockedFunction<typeof post>;
+const mockedGet = get as jest.MockedFunction<typeof get>;
 
 describe("Render cartQuantity", () => {
     it(`Renders correctly when it reads the number ${cartQuantity}`, async () => {
@@ -32,6 +41,11 @@ describe("Render cartQuantity", () => {
         });
     });
     it("Renders loading icon and disables submit button on submission", async () => {
+        const response = { data: mockValidTeam } as AxiosResponse<Team>;
+        when(mockedGet)
+            .calledWith("/api/event/teams/team/")
+            .mockResolvedValue(response);
+
         when(mockedPost)
             .calledWith("/api/hardware/orders/")
             .mockReturnValue(
@@ -67,6 +81,7 @@ describe("Render cartQuantity", () => {
         const store = makeStoreWithEntities({
             hardware: mockHardware,
             cartItems: mockCartItems,
+            // team: mockValidTeam,
         });
 
         const { getByText, getByTestId, queryByTestId } = render(<CartSummary />, {

@@ -222,6 +222,42 @@ export const mockTeam: Team = {
     ],
 };
 
+// Valid Team Size
+export const mockValidTeam: Team = {
+    id: 2,
+    team_code: "A48E6",
+    created_at: "2022-05-28T22:37:54.106311-05:00",
+    updated_at: "2022-05-28T22:37:54.106323-05:00",
+    profiles: [
+        {
+            id: 2,
+            id_provided: true,
+            attended: true,
+            acknowledge_rules: true,
+            e_signature: null,
+            user: {
+                id: 2,
+                first_name: "Foothe",
+                last_name: "Second",
+                email: "foo2@bar.com",
+            },
+        },
+        {
+            id: 3,
+            id_provided: true,
+            attended: true,
+            acknowledge_rules: true,
+            e_signature: null,
+            user: {
+                id: 2,
+                first_name: "Foothe",
+                last_name: "Third",
+                email: "foo3@bar.com",
+            },
+        },
+    ],
+};
+
 export const mockHardware: Hardware[] = [
     {
         id: 1,
