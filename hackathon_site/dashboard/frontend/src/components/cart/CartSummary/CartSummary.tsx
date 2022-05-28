@@ -11,12 +11,14 @@ import {
     submitOrder,
 } from "slices/hardware/cartSlice";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import { teamSizeValidSelector } from "slices/event/teamSlice";
+import { teamSizeSelector } from "slices/event/teamSlice";
+import { maxTeamSize, minTeamSize } from "constants.js";
 
 const CartSummary = () => {
     const cartQuantity = useSelector(cartTotalSelector);
     const cartOrderLoading = useSelector(isLoadingSelector);
-    const teamSizeValid = useSelector(teamSizeValidSelector);
+    const teamSize = useSelector(teamSizeSelector);
+    const teamSizeValid = teamSize >= minTeamSize && teamSize <= maxTeamSize;
     const dispatch = useDispatch();
     const onSubmit = () => {
         if (cartQuantity > 0) {
