@@ -5,6 +5,7 @@ import {
     mockCartItems,
     mockHardware,
     mockValidTeam,
+    mockTeam,
 } from "testing/mockData";
 import store from "slices/store";
 import { Provider } from "react-redux";
@@ -17,17 +18,14 @@ import {
     when,
 } from "testing/utils";
 import { get, post } from "api/api";
-import { AxiosResponse } from "axios";
-import { Team } from "api/types";
+import Cart from "../../../pages/Cart/Cart";
 
 jest.mock("api/api", () => ({
     ...jest.requireActual("api/api"),
     post: jest.fn(),
-    get: jest.fn(),
 }));
 
 const mockedPost = post as jest.MockedFunction<typeof post>;
-const mockedGet = get as jest.MockedFunction<typeof get>;
 
 describe("Render cartQuantity", () => {
     it(`Renders correctly when it reads the number ${cartQuantity}`, async () => {
@@ -41,11 +39,6 @@ describe("Render cartQuantity", () => {
         });
     });
     it("Renders loading icon and disables submit button on submission", async () => {
-        const response = { data: mockValidTeam } as AxiosResponse<Team>;
-        when(mockedGet)
-            .calledWith("/api/event/teams/team/")
-            .mockResolvedValue(response);
-
         when(mockedPost)
             .calledWith("/api/hardware/orders/")
             .mockReturnValue(
@@ -81,7 +74,7 @@ describe("Render cartQuantity", () => {
         const store = makeStoreWithEntities({
             hardware: mockHardware,
             cartItems: mockCartItems,
-            // team: mockValidTeam,
+            team: { team: mockValidTeam },
         });
 
         const { getByText, getByTestId, queryByTestId } = render(<CartSummary />, {
@@ -103,5 +96,17 @@ describe("Render cartQuantity", () => {
                 ).not.toBeInTheDocument();
             });
         });
+    });
+    it("Disables the submit button if team size is invalid", async () => {
+        const store = makeStoreWithEntities({
+            hardware: mockHardware,
+            cartItems: mockCartItems,
+            team: { team: mockTeam },
+        });
+
+        const { getByTestId } = render(<Cart />, { store });
+
+        const submitOrderBtn = getByTestId("submit-order-button");
+        expect(submitOrderBtn).toBeDisabled();
     });
 });
