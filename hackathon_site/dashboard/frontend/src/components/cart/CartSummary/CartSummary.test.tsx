@@ -18,7 +18,7 @@ import {
     when,
 } from "testing/utils";
 import { get, post } from "api/api";
-import Cart from "../../../pages/Cart/Cart";
+import Cart from "pages/Cart/Cart";
 
 jest.mock("api/api", () => ({
     ...jest.requireActual("api/api"),

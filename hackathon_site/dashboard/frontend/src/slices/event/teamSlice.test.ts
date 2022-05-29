@@ -75,7 +75,7 @@ describe("Selectors", () => {
         expect(teamCodeSelector(teamState)).toEqual(mockTeam.team_code);
     });
 
-    test("teamSizeSelector returns false", () => {
+    test("teamSizeSelector returns 2", () => {
         const teamState = {
             ...mockState,
             [teamReducerName]: {
