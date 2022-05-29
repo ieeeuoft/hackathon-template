@@ -3,8 +3,8 @@ from django.conf import settings
 from django.urls import reverse
 from django.utils.timezone import template_localtime
 from jinja2 import Environment
-from time import localtime
 from dateutil import tz
+from sys import platform
 
 from hackathon_site.utils import is_registration_open
 
@@ -39,18 +39,14 @@ def environment(**options):
         }
     )
 
-    def getDateTime(value):
-        print("IT IS ")
-        print(type(value))
+    def formatDateTime(datetime, format):
         local_zone = tz.tzlocal()
-
-        try:
-            retVal = value.astimezone(local_zone).strftime(
-                '%B %-d, %Y, %H:%M:%S')
-        except ValueError:
-            retVal = value.astimezone(local_zone).strftime(
-                '%B %#d, %Y, %H:%M:%S')
-        return value
-    env.filters['getDateTime'] = getDateTime
+        if platform == "win32":
+            finalFormat = format.replace("%-d", "%#d")
+        else:
+            finalFormat = format.replace("%#d", "%-d")
+        retVal = datetime.astimezone(local_zone).strftime(finalFormat)
+        return retVal
+    env.filters['formatDateTime'] = formatDateTime
 
     return env
