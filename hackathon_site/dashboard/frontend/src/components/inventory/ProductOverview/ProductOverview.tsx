@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import MenuItem from "@material-ui/core/MenuItem";
@@ -295,9 +295,11 @@ export const ProductOverview = ({
     );
     const hardware = useSelector(hardwareBeingViewedSelector);
 
-    if (hardware) {
-        dispatch(getUpdatedHardwareDetails());
-    }
+    useEffect(() => {
+        if (hardware) {
+            dispatch(getUpdatedHardwareDetails(hardware.id));
+        }
+    }, [dispatch, hardware]);
 
     const categories = useSelector((state: RootState) =>
         selectCategoriesByIds(state, hardware?.categories || [])

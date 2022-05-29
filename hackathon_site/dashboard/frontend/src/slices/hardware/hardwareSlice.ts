@@ -11,8 +11,10 @@ import { RootState, AppDispatch } from "slices/store";
 import { APIListResponse, Hardware, HardwareFilters } from "api/types";
 import { get, stripHostnameReturnFilters } from "api/api";
 import { displaySnackbar } from "slices/ui/uiSlice";
+import { number } from "yup";
 
 interface HardwareExtraState {
+    isUpdateDetailsLoading: boolean;
     isLoading: boolean;
     isMoreLoading: boolean;
     error: string | null;
@@ -22,6 +24,7 @@ interface HardwareExtraState {
 }
 
 const extraState: HardwareExtraState = {
+    isUpdateDetailsLoading: false,
     isLoading: false,
     isMoreLoading: false,
     error: null,
@@ -103,17 +106,16 @@ export const getHardwareNextPage = createAsyncThunk<
 );
 
 export const getUpdatedHardwareDetails = createAsyncThunk<
-    APIListResponse<Hardware> | null,
-    void,
+    Hardware | null,
+    number,
     { state: RootState; rejectValue: RejectValue; dispatch: AppDispatch }
 >(
     `${hardwareReducerName}/getHardwareDetails`,
-    async (_, { dispatch, getState, rejectWithValue }) => {
-        // const nextFromState = selectHardwareByIds(getState());
-
+    async (hardware_id, { dispatch, getState, rejectWithValue }) => {
         try {
-            const response = await get<APIListResponse<Hardware>>(
-                `/api/hardware/${"hello world"}/`
+            console.log(hardware_id);
+            const response = await get<Hardware>(
+                `/api/hardware/hardware/${hardware_id}/`
             );
             return response.data;
         } catch (e: any) {
@@ -172,14 +174,6 @@ const hardwareSlice = createSlice({
                 state.filters.search = search;
             }
         },
-
-        updateHardwareDetails: (
-            state: HardwareState,
-            { payload }: PayloadAction<Update<Hardware>>
-        ) => {
-            hardwareAdapter.updateOne(state, payload);
-            state.error = null;
-        },
     },
     extraReducers: (builder) => {
         builder.addCase(getHardwareWithFilters.pending, (state) => {
@@ -230,20 +224,23 @@ const hardwareSlice = createSlice({
         });
 
         builder.addCase(getUpdatedHardwareDetails.pending, (state) => {
-            state.isLoading = true;
+            state.isUpdateDetailsLoading = true;
             state.error = null;
         });
 
         builder.addCase(getUpdatedHardwareDetails.fulfilled, (state, { payload }) => {
             if (payload) {
-                state.isLoading = false;
+                state.isUpdateDetailsLoading = false;
                 state.error = null;
-                hardwareAdapter.updateOne(state, payload.results);
+                hardwareAdapter.updateOne(state, {
+                    id: payload.id,
+                    changes: payload,
+                });
             }
         });
 
         builder.addCase(getUpdatedHardwareDetails.rejected, (state, { payload }) => {
-            state.isLoading = false;
+            state.isUpdateDetailsLoading = false;
             state.error = payload?.message || "Something went wrong";
         });
     },
