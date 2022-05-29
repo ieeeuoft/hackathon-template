@@ -3,10 +3,8 @@ from django.conf import settings
 from django.urls import reverse
 from django.utils.timezone import template_localtime
 from jinja2 import Environment
-from dateutil import tz
-from sys import platform
 
-from hackathon_site.utils import is_registration_open
+from hackathon_site.utils import is_registration_open, formatDateTime
 
 # In testing, nothing in this file can be overwritten using the
 # @patch or @override_settings decorators, because it is evaluated before
@@ -39,14 +37,6 @@ def environment(**options):
         }
     )
 
-    def formatDateTime(datetime, format):
-        local_zone = tz.tzlocal()
-        if platform == "win32":
-            finalFormat = format.replace("%-d", "%#d")
-        else:
-            finalFormat = format.replace("%#d", "%-d")
-        retVal = datetime.astimezone(local_zone).strftime(finalFormat)
-        return retVal
     env.filters['formatDateTime'] = formatDateTime
 
     return env
