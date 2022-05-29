@@ -3,6 +3,8 @@ from django.conf import settings
 from django.urls import reverse
 from django.utils.timezone import template_localtime
 from jinja2 import Environment
+from time import localtime
+from dateutil import tz
 
 from hackathon_site.utils import is_registration_open
 
@@ -36,4 +38,19 @@ def environment(**options):
             "chat_room_link": settings.CHAT_ROOM[1],
         }
     )
+
+    def getDateTime(value):
+        print("IT IS ")
+        print(type(value))
+        local_zone = tz.tzlocal()
+
+        try:
+            retVal = value.astimezone(local_zone).strftime(
+                '%B %-d, %Y, %H:%M:%S')
+        except ValueError:
+            retVal = value.astimezone(local_zone).strftime(
+                '%B %#d, %Y, %H:%M:%S')
+        return value
+    env.filters['getDateTime'] = getDateTime
+
     return env
