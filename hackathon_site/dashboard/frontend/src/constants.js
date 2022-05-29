@@ -5,6 +5,7 @@ export const adminPages = [
     "/",
     "/orders",
     "/teams",
+    "/team-detail",
     "/inventory",
     "/reports",
     "/incident-form",

@@ -222,6 +222,71 @@ export const mockTeam: Team = {
     ],
 };
 
+export const mockTeamMultiple = {
+    id: 1,
+    team_code: "A48E5",
+    created_at: "2021-11-12T22:37:54.106311-05:00",
+    updated_at: "2021-11-12T22:37:54.106323-05:00",
+    profiles: [
+        {
+            id: 1,
+            id_provided: false,
+            attended: false,
+            acknowledge_rules: false,
+            e_signature: null,
+            user: {
+                id: 1,
+                first_name: "Foo",
+                last_name: "Bar",
+                email: "foo@bar.com",
+                phone: "802-999-9999",
+            },
+        },
+        {
+            id: 2,
+            id_provided: true,
+            attended: false,
+            acknowledge_rules: false,
+            e_signature: null,
+            user: {
+                id: 2,
+                first_name: "Bat",
+                last_name: "Buzz",
+                email: "bat@buzz.com",
+                phone: "802-567-9909",
+            },
+        },
+        {
+            id: 3,
+            id_provided: true,
+            attended: false,
+            acknowledge_rules: false,
+            e_signature: null,
+            user: {
+                id: 3,
+                first_name: "Super",
+                last_name: "Cool",
+                email: "super@cool.com",
+                phone: "802-542-0000",
+            },
+        },
+        {
+            id: 4,
+            id_provided: false,
+            attended: false,
+            acknowledge_rules: false,
+            e_signature: null,
+            user: {
+                id: 4,
+                first_name: "Tick",
+                last_name: "Tock",
+                email: "tick@tock.com",
+                phone: "802-123-4567",
+            },
+        },
+    ],
+};
+
 export const mockHardware: Hardware[] = [
     {
         id: 1,

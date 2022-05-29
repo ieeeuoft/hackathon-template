@@ -25,6 +25,7 @@ import NotFound from "pages/NotFound/NotFound";
 
 import SnackbarNotifier from "components/general/SnackbarNotifier/SnackbarNotifier";
 import withUserCheck from "components/HOCs/withUserCheck/withUserCheck";
+import TeamDetail from "./pages/TeamDetail/TeamDetail";
 
 type Palette = {
     primary?: { main: string };
@@ -59,6 +60,11 @@ const UnconnectedApp = () => {
                     <Route exact path="/login" component={Login} />
                     <Route exact path="/orders" component={withUserCheck(Orders)} />
                     <Route exact path="/teams" component={withUserCheck(Teams)} />
+                    <Route
+                        exact
+                        path="/team-detail"
+                        component={withUserCheck(TeamDetail)}
+                    />
                     <Route exact path="/reports" component={withUserCheck(Reports)} />
                     <Route
                         exact
