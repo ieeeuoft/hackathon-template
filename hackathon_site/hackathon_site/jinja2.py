@@ -37,6 +37,6 @@ def environment(**options):
         }
     )
 
-    env.filters['formatDateTime'] = formatDateTime
+    env.filters["formatDateTime"] = formatDateTime
 
     return env

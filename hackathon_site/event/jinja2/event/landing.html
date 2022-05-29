@@ -32,7 +32,7 @@
                     <h5>Location</h5>
                     <h5>
                         {# Update this logic if your event ends in a different month or year #}
-                        {{  event_start_date | formatDateTime("%B %-d") }}-{{ event_end_date | formatDateTime("%B %-d") }}
+                        {{  event_start_date | formatDateTime("%B %-d") }} - {{ event_end_date | formatDateTime("%-d %Y") }}
                     </h5>
                 </div>
                 <div class="row">
