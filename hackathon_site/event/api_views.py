@@ -11,7 +11,7 @@ from event.serializers import (
 )
 from event.models import User, Team as EventTeam, Profile
 from event.serializers import UserSerializer, TeamSerializer
-from hardware.serializers import IncidentCreateSerializer, OrderListSerializer, IncidentSerializer
+from hardware.serializers import IncidentCreateSerializer
 from event.permissions import UserHasProfile, FullDjangoModelPermissions
 
 from hardware.models import OrderItem, Order, Incident
@@ -94,7 +94,7 @@ class LeaveTeamView(generics.GenericAPIView):
         # Construct response data
         response_serializer = TeamSerializer(profile.team)
         response_data = response_serializer.data
-        return Response(data=response_data, status=status.HTTP_201_CREATED, )
+        return Response(data=response_data, status=status.HTTP_201_CREATED,)
 
 
 class JoinTeamView(generics.GenericAPIView, mixins.RetrieveModelMixin):
@@ -129,7 +129,7 @@ class JoinTeamView(generics.GenericAPIView, mixins.RetrieveModelMixin):
             current_team.delete()
         response_serializer = TeamSerializer(profile.team)
         response_data = response_serializer.data
-        return Response(data=response_data, status=status.HTTP_200_OK, )
+        return Response(data=response_data, status=status.HTTP_200_OK,)
 
 
 class TeamIncidentListView(

@@ -863,6 +863,7 @@ class IncidentListViewPostTestCase(SetupUserMixin, APITestCase):
         for attribute in similar_attributes:
             self.assertEqual(final_response[attribute], self.request_data[attribute])
 
+
 class IncidentDetailViewGetTestCase(SetupUserMixin, APITestCase):
     def setUp(self):
         super().setUp()
@@ -944,6 +945,7 @@ class IncidentDetailViewGetTestCase(SetupUserMixin, APITestCase):
         expected_response = IncidentSerializer(queryset).data
         data = response.json()
         self.assertEqual(expected_response, data)
+
 
 class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
     def setUp(self):

@@ -81,6 +81,7 @@ class IncidentListView(
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
 
+
 class IncidentDetailView(mixins.RetrieveModelMixin, generics.GenericAPIView):
     queryset = Incident.objects.all()
 
