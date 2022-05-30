@@ -152,16 +152,6 @@ class TeamIncidentListView(
         return self.create(request, *args, **kwargs)
 
 
-class TeamIncidentDetailView(mixins.RetrieveModelMixin, generics.GenericAPIView):
-    queryset = Incident.objects.all()
-
-    serializer_class = IncidentSerializer
-    permission_classes = [UserHasProfile]
-
-    def get(self, request, *args, **kwargs):
-        return self.retrieve(request, *args, **kwargs)
-
-
 class ProfileDetailView(mixins.UpdateModelMixin, generics.GenericAPIView):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
