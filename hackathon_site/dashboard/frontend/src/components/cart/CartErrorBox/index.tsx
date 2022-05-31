@@ -10,6 +10,18 @@ const CartErrorBox = () => {
     const cartQuantity = useSelector(cartTotalSelector);
     const orderSubmissionError = useSelector(errorSelector);
     const teamSize = useSelector(teamSizeSelector);
+    const teamSizeTooLarge = teamSize > maxTeamSize;
+    const teamSizeTooSmall = teamSize < minTeamSize;
+    let errorMessage;
+    let errorTitle;
+
+    if (teamSizeTooSmall) {
+        errorMessage = "few";
+        errorTitle = "Small";
+    } else if (teamSizeTooLarge) {
+        errorMessage = "many";
+        errorTitle = "Large";
+    }
 
     return (
         <Grid direction="row" container>
@@ -33,16 +45,14 @@ const CartErrorBox = () => {
                         )}
                     </Alert>
                 )}
-                {teamSize < minTeamSize && (
+                {(teamSizeTooLarge || teamSizeTooSmall) && (
                     <Alert severity="warning" style={{ margin: "15px 0px" }}>
-                        <AlertTitle>{`Team Size Too Small!`}</AlertTitle>
-                        Sorry, you need to add more team members to place an order.
-                    </Alert>
-                )}
-                {teamSize > maxTeamSize && (
-                    <Alert severity="warning" style={{ margin: "15px 0px" }}>
-                        <AlertTitle>{`Team Size Too Large!`}</AlertTitle>
-                        Sorry, you have too many team members to place an order.
+                        <AlertTitle>{`Team Size Too ${errorTitle}!`}</AlertTitle>
+                        There are too {errorMessage} people on your team to place an
+                        order. We only allow teams between {minTeamSize} to{" "}
+                        {maxTeamSize} to checkout items. To join or leave a team please
+                        go to your Dashboard (link to dashboard page) and click the EDIT
+                        button under your team.
                     </Alert>
                 )}
             </Grid>
