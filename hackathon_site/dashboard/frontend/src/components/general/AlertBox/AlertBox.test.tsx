@@ -11,7 +11,7 @@ const mockSingleError = "Error is here for this single reason.";
 const mockErrorTitle = "An error has occurred due to the following reasons:";
 
 describe("Error Box displays correctly with the right information", () => {
-    it("Shows title and a list if error prop is an array", async () => {
+    it("Shows title and a list if error prop is an array", () => {
         const { getByText, getByTestId } = render(
             <AlertBox error={mockErrorList} title={mockErrorTitle} />
         );
@@ -21,7 +21,7 @@ describe("Error Box displays correctly with the right information", () => {
         mockErrorList.forEach((error) => getByText(new RegExp(error, "i")));
     });
 
-    it("Shows only error text", async () => {
+    it("Shows only error text", () => {
         const { getByText, queryByText, queryByTestId } = render(
             <AlertBox error={mockSingleError} title={mockErrorTitle} />
         );
@@ -31,7 +31,7 @@ describe("Error Box displays correctly with the right information", () => {
         getByText(new RegExp(mockSingleError, "i"));
     });
 
-    it("Shows default title if no title given", async () => {
+    it("Shows default title if no title given", () => {
         const { getByText } = render(<AlertBox error={mockErrorList} />);
 
         getByText(/An error has occurred because:/i);
