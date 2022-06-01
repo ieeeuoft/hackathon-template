@@ -67,7 +67,7 @@ class IncidentCreateSerializer(serializers.ModelSerializer):
         return obj.order_item.order.team.id
 
 
-class IncidentListSerializer(IncidentCreateSerializer):
+class IncidentSerializer(IncidentCreateSerializer):
     order_item = OrderItemSerializer()
 
 
