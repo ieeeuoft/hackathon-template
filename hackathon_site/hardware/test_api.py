@@ -888,7 +888,6 @@ class IncidentDetailViewGetTestCase(SetupUserMixin, APITestCase):
             order=self.order, hardware=self.hardware,
         )
 
-
         self.incident = Incident.objects.create(
             state="Broken",
             description="Description",
