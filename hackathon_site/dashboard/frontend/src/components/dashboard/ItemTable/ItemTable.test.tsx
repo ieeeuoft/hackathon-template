@@ -14,8 +14,7 @@ import {
     mockCheckedOutOrdersInTable,
     mockReturnedOrdersInTable,
 } from "testing/mockData";
-import { RootStore } from "slices/store";
-import { OrderInTable, ReturnOrderInTable } from "../../../api/types";
+import { ReturnOrderInTable } from "api/types";
 
 describe("<ChipStatus />", () => {
     test("Ready status", () => {
@@ -143,7 +142,7 @@ describe("<CheckedOutTable />", () => {
                 checkedOutOrders: mockCheckedOutOrdersInTable,
             },
         });
-        const { getByText, queryByText } = render(<CheckedOutTable />);
+        const { getByText, queryByText } = render(<CheckedOutTable />, { store });
         const button = getByText(/hide all/i);
 
         fireEvent.click(button);

@@ -10,14 +10,7 @@ import {
 import { makeStore, RootStore, RootState } from "slices/store";
 import { SnackbarProvider } from "notistack";
 import { AxiosResponse } from "axios";
-import {
-    APIListResponse,
-    CartItem,
-    Category,
-    Hardware,
-    Order,
-    OrderInTable,
-} from "api/types";
+import { APIListResponse, CartItem, Category, Hardware, OrderInTable } from "api/types";
 import {
     hardwareReducerName,
     HardwareState,
@@ -41,7 +34,7 @@ import {
     initialState as orderInitialState,
     orderReducerName,
     OrderState,
-} from "../slices/order/orderSlice";
+} from "slices/order/orderSlice";
 
 export const withRouter = (component: React.ComponentElement<any, any>) => (
     <BrowserRouter>{component}</BrowserRouter>
