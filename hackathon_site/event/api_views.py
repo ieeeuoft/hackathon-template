@@ -5,13 +5,14 @@ from rest_framework import generics, mixins, status
 from rest_framework.exceptions import ValidationError, PermissionDenied
 from rest_framework.response import Response
 
+
 from event.serializers import (
     ProfileSerializer,
     CurrentProfileSerializer,
 )
 from event.models import User, Team as EventTeam, Profile
 from event.serializers import UserSerializer, TeamSerializer
-from hardware.serializers import IncidentCreateSerializer
+from hardware.serializers import IncidentCreateSerializer, OrderListSerializer
 from event.permissions import UserHasProfile, FullDjangoModelPermissions
 
 from hardware.models import OrderItem, Order, Incident
@@ -153,6 +154,7 @@ class TeamIncidentListView(
 
 
 class ProfileDetailView(mixins.UpdateModelMixin, generics.GenericAPIView):
+
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
     permission_classes = [FullDjangoModelPermissions]
@@ -162,6 +164,7 @@ class ProfileDetailView(mixins.UpdateModelMixin, generics.GenericAPIView):
 
 
 class CurrentProfileView(mixins.UpdateModelMixin, generics.GenericAPIView):
+
     queryset = Profile.objects.all()
     serializer_class = CurrentProfileSerializer
     permission_classes = [UserHasProfile]

@@ -9,7 +9,7 @@ urlpatterns = [
     path("categories/", views.CategoryListView.as_view(), name="category-list"),
     path("incidents/", views.IncidentListView.as_view(), name="incident-list"),
     path(
-        "hardware/incidents/<int:pk>/",
+        "incidents/<int:pk>/",
         views.IncidentDetailView.as_view(),
         name="incident-detail",
     ),

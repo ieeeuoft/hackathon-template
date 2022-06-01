@@ -1,12 +1,10 @@
-from datetime import datetime
-
 from django.contrib.auth.models import Group
 from django.urls import reverse
-from django.conf import settings
 from rest_framework import status
 from rest_framework.test import APITestCase
 from hackathon_site.tests import SetupUserMixin
 from django.contrib.auth.models import Permission
+
 
 from event.models import Profile, User, Team
 from event.serializers import (
@@ -14,8 +12,8 @@ from event.serializers import (
     TeamSerializer,
 )
 
-from hardware.serializers import OrderListSerializer, IncidentSerializer
-from hardware.models import Hardware, Order, OrderItem, Incident
+from hardware.serializers import OrderListSerializer
+from hardware.models import Hardware, Order, OrderItem
 
 
 class CurrentUserTestCase(SetupUserMixin, APITestCase):
@@ -695,6 +693,7 @@ class TeamIncidentListViewPostTestCase(SetupUserMixin, APITestCase):
 
 class EventTeamDetailViewTestCase(SetupUserMixin, APITestCase):
     def setUp(self, **kwargs):
+
         self.team = Team.objects.create()
         self.team2 = Team.objects.create()
         self.team3 = Team.objects.create()

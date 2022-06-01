@@ -867,12 +867,11 @@ class IncidentListViewPostTestCase(SetupUserMixin, APITestCase):
 class IncidentDetailViewGetTestCase(SetupUserMixin, APITestCase):
     def setUp(self):
         super().setUp()
-        self.profile = Profile.objects.create(user=self.user)
         self.team = Team.objects.create()
         self.order = Order.objects.create(
             status="Cart",
             team=self.team,
-            request={"hardware": [{"id": 1, "quantity": 2}, {"id": 2, "quantity": 3}]},
+            request={"hardware": [{"id": 1, "quantity": 1}]},
         )
         self.hardware = Hardware.objects.create(
             name="name",
@@ -885,22 +884,10 @@ class IncidentDetailViewGetTestCase(SetupUserMixin, APITestCase):
             picture="/picture/location",
         )
 
-        self.other_hardware = Hardware.objects.create(
-            name="other",
-            model_number="otherModel",
-            manufacturer="otherManufacturer",
-            datasheet="/datasheet/location/other",
-            quantity_available=10,
-            max_per_team=10,
-            picture="/picture/location/other",
-        )
         self.order_item = OrderItem.objects.create(
             order=self.order, hardware=self.hardware,
         )
 
-        self.order_item2 = OrderItem.objects.create(
-            order=self.order, hardware=self.other_hardware,
-        )
 
         self.incident = Incident.objects.create(
             state="Broken",
@@ -909,12 +896,6 @@ class IncidentDetailViewGetTestCase(SetupUserMixin, APITestCase):
             time_occurred=datetime(2022, 8, 8, tzinfo=settings.TZ_INFO),
         )
 
-        self.another_incident = Incident.objects.create(
-            state="Missing",
-            description="Description",
-            order_item=self.order_item2,
-            time_occurred=datetime(2022, 1, 1, tzinfo=settings.TZ_INFO),
-        )
         self.view_permissions = Permission.objects.filter(
             content_type__app_label="hardware", codename="view_incident"
         )
@@ -925,8 +906,8 @@ class IncidentDetailViewGetTestCase(SetupUserMixin, APITestCase):
         response = self.client.get(self.view)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
-    def test_user_has_no_profile(self):
-        self.profile.delete()
+    def test_user_with_profile_and_no_view_permission(self):
+        Profile.objects.create(user=self.user)
         self._login()
         response = self.client.get(self.view)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
