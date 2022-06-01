@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from django.contrib.auth.models import Permission, Group
+from django.contrib.auth.models import Permission
 from django.urls import reverse
 from django.conf import settings
 
