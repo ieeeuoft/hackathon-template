@@ -21,7 +21,7 @@ from hardware.models import Hardware, Category, Order, Incident, OrderItem
 from hardware.serializers import (
     CategorySerializer,
     HardwareSerializer,
-    IncidentListSerializer,
+    IncidentSerializer,
     IncidentCreateSerializer,
     OrderListSerializer,
     OrderCreateSerializer,
@@ -71,7 +71,7 @@ class IncidentListView(
 
     def get_serializer_class(self):
         if self.request.method == "GET":
-            return IncidentListSerializer
+            return IncidentSerializer
         elif self.request.method == "POST":
             return IncidentCreateSerializer
 
@@ -80,6 +80,16 @@ class IncidentListView(
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
+
+
+class IncidentDetailView(mixins.RetrieveModelMixin, generics.GenericAPIView):
+    queryset = Incident.objects.all()
+
+    serializer_class = IncidentSerializer
+    permission_classes = [FullDjangoModelPermissions]
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
 
 
 class OrderItemListView(mixins.ListModelMixin, generics.GenericAPIView):
