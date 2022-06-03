@@ -12,6 +12,7 @@
         }
         &Item {
             height: 100%;
+            padding: 10px;
             min-height: 250px;
             width: 100%;
             @include flexPosition($dir: column);

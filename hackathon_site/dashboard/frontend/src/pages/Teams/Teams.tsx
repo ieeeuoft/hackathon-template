@@ -64,6 +64,7 @@ const Teams = () => {
             key={0}
             data-testid="team"
             direction="column"
+            grid-template-column="true"
         >
             <TeamCardAdmin
                 team_name={team.TeamName}
@@ -79,7 +80,7 @@ const Teams = () => {
             <div className={styles.searchBar}>
                 <InventorySearch></InventorySearch>
             </div>
-            {CardComponents}
+            <Grid container>{CardComponents}</Grid>
         </>
     );
 };
