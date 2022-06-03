@@ -3,8 +3,12 @@ import React from "react";
 import Header from "components/general/Header/Header";
 import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
-import styles from "../Dashboard/Dashboard.module.scss";
-import TeamCardAdmin from "../../components/dashboard/TeamCardAdmin/TeamCardAdmin";
+import styles from "pages/Teams/Teams.module.scss";
+
+import TeamCardAdmin from "components/dashboard/TeamCardAdmin/TeamCardAdmin";
+import InventorySearch from "components/inventory/InventorySearch/InventorySearch";
+
+// import TeamCardAdmin from "../../components/dashboard/TeamCardAdmin/TeamCardAdmin";
 
 const Teams = () => {
     const mock_data = [
@@ -20,6 +24,34 @@ const Teams = () => {
             TeamName: "Mochi",
             Members: ["Eric Ji", "Avelyn Wong"],
         },
+        {
+            TeamName: "Moo",
+            Members: ["Rosalyn Wong", "Mohaimen Khan"],
+        },
+        {
+            TeamName: "Moo",
+            Members: ["Rosalyn Wong", "Mohaimen Khan"],
+        },
+        {
+            TeamName: "Moo",
+            Members: ["Rosalyn Wong", "Mohaimen Khan"],
+        },
+        {
+            TeamName: "Moo",
+            Members: ["Rosalyn Wong", "Mohaimen Khan"],
+        },
+        {
+            TeamName: "Moo",
+            Members: ["Rosalyn Wong", "Mohaimen Khan"],
+        },
+        {
+            TeamName: "Moo",
+            Members: ["Rosalyn Wong", "Mohaimen Khan"],
+        },
+        {
+            TeamName: "Moo",
+            Members: ["Rosalyn Wong", "Mohaimen Khan"],
+        },
     ];
 
     const CardComponents = mock_data.map((team) => (
@@ -31,19 +63,22 @@ const Teams = () => {
             className={styles.dashboardGridItem}
             key={0}
             data-testid="team"
+            direction="column"
         >
             <TeamCardAdmin
                 team_name={team.TeamName}
                 members={team.Members}
             ></TeamCardAdmin>
         </Grid>
-        // <TeamCardAdmin team_name={team.TeamName} members={team.Members}></TeamCardAdmin>
     ));
 
     return (
         <>
-            <Header />
+            <Header></Header>
             <Typography variant="h1">Teams</Typography>
+            <div className={styles.searchBar}>
+                <InventorySearch></InventorySearch>
+            </div>
             {CardComponents}
         </>
     );

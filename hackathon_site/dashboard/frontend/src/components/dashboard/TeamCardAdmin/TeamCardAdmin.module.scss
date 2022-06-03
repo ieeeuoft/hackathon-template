@@ -2,7 +2,15 @@
 @import "./../../../assets/abstracts/variables";
 
 .name {
-    padding: 12px 20px;
+    padding: 6px 20px;
+}
+
+.title {
+    padding: 0px 5px;
+}
+
+.border {
+    border-style: solid;
 }
 
 .lastRow {
