@@ -3,8 +3,8 @@ import { useSelector } from "react-redux";
 import { cartTotalSelector, errorSelector } from "slices/hardware/cartSlice";
 import Grid from "@material-ui/core/Grid";
 import { Alert, AlertTitle } from "@material-ui/lab";
-import { teamSizeSelector } from "../../../slices/event/teamSlice";
-import { maxTeamSize, minTeamSize } from "../../../constants";
+import { teamSizeSelector } from "slices/event/teamSlice";
+import { maxTeamSize, minTeamSize } from "constants.js";
 
 const CartErrorBox = () => {
     const cartQuantity = useSelector(cartTotalSelector);
@@ -12,16 +12,8 @@ const CartErrorBox = () => {
     const teamSize = useSelector(teamSizeSelector);
     const teamSizeTooLarge = teamSize > maxTeamSize;
     const teamSizeTooSmall = teamSize < minTeamSize;
-    let errorMessage;
-    let errorTitle;
-
-    if (teamSizeTooSmall) {
-        errorMessage = "few";
-        errorTitle = "Small";
-    } else if (teamSizeTooLarge) {
-        errorMessage = "many";
-        errorTitle = "Large";
-    }
+    const errorMessage = teamSizeTooLarge ? "many" : teamSizeTooSmall ? "few" : "";
+    const errorTitle = teamSizeTooLarge ? "Large" : teamSizeTooSmall ? "Small" : "";
 
     return (
         <Grid direction="row" container>
@@ -48,11 +40,13 @@ const CartErrorBox = () => {
                 {(teamSizeTooLarge || teamSizeTooSmall) && (
                     <Alert severity="warning" style={{ margin: "15px 0px" }}>
                         <AlertTitle>{`Team Size Too ${errorTitle}!`}</AlertTitle>
-                        There are too {errorMessage} people on your team to place an
-                        order. We only allow teams between {minTeamSize} to{" "}
-                        {maxTeamSize} to checkout items. To join or leave a team please
-                        go to your Dashboard (link to dashboard page) and click the EDIT
-                        button under your team.
+                        {`There are too ${errorMessage} people on your team to place an
+                        order. We only allow teams between ${minTeamSize} to ${maxTeamSize} 
+                        to checkout items. To join or leave a team please
+                        go to your `}
+                        <a href="/">Dashboard </a>
+                        {` and click the EDIT
+                        button under your team.`}
                     </Alert>
                 )}
             </Grid>

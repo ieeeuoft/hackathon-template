@@ -75,7 +75,7 @@ describe("Selectors", () => {
         expect(teamCodeSelector(teamState)).toEqual(mockTeam.team_code);
     });
 
-    test("teamSizeSelector returns 2", () => {
+    test("teamSizeSelector returns correct team size", () => {
         const teamState = {
             ...mockState,
             [teamReducerName]: {
@@ -85,6 +85,17 @@ describe("Selectors", () => {
             },
         };
         expect(teamSizeSelector(teamState)).toEqual(2);
+    });
+
+    test("teamSizeSelector returns 0 for no team", () => {
+        const teamState = {
+            ...mockState,
+            [teamReducerName]: {
+                ...initialState,
+                isLoading: false,
+            },
+        };
+        expect(teamSizeSelector(teamState)).toEqual(0);
     });
 
     test("teamMemberNamesSelector returns the member names", () => {

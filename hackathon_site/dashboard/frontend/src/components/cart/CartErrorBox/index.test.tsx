@@ -1,7 +1,13 @@
 import React from "react";
 import { makeStoreWithEntities, render } from "testing/utils";
 import CartErrorBox from "./index";
-import { mockCartItems } from "testing/mockData";
+import {
+    mockCartItems,
+    mockHardware,
+    mockLargeTeam,
+    mockTeam,
+    mockValidTeam,
+} from "testing/mockData";
 import { CartItem } from "api/types";
 
 describe("Cart Error Box displays correctly with the right information", () => {
@@ -50,5 +56,35 @@ describe("Cart Error Box displays correctly with the right information", () => {
         });
 
         expect(queryByText(/internal error has occurred/i)).not.toBeInTheDocument();
+    });
+
+    it("Shows the correct message and title if team size is too small", async () => {
+        const store = makeStoreWithEntities({
+            hardware: mockHardware,
+            cartItems: mockCartItems,
+            team: { team: mockTeam },
+        });
+
+        const { queryByText } = render(<CartErrorBox />, {
+            store,
+        });
+
+        expect(queryByText(/There are too few people/i)).toBeInTheDocument();
+        expect(queryByText(/Team Size Too Small/i)).toBeInTheDocument();
+    });
+
+    it("Shows the correct message and title if team size is too large", async () => {
+        const store = makeStoreWithEntities({
+            hardware: mockHardware,
+            cartItems: mockCartItems,
+            team: { team: mockLargeTeam },
+        });
+
+        const { queryByText } = render(<CartErrorBox />, {
+            store,
+        });
+
+        expect(queryByText(/There are too many people/i)).toBeInTheDocument();
+        expect(queryByText(/Team Size Too Large/i)).toBeInTheDocument();
     });
 });
