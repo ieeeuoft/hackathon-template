@@ -1,22 +1,53 @@
 import React from "react";
 import ProductOverview, { EnhancedAddToCartForm } from "./ProductOverview";
 import { mockCartItems, mockCategories, mockHardware } from "testing/mockData";
-import { render, fireEvent, waitFor, makeStoreWithEntities } from "testing/utils";
+import {
+    render,
+    fireEvent,
+    waitFor,
+    makeStoreWithEntities,
+    makeMockApiListResponse,
+    promiseResolveWithDelay,
+} from "testing/utils";
 import { makeStore } from "slices/store";
 import { cartSelectors } from "slices/hardware/cartSlice";
 import { SnackbarProvider } from "notistack";
 import SnackbarNotifier from "components/general/SnackbarNotifier/SnackbarNotifier";
-import { queryByText } from "@testing-library/react";
+import { get } from "api/api";
+import { getUpdatedHardwareDetails } from "slices/hardware/hardwareSlice";
+
+const mockedGet = get as jest.MockedFunction<typeof get>;
 
 describe("<ProductOverview />", () => {
-    test("all 3 parts of the product overview is there", () => {
-        const store = makeStore({
+    test("all 3 parts of the product overview is there", async () => {
+        const temp = {
+            ...mockHardware[0],
+        };
+
+        temp.name = "Randome hardware";
+        temp.model_number = "90";
+        temp.manufacturer = "Tesla";
+        temp.datasheet = "";
+        temp.quantity_available = 5;
+        temp.max_per_team = 6;
+        temp.picture = "https://example.com/datasheet";
+        temp.categories = [2];
+        temp.quantity_remaining = 10;
+        temp.notes = "notes on temp";
+
+        const store = makeStoreWithEntities({
+            hardwareState: {
+                isUpdateDetailsLoading: false,
+                ids: [],
+                entities: {},
+            },
             ui: {
                 inventory: {
-                    hardwareItemBeingViewed: mockHardware[0],
+                    hardwareItemBeingViewed: temp,
                     isProductOverviewVisible: true,
                 },
             },
+            hardware: mockHardware,
         });
 
         const { getByText } = render(<ProductOverview showAddToCartButton />, {
@@ -27,10 +58,52 @@ describe("<ProductOverview />", () => {
         expect(getByText("Category")).toBeInTheDocument();
         expect(getByText("Datasheet")).toBeInTheDocument();
         expect(getByText("Add to cart")).toBeInTheDocument();
+
+        // Check if the product overview is updated with the latest hardware details
+        expect(getByText("Randome hardware")).toBeInTheDocument();
+        expect(getByText("90")).toBeInTheDocument();
+        expect(getByText("Tesla")).toBeInTheDocument();
+        expect(getByText("10 OF 5 IN STOCK")).toBeInTheDocument();
+        expect(getByText("notes on temp")).toBeInTheDocument();
+
+        const hardwareUri = "/api/hardware/hardware/1";
+
+        // Check if the correct get request was dispatched
+        waitFor(() => {
+            expect(get).toHaveBeenCalledWith(hardwareUri);
+        });
+    });
+
+    test("Displays a loader when loading", async () => {
+        const apiResponse = makeMockApiListResponse(mockHardware);
+
+        mockedGet.mockReturnValue(promiseResolveWithDelay(apiResponse, 500));
+
+        const store = makeStore();
+        store.dispatch(getUpdatedHardwareDetails(1));
+
+        const { getByText, queryByTestId } = render(
+            <ProductOverview showAddToCartButton />,
+            { store }
+        );
+
+        await waitFor(() => {
+            expect(queryByTestId("circular-progress")).toBeInTheDocument();
+        });
+
+        // After results have loaded, loader  should disappear
+        await waitFor(() => {
+            expect(queryByTestId("circular-progress")).not.toBeInTheDocument();
+            expect(getByText(mockHardware[0].name)).toBeInTheDocument();
+        });
     });
 
     test("all 3 parts of the product overview is there when hardware has no optional fields", () => {
-        const store = makeStore({
+        const store = makeStoreWithEntities({
+            hardwareState: {
+                isUpdateDetailsLoading: false,
+            },
+
             ui: {
                 inventory: {
                     hardwareItemBeingViewed: mockHardware[9],
@@ -57,6 +130,9 @@ describe("<ProductOverview />", () => {
         const store = makeStoreWithEntities({
             hardware: [mockHardware[0]],
             categories: mockCategories,
+            hardwareState: {
+                isUpdateDetailsLoading: false,
+            },
             ui: {
                 inventory: {
                     hardwareItemBeingViewed: mockHardware[0],
@@ -87,7 +163,10 @@ describe("<ProductOverview />", () => {
     });
 
     it("displays error message when unable to get hardware", () => {
-        const store = makeStore({
+        const store = makeStoreWithEntities({
+            hardwareState: {
+                isUpdateDetailsLoading: false,
+            },
             ui: {
                 inventory: {
                     hardwareItemBeingViewed: null,
@@ -111,6 +190,9 @@ describe("<ProductOverview />", () => {
         const store = makeStoreWithEntities({
             hardware: [mockHardware[0]],
             categories: mockCategories,
+            hardwareState: {
+                isUpdateDetailsLoading: false,
+            },
             ui: {
                 inventory: {
                     hardwareItemBeingViewed: mockHardware[0],
@@ -148,6 +230,9 @@ describe("<ProductOverview />", () => {
         const store = makeStoreWithEntities({
             hardware: [mockHardware[0]],
             categories: mockCategories,
+            hardwareState: {
+                isUpdateDetailsLoading: false,
+            },
             ui: {
                 inventory: {
                     hardwareItemBeingViewed: mockHardware[0],

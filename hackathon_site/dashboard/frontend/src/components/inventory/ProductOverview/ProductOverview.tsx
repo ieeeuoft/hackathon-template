@@ -7,6 +7,7 @@ import Select from "@material-ui/core/Select";
 import LaunchIcon from "@material-ui/icons/Launch";
 import InputLabel from "@material-ui/core/InputLabel";
 import Chip from "@material-ui/core/Chip";
+import CircularProgress from "@material-ui/core/CircularProgress";
 import SideSheetRight from "components/general/SideSheetRight/SideSheetRight";
 
 import * as Yup from "yup";
@@ -23,6 +24,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectCategoriesByIds } from "slices/hardware/categorySlice";
 import { RootState } from "slices/store";
 import { addToCart, cartSelectors } from "slices/hardware/cartSlice";
+import { isUpdateDetailsLoading } from "slices/hardware/hardwareSlice";
 import { Category } from "api/types";
 import hardwareImagePlaceholder from "assets/images/placeholders/no-hardware-image.svg";
 import { getUpdatedHardwareDetails } from "slices/hardware/hardwareSlice";
@@ -287,6 +289,8 @@ export const ProductOverview = ({
     let maxPerTeam: number | null = null;
     let constraints: string[] = [];
 
+    const isLoading = useSelector(isUpdateDetailsLoading);
+
     const dispatch = useDispatch();
     const closeProductOverview = () => dispatch(removeProductOverviewItem());
 
@@ -332,7 +336,16 @@ export const ProductOverview = ({
             isVisible={isProductOverviewVisible}
             handleClose={closeProductOverview}
         >
-            {hardware ? (
+            {isLoading ? (
+                <CircularProgress
+                    data-testid="circular-progress"
+                    style={{
+                        position: "absolute",
+                        left: "50%",
+                        top: "50%",
+                    }}
+                />
+            ) : hardware ? (
                 <div className={styles.productOverview}>
                     <div className={styles.productOverviewDiv}>
                         <MainSection

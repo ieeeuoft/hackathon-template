@@ -9,6 +9,7 @@ import {
     getHardwareWithFilters,
     hardwareSelectors,
     getHardwareNextPage,
+    getUpdatedHardwareDetails,
 } from "slices/hardware/hardwareSlice";
 import { get, stripHostnameReturnFilters } from "api/api";
 import { AnyAction } from "redux";
@@ -158,5 +159,120 @@ describe("getHardwareNextPage thunk", () => {
                 mockHardware.slice(0, limit).map(({ id }) => id)
             );
         });
+    });
+});
+
+describe("getHardwareWithFilters thunk", () => {
+    it("Updates the store on API success", async () => {
+        const response = makeMockApiListResponse(mockHardware);
+        mockedGet.mockResolvedValueOnce(response);
+
+        const store = makeStore();
+        await store.dispatch(getHardwareWithFilters());
+
+        await waitFor(() => {
+            expect(mockedGet).toHaveBeenCalledWith("/api/hardware/hardware/", {});
+            expect(hardwareSelectors.selectIds(store.getState())).toEqual(
+                mockHardware.map(({ id }) => id)
+            );
+        });
+    });
+
+    it("Dispatches a snackbar on API failure", async () => {
+        const failureResponse = {
+            response: {
+                status: 500,
+                message: "Something went wrong",
+            },
+        };
+
+        mockedGet.mockRejectedValue(failureResponse);
+
+        const store = mockStore(mockState);
+        await store.dispatch(getHardwareWithFilters());
+
+        const actions = store.getActions();
+
+        expect(actions).toContainEqual(
+            displaySnackbar({
+                message: "Failed to fetch hardware data: Error 500",
+                options: { variant: "error" },
+            })
+        );
+    });
+
+    it("Updates the store on API failure", async () => {
+        const failureResponse = {
+            response: {
+                status: 500,
+                message: "Something went wrong",
+            },
+        };
+
+        mockedGet.mockRejectedValue(failureResponse);
+
+        const store = makeStore();
+        await store.dispatch(getHardwareWithFilters());
+
+        expect(store.getState()[hardwareReducerName]).toHaveProperty(
+            "error",
+            failureResponse.response.message
+        );
+    });
+});
+
+describe("getUpdatedHardwareDetails thunk", () => {
+    it("Updates the store on API success", async () => {
+        const store = makeStoreWithEntities({ hardware: mockHardware });
+
+        await store.dispatch(getUpdatedHardwareDetails(1));
+        await waitFor(() => {
+            expect(mockedGet).toHaveBeenCalledWith(`/api/hardware/hardware/1/`);
+            expect(hardwareSelectors.selectById(store.getState(), 1)).toEqual(
+                mockHardware[0]
+            );
+        });
+    });
+
+    it("Dispatches a snackbar on API failure", async () => {
+        const failureResponse = {
+            response: {
+                status: 500,
+                message: "Something went wrong",
+            },
+        };
+
+        mockedGet.mockRejectedValue(failureResponse);
+
+        const store = mockStore(mockState);
+        await store.dispatch(getUpdatedHardwareDetails(1));
+
+        const actions = store.getActions();
+
+        expect(actions).toContainEqual(
+            displaySnackbar({
+                message: "Failed to fetch hardware data: Error 500",
+                options: { variant: "error" },
+            })
+        );
+    });
+
+    it("Updates the store on API failure", async () => {
+        const failureResponse = {
+            response: {
+                status: 500,
+                message: "Something went wrong",
+            },
+        };
+
+        mockedGet.mockRejectedValue(failureResponse);
+
+        const store = makeStore();
+        await store.dispatch(getUpdatedHardwareDetails(1));
+
+        expect(store.getState()[hardwareReducerName]).toHaveProperty(
+            "error",
+            failureResponse.response.message
+        );
     });
 });

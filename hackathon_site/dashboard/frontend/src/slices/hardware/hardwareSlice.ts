@@ -113,7 +113,6 @@ export const getUpdatedHardwareDetails = createAsyncThunk<
     `${hardwareReducerName}/getHardwareDetails`,
     async (hardware_id, { dispatch, getState, rejectWithValue }) => {
         try {
-            console.log(hardware_id);
             const response = await get<Hardware>(
                 `/api/hardware/hardware/${hardware_id}/`
             );
@@ -264,6 +263,11 @@ export const isLoadingSelector = createSelector(
 export const isMoreLoadingSelector = createSelector(
     [hardwareSliceSelector],
     (hardwareSlice) => hardwareSlice.isMoreLoading
+);
+
+export const isUpdateDetailsLoading = createSelector(
+    [hardwareSliceSelector],
+    (hardwareSlice) => hardwareSlice.isUpdateDetailsLoading
 );
 
 export const hardwareCountSelector = createSelector(

@@ -111,6 +111,7 @@ export * from "jest-when";
 
 export interface StoreEntities {
     hardware?: Hardware[];
+    hardwareState?: Partial<HardwareState>;
     categories?: Category[];
     ui?: DeepPartial<UIState>;
     cartItems?: CartItem[];
@@ -123,6 +124,7 @@ export const makeStoreWithEntities = (entities: StoreEntities) => {
     if (entities.hardware) {
         const hardwareState: HardwareState = {
             ...hardwareInitialState,
+            ...entities.hardwareState,
             ids: [],
             entities: {},
         };
@@ -133,6 +135,13 @@ export const makeStoreWithEntities = (entities: StoreEntities) => {
         }
 
         preloadedState[hardwareReducerName] = hardwareState;
+    }
+
+    if (entities.hardwareState) {
+        preloadedState[hardwareReducerName] = {
+            ...hardwareInitialState,
+            ...entities.hardwareState,
+        };
     }
 
     if (entities.categories) {
