@@ -7,7 +7,7 @@ from hardware.serializers import (
     HardwareSerializer,
     CategorySerializer,
     OrderListSerializer,
-    IncidentListSerializer,
+    IncidentSerializer,
 )
 
 
@@ -261,7 +261,7 @@ class IncidentSerializerTestCase(TestCase):
         )
 
     def test_base(self):
-        incident_serializer = IncidentListSerializer(self.incident)
+        incident_serializer = IncidentSerializer(self.incident)
         data = incident_serializer.data
         data["order_item"] = dict(data["order_item"])
         expected_response = {
