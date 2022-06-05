@@ -6,6 +6,7 @@ import { Alert, AlertTitle } from "@material-ui/lab";
 import { teamSizeSelector } from "slices/event/teamSlice";
 import { maxTeamSize, minTeamSize } from "constants.js";
 import AlertBox from "components/general/AlertBox/AlertBox";
+import { Link } from "@material-ui/core";
 
 const CartErrorBox = () => {
     const cartQuantity = useSelector(cartTotalSelector);
@@ -32,9 +33,11 @@ const CartErrorBox = () => {
                         <AlertTitle>{`Team Size Too ${errorTitle}!`}</AlertTitle>
                         {`There are too ${errorMessage} people on your team to place an
                         order. We only allow teams between ${minTeamSize} to ${maxTeamSize} 
-                        to checkout items. To join or leave a team please
+                        people to checkout items. To join or leave a team please
                         go to your `}
-                        <a href="/">Dashboard </a>
+                        <Link href="/" underline="always">
+                            {"Dashboard"}
+                        </Link>
                         {` and click the EDIT
                         button under your team.`}
                     </Alert>
