@@ -11,6 +11,11 @@ A website template for hackathons run by [IEEE University of Toronto Student Bra
 #### Associates
 - Dana Al Shekerchi
 - Ethan Hugh
+- Luke Cheseldine
+- Karandeep Lubana
+- Arsh Kadakia
+- Terry Luan
+- Eric Ji
 
 ## Contents
 - [Requirements](#requirements)
