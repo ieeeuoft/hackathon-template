@@ -12,7 +12,7 @@ import {
     OrderResponse,
 } from "slices/hardware/cartSlice";
 import { makeStoreWithEntities, waitFor } from "testing/utils";
-import { mockCartItems, mockHardware } from "testing/mockData";
+import { mockCartItems } from "testing/mockData";
 import { displaySnackbar } from "slices/ui/uiSlice";
 import { post } from "api/api";
 import thunk, { ThunkDispatch } from "redux-thunk";
