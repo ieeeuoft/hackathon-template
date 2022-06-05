@@ -1650,7 +1650,38 @@ class OrderListPatchTestCase(SetupUserMixin, APITestCase):
 class MinMaxTeamOrderTestCase(SetupUserMixin, APITestCase):
     def setUp(self):
         super().setUp()
-        self._create_user_set()
+        self.team = Team.objects.create()
+        self.profile = Profile.objects.create(user=self.user, team=self.team)
+
+        self.user2 = User.objects.create_user(
+            username="frank@johnston.com",
+            password="hellothere31415",
+            email="frank@johnston.com",
+            first_name="Frank",
+            last_name="Johnston",
+        )
+        self.user3 = User.objects.create_user(
+            username="franklin@carmichael.com",
+            password="supersecret456",
+            email="franklin@carmichael.com",
+            first_name="Franklin",
+            last_name="Carmichael",
+        )
+        self.user4 = User.objects.create_user(
+            username="lawren@harris.com",
+            password="wxyz7890",
+            email="lawren@harris.com",
+            first_name="Lawren",
+            last_name="Harris",
+        )
+
+        self.user5 = User.objects.create_user(
+            username="law@henn.com",
+            password="wxyzdfs890",
+            email="law@henn.com",
+            first_name="Law",
+            last_name="Henn",
+        )
 
         self.hardware1 = Hardware.objects.create(
             name="aHardware",
@@ -1663,18 +1694,6 @@ class MinMaxTeamOrderTestCase(SetupUserMixin, APITestCase):
             picture="/picture/location",
         )
 
-        self.category1 = Category.objects.create(name="category1", max_per_team=4)
-
-        self.hardware1.categories.add(self.category1)
-
-        self.view = reverse("api:hardware:order-list")
-
-    def test_team_less_min_order(self):
-        self._login()
-
-        self.team = Team.objects.create()
-        self.profile = Profile.objects.create(user=self.user, team=self.team)
-
         self.order = Order.objects.create(
             status="Cart",
             team=self.team,
@@ -1685,12 +1704,51 @@ class MinMaxTeamOrderTestCase(SetupUserMixin, APITestCase):
             }
         )
 
+        self.category1 = Category.objects.create(name="category1", max_per_team=4)
+
+        self.hardware1.categories.add(self.category1)
+
+        self.view = reverse("api:hardware:order-list")
+
+    def test_team_less_min_order(self):
+        self._login()
+
         request_data = {"hardware": [{"id": self.hardware1.id, "quantity": 2}]}
         response = self.client.post(self.view, request_data, format="json")
         self.assertEqual(
             response.json(), {"non_field_errors": ["Does not match team size criteria"]},
         )
 
+    def test_team_more_max_order(self):
+        self._login()
+        # for user in self._create_user_set():
+        #     if self._create_user_set().index(user) != 0:
+        #         self.profile = Profile.objects.create(user=user, team=self.team)
 
+        self.profile2 = Profile.objects.create(user=self.user2, team=self.team)
+        self.profile3 = Profile.objects.create(user=self.user3, team=self.team)
+        self.profile4 = Profile.objects.create(user=self.user4, team=self.team)
+        self.profile5 = Profile.objects.create(user=self.user5, team=self.team)
 
+        request_data = {"hardware": [{"id": self.hardware1.id, "quantity": 2}]}
+        response = self.client.post(self.view, request_data, format="json")
+        self.assertEqual(
+            response.json(), {"non_field_errors": ["Does not match team size criteria"]},
+        )
 
+    def test_team_correct_size_order(self):
+        self._login()
+
+        self.profile2 = Profile.objects.create(user=self.user2, team=self.team)
+        self.profile3 = Profile.objects.create(user=self.user3, team=self.team)
+        self.profile4 = Profile.objects.create(user=self.user4, team=self.team)
+
+        request_data = {"hardware": [{"id": self.hardware1.id, "quantity": 2}]}
+        response = self.client.post(self.view, request_data, format="json")
+        expected_response = {
+            "order_id": 2,
+            "hardware": [{"hardware_id": 1, "quantity_fulfilled": 2}],
+            "errors": [],
+        }
+
+        self.assertEqual(response.json(), expected_response)
