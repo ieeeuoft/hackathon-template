@@ -7,7 +7,7 @@ from django.conf import settings
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from event.models import Team
+from event.models import Team, User, Profile
 from hardware.models import Hardware, Category, Order, OrderItem, Incident
 from hardware.serializers import (
     HardwareSerializer,
@@ -81,7 +81,7 @@ class HardwareListViewTestCase(SetupUserMixin, APITestCase):
 
     def _build_filter_url(self, **kwargs):
         return (
-            self.view + "?" + "&".join([f"{key}={val}" for key, val in kwargs.items()])
+                self.view + "?" + "&".join([f"{key}={val}" for key, val in kwargs.items()])
         )
 
     def test_user_not_logged_in(self):
@@ -392,7 +392,7 @@ class IncidentListViewTestCase(SetupUserMixin, APITestCase):
 
     def _build_filter_url(self, **kwargs):
         return (
-            self.view + "?" + "&".join([f"{key}={val}" for key, val in kwargs.items()])
+                self.view + "?" + "&".join([f"{key}={val}" for key, val in kwargs.items()])
         )
 
     def test_user_not_logged_in(self):
@@ -528,7 +528,7 @@ class OrderListViewGetTestCase(SetupUserMixin, APITestCase):
 
     def _build_filter_url(self, **kwargs):
         return (
-            self.view + "?" + "&".join([f"{key}={val}" for key, val in kwargs.items()])
+                self.view + "?" + "&".join([f"{key}={val}" for key, val in kwargs.items()])
         )
 
     def test_user_not_logged_in(self):
@@ -719,7 +719,7 @@ class OrderItemListViewGetTestCase(SetupUserMixin, APITestCase):
 
     def _build_filter_url(self, **kwargs):
         return (
-            self.view + "?" + "&".join([f"{key}={val}" for key, val in kwargs.items()])
+                self.view + "?" + "&".join([f"{key}={val}" for key, val in kwargs.items()])
         )
 
     def test_user_not_logged_in(self):
@@ -1558,7 +1558,7 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
 
         expected_response = {
             "order_id": None,
-            "hardware": [{"hardware_id": hardware.id, "quantity_fulfilled": 0,}],
+            "hardware": [{"hardware_id": hardware.id, "quantity_fulfilled": 0, }],
             "errors": [
                 {
                     "hardware_id": hardware.id,
@@ -1645,3 +1645,52 @@ class OrderListPatchTestCase(SetupUserMixin, APITestCase):
             response.json(), {"status": ["Cannot change the status for this order."]},
         )
         self.assertFalse(request_data["status"] == Order.objects.get(id=self.pk).status)
+
+
+class MinMaxTeamOrderTestCase(SetupUserMixin, APITestCase):
+    def setUp(self):
+        super().setUp()
+        self._create_user_set()
+
+        self.hardware1 = Hardware.objects.create(
+            name="aHardware",
+            model_number="model",
+            manufacturer="manufacturer",
+            datasheet="/datasheet/location/",
+            notes="notes",
+            quantity_available=10,
+            max_per_team=5,
+            picture="/picture/location",
+        )
+
+        self.category1 = Category.objects.create(name="category1", max_per_team=4)
+
+        self.hardware1.categories.add(self.category1)
+
+        self.view = reverse("api:hardware:order-list")
+
+    def test_team_less_min_order(self):
+        self._login()
+
+        self.team = Team.objects.create()
+        self.profile = Profile.objects.create(user=self.user, team=self.team)
+
+        self.order = Order.objects.create(
+            status="Cart",
+            team=self.team,
+            request={
+                "hardware": [
+                    {"id": 1, "quantity": 2},
+                ]
+            }
+        )
+
+        request_data = {"hardware": [{"id": self.hardware1.id, "quantity": 2}]}
+        response = self.client.post(self.view, request_data, format="json")
+        self.assertEqual(
+            response.json(), {"non_field_errors": ["Does not match team size criteria"]},
+        )
+
+
+
+

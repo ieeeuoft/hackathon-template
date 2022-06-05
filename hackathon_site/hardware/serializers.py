@@ -204,7 +204,7 @@ class OrderCreateSerializer(serializers.Serializer):
             team__exact=user_profile.team
         ).count()
         if team_size < MIN_MEMBERS or team_size > MAX_MEMBERS:
-            raise serializers.ValidationError("Does not match team  size criteria")
+            raise serializers.ValidationError("Does not match team size criteria")
         # requested_hardware is a Counter where the keys are <Hardware Object>'s
         # and values are <Int>'s
         requested_hardware = self.merge_requests(hardware_requests=data["hardware"])
