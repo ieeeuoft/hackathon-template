@@ -14,63 +14,93 @@ import {
     Paper,
     Container,
     Box,
+    Grid,
 } from "@material-ui/core";
 
 const TeamDetail = () => {
     return (
         <>
             <Header />
-            <Container className={styles.container}>
-                <Typography variant="h1">
-                    Team {mockTeamMultiple.team_code} Overview
-                </Typography>
-
-                <Box className={styles.tableContainer}>
-                    <Box className={styles.left}>
-                        <Typography variant="h2" className={styles.tableTitle}>
-                            Team info
+            <Container>
+                <Grid container direction="column" spacing={6}>
+                    <Grid item>
+                        <Typography variant="h1">
+                            Team {mockTeamMultiple.id} Overview
                         </Typography>
-                        <TableContainer component={Paper}>
-                            <Table className={styles.table} size="small">
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell>Name</TableCell>
-                                        <TableCell>Email</TableCell>
-                                        <TableCell>Phone</TableCell>
-                                        <TableCell>ID</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {mockTeamMultiple.profiles.map((row) => (
-                                        <TableRow key={row.user.id}>
-                                            <TableCell>
-                                                {row.user.first_name}{" "}
-                                                {row.user.last_name}
-                                            </TableCell>
-                                            <TableCell>{row.user.email}</TableCell>
-                                            <TableCell>{row.user.phone}</TableCell>
-                                            <TableCell>
-                                                <Checkbox
-                                                    checked={row.id_provided}
-                                                    className={styles.checkBox}
-                                                ></Checkbox>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
-                    </Box>
+                    </Grid>
+                    {/* Team info and actions */}
+                    <Grid container spacing={2}>
+                        <Grid
+                            container
+                            direction="column"
+                            spacing={1}
+                            item
+                            lg={6}
+                            xs={12}
+                        >
+                            <Grid item>
+                                <Typography variant="h2">Team info</Typography>
+                            </Grid>
+                            <Grid item>
+                                <TableContainer component={Paper}>
+                                    <Table size="small">
+                                        <TableHead>
+                                            <TableRow>
+                                                <TableCell>Name</TableCell>
+                                                <TableCell>Email</TableCell>
+                                                <TableCell>Phone</TableCell>
+                                                <TableCell>ID</TableCell>
+                                            </TableRow>
+                                        </TableHead>
+                                        <TableBody>
+                                            {mockTeamMultiple.profiles.map((row) => (
+                                                <TableRow key={row.user.id}>
+                                                    <TableCell>
+                                                        {row.user.first_name}{" "}
+                                                        {row.user.last_name}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        {row.user.email}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        {row.user.phone}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <Checkbox
+                                                            checked={row.id_provided}
+                                                            style={{
+                                                                color: "#2b7bbc",
+                                                                marginLeft: "-15px",
+                                                            }}
+                                                        ></Checkbox>
+                                                    </TableCell>
+                                                </TableRow>
+                                            ))}
+                                        </TableBody>
+                                    </Table>
+                                </TableContainer>
+                            </Grid>
+                        </Grid>
 
-                    <Box className={styles.right}>
-                        <Typography variant="h2" className={styles.tableTitle}>
-                            Dummy
-                        </Typography>
-                        <TableContainer component={Paper}>
-                            <Table>Dummy</Table>
-                        </TableContainer>
-                    </Box>
-                </Box>
+                        <Grid
+                            container
+                            spacing={1}
+                            direction="column"
+                            item
+                            lg={6}
+                            xs={12}
+                        >
+                            <Grid item>
+                                <Typography variant="h2">Dummy</Typography>
+                            </Grid>
+                            <Grid item>
+                                <TableContainer component={Paper}>
+                                    <Table>Dummy</Table>
+                                </TableContainer>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                </Grid>
             </Container>
         </>
     );
