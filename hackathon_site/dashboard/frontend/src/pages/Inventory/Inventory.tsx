@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Drawer from "@material-ui/core/Drawer";
 import Typography from "@material-ui/core/Typography";
@@ -36,6 +36,7 @@ const Inventory = () => {
     const count = useSelector(hardwareCountSelector);
     const isMoreLoading = useSelector(isMoreLoadingSelector);
     const isLoading = useSelector(isLoadingSelector);
+    const isMounted = useRef(false);
 
     const [mobileOpen, setMobileOpen] = React.useState(false);
     const toggleFilter = () => {
@@ -52,9 +53,12 @@ const Inventory = () => {
 
     // When the page is loaded, clear filters and fetch fresh inventory data
     useEffect(() => {
-        dispatch(clearFilters());
-        dispatch(getHardwareWithFilters());
-        dispatch(getCategories());
+        if (!isMounted.current) {
+            dispatch(clearFilters());
+            dispatch(getHardwareWithFilters());
+            dispatch(getCategories());
+            isMounted.current = true;
+        }
     }, [dispatch]);
 
     return (

@@ -7,6 +7,7 @@ import {
     when,
     fireEvent,
     promiseResolveWithDelay,
+    makeMockApiResponse,
 } from "testing/utils";
 
 import Inventory from "pages/Inventory/Inventory";
@@ -134,8 +135,24 @@ describe("Inventory Page", () => {
     });
 
     it("Shows product overview when hardware item is clicked", async () => {
+        const hardwareDetailUri = "/api/hardware/hardware/1/";
+        const newHardwareData = {
+            ...mockHardware[0],
+            name: "Randome hardware",
+            model_number: "90",
+            manufacturer: "Tesla",
+            datasheet: "",
+            quantity_available: 5,
+            max_per_team: 6,
+            picture: "https://example.com/datasheet",
+            categories: [2],
+            quantity_remaining: 10,
+            notes: "notes on temp",
+        };
+
         const hardwareApiResponse = makeMockApiListResponse(mockHardware);
         const categoryApiResponse = makeMockApiListResponse(mockCategories);
+        const hardwareDetailApiResponse = makeMockApiResponse(newHardwareData);
 
         when(mockedGet)
             .calledWith(hardwareUri, {})
@@ -143,6 +160,9 @@ describe("Inventory Page", () => {
         when(mockedGet)
             .calledWith(categoriesUri, {})
             .mockResolvedValue(categoryApiResponse);
+        when(mockedGet)
+            .calledWith(hardwareDetailUri)
+            .mockResolvedValue(hardwareDetailApiResponse);
 
         const { getByText } = render(<Inventory />);
 
@@ -154,19 +174,22 @@ describe("Inventory Page", () => {
 
         fireEvent.click(getByText(mockHardware[0].name));
 
-        expect(getByText("Product Overview")).toBeVisible();
-        expect(
-            getByText(`- Max ${mockHardware[0].max_per_team} of this item`)
-        ).toBeInTheDocument();
-        expect(
-            getByText(
-                `- Max ${mockCategories[0].max_per_team} of items under category ${mockCategories[0].name}`
-            )
-        ).toBeInTheDocument();
-        expect(getByText(mockHardware[0].model_number)).toBeInTheDocument();
-        expect(getByText(mockHardware[0].manufacturer)).toBeInTheDocument();
-        if (mockHardware[0].notes)
-            expect(getByText(mockHardware[0].notes)).toBeInTheDocument();
+        // Check if the correct get request was dispatched
+        await waitFor(() => {
+            expect(mockedGet).toHaveBeenNthCalledWith(3, hardwareDetailUri);
+            expect(getByText("Product Overview")).toBeVisible();
+            expect(
+                getByText(`- Max ${newHardwareData.max_per_team} of this item`)
+            ).toBeInTheDocument();
+            expect(
+                getByText(
+                    `- Max ${mockCategories[1].max_per_team} of items under category ${mockCategories[1].name}`
+                )
+            ).toBeInTheDocument();
+            expect(getByText(newHardwareData.model_number)).toBeInTheDocument();
+            expect(getByText(newHardwareData.manufacturer)).toBeInTheDocument();
+            expect(getByText(newHardwareData.notes)).toBeInTheDocument();
+        });
     });
 
     it("Loads more hardware", async () => {

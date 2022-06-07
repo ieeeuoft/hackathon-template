@@ -4,14 +4,12 @@ import {
     PayloadAction,
     createSelector,
     createAsyncThunk,
-    Update,
 } from "@reduxjs/toolkit";
 import { RootState, AppDispatch } from "slices/store";
 
 import { APIListResponse, Hardware, HardwareFilters } from "api/types";
 import { get, stripHostnameReturnFilters } from "api/api";
 import { displaySnackbar } from "slices/ui/uiSlice";
-import { number } from "yup";
 
 interface HardwareExtraState {
     isUpdateDetailsLoading: boolean;
@@ -21,6 +19,7 @@ interface HardwareExtraState {
     next: string | null;
     filters: HardwareFilters;
     count: number;
+    hardwareIdInProductOverview: number | null;
 }
 
 const extraState: HardwareExtraState = {
@@ -31,6 +30,7 @@ const extraState: HardwareExtraState = {
     next: null,
     filters: {},
     count: 0,
+    hardwareIdInProductOverview: null,
 };
 
 export const hardwareReducerName = "hardware";
@@ -173,6 +173,17 @@ const hardwareSlice = createSlice({
                 state.filters.search = search;
             }
         },
+
+        setProductOverviewHardwareId: (
+            state: HardwareState,
+            { payload }: PayloadAction<number>
+        ) => {
+            state.hardwareIdInProductOverview = payload;
+        },
+
+        removeProductOverviewItem: (state: HardwareState) => {
+            state.hardwareIdInProductOverview = null;
+        },
     },
     extraReducers: (builder) => {
         builder.addCase(getHardwareWithFilters.pending, (state) => {
@@ -231,6 +242,7 @@ const hardwareSlice = createSlice({
             if (payload) {
                 state.isUpdateDetailsLoading = false;
                 state.error = null;
+                state.hardwareIdInProductOverview = payload.id;
                 hardwareAdapter.updateOne(state, {
                     id: payload.id,
                     changes: payload,
@@ -248,7 +260,12 @@ const hardwareSlice = createSlice({
 export const { actions, reducer } = hardwareSlice;
 export default reducer;
 
-export const { setFilters, clearFilters } = actions;
+export const {
+    setFilters,
+    clearFilters,
+    setProductOverviewHardwareId,
+    removeProductOverviewItem,
+} = actions;
 
 // Selectors
 export const hardwareSliceSelector = (state: RootState) => state[hardwareReducerName];
@@ -288,4 +305,12 @@ export const hardwareNextSelector = createSelector(
 export const selectHardwareByIds = createSelector(
     [hardwareSelectors.selectEntities, (state: RootState, ids: number[]) => ids],
     (entities, ids) => ids.map((id) => entities?.[id])
+);
+
+export const hardwareInProductOverviewSelector = createSelector(
+    [hardwareSelectors.selectEntities, hardwareSliceSelector],
+    (entities, hardwareSlice) =>
+        hardwareSlice.hardwareIdInProductOverview
+            ? entities[hardwareSlice.hardwareIdInProductOverview]
+            : null
 );

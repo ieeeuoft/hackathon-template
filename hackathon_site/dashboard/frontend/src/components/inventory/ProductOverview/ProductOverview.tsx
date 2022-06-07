@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import MenuItem from "@material-ui/core/MenuItem";
@@ -15,19 +15,21 @@ import { Formik, FormikValues } from "formik";
 
 import styles from "./ProductOverview.module.scss";
 import {
+    closeProductOverview,
     displaySnackbar,
-    hardwareBeingViewedSelector,
     isProductOverviewVisibleSelector,
-    removeProductOverviewItem,
 } from "slices/ui/uiSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { selectCategoriesByIds } from "slices/hardware/categorySlice";
 import { RootState } from "slices/store";
 import { addToCart, cartSelectors } from "slices/hardware/cartSlice";
-import { isUpdateDetailsLoading } from "slices/hardware/hardwareSlice";
+import {
+    hardwareInProductOverviewSelector,
+    isUpdateDetailsLoading,
+    removeProductOverviewItem,
+} from "slices/hardware/hardwareSlice";
 import { Category } from "api/types";
 import hardwareImagePlaceholder from "assets/images/placeholders/no-hardware-image.svg";
-import { getUpdatedHardwareDetails } from "slices/hardware/hardwareSlice";
 
 export const ERROR_MESSAGES = {
     quantityMissing: "Quantity is required",
@@ -292,19 +294,15 @@ export const ProductOverview = ({
     const isLoading = useSelector(isUpdateDetailsLoading);
 
     const dispatch = useDispatch();
-    const closeProductOverview = () => dispatch(removeProductOverviewItem());
+    const closeProductOverviewPanel = () => {
+        dispatch(closeProductOverview());
+        dispatch(removeProductOverviewItem());
+    };
 
     const isProductOverviewVisible: boolean = useSelector(
         isProductOverviewVisibleSelector
     );
-    const hardware = useSelector(hardwareBeingViewedSelector);
-
-    useEffect(() => {
-        if (hardware) {
-            dispatch(getUpdatedHardwareDetails(hardware.id));
-        }
-    }, [dispatch, hardware]);
-
+    const hardware = useSelector(hardwareInProductOverviewSelector);
     const categories = useSelector((state: RootState) =>
         selectCategoriesByIds(state, hardware?.categories || [])
     );
@@ -334,7 +332,7 @@ export const ProductOverview = ({
         <SideSheetRight
             title="Product Overview"
             isVisible={isProductOverviewVisible}
-            handleClose={closeProductOverview}
+            handleClose={closeProductOverviewPanel}
         >
             {isLoading ? (
                 <CircularProgress

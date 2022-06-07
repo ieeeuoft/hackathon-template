@@ -21,13 +21,16 @@ import {
     isCheckedOutTableVisibleSelector,
     isPendingTableVisibleSelector,
     isReturnedTableVisibleSelector,
-    setProductOverviewItem,
+    openProductOverview,
     toggleCheckedOutTable,
     togglePendingTable,
     toggleReturnedTable,
 } from "slices/ui/uiSlice";
-import { Hardware, ItemsInOrder, Order, OrderStatus } from "api/types";
-import { hardwareSelectors } from "slices/hardware/hardwareSlice";
+import { ItemsInOrder, Order, OrderStatus } from "api/types";
+import {
+    getUpdatedHardwareDetails,
+    hardwareSelectors,
+} from "slices/hardware/hardwareSlice";
 import hardwareImagePlaceholder from "assets/images/placeholders/no-hardware-image.svg";
 
 export const ChipStatus = ({ status }: { status: OrderStatus | "Error" }) => {
@@ -88,10 +91,9 @@ TableProps) => {
     const hardware = useSelector(hardwareSelectors.selectEntities);
     const isVisible = useSelector(isCheckedOutTableVisibleSelector);
     const toggleVisibility = () => dispatch(toggleCheckedOutTable());
-    const openProductOverview = (hardwareItem: Hardware | undefined) => {
-        if (hardwareItem) {
-            dispatch(setProductOverviewItem(hardwareItem));
-        }
+    const openProductOverviewPanel = (hardwareId: number) => {
+        dispatch(getUpdatedHardwareDetails(hardwareId));
+        dispatch(openProductOverview());
     };
 
     const checkedOutOrders: OrderInTable[] = [];
@@ -219,8 +221,8 @@ TableProps) => {
                                                             aria-label="Info"
                                                             data-testid="info-button"
                                                             onClick={() => {
-                                                                openProductOverview(
-                                                                    hardware[row.id]
+                                                                openProductOverviewPanel(
+                                                                    row.id
                                                                 );
                                                             }}
                                                         >
