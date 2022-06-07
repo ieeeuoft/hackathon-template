@@ -10,7 +10,7 @@ import {
 import { makeStore, RootStore, RootState } from "slices/store";
 import { SnackbarProvider } from "notistack";
 import { AxiosResponse } from "axios";
-import { APIListResponse, CartItem, Category, Hardware } from "api/types";
+import { APIListResponse, CartItem, Category, Hardware, OrderInTable } from "api/types";
 import {
     hardwareReducerName,
     HardwareState,
@@ -30,6 +30,11 @@ import {
 } from "slices/hardware/cartSlice";
 
 import { teamReducerName, TeamState } from "slices/event/teamSlice";
+import {
+    initialState as orderInitialState,
+    orderReducerName,
+    OrderState,
+} from "slices/order/orderSlice";
 
 export const withRouter = (component: React.ComponentElement<any, any>) => (
     <BrowserRouter>{component}</BrowserRouter>
@@ -117,6 +122,8 @@ export interface StoreEntities {
     cartItems?: CartItem[];
     team?: DeepPartial<TeamState>;
     cartState?: DeepPartial<CartState>;
+    orderState?: Partial<OrderState>;
+    pendingOrders?: OrderInTable[];
 }
 
 export const makeStoreWithEntities = (entities: StoreEntities) => {
@@ -161,14 +168,13 @@ export const makeStoreWithEntities = (entities: StoreEntities) => {
         preloadedState[uiReducerName] = entities.ui;
     }
 
-    const cartItemState: CartState = {
-        ...cartItemInitialState,
-        ...entities.cartState,
-        ids: [],
-        entities: {},
-    };
-
     if (entities.cartItems) {
+        const cartItemState: CartState = {
+            ...cartItemInitialState,
+            ...entities.cartState,
+            ids: [],
+            entities: {},
+        };
         for (const cartItem of entities.cartItems) {
             cartItemState.ids.push(cartItem.hardware_id);
             cartItemState.entities[cartItem.hardware_id] = cartItem;
@@ -179,6 +185,29 @@ export const makeStoreWithEntities = (entities: StoreEntities) => {
 
     if (entities.team) {
         preloadedState[teamReducerName] = entities.team;
+    }
+
+    if (entities.orderState) {
+        preloadedState[orderReducerName] = {
+            ...orderInitialState,
+            ...entities.orderState,
+        };
+    }
+
+    if (entities.pendingOrders) {
+        const orderState: OrderState = {
+            ...orderInitialState,
+            ...entities.orderState,
+            ids: [],
+            entities: {},
+        };
+
+        for (const order of entities.pendingOrders) {
+            orderState.ids.push(order.id);
+            orderState.entities[order.id] = order;
+        }
+
+        preloadedState[orderReducerName] = orderState;
     }
 
     return makeStore(preloadedState);
