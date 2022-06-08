@@ -19,7 +19,7 @@ import {
 import { RouteComponentProps } from "react-router-dom";
 
 export interface PageParams {
-    id: string;
+    code: string;
 }
 
 const TeamDetail = ({ match }: RouteComponentProps<PageParams>) => {
@@ -30,7 +30,7 @@ const TeamDetail = ({ match }: RouteComponentProps<PageParams>) => {
                 <Grid container direction="column" spacing={6}>
                     <Grid item>
                         <Typography variant="h1">
-                            Team {match.params.id} Overview
+                            Team {match.params.code} Overview
                         </Typography>
                     </Grid>
                     {/* Team info and actions */}

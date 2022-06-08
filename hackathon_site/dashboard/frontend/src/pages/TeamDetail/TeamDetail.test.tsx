@@ -8,12 +8,20 @@ import { RouteComponentProps } from "react-router-dom";
 const teamDetailProps = {
     match: {
         params: {
-            id: mockTeamMultiple.id.toString(),
+            code: mockTeamMultiple.team_code,
         },
     },
 } as RouteComponentProps<PageParams>;
 
 describe("User info table", () => {
+    test("renders team detail page with team code", () => {
+        render(<TeamDetail {...teamDetailProps} />);
+
+        expect(
+            screen.getByText(`Team ${mockTeamMultiple.team_code} Overview`)
+        ).toBeInTheDocument();
+    });
+
     test("renders user info table", () => {
         render(<TeamDetail {...teamDetailProps} />);
 
