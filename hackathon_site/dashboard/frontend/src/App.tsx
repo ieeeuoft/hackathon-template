@@ -70,7 +70,7 @@ const UnconnectedApp = () => {
                     />
                     <Route
                         exact
-                        path="/teams/:code"
+                        path="/teams/:id"
                         component={withUserCheck("admin", TeamDetail)}
                     />
                     <Route
