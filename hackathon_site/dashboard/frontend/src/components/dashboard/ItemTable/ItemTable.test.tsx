@@ -7,12 +7,14 @@ import {
     ReturnedTable,
 } from "components/dashboard/ItemTable/ItemTable";
 import {
-    itemsCheckedOut,
     mockPendingOrders,
     mockCheckedOutOrders,
     mockHardware,
+    mockPendingOrdersInTable,
+    mockCheckedOutOrdersInTable,
+    mockReturnedOrdersInTable,
 } from "testing/mockData";
-import { RootStore } from "slices/store";
+import { ReturnOrderInTable } from "api/types";
 
 describe("<ChipStatus />", () => {
     test("Ready status", () => {
@@ -33,12 +35,13 @@ describe("<ChipStatus />", () => {
 
 describe("<PendingTable />", () => {
     it("Shows pending items and status chip", () => {
-        const { getByText, queryByText } = render(
-            <PendingTable orders={mockPendingOrders} />
-        );
+        const store = makeStoreWithEntities({
+            pendingOrders: mockPendingOrdersInTable,
+        });
+        const { getByText, queryByText } = render(<PendingTable />, { store });
         expect(getByText(/pending orders/i)).toBeInTheDocument();
         expect(queryByText("In progress")).toBeInTheDocument();
-        mockPendingOrders.map(({ id }) => {
+        mockPendingOrdersInTable.map(({ id }) => {
             expect(getByText(`Order #${id}`)).toBeInTheDocument();
         });
     });
@@ -50,11 +53,9 @@ describe("<PendingTable />", () => {
                     isPendingTableVisible: false,
                 },
             },
+            pendingOrders: mockPendingOrdersInTable,
         });
-        const { getByText, queryByText } = render(
-            <PendingTable orders={mockPendingOrders} />,
-            { store }
-        );
+        const { getByText, queryByText } = render(<PendingTable />, { store });
 
         expect(getByText(/pending orders/i)).toBeInTheDocument();
         expect(getByText(/show all/i)).toBeInTheDocument();
@@ -64,14 +65,15 @@ describe("<PendingTable />", () => {
     });
 
     it("Doesn't show when there are no pending orders", () => {
-        const { queryByText } = render(<PendingTable orders={[]} />);
+        const { queryByText } = render(<PendingTable />);
         expect(queryByText("Pending Orders")).toBeNull();
     });
 
     it("PendingTable dispatches an action to toggle visibility when button clicked", async () => {
-        const { getByText, queryByText } = render(
-            <PendingTable orders={mockPendingOrders} />
-        );
+        const store = makeStoreWithEntities({
+            pendingOrders: mockPendingOrdersInTable,
+        });
+        const { getByText, queryByText } = render(<PendingTable />, { store });
         const button = getByText(/hide all/i);
 
         fireEvent.click(button);
@@ -84,14 +86,30 @@ describe("<PendingTable />", () => {
 
 describe("<CheckedOutTable />", () => {
     it("Shows a message when there's no checked out items", () => {
-        const { getByText } = render(<CheckedOutTable orders={[]} />);
+        const { getByText } = render(<CheckedOutTable />);
         expect(
             getByText("You have no items checked out yet. View our inventory.")
         ).toBeInTheDocument();
     });
 
+    it("Shows a error when failed to fetch orders", () => {
+        const store = makeStoreWithEntities({
+            orderState: {
+                checkedOutOrders: mockCheckedOutOrdersInTable,
+                error: "A problem has occurred when fetching orders",
+            },
+        });
+        const { getByText } = render(<CheckedOutTable />, { store });
+        expect(getByText(/Unable to view checked out items/i)).toBeInTheDocument();
+    });
+
     it("Shows checked out items", () => {
-        const { getByText } = render(<CheckedOutTable orders={mockCheckedOutOrders} />);
+        const store = makeStoreWithEntities({
+            orderState: {
+                checkedOutOrders: mockCheckedOutOrdersInTable,
+            },
+        });
+        const { getByText } = render(<CheckedOutTable />, { store });
         expect(getByText(/checked out items/i)).toBeInTheDocument();
         expect(getByText(/hide all/i)).toBeInTheDocument();
         mockCheckedOutOrders.map(({ id }) => {
@@ -106,11 +124,11 @@ describe("<CheckedOutTable />", () => {
                     isCheckedOutTableVisible: false,
                 },
             },
+            orderState: {
+                checkedOutOrders: mockCheckedOutOrdersInTable,
+            },
         });
-        const { getByText, queryByText } = render(
-            <CheckedOutTable orders={mockCheckedOutOrders} />,
-            { store }
-        );
+        const { getByText, queryByText } = render(<CheckedOutTable />, { store });
         expect(getByText(/checked out items/i)).toBeInTheDocument();
         expect(getByText(/show all/i)).toBeInTheDocument();
         mockCheckedOutOrders.map(({ id }) => {
@@ -119,9 +137,12 @@ describe("<CheckedOutTable />", () => {
     });
 
     it("CheckedOutTable dispatches an action to toggle visibility when button clicked", async () => {
-        const { getByText, queryByText } = render(
-            <CheckedOutTable orders={mockCheckedOutOrders} />
-        );
+        const store = makeStoreWithEntities({
+            orderState: {
+                checkedOutOrders: mockCheckedOutOrdersInTable,
+            },
+        });
+        const { getByText, queryByText } = render(<CheckedOutTable />, { store });
         const button = getByText(/hide all/i);
 
         fireEvent.click(button);
@@ -160,25 +181,27 @@ describe("<CheckedOutTable />", () => {
 });
 
 describe("<ReturnedTable />", () => {
-    let store: RootStore;
-    const mockOrdersWithReturnedItems = mockCheckedOutOrders.filter(
-        (order) =>
-            order.items.filter((item) => item.part_returned_health !== null).length > 0
-    );
-
-    beforeEach(() => {
-        store = makeStoreWithEntities({
+    const makeStoreWithReturnedOrders = (
+        returnedOrders?: ReturnOrderInTable[],
+        isReturnedTableVisible: boolean = true
+    ) =>
+        makeStoreWithEntities({
             hardware: mockHardware,
             ui: {
                 dashboard: {
-                    isReturnedTableVisible: true,
+                    isReturnedTableVisible,
                 },
             },
+            ...(returnedOrders && {
+                orderState: {
+                    returnedOrders,
+                },
+            }),
         });
-    });
 
     it("Shows a message when there's no returned items", () => {
-        const { getByText } = render(<ReturnedTable orders={[]} />, { store });
+        const store = makeStoreWithReturnedOrders();
+        const { getByText } = render(<ReturnedTable />, { store });
         expect(
             getByText(
                 "Please bring items to the tech table and a tech team member will assist you."
@@ -186,50 +209,52 @@ describe("<ReturnedTable />", () => {
         ).toBeInTheDocument();
     });
 
+    it("Shows an error message when failed to fetch orders", () => {
+        const store = makeStoreWithEntities({
+            orderState: {
+                returnedOrders: mockReturnedOrdersInTable,
+                error: "Unable to display returned orders",
+            },
+        });
+        const { getByText } = render(<ReturnedTable />, { store });
+        expect(getByText(/Unable to view returned items/i)).toBeInTheDocument();
+    });
+
     it("Shows returned items", () => {
-        const { getByText } = render(<ReturnedTable orders={mockCheckedOutOrders} />, {
+        const store = makeStoreWithReturnedOrders(mockReturnedOrdersInTable);
+        const { getByText } = render(<ReturnedTable />, {
             store,
         });
         expect(getByText(/returned items/i)).toBeInTheDocument();
-        mockOrdersWithReturnedItems.map(({ id }) => {
+        mockReturnedOrdersInTable.map(({ id }) => {
             expect(getByText(`Order #${id}`)).toBeInTheDocument();
         });
     });
 
     it("Hides the table when isVisible is false", () => {
-        store = makeStoreWithEntities({
-            hardware: mockHardware,
-            ui: {
-                dashboard: {
-                    isReturnedTableVisible: false,
-                },
-            },
-        });
-        const { getByText, queryByText } = render(
-            <ReturnedTable orders={mockCheckedOutOrders} />,
-            { store }
-        );
+        const store = makeStoreWithReturnedOrders(mockReturnedOrdersInTable, false);
+        const { getByText, queryByText } = render(<ReturnedTable />, { store });
         expect(getByText(/returned items/i)).toBeInTheDocument();
         expect(getByText(/show all/i)).toBeInTheDocument();
-        mockOrdersWithReturnedItems.map(({ id }) => {
+        mockReturnedOrdersInTable.map(({ id }) => {
             expect(queryByText(`Order #${id}`)).toBeNull();
         });
     });
 
     it("ReturnedTable dispatches an action to toggle visibility when button clicked", () => {
-        const { getByText, queryByText } = render(
-            <ReturnedTable orders={mockCheckedOutOrders} />,
-            {
-                store,
-            }
-        );
+        const store = makeStoreWithReturnedOrders(mockReturnedOrdersInTable);
+        const { getByText, queryByText } = render(<ReturnedTable />, {
+            store,
+        });
         const button = getByText(/hide all/i);
-
-        mockOrdersWithReturnedItems.map(({ id }) => {
+        mockReturnedOrdersInTable.map(({ id, hardwareInOrder }) => {
             expect(getByText(`Order #${id}`)).toBeInTheDocument();
+            hardwareInOrder.forEach((hardwareItem) => {
+                expect(getByText(hardwareItem.time)).toBeInTheDocument();
+            });
         });
         fireEvent.click(button);
-        mockOrdersWithReturnedItems.map(({ id }) => {
+        mockReturnedOrdersInTable.map(({ id }) => {
             expect(queryByText(`Order #${id}`)).not.toBeInTheDocument();
         });
     });

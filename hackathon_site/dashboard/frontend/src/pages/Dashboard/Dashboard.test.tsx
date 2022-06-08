@@ -16,12 +16,12 @@ import {
     mockCategories,
     mockCheckedOutOrders,
     mockHardware,
-    mockPendingOrders,
+    mockOrders,
     mockTeam,
 } from "testing/mockData";
 import { get } from "api/api";
 import { AxiosResponse } from "axios";
-import { Team } from "api/types";
+import { Order, Team } from "api/types";
 
 jest.mock("api/api", () => ({
     ...jest.requireActual("api/api"),
@@ -32,30 +32,43 @@ const mockedGet = get as jest.MockedFunction<typeof get>;
 const hardwareUri = "/api/hardware/hardware/";
 const categoriesUri = "/api/hardware/categories/";
 const teamUri = "/api/event/teams/team/";
+const ordersUri = "/api/event/teams/team/orders/";
+
+const teamAPIResponse = { data: mockTeam } as AxiosResponse<Team>;
+
+const mockOrderAPI = (orders?: Order[]) =>
+    when(mockedGet)
+        .calledWith(ordersUri)
+        .mockResolvedValue(makeMockApiListResponse<Order>(orders ?? mockOrders));
+const mockTeamAPI = (withDelay?: boolean) =>
+    when(mockedGet)
+        .calledWith(teamUri)
+        .mockResolvedValue(
+            withDelay ? promiseResolveWithDelay(teamAPIResponse, 500) : teamAPIResponse
+        );
 
 describe("Dashboard Page", () => {
     it("Renders correctly when the dashboard appears 4 cards and 3 tables", async () => {
-        const response = { data: mockTeam } as AxiosResponse<Team>;
-        when(mockedGet).calledWith(teamUri).mockResolvedValue(response);
-
+        mockTeamAPI();
+        mockOrderAPI();
         const { queryByText, getByText } = render(<Dashboard />);
+
         await waitFor(() => {
             for (let e of cardItems) {
                 expect(queryByText(e.title)).toBeTruthy();
             }
             expect(getByText("Checked out items")).toBeInTheDocument();
             expect(getByText("Pending Orders")).toBeInTheDocument();
+            expect(getByText("Returned items")).toBeInTheDocument();
         });
         // TODO: add check for returned items and broken items when those are ready
     });
     it("Opens Product Overview with the correct hardware information", async () => {
         const hardwareApiResponse = makeMockApiListResponse(mockHardware);
         const categoryApiResponse = makeMockApiListResponse(mockCategories);
+        const hardware_ids = [1, 2, 3, 4, 10];
 
-        const allOrders = mockPendingOrders.concat(mockCheckedOutOrders);
-        const hardware_ids = allOrders.flatMap((order) =>
-            order.items.map((item) => item.hardware_id)
-        );
+        mockOrderAPI();
         when(mockedGet)
             .calledWith(hardwareUri, { hardware_ids })
             .mockResolvedValue(hardwareApiResponse);
@@ -98,10 +111,7 @@ describe("Dashboard Page", () => {
     });
 
     it("get info on the current team", async () => {
-        const response = { data: mockTeam } as AxiosResponse<Team>;
-        when(mockedGet)
-            .calledWith(teamUri)
-            .mockResolvedValue(promiseResolveWithDelay(response, 500));
+        mockTeamAPI(true);
 
         const { getByText, getByTestId, queryByTestId } = render(<Dashboard />);
         await waitFor(() => {
@@ -114,7 +124,9 @@ describe("Dashboard Page", () => {
             expect(mockedGet).toHaveBeenCalledWith("/api/event/teams/team/");
         });
     });
+});
 
+describe("Dashboard Page Error Messages", () => {
     it("Renders order info box when there are fulfillment errors", () => {
         const store = makeStoreWithEntities({
             cartState: {
@@ -131,5 +143,28 @@ describe("Dashboard Page", () => {
 
         getByText(/there were modifications made to order 1/i);
         getByText(/no sensors left in inventory/i);
+    });
+
+    it("Shows error message when there is a problem retrieving orders", async () => {
+        mockedGet.mockRejectedValue({
+            response: {
+                status: 500,
+                message: "Something went wrong",
+            },
+        });
+        const { findByText } = render(<Dashboard />);
+        await findByText(/Something went wrong/i);
+    });
+
+    it("Shows default error message when there is a problem retrieving orders", async () => {
+        mockedGet.mockRejectedValue({
+            response: {
+                status: 500,
+            },
+        });
+        const { findByText } = render(<Dashboard />);
+        await findByText(
+            /There was a problem retrieving orders. If this continues please contact hackathon organizers/i
+        );
     });
 });
