@@ -27,20 +27,21 @@ export const TeamCardAdmin = ({ team_name, members }: CardProps) => {
         //         : null}
         // </TitledPaper>
 
-        <Card>
-            <Container className={styles.title}>
-                <Typography variant={"h6"}>{title}</Typography>
+        <Card style={{ minHeight: "200px" }}>
+            <Container className={styles.content_container}>
+                <Container className={styles.title}>
+                    <Typography variant={"h6"}>{title}</Typography>
+                </Container>
+                {members?.length
+                    ? members?.map((member, i) => (
+                          <Container className={styles.name} key={i}>
+                              <Typography variant="body2" noWrap>
+                                  {member}
+                              </Typography>
+                          </Container>
+                      ))
+                    : null}
             </Container>
-            {/*{title}*/}
-            {members?.length
-                ? members?.map((member, i) => (
-                      <Container className={styles.name} key={i}>
-                          <Typography variant="body2" noWrap>
-                              {member}
-                          </Typography>
-                      </Container>
-                  ))
-                : null}
         </Card>
     );
 };

@@ -14,7 +14,7 @@ const Teams = () => {
     const mock_data = [
         {
             TeamName: "Moo",
-            Members: ["Rosalyn Wong", "Mohaimen Khan"],
+            Members: ["Rosalyn Wong", "Mohaimen Khan", "Raymond Kim", "Eric Ji"],
         },
         {
             TeamName: "Oliver",

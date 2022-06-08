@@ -11,6 +11,7 @@ from hackathon_site.utils import is_registration_open
 # the test methods. If you have tests that rely on these values, explicitly
 # set them in the context of your views.
 
+
 def environment(**options):
     env = Environment(**options)
     env.globals.update(
