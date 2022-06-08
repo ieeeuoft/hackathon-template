@@ -174,13 +174,6 @@ const hardwareSlice = createSlice({
             }
         },
 
-        setProductOverviewHardwareId: (
-            state: HardwareState,
-            { payload }: PayloadAction<number>
-        ) => {
-            state.hardwareIdInProductOverview = payload;
-        },
-
         removeProductOverviewItem: (state: HardwareState) => {
             state.hardwareIdInProductOverview = null;
         },
@@ -260,12 +253,7 @@ const hardwareSlice = createSlice({
 export const { actions, reducer } = hardwareSlice;
 export default reducer;
 
-export const {
-    setFilters,
-    clearFilters,
-    setProductOverviewHardwareId,
-    removeProductOverviewItem,
-} = actions;
+export const { setFilters, clearFilters, removeProductOverviewItem } = actions;
 
 // Selectors
 export const hardwareSliceSelector = (state: RootState) => state[hardwareReducerName];

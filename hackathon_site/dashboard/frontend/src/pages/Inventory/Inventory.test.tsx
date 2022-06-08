@@ -174,9 +174,8 @@ describe("Inventory Page", () => {
 
         fireEvent.click(getByText(mockHardware[0].name));
 
-        // Check if the correct get request was dispatched
         await waitFor(() => {
-            expect(mockedGet).toHaveBeenNthCalledWith(3, hardwareDetailUri);
+            expect(get).toHaveBeenNthCalledWith(3, hardwareDetailUri);
             expect(getByText("Product Overview")).toBeVisible();
             expect(
                 getByText(`- Max ${newHardwareData.max_per_team} of this item`)

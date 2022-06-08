@@ -26,11 +26,10 @@ import {
     togglePendingTable,
     toggleReturnedTable,
 } from "slices/ui/uiSlice";
-import { ItemsInOrder, Order, OrderStatus } from "api/types";
+import { OrderStatus } from "api/types";
 import {
     getUpdatedHardwareDetails,
     hardwareSelectors,
-    setProductOverviewHardwareId,
 } from "slices/hardware/hardwareSlice";
 import hardwareImagePlaceholder from "assets/images/placeholders/no-hardware-image.svg";
 import {
