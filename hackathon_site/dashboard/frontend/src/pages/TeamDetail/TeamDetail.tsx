@@ -16,8 +16,13 @@ import {
     Box,
     Grid,
 } from "@material-ui/core";
+import { RouteComponentProps } from "react-router-dom";
 
-const TeamDetail = () => {
+export interface PageParams {
+    id: string;
+}
+
+const TeamDetail = ({ match }: RouteComponentProps<PageParams>) => {
     return (
         <>
             <Header />
@@ -25,7 +30,7 @@ const TeamDetail = () => {
                 <Grid container direction="column" spacing={6}>
                     <Grid item>
                         <Typography variant="h1">
-                            Team {mockTeamMultiple.id} Overview
+                            Team {match.params.id} Overview
                         </Typography>
                     </Grid>
                     {/* Team info and actions */}
