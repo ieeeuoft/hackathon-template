@@ -3,7 +3,15 @@ import OpenInNew from "@material-ui/icons/OpenInNew";
 import GetApp from "@material-ui/icons/GetApp";
 import PinDrop from "@material-ui/icons/PinDrop";
 
-import { Category, Hardware, Order, Team, User } from "api/types";
+import {
+    Category,
+    Hardware,
+    Order,
+    OrderInTable,
+    ReturnOrderInTable,
+    Team,
+    User,
+} from "api/types";
 import { CartItem } from "api/types";
 import { adminGroup } from "constants.js";
 
@@ -222,6 +230,117 @@ export const mockTeam: Team = {
     ],
 };
 
+// Valid Team Size
+export const mockValidTeam: Team = {
+    id: 2,
+    team_code: "A48E6",
+    created_at: "2022-05-28T22:37:54.106311-05:00",
+    updated_at: "2022-05-28T22:37:54.106323-05:00",
+    profiles: [
+        {
+            id: 2,
+            id_provided: true,
+            attended: true,
+            acknowledge_rules: true,
+            e_signature: null,
+            user: {
+                id: 2,
+                first_name: "Foothe",
+                last_name: "Second",
+                email: "foo2@bar.com",
+            },
+        },
+        {
+            id: 3,
+            id_provided: true,
+            attended: true,
+            acknowledge_rules: true,
+            e_signature: null,
+            user: {
+                id: 3,
+                first_name: "Foothe",
+                last_name: "Third",
+                email: "foo3@bar.com",
+            },
+        },
+    ],
+};
+
+// Team with too many members
+export const mockLargeTeam: Team = {
+    id: 3,
+    team_code: "A48E7",
+    created_at: "2022-06-03T22:37:54.106311-05:00",
+    updated_at: "2022-06-03T22:37:54.106323-05:00",
+    profiles: [
+        {
+            id: 4,
+            id_provided: true,
+            attended: true,
+            acknowledge_rules: true,
+            e_signature: null,
+            user: {
+                id: 4,
+                first_name: "Foothe",
+                last_name: "Fourth",
+                email: "foo4@bar.com",
+            },
+        },
+        {
+            id: 5,
+            id_provided: true,
+            attended: true,
+            acknowledge_rules: true,
+            e_signature: null,
+            user: {
+                id: 5,
+                first_name: "Foothe",
+                last_name: "Fifth",
+                email: "foo5@bar.com",
+            },
+        },
+        {
+            id: 6,
+            id_provided: true,
+            attended: true,
+            acknowledge_rules: true,
+            e_signature: null,
+            user: {
+                id: 6,
+                first_name: "Foothe",
+                last_name: "Sixth",
+                email: "foo6@bar.com",
+            },
+        },
+        {
+            id: 7,
+            id_provided: true,
+            attended: true,
+            acknowledge_rules: true,
+            e_signature: null,
+            user: {
+                id: 7,
+                first_name: "Foothe",
+                last_name: "Seventh",
+                email: "foo7@bar.com",
+            },
+        },
+        {
+            id: 8,
+            id_provided: true,
+            attended: true,
+            acknowledge_rules: true,
+            e_signature: null,
+            user: {
+                id: 8,
+                first_name: "Foothe",
+                last_name: "Eighth",
+                email: "foo8@bar.com",
+            },
+        },
+    ],
+};
+
 export const mockHardware: Hardware[] = [
     {
         id: 1,
@@ -378,6 +497,16 @@ export const mockPendingOrders: Order[] = [
         status: "Ready for Pickup",
         created_at: "2021-10-17T18:28:44.691969-04:00",
         updated_at: "2021-12-03T23:01:46.606892-05:00",
+        request: [
+            {
+                id: 3,
+                requested_quantity: 1,
+            },
+            {
+                id: 4,
+                requested_quantity: 1,
+            },
+        ],
     },
     {
         id: 4,
@@ -392,12 +521,27 @@ export const mockPendingOrders: Order[] = [
                 hardware_id: 1,
                 part_returned_health: null,
             },
+            {
+                id: 11,
+                hardware_id: 1,
+                part_returned_health: null,
+            },
         ],
         team_id: 2,
         team_code: "IEEE",
         status: "Submitted",
         created_at: "2021-10-17T18:28:44.691969-04:00",
         updated_at: "2021-12-03T23:01:46.606892-05:00",
+        request: [
+            {
+                id: 1,
+                requested_quantity: 2,
+            },
+            {
+                id: 4,
+                requested_quantity: 1,
+            },
+        ],
     },
     {
         id: 5,
@@ -413,6 +557,33 @@ export const mockPendingOrders: Order[] = [
         status: "Ready for Pickup",
         created_at: "2021-10-17T18:28:44.691969-04:00",
         updated_at: "2021-12-03T23:01:46.606892-05:00",
+        request: [
+            {
+                id: 10,
+                requested_quantity: 2,
+            },
+        ],
+    },
+    {
+        id: 6,
+        items: [
+            {
+                id: 12,
+                hardware_id: 10,
+                part_returned_health: null,
+            },
+        ],
+        team_id: 1,
+        team_code: "IEEE",
+        status: "Cancelled",
+        created_at: "2021-10-17T18:28:44.691969-04:00",
+        updated_at: "2021-12-03T23:01:46.606892-05:00",
+        request: [
+            {
+                id: 10,
+                requested_quantity: 2,
+            },
+        ],
     },
 ];
 
@@ -436,6 +607,12 @@ export const mockCheckedOutOrders: Order[] = [
         status: "Picked Up",
         created_at: "2021-10-17T18:28:44.691969-04:00",
         updated_at: "2021-12-03T23:01:46.606892-05:00",
+        request: [
+            {
+                id: 1,
+                requested_quantity: 2,
+            },
+        ],
     },
     {
         id: 2,
@@ -453,28 +630,173 @@ export const mockCheckedOutOrders: Order[] = [
             {
                 id: 5,
                 hardware_id: 2,
-                part_returned_health: "Broken",
+                part_returned_health: null,
             },
         ],
         team_id: 2,
         team_code: "IEEE",
         status: "Picked Up",
         created_at: "2021-10-17T18:28:44.691969-04:00",
-        updated_at: "2021-12-03T23:01:46.606892-05:00",
+        updated_at: "2021-12-03T23:01:45.606892-05:00",
+        request: [
+            {
+                id: 1,
+                requested_quantity: 2,
+            },
+            {
+                id: 2,
+                requested_quantity: 1,
+            },
+        ],
     },
     {
-        id: 5,
+        id: 3,
         items: [
             {
                 id: 10,
                 hardware_id: 10,
                 part_returned_health: null,
             },
+            {
+                id: 11,
+                hardware_id: 10,
+                part_returned_health: "Heavily Used",
+            },
+            {
+                id: 12,
+                hardware_id: 10,
+                part_returned_health: null,
+            },
         ],
         team_id: 1,
         team_code: "IEEE",
-        status: "Submitted",
+        status: "Picked Up",
         created_at: "2021-10-17T18:28:44.691969-04:00",
         updated_at: "2021-12-03T23:01:46.606892-05:00",
+        request: [
+            {
+                id: 10,
+                requested_quantity: 3,
+            },
+        ],
+    },
+];
+
+export const mockOrders: Order[] = mockCheckedOutOrders.concat(mockPendingOrders);
+
+export const mockPendingOrdersInTable: OrderInTable[] = [
+    {
+        id: 5,
+        hardwareInTableRow: [
+            {
+                id: 10,
+                quantityRequested: 2,
+                quantityGranted: 1,
+            },
+        ],
+        status: "Ready for Pickup",
+    },
+    {
+        id: 4,
+        hardwareInTableRow: [
+            {
+                id: 1,
+                quantityRequested: 2,
+                quantityGranted: 2,
+            },
+            {
+                id: 4,
+                quantityRequested: 1,
+                quantityGranted: 1,
+            },
+        ],
+        status: "Submitted",
+    },
+    {
+        id: 3,
+        hardwareInTableRow: [
+            {
+                id: 3,
+                quantityRequested: 1,
+                quantityGranted: 1,
+            },
+            {
+                id: 4,
+                quantityRequested: 1,
+                quantityGranted: 1,
+            },
+        ],
+        status: "Ready for Pickup",
+    },
+];
+
+export const mockCheckedOutOrdersInTable: OrderInTable[] = [
+    {
+        id: 3,
+        hardwareInTableRow: [
+            {
+                id: 10,
+                quantityRequested: 3,
+                quantityGranted: 2,
+            },
+        ],
+        status: "Picked Up",
+    },
+    {
+        id: 2,
+        hardwareInTableRow: [
+            {
+                id: 1,
+                quantityRequested: 2,
+                quantityGranted: 1,
+            },
+            {
+                id: 2,
+                quantityRequested: 1,
+                quantityGranted: 1,
+            },
+        ],
+        status: "Picked Up",
+    },
+    {
+        id: 1,
+        hardwareInTableRow: [
+            {
+                id: 1,
+                quantityRequested: 2,
+                quantityGranted: 2,
+            },
+        ],
+        status: "Picked Up",
+    },
+];
+
+const timeForOrderItem3 = new Date(mockCheckedOutOrders[1].updated_at);
+const timeForOrderItem11 = new Date(mockCheckedOutOrders[2].updated_at);
+
+export const mockReturnedOrdersInTable: ReturnOrderInTable[] = [
+    {
+        id: 2,
+        hardwareInOrder: [
+            {
+                id: 3,
+                hardware_id: 1,
+                part_returned_health: "Healthy",
+                quantity: 1,
+                time: `${timeForOrderItem3.toLocaleTimeString()} (${timeForOrderItem3.toDateString()})`,
+            },
+        ],
+    },
+    {
+        id: 3,
+        hardwareInOrder: [
+            {
+                id: 11,
+                hardware_id: 10,
+                part_returned_health: "Heavily Used",
+                quantity: 1,
+                time: `${timeForOrderItem11.toLocaleTimeString()} (${timeForOrderItem11.toDateString()})`,
+            },
+        ],
     },
 ];

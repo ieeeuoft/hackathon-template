@@ -7,14 +7,14 @@ from django.conf import settings
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from event.models import Team
+from event.models import Team, Profile
 from hardware.models import Hardware, Category, Order, OrderItem, Incident
 from hardware.serializers import (
     HardwareSerializer,
     CategorySerializer,
     OrderListSerializer,
     OrderItemListSerializer,
-    IncidentListSerializer,
+    IncidentSerializer,
 )
 from hackathon_site.tests import SetupUserMixin
 
@@ -412,7 +412,7 @@ class IncidentListViewTestCase(SetupUserMixin, APITestCase):
 
         queryset = Incident.objects.all()
         # need to provide a request in the serializer context to produce absolute url for image field
-        expected_response = IncidentListSerializer(
+        expected_response = IncidentSerializer(
             queryset, many=True, context={"request": response.wsgi_request}
         ).data
         data = response.json()
@@ -862,6 +862,69 @@ class IncidentListViewPostTestCase(SetupUserMixin, APITestCase):
         del final_response["id"]
         for attribute in similar_attributes:
             self.assertEqual(final_response[attribute], self.request_data[attribute])
+
+
+class IncidentDetailViewGetTestCase(SetupUserMixin, APITestCase):
+    def setUp(self):
+        super().setUp()
+        self.team = Team.objects.create()
+        self.order = Order.objects.create(
+            status="Cart",
+            team=self.team,
+            request={"hardware": [{"id": 1, "quantity": 1}]},
+        )
+        self.hardware = Hardware.objects.create(
+            name="name",
+            model_number="model",
+            manufacturer="manufacturer",
+            datasheet="/datasheet/location/",
+            notes="notes",
+            quantity_available=4,
+            max_per_team=1,
+            picture="/picture/location",
+        )
+
+        self.order_item = OrderItem.objects.create(
+            order=self.order, hardware=self.hardware,
+        )
+
+        self.incident = Incident.objects.create(
+            state="Broken",
+            description="Description",
+            order_item=self.order_item,
+            time_occurred=datetime(2022, 8, 8, tzinfo=settings.TZ_INFO),
+        )
+
+        self.view_permissions = Permission.objects.filter(
+            content_type__app_label="hardware", codename="view_incident"
+        )
+
+        self.view = reverse("api:hardware:incident-detail", args=[self.incident.id])
+
+    def test_user_not_logged_in(self):
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_user_with_profile_and_no_view_permission(self):
+        Profile.objects.create(user=self.user)
+        self._login()
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_incorrect_permissions(self):
+        self._login()
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_incident_get_success(self):
+        self._login(self.view_permissions)
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        queryset = Incident.objects.get(id=self.incident.id)
+        expected_response = IncidentSerializer(queryset).data
+        data = response.json()
+        self.assertEqual(expected_response, data)
 
 
 class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
