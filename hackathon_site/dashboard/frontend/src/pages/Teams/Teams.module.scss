@@ -4,20 +4,7 @@
 .dashboard {
     width: 100%;
     max-width: 1400px;
-    &Grid {
-        margin-top: 30px;
-
-        @include responsive(sm-down) {
-            margin-top: 20px;
-        }
-        &Item {
-            height: 100%;
-            padding: 10px;
-            min-height: 250px;
-            width: 100%;
-            @include flexPosition($dir: column);
-        }
-    }
+    padding: 10px;
 }
 
 .searchBar {
