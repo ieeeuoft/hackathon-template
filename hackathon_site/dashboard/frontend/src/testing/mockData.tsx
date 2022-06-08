@@ -478,3 +478,46 @@ export const mockCheckedOutOrders: Order[] = [
         updated_at: "2021-12-03T23:01:46.606892-05:00",
     },
 ];
+
+export const teamsList = [
+    {
+        TeamName: "Vandal",
+        Members: ["Phoenix", "Sage", "Kayo", "Sova"],
+    },
+    {
+        TeamName: "Phantom",
+        Members: ["Name1", "Name2", "Name3", "Name4"],
+    },
+    {
+        TeamName: "Guardian",
+        Members: ["Name1", "Name2", "Name3", "Name4"],
+    },
+    {
+        TeamName: "Bulldog",
+        Members: ["Name1", "Name2", "Name3", "Name4"],
+    },
+    {
+        TeamName: "Bucky",
+        Members: ["Name1", "Name2", "Name3", "Name4"],
+    },
+    {
+        TeamName: "Judge",
+        Members: ["Name1", "Name2", "Name3", "Name4"],
+    },
+    {
+        TeamName: "Aries",
+        Members: ["Name1", "Name2", "Name3", "Name4"],
+    },
+    {
+        TeamName: "Odin",
+        Members: ["Name1", "Name2", "Name3", "Name4"],
+    },
+    {
+        TeamName: "Sheriff",
+        Members: ["Name1", "Name2", "Name3", "Name4"],
+    },
+    {
+        TeamName: "Ghost",
+        Members: ["Name1", "Name2", "Name3", "Name4"],
+    },
+];

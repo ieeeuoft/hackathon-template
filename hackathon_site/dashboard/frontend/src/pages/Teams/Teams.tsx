@@ -7,54 +7,12 @@ import styles from "pages/Teams/Teams.module.scss";
 
 import TeamCardAdmin from "components/dashboard/TeamCardAdmin/TeamCardAdmin";
 import InventorySearch from "components/inventory/InventorySearch/InventorySearch";
+import { teamsList } from "testing/mockData";
 
 // import TeamCardAdmin from "../../components/dashboard/TeamCardAdmin/TeamCardAdmin";
 
 const Teams = () => {
-    const mock_data = [
-        {
-            TeamName: "Moo",
-            Members: ["Rosalyn Wong", "Mohaimen Khan", "Raymond Kim", "Eric Ji"],
-        },
-        {
-            TeamName: "Oliver",
-            Members: ["Raymond Kim", "Lisa Li"],
-        },
-        {
-            TeamName: "Mochi",
-            Members: ["Eric Ji", "Avelyn Wong"],
-        },
-        {
-            TeamName: "Moo",
-            Members: ["Rosalyn Wong", "Mohaimen Khan"],
-        },
-        {
-            TeamName: "Moo",
-            Members: ["Rosalyn Wong", "Mohaimen Khan"],
-        },
-        {
-            TeamName: "Moo",
-            Members: ["Rosalyn Wong", "Mohaimen Khan"],
-        },
-        {
-            TeamName: "Moo",
-            Members: ["Rosalyn Wong", "Mohaimen Khan"],
-        },
-        {
-            TeamName: "Moo",
-            Members: ["Rosalyn Wong", "Mohaimen Khan"],
-        },
-        {
-            TeamName: "Moo",
-            Members: ["Rosalyn Wong", "Mohaimen Khan"],
-        },
-        {
-            TeamName: "Moo",
-            Members: ["Rosalyn Wong", "Mohaimen Khan"],
-        },
-    ];
-
-    const CardComponents = mock_data.map((team) => (
+    const CardComponents = teamsList.map((team) => (
         <Grid
             item
             md={3}
