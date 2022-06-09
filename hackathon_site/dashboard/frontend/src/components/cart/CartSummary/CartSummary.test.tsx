@@ -1,6 +1,12 @@
 import React from "react";
 import CartSummary from "components/cart/CartSummary/CartSummary";
-import { cartQuantity, mockCartItems, mockHardware } from "testing/mockData";
+import {
+    cartQuantity,
+    mockCartItems,
+    mockHardware,
+    mockValidTeam,
+    mockTeam,
+} from "testing/mockData";
 import store from "slices/store";
 import { Provider } from "react-redux";
 import {
@@ -11,7 +17,8 @@ import {
     promiseResolveWithDelay,
     when,
 } from "testing/utils";
-import { post } from "api/api";
+import { get, post } from "api/api";
+import Cart from "pages/Cart/Cart";
 
 jest.mock("api/api", () => ({
     ...jest.requireActual("api/api"),
@@ -67,6 +74,7 @@ describe("Render cartQuantity", () => {
         const store = makeStoreWithEntities({
             hardware: mockHardware,
             cartItems: mockCartItems,
+            team: { team: mockValidTeam },
         });
 
         const { getByText, getByTestId, queryByTestId } = render(<CartSummary />, {
@@ -88,5 +96,17 @@ describe("Render cartQuantity", () => {
                 ).not.toBeInTheDocument();
             });
         });
+    });
+    it("Disables the submit button if team size is invalid", async () => {
+        const store = makeStoreWithEntities({
+            hardware: mockHardware,
+            cartItems: mockCartItems,
+            team: { team: mockTeam },
+        });
+
+        const { getByTestId } = render(<Cart />, { store });
+
+        const submitOrderBtn = getByTestId("submit-order-button");
+        expect(submitOrderBtn).toBeDisabled();
     });
 });

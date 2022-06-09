@@ -2,6 +2,7 @@ import React from "react";
 import { render, screen } from "testing/utils";
 import { mockTeamMultiple } from "testing/mockData";
 
+
 import TeamDetail, { PageParams } from "pages/TeamDetail/TeamDetail";
 import { RouteComponentProps } from "react-router-dom";
 
@@ -15,44 +16,31 @@ const teamDetailProps = {
 
 describe("User info table", () => {
     test("renders user info table", () => {
-        render(<TeamDetail {...teamDetailProps} />);
-
-        expect(screen.getByText("Team info")).toBeInTheDocument();
-    });
-
-    test("renders each user first and last name in the table", () => {
-        render(<TeamDetail {...teamDetailProps} />);
-
-        mockTeamMultiple.profiles.forEach((user) => {
-            expect(
-                screen.getByText(`${user.user.first_name} ${user.user.last_name}`)
-            ).toBeInTheDocument();
-        });
-    });
-
-    test("renders each user email in the table", () => {
-        render(<TeamDetail {...teamDetailProps} />);
-
-        mockTeamMultiple.profiles.forEach((user) => {
-            expect(screen.getByText(user.user.email)).toBeInTheDocument();
-        });
-    });
-
-    test("renders each user phone number in the table", () => {
-        render(<TeamDetail {...teamDetailProps} />);
-
-        mockTeamMultiple.profiles.forEach((user) => {
-            expect(screen.getByText(user.user.phone)).toBeInTheDocument();
-        });
-    });
-
-    test("users with id provided have a checkbox in the table", () => {
-        // NOTE: this test assumes that users are rendered in the table in the same order that they are stored in the json test data
         const { container } = render(<TeamDetail {...teamDetailProps} />);
-
         const checkboxes = container.getElementsByClassName("MuiCheckbox-root");
 
-        for (let i = 0; i < checkboxes.length; i++) {
+        expect(screen.getByText("Team info")).toBeInTheDocument();
+
+        for (let i = 0; i < mockTeamMultiple.profiles.length; i++) {
+            // renders all user names
+            expect(
+                screen.getByText(
+                    `${mockTeamMultiple.profiles[i].user.first_name} ${mockTeamMultiple.profiles[i].user.last_name}`
+                )
+            ).toBeInTheDocument();
+
+            // renders all user emails
+            expect(
+                screen.getByText(mockTeamMultiple.profiles[i].user.email)
+            ).toBeInTheDocument();
+
+            // renders all user phone numbers
+            expect(
+                screen.getByText(mockTeamMultiple.profiles[i].user.phone)
+            ).toBeInTheDocument();
+
+            // renders checkboxes correctly checked
+            // NOTE: this test assumes that users are rendered in the table in the same order that they are stored in the json test data
             if (mockTeamMultiple.profiles[i].id_provided) {
                 expect(checkboxes[i].classList.contains("Mui-checked")).toBe(true);
             } else {
