@@ -10,20 +10,16 @@ interface CardProps {
 }
 
 export const TeamCardAdmin = ({ teamCode, members }: CardProps) => {
-    const title = `Team ${teamCode}`;
-
     return (
         <Card style={{ minHeight: "200px" }}>
             <Container className={styles.content_container}>
                 <Container className={styles.title}>
-                    <Typography variant={"h6"}>{title}</Typography>
+                    <Typography variant={"h6"}>{`Team ${teamCode}`}</Typography>
                 </Container>
-                {members?.length
-                    ? members?.map((member, i) => (
+                {members.length
+                    ? members.map((member, i) => (
                           <Container className={styles.name} key={i}>
-                              <Typography variant="body2" noWrap>
-                                  {member}
-                              </Typography>
+                              <Typography variant="body2">{member}</Typography>
                           </Container>
                       ))
                     : null}

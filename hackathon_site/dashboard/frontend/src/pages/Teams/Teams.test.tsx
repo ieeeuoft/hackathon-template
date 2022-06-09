@@ -7,7 +7,7 @@ import Teams from "pages/Teams/Teams";
 test("renders teams without crashing", () => {
     const teamCodes = teamsList.map((team) => team.TeamName);
     const { getByText } = render(<Teams />);
-    teamCodes.forEach(function (teamCode) {
+    teamCodes.forEach((teamCode) => {
         expect(getByText("Team " + teamCode)).toBeInTheDocument();
     });
 });

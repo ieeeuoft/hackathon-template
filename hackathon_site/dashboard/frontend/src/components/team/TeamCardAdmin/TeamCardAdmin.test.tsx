@@ -10,9 +10,7 @@ test("renders team card without crashing", () => {
     const teamCode = teamsList[0].TeamName;
     const members = teamsList[0].Members;
 
-    const { getByText } = render(
-        <TeamCardAdmin teamCode={teamCode} members={members} />
-    );
+    const { getByText } = render(<TeamCardAdmin {...{ teamCode, members }} />);
     expect(getByText(`Team ${teamCode}`)).toBeInTheDocument();
     members.forEach((memberName) => {
         expect(getByText(memberName)).toBeInTheDocument();

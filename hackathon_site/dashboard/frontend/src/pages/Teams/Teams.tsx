@@ -6,7 +6,7 @@ import Grid from "@material-ui/core/Grid";
 import styles from "pages/Teams/Teams.module.scss";
 
 import TeamCardAdmin from "components/team/TeamCardAdmin/TeamCardAdmin";
-import InventorySearch from "components/inventory/InventorySearch/InventorySearch";
+import TeamSearchBar from "components/team/TeamSearchBar/TeamSearchBar";
 import { teamsList } from "testing/mockData";
 
 const Teams = () => {
@@ -16,8 +16,9 @@ const Teams = () => {
             md={3}
             sm={4}
             xs={12}
+            xl={2}
             key={index}
-            className={styles.dashboard}
+            className={styles.teamsDashboard}
             grid-template-column="true"
             onClick={() => alert(`Goes to team-detail for team ${team.TeamName}`)}
         >
@@ -30,7 +31,7 @@ const Teams = () => {
             <Header />
             <Typography variant="h1">Teams</Typography>
             <div className={styles.searchBar}>
-                <InventorySearch></InventorySearch>
+                <TeamSearchBar />
             </div>
             <Grid container>{CardComponents}</Grid>
         </>
