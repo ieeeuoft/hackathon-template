@@ -69,7 +69,7 @@ const TeamDetail = () => {
                                                             style={{
                                                                 marginLeft: "-15px",
                                                             }}
-                                                        ></Checkbox>
+                                                        />
                                                     </TableCell>
                                                 </TableRow>
                                             ))}
