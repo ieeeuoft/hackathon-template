@@ -230,6 +230,117 @@ export const mockTeam: Team = {
     ],
 };
 
+// Valid Team Size
+export const mockValidTeam: Team = {
+    id: 2,
+    team_code: "A48E6",
+    created_at: "2022-05-28T22:37:54.106311-05:00",
+    updated_at: "2022-05-28T22:37:54.106323-05:00",
+    profiles: [
+        {
+            id: 2,
+            id_provided: true,
+            attended: true,
+            acknowledge_rules: true,
+            e_signature: null,
+            user: {
+                id: 2,
+                first_name: "Foothe",
+                last_name: "Second",
+                email: "foo2@bar.com",
+            },
+        },
+        {
+            id: 3,
+            id_provided: true,
+            attended: true,
+            acknowledge_rules: true,
+            e_signature: null,
+            user: {
+                id: 3,
+                first_name: "Foothe",
+                last_name: "Third",
+                email: "foo3@bar.com",
+            },
+        },
+    ],
+};
+
+// Team with too many members
+export const mockLargeTeam: Team = {
+    id: 3,
+    team_code: "A48E7",
+    created_at: "2022-06-03T22:37:54.106311-05:00",
+    updated_at: "2022-06-03T22:37:54.106323-05:00",
+    profiles: [
+        {
+            id: 4,
+            id_provided: true,
+            attended: true,
+            acknowledge_rules: true,
+            e_signature: null,
+            user: {
+                id: 4,
+                first_name: "Foothe",
+                last_name: "Fourth",
+                email: "foo4@bar.com",
+            },
+        },
+        {
+            id: 5,
+            id_provided: true,
+            attended: true,
+            acknowledge_rules: true,
+            e_signature: null,
+            user: {
+                id: 5,
+                first_name: "Foothe",
+                last_name: "Fifth",
+                email: "foo5@bar.com",
+            },
+        },
+        {
+            id: 6,
+            id_provided: true,
+            attended: true,
+            acknowledge_rules: true,
+            e_signature: null,
+            user: {
+                id: 6,
+                first_name: "Foothe",
+                last_name: "Sixth",
+                email: "foo6@bar.com",
+            },
+        },
+        {
+            id: 7,
+            id_provided: true,
+            attended: true,
+            acknowledge_rules: true,
+            e_signature: null,
+            user: {
+                id: 7,
+                first_name: "Foothe",
+                last_name: "Seventh",
+                email: "foo7@bar.com",
+            },
+        },
+        {
+            id: 8,
+            id_provided: true,
+            attended: true,
+            acknowledge_rules: true,
+            e_signature: null,
+            user: {
+                id: 8,
+                first_name: "Foothe",
+                last_name: "Eighth",
+                email: "foo8@bar.com",
+            },
+        },
+    ],
+};
+
 export const mockHardware: Hardware[] = [
     {
         id: 1,
