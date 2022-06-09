@@ -30,9 +30,7 @@ const Teams = () => {
         <>
             <Header />
             <Typography variant="h1">Teams</Typography>
-            <div className={styles.searchBar}>
-                <TeamSearchBar />
-            </div>
+            <TeamSearchBar />
             <Grid container>{CardComponents}</Grid>
         </>
     );
