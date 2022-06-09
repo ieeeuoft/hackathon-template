@@ -290,7 +290,11 @@ export const mockTeamMultiple = {
                 last_name: "Tock",
                 email: "tick@tock.com",
                 phone: "802-123-4567",
-                  
+            },
+        },
+    ],
+};
+
 // Valid Team Size
 export const mockValidTeam: Team = {
     id: 2,
@@ -309,6 +313,11 @@ export const mockValidTeam: Team = {
                 first_name: "Foothe",
                 last_name: "Second",
                 email: "foo2@bar.com",
+            },
+        },
+        {
+            id: 3,
+            id_provided: true,
             attended: true,
             acknowledge_rules: true,
             e_signature: null,
