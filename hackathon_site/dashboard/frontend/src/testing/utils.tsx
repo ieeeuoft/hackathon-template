@@ -142,9 +142,7 @@ export const makeStoreWithEntities = (entities: StoreEntities) => {
         }
 
         preloadedState[hardwareReducerName] = hardwareState;
-    }
-
-    if (entities.hardwareState) {
+    } else if (entities.hardwareState) {
         preloadedState[hardwareReducerName] = {
             ...hardwareInitialState,
             ...entities.hardwareState,
