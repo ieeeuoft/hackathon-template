@@ -1,5 +1,4 @@
 import React from "react";
-import styles from "./TeamDetail.module.scss";
 import Header from "components/general/Header/Header";
 import Typography from "@material-ui/core/Typography";
 import { mockTeamMultiple } from "testing/mockData";
@@ -13,7 +12,6 @@ import {
     Checkbox,
     Paper,
     Container,
-    Box,
     Grid,
 } from "@material-ui/core";
 
@@ -35,7 +33,7 @@ const TeamDetail = () => {
                             direction="column"
                             spacing={1}
                             item
-                            lg={6}
+                            md={6}
                             xs={12}
                         >
                             <Grid item>
@@ -56,8 +54,7 @@ const TeamDetail = () => {
                                             {mockTeamMultiple.profiles.map((row) => (
                                                 <TableRow key={row.user.id}>
                                                     <TableCell>
-                                                        {row.user.first_name}{" "}
-                                                        {row.user.last_name}
+                                                        {`${row.user.first_name} ${row.user.last_name}`}
                                                     </TableCell>
                                                     <TableCell>
                                                         {row.user.email}
@@ -68,8 +65,8 @@ const TeamDetail = () => {
                                                     <TableCell>
                                                         <Checkbox
                                                             checked={row.id_provided}
+                                                            color="primary"
                                                             style={{
-                                                                color: "#2b7bbc",
                                                                 marginLeft: "-15px",
                                                             }}
                                                         ></Checkbox>
@@ -87,7 +84,7 @@ const TeamDetail = () => {
                             spacing={1}
                             direction="column"
                             item
-                            lg={6}
+                            md={6}
                             xs={12}
                         >
                             <Grid item>
