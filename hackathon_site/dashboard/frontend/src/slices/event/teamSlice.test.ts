@@ -8,9 +8,10 @@ import {
     teamSelector,
     teamCodeSelector,
     teamMemberNamesSelector,
+    teamSizeSelector,
 } from "slices/event/teamSlice";
 import { waitFor } from "testing/utils";
-import { mockTeam } from "testing/mockData";
+import { mockTeam, mockValidTeam } from "testing/mockData";
 import { get } from "api/api";
 import { AxiosResponse } from "axios";
 import { Team } from "api/types";
@@ -72,6 +73,29 @@ describe("Selectors", () => {
             },
         };
         expect(teamCodeSelector(teamState)).toEqual(mockTeam.team_code);
+    });
+
+    test("teamSizeSelector returns correct team size", () => {
+        const teamState = {
+            ...mockState,
+            [teamReducerName]: {
+                ...initialState,
+                isLoading: false,
+                team: mockValidTeam,
+            },
+        };
+        expect(teamSizeSelector(teamState)).toEqual(2);
+    });
+
+    test("teamSizeSelector returns 0 for no team", () => {
+        const teamState = {
+            ...mockState,
+            [teamReducerName]: {
+                ...initialState,
+                isLoading: false,
+            },
+        };
+        expect(teamSizeSelector(teamState)).toEqual(0);
     });
 
     test("teamMemberNamesSelector returns the member names", () => {
