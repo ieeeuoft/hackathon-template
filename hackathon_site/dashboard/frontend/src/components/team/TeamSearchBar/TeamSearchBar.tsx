@@ -11,7 +11,6 @@ const TeamSearchBar = () => (
     <form autoComplete="off" className={styles.searchBar}>
         <Box display="flex" flexDirection="row">
             <TextField
-                className={styles.inventoryBodyToolbarSearch}
                 id="search-input"
                 name="search"
                 label="Search items"

@@ -18,7 +18,7 @@ const Teams = () => {
             xs={12}
             xl={2}
             key={index}
-            className={styles.teamsDashboard}
+            className={styles.teamsListGridItem}
             grid-template-column="true"
             onClick={() => alert(`Goes to team-detail for team ${team.TeamName}`)}
         >
