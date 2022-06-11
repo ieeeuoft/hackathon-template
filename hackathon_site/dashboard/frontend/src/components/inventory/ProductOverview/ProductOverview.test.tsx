@@ -10,6 +10,7 @@ import {
     when,
     makeMockApiResponse,
 } from "testing/utils";
+import { makeStore } from "slices/store";
 import { cartSelectors } from "slices/hardware/cartSlice";
 import { SnackbarProvider } from "notistack";
 import SnackbarNotifier from "components/general/SnackbarNotifier/SnackbarNotifier";
@@ -148,8 +149,13 @@ describe("<ProductOverview />", () => {
         expect(getByText(minConstraint)).toBeInTheDocument();
     });
 
-    it("displays error message when unable to get hardware", () => {
+    it("displays error message when unable to get hardware", async () => {
+        const apiResponse = makeMockApiResponse({}, 500);
+
+        when(mockedGet).mockResolvedValue(apiResponse);
+
         const store = makeStoreWithEntities({
+            hardware: mockHardware,
             hardwareState: {
                 isUpdateDetailsLoading: false,
             },
@@ -164,11 +170,15 @@ describe("<ProductOverview />", () => {
             store,
         });
 
-        expect(
-            getByText(
-                "Unable to display hardware. Please refresh the page and try again."
-            )
-        ).toBeInTheDocument();
+        store.dispatch(getUpdatedHardwareDetails(1));
+
+        await waitFor(() => {
+            expect(
+                getByText(
+                    "Unable to display hardware. Please refresh the page and try again."
+                )
+            ).toBeInTheDocument();
+        });
     });
 
     test("Add to Cart button adds hardware to cart store", async () => {

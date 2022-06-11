@@ -256,23 +256,4 @@ describe("getUpdatedHardwareDetails thunk", () => {
             })
         );
     });
-
-    it("Updates the store on API failure", async () => {
-        const failureResponse = {
-            response: {
-                status: 500,
-                message: "Something went wrong",
-            },
-        };
-
-        mockedGet.mockRejectedValue(failureResponse);
-
-        const store = makeStore();
-        await store.dispatch(getUpdatedHardwareDetails(1));
-
-        expect(store.getState()[hardwareReducerName]).toHaveProperty(
-            "error",
-            failureResponse.response.message
-        );
-    });
 });

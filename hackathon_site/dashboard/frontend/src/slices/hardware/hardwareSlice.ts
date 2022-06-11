@@ -228,13 +228,11 @@ const hardwareSlice = createSlice({
 
         builder.addCase(getUpdatedHardwareDetails.pending, (state) => {
             state.isUpdateDetailsLoading = true;
-            state.error = null;
         });
 
         builder.addCase(getUpdatedHardwareDetails.fulfilled, (state, { payload }) => {
             if (payload) {
                 state.isUpdateDetailsLoading = false;
-                state.error = null;
                 state.hardwareIdInProductOverview = payload.id;
                 hardwareAdapter.updateOne(state, {
                     id: payload.id,
@@ -245,7 +243,6 @@ const hardwareSlice = createSlice({
 
         builder.addCase(getUpdatedHardwareDetails.rejected, (state, { payload }) => {
             state.isUpdateDetailsLoading = false;
-            state.error = payload?.message || "Something went wrong";
         });
     },
 });
