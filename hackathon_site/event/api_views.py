@@ -9,6 +9,7 @@ from rest_framework.response import Response
 from event.serializers import (
     ProfileSerializer,
     CurrentProfileSerializer,
+    CreateProfileSerializer,
 )
 from event.models import User, Team as EventTeam, Profile
 from event.serializers import UserSerializer, TeamSerializer
@@ -161,6 +162,23 @@ class ProfileDetailView(mixins.UpdateModelMixin, generics.GenericAPIView):
 
     def patch(self, request, *args, **kwargs):
         return self.partial_update(request, *args, **kwargs)
+
+
+class CreateProfileView(
+    generics.GenericAPIView, mixins.CreateModelMixin,
+):
+    serializer_class = CreateProfileSerializer
+    queryset = Profile.objects.all()
+
+    def post(self, request, *args, **kwargs):
+        # create a new profile for the user
+        profile = Profile.objects.create(user=self.request.user)
+        team = profile.team
+
+        response_serializer = CreateProfileSerializer(profile)
+        response_data = response_serializer.data
+
+        return Response(data=response_data, status=status.HTTP_201_CREATED,)
 
 
 class CurrentProfileView(mixins.UpdateModelMixin, generics.GenericAPIView):
