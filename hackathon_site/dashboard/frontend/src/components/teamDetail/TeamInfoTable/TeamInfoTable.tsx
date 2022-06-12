@@ -2,7 +2,6 @@ import { RouteComponentProps } from "react-router-dom";
 
 import {
     Checkbox,
-    Container,
     Grid,
     Paper,
     Table,
@@ -20,86 +19,45 @@ import { PageParams } from "pages/TeamDetail/TeamDetail";
 export const TeamInfoTable = ({ match }: RouteComponentProps<PageParams>) => {
     return (
         <>
-            <Container>
-                <Grid container direction="column" spacing={6}>
-                    <Grid item>
-                        <Typography variant="h1">
-                            Team {match.params.id} Overview
-                        </Typography>
-                    </Grid>
-                    {/* Team info and actions */}
-                    <Grid container spacing={2}>
-                        <Grid
-                            container
-                            direction="column"
-                            spacing={1}
-                            item
-                            md={6}
-                            xs={12}
-                        >
-                            <Grid item>
-                                <Typography variant="h2">Team info</Typography>
-                            </Grid>
-                            <Grid item>
-                                <TableContainer component={Paper}>
-                                    <Table size="small">
-                                        <TableHead>
-                                            <TableRow>
-                                                <TableCell>Name</TableCell>
-                                                <TableCell>Email</TableCell>
-                                                <TableCell>Phone</TableCell>
-                                                <TableCell>ID</TableCell>
-                                            </TableRow>
-                                        </TableHead>
-                                        <TableBody>
-                                            {mockTeamMultiple.profiles.map((row) => (
-                                                <TableRow key={row.user.id}>
-                                                    <TableCell>
-                                                        {`${row.user.first_name} ${row.user.last_name}`}
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        {row.user.email}
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        {row.user.phone}
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        <Checkbox
-                                                            checked={row.id_provided}
-                                                            color="primary"
-                                                            style={{
-                                                                marginLeft: "-15px",
-                                                            }}
-                                                        />
-                                                    </TableCell>
-                                                </TableRow>
-                                            ))}
-                                        </TableBody>
-                                    </Table>
-                                </TableContainer>
-                            </Grid>
-                        </Grid>
-
-                        <Grid
-                            container
-                            spacing={1}
-                            direction="column"
-                            item
-                            md={6}
-                            xs={12}
-                        >
-                            <Grid item>
-                                <Typography variant="h2">Dummy</Typography>
-                            </Grid>
-                            <Grid item>
-                                <TableContainer component={Paper}>
-                                    <Table>Dummy</Table>
-                                </TableContainer>
-                            </Grid>
-                        </Grid>
-                    </Grid>
+            <Grid container direction="column" spacing={1} item md={6} xs={12}>
+                <Grid item>
+                    <Typography variant="h2">Team info</Typography>
                 </Grid>
-            </Container>
+                <Grid item>
+                    <TableContainer component={Paper}>
+                        <Table size="small">
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>Name</TableCell>
+                                    <TableCell>Email</TableCell>
+                                    <TableCell>Phone</TableCell>
+                                    <TableCell>ID</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {mockTeamMultiple.profiles.map((row) => (
+                                    <TableRow key={row.user.id}>
+                                        <TableCell>
+                                            {`${row.user.first_name} ${row.user.last_name}`}
+                                        </TableCell>
+                                        <TableCell>{row.user.email}</TableCell>
+                                        <TableCell>{row.user.phone}</TableCell>
+                                        <TableCell>
+                                            <Checkbox
+                                                checked={row.id_provided}
+                                                color="primary"
+                                                style={{
+                                                    marginLeft: "-15px",
+                                                }}
+                                            />
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                </Grid>
+            </Grid>
         </>
     );
 };
