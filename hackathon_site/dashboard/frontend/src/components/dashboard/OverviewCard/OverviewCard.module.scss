@@ -1,0 +1,20 @@
+@import "./../../../assets/abstracts/mixins";
+@import "./../../../assets/abstracts/variables";
+
+.title {
+    @include flexPosition($jusCon: space-between, $alIte: flex-end);
+    &Text {
+        margin-bottom: 10px;
+    }
+    &Chip {
+        margin: 0 0 5px 0;
+        display: flex;
+        &Space {
+            @include flexPosition($jusCon: space-between);
+        }
+        &Text {
+            min-width: fit-content;
+            padding-top: 7px;
+        }
+    }
+}

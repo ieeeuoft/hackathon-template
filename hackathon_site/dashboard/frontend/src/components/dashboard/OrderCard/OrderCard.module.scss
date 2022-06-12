@@ -1,0 +1,52 @@
+@import "./../../../assets/abstracts/mixins";
+@import "./../../../assets/abstracts/variables";
+
+.title {
+    @include flexPosition($jusCon: space-between, $alIte: flex-end);
+    &Text {
+        margin-bottom: 10px;
+    }
+    &Chip {
+        margin: 20px 0 5px 0;
+        display: flex;
+        &Space {
+            @include flexPosition($jusCon: space-between);
+        }
+        &Text {
+            min-width: fit-content;
+            padding-top: 7px;
+        }
+    }
+}
+
+.items {
+    @include flexPosition($jusCon: space-between, $alIte: center);
+    padding-top: 10px;
+    padding-bottom: 10px;
+    &:hover {
+        background-color: color(light2);
+    }
+    svg {
+        margin-left: 15px;
+    }
+}
+
+.paper {
+    flex-grow: 1;
+    padding: 8px 0px;
+    svg {
+        color: color(grey);
+    }
+}
+
+.items {
+    @include flexPosition($jusCon: space-between, $alIte: center);
+    padding-top: 10px;
+    padding-bottom: 10px;
+    &:hover {
+        background-color: color(light2);
+    }
+    svg {
+        margin-left: 15px;
+    }
+}

@@ -16,6 +16,75 @@ import { CartItem } from "api/types";
 import { adminGroup } from "constants.js";
 
 // For DashCard on Dashboard
+
+export const mockOverviewStats = [
+    {
+        title: "checked_out",
+        quantity: 123,
+    },
+    {
+        title: "participants",
+        quantity: 200,
+    },
+    {
+        title: "teams",
+        quantity: 14,
+    },
+    {
+        title: "orders",
+        quantity: 123,
+    },
+    {
+        title: "broken",
+        quantity: 7,
+    },
+];
+
+export const mockAdminPendingOrders = [
+    {
+        team: 3,
+        order_quantity: 4,
+        time_ordered: "11:30",
+        id: 1342,
+    },
+    {
+        team: 2,
+        order_quantity: 5,
+        time_ordered: "16:30",
+        id: 1345,
+    },
+    {
+        team: 7,
+        order_quantity: 2,
+        time_ordered: "19:30",
+        id: 1342,
+    },
+    {
+        team: 10,
+        order_quantity: 1,
+        time_ordered: "10:30",
+        id: 1232,
+    },
+    {
+        team: 5,
+        order_quantity: 1,
+        time_ordered: "08:00",
+        id: 1394,
+    },
+    {
+        team: 1,
+        order_quantity: 1,
+        time_ordered: "23:30",
+        id: 2234,
+    },
+    {
+        team: 9,
+        order_quantity: 1,
+        time_ordered: "10:00",
+        id: 2312,
+    },
+];
+
 export const cardItems = [
     {
         title: "Important Links",

@@ -1,0 +1,45 @@
+@import "./../../../assets/abstracts/mixins";
+@import "./../../../assets/abstracts/variables";
+
+.title {
+    @include flexPosition($jusCon: space-between, $alIte: flex-end);
+    &Text {
+        margin-bottom: 10px;
+    }
+    &Chip {
+        margin: 20px 0 5px 0;
+        display: flex;
+        &Space {
+            @include flexPosition($jusCon: space-between);
+        }
+        &Text {
+            min-width: fit-content;
+            padding-top: 7px;
+        }
+    }
+}
+
+.dashboard {
+    width: 100%;
+    max-width: 1400px;
+    &Grid {
+        margin-top: 30px;
+        @include responsive(sm-down) {
+            margin-top: 20px;
+        }
+        &Item {
+            height: 100%;
+            min-height: 283px;
+            width: 100%;
+            @include flexPosition($dir: column);
+        }
+    }
+}
+
+.paper {
+    flex-grow: 1;
+    padding: 8px 0px;
+    svg {
+        color: color(grey);
+    }
+}

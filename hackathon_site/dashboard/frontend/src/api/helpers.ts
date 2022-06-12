@@ -23,10 +23,10 @@ export const teamOrderListSerialization = (
             const hardwareItems: Record<number, OrderItemTableRow> = {};
             const hardwareRequested: Record<number, number> = {};
             const returnedItems: Record<string, ReturnedItem> = {};
-            order.request.forEach(
-                (hardware) =>
-                    (hardwareRequested[hardware.id] = hardware.requested_quantity)
-            );
+            // order.request.forEach(
+            //     (hardware) =>
+            //         (hardwareRequested[hardware.id] = hardware.requested_quantity)
+            // );
             order.items.forEach(({ id, hardware_id, part_returned_health }) => {
                 if (part_returned_health) {
                     const returnItemKey = `${hardware_id}-${part_returned_health}`;
