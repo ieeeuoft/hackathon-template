@@ -1,5 +1,5 @@
 import { RouteComponentProps } from "react-router-dom";
-import Header from "components/general/Header/Header";
+
 import {
     Checkbox,
     Container,
@@ -17,7 +17,7 @@ import { mockTeamMultiple } from "testing/mockData";
 import React from "react";
 import { PageParams } from "pages/TeamDetail/TeamDetail";
 
-export const TeamDetail = ({ match }: RouteComponentProps<PageParams>) => {
+export const TeamInfoTable = ({ match }: RouteComponentProps<PageParams>) => {
     return (
         <>
             <Container>
@@ -104,4 +104,4 @@ export const TeamDetail = ({ match }: RouteComponentProps<PageParams>) => {
     );
 };
 
-export default TeamDetail;
+export default TeamInfoTable;
