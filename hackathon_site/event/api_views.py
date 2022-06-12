@@ -1,5 +1,6 @@
 from django.db import transaction
 from django.db.models import Q
+from django.conf import settings
 
 from rest_framework import generics, mixins, status
 from rest_framework.exceptions import ValidationError, PermissionDenied
@@ -12,7 +13,6 @@ from event.serializers import (
 )
 from event.models import User, Team as EventTeam, Profile
 from event.serializers import UserSerializer, TeamSerializer
-from hackathon_site import MAX_MEMBERS
 from hardware.serializers import IncidentCreateSerializer, OrderListSerializer
 from event.permissions import UserHasProfile, FullDjangoModelPermissions
 
@@ -113,7 +113,7 @@ class JoinTeamView(generics.GenericAPIView, mixins.RetrieveModelMixin):
 
         team = self.get_object()
 
-        if team.profiles.count() >= MAX_MEMBERS:
+        if team.profiles.count() >= settings.MAX_MEMBERS:
             raise ValidationError({"detail": "Team is full"})
 
         active_orders = OrderItem.objects.filter(

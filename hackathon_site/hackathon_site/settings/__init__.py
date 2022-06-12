@@ -298,6 +298,10 @@ MINIMUM_AGE = 14
 ACCOUNT_ACTIVATION_DAYS = 7
 RSVP_DAYS = 7
 
+# Team requirements
+MIN_MEMBERS = 2
+MAX_MEMBERS = 4
+
 # The time at which waitlisted people will start being accepted into
 # the event. This usually happens an hour or two after the start of
 # the event.

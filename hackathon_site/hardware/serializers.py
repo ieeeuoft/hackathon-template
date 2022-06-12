@@ -2,10 +2,10 @@ from collections import Counter
 import functools
 from django.db.models import Count, Q
 from django.core.exceptions import ObjectDoesNotExist
+from django.conf import settings
 from rest_framework import serializers
 
 from event.models import Profile
-from hackathon_site import MIN_MEMBERS, MAX_MEMBERS
 from hardware.models import Hardware, Category, OrderItem, Order, Incident
 
 
@@ -201,8 +201,10 @@ class OrderCreateSerializer(serializers.Serializer):
         except ObjectDoesNotExist:
             raise serializers.ValidationError("User does not have profile")
         team_size = Profile.objects.filter(team__exact=user_profile.team).count()
-        if team_size < MIN_MEMBERS or team_size > MAX_MEMBERS:
-            raise serializers.ValidationError("Does not match team size criteria")
+        if team_size < settings.MIN_MEMBERS or team_size > settings.MAX_MEMBERS:
+            raise serializers.ValidationError(
+                "User's team does not meet team size criteria"
+            )
         # requested_hardware is a Counter where the keys are <Hardware Object>'s
         # and values are <Int>'s
         requested_hardware = self.merge_requests(hardware_requests=data["hardware"])
