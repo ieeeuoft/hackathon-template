@@ -10,6 +10,7 @@ import {
     within,
     promiseResolveWithDelay,
     makeStoreWithEntities,
+    makeMockApiResponse,
 } from "testing/utils";
 import {
     cardItems,
@@ -21,7 +22,7 @@ import {
 } from "testing/mockData";
 import { get } from "api/api";
 import { AxiosResponse } from "axios";
-import { Order, Team } from "api/types";
+import { Hardware, Order, Team } from "api/types";
 
 jest.mock("api/api", () => ({
     ...jest.requireActual("api/api"),
@@ -63,9 +64,26 @@ describe("Dashboard Page", () => {
         });
         // TODO: add check for returned items and broken items when those are ready
     });
+
     it("Opens Product Overview with the correct hardware information", async () => {
+        const hardwareDetailUri = "/api/hardware/hardware/1/";
+        const newHardwareData: Hardware = {
+            id: mockCheckedOutOrders[0].items[0].hardware_id,
+            name: "Randome hardware",
+            model_number: "90",
+            manufacturer: "Tesla",
+            datasheet: "",
+            quantity_available: 5,
+            max_per_team: 6,
+            picture: "https://example.com/datasheet",
+            categories: [2],
+            quantity_remaining: 10,
+            notes: "notes on temp",
+        };
+
         const hardwareApiResponse = makeMockApiListResponse(mockHardware);
         const categoryApiResponse = makeMockApiListResponse(mockCategories);
+        const hardwareDetailApiResponse = makeMockApiResponse(newHardwareData);
         const hardware_ids = [1, 2, 3, 4, 10];
 
         mockOrderAPI();
@@ -75,37 +93,46 @@ describe("Dashboard Page", () => {
         when(mockedGet)
             .calledWith(categoriesUri, {})
             .mockResolvedValue(categoryApiResponse);
+        when(mockedGet)
+            .calledWith(hardwareDetailUri)
+            .mockResolvedValue(hardwareDetailApiResponse);
 
         const { getByTestId, getByText } = render(<Dashboard />);
 
-        const hardware = mockHardware.find(
-            ({ id }) => id === mockCheckedOutOrders[0].items[0].hardware_id
-        );
         const category = mockCategories.find(
-            ({ id }) => id === hardware?.categories[0]
+            ({ id }) => id === newHardwareData?.categories[0]
         );
 
-        if (hardware && category) {
+        if (category) {
+            await waitFor(() => {
+                expect(get).toHaveBeenNthCalledWith(1, teamUri);
+                expect(get).toHaveBeenNthCalledWith(2, categoriesUri, {});
+                expect(get).toHaveBeenNthCalledWith(3, ordersUri);
+                expect(get).toHaveBeenNthCalledWith(4, hardwareUri, { hardware_ids });
+            });
             await waitFor(() => {
                 const infoButton = within(
                     getByTestId(
-                        `checked-out-hardware-${hardware.id}-${mockCheckedOutOrders[0].id}`
+                        `checked-out-hardware-${newHardwareData.id}-${mockCheckedOutOrders[0].id}`
                     )
                 ).getByTestId("info-button");
                 fireEvent.click(infoButton);
+            });
+            await waitFor(() => {
+                expect(get).toHaveBeenNthCalledWith(5, hardwareDetailUri);
                 expect(getByText("Product Overview")).toBeVisible();
                 expect(
-                    getByText(`- Max ${hardware.max_per_team} of this item`)
+                    getByText(`- Max ${newHardwareData.max_per_team} of this item`)
                 ).toBeInTheDocument();
                 expect(
                     getByText(
-                        `- Max ${mockCategories[0].max_per_team} of items under category ${mockCategories[0].name}`
+                        `- Max ${category.max_per_team} of items under category ${category.name}`
                     )
                 ).toBeInTheDocument();
-                expect(getByText(hardware.model_number)).toBeInTheDocument();
-                expect(getByText(hardware.manufacturer)).toBeInTheDocument();
-                if (hardware.notes)
-                    expect(getByText(hardware.notes)).toBeInTheDocument();
+                expect(getByText(newHardwareData.model_number)).toBeInTheDocument();
+                expect(getByText(newHardwareData.manufacturer)).toBeInTheDocument();
+                if (newHardwareData.notes)
+                    expect(getByText(newHardwareData.notes)).toBeInTheDocument();
             });
         }
     });
