@@ -16,7 +16,7 @@ import SideSheetRight from "components/general/SideSheetRight/SideSheetRight";
 import * as Yup from "yup";
 import { Formik, FormikValues } from "formik";
 
-//import styles from "./EditTeamModal.module.scss";
+import styles from "./EditTeamModal.module.scss";
 import {
     displaySnackbar,
     hardwareBeingViewedSelector,
@@ -28,7 +28,7 @@ import { selectCategoriesByIds } from "slices/hardware/categorySlice";
 import { RootState } from "slices/store";
 import { addToCart, cartSelectors } from "slices/hardware/cartSlice";
 import { Category } from "api/types";
-import styles from "../../inventory/ProductOverview/ProductOverview.module.scss";
+//import styles from "../../inventory/ProductOverview/ProductOverview.module.scss";
 
 // export const ERROR_MESSAGES = {
 //     quantityMissing: "Quantity is required",
@@ -343,66 +343,91 @@ export const TeamModal = () =>
 
         return (
             <SideSheetRight
-                title="Edit team"
+                title="Product Overview"
                 isVisible={true}
                 handleClose={true}
-                //isVisible={isProductOverviewVisible}
-                // handleClose={closeProductOverview}
             >
-                {true ? (
-                    <div>
-                        <div>
-                            {/*<MainSection*/}
-                            {/*    name={hardware.name}*/}
-                            {/*    quantityAvailable={hardware.quantity_available}*/}
-                            {/*    quantityRemaining={hardware.quantity_remaining}*/}
-                            {/*    categories={categoryNames}*/}
-                            {/*    picture={hardware.picture}*/}
-                            {/*/>*/}
-                            {/*<DetailInfoSection*/}
-                            {/*    manufacturer={hardware.manufacturer}*/}
-                            {/*    modelNumber={hardware.model_number}*/}
-                            {/*    datasheet={hardware.datasheet}*/}
-                            {/*    notes={hardware.notes}*/}
-                            {/*    constraints={constraints}*/}
-                            {/*/>*/}
-                            <Typography variant="body2" className={styles.heading}>
-                                Create a team with up to 4 people. Share your code with
-                                others who have RSVP’ed to MakeUofT, or join another
-                                team. Note: You do not have to stay in the same team you
-                                applied with.
-                            </Typography>
-                            <TeamInfoBlock />
-                            <Typography>
-                                Your team will be locked after you make your first order
-                                on the day of the event. After that, in order to leave
-                                the team or add new members, please speak to the tech
-                                team at the tech station.
-                            </Typography>
+                <div className={styles.productOverview}>
+                    <div className={styles.productOverviewDiv}>
+                        <Typography variant="body2" className={styles.heading}>
+                            Create a team with up to 4 people. Share your code with
+                            others who have RSVP’ed to MakeUofT, or join another team.
+                            Note: You do not have to stay in the same team you applied
+                            with.
+                        </Typography>
+                        <TeamInfoBlock />
+                        <Typography variant="body2" className={styles.heading}>
+                            Your team will be locked after you make your first order on
+                            the day of the event. After that, in order to leave the team
+                            or add new members, please speak to the tech team at the
+                            tech station.
+                        </Typography>
 
-                            <TeamChangeForm />
+                        <TeamChangeForm />
 
-                            <div className={styles.formButton}>
-                                <Button
-                                    variant="contained"
-                                    color="primary"
-                                    fullWidth={true}
-                                    size="large"
-                                    type="submit"
-                                    disableElevation
-                                >
-                                    LEAVE TEAM
-                                </Button>
-                            </div>
+                        <div className={styles.formButton}>
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                fullWidth={true}
+                                size="large"
+                                type="submit"
+                                disableElevation
+                            >
+                                LEAVE TEAM
+                            </Button>
                         </div>
                     </div>
-                ) : (
-                    <Typography variant="subtitle2" align="center" paragraph>
-                        Unable to display hardware. Please refresh the page and try
-                        again.
-                    </Typography>
-                )}
+                </div>
             </SideSheetRight>
+            // <SideSheetRight
+            //     title="Edit team"
+            //     isVisible={true}
+            //     handleClose={true}
+            //     //isVisible={isProductOverviewVisible}
+            //     // handleClose={closeProductOverview}
+            // >
+            //     {true ? (
+            //         <div>
+            //             <div>
+            //
+            //                 <Typography variant="body2" className={styles.heading}>
+            //                     Create a team with up to 4 people. Share your code with
+            //                     others who have RSVP’ed to MakeUofT, or join another
+            //                     team. Note: You do not have to stay in the same team you
+            //                     applied with.
+            //                 </Typography>
+            //                 <TeamInfoBlock />
+            //                 <Typography>
+            //                     Your team will be locked after you make your first order
+            //                     on the day of the event. After that, in order to leave
+            //                     the team or add new members, please speak to the tech
+            //                     team at the tech station.
+            //                 </Typography>
+            //
+            //                 <TeamChangeForm />
+            //
+            //                 <div className={styles.formButton}>
+            //                     <Button
+            //                         variant="contained"
+            //                         color="primary"
+            //                         fullWidth={true}
+            //                         size="large"
+            //                         type="submit"
+            //                         disableElevation
+            //                     >
+            //                         LEAVE TEAM
+            //                     </Button>
+            //                 </div>
+            //             </div>
+            //         </div>
+            //     ) : (
+            //         <Typography variant="subtitle2" align="center" paragraph>
+            //             Unable to display hardware. Please refresh the page and try
+            //             again.
+            //         </Typography>
+            //     )}
+            // </SideSheetRight>
         );
     };
 
