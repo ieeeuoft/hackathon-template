@@ -150,9 +150,14 @@ describe("<ProductOverview />", () => {
     });
 
     it("displays error message when unable to get hardware", async () => {
-        const apiResponse = makeMockApiResponse({}, 500);
+        const failureResponse = {
+            response: {
+                status: 500,
+                message: "Something went wrong",
+            },
+        };
 
-        when(mockedGet).mockResolvedValue(apiResponse);
+        mockedGet.mockRejectedValue(failureResponse);
 
         const store = makeStoreWithEntities({
             hardware: mockHardware,
