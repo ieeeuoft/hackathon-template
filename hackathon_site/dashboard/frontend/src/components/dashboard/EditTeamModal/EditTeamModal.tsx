@@ -28,6 +28,10 @@ import { Category } from "api/types";
 import { Grid } from "@material-ui/core";
 //import styles from "../../inventory/ProductOverview/ProductOverview.module.scss";
 
+interface TeamModalProps {
+    teamCode: string;
+    canChangeTeam: boolean;
+}
 // export const ERROR_MESSAGES = {
 //     quantityMissing: "Quantity is required",
 // };
@@ -275,12 +279,12 @@ import { Grid } from "@material-ui/core";
 //     );
 // };
 
-const TeamInfoBlock = () => {
+const TeamInfoBlock = ({ teamCode, canChangeTeam }: TeamModalProps) => {
     return (
         <div>
             <Alert severity="info" icon={false} className={styles.alertBox}>
                 Team code:
-                <span className={styles.teamCode}> BIWL2 </span>
+                <span className={styles.teamCode}> {teamCode} </span>
                 <Button color={"primary"}>
                     <FileCopyIcon fontSize={"small"} />
                     Copy
@@ -321,7 +325,7 @@ const TeamChangeForm = () => {
     );
 };
 
-export const EditTeamModal = () =>
+export const EditTeamModal = ({ teamCode, canChangeTeam }: TeamModalProps) =>
     //{
     //     showAddToCartButton,
     // }: {
@@ -378,7 +382,7 @@ export const EditTeamModal = () =>
                             Note: You do not have to stay in the same team you applied
                             with.
                         </Typography>
-                        <TeamInfoBlock />
+                        <TeamInfoBlock teamCode={teamCode} canChangeTeam={false} />
                         <Typography variant="body1" className={styles.heading}>
                             Your team will be locked after you make your first order on
                             the day of the event. After that, in order to leave the team
