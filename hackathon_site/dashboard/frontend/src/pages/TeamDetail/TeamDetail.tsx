@@ -4,7 +4,15 @@ import TeamInfoTable from "components/teamDetail/TeamInfoTable/TeamInfoTable";
 
 import { RouteComponentProps } from "react-router-dom";
 import Header from "components/general/Header/Header";
-import { Grid, Paper, Table, TableContainer } from "@material-ui/core";
+import {
+    Grid,
+    Paper,
+    Table,
+    TableContainer,
+    TableBody,
+    TableRow,
+    TableCell,
+} from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 
 export interface PageParams {
@@ -31,7 +39,13 @@ const TeamDetail = ({ match }: RouteComponentProps<PageParams>) => {
                         </Grid>
                         <Grid item>
                             <TableContainer component={Paper}>
-                                <Table>Dummy</Table>
+                                <Table>
+                                    <TableBody>
+                                        <TableRow>
+                                            <TableCell>Dummy</TableCell>
+                                        </TableRow>
+                                    </TableBody>
+                                </Table>
                             </TableContainer>
                         </Grid>
                     </Grid>

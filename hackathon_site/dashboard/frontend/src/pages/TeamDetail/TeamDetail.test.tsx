@@ -17,6 +17,6 @@ test("renders without crashing", () => {
     } as RouteComponentProps<PageParams>;
     render(<TeamDetail {...teamDetailProps} />);
     expect(
-        screen.getByText(`Team ${teamDetailProps.match.params.id}`)
+        screen.getByText(`Team ${teamDetailProps.match.params.id} Overview`)
     ).toBeInTheDocument();
 });
