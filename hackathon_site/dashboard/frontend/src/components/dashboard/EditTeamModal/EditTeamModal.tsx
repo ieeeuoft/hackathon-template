@@ -295,7 +295,7 @@ const TeamInfoBlock = ({ teamCode, canChangeTeam }: TeamModalProps) => {
     );
 };
 
-const TeamChangeForm = () => {
+const TeamChangeForm = ({ teamCode, canChangeTeam }: TeamModalProps) => {
     return (
         <>
             <Typography variant={"h2"} className={styles.heading}>
@@ -315,6 +315,7 @@ const TeamChangeForm = () => {
                             color={"primary"}
                             className={styles.teamButton}
                             variant="contained"
+                            disabled={!canChangeTeam}
                         >
                             SUBMIT
                         </Button>
@@ -390,7 +391,10 @@ export const EditTeamModal = ({ teamCode, canChangeTeam }: TeamModalProps) =>
                             tech station.
                         </Typography>
 
-                        <TeamChangeForm />
+                        <TeamChangeForm
+                            teamCode={teamCode}
+                            canChangeTeam={canChangeTeam}
+                        />
                     </div>
                     <div className={styles.formButton}>
                         <Button
@@ -400,6 +404,7 @@ export const EditTeamModal = ({ teamCode, canChangeTeam }: TeamModalProps) =>
                             size="large"
                             type="submit"
                             disableElevation
+                            disabled={!canChangeTeam}
                         >
                             LEAVE TEAM
                         </Button>

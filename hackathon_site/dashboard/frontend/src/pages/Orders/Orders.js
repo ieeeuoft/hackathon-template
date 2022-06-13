@@ -9,7 +9,7 @@ const Orders = () => {
             <Header />
             <Typography variant="h1">Orders</Typography>
             <p>IEEEEEsdfsdfsdE</p>
-            <EditTeamModal teamCode={"ABCDE"} canChangeTeam={false} />
+            <EditTeamModal teamCode={"ABCDE"} canChangeTeam={true} />
         </>
     );
 };
