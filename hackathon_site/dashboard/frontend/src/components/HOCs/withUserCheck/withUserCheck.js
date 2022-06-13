@@ -5,7 +5,6 @@ import LinearProgress from "@material-ui/core/LinearProgress";
 
 import { userSelector, fetchUserData, userTypeSelector } from "slices/users/userSlice";
 import { displaySnackbar } from "slices/ui/uiSlice";
-import { adminPages, participantPages } from "constants.js";
 
 export const UnconnectedUserCheck = ({
     user,
@@ -15,6 +14,7 @@ export const UnconnectedUserCheck = ({
     displaySnackbar,
     PrimaryComponent,
     SecondaryComponent,
+    accessType,
     ...passThroughProps
 }) => {
     useEffect(() => {
@@ -23,13 +23,10 @@ export const UnconnectedUserCheck = ({
             return;
         }
 
-        const incorrectPermissions =
-            (userType !== "participant" && userType !== "admin") ||
-            (userType === "participant" &&
-                !participantPages.includes(window.location.pathname)) ||
-            (userType === "admin" && !adminPages.includes(window.location.pathname));
-
-        if (incorrectPermissions) {
+        if (
+            !(accessType === "both" && userType !== "none") &&
+            userType !== accessType
+        ) {
             displaySnackbar({
                 message: "You do not have permission to access this page",
                 options: { variant: "error" },
@@ -53,12 +50,13 @@ export const UnconnectedUserCheck = ({
     );
 };
 
-export const withUserCheck = (PrimaryComponent, SecondaryComponent) => {
+export const withUserCheck = (accessType, PrimaryComponent, SecondaryComponent) => {
     const mapStateToProps = (state) => ({
         user: userSelector(state),
         userType: userTypeSelector(state),
         PrimaryComponent,
         SecondaryComponent,
+        accessType,
     });
 
     return connect(mapStateToProps, {

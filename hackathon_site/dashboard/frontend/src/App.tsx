@@ -25,6 +25,7 @@ import NotFound from "pages/NotFound/NotFound";
 
 import SnackbarNotifier from "components/general/SnackbarNotifier/SnackbarNotifier";
 import withUserCheck from "components/HOCs/withUserCheck/withUserCheck";
+import TeamDetail from "./pages/TeamDetail/TeamDetail";
 
 type Palette = {
     primary?: { main: string };
@@ -54,22 +55,43 @@ const UnconnectedApp = () => {
                     <Route
                         exact
                         path="/"
-                        component={withUserCheck(Dashboard, AdminDashboard)}
+                        component={withUserCheck("both", Dashboard, AdminDashboard)}
                     />
                     <Route exact path="/login" component={Login} />
-                    <Route exact path="/orders" component={withUserCheck(Orders)} />
-                    <Route exact path="/teams" component={withUserCheck(Teams)} />
-                    <Route exact path="/reports" component={withUserCheck(Reports)} />
+                    <Route
+                        exact
+                        path="/orders"
+                        component={withUserCheck("admin", Orders)}
+                    />
+                    <Route
+                        exact
+                        path="/teams"
+                        component={withUserCheck("admin", Teams)}
+                    />
+                    <Route
+                        exact
+                        path="/teams/:id"
+                        component={withUserCheck("admin", TeamDetail)}
+                    />
+                    <Route
+                        exact
+                        path="/reports"
+                        component={withUserCheck("admin", Reports)}
+                    />
                     <Route
                         exact
                         path="/inventory"
-                        component={withUserCheck(Inventory)}
+                        component={withUserCheck("both", Inventory)}
                     />
-                    <Route exact path="/cart" component={withUserCheck(Cart)} />
+                    <Route
+                        exact
+                        path="/cart"
+                        component={withUserCheck("participant", Cart)}
+                    />
                     <Route
                         exact
                         path="/incident-form"
-                        component={withUserCheck(IncidentForm)}
+                        component={withUserCheck("both", IncidentForm)}
                     />
                     <Route exact path="/404" component={NotFound} />
                     <Redirect to="/404" />
