@@ -5,6 +5,7 @@ import { render, screen } from "testing/utils";
 import { mockTeamMultiple } from "testing/mockData";
 import TeamDetail, { PageParams } from "pages/TeamDetail/TeamDetail";
 import { RouteComponentProps } from "react-router-dom";
+import { match } from "assert";
 
 test("renders without crashing", () => {
     const teamDetailProps = {
@@ -15,5 +16,7 @@ test("renders without crashing", () => {
         },
     } as RouteComponentProps<PageParams>;
     render(<TeamDetail {...teamDetailProps} />);
-    expect(screen.getByText("Name")).toBeInTheDocument();
+    expect(
+        screen.getByText(`Team ${teamDetailProps.match.params.id}`)
+    ).toBeInTheDocument();
 });
