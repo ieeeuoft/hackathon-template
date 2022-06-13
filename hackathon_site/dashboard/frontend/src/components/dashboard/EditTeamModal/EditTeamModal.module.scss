@@ -3,10 +3,24 @@
 
 .heading {
     margin-top: 20px;
-    font-weight: 500;
 }
 
-.productOverview {
+.teamCode {
+    font-weight: 700;
+}
+
+.teamForm {
+    margin-top: 10px;
+}
+
+.teamButton {
+    margin-top: 10px;
+}
+
+.copyButton {
+    height: 50%;
+}
+.editTeamModal {
     height: 100%;
     width: 500px;
     @include flexPosition($jusCon: space-between, $alIte: flex-start, $dir: column);
