@@ -5,7 +5,6 @@ import { render, screen } from "testing/utils";
 import { mockTeamMultiple } from "testing/mockData";
 import TeamDetail, { PageParams } from "pages/TeamDetail/TeamDetail";
 import { RouteComponentProps } from "react-router-dom";
-import { match } from "assert";
 
 test("renders without crashing", () => {
     const teamDetailProps = {
