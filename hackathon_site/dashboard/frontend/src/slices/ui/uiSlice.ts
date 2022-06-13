@@ -8,6 +8,7 @@ interface UIInitialState {
         isCheckedOutTableVisible: boolean;
         isReturnedTableVisible: boolean;
         isPendingTableVisible: boolean;
+        isTeamModalVisible: boolean;
     };
     inventory: {
         hardwareItemBeingViewed: Hardware | null;
@@ -27,6 +28,7 @@ export const initialState: UIInitialState = {
         isCheckedOutTableVisible: true,
         isReturnedTableVisible: true,
         isPendingTableVisible: true,
+        isTeamModalVisible: true,
     },
     inventory: {
         hardwareItemBeingViewed: null,
@@ -61,6 +63,9 @@ const uiSlice = createSlice({
         removeProductOverviewItem: (state: UIState) => {
             state.inventory.hardwareItemBeingViewed = null;
             state.inventory.isProductOverviewVisible = false;
+        },
+        removeTeamModalItem: (state: UIState) => {
+            state.dashboard.isTeamModalVisible = false;
         },
         displaySnackbar: (state: UIState, { payload: { message, options = {} } }) => {
             if (!options.key) {
@@ -102,6 +107,7 @@ export const {
     togglePendingTable,
     setProductOverviewItem,
     removeProductOverviewItem,
+    removeTeamModalItem,
     displaySnackbar,
     dismissSnackbar,
     removeSnackbar,
@@ -133,4 +139,8 @@ export const hardwareBeingViewedSelector = createSelector(
 export const isProductOverviewVisibleSelector = createSelector(
     [uiSliceSelector],
     (uiSlice) => uiSlice.inventory.isProductOverviewVisible
+);
+export const isTeamModalVisibleSelector = createSelector(
+    [uiSliceSelector],
+    (uiSlice) => uiSlice.dashboard.isTeamModalVisible
 );
