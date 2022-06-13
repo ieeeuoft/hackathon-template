@@ -16,10 +16,8 @@ import { Formik, FormikValues } from "formik";
 import styles from "./EditTeamModal.module.scss";
 import {
     displaySnackbar,
-    hardwareBeingViewedSelector,
     isProductOverviewVisibleSelector,
     isTeamModalVisibleSelector,
-    removeProductOverviewItem,
     removeTeamModalItem,
 } from "slices/ui/uiSlice";
 import { useDispatch, useSelector } from "react-redux";
