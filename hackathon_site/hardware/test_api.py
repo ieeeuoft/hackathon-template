@@ -977,6 +977,28 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
         Profile.objects.create(user=self.user, team=self.team)
         Profile.objects.create(user=self.user2, team=self.team)
 
+    def create_order(self):
+        self.hardware1 = Hardware.objects.create(
+            name="aHardware",
+            model_number="model",
+            manufacturer="manufacturer",
+            datasheet="/datasheet/location/",
+            notes="notes",
+            quantity_available=10,
+            max_per_team=5,
+            picture="/picture/location",
+        )
+
+        self.order = Order.objects.create(
+            status="Cart",
+            team=self.team,
+            request={"hardware": [{"id": 1, "quantity": 2},]},
+        )
+
+        self.category1 = Category.objects.create(name="category1", max_per_team=4)
+
+        self.hardware1.categories.add(self.category1)
+
     def test_user_not_logged_in(self):
         response = self.client.get(self.view)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
@@ -1676,28 +1698,6 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
             ],
         }
         self.assertEqual(response.json(), expected_response)
-
-    def create_order(self):
-        self.hardware1 = Hardware.objects.create(
-            name="aHardware",
-            model_number="model",
-            manufacturer="manufacturer",
-            datasheet="/datasheet/location/",
-            notes="notes",
-            quantity_available=10,
-            max_per_team=5,
-            picture="/picture/location",
-        )
-
-        self.order = Order.objects.create(
-            status="Cart",
-            team=self.team,
-            request={"hardware": [{"id": 1, "quantity": 2},]},
-        )
-
-        self.category1 = Category.objects.create(name="category1", max_per_team=4)
-
-        self.hardware1.categories.add(self.category1)
 
     def test_team_less_min_order(self):
         self._login()
