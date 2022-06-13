@@ -800,3 +800,46 @@ export const mockReturnedOrdersInTable: ReturnOrderInTable[] = [
         ],
     },
 ];
+
+export const teamsList = [
+    {
+        TeamName: "Vandal",
+        Members: ["Phoenix", "Sage", "Kayo", "Sova"],
+    },
+    {
+        TeamName: "Phantom",
+        Members: ["Name1", "Name2", "Name3", "Name4"],
+    },
+    {
+        TeamName: "Guardian",
+        Members: ["Name1", "Name2", "Name3", "Name4"],
+    },
+    {
+        TeamName: "Bulldog",
+        Members: ["Name1", "Name2", "Name3", "Name4"],
+    },
+    {
+        TeamName: "Bucky",
+        Members: ["Name1", "Name2", "Name3", "Name4"],
+    },
+    {
+        TeamName: "Judge",
+        Members: ["Name1", "Name2", "Name3", "Name4"],
+    },
+    {
+        TeamName: "Aries",
+        Members: ["Name1", "Name2", "Name3", "Name4"],
+    },
+    {
+        TeamName: "Odin",
+        Members: ["Name1", "Name2", "Name3", "Name4"],
+    },
+    {
+        TeamName: "Sheriff",
+        Members: ["Name1", "Name2", "Name3", "Name4"],
+    },
+    {
+        TeamName: "Ghost",
+        Members: ["Name1", "Name2", "Name3", "Name4"],
+    },
+];
