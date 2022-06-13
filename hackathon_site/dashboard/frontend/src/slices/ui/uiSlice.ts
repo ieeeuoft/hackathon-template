@@ -1,5 +1,4 @@
-import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Hardware } from "api/types";
+import { createSelector, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 
 // Slice
@@ -11,7 +10,6 @@ interface UIInitialState {
         isTeamModalVisible: boolean;
     };
     inventory: {
-        hardwareItemBeingViewed: Hardware | null;
         isProductOverviewVisible: boolean;
     };
     snackbars: {
@@ -31,7 +29,6 @@ export const initialState: UIInitialState = {
         isTeamModalVisible: true,
     },
     inventory: {
-        hardwareItemBeingViewed: null,
         isProductOverviewVisible: false,
     },
     snackbars: [],
@@ -53,15 +50,10 @@ const uiSlice = createSlice({
             state.dashboard.isPendingTableVisible =
                 !state.dashboard.isPendingTableVisible;
         },
-        setProductOverviewItem: (
-            state: UIState,
-            { payload }: PayloadAction<Hardware>
-        ) => {
-            state.inventory.hardwareItemBeingViewed = payload;
+        openProductOverview: (state: UIState) => {
             state.inventory.isProductOverviewVisible = true;
         },
-        removeProductOverviewItem: (state: UIState) => {
-            state.inventory.hardwareItemBeingViewed = null;
+        closeProductOverview: (state: UIState) => {
             state.inventory.isProductOverviewVisible = false;
         },
         removeTeamModalItem: (state: UIState) => {
@@ -105,8 +97,8 @@ export const {
     toggleCheckedOutTable,
     toggleReturnedTable,
     togglePendingTable,
-    setProductOverviewItem,
-    removeProductOverviewItem,
+    openProductOverview,
+    closeProductOverview,
     removeTeamModalItem,
     displaySnackbar,
     dismissSnackbar,
@@ -131,10 +123,6 @@ export const isPendingTableVisibleSelector = createSelector(
 export const snackbarSelector = createSelector(
     [uiSliceSelector],
     (uiSlice) => uiSlice.snackbars
-);
-export const hardwareBeingViewedSelector = createSelector(
-    [uiSliceSelector],
-    (uiSlice) => uiSlice.inventory.hardwareItemBeingViewed
 );
 export const isProductOverviewVisibleSelector = createSelector(
     [uiSliceSelector],
