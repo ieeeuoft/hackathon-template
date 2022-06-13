@@ -2,7 +2,7 @@ import React from "react";
 
 import TeamInfoTable from "components/teamDetail/TeamInfoTable/TeamInfoTable";
 
-import { RouteComponentProps, useHistory, useLocation } from "react-router-dom";
+import { RouteComponentProps } from "react-router-dom";
 import Header from "components/general/Header/Header";
 import { Grid, Paper, Table, TableContainer } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
@@ -12,9 +12,6 @@ export interface PageParams {
 }
 
 const TeamDetail = ({ match }: RouteComponentProps<PageParams>) => {
-    const history = useHistory();
-    const location = useLocation();
-
     return (
         <>
             <Header />
@@ -27,11 +24,7 @@ const TeamDetail = ({ match }: RouteComponentProps<PageParams>) => {
                 </Grid>
 
                 <Grid item container direction="row" spacing={2}>
-                    <TeamInfoTable
-                        match={match}
-                        history={history}
-                        location={location}
-                    />
+                    <TeamInfoTable />
                     <Grid container spacing={1} direction="column" item md={6} xs={12}>
                         <Grid item>
                             <Typography variant="h2">Dummy</Typography>

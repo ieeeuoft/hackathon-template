@@ -2,21 +2,11 @@ import React from "react";
 import { render, screen } from "testing/utils";
 import { mockTeamMultiple } from "testing/mockData";
 
-import { PageParams } from "pages/TeamDetail/TeamDetail";
 import TeamInfoTable from "components/teamDetail/TeamInfoTable/TeamInfoTable";
-import { RouteComponentProps } from "react-router-dom";
-
-const teamDetailProps = {
-    match: {
-        params: {
-            id: mockTeamMultiple.id.toString(),
-        },
-    },
-} as RouteComponentProps<PageParams>;
 
 describe("team info table", () => {
     test("renders team info table", () => {
-        const { container } = render(<TeamInfoTable {...teamDetailProps} />);
+        const { container } = render(<TeamInfoTable />);
         const checkboxes = container.getElementsByClassName("MuiCheckbox-root");
 
         expect(screen.getByText("Team info")).toBeInTheDocument();
