@@ -278,7 +278,7 @@ import { Grid } from "@material-ui/core";
 const TeamInfoBlock = () => {
     return (
         <div>
-            <Alert severity="info" icon={false}>
+            <Alert severity="info" icon={false} className={styles.alertBox}>
                 Team code:
                 <span className={styles.teamCode}> BIWL2 </span>
                 <Button color={"primary"}>
