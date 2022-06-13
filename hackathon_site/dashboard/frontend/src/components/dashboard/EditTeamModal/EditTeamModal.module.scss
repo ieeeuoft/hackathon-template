@@ -53,6 +53,7 @@
         margin-left: -50px;
         margin-bottom: -45px;
         padding: 30px 50px;
+        @include flexPosition($jusCon: space-between, $alIte: flex-end, $dir: column);
 
         @include responsive(sm-down) {
             width: calc(100% + 60px);
