@@ -1,5 +1,6 @@
 from django.db import transaction
 from django.db.models import Q
+from django.conf import settings
 
 from rest_framework import generics, mixins, status
 from rest_framework.exceptions import ValidationError, PermissionDenied
@@ -112,7 +113,7 @@ class JoinTeamView(generics.GenericAPIView, mixins.RetrieveModelMixin):
 
         team = self.get_object()
 
-        if team.profiles.count() >= EventTeam.MAX_MEMBERS:
+        if team.profiles.count() >= settings.MAX_MEMBERS:
             raise ValidationError({"detail": "Team is full"})
 
         active_orders = OrderItem.objects.filter(
