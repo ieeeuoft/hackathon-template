@@ -21,13 +21,16 @@ import {
     isCheckedOutTableVisibleSelector,
     isPendingTableVisibleSelector,
     isReturnedTableVisibleSelector,
-    setProductOverviewItem,
+    openProductOverview,
     toggleCheckedOutTable,
     togglePendingTable,
     toggleReturnedTable,
 } from "slices/ui/uiSlice";
-import { Hardware, OrderStatus } from "api/types";
-import { hardwareSelectors } from "slices/hardware/hardwareSlice";
+import { OrderStatus } from "api/types";
+import {
+    getUpdatedHardwareDetails,
+    hardwareSelectors,
+} from "slices/hardware/hardwareSlice";
 import hardwareImagePlaceholder from "assets/images/placeholders/no-hardware-image.svg";
 import {
     checkedOutOrdersSelector,
@@ -78,8 +81,10 @@ export const CheckedOutTable = () =>
         const isVisible = useSelector(isCheckedOutTableVisibleSelector);
         const fetchOrdersError = useSelector(orderErrorSelector);
         const toggleVisibility = () => dispatch(toggleCheckedOutTable());
-        const openProductOverview = (hardwareItem: Hardware | undefined) =>
-            hardwareItem ? dispatch(setProductOverviewItem(hardwareItem)) : null;
+        const openProductOverviewPanel = (hardwareId: number) => {
+            dispatch(getUpdatedHardwareDetails(hardwareId));
+            dispatch(openProductOverview());
+        };
 
         return (
             <Container
@@ -188,11 +193,11 @@ export const CheckedOutTable = () =>
                                                                 color="inherit"
                                                                 aria-label="Info"
                                                                 data-testid="info-button"
-                                                                onClick={() => {
-                                                                    openProductOverview(
-                                                                        hardware[row.id]
-                                                                    );
-                                                                }}
+                                                                onClick={() =>
+                                                                    openProductOverviewPanel(
+                                                                        row.id
+                                                                    )
+                                                                }
                                                             >
                                                                 <Info />
                                                             </IconButton>
