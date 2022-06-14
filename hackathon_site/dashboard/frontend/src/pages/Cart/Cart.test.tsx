@@ -9,7 +9,7 @@ import {
     fireEvent,
     within,
 } from "testing/utils";
-import { mockCartItems, mockHardware } from "testing/mockData";
+import { mockCartItems, mockHardware, mockValidTeam } from "testing/mockData";
 import { get, post } from "api/api";
 
 import Cart from "pages/Cart/Cart";
@@ -185,6 +185,7 @@ describe("Cart Page", () => {
         const store = makeStoreWithEntities({
             hardware: mockHardware,
             cartItems: mockCartItems,
+            team: { team: mockValidTeam },
         });
 
         const { getByTestId, queryByTestId } = render(<Cart />, { store });
@@ -230,7 +231,10 @@ describe("Cart Page", () => {
     });
 
     test("Checks if submit order button is disabled when cart is empty", async () => {
-        const store = makeStoreWithEntities({ hardware: mockHardware });
+        const store = makeStoreWithEntities({
+            hardware: mockHardware,
+            team: { team: mockValidTeam },
+        });
 
         const { getByTestId } = render(<Cart />, { store });
 

@@ -2,8 +2,10 @@ from collections import Counter
 import functools
 from django.db.models import Count, Q
 from django.core.exceptions import ObjectDoesNotExist
+from django.conf import settings
 from rest_framework import serializers
 
+from event.models import Profile
 from hardware.models import Hardware, Category, OrderItem, Order, Incident
 
 
@@ -67,7 +69,7 @@ class IncidentCreateSerializer(serializers.ModelSerializer):
         return obj.order_item.order.team.id
 
 
-class IncidentListSerializer(IncidentCreateSerializer):
+class IncidentSerializer(IncidentCreateSerializer):
     order_item = OrderItemSerializer()
 
 
@@ -198,6 +200,11 @@ class OrderCreateSerializer(serializers.Serializer):
             user_profile = self.context["request"].user.profile
         except ObjectDoesNotExist:
             raise serializers.ValidationError("User does not have profile")
+        team_size = Profile.objects.filter(team__exact=user_profile.team).count()
+        if team_size < settings.MIN_MEMBERS or team_size > settings.MAX_MEMBERS:
+            raise serializers.ValidationError(
+                "User's team does not meet team size criteria"
+            )
         # requested_hardware is a Counter where the keys are <Hardware Object>'s
         # and values are <Int>'s
         requested_hardware = self.merge_requests(hardware_requests=data["hardware"])
@@ -248,9 +255,6 @@ class OrderCreateSerializer(serializers.Serializer):
         return data
 
     def create(self, validated_data):
-
-        # make a copy of validated_data
-        validated_data_copy = validated_data.copy()
         # validated data should already satisfy all constraints
         requested_hardware = self.merge_requests(
             hardware_requests=validated_data["hardware"]
@@ -259,9 +263,12 @@ class OrderCreateSerializer(serializers.Serializer):
         new_order = None
         response_data = {"order_id": None, "hardware": [], "errors": []}
 
-        # The reason why doing this is because the id field stores the hardware object, django cannot translate hardware object into JSON. Therefore, loop has been used to call Hardware seriliazer and assign the JSON file to the validated_data filed.
-        for i, item in enumerate(validated_data_copy["hardware"]):
-            validated_data_copy["hardware"][i] = HardwareSerializer(item["id"]).data
+        # The reason why doing this is because the id field stores the hardware object, django cannot translate hardware object into JSON. Therefore, loop has been used to get the hardware id and quantity requested
+        serialized_requested_hardware = []
+        for (hardware, requested_quantity) in requested_hardware.items():
+            serialized_requested_hardware.append(
+                {"id": hardware.id, "requested_quantity": requested_quantity}
+            )
 
         order_items = []
         for (hardware, requested_quantity) in requested_hardware.items():
@@ -281,7 +288,7 @@ class OrderCreateSerializer(serializers.Serializer):
                 new_order = Order.objects.create(
                     team=self.context["request"].user.profile.team,
                     status="Submitted",
-                    request=validated_data_copy,
+                    request=serialized_requested_hardware,
                 )
                 response_data["order_id"] = new_order.id
             order_items += [
