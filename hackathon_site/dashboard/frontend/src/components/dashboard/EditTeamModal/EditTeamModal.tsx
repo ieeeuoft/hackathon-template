@@ -1,4 +1,5 @@
 import React from "react";
+import { useState } from "react";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
@@ -296,6 +297,11 @@ const TeamInfoBlock = ({ teamCode, canChangeTeam }: TeamModalProps) => {
 };
 
 const TeamChangeForm = ({ teamCode, canChangeTeam }: TeamModalProps) => {
+    const [value, setValue] = React.useState("");
+
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setValue(event.target.value);
+    };
     return (
         <>
             <Typography variant={"h2"} className={styles.heading}>
@@ -308,6 +314,8 @@ const TeamChangeForm = ({ teamCode, canChangeTeam }: TeamModalProps) => {
                             fullWidth={true}
                             label="Team code"
                             variant="outlined"
+                            value={value}
+                            onChange={handleChange}
                         />
                     </Grid>
                     <Grid item>
@@ -316,6 +324,7 @@ const TeamChangeForm = ({ teamCode, canChangeTeam }: TeamModalProps) => {
                             className={styles.teamButton}
                             variant="contained"
                             disabled={!canChangeTeam}
+                            onClick={() => alert(`The new teamcode is: ${value}`)}
                         >
                             SUBMIT
                         </Button>
