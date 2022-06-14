@@ -8,7 +8,7 @@ const Orders = () => {
         <>
             <Header />
             <Typography variant="h1">Orders</Typography>
-            <p>IEEEEE</p>
+            <p>IEEEEEE</p>
             {/*<EditTeamModal teamCode={"abced"} canChangeTeam={true} />*/}
         </>
     );
