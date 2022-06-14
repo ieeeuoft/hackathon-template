@@ -286,7 +286,10 @@ const TeamInfoBlock = ({ teamCode, canChangeTeam }: TeamModalProps) => {
             <Alert severity="info" icon={false} className={styles.alertBox}>
                 Team code:
                 <span className={styles.teamCode}> {teamCode} </span>
-                <Button color={"primary"}>
+                <Button
+                    color={"primary"}
+                    onClick={() => navigator.clipboard.writeText(teamCode)}
+                >
                     <FileCopyIcon fontSize={"small"} />
                     Copy
                 </Button>
