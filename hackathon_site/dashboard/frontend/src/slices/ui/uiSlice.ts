@@ -26,7 +26,7 @@ export const initialState: UIInitialState = {
         isCheckedOutTableVisible: true,
         isReturnedTableVisible: true,
         isPendingTableVisible: true,
-        isTeamModalVisible: true,
+        isTeamModalVisible: false,
     },
     inventory: {
         isProductOverviewVisible: false,
@@ -55,6 +55,9 @@ const uiSlice = createSlice({
         },
         closeProductOverview: (state: UIState) => {
             state.inventory.isProductOverviewVisible = false;
+        },
+        openTeamModalItem: (state: UIState) => {
+            state.dashboard.isTeamModalVisible = true;
         },
         removeTeamModalItem: (state: UIState) => {
             state.dashboard.isTeamModalVisible = false;
@@ -99,6 +102,7 @@ export const {
     togglePendingTable,
     openProductOverview,
     closeProductOverview,
+    openTeamModalItem,
     removeTeamModalItem,
     displaySnackbar,
     dismissSnackbar,
