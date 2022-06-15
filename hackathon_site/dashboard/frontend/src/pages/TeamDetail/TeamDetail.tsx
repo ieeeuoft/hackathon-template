@@ -1,6 +1,7 @@
 import React from "react";
 
 import TeamInfoTable from "components/teamDetail/TeamInfoTable/TeamInfoTable";
+import TeamActionTable from "components/teamDetail/TeamActionsTable/TeamActionTable";
 
 import { RouteComponentProps } from "react-router-dom";
 import Header from "components/general/Header/Header";
@@ -33,22 +34,7 @@ const TeamDetail = ({ match }: RouteComponentProps<PageParams>) => {
 
                 <Grid item container direction="row" spacing={2}>
                     <TeamInfoTable />
-                    <Grid container spacing={1} direction="column" item md={6} xs={12}>
-                        <Grid item>
-                            <Typography variant="h2">Dummy</Typography>
-                        </Grid>
-                        <Grid item>
-                            <TableContainer component={Paper}>
-                                <Table>
-                                    <TableBody>
-                                        <TableRow>
-                                            <TableCell>Dummy</TableCell>
-                                        </TableRow>
-                                    </TableBody>
-                                </Table>
-                            </TableContainer>
-                        </Grid>
-                    </Grid>
+                    <TeamActionTable />
                 </Grid>
             </Grid>
         </>
