@@ -86,3 +86,8 @@ export const post = <T>(uri: string, data?: any) => {
     uri = cleanURI(uri);
     return axios.post(`${SERVER_URL}/${uri}`, data, makeConfig());
 };
+
+export const patch = <T>(uri: string, data?: any) => {
+    uri = cleanURI(uri);
+    return axios.patch(`${SERVER_URL}/${uri}`, data, makeConfig());
+};

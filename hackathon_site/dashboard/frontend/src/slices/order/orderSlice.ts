@@ -6,7 +6,7 @@ import {
 } from "@reduxjs/toolkit";
 import { APIListResponse, Order, OrderInTable, ReturnOrderInTable } from "api/types";
 import { AppDispatch, RootState } from "slices/store";
-import { get } from "api/api";
+import { get, patch } from "api/api";
 import { teamOrderListSerialization } from "api/helpers";
 
 interface OrderExtraState {
@@ -56,6 +56,29 @@ export const getTeamOrders = createAsyncThunk<
     }
 });
 
+export const updateOrder = createAsyncThunk<
+    OrderInTable,
+    number,
+    { state: RootState; rejectValue: RejectValue; dispatch: AppDispatch }
+>(`${orderReducerName}/updateOrder`, async (order_id, { rejectWithValue }) => {
+    try {
+        const data = {
+            status: "Cancelled",
+            request: "string",
+        };
+        const response = await patch<APIListResponse<Order>>(
+            `/api/hardware/orders/${order_id}`,
+            data
+        );
+        return response.data;
+    } catch (e: any) {
+        return rejectWithValue({
+            status: e.response.status,
+            message: e.response.message ?? e.response.data,
+        });
+    }
+});
+
 const orderSlice = createSlice({
     name: orderReducerName,
     initialState,
@@ -88,6 +111,29 @@ const orderSlice = createSlice({
             state.error =
                 payload?.message ||
                 "There was a problem retrieving orders. If this continues please contact hackathon organizers.";
+        });
+
+        builder.addCase(updateOrder.pending, (state) => {
+            state.isLoading = true;
+            state.error = null;
+        });
+
+        builder.addCase(updateOrder.fulfilled, (state, { payload }) => {
+            state.isLoading = false;
+            state.error = null;
+            if (payload) {
+                pendingOrderAdapter.updateOne(state, {
+                    id: payload.id,
+                    changes: payload,
+                });
+            }
+        });
+
+        builder.addCase(updateOrder.rejected, (state, { payload }) => {
+            state.isLoading = false;
+            state.error =
+                payload?.message ||
+                "There was a problem cancelling orders. If this continues please contact hackathon organizers.";
         });
     },
 });

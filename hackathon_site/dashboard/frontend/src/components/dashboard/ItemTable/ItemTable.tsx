@@ -37,6 +37,7 @@ import {
     orderErrorSelector,
     pendingOrderSelectors,
     returnedOrdersSelector,
+    updateOrder,
 } from "slices/order/orderSlice";
 
 export const ChipStatus = ({ status }: { status: OrderStatus | "Error" }) => {
@@ -368,6 +369,7 @@ export const PendingTable = () => {
     const hardware = useSelector(hardwareSelectors.selectEntities);
     const isVisible = useSelector(isPendingTableVisibleSelector);
     const toggleVisibility = () => dispatch(togglePendingTable());
+    const cancelOrder = (orderId: number) => dispatch(updateOrder(orderId));
 
     return (
         <Container
@@ -465,6 +467,18 @@ export const PendingTable = () => {
                                 </TableBody>
                             </Table>
                         </TableContainer>
+                        <div className={styles.title}>
+                            <Typography
+                                variant="h2"
+                                className={styles.titleText}
+                            ></Typography>
+                            <Button
+                                onClick={() => cancelOrder(pendingOrder.id)}
+                                color="secondary"
+                            >
+                                {isVisible ? "Cancel order" : ""}
+                            </Button>
+                        </div>
                     </div>
                 ))}
         </Container>
