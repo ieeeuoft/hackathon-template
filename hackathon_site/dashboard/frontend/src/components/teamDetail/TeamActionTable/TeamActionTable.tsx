@@ -67,6 +67,7 @@ const TeamActionTable = () => {
                                 <TableCell className={styles.actionItem}>
                                     <Button
                                         className={styles.button}
+                                        title="delete"
                                         startIcon={
                                             <DeleteIcon className={styles.icon} />
                                         }

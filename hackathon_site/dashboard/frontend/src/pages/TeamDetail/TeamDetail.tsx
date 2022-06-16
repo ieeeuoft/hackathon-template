@@ -1,7 +1,7 @@
 import React from "react";
 
 import TeamInfoTable from "components/teamDetail/TeamInfoTable/TeamInfoTable";
-import TeamActionTable from "components/teamDetail/TeamActionsTable/TeamActionTable";
+import TeamActionTable from "components/teamDetail/TeamActionTable/TeamActionTable";
 
 import { RouteComponentProps } from "react-router-dom";
 import Header from "components/general/Header/Header";

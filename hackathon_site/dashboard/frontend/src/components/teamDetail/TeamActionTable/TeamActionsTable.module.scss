@@ -1,0 +1,15 @@
+@use "../../../assets/abstracts/variables";
+
+.button {
+    text-transform: none;
+    font-weight: 400;
+}
+
+.actionItem {
+    padding: 11px;
+    border-bottom: none;
+}
+
+.icon {
+    color: variables.color(grey);
+}
