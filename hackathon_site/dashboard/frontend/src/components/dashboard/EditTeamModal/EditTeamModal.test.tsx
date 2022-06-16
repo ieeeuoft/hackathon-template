@@ -34,7 +34,7 @@ describe("<EditTeamModal />", () => {
         });
 
         const { getByText } = render(
-            <EditTeamModal teamCode={"ABCDE"} canChangeTeam={false} />,
+            <EditTeamModal teamCode={"ABCDE"} canChangeTeam={false} teamSize={1} />,
             {
                 store,
             }
@@ -53,7 +53,7 @@ describe("<EditTeamModal />", () => {
             },
         });
         const { getByText } = render(
-            <EditTeamModal teamCode={"ABCDE"} canChangeTeam={false} />,
+            <EditTeamModal teamCode={"ABCDE"} canChangeTeam={false} teamSize={1} />,
             {
                 store,
             }
@@ -75,7 +75,7 @@ describe("<EditTeamModal />", () => {
             },
         });
         const { getByText } = render(
-            <EditTeamModal teamCode={"ABCDE"} canChangeTeam={true} />,
+            <EditTeamModal teamCode={"ABCDE"} canChangeTeam={true} teamSize={1} />,
             {
                 store,
             }
