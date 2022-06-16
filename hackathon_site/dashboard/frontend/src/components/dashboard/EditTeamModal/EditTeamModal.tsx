@@ -289,7 +289,7 @@ const TeamInfoBlock = ({ teamCode, canChangeTeam, teamSize }: TeamModalProps) =>
         <div>
             <Alert severity="info" icon={false} className={styles.alertBox}>
                 Team code:
-                <span className={styles.teamCode}> {teamCode} </span>
+                <strong> {teamCode} </strong>
                 <Button
                     color={"primary"}
                     onClick={() => navigator.clipboard.writeText(teamCode)}
