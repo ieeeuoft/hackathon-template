@@ -68,6 +68,7 @@ const Dashboard = () => {
     return (
         <>
             <Header />
+            <ProductOverview showAddToCartButton />
             <EditTeamModal
                 teamCode={team_code == null ? "None" : team_code}
                 canChangeTeam={true}
