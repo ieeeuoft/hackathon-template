@@ -21,7 +21,6 @@ import {
     getTeamOrders,
     hardwareInOrdersSelector,
     orderErrorSelector,
-    pendingOrderSelectors,
 } from "slices/order/orderSlice";
 import { getHardwareWithFilters, setFilters } from "slices/hardware/hardwareSlice";
 import { getCategories } from "slices/hardware/categorySlice";
@@ -32,7 +31,6 @@ const Dashboard = () => {
     const isTeamLoading = useSelector(isLoadingSelector);
     const orderFulfillmentError = useSelector(fulfillmentErrorSelector);
     const fetchOrderError = useSelector(orderErrorSelector);
-    const pendingOrders = useSelector(pendingOrderSelectors.selectAll);
     const hardwareInOrders = useSelector(hardwareInOrdersSelector);
 
     useEffect(() => {
@@ -46,7 +44,7 @@ const Dashboard = () => {
             dispatch(setFilters({ hardware_ids: hardwareInOrders }));
             dispatch(getHardwareWithFilters());
         }
-    }, [dispatch, hardwareInOrders, pendingOrders]);
+    }, [dispatch, hardwareInOrders]);
 
     return (
         <>

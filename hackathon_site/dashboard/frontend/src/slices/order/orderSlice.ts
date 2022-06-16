@@ -4,24 +4,16 @@ import {
     createSelector,
     createSlice,
 } from "@reduxjs/toolkit";
-import {
-    APIListResponse,
-    Order,
-    OrderInTable,
-    OrderStatus,
-    PartReturnedHealth,
-    ReturnOrderInTable,
-} from "api/types";
+import { APIListResponse, Order, OrderInTable, ReturnOrderInTable } from "api/types";
 import { AppDispatch, RootState } from "slices/store";
 import { get, patch } from "api/api";
 import { teamOrderListSerialization } from "api/helpers";
-import { displaySnackbar } from "../ui/uiSlice";
+import { displaySnackbar } from "slices/ui/uiSlice";
 
 interface OrderExtraState {
     isLoading: boolean;
     cancelOrderLoading: boolean;
     error: string | null;
-    cancelOrderError: string | null;
     next: string | null;
     hardwareInOrders: number[] | null;
     returnedOrders: ReturnOrderInTable[];
@@ -32,7 +24,6 @@ const extraState: OrderExtraState = {
     isLoading: false,
     cancelOrderLoading: false,
     error: null,
-    cancelOrderError: null,
     next: null,
     hardwareInOrders: null,
     returnedOrders: [],
@@ -68,50 +59,32 @@ export const getTeamOrders = createAsyncThunk<
     }
 });
 
-export interface PatchOrderResponse {
-    id: number;
-    items: [
-        {
-            id: number;
-            hardware_id: string;
-            part_returned_health: PartReturnedHealth | null;
-        }
-    ];
-    team_id: string;
-    team_code: string;
-    status: OrderStatus;
-    created_at: string;
-    updated_at: string;
-    request: {
-        id: number;
-        requested_quantity: number;
-    }[];
-}
-
 export const cancelOrderThunk = createAsyncThunk<
-    PatchOrderResponse,
+    Order,
     number,
     { state: RootState; rejectValue: RejectValue; dispatch: AppDispatch }
->(`${orderReducerName}/updateOrder`, async (orderId, { dispatch, rejectWithValue }) => {
-    try {
-        const response = await patch<PatchOrderResponse>(
-            `/api/hardware/orders/${orderId}`,
-            { status: "Cancelled" }
-        );
-        return response.data;
-    } catch (e: any) {
-        dispatch(
-            displaySnackbar({
-                message: `There was a problem retrieving orders. If this continues please contact hackathon organizers.`,
-                options: { variant: "error" },
-            })
-        );
-        return rejectWithValue({
-            status: e.response.status,
-            message: e.response.message ?? e.response.data,
-        });
+>(
+    `${orderReducerName}/cancelOrderThunk`,
+    async (orderId, { dispatch, rejectWithValue }) => {
+        try {
+            const response = await patch<Order>(`/api/hardware/orders/${orderId}`, {
+                status: "Cancelled",
+            });
+            return response.data;
+        } catch (e: any) {
+            dispatch(
+                displaySnackbar({
+                    message: `There was a problem retrieving orders. If this continues please contact hackathon organizers.`,
+                    options: { variant: "error" },
+                })
+            );
+            return rejectWithValue({
+                status: e.response.status,
+                message: e.response.message ?? e.response.data,
+            });
+        }
     }
-});
+);
 
 const orderSlice = createSlice({
     name: orderReducerName,
@@ -149,12 +122,10 @@ const orderSlice = createSlice({
 
         builder.addCase(cancelOrderThunk.pending, (state) => {
             state.cancelOrderLoading = true;
-            state.cancelOrderError = null;
         });
 
         builder.addCase(cancelOrderThunk.fulfilled, (state, { payload }) => {
             state.cancelOrderLoading = false;
-            state.cancelOrderError = null;
             if (payload) {
                 pendingOrderAdapter.removeOne(state, {
                     payload: payload.id,
@@ -165,9 +136,6 @@ const orderSlice = createSlice({
 
         builder.addCase(cancelOrderThunk.rejected, (state, { payload }) => {
             state.isLoading = false;
-            state.cancelOrderError =
-                payload?.message ||
-                "There was a problem cancelling orders. If this continues please contact hackathon organizers.";
         });
     },
 });
@@ -204,4 +172,9 @@ export const returnedOrdersSelector = createSelector(
 export const hardwareInOrdersSelector = createSelector(
     [orderSliceSelector],
     (orderSlice) => orderSlice.hardwareInOrders
+);
+
+export const cancelOrderLoadingSelector = createSelector(
+    [orderSliceSelector],
+    (orderSlice) => orderSlice.cancelOrderLoading
 );
