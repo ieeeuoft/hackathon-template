@@ -19,6 +19,12 @@
 .alertBox {
     margin-top: 10px;
     width: 70%;
+    @include responsive(sm-down) {
+        // change the width to suit mobile screens here (width: 100% usually is the best)
+        // you can use md-down (medium-sized screens) and xs-down (extra small screens) too,
+        //play around with the width and use chrome dev tools to make sure it's responsive
+        width: 100%;
+    }
 }
 
 .editTeamModal {
@@ -27,6 +33,13 @@
     @include flexPosition($jusCon: space-between, $alIte: flex-start, $dir: column);
 
     &Div {
+        width: 100%;
+    }
+
+    @include responsive(sm-down) {
+        // change the width to suit mobile screens here (width: 100% usually is the best)
+        // you can use md-down (medium-sized screens) and xs-down (extra small screens) too,
+        //play around with the width and use chrome dev tools to make sure it's responsive
         width: 100%;
     }
 }
