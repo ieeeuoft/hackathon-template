@@ -19,7 +19,7 @@ import {
     displaySnackbar,
     isProductOverviewVisibleSelector,
     isTeamModalVisibleSelector,
-    removeTeamModalItem,
+    closeTeamModalItem,
 } from "slices/ui/uiSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { selectCategoriesByIds } from "slices/hardware/categorySlice";
@@ -354,7 +354,7 @@ export const EditTeamModal = ({ teamCode, canChangeTeam, teamSize }: TeamModalPr
         // let constraints: string[] = [];
         //
         const dispatch = useDispatch();
-        const closeTeamModal = () => dispatch(removeTeamModalItem());
+        const closeTeamModal = () => dispatch(closeTeamModalItem());
         //
         const isTeamModalVisible: boolean = useSelector(isTeamModalVisibleSelector);
 

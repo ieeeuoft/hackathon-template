@@ -59,7 +59,7 @@ const uiSlice = createSlice({
         openTeamModalItem: (state: UIState) => {
             state.dashboard.isTeamModalVisible = true;
         },
-        removeTeamModalItem: (state: UIState) => {
+        closeTeamModalItem: (state: UIState) => {
             state.dashboard.isTeamModalVisible = false;
         },
         displaySnackbar: (state: UIState, { payload: { message, options = {} } }) => {
@@ -103,7 +103,7 @@ export const {
     openProductOverview,
     closeProductOverview,
     openTeamModalItem,
-    removeTeamModalItem,
+    closeTeamModalItem,
     displaySnackbar,
     dismissSnackbar,
     removeSnackbar,
