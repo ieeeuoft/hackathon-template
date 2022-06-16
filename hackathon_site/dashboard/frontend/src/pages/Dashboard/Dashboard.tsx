@@ -46,11 +46,7 @@ const Dashboard = () => {
             dispatch(setFilters({ hardware_ids: hardwareInOrders }));
             dispatch(getHardwareWithFilters());
         }
-    }, [dispatch, hardwareInOrders]);
-
-    useEffect(() => {
-        dispatch(getTeamOrders());
-    }, [pendingOrders]);
+    }, [dispatch, hardwareInOrders, pendingOrders]);
 
     return (
         <>
