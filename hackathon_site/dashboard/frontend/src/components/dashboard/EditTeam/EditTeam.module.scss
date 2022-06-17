@@ -49,7 +49,7 @@
     width: 100%;
 
     &Control {
-        margin: 20px 0;
+        margin: 10px 0;
         width: 120px;
     }
 
@@ -64,7 +64,7 @@
         @include responsive(sm-down) {
             width: calc(100% + 60px);
             margin-left: -30px;
-            margin-bottom: -25px;
+            margin-bottom: -15px;
             padding: 20px 30px;
         }
     }
