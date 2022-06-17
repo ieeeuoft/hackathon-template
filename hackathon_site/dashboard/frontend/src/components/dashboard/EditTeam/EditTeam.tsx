@@ -51,7 +51,7 @@ const TeamChangeForm = ({ teamCode, canChangeTeam }: TeamModalProps) => {
             </Typography>
             <form noValidate autoComplete="off" className={styles.teamForm}>
                 <Grid container spacing={3}>
-                    <Grid item xs={8} spacing={3}>
+                    <Grid item xs={8}>
                         <TextField
                             fullWidth={true}
                             label="Team code"
