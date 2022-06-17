@@ -33,6 +33,7 @@ const TeamActionTable = () => {
                                         className={styles.button}
                                         startIcon={<NotificationImportantIcon />}
                                         disabled
+                                        fullWidth
                                         size="large"
                                     >
                                         Notify team to come to table to resolve issue
@@ -45,6 +46,7 @@ const TeamActionTable = () => {
                                         className={styles.button}
                                         startIcon={<CallSplitIcon />}
                                         disabled
+                                        fullWidth
                                         size="large"
                                     >
                                         Split team
@@ -57,6 +59,7 @@ const TeamActionTable = () => {
                                         className={styles.button}
                                         startIcon={<MergeTypeIcon />}
                                         disabled
+                                        fullWidth
                                         size="large"
                                     >
                                         Merge team
@@ -67,6 +70,7 @@ const TeamActionTable = () => {
                                 <TableCell className={styles.actionItem}>
                                     <Button
                                         className={styles.button}
+                                        fullWidth
                                         title="delete"
                                         startIcon={
                                             <DeleteIcon className={styles.icon} />
