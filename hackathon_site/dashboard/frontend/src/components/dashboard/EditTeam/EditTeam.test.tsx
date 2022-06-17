@@ -87,28 +87,4 @@ describe("<EditTeam />", () => {
         const button_leave_team = getByText("LEAVE TEAM").closest("button");
         expect(button_leave_team).not.toBeDisabled();
     });
-
-    // test("Whether the copy function works or not", async () => {
-    //     const store = makeStoreWithEntities({
-    //         ui: {
-    //             dashboard: {
-    //                 isTeamModalVisible: true,
-    //             },
-    //         },
-    //     });
-    //     const { getByText } = render(
-    //         <EditTeam teamCode={"ABCDE"} canChangeTeam={true} />,
-    //         {
-    //             store,
-    //         }
-    //     );
-    //
-    //     const button = getByText("Copy");
-    //
-    //     await waitFor(() => {
-    //         fireEvent.click(button);
-    //     });
-    //     let text = navigator.clipboard.readText();
-    //     expect(text).toEqual("ABCDE");
-    // });
 });

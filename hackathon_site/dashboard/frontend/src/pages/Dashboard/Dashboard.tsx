@@ -99,7 +99,7 @@ const Dashboard = () => {
                             key={0}
                             data-testid="team"
                         >
-                            <TeamCard handleEditTeam={() => openEditTeamModal()} />
+                            <TeamCard handleEditTeam={openEditTeamModal} />
                         </Grid>
                         {cardItems.map(({ title, content }, i) => (
                             <Grid
