@@ -14,7 +14,7 @@ import SideSheetRight from "components/general/SideSheetRight/SideSheetRight";
 import * as Yup from "yup";
 import { Formik, FormikValues } from "formik";
 
-import styles from "./EditTeamModal.module.scss";
+import styles from "./EditTeam.module.scss";
 import {
     displaySnackbar,
     isProductOverviewVisibleSelector,
@@ -342,7 +342,7 @@ const TeamChangeForm = ({ teamCode, canChangeTeam }: TeamModalProps) => {
     );
 };
 
-export const EditTeamModal = ({ teamCode, canChangeTeam, teamSize }: TeamModalProps) =>
+export const EditTeam = ({ teamCode, canChangeTeam, teamSize }: TeamModalProps) =>
     //{
     //     showAddToCartButton,
     // }: {
@@ -485,4 +485,4 @@ export const EditTeamModal = ({ teamCode, canChangeTeam, teamSize }: TeamModalPr
         );
     };
 
-export default EditTeamModal;
+export default EditTeam;

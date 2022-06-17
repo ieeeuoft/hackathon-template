@@ -35,7 +35,7 @@ import {
 import { getCategories } from "slices/hardware/categorySlice";
 import AlertBox from "components/general/AlertBox/AlertBox";
 import { openTeamModalItem } from "../../slices/ui/uiSlice";
-import EditTeamModal from "../../components/dashboard/EditTeamModal/EditTeamModal";
+import EditTeam from "../../components/dashboard/EditTeam/EditTeam";
 import { Edit } from "@material-ui/icons";
 
 const Dashboard = () => {
@@ -69,7 +69,7 @@ const Dashboard = () => {
         <>
             <Header />
             <ProductOverview showAddToCartButton />
-            <EditTeamModal
+            <EditTeam
                 teamCode={team_code == null ? "None" : team_code}
                 canChangeTeam={true}
                 teamSize={team_size}

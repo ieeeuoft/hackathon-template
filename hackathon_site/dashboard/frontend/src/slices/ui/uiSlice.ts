@@ -7,7 +7,7 @@ interface UIInitialState {
         isCheckedOutTableVisible: boolean;
         isReturnedTableVisible: boolean;
         isPendingTableVisible: boolean;
-        isTeamModalVisible: boolean;
+        isEditTeamVisible: boolean;
     };
     inventory: {
         isProductOverviewVisible: boolean;
@@ -26,7 +26,7 @@ export const initialState: UIInitialState = {
         isCheckedOutTableVisible: true,
         isReturnedTableVisible: true,
         isPendingTableVisible: true,
-        isTeamModalVisible: false,
+        isEditTeamVisible: false,
     },
     inventory: {
         isProductOverviewVisible: false,
@@ -57,10 +57,10 @@ const uiSlice = createSlice({
             state.inventory.isProductOverviewVisible = false;
         },
         openTeamModalItem: (state: UIState) => {
-            state.dashboard.isTeamModalVisible = true;
+            state.dashboard.isEditTeamVisible = true;
         },
         closeTeamModalItem: (state: UIState) => {
-            state.dashboard.isTeamModalVisible = false;
+            state.dashboard.isEditTeamVisible = false;
         },
         displaySnackbar: (state: UIState, { payload: { message, options = {} } }) => {
             if (!options.key) {
@@ -134,5 +134,5 @@ export const isProductOverviewVisibleSelector = createSelector(
 );
 export const isTeamModalVisibleSelector = createSelector(
     [uiSliceSelector],
-    (uiSlice) => uiSlice.dashboard.isTeamModalVisible
+    (uiSlice) => uiSlice.dashboard.isEditTeamVisible
 );

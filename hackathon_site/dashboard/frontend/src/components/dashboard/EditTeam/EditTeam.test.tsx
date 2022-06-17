@@ -1,5 +1,5 @@
 import React from "react";
-import EditTeamModal from "./EditTeamModal";
+import EditTeam from "./EditTeam";
 import { mockCartItems, mockCategories, mockHardware } from "testing/mockData";
 import {
     render,
@@ -23,18 +23,18 @@ jest.mock("api/api", () => ({
 }));
 const mockedGet = get as jest.MockedFunction<typeof get>;
 
-describe("<EditTeamModal />", () => {
+describe("<EditTeam />", () => {
     test("The team code is correctly displayed", async () => {
         const store = makeStoreWithEntities({
             ui: {
                 dashboard: {
-                    isTeamModalVisible: true,
+                    isEditTeamVisible: true,
                 },
             },
         });
 
         const { getByText } = render(
-            <EditTeamModal teamCode={"ABCDE"} canChangeTeam={false} teamSize={1} />,
+            <EditTeam teamCode={"ABCDE"} canChangeTeam={false} teamSize={1} />,
             {
                 store,
             }
@@ -48,12 +48,12 @@ describe("<EditTeamModal />", () => {
         const store = makeStoreWithEntities({
             ui: {
                 dashboard: {
-                    isTeamModalVisible: true,
+                    isEditTeamVisible: true,
                 },
             },
         });
         const { getByText } = render(
-            <EditTeamModal teamCode={"ABCDE"} canChangeTeam={false} teamSize={1} />,
+            <EditTeam teamCode={"ABCDE"} canChangeTeam={false} teamSize={1} />,
             {
                 store,
             }
@@ -70,12 +70,12 @@ describe("<EditTeamModal />", () => {
         const store = makeStoreWithEntities({
             ui: {
                 dashboard: {
-                    isTeamModalVisible: true,
+                    isEditTeamVisible: true,
                 },
             },
         });
         const { getByText } = render(
-            <EditTeamModal teamCode={"ABCDE"} canChangeTeam={true} teamSize={1} />,
+            <EditTeam teamCode={"ABCDE"} canChangeTeam={true} teamSize={1} />,
             {
                 store,
             }
@@ -97,7 +97,7 @@ describe("<EditTeamModal />", () => {
     //         },
     //     });
     //     const { getByText } = render(
-    //         <EditTeamModal teamCode={"ABCDE"} canChangeTeam={true} />,
+    //         <EditTeam teamCode={"ABCDE"} canChangeTeam={true} />,
     //         {
     //             store,
     //         }
