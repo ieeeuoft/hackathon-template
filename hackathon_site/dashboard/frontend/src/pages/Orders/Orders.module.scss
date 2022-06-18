@@ -1,0 +1,87 @@
+@import "./../../assets/abstracts/variables";
+@import "./../../assets/abstracts/mixins";
+
+.orders {
+    display: flex;
+    flex-direction: column;
+    max-width: 1800px;
+    width: 100%;
+
+    &Body {
+        display: flex;
+        // width: auto;
+
+        &Title {
+            align-items: center;
+        }
+
+        &Toolbar {
+            @include flexPosition($jusCon: flex-end);
+            width: 100%;
+
+            &Div {
+                @include flexPosition($jusCon: space-between, $alIte: center);
+                width: auto;
+            }
+
+            &Search {
+                background-color: white;
+                width: 250px;
+            }
+
+            &IconButton {
+                margin: 2px;
+            }
+
+            &Divider {
+                margin: 0 10px;
+            }
+
+            &Refresh {
+                @include flexPosition($jusCon: space-between, $alIte: center);
+                white-space: nowrap;
+            }
+        }
+
+        @include responsive(sm-down) {
+            &Toolbar {
+                flex-direction: column;
+                margin-bottom: 5px;
+            }
+
+            &Div {
+                width: 100%;
+            }
+
+            &Div:last-child {
+                margin: 10px 0;
+            }
+
+            &Divider {
+                display: none;
+            }
+
+            &Refresh {
+                margin-left: 0;
+            }
+        }
+
+        @include responsive(md-down) {
+            margin-top: 15px;
+
+            &Toolbar {
+                &Refresh {
+                    margin-left: 20px;
+                }
+
+                &Search {
+                    width: 100%;
+                }
+
+                &Div:nth-child(1) {
+                    width: 100%;
+                }
+            }
+        }
+    }
+}
