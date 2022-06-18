@@ -1,11 +1,11 @@
 import React from "react";
 import Header from "components/general/Header/Header";
 import Typography from "@material-ui/core/Typography";
+import { Divider, Grid } from "@material-ui/core";
 import OrdersSearch from "components/Orders/OrdersSearch/OrdersSearch";
-import { Divider, Grid, IconButton } from "@material-ui/core";
+import OrdersFilter from "components/Orders/OrdersFilter/OrdersFilter";
+import OrdersCount from "components/Orders/OrdersCount/OrdersCount";
 import styles from "./Orders.module.scss";
-import FilterListIcon from "@material-ui/icons/FilterList";
-import RefreshIcon from "@material-ui/icons/Refresh";
 
 const Orders = () => {
     return (
@@ -29,26 +29,8 @@ const Orders = () => {
                             />
 
                             <div className={styles.ordersBodyToolbarDiv}>
-                                <IconButton
-                                    color="primary"
-                                    aria-label="Search"
-                                    // onClick={handleSubmit}
-                                    data-testid="search-button"
-                                >
-                                    <FilterListIcon color="primary" />
-                                </IconButton>
-
-                                <div className={styles.ordersBodyToolbarRefresh}>
-                                    <Typography variant="body2">2 results</Typography>
-                                    <IconButton
-                                        color="primary"
-                                        aria-label="Refresh"
-                                        // onClick={refreshHardware}
-                                        data-testid="refreshInventory"
-                                    >
-                                        <RefreshIcon />
-                                    </IconButton>
-                                </div>
+                                <OrdersFilter />
+                                <OrdersCount />
                             </div>
                         </div>
                     </Grid>

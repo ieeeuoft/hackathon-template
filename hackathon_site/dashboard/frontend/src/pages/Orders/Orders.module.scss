@@ -3,21 +3,24 @@
 
 .orders {
     display: flex;
-    flex-direction: column;
     max-width: 1800px;
     width: 100%;
+    flex-direction: column;
 
     &Body {
         display: flex;
-        // width: auto;
+        width: auto;
 
         &Title {
+            font-size: 45px;
             align-items: center;
+            margin: 0 25px 25px 0;
         }
 
         &Toolbar {
             @include flexPosition($jusCon: flex-end);
             width: 100%;
+            margin-bottom: 25px;
 
             &Div {
                 @include flexPosition($jusCon: space-between, $alIte: center);
@@ -44,6 +47,8 @@
         }
 
         @include responsive(sm-down) {
+            flex-direction: column;
+
             &Toolbar {
                 flex-direction: column;
                 margin-bottom: 5px;
@@ -68,6 +73,7 @@
 
         @include responsive(md-down) {
             margin-top: 15px;
+            flex-direction: column;
 
             &Toolbar {
                 &Refresh {
