@@ -88,7 +88,7 @@ class ApplicationResource(resources.ModelResource):
 
 @admin.register(Application)
 class ApplicationAdmin(ExportMixin, admin.ModelAdmin):
-    change_list_template = 'application/change_list.html'
+    change_list_template = "application/change_list.html"
     resource_class = ApplicationResource
     autocomplete_fields = ("user", "team")
     list_display = ("get_full_name", "team", "school")
