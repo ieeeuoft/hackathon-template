@@ -14,6 +14,7 @@ import {
     TableCell,
 } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
+import TeamPendingOrderTable from "../../components/teamDetail/TeamPendingOrderTable/TeamPendingOrderTable";
 
 export interface PageParams {
     id: string;
@@ -49,6 +50,9 @@ const TeamDetail = ({ match }: RouteComponentProps<PageParams>) => {
                             </TableContainer>
                         </Grid>
                     </Grid>
+                </Grid>
+                <Grid item>
+                    <TeamPendingOrderTable />
                 </Grid>
             </Grid>
         </>
