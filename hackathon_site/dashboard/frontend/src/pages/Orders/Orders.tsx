@@ -2,9 +2,9 @@ import React from "react";
 import Header from "components/general/Header/Header";
 import Typography from "@material-ui/core/Typography";
 import { Divider, Grid } from "@material-ui/core";
-import OrdersSearch from "components/Orders/OrdersSearch/OrdersSearch";
-import OrdersFilter from "components/Orders/OrdersFilter/OrdersFilter";
-import OrdersCount from "components/Orders/OrdersCount/OrdersCount";
+import OrdersSearch from "components/orders/OrdersSearch/OrdersSearch";
+import OrdersFilter from "components/orders/OrdersFilter/OrdersFilter";
+import OrdersCount from "components/orders/OrdersCount/OrdersCount";
 import styles from "./Orders.module.scss";
 
 const Orders = () => {
