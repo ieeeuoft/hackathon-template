@@ -32,7 +32,13 @@ const TeamDetail = ({ match }: RouteComponentProps<PageParams>) => {
                     </Typography>
                 </Grid>
 
-                <Grid item container direction="row" justifyContent="space-between">
+                <Grid
+                    item
+                    container
+                    spacing={1}
+                    direction="row"
+                    justifyContent="space-between"
+                >
                     <TeamInfoTable />
                     <TeamActionTable />
                 </Grid>

@@ -23,71 +23,73 @@ const TeamActionTable = () => {
             <Grid item>
                 <Typography variant="h2">Actions</Typography>
             </Grid>
-            <Grid item>
-                <TableContainer component={Paper}>
-                    <Table>
-                        <TableBody>
-                            <TableRow>
-                                <TableCell className={styles.actionItem}>
-                                    <Button
-                                        className={styles.button}
-                                        startIcon={<NotificationImportantIcon />}
-                                        disabled
-                                        fullWidth
-                                        size="large"
-                                    >
-                                        Notify team to come to table to resolve issue
-                                    </Button>
-                                </TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell className={styles.actionItem}>
-                                    <Button
-                                        className={styles.button}
-                                        startIcon={<CallSplitIcon />}
-                                        disabled
-                                        fullWidth
-                                        size="large"
-                                    >
-                                        Split team
-                                    </Button>
-                                </TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell className={styles.actionItem}>
-                                    <Button
-                                        className={styles.button}
-                                        startIcon={<MergeTypeIcon />}
-                                        disabled
-                                        fullWidth
-                                        size="large"
-                                    >
-                                        Merge team
-                                    </Button>
-                                </TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell className={styles.actionItem}>
-                                    <Button
-                                        className={styles.button}
-                                        fullWidth
-                                        title="delete"
-                                        startIcon={
-                                            <DeleteIcon className={styles.icon} />
-                                        }
-                                        size="large"
-                                        onClick={() => {
-                                            alert("Team successfully deleted");
-                                        }}
-                                    >
-                                        Delete team
-                                    </Button>
-                                </TableCell>
-                            </TableRow>
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-            </Grid>
+            <TableContainer component={Paper}>
+                <Table
+                    size="small"
+                    style={{
+                        minWidth: 360,
+                        height: 256.8,
+                    }}
+                >
+                    <TableBody>
+                        <TableRow>
+                            <TableCell className={styles.actionItem}>
+                                <Button
+                                    className={styles.button}
+                                    startIcon={<NotificationImportantIcon />}
+                                    disabled
+                                    fullWidth
+                                    size="large"
+                                >
+                                    Notify team to come to table to resolve issue
+                                </Button>
+                            </TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell className={styles.actionItem}>
+                                <Button
+                                    className={styles.button}
+                                    startIcon={<CallSplitIcon />}
+                                    disabled
+                                    fullWidth
+                                    size="large"
+                                >
+                                    Split team
+                                </Button>
+                            </TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell className={styles.actionItem}>
+                                <Button
+                                    className={styles.button}
+                                    startIcon={<MergeTypeIcon />}
+                                    disabled
+                                    fullWidth
+                                    size="large"
+                                >
+                                    Merge team
+                                </Button>
+                            </TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell className={styles.actionItem}>
+                                <Button
+                                    className={styles.button}
+                                    fullWidth
+                                    title="delete"
+                                    startIcon={<DeleteIcon className={styles.icon} />}
+                                    size="large"
+                                    onClick={() => {
+                                        alert("Team successfully deleted");
+                                    }}
+                                >
+                                    Delete team
+                                </Button>
+                            </TableCell>
+                        </TableRow>
+                    </TableBody>
+                </Table>
+            </TableContainer>
         </Grid>
     );
 };
