@@ -12,7 +12,7 @@ const OrdersCount = ({ refreshOrders }: FormikValues) => {
                 color="primary"
                 aria-label="Refresh"
                 onClick={refreshOrders}
-                data-testid="refreshInventory"
+                data-testid="refreshOrders"
             >
                 <RefreshIcon />
             </IconButton>

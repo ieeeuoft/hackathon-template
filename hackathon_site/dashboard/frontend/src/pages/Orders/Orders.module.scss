@@ -9,7 +9,9 @@
 
     &Body {
         display: flex;
-        width: auto;
+        width: 100%;
+        justify-content: flex-end;
+        align-content: center;
 
         &Title {
             font-size: 45px;

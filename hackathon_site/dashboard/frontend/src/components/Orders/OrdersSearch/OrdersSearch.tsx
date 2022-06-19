@@ -6,11 +6,11 @@ import SearchIcon from "@material-ui/icons/Search";
 import styles from "pages/Orders/Orders.module.scss";
 
 const OrdersSearch = ({
+    // values: { search },
     handleChange,
     handleReset,
     handleSubmit,
-}: // values: { search },
-FormikValues) => {
+}: FormikValues) => {
     return (
         <form onReset={handleReset} onSubmit={handleSubmit} autoComplete="off">
             <Box display="flex" flexDirection="row">

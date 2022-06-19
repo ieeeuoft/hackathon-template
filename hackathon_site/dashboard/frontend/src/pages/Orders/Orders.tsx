@@ -12,7 +12,7 @@ const Orders = () => {
         <>
             <Header />
             <div className={styles.orders}>
-                <Grid container spacing={2} className={styles.ordersBody}>
+                <Grid container className={styles.ordersBody}>
                     <Grid item md={8} xl={10} xs={10} className={styles.ordersBody}>
                         <Typography variant="h1" className={styles.ordersBodyTitle}>
                             Orders
@@ -25,6 +25,7 @@ const Orders = () => {
                             <Divider
                                 orientation="vertical"
                                 className={styles.ordersBodyToolbarDivider}
+                                data-testid="ordersCountDivider"
                                 flexItem
                             />
 

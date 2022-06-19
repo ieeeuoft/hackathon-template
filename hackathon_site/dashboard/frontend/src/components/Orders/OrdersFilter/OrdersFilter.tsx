@@ -8,9 +8,9 @@ const OrdersFilter = ({ handleSubmit }: FormikValues) => {
         <>
             <IconButton
                 color="primary"
-                aria-label="Search"
+                aria-label="Filter"
                 onClick={handleSubmit}
-                data-testid="search-button"
+                data-testid="filter-button"
             >
                 <FilterListIcon color="primary" />
             </IconButton>
