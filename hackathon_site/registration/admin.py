@@ -1,7 +1,10 @@
+import json
+
 from django.contrib import admin
 from import_export import resources
 from import_export.admin import ExportMixin
 
+from hackathon_site import settings
 from registration.models import Application, Team as TeamApplied
 
 
@@ -85,6 +88,7 @@ class ApplicationResource(resources.ModelResource):
 
 @admin.register(Application)
 class ApplicationAdmin(ExportMixin, admin.ModelAdmin):
+    change_list_template = "application/change_list.html"
     resource_class = ApplicationResource
     autocomplete_fields = ("user", "team")
     list_display = ("get_full_name", "team", "school")

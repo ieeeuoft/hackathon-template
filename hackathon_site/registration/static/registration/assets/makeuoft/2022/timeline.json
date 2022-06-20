@@ -1,0 +1,182 @@
+[
+    {
+        "num_applied_to_date": 3,
+        "date": "2022-01-03",
+        "day_of_registration": 0
+    },
+    {
+        "num_applied_to_date": 9,
+        "date": "2022-01-04",
+        "day_of_registration": 1
+    },
+    {
+        "num_applied_to_date": 14,
+        "date": "2022-01-05",
+        "day_of_registration": 2
+    },
+    {
+        "num_applied_to_date": 17,
+        "date": "2022-01-06",
+        "day_of_registration": 3
+    },
+    {
+        "num_applied_to_date": 21,
+        "date": "2022-01-07",
+        "day_of_registration": 4
+    },
+    {
+        "num_applied_to_date": 23,
+        "date": "2022-01-08",
+        "day_of_registration": 5
+    },
+    {
+        "num_applied_to_date": 24,
+        "date": "2022-01-09",
+        "day_of_registration": 6
+    },
+    {
+        "num_applied_to_date": 29,
+        "date": "2022-01-11",
+        "day_of_registration": 8
+    },
+    {
+        "num_applied_to_date": 32,
+        "date": "2022-01-12",
+        "day_of_registration": 9
+    },
+    {
+        "num_applied_to_date": 33,
+        "date": "2022-01-13",
+        "day_of_registration": 10
+    },
+    {
+        "num_applied_to_date": 34,
+        "date": "2022-01-15",
+        "day_of_registration": 12
+    },
+    {
+        "num_applied_to_date": 35,
+        "date": "2022-01-16",
+        "day_of_registration": 13
+    },
+    {
+        "num_applied_to_date": 37,
+        "date": "2022-01-17",
+        "day_of_registration": 14
+    },
+    {
+        "num_applied_to_date": 38,
+        "date": "2022-01-18",
+        "day_of_registration": 15
+    },
+    {
+        "num_applied_to_date": 43,
+        "date": "2022-01-19",
+        "day_of_registration": 16
+    },
+    {
+        "num_applied_to_date": 63,
+        "date": "2022-01-21",
+        "day_of_registration": 18
+    },
+    {
+        "num_applied_to_date": 74,
+        "date": "2022-01-22",
+        "day_of_registration": 19
+    },
+    {
+        "num_applied_to_date": 78,
+        "date": "2022-01-23",
+        "day_of_registration": 20
+    },
+    {
+        "num_applied_to_date": 81,
+        "date": "2022-01-24",
+        "day_of_registration": 21
+    },
+    {
+        "num_applied_to_date": 91,
+        "date": "2022-01-25",
+        "day_of_registration": 22
+    },
+    {
+        "num_applied_to_date": 98,
+        "date": "2022-01-26",
+        "day_of_registration": 23
+    },
+    {
+        "num_applied_to_date": 109,
+        "date": "2022-01-27",
+        "day_of_registration": 24
+    },
+    {
+        "num_applied_to_date": 122,
+        "date": "2022-01-28",
+        "day_of_registration": 25
+    },
+    {
+        "num_applied_to_date": 132,
+        "date": "2022-01-29",
+        "day_of_registration": 26
+    },
+    {
+        "num_applied_to_date": 140,
+        "date": "2022-01-30",
+        "day_of_registration": 27
+    },
+    {
+        "num_applied_to_date": 147,
+        "date": "2022-01-31",
+        "day_of_registration": 28
+    },
+    {
+        "num_applied_to_date": 156,
+        "date": "2022-02-01",
+        "day_of_registration": 29
+    },
+    {
+        "num_applied_to_date": 179,
+        "date": "2022-02-02",
+        "day_of_registration": 30
+    },
+    {
+        "num_applied_to_date": 210,
+        "date": "2022-02-03",
+        "day_of_registration": 31
+    },
+    {
+        "num_applied_to_date": 229,
+        "date": "2022-02-04",
+        "day_of_registration": 32
+    },
+    {
+        "num_applied_to_date": 270,
+        "date": "2022-02-05",
+        "day_of_registration": 33
+    },
+    {
+        "num_applied_to_date": 323,
+        "date": "2022-02-06",
+        "day_of_registration": 34
+    },
+    {
+        "num_applied_to_date": 331,
+        "date": "2022-02-07",
+        "day_of_registration": 35
+    },
+    {
+        "num_applied_to_date": 344,
+        "date": "2022-02-08",
+        "day_of_registration": 36
+    },
+    {
+        "num_applied_to_date": 367,
+        "date": "2022-02-09",
+        "day_of_registration": 37
+    },
+    {
+        "num_applied_to_date": 385,
+        "date": "2022-02-10",
+        "day_of_registration": 38
+    }
+]
