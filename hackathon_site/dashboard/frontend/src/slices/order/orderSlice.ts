@@ -74,7 +74,7 @@ export const cancelOrderThunk = createAsyncThunk<
         } catch (e: any) {
             dispatch(
                 displaySnackbar({
-                    message: `There was a problem retrieving orders. If this continues please contact hackathon organizers.`,
+                    message: `There was a problem cancelling orders. If this continues please contact hackathon organizers.`,
                     options: { variant: "error" },
                 })
             );
@@ -135,7 +135,7 @@ const orderSlice = createSlice({
         });
 
         builder.addCase(cancelOrderThunk.rejected, (state, { payload }) => {
-            state.isLoading = false;
+            state.cancelOrderLoading = false;
         });
     },
 });
