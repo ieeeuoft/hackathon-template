@@ -158,3 +158,6 @@ node_modules/
 
 # OS Stuff
 .DS_Store
+
+# analytics
+hackathon_site/registration/analytics/data/
