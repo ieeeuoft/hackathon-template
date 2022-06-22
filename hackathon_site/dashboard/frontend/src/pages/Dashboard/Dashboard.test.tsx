@@ -18,17 +18,21 @@ import {
     mockCheckedOutOrders,
     mockHardware,
     mockOrders,
+    mockPendingOrdersInTable,
     mockTeam,
 } from "testing/mockData";
-import { get } from "api/api";
+import { get, patch } from "api/api";
 import { AxiosResponse } from "axios";
 import { Hardware, Order, Team } from "api/types";
+import { findByText, getByText } from "@testing-library/react";
 
 jest.mock("api/api", () => ({
     ...jest.requireActual("api/api"),
     get: jest.fn(),
+    patch: jest.fn(),
 }));
 const mockedGet = get as jest.MockedFunction<typeof get>;
+const mockedPatch = patch as jest.MockedFunction<typeof patch>;
 
 const hardwareUri = "/api/hardware/hardware/";
 const categoriesUri = "/api/hardware/categories/";
@@ -149,6 +153,28 @@ describe("Dashboard Page", () => {
             expect(getByText(/foo bar/i)).toBeInTheDocument();
             expect(getByText(/A48E5/i)).toBeInTheDocument();
             expect(mockedGet).toHaveBeenCalledWith("/api/event/teams/team/");
+        });
+    });
+
+    it("Removes orders when cancel order button is clicked", async () => {
+        const response = makeMockApiResponse(mockPendingOrdersInTable[1]);
+        mockedPatch.mockResolvedValueOnce(response);
+
+        const store = makeStoreWithEntities({
+            pendingOrders: mockPendingOrdersInTable,
+        });
+
+        const { queryAllByText, getByText } = render(<Dashboard />, {
+            store,
+        });
+        const cancelOrderBtns = queryAllByText(/cancel order/i);
+        const orderTable = getByText(/order #4/i);
+
+        fireEvent.click(cancelOrderBtns[1]);
+
+        await waitFor(() => {
+            expect(orderTable).not.toBeInTheDocument();
+            expect(cancelOrderBtns[1]).not.toBeInTheDocument();
         });
     });
 });

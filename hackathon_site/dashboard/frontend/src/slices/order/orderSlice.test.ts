@@ -17,7 +17,6 @@ import {
 import {
     mockCheckedOutOrdersInTable,
     mockOrders,
-    mockPendingOrders,
     mockPendingOrdersInTable,
     mockReturnedOrdersInTable,
 } from "testing/mockData";
@@ -28,7 +27,7 @@ import {
     waitFor,
 } from "testing/utils";
 import { get, patch } from "api/api";
-import { displaySnackbar } from "../ui/uiSlice";
+import { displaySnackbar } from "slices/ui/uiSlice";
 import thunk, { ThunkDispatch } from "redux-thunk";
 import { AnyAction } from "redux";
 import configureStore from "redux-mock-store";
@@ -53,7 +52,9 @@ const mockStateWithOrderState = (orderState?: Partial<OrderState>) => ({
 
 const mockState: RootState = {
     ...store.getState(),
-    [orderReducerName]: initialState,
+    [orderReducerName]: {
+        ...initialState,
+    },
 };
 
 describe("Selectors", () => {
@@ -166,70 +167,58 @@ describe("getTeamOrders Thunk", () => {
 });
 
 describe("cancelOrderThunk Thunk", () => {
-    it("Updates the store on API success", async () => {
-        const response = makeMockApiResponse(mockPendingOrders);
+    it("pendingOrderAdapter removes order", async () => {
+        const response = makeMockApiResponse(mockPendingOrdersInTable[1]);
         mockedPatch.mockResolvedValueOnce(response);
 
         const store = makeStoreWithEntities({
             pendingOrders: mockPendingOrdersInTable,
         });
-        store.dispatch(cancelOrderThunk(3));
+
+        store.dispatch(cancelOrderThunk(4));
         await waitFor(() => {
-            expect(mockedPatch).toHaveBeenCalledWith(`/api/hardware/orders/${3}`, {
+            expect(mockedPatch).toHaveBeenCalledWith(`/api/hardware/orders/4`, {
                 status: "Cancelled",
             });
-            expect(pendingOrderSelectors.selectById(store.getState(), 3)).toEqual({
-                id: 3,
-                items: [
-                    {
-                        id: 6,
-                        hardware_id: 3,
-                        part_returned_health: null,
-                    },
-                    {
-                        id: 7,
-                        hardware_id: 4,
-                        part_returned_health: null,
-                    },
-                ],
-                team_id: 2,
-                team_code: "IEEE",
-                status: "Cancelled",
-                created_at: "2021-10-17T18:28:44.691969-04:00",
-                updated_at: "2021-12-03T23:01:46.606892-05:00",
-                request: [
-                    {
-                        id: 3,
-                        requested_quantity: 1,
-                    },
-                    {
-                        id: 4,
-                        requested_quantity: 1,
-                    },
-                ],
-            });
+            expect(pendingOrderSelectors.selectById(store.getState(), 4)).toEqual(
+                undefined
+            );
         });
     });
 
-    it("Updates the store on API failure", async () => {
+    it("displaying snackbar on success", async () => {
+        const response = makeMockApiResponse(mockPendingOrdersInTable[1]);
+        mockedPatch.mockResolvedValueOnce(response);
+
+        const store = mockStore(mockState);
+        await store.dispatch(cancelOrderThunk(4));
+        const actions = store.getActions();
+
+        expect(actions).toContainEqual(
+            displaySnackbar({
+                message: `Order has been cancelled.`,
+                options: { variant: "success" },
+            })
+        );
+    });
+
+    it("displaying snackbar on error", async () => {
         const failureResponse = {
             response: {
                 status: 500,
-                message:
-                    "There was a problem cancelling orders. If this continues please contact hackathon organizers.",
+                message: `Failed to cancel order: undefined`,
             },
         };
 
         mockedPatch.mockRejectedValue(failureResponse);
 
         const store = mockStore(mockState);
-        await store.dispatch(cancelOrderThunk(5));
+        await store.dispatch(cancelOrderThunk(3));
         const actions = store.getActions();
 
         expect(actions).toContainEqual(
             displaySnackbar({
-                message:
-                    "There was a problem cancelling orders. If this continues please contact hackathon organizers.",
+                message: `Failed to cancel order: undefined`,
                 options: { variant: "error" },
             })
         );

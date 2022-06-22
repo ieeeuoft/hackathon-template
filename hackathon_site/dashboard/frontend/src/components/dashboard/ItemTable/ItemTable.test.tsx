@@ -15,6 +15,7 @@ import {
     mockReturnedOrdersInTable,
 } from "testing/mockData";
 import { ReturnOrderInTable } from "api/types";
+import { getAllByText } from "@testing-library/react";
 
 describe("<ChipStatus />", () => {
     test("Ready status", () => {
@@ -73,13 +74,17 @@ describe("<PendingTable />", () => {
         const store = makeStoreWithEntities({
             pendingOrders: mockPendingOrdersInTable,
         });
-        const { getByText, queryByText } = render(<PendingTable />, { store });
+        const { getByText, queryByText, getAllByText } = render(<PendingTable />, {
+            store,
+        });
         const button = getByText(/hide all/i);
+        const cancelOrderBtns = getAllByText(/cancel order/i);
 
         fireEvent.click(button);
         expect(getByText(/show all/i)).toBeInTheDocument();
         mockPendingOrders.map(({ id }) => {
             expect(queryByText(`Order #${id}`)).toBeNull();
+            expect(cancelOrderBtns[0]).not.toBeInTheDocument();
         });
     });
 });

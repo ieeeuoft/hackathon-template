@@ -469,12 +469,11 @@ export const PendingTable = () => {
                                 </TableBody>
                             </Table>
                         </TableContainer>
-                        <TableCell
-                            className={styles.title}
+                        <div
                             style={{
                                 display: "flex",
-                                flexDirection: "row",
                                 justifyContent: "flex-end",
+                                marginTop: "10px",
                             }}
                         >
                             <Button
@@ -482,9 +481,9 @@ export const PendingTable = () => {
                                 disabled={isCancelOrderLoading}
                                 color="secondary"
                             >
-                                {isVisible ? "Cancel order" : ""}
+                                {"Cancel order"}
                             </Button>
-                        </TableCell>
+                        </div>
                     </div>
                 ))}
         </Container>

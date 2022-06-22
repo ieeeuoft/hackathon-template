@@ -70,11 +70,17 @@ export const cancelOrderThunk = createAsyncThunk<
             const response = await patch<Order>(`/api/hardware/orders/${orderId}`, {
                 status: "Cancelled",
             });
+            dispatch(
+                displaySnackbar({
+                    message: `Order has been cancelled.`,
+                    options: { variant: "success" },
+                })
+            );
             return response.data;
         } catch (e: any) {
             dispatch(
                 displaySnackbar({
-                    message: `There was a problem cancelling orders. If this continues please contact hackathon organizers.`,
+                    message: `Failed to cancel order: ${e.response?.data?.status[0]}`,
                     options: { variant: "error" },
                 })
             );
@@ -127,10 +133,7 @@ const orderSlice = createSlice({
         builder.addCase(cancelOrderThunk.fulfilled, (state, { payload }) => {
             state.cancelOrderLoading = false;
             if (payload) {
-                pendingOrderAdapter.removeOne(state, {
-                    payload: payload.id,
-                    type: payload.status,
-                });
+                pendingOrderAdapter.removeOne(state, payload.id);
             }
         });
 
