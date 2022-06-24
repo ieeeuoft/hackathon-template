@@ -35,7 +35,7 @@ import {
 import { getCategories } from "slices/hardware/categorySlice";
 import AlertBox from "components/general/AlertBox/AlertBox";
 import { openTeamModalItem } from "../../slices/ui/uiSlice";
-import EditTeam from "../../components/dashboard/EditTeam/EditTeam";
+import EditTeam from "components/dashboard/EditTeam/EditTeam";
 import { Edit } from "@material-ui/icons";
 
 const Dashboard = () => {
