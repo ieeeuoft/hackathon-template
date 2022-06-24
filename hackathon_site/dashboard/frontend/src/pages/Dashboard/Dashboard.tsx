@@ -60,10 +60,7 @@ const Dashboard = () => {
         }
     }, [dispatch, hardwareInOrders]);
 
-    const openEditTeamModal = () => {
-        //dispatch(getCurrentTeam());
-        dispatch(openTeamModalItem());
-    };
+    const openEditTeamModal = () => dispatch(openTeamModalItem());
 
     return (
         <>
