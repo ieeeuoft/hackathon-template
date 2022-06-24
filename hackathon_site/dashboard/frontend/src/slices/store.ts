@@ -21,6 +21,7 @@ import orderReducer, { orderReducerName } from "slices/order/orderSlice";
 import categoryReducer, { categoryReducerName } from "slices/hardware/categorySlice";
 import cartReducer, { cartReducerName } from "slices/hardware/cartSlice";
 import teamReducer, { teamReducerName } from "./event/teamSlice";
+import teamAdminReducer, { teamAdminName } from "slices/event/teamAdminSlice";
 
 export const history = createBrowserHistory();
 
@@ -32,6 +33,7 @@ const reducers = {
     [orderReducerName]: orderReducer,
     [userReducerName]: userReducer,
     [uiReducerName]: uiReducer,
+    [teamAdminName]: teamAdminReducer, // Eric Changes
     router: connectRouter(history),
 };
 
