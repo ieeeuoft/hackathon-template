@@ -21,20 +21,18 @@ interface TeamModalProps {
 
 const TeamInfoBlock = ({ teamCode, canChangeTeam, teamSize }: TeamModalProps) => {
     return (
-        <div>
-            <Alert severity="info" icon={false} className={styles.alertBox}>
-                Team code:
-                <strong> {teamCode} </strong>
-                <Button
-                    color={"primary"}
-                    onClick={() => navigator.clipboard.writeText(teamCode)}
-                >
-                    <FileCopyIcon fontSize={"small"} />
-                    Copy
-                </Button>
-                <p>There are {maxTeamSize - teamSize} spots remaining on your team.</p>
-            </Alert>
-        </div>
+        <Alert severity="info" icon={false} className={styles.alertBox}>
+            Team code:
+            <strong> {teamCode} </strong>
+            <Button
+                color={"primary"}
+                onClick={() => navigator.clipboard.writeText(teamCode)}
+            >
+                <FileCopyIcon fontSize={"small"} />
+                Copy
+            </Button>
+            <p>There are {maxTeamSize - teamSize} spots remaining on your team.</p>
+        </Alert>
     );
 };
 
