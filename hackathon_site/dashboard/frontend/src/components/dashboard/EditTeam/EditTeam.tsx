@@ -11,7 +11,7 @@ import styles from "./EditTeam.module.scss";
 import { isTeamModalVisibleSelector, closeTeamModalItem } from "slices/ui/uiSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { Grid } from "@material-ui/core";
-import { maxTeamSize } from "../../../constants";
+import { maxTeamSize } from "constants.js";
 
 interface TeamModalProps {
     teamCode: string;
