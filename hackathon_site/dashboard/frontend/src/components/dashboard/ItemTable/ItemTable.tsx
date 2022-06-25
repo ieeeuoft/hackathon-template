@@ -393,7 +393,10 @@ export const PendingTable = () => {
             {isVisible &&
                 orders.length > 0 &&
                 orders.map((pendingOrder) => (
-                    <div key={pendingOrder.id}>
+                    <div
+                        key={pendingOrder.id}
+                        data-testid={`pending-order-item-${pendingOrder.id}`}
+                    >
                         <Container
                             className={styles.titleChip}
                             maxWidth={false}
@@ -480,8 +483,9 @@ export const PendingTable = () => {
                                 onClick={() => cancelOrder(pendingOrder.id)}
                                 disabled={isCancelOrderLoading}
                                 color="secondary"
+                                data-testid="cancel-order-button"
                             >
-                                {"Cancel order"}
+                                Cancel order
                             </Button>
                         </div>
                     </div>
