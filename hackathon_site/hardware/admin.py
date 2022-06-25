@@ -179,11 +179,16 @@ class IncidentInline(admin.TabularInline):
     def has_add_permission(self, request, obj):
         return False
 
+
 class CategoryResource(resources.ModelResource):
     class Meta:
         model = Category
-        exclude = ('id', 'created_at', 'updated_at',)
-        import_id_fields = ('name',)
+        exclude = (
+            "id",
+            "created_at",
+            "updated_at",
+        )
+        import_id_fields = ("name",)
 
 
 @admin.register(Category)
@@ -197,15 +202,24 @@ class CategoryAdmin(ImportMixin, admin.ModelAdmin):
 
 class HardwareResource(resources.ModelResource):
     categories = Field(
-        column_name='categories',
-        attribute='categories',
-        widget=ManyToManyWidget(Category, ',', 'name')
+        column_name="categories",
+        attribute="categories",
+        widget=ManyToManyWidget(Category, ",", "name"),
     )
- 
+
     class Meta:
         model = Hardware
-        exclude = ('id', 'picture', 'created_at', 'updated_at',)
-        import_id_fields = ('name', 'model_number', 'manufacturer',)
+        exclude = (
+            "id",
+            "picture",
+            "created_at",
+            "updated_at",
+        )
+        import_id_fields = (
+            "name",
+            "model_number",
+            "manufacturer",
+        )
 
 
 @admin.register(Hardware)
