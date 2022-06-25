@@ -72,7 +72,7 @@ export const ChipStatus = ({ status }: { status: OrderStatus | "Error" }) => {
     }
 };
 
-export const CheckedOutTable = () =>
+export const CheckedOutTables = () =>
     // TODO: for incident reports
     // { push,
     // reportIncident, }
@@ -364,7 +364,7 @@ export const ReturnedTable = () => {
     );
 };
 
-export const PendingTable = () => {
+export const PendingTables = () => {
     const dispatch = useDispatch();
     const orders = useSelector(pendingOrderSelectors.selectAll);
     const hardware = useSelector(hardwareSelectors.selectEntities);
@@ -395,7 +395,7 @@ export const PendingTable = () => {
                 orders.map((pendingOrder) => (
                     <div
                         key={pendingOrder.id}
-                        data-testid={`pending-order-item-${pendingOrder.id}`}
+                        data-testid={`pending-order-table-${pendingOrder.id}`}
                     >
                         <Container
                             className={styles.titleChip}

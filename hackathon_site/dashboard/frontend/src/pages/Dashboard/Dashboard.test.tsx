@@ -178,7 +178,7 @@ describe("Dashboard Page", () => {
         });
 
         const orderItem = getByTestId(
-            `pending-order-item-${mockPendingOrdersInTable[1].id}`
+            `pending-order-table-${mockPendingOrdersInTable[1].id}`
         );
         const cancelOrderBtn = within(orderItem).getByTestId("cancel-order-button");
         fireEvent.click(cancelOrderBtn);

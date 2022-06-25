@@ -1,9 +1,9 @@
 import React from "react";
-import { fireEvent, makeStoreWithEntities, render, within } from "testing/utils";
+import { fireEvent, makeStoreWithEntities, render } from "testing/utils";
 import {
     ChipStatus,
-    PendingTable,
-    CheckedOutTable,
+    PendingTables,
+    CheckedOutTables,
     ReturnedTable,
 } from "components/dashboard/ItemTable/ItemTable";
 import {
@@ -33,12 +33,12 @@ describe("<ChipStatus />", () => {
     });
 });
 
-describe("<PendingTable />", () => {
+describe("<PendingTables />", () => {
     it("Shows pending items and status chip", () => {
         const store = makeStoreWithEntities({
             pendingOrders: mockPendingOrdersInTable,
         });
-        const { getByText, queryByText } = render(<PendingTable />, { store });
+        const { getByText, queryByText } = render(<PendingTables />, { store });
         expect(getByText(/pending orders/i)).toBeInTheDocument();
         expect(queryByText("In progress")).toBeInTheDocument();
         mockPendingOrdersInTable.map(({ id }) => {
@@ -55,7 +55,7 @@ describe("<PendingTable />", () => {
             },
             pendingOrders: mockPendingOrdersInTable,
         });
-        const { getByText, queryByText } = render(<PendingTable />, { store });
+        const { getByText, queryByText } = render(<PendingTables />, { store });
 
         expect(getByText(/pending orders/i)).toBeInTheDocument();
         expect(getByText(/show all/i)).toBeInTheDocument();
@@ -65,7 +65,7 @@ describe("<PendingTable />", () => {
     });
 
     it("Doesn't show when there are no pending orders", () => {
-        const { queryByText } = render(<PendingTable />);
+        const { queryByText } = render(<PendingTables />);
         expect(queryByText("Pending Orders")).toBeNull();
     });
 
@@ -73,7 +73,7 @@ describe("<PendingTable />", () => {
         const store = makeStoreWithEntities({
             pendingOrders: mockPendingOrdersInTable,
         });
-        const { getByText, queryByText } = render(<PendingTable />, { store });
+        const { getByText, queryByText } = render(<PendingTables />, { store });
         const button = getByText(/hide all/i);
 
         fireEvent.click(button);
@@ -87,21 +87,19 @@ describe("<PendingTable />", () => {
         const store = makeStoreWithEntities({
             pendingOrders: mockPendingOrdersInTable,
         });
-        const { getByText, queryByText } = render(<PendingTable />, {
+        const { getByText, queryByText } = render(<PendingTables />, {
             store,
         });
         const button = getByText(/hide all/i);
         fireEvent.click(button);
         expect(getByText(/show all/i)).toBeInTheDocument();
-        mockPendingOrders.map(() => {
-            expect(queryByText(/cancel order/i)).toBeNull();
-        });
+        expect(queryByText(/cancel order/i)).toBeNull();
     });
 });
 
-describe("<CheckedOutTable />", () => {
+describe("<CheckedOutTables />", () => {
     it("Shows a message when there's no checked out items", () => {
-        const { getByText } = render(<CheckedOutTable />);
+        const { getByText } = render(<CheckedOutTables />);
         expect(
             getByText("You have no items checked out yet. View our inventory.")
         ).toBeInTheDocument();
@@ -114,7 +112,7 @@ describe("<CheckedOutTable />", () => {
                 error: "A problem has occurred when fetching orders",
             },
         });
-        const { getByText } = render(<CheckedOutTable />, { store });
+        const { getByText } = render(<CheckedOutTables />, { store });
         expect(getByText(/Unable to view checked out items/i)).toBeInTheDocument();
     });
 
@@ -124,7 +122,7 @@ describe("<CheckedOutTable />", () => {
                 checkedOutOrders: mockCheckedOutOrdersInTable,
             },
         });
-        const { getByText } = render(<CheckedOutTable />, { store });
+        const { getByText } = render(<CheckedOutTables />, { store });
         expect(getByText(/checked out items/i)).toBeInTheDocument();
         expect(getByText(/hide all/i)).toBeInTheDocument();
         mockCheckedOutOrders.map(({ id }) => {
@@ -143,7 +141,7 @@ describe("<CheckedOutTable />", () => {
                 checkedOutOrders: mockCheckedOutOrdersInTable,
             },
         });
-        const { getByText, queryByText } = render(<CheckedOutTable />, { store });
+        const { getByText, queryByText } = render(<CheckedOutTables />, { store });
         expect(getByText(/checked out items/i)).toBeInTheDocument();
         expect(getByText(/show all/i)).toBeInTheDocument();
         mockCheckedOutOrders.map(({ id }) => {
@@ -157,7 +155,7 @@ describe("<CheckedOutTable />", () => {
                 checkedOutOrders: mockCheckedOutOrdersInTable,
             },
         });
-        const { getByText, queryByText } = render(<CheckedOutTable />, { store });
+        const { getByText, queryByText } = render(<CheckedOutTables />, { store });
         const button = getByText(/hide all/i);
 
         fireEvent.click(button);
