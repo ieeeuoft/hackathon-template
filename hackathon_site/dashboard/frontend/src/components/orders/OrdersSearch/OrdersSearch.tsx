@@ -1,9 +1,9 @@
 import React from "react";
 import { Box, IconButton, InputAdornment, TextField } from "@material-ui/core";
-import { FormikValues } from "formik";
 import CloseIcon from "@material-ui/icons/Close";
 import SearchIcon from "@material-ui/icons/Search";
 import styles from "pages/Orders/Orders.module.scss";
+import { FormikValues } from "formik";
 
 const OrdersSearch = ({
     // TODO: add search functionality

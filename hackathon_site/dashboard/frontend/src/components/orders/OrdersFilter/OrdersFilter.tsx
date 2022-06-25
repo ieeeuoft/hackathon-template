@@ -1,7 +1,7 @@
 import React from "react";
 import { IconButton } from "@material-ui/core";
-import { FormikValues } from "formik";
 import FilterListIcon from "@material-ui/icons/FilterList";
+import { FormikValues } from "formik";
 
 const OrdersFilter = ({ handleSubmit }: FormikValues) => {
     return (
