@@ -53,8 +53,15 @@ const Orders = () => {
                             <Grid container spacing={1} direction="row">
                                 {Array(12)
                                     .fill("order card component")
-                                    .map((str) => (
-                                        <Grid item lg={3} md={4} sm={6} xs={12}>
+                                    .map((str, idx) => (
+                                        <Grid
+                                            item
+                                            lg={3}
+                                            md={4}
+                                            sm={6}
+                                            xs={12}
+                                            key={idx}
+                                        >
                                             <div
                                                 style={{
                                                     border: "1px solid black",
