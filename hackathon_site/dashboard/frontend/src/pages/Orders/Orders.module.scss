@@ -2,27 +2,23 @@
 @import "./../../assets/abstracts/mixins";
 
 .orders {
-    display: flex;
     max-width: 1800px;
     width: 100%;
-    flex-direction: column;
 
     &Body {
         display: flex;
-        width: 100%;
-        justify-content: flex-end;
-        align-content: center;
+        flex-direction: row;
+        @include flexPosition($jusCon: space-between);
 
         &Title {
             font-size: 45px;
-            align-items: center;
-            margin: 0 25px 25px 0;
         }
 
         &Toolbar {
             @include flexPosition($jusCon: flex-end);
-            width: 100%;
+            width: 100px;
             margin-bottom: 25px;
+            margin-left: auto;
 
             &Div {
                 @include flexPosition($jusCon: space-between, $alIte: center);
@@ -48,46 +44,38 @@
             }
         }
 
-        @include responsive(sm-down) {
+        @media (max-width: 725px) {
             flex-direction: column;
 
             &Toolbar {
-                flex-direction: column;
-                margin-bottom: 5px;
-            }
+                margin-bottom: 10px;
+                margin-top: 10px;
 
-            &Div {
-                width: 100%;
-            }
+                &Search {
+                    width: 350px;
+                }
 
-            &Div:last-child {
-                margin: 10px 0;
-            }
-
-            &Divider {
-                display: none;
-            }
-
-            &Refresh {
-                margin-left: 0;
+                &Divider {
+                    display: none;
+                }
             }
         }
 
-        @include responsive(md-down) {
-            margin-top: 15px;
-            flex-direction: column;
-
+        @include responsive(sm-down) {
             &Toolbar {
-                &Refresh {
-                    margin-left: 20px;
-                }
+                flex-direction: column;
+                width: 100%;
 
                 &Search {
                     width: 100%;
                 }
 
-                &Div:nth-child(1) {
-                    width: 100%;
+                &IconButton {
+                    margin: 0px;
+                }
+
+                &Refresh {
+                    margin: 0px;
                 }
             }
         }

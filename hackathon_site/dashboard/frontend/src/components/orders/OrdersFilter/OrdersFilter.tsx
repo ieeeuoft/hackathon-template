@@ -5,16 +5,14 @@ import { FormikValues } from "formik";
 
 const OrdersFilter = ({ handleSubmit }: FormikValues) => {
     return (
-        <>
-            <IconButton
-                color="primary"
-                aria-label="Filter"
-                onClick={handleSubmit}
-                data-testid="filter-button"
-            >
-                <FilterListIcon color="primary" />
-            </IconButton>
-        </>
+        <IconButton
+            color="primary"
+            aria-label="Filter"
+            onClick={handleSubmit}
+            data-testid="filter-button"
+        >
+            <FilterListIcon color="primary" />
+        </IconButton>
     );
 };
 
