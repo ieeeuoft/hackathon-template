@@ -6,6 +6,7 @@ import SearchIcon from "@material-ui/icons/Search";
 import styles from "pages/Orders/Orders.module.scss";
 
 const OrdersSearch = ({
+    // TODO: add search functionality
     // values: { search },
     handleChange,
     handleReset,
