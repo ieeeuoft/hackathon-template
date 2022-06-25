@@ -1,4 +1,5 @@
 import {
+    Button,
     Checkbox,
     Grid,
     Paper,
@@ -34,9 +35,25 @@ const createDropdownList = (number: number) => {
     return entry;
 };
 
+export const grantQtyForm = (requestedQuantity: number) => {
+    return (
+        <Grid container direction="column">
+            <FormControl variant="standard" hiddenLabel={true}>
+                <Select value={0} label="Qty" labelId="qtyLabel" name="quantity">
+                    {createDropdownList(requestedQuantity)}
+                </Select>
+            </FormControl>
+
+            <Typography variant={"h2"}>test</Typography>
+        </Grid>
+    );
+};
+
 export const TeamPendingOrderTable = () => {
     const orders = mockPendingOrders;
     const hardware = mockHardware;
+
+    const testfunc = () => {};
 
     return (
         <Container maxWidth={false} disableGutters={true}>
@@ -46,45 +63,28 @@ export const TeamPendingOrderTable = () => {
                         <Typography variant="h2">{`Order #${pendingOrder.id}`}</Typography>
                     </Grid>
                     <Grid item>
-                        <Table
-                            className={styles.table}
-                            size="small"
-                            aria-label="pending table"
-                        >
+                        <Table className={styles.table}>
                             <TableHead>
                                 <TableRow>
-                                    <TableCell className={styles.widthFixed} />
-                                    <TableCell className={styles.width6} align="left">
+                                    <TableCell className={styles.width1} />
+                                    <TableCell className={styles.width2}>
                                         Name
                                     </TableCell>
-                                    <TableCell
-                                        className={`${styles.width1} ${styles.noWrap}`}
-                                        align="left"
-                                    >
+                                    <TableCell className={`${styles.width1}`}>
                                         Model
                                     </TableCell>
-                                    <TableCell
-                                        className={`${styles.width1} ${styles.noWrap}`}
-                                        align="left"
-                                    >
+                                    <TableCell className={`${styles.width1}`}>
                                         Manufacturer
                                     </TableCell>
-                                    <TableCell
-                                        className={`${styles.width1} ${styles.noWrap}`}
-                                        align="left"
-                                    >
+                                    <TableCell className={`${styles.width1}`}>
                                         Qty requested
                                     </TableCell>
                                     <TableCell
                                         className={`${styles.width1} ${styles.noWrap}`}
-                                        align="left"
                                     >
                                         Qty granted
                                     </TableCell>
-                                    <TableCell
-                                        className={`${styles.width1} ${styles.noWrap}`}
-                                        align="right"
-                                    >
+                                    <TableCell className={`${styles.width1}`}>
                                         Time
                                     </TableCell>
                                     <TableCell>
@@ -100,7 +100,7 @@ export const TeamPendingOrderTable = () => {
                             <TableBody>
                                 {pendingOrder.request.map((row) => (
                                     <TableRow key={row.id}>
-                                        <TableCell align="left">
+                                        <TableCell>
                                             <img
                                                 className={styles.itemImg}
                                                 src={
@@ -110,32 +110,32 @@ export const TeamPendingOrderTable = () => {
                                                 alt={hardware[row.id]?.name}
                                             />
                                         </TableCell>
-                                        <TableCell
-                                            className={`${styles.noWrap}`}
-                                            align="left"
-                                        >
+                                        <TableCell>
                                             {`${hardware[row.id]?.name}`}
                                         </TableCell>
-                                        <TableCell align="right">
+                                        <TableCell>
                                             {`${hardware[row.id]?.model_number}`}
                                         </TableCell>
-                                        <TableCell
-                                            className={`${styles.noWrap}`}
-                                            align="right"
-                                        >
+                                        <TableCell>
                                             {`${hardware[row.id]?.manufacturer}`}
                                         </TableCell>
-                                        <TableCell align="right">
+                                        <TableCell>
                                             {`${row.requested_quantity}`}
                                         </TableCell>
-                                        <TableCell align="right">
+                                        <TableCell
+                                            style={{
+                                                display: "inline-block",
+                                                verticalAlign: "baseline",
+                                            }}
+                                            className={`${styles.width2} ${styles.noWrap}`}
+                                        >
+                                            All
                                             <FormControl
                                                 variant="standard"
                                                 hiddenLabel={true}
                                             >
                                                 <Select
                                                     value={0}
-                                                    // onChange={handleChange}
                                                     label="Qty"
                                                     labelId="qtyLabel"
                                                     name="quantity"
@@ -146,10 +146,7 @@ export const TeamPendingOrderTable = () => {
                                                 </Select>
                                             </FormControl>
                                         </TableCell>
-                                        <TableCell
-                                            className={`${styles.noWrap}`}
-                                            align="right"
-                                        >
+                                        <TableCell>
                                             {`${pendingOrder.created_at}`}
                                         </TableCell>
                                         <TableCell>
@@ -164,6 +161,14 @@ export const TeamPendingOrderTable = () => {
                                 ))}
                             </TableBody>
                         </Table>
+                    </Grid>
+                    <Grid container justifyContent="flex-end">
+                        <Button color="secondary" variant="text" disableElevation>
+                            Reject Order
+                        </Button>
+                        <Button color="primary" variant="contained" disableElevation>
+                            Complete Order
+                        </Button>
                     </Grid>
                 </Grid>
             ))}
