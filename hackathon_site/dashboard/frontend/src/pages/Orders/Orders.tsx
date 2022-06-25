@@ -1,20 +1,45 @@
 import React from "react";
 import Header from "components/general/Header/Header";
 import Typography from "@material-ui/core/Typography";
-import { Divider, Grid, Hidden } from "@material-ui/core";
+import { Divider, Drawer, Grid, Hidden } from "@material-ui/core";
 import OrdersSearch from "components/orders/OrdersSearch/OrdersSearch";
-import OrdersFilter from "components/orders/OrdersFilter/OrdersFilter";
+import OrdersFilterButton from "components/orders/OrdersFilterButton/OrdersFilterButton";
 import OrdersCount from "components/orders/OrdersCount/OrdersCount";
+import OrdersFilter from "components/orders/OrdersFilter/OrderFilter";
 import styles from "./Orders.module.scss";
+import CloseIcon from "@material-ui/icons/Close";
+import IconButton from "@material-ui/core/IconButton";
 
 const Orders = () => {
+    const [mobileOpen, setMobileOpen] = React.useState(false);
+    const toggleFilter = () => {
+        setMobileOpen(!mobileOpen);
+    };
     return (
         <>
             <Header />
+
+            <Drawer
+                className={styles.orderFilterDrawer}
+                open={mobileOpen}
+                onClose={toggleFilter}
+            >
+                <div className={styles.ordersFilterDrawerTop}>
+                    <Typography variant="h2">Filters</Typography>
+                    <IconButton
+                        color="inherit"
+                        aria-label="CloseFilter"
+                        onClick={toggleFilter}
+                    >
+                        <CloseIcon />
+                    </IconButton>
+                </div>
+                <OrdersFilter />
+            </Drawer>
             <Grid container spacing={5} direction="row" className={styles.orders}>
                 <Grid item xl={2} lg={3} md={3}>
                     <Hidden implementation="css" smDown>
-                        <div
+                        {/* <div
                             style={{
                                 backgroundColor: "lightblue",
                                 padding: "10px",
@@ -24,7 +49,8 @@ const Orders = () => {
                         >
                             Filters Component (remove this div once its starting to be
                             worked on)
-                        </div>
+                        </div> */}
+                        <OrdersFilter />
                     </Hidden>
                 </Grid>
                 <Grid item xl={10} lg={9} md={9} sm={12}>
@@ -44,7 +70,11 @@ const Orders = () => {
                                 />
 
                                 <div className={styles.ordersBodyToolbarDiv}>
-                                    <OrdersFilter />
+                                    <Hidden implementation="css" mdUp>
+                                        <OrdersFilterButton
+                                            handleSubmit={toggleFilter}
+                                        />
+                                    </Hidden>
                                     <OrdersCount />
                                 </div>
                             </div>
