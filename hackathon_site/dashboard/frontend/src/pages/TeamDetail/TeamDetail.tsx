@@ -51,8 +51,7 @@ const TeamDetail = ({ match }: RouteComponentProps<PageParams>) => {
                         </Grid>
                     </Grid>
                 </Grid>
-                <Grid item>
-                    <Typography variant="h2">Requested Items</Typography>
+                <Grid item container direction="column" spacing={2}>
                     <TeamPendingOrderTable />
                 </Grid>
             </Grid>

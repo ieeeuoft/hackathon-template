@@ -2,6 +2,7 @@ import {
     Button,
     Checkbox,
     Grid,
+    Link,
     Paper,
     Table,
     TableBody,
@@ -17,9 +18,9 @@ import Container from "@material-ui/core/Container";
 import styles from "components/dashboard/ItemTable/ItemTable.module.scss";
 import hardwareImagePlaceholder from "assets/images/placeholders/no-hardware-image.svg";
 import MenuItem from "@material-ui/core/MenuItem";
-import InputLabel from "@material-ui/core/InputLabel";
 import Select from "@material-ui/core/Select";
 import FormControl from "@material-ui/core/FormControl";
+import { ChipStatus } from "components/dashboard/ItemTable/ItemTable";
 
 const createDropdownList = (number: number) => {
     let entry = [];
@@ -73,35 +74,70 @@ export const TeamPendingOrderTable = () => {
     const testfunc = () => {};
 
     return (
-        <Container maxWidth={false} disableGutters={true}>
+        <Container
+            className={styles.tableContainer}
+            maxWidth={false}
+            disableGutters={true}
+        >
+            {orders.length > 0 && (
+                <div className={styles.title}>
+                    <Typography variant="h2" className={styles.titleText}>
+                        Requested Items
+                    </Typography>
+                    <Button onClick={() => alert("show/hide tables")} color="primary">
+                        Hide all
+                    </Button>
+                </div>
+            )}
             {orders.map((pendingOrder) => (
-                <Grid container direction="column" spacing={1} item md={6} xs={12}>
-                    <Grid item>
-                        <Typography variant="h2">{`Order #${pendingOrder.id}`}</Typography>
-                    </Grid>
-                    <Grid item>
-                        <Table className={styles.table}>
+                <div key={pendingOrder.id}>
+                    <Container
+                        className={styles.titleChip}
+                        maxWidth={false}
+                        disableGutters={true}
+                    >
+                        <Typography variant="h2" className={styles.titleChipText}>
+                            {`Order #${pendingOrder.id}`}
+                        </Typography>
+                        <Container
+                            className={styles.titleChipSpace}
+                            maxWidth={false}
+                            disableGutters={true}
+                        >
+                            <ChipStatus status={pendingOrder.status} />
+                        </Container>
+                    </Container>
+                    <TableContainer component={Paper} elevation={2} square={true}>
+                        <Table className={styles.table} size="small">
                             <TableHead>
                                 <TableRow>
-                                    <TableCell className={styles.width1} />
-                                    <TableCell className={styles.width2}>
+                                    <TableCell className={styles.widthFixed} />
+                                    <TableCell className={styles.width6}>
                                         Name
-                                    </TableCell>
-                                    <TableCell className={`${styles.width1}`}>
-                                        Model
-                                    </TableCell>
-                                    <TableCell className={`${styles.width1}`}>
-                                        Manufacturer
-                                    </TableCell>
-                                    <TableCell className={`${styles.width1}`}>
-                                        Qty requested
                                     </TableCell>
                                     <TableCell
                                         className={`${styles.width1} ${styles.noWrap}`}
                                     >
+                                        Model
+                                    </TableCell>
+                                    <TableCell
+                                        className={`${styles.width1} ${styles.noWrap}`}
+                                    >
+                                        Manufacturer
+                                    </TableCell>
+                                    <TableCell
+                                        className={`${styles.width1} ${styles.noWrap}`}
+                                    >
+                                        Qty requested
+                                    </TableCell>
+                                    <TableCell
+                                        className={`${styles.width6} ${styles.noWrap}`}
+                                    >
                                         Qty granted
                                     </TableCell>
-                                    <TableCell className={`${styles.width1}`}>
+                                    <TableCell
+                                        className={`${styles.width1} ${styles.noWrap}`}
+                                    >
                                         Time
                                     </TableCell>
                                     <TableCell>
@@ -127,41 +163,45 @@ export const TeamPendingOrderTable = () => {
                                                 alt={hardware[row.id]?.name}
                                             />
                                         </TableCell>
+                                        <TableCell>{hardware[row.id]?.name}</TableCell>
                                         <TableCell>
-                                            {`${hardware[row.id]?.name}`}
+                                            {hardware[row.id]?.model_number}
                                         </TableCell>
                                         <TableCell>
-                                            {`${hardware[row.id]?.model_number}`}
+                                            {hardware[row.id]?.manufacturer}
                                         </TableCell>
+                                        <TableCell>{row.requested_quantity}</TableCell>
                                         <TableCell>
-                                            {`${hardware[row.id]?.manufacturer}`}
-                                        </TableCell>
-                                        <TableCell>
-                                            {`${row.requested_quantity}`}
-                                        </TableCell>
-                                        <TableCell
-                                            style={{
-                                                display: "inline-block",
-                                                verticalAlign: "baseline",
-                                            }}
-                                            className={`${styles.width2} ${styles.noWrap}`}
-                                        >
-                                            All
-                                            <FormControl
-                                                variant="standard"
-                                                hiddenLabel={true}
+                                            <div
+                                                style={{
+                                                    display: "flex",
+                                                    justifyContent: "space-evenly",
+                                                    alignItems: "end",
+                                                }}
                                             >
-                                                <Select
-                                                    value={0}
-                                                    label="Qty"
-                                                    labelId="qtyLabel"
-                                                    name="quantity"
+                                                <Link
+                                                    underline="always"
+                                                    color="textPrimary"
                                                 >
-                                                    {createDropdownList(
-                                                        row.requested_quantity
-                                                    )}
-                                                </Select>
-                                            </FormControl>
+                                                    {" "}
+                                                    All{" "}
+                                                </Link>
+                                                <FormControl
+                                                    variant="standard"
+                                                    hiddenLabel={true}
+                                                >
+                                                    <Select
+                                                        value={0}
+                                                        label="Qty"
+                                                        labelId="qtyLabel"
+                                                        name="quantity"
+                                                    >
+                                                        {createDropdownList(
+                                                            row.requested_quantity
+                                                        )}
+                                                    </Select>
+                                                </FormControl>
+                                            </div>
                                         </TableCell>
                                         <TableCell>
                                             {convertToDateTime(pendingOrder.created_at)}
@@ -178,16 +218,29 @@ export const TeamPendingOrderTable = () => {
                                 ))}
                             </TableBody>
                         </Table>
+                    </TableContainer>
+                    <Grid
+                        container
+                        justifyContent="flex-end"
+                        spacing={1}
+                        style={{ marginTop: "10px" }}
+                    >
+                        <Grid item>
+                            <Button color="secondary" variant="text" disableElevation>
+                                Reject Order
+                            </Button>
+                        </Grid>
+                        <Grid item>
+                            <Button
+                                color="primary"
+                                variant="contained"
+                                disableElevation
+                            >
+                                Complete Order
+                            </Button>
+                        </Grid>
                     </Grid>
-                    <Grid container justifyContent="flex-end">
-                        <Button color="secondary" variant="text" disableElevation>
-                            Reject Order
-                        </Button>
-                        <Button color="primary" variant="contained" disableElevation>
-                            Complete Order
-                        </Button>
-                    </Grid>
-                </Grid>
+                </div>
             ))}
         </Container>
     );
