@@ -14,6 +14,7 @@ import {
     TableCell,
 } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
+import TeamCheckoutOrderTable from "../../components/teamDetail/TeamCheckoutOrderTable/TeamCheckoutOrderTable";
 
 export interface PageParams {
     id: string;
@@ -49,6 +50,10 @@ const TeamDetail = ({ match }: RouteComponentProps<PageParams>) => {
                             </TableContainer>
                         </Grid>
                     </Grid>
+                </Grid>
+                <Grid item>
+                    <Typography variant="h2">Checkout Items</Typography>
+                    <TeamCheckoutOrderTable />
                 </Grid>
             </Grid>
         </>
