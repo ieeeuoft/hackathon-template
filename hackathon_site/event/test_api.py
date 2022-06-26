@@ -55,16 +55,6 @@ class CurrentUserTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json(), serializer.data)
 
-    def test_create_profile_for_new_user(self):
-        response = self.client.post(self.view, self.request_body)
-        data = response.json()
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(self.expected_response, data)
-
-    def test_create_profile_for_user_with_existing_profile(self):
-        response = self.client.post(self.view, self.request_body)
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
 
 class CurrentTeamTestCase(SetupUserMixin, APITestCase):
     def setUp(self):

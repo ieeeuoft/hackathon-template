@@ -176,15 +176,15 @@ class CurrentProfileView(mixins.UpdateModelMixin, generics.GenericAPIView):
 
     def get_object(self):
         return self.request.user.profile
+    def get_permissions(self):
+        if self.request.method == "PATCH":
+            return [UserHasProfile()]
+        elif self.request.method == "POST":
+            return []
 
     def patch(self, request, *args, **kwargs):
         return self.partial_update(request, *args, **kwargs)
 
-    def get_permissions(self):
-        if self.request.method == "PATCH":
-            return [UserHasProfile]
-        elif self.request.method == "POST":
-            return []
 
     def post(self, request, *args, **kwargs):
         response_serializer = self.get_serializer(data=request.data)
