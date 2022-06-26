@@ -23,11 +23,6 @@ urlpatterns = [
         api_views.CurrentProfileView.as_view(),
         name="current-profile",
     ),
-    path(
-        "profiles/create_profile/",
-        api_views.CreateProfileView.as_view(),
-        name="create-profile",
-    ),
     path("teams/", views.TeamListView.as_view(), name="team-list"),
     path(
         "teams/team/incidents/",

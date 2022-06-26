@@ -164,34 +164,34 @@ class ProfileDetailView(mixins.UpdateModelMixin, generics.GenericAPIView):
         return self.partial_update(request, *args, **kwargs)
 
 
-class CreateProfileView(
-    generics.GenericAPIView, mixins.CreateModelMixin,
-):
-    serializer_class = CreateProfileSerializer
-    queryset = Profile.objects.all()
-
-    def post(self, request, *args, **kwargs):
-        # create a new profile for the user
-        profile = Profile.objects.create(user=self.request.user)
-        team = profile.team
-
-        response_serializer = CreateProfileSerializer(profile)
-        response_data = response_serializer.data
-
-        return Response(data=response_data, status=status.HTTP_201_CREATED,)
-
-
 class CurrentProfileView(mixins.UpdateModelMixin, generics.GenericAPIView):
 
     queryset = Profile.objects.all()
-    serializer_class = CurrentProfileSerializer
-    permission_classes = [UserHasProfile]
+
+    def get_serializer_class(self):
+        if self.request.method == "PATCH":
+            return CurrentProfileSerializer
+        elif self.request.method == "POST":
+            return CreateProfileSerializer
 
     def get_object(self):
         return self.request.user.profile
 
     def patch(self, request, *args, **kwargs):
         return self.partial_update(request, *args, **kwargs)
+
+    def get_permissions(self):
+        if self.request.method == "PATCH":
+            return [UserHasProfile]
+        elif self.request.method == "POST":
+            return []
+
+    def post(self, request, *args, **kwargs):
+        response_serializer = self.get_serializer(data=request.data)
+        response_serializer.is_valid(raise_exception=True)
+        response_serializer.save()
+
+        return Response(data=response_serializer.data, status=status.HTTP_201_CREATED,)
 
 
 class CurrentTeamOrderListView(generics.ListAPIView):

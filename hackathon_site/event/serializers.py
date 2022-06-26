@@ -88,25 +88,18 @@ class CurrentProfileSerializer(ProfileSerializer):
 
 class CreateProfileSerializer(ProfileSerializer):
     class Meta(ProfileSerializer.Meta):
-        read_only_fields = ("id", "team", "attended")
+        read_only_fields = ("id", "team", "id_provided", "attended")
 
-    def update(self, instance: Profile, validated_data):
-        acknowledge_rules = validated_data.pop("acknowledge_rules", False)
-        e_signature = validated_data.pop("e_signature", None)
-        id_provided = validated_data.pop("id_provided", False)
-
-        if not instance.acknowledge_rules and acknowledge_rules:
-            instance.acknowledge_rules = acknowledge_rules
-        if not instance.e_signature and e_signature:
-            instance.e_signature = e_signature
-        if not instance.id_provided and id_provided:
-            instance.id_provided = id_provided
-
-        # This uses the original model serializer update function because calling super().update() will call
-        # ProfileSerializer update function and we want to keep the logic between these two update functions separate.
-        return serializers.ModelSerializer.update(
-            self, instance, validated_data, id_provided
+    def create(self, validated_data):
+        response_data = {"attended": True}
+        response_data["user"] = self.context["request"].user
+        response_data["id_provided"] = True
+        response_data["acknowledge_rules"] = validated_data.pop(
+            "acknowledge_rules", False
         )
+        response_data["e_signature"] = validated_data.pop("e_signature", "NULL")
+
+        return Profile.objects.create(**response_data)
 
 
 class UserSerializer(serializers.ModelSerializer):
