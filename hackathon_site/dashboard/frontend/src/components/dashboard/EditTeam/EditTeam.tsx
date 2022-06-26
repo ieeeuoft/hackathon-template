@@ -36,7 +36,7 @@ const TeamInfoBlock = ({ teamCode, canChangeTeam, teamSize }: TeamModalProps) =>
     );
 };
 
-const TeamChangeForm = ({ teamCode, canChangeTeam }: TeamModalProps) => {
+const TeamChangeForm = ({ canChangeTeam }: TeamModalProps) => {
     const [value, setValue] = React.useState("");
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {

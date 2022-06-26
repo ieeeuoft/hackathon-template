@@ -1,27 +1,12 @@
 import React from "react";
-import EditTeam from "./EditTeam";
-import { mockCartItems, mockCategories, mockHardware } from "testing/mockData";
-import {
-    render,
-    fireEvent,
-    waitFor,
-    makeStoreWithEntities,
-    promiseResolveWithDelay,
-    when,
-    makeMockApiResponse,
-} from "testing/utils";
-import { makeStore } from "slices/store";
-import { cartSelectors } from "slices/hardware/cartSlice";
-import { SnackbarProvider } from "notistack";
-import SnackbarNotifier from "components/general/SnackbarNotifier/SnackbarNotifier";
-import { get } from "api/api";
-import { getUpdatedHardwareDetails } from "slices/hardware/hardwareSlice";
+import EditTeam from "components/dashboard/EditTeam/EditTeam";
+import { render, fireEvent, makeStoreWithEntities } from "testing/utils";
 
-jest.mock("api/api", () => ({
-    ...jest.requireActual("api/api"),
-    get: jest.fn(),
-}));
-const mockedGet = get as jest.MockedFunction<typeof get>;
+Object.assign(navigator, {
+    clipboard: {
+        writeText: () => {},
+    },
+});
 
 describe("<EditTeam />", () => {
     test("The team code is correctly displayed", async () => {
@@ -86,5 +71,26 @@ describe("<EditTeam />", () => {
 
         const button_leave_team = getByText("LEAVE TEAM").closest("button");
         expect(button_leave_team).not.toBeDisabled();
+    });
+
+    test("Copy team code to clipboard", async () => {
+        // inside unit test
+        jest.spyOn(navigator.clipboard, "writeText");
+        const store = makeStoreWithEntities({
+            ui: {
+                dashboard: {
+                    isEditTeamVisible: true,
+                },
+            },
+        });
+        const { getByText } = render(
+            <EditTeam teamCode="ABCDE" canChangeTeam={true} teamSize={1} />,
+            {
+                store,
+            }
+        );
+        const copy_button = getByText("Copy");
+        fireEvent.click(copy_button);
+        expect(navigator.clipboard.writeText).toHaveBeenCalledWith("ABCDE");
     });
 });
