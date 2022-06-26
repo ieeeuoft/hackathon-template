@@ -35,6 +35,23 @@ const createDropdownList = (number: number) => {
     return entry;
 };
 
+const convertToDateTime = (dateString: string) => {
+    const date = new Date(dateString);
+    const formattedDateString =
+        ("0" + date.getUTCHours()).slice(-2) +
+        ":" +
+        ("0" + date.getUTCMinutes()).slice(-2) +
+        ":" +
+        ("0" + date.getUTCSeconds()).slice(-2) +
+        " " +
+        ("0" + date.getUTCDate()).slice(-2) +
+        "/" +
+        ("0" + (date.getUTCMonth() + 1)).slice(-2) +
+        "/" +
+        date.getUTCFullYear();
+    return formattedDateString;
+};
+
 export const grantQtyForm = (requestedQuantity: number) => {
     return (
         <Grid container direction="column">
@@ -147,7 +164,7 @@ export const TeamPendingOrderTable = () => {
                                             </FormControl>
                                         </TableCell>
                                         <TableCell>
-                                            {`${pendingOrder.created_at}`}
+                                            {convertToDateTime(pendingOrder.created_at)}
                                         </TableCell>
                                         <TableCell>
                                             <Checkbox
