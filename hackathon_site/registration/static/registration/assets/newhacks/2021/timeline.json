@@ -1,0 +1,162 @@
+[
+    {
+        "num_applied_to_date": 2,
+        "date": "2021-09-04",
+        "day_of_registration": 1
+    },
+    {
+        "num_applied_to_date": 5,
+        "date": "2021-09-08",
+        "day_of_registration": 5
+    },
+    {
+        "num_applied_to_date": 6,
+        "date": "2021-09-10",
+        "day_of_registration": 7
+    },
+    {
+        "num_applied_to_date": 7,
+        "date": "2021-09-11",
+        "day_of_registration": 8
+    },
+    {
+        "num_applied_to_date": 8,
+        "date": "2021-09-12",
+        "day_of_registration": 9
+    },
+    {
+        "num_applied_to_date": 10,
+        "date": "2021-09-19",
+        "day_of_registration": 16
+    },
+    {
+        "num_applied_to_date": 11,
+        "date": "2021-09-20",
+        "day_of_registration": 17
+    },
+    {
+        "num_applied_to_date": 13,
+        "date": "2021-09-21",
+        "day_of_registration": 18
+    },
+    {
+        "num_applied_to_date": 14,
+        "date": "2021-09-23",
+        "day_of_registration": 20
+    },
+    {
+        "num_applied_to_date": 15,
+        "date": "2021-09-24",
+        "day_of_registration": 21
+    },
+    {
+        "num_applied_to_date": 17,
+        "date": "2021-10-01",
+        "day_of_registration": 28
+    },
+    {
+        "num_applied_to_date": 19,
+        "date": "2021-10-03",
+        "day_of_registration": 30
+    },
+    {
+        "num_applied_to_date": 20,
+        "date": "2021-10-09",
+        "day_of_registration": 36
+    },
+    {
+        "num_applied_to_date": 23,
+        "date": "2021-10-12",
+        "day_of_registration": 39
+    },
+    {
+        "num_applied_to_date": 25,
+        "date": "2021-10-14",
+        "day_of_registration": 41
+    },
+    {
+        "num_applied_to_date": 26,
+        "date": "2021-10-19",
+        "day_of_registration": 46
+    },
+    {
+        "num_applied_to_date": 31,
+        "date": "2021-10-20",
+        "day_of_registration": 47
+    },
+    {
+        "num_applied_to_date": 40,
+        "date": "2021-10-21",
+        "day_of_registration": 48
+    },
+    {
+        "num_applied_to_date": 76,
+        "date": "2021-10-22",
+        "day_of_registration": 49
+    },
+    {
+        "num_applied_to_date": 95,
+        "date": "2021-10-23",
+        "day_of_registration": 50
+    },
+    {
+        "num_applied_to_date": 110,
+        "date": "2021-10-24",
+        "day_of_registration": 51
+    },
+    {
+        "num_applied_to_date": 124,
+        "date": "2021-10-25",
+        "day_of_registration": 52
+    },
+    {
+        "num_applied_to_date": 139,
+        "date": "2021-10-26",
+        "day_of_registration": 53
+    },
+    {
+        "num_applied_to_date": 172,
+        "date": "2021-10-27",
+        "day_of_registration": 54
+    },
+    {
+        "num_applied_to_date": 214,
+        "date": "2021-10-28",
+        "day_of_registration": 55
+    },
+    {
+        "num_applied_to_date": 293,
+        "date": "2021-10-29",
+        "day_of_registration": 56
+    },
+    {
+        "num_applied_to_date": 354,
+        "date": "2021-10-30",
+        "day_of_registration": 57
+    },
+    {
+        "num_applied_to_date": 361,
+        "date": "2021-10-31",
+        "day_of_registration": 58
+    },
+    {
+        "num_applied_to_date": 367,
+        "date": "2021-11-01",
+        "day_of_registration": 59
+    },
+    {
+        "num_applied_to_date": 389,
+        "date": "2021-11-02",
+        "day_of_registration": 60
+    },
+    {
+        "num_applied_to_date": 415,
+        "date": "2021-11-03",
+        "day_of_registration": 61
+    },
+    {
+        "num_applied_to_date": 436,
+        "date": "2021-11-04",
+        "day_of_registration": 62
+    }
+]

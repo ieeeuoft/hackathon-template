@@ -1,0 +1,33 @@
+{% extends "admin/change_list.html" %}
+{% load static %}
+
+{% block extrahead %}
+{{ block.super }}
+    <link rel="stylesheet" href="{% static 'registration/css/styles.css' %}"></link>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.8.0"></script>
+    <script src="{% static 'registration/js/loadCharts.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+    <label for="data-type">Analytic: </label>
+    <select name="data-type" id="chartType">
+        <option value="timeline">Applications Timeline</option>
+        <option value="school">Applicant Schools</option>
+        <option value="program">Applicant Programs</option>
+        <option value="study_level">Applicant Study Levels</option>
+    </select>
+    <label for="year" style="margin-left: 10px">Year: </label>
+    <select name="year" id="hackathonYear">
+        <option value="">N/A</option>
+        <option value="newhacks-2021">NewHacks 2021</option>
+        <option value="makeuoft-2022">MakeUofT 2022</option>
+    </select>
+    <button onclick="handleGraphChange()">View Data</button>
+    <div style="width: 80%;" id="lineChartContainer">
+        <canvas style="margin: 30px 0px;" id="lineChart"></canvas>
+    </div>
+    <div style="width: 40%;" id="pieChartContainer">
+        <canvas style="margin: 30px 0px" id="pieChart"></canvas>
+    </div>
+{{ block.super }}
+{% endblock %}
