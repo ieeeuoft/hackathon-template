@@ -1,14 +1,17 @@
 import React from "react";
 import styles from "components/general/OrderTables/OrderTables.module.scss";
-import Paper from "@material-ui/core/Paper";
-import Container from "@material-ui/core/Container";
-import IconButton from "@material-ui/core/IconButton";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableContainer from "@material-ui/core/TableContainer";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
+import {
+    Button,
+    Paper,
+    Container,
+    IconButton,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+} from "@material-ui/core";
 import Info from "@material-ui/icons/Info";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -30,13 +33,15 @@ import {
     orderErrorSelector,
     pendingOrderSelectors,
     returnedOrdersSelector,
+    cancelOrderThunk,
+    cancelOrderLoadingSelector,
 } from "slices/order/orderSlice";
 import {
     GeneralOrderTitle,
     GeneralOrderTableTitle,
 } from "components/general/OrderTables/OrderTables";
 
-export const CheckedOutTable = () =>
+export const CheckedOutTables = () =>
     // TODO: for incident reports
     // { push,
     // reportIncident, }
@@ -304,12 +309,14 @@ export const ReturnedTable = () => {
     );
 };
 
-export const PendingTable = () => {
+export const PendingTables = () => {
     const dispatch = useDispatch();
     const orders = useSelector(pendingOrderSelectors.selectAll);
     const hardware = useSelector(hardwareSelectors.selectEntities);
     const isVisible = useSelector(isPendingTableVisibleSelector);
+    const isCancelOrderLoading = useSelector(cancelOrderLoadingSelector);
     const toggleVisibility = () => dispatch(togglePendingTable());
+    const cancelOrder = (orderId: number) => dispatch(cancelOrderThunk(orderId));
 
     return (
         <Container
@@ -330,7 +337,10 @@ export const PendingTable = () => {
             {isVisible &&
                 orders.length > 0 &&
                 orders.map((pendingOrder) => (
-                    <div key={pendingOrder.id}>
+                    <div
+                        key={pendingOrder.id}
+                        data-testid={`pending-order-table-${pendingOrder.id}`}
+                    >
                         <GeneralOrderTableTitle
                             orderId={pendingOrder.id}
                             orderStatus={pendingOrder.status}
@@ -393,6 +403,22 @@ export const PendingTable = () => {
                                 </TableBody>
                             </Table>
                         </TableContainer>
+                        <div
+                            style={{
+                                display: "flex",
+                                justifyContent: "flex-end",
+                                marginTop: "10px",
+                            }}
+                        >
+                            <Button
+                                onClick={() => cancelOrder(pendingOrder.id)}
+                                disabled={isCancelOrderLoading}
+                                color="secondary"
+                                data-testid="cancel-order-button"
+                            >
+                                Cancel order
+                            </Button>
+                        </div>
                     </div>
                 ))}
         </Container>
