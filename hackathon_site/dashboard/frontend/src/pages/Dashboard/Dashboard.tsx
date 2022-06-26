@@ -5,8 +5,8 @@ import Typography from "@material-ui/core/Typography";
 import DashCard from "components/dashboard/DashCard/DashCard";
 import TeamCard from "components/dashboard/TeamCard/TeamCard";
 import {
-    PendingTable,
-    CheckedOutTable,
+    PendingTables,
+    CheckedOutTables,
     ReturnedTable,
 } from "components/dashboard/ItemTable/ItemTable";
 import ProductOverview from "components/inventory/ProductOverview/ProductOverview";
@@ -123,8 +123,8 @@ const Dashboard = () => {
                 {fetchOrderError && <AlertBox error={fetchOrderError} />}
                 {/* TODO: add back in when incident reports are completed on the frontend */}
                 {/* <BrokenTable items={itemsBroken} openReportAlert={openBrokenTable} /> */}
-                <PendingTable />
-                <CheckedOutTable />
+                <PendingTables />
+                <CheckedOutTables />
                 <ReturnedTable />
             </div>
         </>
