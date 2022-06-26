@@ -15,12 +15,15 @@ import Typography from "@material-ui/core/Typography";
 import { mockPendingOrders, mockHardware } from "testing/mockData";
 import React from "react";
 import Container from "@material-ui/core/Container";
-import styles from "components/dashboard/ItemTable/ItemTable.module.scss";
+import styles from "components/general/OrderTables/OrderTables.module.scss";
 import hardwareImagePlaceholder from "assets/images/placeholders/no-hardware-image.svg";
 import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
 import FormControl from "@material-ui/core/FormControl";
-import { ChipStatus } from "components/dashboard/ItemTable/ItemTable";
+import {
+    GeneralOrderTableTitle,
+    GeneralOrderTitle,
+} from "components/general/OrderTables/OrderTables";
 
 const createDropdownList = (number: number) => {
     let entry = [];
@@ -80,131 +83,51 @@ export const TeamPendingOrderTable = () => {
             disableGutters={true}
         >
             {orders.length > 0 && (
-                <div className={styles.title}>
-                    <Typography variant="h2" className={styles.titleText}>
-                        Requested Items
-                    </Typography>
-                    <Button onClick={() => alert("show/hide tables")} color="primary">
-                        Hide all
-                    </Button>
-                </div>
+                <GeneralOrderTitle
+                    title="Requested Items"
+                    isVisible={true}
+                    toggleVisibility={() => alert("show/hide orders")}
+                />
             )}
-            {orders.map((pendingOrder) => (
-                <div key={pendingOrder.id}>
-                    <Container
-                        className={styles.titleChip}
-                        maxWidth={false}
-                        disableGutters={true}
-                    >
-                        <Typography variant="h2" className={styles.titleChipText}>
-                            {`Order #${pendingOrder.id}`}
-                        </Typography>
-                        <Container
-                            className={styles.titleChipSpace}
-                            maxWidth={false}
-                            disableGutters={true}
-                        >
-                            <ChipStatus status={pendingOrder.status} />
-                        </Container>
-                    </Container>
-                    <TableContainer component={Paper} elevation={2} square={true}>
-                        <Table className={styles.table} size="small">
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell className={styles.widthFixed} />
-                                    <TableCell className={styles.width6}>
-                                        Name
-                                    </TableCell>
-                                    <TableCell
-                                        className={`${styles.width1} ${styles.noWrap}`}
-                                    >
-                                        Model
-                                    </TableCell>
-                                    <TableCell
-                                        className={`${styles.width1} ${styles.noWrap}`}
-                                    >
-                                        Manufacturer
-                                    </TableCell>
-                                    <TableCell
-                                        className={`${styles.width1} ${styles.noWrap}`}
-                                    >
-                                        Qty requested
-                                    </TableCell>
-                                    <TableCell
-                                        className={`${styles.width6} ${styles.noWrap}`}
-                                    >
-                                        Qty granted
-                                    </TableCell>
-                                    <TableCell
-                                        className={`${styles.width1} ${styles.noWrap}`}
-                                    >
-                                        Time
-                                    </TableCell>
-                                    <TableCell>
-                                        <Checkbox
-                                            color="primary"
-                                            style={{
-                                                marginLeft: "-15px",
-                                            }}
-                                        />
-                                    </TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {pendingOrder.request.map((row) => (
-                                    <TableRow key={row.id}>
-                                        <TableCell>
-                                            <img
-                                                className={styles.itemImg}
-                                                src={
-                                                    hardware[row.id]?.picture ??
-                                                    hardwareImagePlaceholder
-                                                }
-                                                alt={hardware[row.id]?.name}
-                                            />
+            {orders.length &&
+                orders.map((pendingOrder) => (
+                    <div key={pendingOrder.id}>
+                        <GeneralOrderTableTitle
+                            orderId={pendingOrder.id}
+                            orderStatus={pendingOrder.status}
+                        />
+                        <TableContainer component={Paper} elevation={2} square={true}>
+                            <Table className={styles.table} size="small">
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell className={styles.widthFixed} />
+                                        <TableCell className={styles.width6}>
+                                            Name
                                         </TableCell>
-                                        <TableCell>{hardware[row.id]?.name}</TableCell>
-                                        <TableCell>
-                                            {hardware[row.id]?.model_number}
+                                        <TableCell
+                                            className={`${styles.width1} ${styles.noWrap}`}
+                                        >
+                                            Model
                                         </TableCell>
-                                        <TableCell>
-                                            {hardware[row.id]?.manufacturer}
+                                        <TableCell
+                                            className={`${styles.width1} ${styles.noWrap}`}
+                                        >
+                                            Manufacturer
                                         </TableCell>
-                                        <TableCell>{row.requested_quantity}</TableCell>
-                                        <TableCell>
-                                            <div
-                                                style={{
-                                                    display: "flex",
-                                                    justifyContent: "space-evenly",
-                                                    alignItems: "end",
-                                                }}
-                                            >
-                                                <Link
-                                                    underline="always"
-                                                    color="textPrimary"
-                                                >
-                                                    {" "}
-                                                    All{" "}
-                                                </Link>
-                                                <FormControl
-                                                    variant="standard"
-                                                    hiddenLabel={true}
-                                                >
-                                                    <Select
-                                                        value={0}
-                                                        label="Qty"
-                                                        labelId="qtyLabel"
-                                                        name="quantity"
-                                                    >
-                                                        {createDropdownList(
-                                                            row.requested_quantity
-                                                        )}
-                                                    </Select>
-                                                </FormControl>
-                                            </div>
+                                        <TableCell
+                                            className={`${styles.width1} ${styles.noWrap}`}
+                                        >
+                                            Qty requested
                                         </TableCell>
-                                        <TableCell>
-                                            {convertToDateTime(pendingOrder.created_at)}
+                                        <TableCell
+                                            className={`${styles.width6} ${styles.noWrap}`}
+                                        >
+                                            Qty granted
+                                        </TableCell>
+                                        <TableCell
+                                            className={`${styles.width1} ${styles.noWrap}`}
+                                        >
+                                            Time
                                         </TableCell>
                                         <TableCell>
                                             <Checkbox
@@ -215,33 +138,108 @@ export const TeamPendingOrderTable = () => {
                                             />
                                         </TableCell>
                                     </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                    <Grid
-                        container
-                        justifyContent="flex-end"
-                        spacing={1}
-                        style={{ marginTop: "10px" }}
-                    >
-                        <Grid item>
-                            <Button color="secondary" variant="text" disableElevation>
-                                Reject Order
-                            </Button>
+                                </TableHead>
+                                <TableBody>
+                                    {pendingOrder.request.map((row) => (
+                                        <TableRow key={row.id}>
+                                            <TableCell>
+                                                <img
+                                                    className={styles.itemImg}
+                                                    src={
+                                                        hardware[row.id]?.picture ??
+                                                        hardwareImagePlaceholder
+                                                    }
+                                                    alt={hardware[row.id]?.name}
+                                                />
+                                            </TableCell>
+                                            <TableCell>
+                                                {hardware[row.id]?.name}
+                                            </TableCell>
+                                            <TableCell>
+                                                {hardware[row.id]?.model_number}
+                                            </TableCell>
+                                            <TableCell>
+                                                {hardware[row.id]?.manufacturer}
+                                            </TableCell>
+                                            <TableCell>
+                                                {row.requested_quantity}
+                                            </TableCell>
+                                            <TableCell>
+                                                <div
+                                                    style={{
+                                                        display: "flex",
+                                                        alignItems: "end",
+                                                    }}
+                                                >
+                                                    <Link
+                                                        underline="always"
+                                                        color="textPrimary"
+                                                        style={{ marginRight: "15px" }}
+                                                    >
+                                                        All
+                                                    </Link>
+                                                    <FormControl
+                                                        variant="standard"
+                                                        hiddenLabel={true}
+                                                    >
+                                                        <Select
+                                                            value={0}
+                                                            label="Qty"
+                                                            labelId="qtyLabel"
+                                                            name="quantity"
+                                                        >
+                                                            {createDropdownList(
+                                                                row.requested_quantity
+                                                            )}
+                                                        </Select>
+                                                    </FormControl>
+                                                </div>
+                                            </TableCell>
+                                            <TableCell>
+                                                {convertToDateTime(
+                                                    pendingOrder.created_at
+                                                )}
+                                            </TableCell>
+                                            <TableCell>
+                                                <Checkbox
+                                                    color="primary"
+                                                    style={{
+                                                        marginLeft: "-15px",
+                                                    }}
+                                                />
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                        <Grid
+                            container
+                            justifyContent="flex-end"
+                            spacing={1}
+                            style={{ marginTop: "10px" }}
+                        >
+                            <Grid item>
+                                <Button
+                                    color="secondary"
+                                    variant="text"
+                                    disableElevation
+                                >
+                                    Reject Order
+                                </Button>
+                            </Grid>
+                            <Grid item>
+                                <Button
+                                    color="primary"
+                                    variant="contained"
+                                    disableElevation
+                                >
+                                    Complete Order
+                                </Button>
+                            </Grid>
                         </Grid>
-                        <Grid item>
-                            <Button
-                                color="primary"
-                                variant="contained"
-                                disableElevation
-                            >
-                                Complete Order
-                            </Button>
-                        </Grid>
-                    </Grid>
-                </div>
-            ))}
+                    </div>
+                ))}
         </Container>
     );
 };
