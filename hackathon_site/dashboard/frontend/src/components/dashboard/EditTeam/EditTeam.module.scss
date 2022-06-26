@@ -1,0 +1,65 @@
+@import "./../../../assets/abstracts/mixins";
+
+.heading {
+    margin-top: 20px;
+}
+
+.teamForm {
+    margin-top: 10px;
+    padding-bottom: 10px;
+}
+
+.teamButton {
+    margin-top: 10px;
+}
+
+.copyButton {
+    height: 50%;
+}
+
+.alertBox {
+    margin-top: 10px;
+    width: 70%;
+    @include responsive(sm-down) {
+        width: 100%;
+    }
+}
+
+.editTeamModal {
+    height: 100%;
+    width: 500px;
+    @include flexPosition($jusCon: space-between, $alIte: flex-start, $dir: column);
+
+    &Div {
+        width: 100%;
+    }
+
+    @include responsive(sm-down) {
+        width: 100%;
+    }
+}
+
+.form {
+    width: 100%;
+
+    &Control {
+        margin: 10px 0;
+        width: 120px;
+    }
+
+    &Button {
+        background-color: color(light2);
+        width: calc(100% + 100px);
+        margin-left: -50px;
+        margin-bottom: -45px;
+        padding: 30px 50px;
+        @include flexPosition($jusCon: space-between, $alIte: flex-end, $dir: column);
+
+        @include responsive(sm-down) {
+            width: calc(100% + 60px);
+            margin-left: -30px;
+            margin-bottom: -15px;
+            padding: 20px 30px;
+        }
+    }
+}
