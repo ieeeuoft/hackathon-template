@@ -37,6 +37,8 @@ import {
     orderErrorSelector,
     pendingOrderSelectors,
     returnedOrdersSelector,
+    cancelOrderThunk,
+    cancelOrderLoadingSelector,
 } from "slices/order/orderSlice";
 
 export const ChipStatus = ({ status }: { status: OrderStatus | "Error" }) => {
@@ -70,7 +72,7 @@ export const ChipStatus = ({ status }: { status: OrderStatus | "Error" }) => {
     }
 };
 
-export const CheckedOutTable = () =>
+export const CheckedOutTables = () =>
     // TODO: for incident reports
     // { push,
     // reportIncident, }
@@ -362,12 +364,14 @@ export const ReturnedTable = () => {
     );
 };
 
-export const PendingTable = () => {
+export const PendingTables = () => {
     const dispatch = useDispatch();
     const orders = useSelector(pendingOrderSelectors.selectAll);
     const hardware = useSelector(hardwareSelectors.selectEntities);
     const isVisible = useSelector(isPendingTableVisibleSelector);
+    const isCancelOrderLoading = useSelector(cancelOrderLoadingSelector);
     const toggleVisibility = () => dispatch(togglePendingTable());
+    const cancelOrder = (orderId: number) => dispatch(cancelOrderThunk(orderId));
 
     return (
         <Container
@@ -389,7 +393,10 @@ export const PendingTable = () => {
             {isVisible &&
                 orders.length > 0 &&
                 orders.map((pendingOrder) => (
-                    <div key={pendingOrder.id}>
+                    <div
+                        key={pendingOrder.id}
+                        data-testid={`pending-order-table-${pendingOrder.id}`}
+                    >
                         <Container
                             className={styles.titleChip}
                             maxWidth={false}
@@ -465,6 +472,22 @@ export const PendingTable = () => {
                                 </TableBody>
                             </Table>
                         </TableContainer>
+                        <div
+                            style={{
+                                display: "flex",
+                                justifyContent: "flex-end",
+                                marginTop: "10px",
+                            }}
+                        >
+                            <Button
+                                onClick={() => cancelOrder(pendingOrder.id)}
+                                disabled={isCancelOrderLoading}
+                                color="secondary"
+                                data-testid="cancel-order-button"
+                            >
+                                Cancel order
+                            </Button>
+                        </div>
                     </div>
                 ))}
         </Container>
