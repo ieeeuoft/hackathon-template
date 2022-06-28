@@ -1,5 +1,5 @@
 import React from "react";
-
+import styles from "./TeamDetail.module.scss";
 import TeamInfoTable from "components/teamDetail/TeamInfoTable/TeamInfoTable";
 
 import { RouteComponentProps } from "react-router-dom";
@@ -12,9 +12,14 @@ import {
     TableBody,
     TableRow,
     TableCell,
+    Divider,
 } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import TeamPendingOrderTable from "../../components/teamDetail/TeamPendingOrderTable/TeamPendingOrderTable";
+import {
+    AdminReturnedItemsTable,
+    SimplePendingOrderFulfillmentTable,
+} from "components/teamDetail/SimpleOrderTables/SimpleOrderTables";
 
 export interface PageParams {
     id: string;
@@ -53,6 +58,10 @@ const TeamDetail = ({ match }: RouteComponentProps<PageParams>) => {
                 </Grid>
                 <Grid item container direction="column" spacing={2}>
                     <TeamPendingOrderTable />
+                    <Divider className={styles.dividerMargin} />
+                    <SimplePendingOrderFulfillmentTable />
+                    <Divider className={styles.dividerMargin} />
+                    <AdminReturnedItemsTable />
                 </Grid>
             </Grid>
         </>
