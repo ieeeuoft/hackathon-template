@@ -1,5 +1,6 @@
 import React from "react";
-import styles from "./InventoryFilter.module.scss";
+// import styles from "./InventoryFilter.module.scss";
+import styles from "../../Filter.module.scss";
 import { Formik, Field, FieldProps, FormikValues } from "formik";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
@@ -98,10 +99,14 @@ export const InventoryFilter = ({ handleReset, handleSubmit }: FormikValues) => 
     const categories = useSelector(categorySelectors.selectAll);
     const isCategoriesLoading = useSelector(isCategoriesLoadingSelector);
     const isHardwareLoading = useSelector(isHardwareLoadingSelector);
-
     return (
         <div className={styles.filter}>
-            <Paper elevation={2} className={styles.filterPaper} square={true}>
+            <Paper
+                elevation={2}
+                className={styles.filterPaper}
+                square={true}
+                style={{ padding: "0px" }}
+            >
                 <form onReset={handleReset} onSubmit={handleSubmit}>
                     <fieldset>
                         <legend>

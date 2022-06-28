@@ -108,7 +108,10 @@ const OrderFilter = ({ handleReset, handleSubmit }: FormikValues) => {
                             options={orderByOptions}
                         />
                     </fieldset>
-                    <Divider className={styles.filterDivider} />
+                    <Divider
+                        className={styles.filterDivider}
+                        data-testid="orderFilterDivider"
+                    />
                     <fieldset>
                         <legend>
                             <Typography variant="h2">Status</Typography>
@@ -122,7 +125,12 @@ const OrderFilter = ({ handleReset, handleSubmit }: FormikValues) => {
                 </form>
             </Paper>
             <div className={styles.filterBtns}>
-                <Button type="reset" color="secondary" onClick={handleReset}>
+                <Button
+                    type="reset"
+                    color="secondary"
+                    onClick={handleReset}
+                    data-testid="clear-button"
+                >
                     Clear all
                 </Button>
                 <Button
@@ -133,6 +141,7 @@ const OrderFilter = ({ handleReset, handleSubmit }: FormikValues) => {
                     fullWidth={true}
                     className={styles.filterBtnsApply}
                     disableElevation
+                    data-testid="apply-button"
                 >
                     Apply
                 </Button>

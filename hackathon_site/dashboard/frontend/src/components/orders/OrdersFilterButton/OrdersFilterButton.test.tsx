@@ -1,10 +1,10 @@
 import React from "react";
 import { render } from "@testing-library/react";
-import OrdersFilter from "./OrdersFilterButton";
+import OrdersFilterButton from "./OrdersFilterButton";
 
-describe("<OrdersFilter />", () => {
+describe("<OrdersFilterButton />", () => {
     it("Has necessary component elements", async () => {
-        const { getByTestId } = render(<OrdersFilter />);
+        const { getByTestId } = render(<OrdersFilterButton />);
         expect(getByTestId("filter-button")).toBeInTheDocument();
     });
 });
