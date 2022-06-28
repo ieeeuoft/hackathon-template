@@ -1,5 +1,4 @@
 import React from "react";
-// import styles from "./InventoryFilter.module.scss";
 import styles from "../../Filter.module.scss";
 import { Formik, Field, FieldProps, FormikValues } from "formik";
 import Typography from "@material-ui/core/Typography";

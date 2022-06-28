@@ -10,8 +10,8 @@ import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
-import styles from "../../Filter.module.scss";
 import { OrdersOrdering, OrderStatus } from "api/types";
+import styles from "../../Filter.module.scss";
 
 type OrderByOptions = {
     value: OrdersOrdering;
