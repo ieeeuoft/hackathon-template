@@ -10,13 +10,21 @@ import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
-import styles from "./OrderFilter.module.scss";
-import { Category, OrdersOrdering } from "api/types";
+import styles from "../../Filter.module.scss";
+import { OrdersOrdering, OrderStatus } from "api/types";
 
 type OrderByOptions = {
     value: OrdersOrdering;
     label: string;
 }[];
+
+type StatusCategories = [
+    {
+        id: Number;
+        status: OrderStatus;
+        numOrders: Number;
+    }
+];
 
 const orderByOptions: OrderByOptions = [
     { value: "", label: "Default" },
@@ -40,7 +48,10 @@ const RadioOrderBy = ({ field, options }: FieldProps & { options: OrderByOptions
     </RadioGroup>
 );
 
-const CheckboxCategory = ({ field, options }: FieldProps & { options: Category[] }) => (
+const CheckboxCategory = ({
+    field,
+    options,
+}: FieldProps & { options: StatusCategories }) => (
     <FormGroup {...field}>
         {options.map((item, i) => (
             <div className={styles.filterCategory} key={i}>
@@ -48,7 +59,7 @@ const CheckboxCategory = ({ field, options }: FieldProps & { options: Category[]
                     name={field.name}
                     value={item.id}
                     control={<Checkbox color="primary" />}
-                    label={item.name}
+                    label={item.status}
                     checked={
                         field.value ? field.value.includes(item.id.toString()) : false
                     }
@@ -56,7 +67,7 @@ const CheckboxCategory = ({ field, options }: FieldProps & { options: Category[]
                 <Chip
                     size="small"
                     // label={item.qty}
-                    label={item.unique_hardware_count}
+                    label={item.numOrders}
                     className={styles.filterCategoryChip}
                 />
             </div>
@@ -68,18 +79,18 @@ const OrderFilter = ({ handleReset, handleSubmit }: FormikValues) => {
     const status = [
         {
             id: 1,
-            name: "Pending",
-            unique_hardware_count: 2,
+            status: "Pending",
+            numOrders: 2,
         },
         {
             id: 2,
-            name: "Ready for Pick up",
-            unique_hardware_count: 4,
+            status: "Ready for Pick up",
+            numOrders: 4,
         },
         {
             id: 3,
-            name: "Checked out",
-            unique_hardware_count: 4,
+            status: "Checked out",
+            numOrders: 4,
         },
     ];
 
@@ -103,7 +114,7 @@ const OrderFilter = ({ handleReset, handleSubmit }: FormikValues) => {
                             <Typography variant="h2">Status</Typography>
                         </legend>
                         <Field
-                            name="categories"
+                            name="status"
                             component={CheckboxCategory}
                             options={status}
                         />
@@ -131,9 +142,12 @@ const OrderFilter = ({ handleReset, handleSubmit }: FormikValues) => {
 };
 
 export const EnhancedOrderFilter = () => {
-    const onSubmit = () => {
+    const onSubmit = ({ ordering, status }: any) => {
         // TODO
         alert("The apply button has been clicked.");
+
+        console.log("ordering: ", ordering);
+        console.log("statuses: ", status);
     };
 
     const onReset = () => {
@@ -144,7 +158,7 @@ export const EnhancedOrderFilter = () => {
         <Formik
             initialValues={{
                 ordering: "",
-                categories: [],
+                status: [],
             }}
             onSubmit={onSubmit}
             onReset={onReset}

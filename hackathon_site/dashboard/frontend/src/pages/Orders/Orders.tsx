@@ -18,7 +18,6 @@ const Orders = () => {
     return (
         <>
             <Header />
-
             <Drawer
                 className={styles.orderFilterDrawer}
                 open={mobileOpen}
@@ -39,17 +38,6 @@ const Orders = () => {
             <Grid container spacing={5} direction="row" className={styles.orders}>
                 <Grid item xl={2} lg={3} md={3}>
                     <Hidden implementation="css" smDown>
-                        {/* <div
-                            style={{
-                                backgroundColor: "lightblue",
-                                padding: "10px",
-                                borderRadius: "5px",
-                                border: "1px solid black",
-                            }}
-                        >
-                            Filters Component (remove this div once its starting to be
-                            worked on)
-                        </div> */}
                         <OrdersFilter />
                     </Hidden>
                 </Grid>
