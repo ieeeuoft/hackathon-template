@@ -544,10 +544,10 @@ export const mockCartItems: CartItem[] = [
 
 export const mockPendingOrders: Order[] = [
     {
-        id: 3,
+        id: 3, //order id
         items: [
             {
-                id: 6,
+                id: 6, // order item id
                 hardware_id: 3,
                 part_returned_health: null,
             },
@@ -564,8 +564,8 @@ export const mockPendingOrders: Order[] = [
         updated_at: "2021-12-03T23:01:46.606892-05:00",
         request: [
             {
-                id: 3,
-                requested_quantity: 1,
+                id: 3, //hardware id
+                requested_quantity: 2,
             },
             {
                 id: 4,
@@ -600,7 +600,7 @@ export const mockPendingOrders: Order[] = [
         request: [
             {
                 id: 1,
-                requested_quantity: 2,
+                requested_quantity: 5,
             },
             {
                 id: 4,
