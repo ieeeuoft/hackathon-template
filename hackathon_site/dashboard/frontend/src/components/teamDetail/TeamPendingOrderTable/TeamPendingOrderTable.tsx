@@ -185,6 +185,12 @@ export const TeamPendingOrderTable = () => {
                                                                 style={{
                                                                     marginRight: "15px",
                                                                 }}
+                                                                onClick={() => {
+                                                                    props.setFieldValue(
+                                                                        `${row.id}-quantity`,
+                                                                        row.requested_quantity
+                                                                    );
+                                                                }}
                                                             >
                                                                 All
                                                             </Link>
