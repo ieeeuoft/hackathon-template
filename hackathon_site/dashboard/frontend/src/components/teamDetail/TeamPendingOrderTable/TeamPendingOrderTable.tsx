@@ -29,7 +29,7 @@ import { Formik, Field } from "formik";
 const createDropdownList = (number: number) => {
     let entry = [];
 
-    for (let i = 0; i <= number + 5; i++) {
+    for (let i = 0; i <= number; i++) {
         entry.push(
             <MenuItem key={i} role="quantity" value={i.toString()}>
                 {i}
