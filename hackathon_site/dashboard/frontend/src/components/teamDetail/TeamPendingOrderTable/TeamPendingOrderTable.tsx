@@ -47,7 +47,6 @@ const setInitialValues = (request: { id: number; requested_quantity: number }[])
             orderItem.requested_quantity.toString();
         orderInitalValues[`${orderItem.id}-checkbox`] = false;
     });
-    console.log(orderInitalValues);
     return orderInitalValues;
 };
 
@@ -72,16 +71,6 @@ export const TeamPendingOrderTable = () => {
     const orders = mockPendingOrders;
     const hardware = mockHardware;
 
-    // let orderInitalValues: Record<string, Record<string, string | boolean>> = {};
-    // mockPendingOrders[0].request.forEach((orderItem) => {
-    //     orderInitalValues[`mui-component-select-${orderItem.id}-quantity`] = {
-    //         "quantity-granted": orderItem.requested_quantity.toString(),
-    //         checkbox: false,
-    //     };
-    // });
-    //
-    // const testfunc = () => {};
-
     return (
         <Container
             className={styles.tableContainer}
@@ -103,7 +92,6 @@ export const TeamPendingOrderTable = () => {
                     >
                         {(props) => (
                             <div key={pendingOrder.id}>
-                                {/*<pre>{JSON.stringify(props.values, undefined, 2)}</pre>*/}
                                 <GeneralOrderTableTitle
                                     orderId={pendingOrder.id}
                                     orderStatus={pendingOrder.status}
@@ -199,12 +187,7 @@ export const TeamPendingOrderTable = () => {
                                                             >
                                                                 All
                                                             </Link>
-                                                            {/*<FormControl*/}
-                                                            {/*    variant="standard"*/}
-                                                            {/*    hiddenLabel={true}*/}
-                                                            {/*>*/}
                                                             <Select
-                                                                // value=values[]
                                                                 value={
                                                                     props.values[
                                                                         `${row.id}-quantity`
@@ -222,7 +205,6 @@ export const TeamPendingOrderTable = () => {
                                                                     row.requested_quantity
                                                                 )}
                                                             </Select>
-                                                            {/*</FormControl>*/}
                                                         </div>
                                                     </TableCell>
                                                     <TableCell>
@@ -278,11 +260,6 @@ export const TeamPendingOrderTable = () => {
                                         </Button>
                                     </Grid>
                                 </Grid>
-                                {/*<Field*/}
-                                {/*    id="name"*/}
-                                {/*    name="name"*/}
-                                {/*    val;u={props.handleChange()}*/}
-                                {/*/>*/}
                             </div>
                         )}
                     </Formik>
