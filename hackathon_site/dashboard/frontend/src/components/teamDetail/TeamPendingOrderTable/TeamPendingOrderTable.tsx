@@ -1,6 +1,7 @@
 import {
     Button,
     Checkbox,
+    FormControlLabel,
     Grid,
     Link,
     Paper,
@@ -213,8 +214,15 @@ export const TeamPendingOrderTable = () => {
                                                         )}
                                                     </TableCell>
                                                     <TableCell>
-                                                        <Checkbox
-                                                            color="primary"
+                                                        <FormControlLabel
+                                                            control={
+                                                                <Checkbox color="primary" />
+                                                            }
+                                                            label=""
+                                                            name={`${row.id}-checkbox`}
+                                                            onChange={
+                                                                props.handleChange
+                                                            }
                                                             style={{
                                                                 marginLeft: "-15px",
                                                             }}
