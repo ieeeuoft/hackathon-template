@@ -24,11 +24,12 @@ import {
     GeneralOrderTableTitle,
     GeneralOrderTitle,
 } from "components/general/OrderTables/OrderTables";
+import { Formik, Field } from "formik";
 
 const createDropdownList = (number: number) => {
     let entry = [];
 
-    for (let i = 0; i <= number; i++) {
+    for (let i = 0; i <= number + 5; i++) {
         entry.push(
             <MenuItem key={i} role="quantity" value={i.toString()}>
                 {i}
@@ -37,6 +38,17 @@ const createDropdownList = (number: number) => {
     }
 
     return entry;
+};
+
+const setInitialValues = (request: { id: number; requested_quantity: number }[]) => {
+    let orderInitalValues: Record<string, string | boolean> = {};
+    request.forEach((orderItem) => {
+        orderInitalValues[`${orderItem.id}-quantity`] =
+            orderItem.requested_quantity.toString();
+        orderInitalValues[`${orderItem.id}-checkbox`] = false;
+    });
+    console.log(orderInitalValues);
+    return orderInitalValues;
 };
 
 const convertToDateTime = (dateString: string) => {
@@ -56,25 +68,19 @@ const convertToDateTime = (dateString: string) => {
     return formattedDateString;
 };
 
-export const grantQtyForm = (requestedQuantity: number) => {
-    return (
-        <Grid container direction="column">
-            <FormControl variant="standard" hiddenLabel={true}>
-                <Select value={0} label="Qty" labelId="qtyLabel" name="quantity">
-                    {createDropdownList(requestedQuantity)}
-                </Select>
-            </FormControl>
-
-            <Typography variant={"h2"}>test</Typography>
-        </Grid>
-    );
-};
-
 export const TeamPendingOrderTable = () => {
     const orders = mockPendingOrders;
     const hardware = mockHardware;
 
-    const testfunc = () => {};
+    // let orderInitalValues: Record<string, Record<string, string | boolean>> = {};
+    // mockPendingOrders[0].request.forEach((orderItem) => {
+    //     orderInitalValues[`mui-component-select-${orderItem.id}-quantity`] = {
+    //         "quantity-granted": orderItem.requested_quantity.toString(),
+    //         checkbox: false,
+    //     };
+    // });
+    //
+    // const testfunc = () => {};
 
     return (
         <Container
@@ -91,154 +97,195 @@ export const TeamPendingOrderTable = () => {
             )}
             {orders.length &&
                 orders.map((pendingOrder) => (
-                    <div key={pendingOrder.id}>
-                        <GeneralOrderTableTitle
-                            orderId={pendingOrder.id}
-                            orderStatus={pendingOrder.status}
-                        />
-                        <TableContainer component={Paper} elevation={2} square={true}>
-                            <Table className={styles.table} size="small">
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell className={styles.widthFixed} />
-                                        <TableCell className={styles.width6}>
-                                            Name
-                                        </TableCell>
-                                        <TableCell
-                                            className={`${styles.width1} ${styles.noWrap}`}
-                                        >
-                                            Model
-                                        </TableCell>
-                                        <TableCell
-                                            className={`${styles.width1} ${styles.noWrap}`}
-                                        >
-                                            Manufacturer
-                                        </TableCell>
-                                        <TableCell
-                                            className={`${styles.width1} ${styles.noWrap}`}
-                                        >
-                                            Qty requested
-                                        </TableCell>
-                                        <TableCell
-                                            className={`${styles.width6} ${styles.noWrap}`}
-                                        >
-                                            Qty granted
-                                        </TableCell>
-                                        <TableCell
-                                            className={`${styles.width1} ${styles.noWrap}`}
-                                        >
-                                            Time
-                                        </TableCell>
-                                        <TableCell>
-                                            <Checkbox
-                                                color="primary"
-                                                style={{
-                                                    marginLeft: "-15px",
-                                                }}
-                                            />
-                                        </TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {pendingOrder.request.map((row) => (
-                                        <TableRow key={row.id}>
-                                            <TableCell>
-                                                <img
-                                                    className={styles.itemImg}
-                                                    src={
-                                                        hardware[row.id]?.picture ??
-                                                        hardwareImagePlaceholder
-                                                    }
-                                                    alt={hardware[row.id]?.name}
+                    <Formik
+                        initialValues={setInitialValues(pendingOrder.request)}
+                        onSubmit={(values) => alert(values)}
+                    >
+                        {(props) => (
+                            <div key={pendingOrder.id}>
+                                {/*<pre>{JSON.stringify(props.values, undefined, 2)}</pre>*/}
+                                <GeneralOrderTableTitle
+                                    orderId={pendingOrder.id}
+                                    orderStatus={pendingOrder.status}
+                                />
+                                <TableContainer
+                                    component={Paper}
+                                    elevation={2}
+                                    square={true}
+                                >
+                                    <Table className={styles.table} size="small">
+                                        <TableHead>
+                                            <TableRow>
+                                                <TableCell
+                                                    className={styles.widthFixed}
                                                 />
-                                            </TableCell>
-                                            <TableCell>
-                                                {hardware[row.id]?.name}
-                                            </TableCell>
-                                            <TableCell>
-                                                {hardware[row.id]?.model_number}
-                                            </TableCell>
-                                            <TableCell>
-                                                {hardware[row.id]?.manufacturer}
-                                            </TableCell>
-                                            <TableCell>
-                                                {row.requested_quantity}
-                                            </TableCell>
-                                            <TableCell>
-                                                <div
-                                                    style={{
-                                                        display: "flex",
-                                                        alignItems: "end",
-                                                    }}
+                                                <TableCell className={styles.width6}>
+                                                    Name
+                                                </TableCell>
+                                                <TableCell
+                                                    className={`${styles.width1} ${styles.noWrap}`}
                                                 >
-                                                    <Link
-                                                        underline="always"
-                                                        color="textPrimary"
-                                                        style={{ marginRight: "15px" }}
-                                                    >
-                                                        All
-                                                    </Link>
-                                                    <FormControl
-                                                        variant="standard"
-                                                        hiddenLabel={true}
-                                                    >
-                                                        <Select
-                                                            value={0}
-                                                            label="Qty"
-                                                            labelId="qtyLabel"
-                                                            name="quantity"
+                                                    Model
+                                                </TableCell>
+                                                <TableCell
+                                                    className={`${styles.width1} ${styles.noWrap}`}
+                                                >
+                                                    Manufacturer
+                                                </TableCell>
+                                                <TableCell
+                                                    className={`${styles.width1} ${styles.noWrap}`}
+                                                >
+                                                    Qty requested
+                                                </TableCell>
+                                                <TableCell
+                                                    className={`${styles.width6} ${styles.noWrap}`}
+                                                >
+                                                    Qty granted
+                                                </TableCell>
+                                                <TableCell
+                                                    className={`${styles.width1} ${styles.noWrap}`}
+                                                >
+                                                    Time
+                                                </TableCell>
+                                                <TableCell>
+                                                    <Checkbox
+                                                        color="primary"
+                                                        style={{
+                                                            marginLeft: "-15px",
+                                                        }}
+                                                    />
+                                                </TableCell>
+                                            </TableRow>
+                                        </TableHead>
+                                        <TableBody>
+                                            {pendingOrder.request.map((row) => (
+                                                <TableRow key={row.id}>
+                                                    <TableCell>
+                                                        <img
+                                                            className={styles.itemImg}
+                                                            src={
+                                                                hardware[row.id]
+                                                                    ?.picture ??
+                                                                hardwareImagePlaceholder
+                                                            }
+                                                            alt={hardware[row.id]?.name}
+                                                        />
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        {hardware[row.id]?.name}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        {hardware[row.id]?.model_number}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        {hardware[row.id]?.manufacturer}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        {row.requested_quantity}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <div
+                                                            style={{
+                                                                display: "flex",
+                                                                alignItems: "end",
+                                                            }}
                                                         >
-                                                            {createDropdownList(
-                                                                row.requested_quantity
-                                                            )}
-                                                        </Select>
-                                                    </FormControl>
-                                                </div>
-                                            </TableCell>
-                                            <TableCell>
-                                                {convertToDateTime(
-                                                    pendingOrder.created_at
-                                                )}
-                                            </TableCell>
-                                            <TableCell>
-                                                <Checkbox
-                                                    color="primary"
-                                                    style={{
-                                                        marginLeft: "-15px",
-                                                    }}
-                                                />
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
-                        <Grid
-                            container
-                            justifyContent="flex-end"
-                            spacing={1}
-                            style={{ marginTop: "10px" }}
-                        >
-                            <Grid item>
-                                <Button
-                                    color="secondary"
-                                    variant="text"
-                                    disableElevation
+                                                            <Link
+                                                                underline="always"
+                                                                color="textPrimary"
+                                                                style={{
+                                                                    marginRight: "15px",
+                                                                }}
+                                                            >
+                                                                All
+                                                            </Link>
+                                                            {/*<FormControl*/}
+                                                            {/*    variant="standard"*/}
+                                                            {/*    hiddenLabel={true}*/}
+                                                            {/*>*/}
+                                                            <Select
+                                                                // value=values[]
+                                                                value={
+                                                                    props.values[
+                                                                        `${row.id}-quantity`
+                                                                    ]
+                                                                }
+                                                                onChange={
+                                                                    props.handleChange
+                                                                }
+                                                                label="Qty"
+                                                                labelId="qtyLabel"
+                                                                name={`${row.id}-quantity`}
+                                                                id={`${row.id}-quantity`}
+                                                            >
+                                                                {createDropdownList(
+                                                                    row.requested_quantity
+                                                                )}
+                                                            </Select>
+                                                            {/*</FormControl>*/}
+                                                        </div>
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        {convertToDateTime(
+                                                            pendingOrder.created_at
+                                                        )}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <Checkbox
+                                                            color="primary"
+                                                            style={{
+                                                                marginLeft: "-15px",
+                                                            }}
+                                                        />
+                                                    </TableCell>
+                                                </TableRow>
+                                            ))}
+                                        </TableBody>
+                                    </Table>
+                                </TableContainer>
+                                <Grid
+                                    container
+                                    justifyContent="flex-end"
+                                    spacing={1}
+                                    style={{ marginTop: "10px" }}
                                 >
-                                    Reject Order
-                                </Button>
-                            </Grid>
-                            <Grid item>
-                                <Button
-                                    color="primary"
-                                    variant="contained"
-                                    disableElevation
-                                >
-                                    Complete Order
-                                </Button>
-                            </Grid>
-                        </Grid>
-                    </div>
+                                    <Grid item>
+                                        <Button
+                                            color="secondary"
+                                            variant="text"
+                                            disableElevation
+                                        >
+                                            Reject Order
+                                        </Button>
+                                    </Grid>
+                                    <Grid item>
+                                        <Button
+                                            color="primary"
+                                            variant="contained"
+                                            type="submit"
+                                            disableElevation
+                                            onClick={() => {
+                                                alert(
+                                                    JSON.stringify(
+                                                        props.values,
+                                                        undefined,
+                                                        2
+                                                    )
+                                                );
+                                            }}
+                                        >
+                                            Complete Order
+                                        </Button>
+                                    </Grid>
+                                </Grid>
+                                {/*<Field*/}
+                                {/*    id="name"*/}
+                                {/*    name="name"*/}
+                                {/*    val;u={props.handleChange()}*/}
+                                {/*/>*/}
+                            </div>
+                        )}
+                    </Formik>
                 ))}
         </Container>
     );
