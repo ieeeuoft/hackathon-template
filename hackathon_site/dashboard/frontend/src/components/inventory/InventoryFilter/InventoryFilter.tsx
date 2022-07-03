@@ -1,5 +1,4 @@
 import React from "react";
-import styles from "../../global_css/Filter.module.scss";
 import { Formik, Field, FieldProps, FormikValues } from "formik";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
@@ -25,6 +24,7 @@ import {
     categorySelectors,
     isLoadingSelector as isCategoriesLoadingSelector,
 } from "slices/hardware/categorySlice";
+import styles from "../../global_css/Filter.module.scss";
 type OrderByOptions = {
     value: HardwareOrdering;
     label: string;
