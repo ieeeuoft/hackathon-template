@@ -1,7 +1,7 @@
 import styles from "./OrderTables.module.scss";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
-import React, { useState } from "react";
+import React, { ReactElement, useState } from "react";
 import Container from "@material-ui/core/Container";
 import { Hardware, OrderInTable, OrderStatus, ReturnOrderInTable } from "api/types";
 import Chip from "@material-ui/core/Chip";
@@ -9,6 +9,7 @@ import CheckCircle from "@material-ui/icons/CheckCircle";
 import WatchLater from "@material-ui/icons/WatchLater";
 import Error from "@material-ui/icons/Error";
 import {
+    Checkbox,
     Grid,
     Paper,
     Table,
@@ -103,8 +104,13 @@ export const GeneralOrderTableTitle = ({
 
 export const GeneralPendingTable = ({
     pendingOrder,
+    extraColumn,
 }: {
     pendingOrder: OrderInTable;
+    extraColumn?: {
+        header: ReactElement;
+        body: (id: number) => ReactElement;
+    };
 }) => {
     const hardware = useSelector(hardwareSelectors.selectEntities);
 
@@ -134,7 +140,10 @@ export const GeneralPendingTable = ({
                             >
                                 Granted Qty
                             </TableCell>
-                            <TableCell className={styles.widthBuffer} />
+                            {extraColumn?.header}
+                            {!extraColumn && (
+                                <TableCell className={styles.widthBuffer} />
+                            )}
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -159,7 +168,10 @@ export const GeneralPendingTable = ({
                                 <TableCell align="right">
                                     {row.quantityGranted}
                                 </TableCell>
-                                <TableCell className={styles.widthBuffer} />
+                                {extraColumn?.body(row.id)}
+                                {!extraColumn && (
+                                    <TableCell className={styles.widthBuffer} />
+                                )}
                             </TableRow>
                         ))}
                     </TableBody>

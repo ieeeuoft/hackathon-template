@@ -1,14 +1,66 @@
 import { mockPendingOrdersInTable, mockReturnedOrdersInTable } from "testing/mockData";
-import React, { useState } from "react";
+import React, { ChangeEvent, ChangeEventHandler, useState } from "react";
 import Container from "@material-ui/core/Container";
 import styles from "components/general/OrderTables/OrderTables.module.scss";
-import { Grid } from "@material-ui/core";
+import { Checkbox, FormGroup, Grid, TableCell, Tooltip } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import {
     GeneralOrderTitle,
     GeneralPendingTable,
     GeneralReturnTable,
 } from "components/general/OrderTables/OrderTables";
+import { Field, FieldProps, Form, Formik } from "formik";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+
+const TableCheckbox = ({
+    field,
+    option,
+    recheckAll,
+    ...props
+}: FieldProps & { option: string; recheckAll: (e: ChangeEvent<{}>) => void }) => (
+    <FormGroup {...field} {...props}>
+        <FormControlLabel
+            name={field.name}
+            value={option}
+            control={<Checkbox color="primary" />}
+            label=""
+            checked={field.value?.includes(option)}
+            onChange={(e) => {
+                field.onChange(e);
+                recheckAll(e);
+            }}
+        />
+    </FormGroup>
+);
+
+const TableCheckAll = ({
+    field,
+    checkAll,
+    ...props
+}: FieldProps & { checkAll: (e: ChangeEvent<{}>) => void }) => (
+    <FormGroup {...field} {...props}>
+        <FormControlLabel
+            name={field.name}
+            value={field.value}
+            onChange={checkAll}
+            control={<Checkbox color="primary" />}
+            label=""
+            checked={field.value}
+        />
+    </FormGroup>
+);
+
+const CompleteOrderButton = ({ isDisabled }: { isDisabled: boolean }) => (
+    <Button
+        color="primary"
+        variant="contained"
+        disableElevation
+        type="submit"
+        disabled={isDisabled}
+    >
+        Complete Order
+    </Button>
+);
 
 export const SimplePendingOrderFulfillmentTable = () => {
     const orders = mockPendingOrdersInTable;
@@ -35,39 +87,122 @@ export const SimplePendingOrderFulfillmentTable = () => {
             {isVisible &&
                 orders.length > 0 &&
                 orders.map((pendingOrder) => (
-                    <div
+                    <Formik
                         key={pendingOrder.id}
-                        data-testid={`admin-pending-order-${pendingOrder.id}`}
+                        initialValues={{
+                            itemIdsChecked: [],
+                            checkAll: false,
+                        }}
+                        onSubmit={(values) => console.log(values)}
                     >
-                        <GeneralPendingTable {...{ pendingOrder }} />
-                        <Grid
-                            container
-                            justifyContent="flex-end"
-                            spacing={1}
-                            style={{ marginTop: "10px" }}
-                        >
-                            <Grid item>
-                                <Button
-                                    color="secondary"
-                                    variant="text"
-                                    disableElevation
+                        {({ values, setFieldValue }) => {
+                            const disableCompletion =
+                                values.itemIdsChecked.length !==
+                                pendingOrder.hardwareInTableRow.length;
+                            const checkAllItems = (e: ChangeEvent<HTMLInputElement>) =>
+                                setFieldValue(
+                                    "itemIdsChecked",
+                                    e.target.checked
+                                        ? pendingOrder.hardwareInTableRow.map(
+                                              (item) => `hardware-${item.id}`
+                                          )
+                                        : []
+                                );
+                            const recheckAllItems = (
+                                e: ChangeEvent<HTMLInputElement>
+                            ) => {
+                                if (
+                                    pendingOrder.hardwareInTableRow.length -
+                                        values.itemIdsChecked.length <=
+                                    1
+                                ) {
+                                    setFieldValue("checkAll", e.target.checked);
+                                }
+                            };
+                            return (
+                                <Form
+                                    data-testid={`admin-pending-order-${pendingOrder.id}`}
                                 >
-                                    Reject Order
-                                </Button>
-                            </Grid>
-                            {pendingOrder.status === "Submitted" && (
-                                <Grid item>
-                                    <Button
-                                        color="primary"
-                                        variant="contained"
-                                        disableElevation
+                                    <GeneralPendingTable
+                                        {...{
+                                            pendingOrder,
+                                            ...(pendingOrder.status === "Submitted" && {
+                                                extraColumn: {
+                                                    header: (
+                                                        <TableCell
+                                                            className={`${styles.width1} ${styles.noWrap}`}
+                                                            align="center"
+                                                        >
+                                                            <Field
+                                                                name="checkAll"
+                                                                component={
+                                                                    TableCheckAll
+                                                                }
+                                                                checkAll={checkAllItems}
+                                                            />
+                                                        </TableCell>
+                                                    ),
+                                                    body: (id) => (
+                                                        <TableCell
+                                                            className={`${styles.width1} ${styles.noWrap}`}
+                                                            align="center"
+                                                        >
+                                                            <Field
+                                                                name="itemIdsChecked"
+                                                                component={
+                                                                    TableCheckbox
+                                                                }
+                                                                option={`hardware-${id}`}
+                                                                recheckAll={
+                                                                    recheckAllItems
+                                                                }
+                                                            />
+                                                        </TableCell>
+                                                    ),
+                                                },
+                                            }),
+                                        }}
+                                    />
+                                    <Grid
+                                        container
+                                        justifyContent="flex-end"
+                                        spacing={1}
+                                        style={{ marginTop: "10px" }}
                                     >
-                                        Complete Order
-                                    </Button>
-                                </Grid>
-                            )}
-                        </Grid>
-                    </div>
+                                        <Grid item>
+                                            <Button
+                                                color="secondary"
+                                                variant="text"
+                                                disableElevation
+                                            >
+                                                Reject Order
+                                            </Button>
+                                        </Grid>
+                                        {pendingOrder.status === "Submitted" && (
+                                            <Grid item>
+                                                {disableCompletion ? (
+                                                    <Tooltip
+                                                        title="You must check all items to fulfill the order"
+                                                        placement="top"
+                                                    >
+                                                        <span>
+                                                            <CompleteOrderButton
+                                                                isDisabled={true}
+                                                            />
+                                                        </span>
+                                                    </Tooltip>
+                                                ) : (
+                                                    <CompleteOrderButton
+                                                        isDisabled={false}
+                                                    />
+                                                )}
+                                            </Grid>
+                                        )}
+                                    </Grid>
+                                </Form>
+                            );
+                        }}
+                    </Formik>
                 ))}
         </Container>
     );
