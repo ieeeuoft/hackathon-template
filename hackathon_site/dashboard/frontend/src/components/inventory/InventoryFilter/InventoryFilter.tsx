@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "../../Filter.module.scss";
+import styles from "../../global_css/Filter.module.scss";
 import { Formik, Field, FieldProps, FormikValues } from "formik";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
