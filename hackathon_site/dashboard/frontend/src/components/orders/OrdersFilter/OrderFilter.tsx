@@ -66,7 +66,6 @@ const CheckboxCategory = ({
                 />
                 <Chip
                     size="small"
-                    // label={item.qty}
                     label={item.numOrders}
                     className={styles.filterCategoryChip}
                 />
