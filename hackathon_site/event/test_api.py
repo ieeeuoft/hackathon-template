@@ -845,7 +845,7 @@ class CurrentUserAcceptanceTestCase(SetupUserMixin, APITestCase):
         data = response.json()
         self.assertEqual(self.get_expected_response("None"), data)
 
-    def test_user_has_no_review(self):
+    def test_user_has_review_and_application(self):
         self.application = self._apply_as_user(self.user)
         self._review()
         self._login()
