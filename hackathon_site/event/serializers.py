@@ -1,7 +1,9 @@
 from django.contrib.auth.models import Group
+from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import serializers
 
 from event.models import Profile, User, Team
+from review.models import Review
 
 
 class GroupSerializer(serializers.ModelSerializer):
@@ -107,3 +109,18 @@ class TeamSerializer(serializers.ModelSerializer):
             "updated_at",
             "profiles",
         )
+
+
+class UserAcceptanceSerializer(serializers.ModelSerializer):
+    acceptance = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = ("id", "first_name", "last_name", "email", "acceptance")
+
+    @staticmethod
+    def get_acceptance(user: User):
+        try:
+            return Review.objects.get(application__user=user).status
+        except ObjectDoesNotExist:
+            return "None"
