@@ -1,5 +1,3 @@
-import { RouteComponentProps } from "react-router-dom";
-
 import {
     Checkbox,
     Grid,

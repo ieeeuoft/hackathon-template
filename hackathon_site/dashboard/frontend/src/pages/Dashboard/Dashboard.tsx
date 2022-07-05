@@ -12,7 +12,11 @@ import {
 import ProductOverview from "components/inventory/ProductOverview/ProductOverview";
 import Header from "components/general/Header/Header";
 import { cardItems } from "testing/mockData";
-import { hackathonName } from "constants.js";
+import {
+    hackathonName,
+    hardwareSignOutEndDate,
+    hardwareSignOutStartDate,
+} from "constants.js";
 import { useDispatch, useSelector } from "react-redux";
 import {
     getCurrentTeam,
@@ -26,26 +30,29 @@ import {
     getTeamOrders,
     hardwareInOrdersSelector,
     orderErrorSelector,
+    isLoadingSelector as areOrdersLoadingSelector,
 } from "slices/order/orderSlice";
-import {
-    getHardwareWithFilters,
-    getUpdatedHardwareDetails,
-    setFilters,
-} from "slices/hardware/hardwareSlice";
+import { getHardwareWithFilters, setFilters } from "slices/hardware/hardwareSlice";
 import { getCategories } from "slices/hardware/categorySlice";
 import AlertBox from "components/general/AlertBox/AlertBox";
 import { openTeamModalItem } from "../../slices/ui/uiSlice";
 import EditTeam from "components/dashboard/EditTeam/EditTeam";
-import { Edit } from "@material-ui/icons";
+import { CircularProgress } from "@material-ui/core";
 
 const Dashboard = () => {
     const dispatch = useDispatch();
     const isTeamLoading = useSelector(isLoadingSelector);
+    const areOrdersLoading = useSelector(areOrdersLoadingSelector);
     const orderFulfillmentError = useSelector(fulfillmentErrorSelector);
     const fetchOrderError = useSelector(orderErrorSelector);
     const hardwareInOrders = useSelector(hardwareInOrdersSelector);
     const team_code = useSelector(teamCodeSelector);
     const team_size = useSelector(teamSizeSelector);
+
+    const currentDateTime = new Date();
+    const isBeforeSignOutPeriod = currentDateTime < hardwareSignOutStartDate;
+    const isOutsideSignOutPeriod =
+        isBeforeSignOutPeriod || currentDateTime > hardwareSignOutEndDate;
 
     useEffect(() => {
         dispatch(getCurrentTeam());
@@ -73,59 +80,77 @@ const Dashboard = () => {
             />
             <div className={styles.dashboard}>
                 <Typography variant="h1">{hackathonName} Hardware Dashboard</Typography>
-                {isTeamLoading ? (
+                {isOutsideSignOutPeriod && (
+                    <AlertBox
+                        title={
+                            isBeforeSignOutPeriod
+                                ? "The allocated time period for checking out hardware has not begun yet."
+                                : "The allocated time period for checking out hardware is over."
+                        }
+                        error={`
+                                The period begins on ${hardwareSignOutStartDate.toDateString()} at ${hardwareSignOutStartDate.toLocaleTimeString()}
+                                and ends on ${hardwareSignOutEndDate.toDateString()} at ${hardwareSignOutEndDate.toLocaleTimeString()}.
+                                When the period starts, you'll be able to place orders and rent our hardware. For now, you can familiarize yourself
+                                with our site and create or join a team.
+                            `}
+                        type="info"
+                    />
+                )}
+                {isTeamLoading && areOrdersLoading ? (
                     <LinearProgress
                         style={{ width: "100%", marginTop: 25 }}
                         data-testid="team-linear-progress"
                     />
                 ) : (
-                    <Grid
-                        container
-                        direction="row"
-                        justifyContent="flex-start"
-                        alignItems="flex-start"
-                        spacing={2}
-                        className={styles.dashboardGrid}
-                    >
+                    <>
                         <Grid
-                            item
-                            md={3}
-                            sm={4}
-                            xs={6}
-                            className={styles.dashboardGridItem}
-                            key={0}
-                            data-testid="team"
+                            container
+                            direction="row"
+                            justifyContent="flex-start"
+                            alignItems="flex-start"
+                            spacing={2}
+                            className={styles.dashboardGrid}
                         >
-                            <TeamCard handleEditTeam={openEditTeamModal} />
-                        </Grid>
-                        {cardItems.map(({ title, content }, i) => (
                             <Grid
                                 item
                                 md={3}
                                 sm={4}
                                 xs={6}
                                 className={styles.dashboardGridItem}
-                                key={i + 1}
+                                key={0}
+                                data-testid="team"
                             >
-                                <DashCard title={title} content={content} />
+                                <TeamCard handleEditTeam={openEditTeamModal} />
                             </Grid>
-                        ))}
-                    </Grid>
-                )}
-                {orderFulfillmentError && (
-                    <AlertBox
-                        error={orderFulfillmentError.errors.map(
-                            ({ message }) => message
+                            {cardItems.map(({ title, content }, i) => (
+                                <Grid
+                                    item
+                                    md={3}
+                                    sm={4}
+                                    xs={6}
+                                    className={styles.dashboardGridItem}
+                                    key={i + 1}
+                                >
+                                    <DashCard title={title} content={content} />
+                                </Grid>
+                            ))}
+                        </Grid>
+                        {orderFulfillmentError && (
+                            <AlertBox
+                                error={orderFulfillmentError.errors.map(
+                                    ({ message }) => message
+                                )}
+                                title={`There were modifications made to order ${orderFulfillmentError.order_id}`}
+                            />
                         )}
-                        title={`There were modifications made to order ${orderFulfillmentError.order_id}`}
-                    />
+                        {fetchOrderError && <AlertBox error={fetchOrderError} />}
+                        {/* TODO: add back in when incident reports are completed on the frontend */}
+                        {/* <BrokenTable items={itemsBroken} openReportAlert={openBrokenTable} /> */}
+                        <PendingTables />
+                        <CheckedOutTables />
+                        <ReturnedTable />
+                    </>
                 )}
-                {fetchOrderError && <AlertBox error={fetchOrderError} />}
-                {/* TODO: add back in when incident reports are completed on the frontend */}
-                {/* <BrokenTable items={itemsBroken} openReportAlert={openBrokenTable} /> */}
-                <PendingTables />
-                <CheckedOutTables />
-                <ReturnedTable />
             </div>
         </>
     );
