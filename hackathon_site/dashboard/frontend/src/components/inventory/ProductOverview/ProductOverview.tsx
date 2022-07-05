@@ -75,6 +75,7 @@ export const AddToCartForm = ({
     const isOutsideSignOutPeriod =
         currentDateTime < hardwareSignOutStartDate ||
         currentDateTime > hardwareSignOutEndDate;
+
     const addToCartButton = (
         <Button
             variant="contained"

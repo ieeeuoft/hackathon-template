@@ -8,9 +8,13 @@ interface ErrorBoxProps {
     title?: string;
 }
 
-const AlertBox = ({ error, body, type, title }: ErrorBoxProps) => {
+const AlertBox = ({ error, body, type, title, ...otherProps }: ErrorBoxProps) => {
     return (
-        <Alert severity={type ?? "error"} style={{ margin: "15px 0px" }}>
+        <Alert
+            severity={type ?? "error"}
+            style={{ margin: "15px 0px" }}
+            {...otherProps}
+        >
             {typeof error === "object" ? (
                 <>
                     <AlertTitle>{title ?? "An error has occurred because:"}</AlertTitle>

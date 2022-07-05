@@ -1,5 +1,8 @@
 import React from "react";
-import ProductOverview, { EnhancedAddToCartForm } from "./ProductOverview";
+import ProductOverview, {
+    AddToCartForm,
+    EnhancedAddToCartForm,
+} from "./ProductOverview";
 import { mockCartItems, mockCategories, mockHardware } from "testing/mockData";
 import {
     render,
@@ -10,7 +13,6 @@ import {
     when,
     makeMockApiResponse,
 } from "testing/utils";
-import { makeStore } from "slices/store";
 import { cartSelectors } from "slices/hardware/cartSlice";
 import { SnackbarProvider } from "notistack";
 import SnackbarNotifier from "components/general/SnackbarNotifier/SnackbarNotifier";
@@ -22,6 +24,34 @@ jest.mock("api/api", () => ({
     get: jest.fn(),
 }));
 const mockedGet = get as jest.MockedFunction<typeof get>;
+
+const mockHardwareSignOutStartDate = jest.fn();
+const mockHardwareSignOutEndDate = jest.fn();
+jest.mock("constants.js", () => ({
+    get hardwareSignOutStartDate() {
+        return mockHardwareSignOutStartDate();
+    },
+    get hardwareSignOutEndDate() {
+        return mockHardwareSignOutEndDate();
+    },
+}));
+
+export const mockHardwareSignOutDates = (
+    numDaysRelativeToStart?: number,
+    numDaysRelativeToEnd?: number
+): {
+    start: Date;
+    end: Date;
+} => {
+    const currentDate = new Date();
+    const start = new Date();
+    const end = new Date();
+    start.setDate(currentDate.getDate() + (numDaysRelativeToStart ?? -1));
+    end.setDate(currentDate.getDate() + (numDaysRelativeToEnd ?? 1));
+    mockHardwareSignOutStartDate.mockReturnValue(start);
+    mockHardwareSignOutEndDate.mockReturnValue(end);
+    return { start, end };
+};
 
 describe("<ProductOverview />", () => {
     test("all 3 parts of the product overview is there", async () => {
@@ -338,5 +368,20 @@ describe("<EnhancedAddToCartForm />", () => {
         fireEvent.mouseDown(getByRole("button", { name: "Qty 1" }));
 
         expect(getByText("3")).toBeInTheDocument();
+    });
+
+    test("button is disabled if date is not within hardware sign out period", () => {
+        mockHardwareSignOutDates(5, 10);
+        const { getByText } = render(
+            <EnhancedAddToCartForm
+                quantityRemaining={3}
+                maxPerTeam={5}
+                hardwareId={1}
+                name="Arduino"
+            />
+        );
+
+        const button = getByText("Add to cart").closest("button");
+        expect(button).toBeDisabled();
     });
 });

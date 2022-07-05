@@ -12,11 +12,7 @@ import {
 import ProductOverview from "components/inventory/ProductOverview/ProductOverview";
 import Header from "components/general/Header/Header";
 import { cardItems } from "testing/mockData";
-import {
-    hackathonName,
-    hardwareSignOutEndDate,
-    hardwareSignOutStartDate,
-} from "constants.js";
+import { hackathonName } from "constants.js";
 import { useDispatch, useSelector } from "react-redux";
 import {
     getCurrentTeam,
@@ -35,9 +31,9 @@ import {
 import { getHardwareWithFilters, setFilters } from "slices/hardware/hardwareSlice";
 import { getCategories } from "slices/hardware/categorySlice";
 import AlertBox from "components/general/AlertBox/AlertBox";
-import { openTeamModalItem } from "../../slices/ui/uiSlice";
+import { openTeamModalItem } from "slices/ui/uiSlice";
 import EditTeam from "components/dashboard/EditTeam/EditTeam";
-import { CircularProgress } from "@material-ui/core";
+import DateRestrictionAlert from "components/general/DateRestrictionAlert/DateRestrictionAlert";
 
 const Dashboard = () => {
     const dispatch = useDispatch();
@@ -48,11 +44,6 @@ const Dashboard = () => {
     const hardwareInOrders = useSelector(hardwareInOrdersSelector);
     const team_code = useSelector(teamCodeSelector);
     const team_size = useSelector(teamSizeSelector);
-
-    const currentDateTime = new Date();
-    const isBeforeSignOutPeriod = currentDateTime < hardwareSignOutStartDate;
-    const isOutsideSignOutPeriod =
-        isBeforeSignOutPeriod || currentDateTime > hardwareSignOutEndDate;
 
     useEffect(() => {
         dispatch(getCurrentTeam());
@@ -80,23 +71,8 @@ const Dashboard = () => {
             />
             <div className={styles.dashboard}>
                 <Typography variant="h1">{hackathonName} Hardware Dashboard</Typography>
-                {isOutsideSignOutPeriod && (
-                    <AlertBox
-                        title={
-                            isBeforeSignOutPeriod
-                                ? "The allocated time period for checking out hardware has not begun yet."
-                                : "The allocated time period for checking out hardware is over."
-                        }
-                        error={`
-                                The period begins on ${hardwareSignOutStartDate.toDateString()} at ${hardwareSignOutStartDate.toLocaleTimeString()}
-                                and ends on ${hardwareSignOutEndDate.toDateString()} at ${hardwareSignOutEndDate.toLocaleTimeString()}.
-                                When the period starts, you'll be able to place orders and rent our hardware. For now, you can familiarize yourself
-                                with our site and create or join a team.
-                            `}
-                        type="info"
-                    />
-                )}
-                {isTeamLoading && areOrdersLoading ? (
+                <DateRestrictionAlert />
+                {isTeamLoading || areOrdersLoading ? (
                     <LinearProgress
                         style={{ width: "100%", marginTop: 25 }}
                         data-testid="team-linear-progress"
