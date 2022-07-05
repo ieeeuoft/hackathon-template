@@ -1,14 +1,11 @@
 import os
 from urllib.parse import urlparse
-from urllib.request import urlopen, urlretrieve
 
 import requests
 from client_side_image_cropping import ClientsideCroppingWidget, DcsicAdminMixin
 from django import forms
 from django.contrib import admin
-from django.core.files import File
 from django.core.files.base import ContentFile
-from django.core.files.temp import NamedTemporaryFile
 from django.db import models
 from django.utils.html import mark_safe
 from import_export import resources
@@ -234,15 +231,14 @@ class HardwareResource(resources.ModelResource):
         instance = Hardware.objects.get(
             name=row["name"],
             model_number=row["model_number"],
-            manufacturer=row["manufacturer"]
+            manufacturer=row["manufacturer"],
         )
-        if row['picture']:
-            if row['picture'] == instance.picture:
-                image_content = ContentFile(requests.get(row['picture']).content)
-                url_image = urlparse(row['picture'])
+        if row["picture"]:
+            if row["picture"] == instance.picture:
+                image_content = ContentFile(requests.get(row["picture"]).content)
+                url_image = urlparse(row["picture"])
                 instance.picture.save(os.path.basename(url_image.path), image_content)
                 instance.save()
-
 
 
 @admin.register(Hardware)
