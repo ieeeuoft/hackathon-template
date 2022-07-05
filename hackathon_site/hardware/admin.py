@@ -1,6 +1,14 @@
+import os
+from urllib.parse import urlparse
+from urllib.request import urlopen, urlretrieve
+
+import requests
 from client_side_image_cropping import ClientsideCroppingWidget, DcsicAdminMixin
 from django import forms
 from django.contrib import admin
+from django.core.files import File
+from django.core.files.base import ContentFile
+from django.core.files.temp import NamedTemporaryFile
 from django.db import models
 from django.utils.html import mark_safe
 from import_export import resources
@@ -211,7 +219,6 @@ class HardwareResource(resources.ModelResource):
         model = Hardware
         exclude = (
             "id",
-            "picture",
             "created_at",
             "updated_at",
         )
@@ -220,6 +227,22 @@ class HardwareResource(resources.ModelResource):
             "model_number",
             "manufacturer",
         )
+
+    # Note: not the most efficient solution because it runs twice
+    # reference: https://github.com/django-import-export/django-import-export/issues/90#issuecomment-410257893
+    def after_import_row(self, row, row_result, **kwargs):
+        instance = Hardware.objects.get(
+            name=row["name"],
+            model_number=row["model_number"],
+            manufacturer=row["manufacturer"]
+        )
+        if row['picture']:
+            if row['picture'] == instance.picture:
+                image_content = ContentFile(requests.get(row['picture']).content)
+                url_image = urlparse(row['picture'])
+                instance.picture.save(os.path.basename(url_image.path), image_content)
+                instance.save()
+
 
 
 @admin.register(Hardware)
