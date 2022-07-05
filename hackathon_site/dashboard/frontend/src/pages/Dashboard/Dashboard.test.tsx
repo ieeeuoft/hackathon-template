@@ -18,17 +18,21 @@ import {
     mockCheckedOutOrders,
     mockHardware,
     mockOrders,
+    mockPendingOrdersInTable,
     mockTeam,
 } from "testing/mockData";
-import { get } from "api/api";
+import { get, patch } from "api/api";
 import { AxiosResponse } from "axios";
 import { Hardware, Order, Team } from "api/types";
+import { pendingOrderSelectors } from "slices/order/orderSlice";
 
 jest.mock("api/api", () => ({
     ...jest.requireActual("api/api"),
     get: jest.fn(),
+    patch: jest.fn(),
 }));
 const mockedGet = get as jest.MockedFunction<typeof get>;
+const mockedPatch = patch as jest.MockedFunction<typeof patch>;
 
 const hardwareUri = "/api/hardware/hardware/";
 const categoriesUri = "/api/hardware/categories/";
@@ -149,6 +153,46 @@ describe("Dashboard Page", () => {
             expect(getByText(/foo bar/i)).toBeInTheDocument();
             expect(getByText(/A48E5/i)).toBeInTheDocument();
             expect(mockedGet).toHaveBeenCalledWith("/api/event/teams/team/");
+        });
+    });
+
+    it("Removes orders when cancel order button is clicked", async () => {
+        const pendingOrderDetailUri = "/api/hardware/orders/4";
+        const pendingOrderResponse = makeMockApiResponse(mockPendingOrdersInTable[1]);
+        when(mockedPatch)
+            .calledWith(pendingOrderDetailUri, { status: "Cancelled" })
+            .mockResolvedValueOnce(pendingOrderResponse);
+
+        const store = makeStoreWithEntities({
+            pendingOrders: mockPendingOrdersInTable,
+        });
+
+        const { getByTestId, queryByText, getByText } = render(<Dashboard />, {
+            store,
+        });
+
+        await waitFor(() => {
+            mockPendingOrdersInTable.forEach((order) => {
+                expect(getByText(`Order #${order.id}`)).toBeInTheDocument();
+            });
+        });
+
+        const orderItem = getByTestId(
+            `pending-order-table-${mockPendingOrdersInTable[1].id}`
+        );
+        const cancelOrderBtn = within(orderItem).getByTestId("cancel-order-button");
+        fireEvent.click(cancelOrderBtn);
+
+        await waitFor(() => {
+            expect(mockedPatch).toHaveBeenCalledWith(`/api/hardware/orders/4`, {
+                status: "Cancelled",
+            });
+            expect(pendingOrderSelectors.selectById(store.getState(), 4)).toEqual(
+                undefined
+            );
+            expect(queryByText(/order #4/i)).toEqual(null);
+            expect(orderItem).not.toBeInTheDocument();
+            expect(cancelOrderBtn).not.toBeInTheDocument();
         });
     });
 });
