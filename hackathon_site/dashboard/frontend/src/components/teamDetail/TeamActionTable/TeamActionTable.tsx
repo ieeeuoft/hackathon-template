@@ -1,10 +1,10 @@
 import {
     Grid,
     Paper,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
+    List,
+    ListItem,
+    ListItemIcon,
+    ListItemText,
     TableRow,
     Button,
 } from "@material-ui/core";
@@ -18,78 +18,48 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import styles from "./TeamActionsTable.module.scss";
 
 const TeamActionTable = () => {
+    const actionButtons = [
+        {
+            icon: <NotificationImportantIcon />,
+            text: "Notify team to come to table to resolve issue",
+            onClick: undefined,
+        },
+        {
+            icon: <CallSplitIcon />,
+            text: "Split team",
+            onClick: undefined,
+        },
+        {
+            icon: <MergeTypeIcon />,
+            text: "Merge team",
+            onClick: undefined,
+        },
+        {
+            icon: <DeleteIcon />,
+            text: "Delete team",
+            onClick: () => {
+                alert("Team successfully deleted");
+            },
+        },
+    ];
+
     return (
-        <Grid container spacing={1} direction="column" item md={6} xs={12}>
+        <Grid container direction="column" spacing={1} item md={6} xs={12}>
             <Grid item>
                 <Typography variant="h2">Actions</Typography>
             </Grid>
-            <TableContainer component={Paper}>
-                <Table
-                    size="small"
-                    style={{
-                        minWidth: 360,
-                        height: 256.8,
-                    }}
-                >
-                    <TableBody>
-                        <TableRow>
-                            <TableCell className={styles.actionItem}>
-                                <Button
-                                    className={styles.button}
-                                    startIcon={<NotificationImportantIcon />}
-                                    disabled
-                                    fullWidth
-                                    size="large"
-                                >
-                                    Notify team to come to table to resolve issue
-                                </Button>
-                            </TableCell>
-                        </TableRow>
-                        <TableRow>
-                            <TableCell className={styles.actionItem}>
-                                <Button
-                                    className={styles.button}
-                                    startIcon={<CallSplitIcon />}
-                                    disabled
-                                    fullWidth
-                                    size="large"
-                                >
-                                    Split team
-                                </Button>
-                            </TableCell>
-                        </TableRow>
-                        <TableRow>
-                            <TableCell className={styles.actionItem}>
-                                <Button
-                                    className={styles.button}
-                                    startIcon={<MergeTypeIcon />}
-                                    disabled
-                                    fullWidth
-                                    size="large"
-                                >
-                                    Merge team
-                                </Button>
-                            </TableCell>
-                        </TableRow>
-                        <TableRow>
-                            <TableCell className={styles.actionItem}>
-                                <Button
-                                    className={styles.button}
-                                    fullWidth
-                                    title="delete"
-                                    startIcon={<DeleteIcon className={styles.icon} />}
-                                    size="large"
-                                    onClick={() => {
-                                        alert("Team successfully deleted");
-                                    }}
-                                >
-                                    Delete team
-                                </Button>
-                            </TableCell>
-                        </TableRow>
-                    </TableBody>
-                </Table>
-            </TableContainer>
+            <List component={Paper}>
+                {actionButtons.map((action) => (
+                    <ListItem
+                        button
+                        onClick={action.onClick}
+                        disabled={action.onClick == undefined}
+                    >
+                        <ListItemIcon>{action.icon}</ListItemIcon>
+                        <ListItemText primary={action.text} />
+                    </ListItem>
+                ))}
+            </List>
         </Grid>
     );
 };

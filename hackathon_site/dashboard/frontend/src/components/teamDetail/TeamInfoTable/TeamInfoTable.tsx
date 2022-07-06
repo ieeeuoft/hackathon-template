@@ -17,27 +17,12 @@ import React from "react";
 
 export const TeamInfoTable = () => {
     return (
-        <Grid
-            container
-            direction="column"
-            spacing={1}
-            item
-            md={6}
-            xs={12}
-            style={{
-                marginBottom: 12,
-            }}
-        >
+        <Grid container direction="column" spacing={1} item md={6} xs={12}>
             <Grid item>
                 <Typography variant="h2">Team info</Typography>
             </Grid>
             <TableContainer component={Paper}>
-                <Table
-                    size="small"
-                    style={{
-                        minWidth: 360,
-                    }}
-                >
+                <Table size="small">
                     <TableHead>
                         <TableRow>
                             <TableCell>Name</TableCell>
