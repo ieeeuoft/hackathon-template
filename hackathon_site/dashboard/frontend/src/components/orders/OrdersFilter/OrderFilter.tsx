@@ -11,6 +11,7 @@ import RadioGroup from "@material-ui/core/RadioGroup";
 import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import { OrderStatus } from "api/types";
+import { status } from "testing/mockData";
 import styles from "components/global_css/Filter.module.scss";
 
 type OrdersOrdering = "" | "timeOrderedASC" | "timeOrderedDESC" | "orderQuantity";
@@ -79,21 +80,6 @@ const CheckboxCategory = ({
 );
 
 const OrderFilter = ({ handleReset, handleSubmit }: FormikValues) => {
-    const status = [
-        {
-            status: "Pending",
-            numOrders: 2,
-        },
-        {
-            status: "Ready for Pick up",
-            numOrders: 4,
-        },
-        {
-            status: "Checked out",
-            numOrders: 4,
-        },
-    ];
-
     return (
         <div className={styles.filter}>
             <Paper elevation={2} className={styles.filterPaper} square={true}>
