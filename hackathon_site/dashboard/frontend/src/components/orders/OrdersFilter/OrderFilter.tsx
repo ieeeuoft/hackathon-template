@@ -13,7 +13,7 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import { OrderStatus } from "api/types";
 import styles from "components/global_css/Filter.module.scss";
 
-type OrdersOrdering = "" | "timeOrderedASC" | "timeOrderedDESC" | "OrderQuality";
+type OrdersOrdering = "" | "timeOrderedASC" | "timeOrderedDESC" | "orderQuantity";
 
 type OrderByOptions = {
     value: OrdersOrdering;
@@ -32,7 +32,7 @@ const orderByOptions: OrderByOptions = [
     { value: "", label: "Default" },
     { value: "timeOrderedASC", label: "Time Ordered (ASC)" },
     { value: "timeOrderedDESC", label: "Time Ordered (DESC)" },
-    { value: "OrderQuality", label: "Order Quantity" },
+    { value: "orderQuantity", label: "Order Quantity" },
 ];
 
 const RadioOrderBy = ({ field, options }: FieldProps & { options: OrderByOptions }) => (
