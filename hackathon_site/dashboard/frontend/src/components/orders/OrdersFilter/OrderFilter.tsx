@@ -137,7 +137,7 @@ const OrderFilter = ({ handleReset, handleSubmit }: FormikValues) => {
 };
 
 export const EnhancedOrderFilter = () => {
-    const onSubmit = ({ ordering, status }: OrdersFilterValues) => {
+    const handleSubmit = ({ ordering, status }: OrdersFilterValues) => {
         // TODO
         alert("The apply button has been clicked.");
 
@@ -145,7 +145,7 @@ export const EnhancedOrderFilter = () => {
         console.log("statuses: ", status);
     };
 
-    const onReset = () => {
+    const handleReset = () => {
         // TODO
     };
 
@@ -155,8 +155,8 @@ export const EnhancedOrderFilter = () => {
                 ordering: "",
                 status: [],
             }}
-            onSubmit={onSubmit}
-            onReset={onReset}
+            onSubmit={handleSubmit}
+            onReset={handleReset}
             validateOnBlur={false}
             validateOnChange={false}
         >
