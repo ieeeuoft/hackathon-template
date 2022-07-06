@@ -6,9 +6,9 @@ import OrdersSearch from "components/orders/OrdersSearch/OrdersSearch";
 import OrdersFilterButton from "components/orders/OrdersFilterButton/OrdersFilterButton";
 import OrdersCount from "components/orders/OrdersCount/OrdersCount";
 import OrdersFilter from "components/orders/OrdersFilter/OrderFilter";
-import styles from "./Orders.module.scss";
 import CloseIcon from "@material-ui/icons/Close";
 import IconButton from "@material-ui/core/IconButton";
+import styles from "./Orders.module.scss";
 
 const Orders = () => {
     const [mobileOpen, setMobileOpen] = React.useState(false);
@@ -36,7 +36,7 @@ const Orders = () => {
                 <OrdersFilter />
             </Drawer>
             <Grid container spacing={5} direction="row" className={styles.orders}>
-                <Grid item xl={2} lg={3} md={3}>
+                <Grid item xl={2} md={3}>
                     <Hidden implementation="css" smDown>
                         <OrdersFilter />
                     </Hidden>
