@@ -88,7 +88,6 @@ export interface Team {
 }
 
 /** Orders API */
-export type OrdersOrdering = "" | "timeOrderedASC" | "timeOrderedDESC" | "OrderQuality";
 export type OrderStatus = "Submitted" | "Ready for Pickup" | "Picked Up" | "Cancelled";
 export type PartReturnedHealth = "Healthy" | "Heavily Used" | "Broken" | "Lost";
 
