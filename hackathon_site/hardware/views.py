@@ -27,7 +27,7 @@ from hardware.serializers import (
     OrderCreateSerializer,
     OrderCreateResponseSerializer,
     OrderChangeSerializer,
-    OrderItemListSerializer,
+    OrderItemListSerializer, OrderItemReturnCreateSerializer,
 )
 
 logger = logging.getLogger(__name__)
@@ -161,3 +161,11 @@ class OrderDetailView(generics.GenericAPIView, mixins.UpdateModelMixin):
 
     def patch(self, request, *args, **kwargs):
         return self.partial_update(request, *args, **kwargs)
+
+class OrderItemReturnView(generics.GenericAPIView, mixins.UpdateModelMixin):
+    queryset = Order.objects.all()
+    serializer_class = OrderItemReturnCreateSerializer
+    permission_classes = [FullDjangoModelPermissions]
+
+    def post(self, request, *args, **kwargs):
+        return self.
