@@ -12,7 +12,7 @@ import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import { OrderStatus } from "api/types";
 import { status } from "testing/mockData";
-import styles from "components/global_css/Filter.module.scss";
+import styles from "components/sharedStyles/Filter.module.scss";
 
 type OrdersOrdering = "" | "timeOrderedASC" | "timeOrderedDESC" | "orderQuantity";
 
@@ -24,7 +24,7 @@ type OrderByOptions = {
 type StatusCategories = [
     {
         status: OrderStatus;
-        numOrders: Number;
+        numOrders: number;
     }
 ];
 

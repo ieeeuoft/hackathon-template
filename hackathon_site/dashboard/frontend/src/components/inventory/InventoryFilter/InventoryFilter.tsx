@@ -24,7 +24,7 @@ import {
     categorySelectors,
     isLoadingSelector as isCategoriesLoadingSelector,
 } from "slices/hardware/categorySlice";
-import styles from "components/global_css/Filter.module.scss";
+import styles from "components/sharedStyles/Filter.module.scss";
 type OrderByOptions = {
     value: HardwareOrdering;
     label: string;
