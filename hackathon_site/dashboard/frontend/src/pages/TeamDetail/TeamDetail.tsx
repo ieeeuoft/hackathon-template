@@ -25,14 +25,23 @@ const TeamDetail = ({ match }: RouteComponentProps<PageParams>) => {
         <>
             <Header />
 
-            <Grid container direction="column" spacing={6}>
-                <Grid item>
+            <Grid container direction="column" spacing={6} xs={12}>
+                <Grid item xs={12}>
                     <Typography variant="h1">
                         Team {match.params.id} Overview
                     </Typography>
                 </Grid>
 
-                <Grid item container spacing={2} justifyContent="space-between">
+                <Grid
+                    item
+                    container
+                    spacing={2}
+                    justifyContent="space-between"
+                    xs={12}
+                    style={{
+                        alignSelf: "center",
+                    }}
+                >
                     <TeamInfoTable />
                     <TeamActionTable />
                 </Grid>

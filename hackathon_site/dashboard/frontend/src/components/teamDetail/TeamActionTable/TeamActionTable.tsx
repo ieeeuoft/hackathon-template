@@ -48,12 +48,23 @@ const TeamActionTable = () => {
             <Grid item>
                 <Typography variant="h2">Actions</Typography>
             </Grid>
-            <List component={Paper}>
+
+            <List
+                component={Paper}
+                style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    flex: 1,
+                }}
+            >
                 {actionButtons.map((action) => (
                     <ListItem
                         button
                         onClick={action.onClick}
                         disabled={action.onClick == undefined}
+                        style={{
+                            flex: 1,
+                        }}
                     >
                         <ListItemIcon>{action.icon}</ListItemIcon>
                         <ListItemText primary={action.text} />
