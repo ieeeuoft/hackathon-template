@@ -108,7 +108,7 @@ export const AddToCartForm = ({
                 </FormControl>
                 <div className={styles.formButton}>
                     {isOutsideSignOutPeriod ? (
-                        <Tooltip title="You cannot add items to cart because hardware signout period has not begun or is already over.">
+                        <Tooltip title="You cannot add items to cart because hardware sign out period has not begun or is already over">
                             <span> {addToCartButton} </span>
                         </Tooltip>
                     ) : (

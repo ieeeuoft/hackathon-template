@@ -8,8 +8,6 @@ const DateRestrictionAlert = () => {
     const isOutsideSignOutPeriod =
         isBeforeSignOutPeriod || currentDateTime > hardwareSignOutEndDate;
 
-    console.log(hardwareSignOutStartDate, hardwareSignOutEndDate);
-
     return isOutsideSignOutPeriod ? (
         <AlertBox
             data-testid="date-restriction-alert"
