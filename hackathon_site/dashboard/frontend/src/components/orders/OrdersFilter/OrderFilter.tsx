@@ -27,6 +27,11 @@ type StatusCategories = [
     }
 ];
 
+interface OrdersFilterValues {
+    ordering: OrdersOrdering;
+    status: OrderByOptions;
+}
+
 const orderByOptions: OrderByOptions = [
     { value: "", label: "Default" },
     { value: "timeOrderedASC", label: "Time Ordered (ASC)" },
@@ -146,7 +151,7 @@ const OrderFilter = ({ handleReset, handleSubmit }: FormikValues) => {
 };
 
 export const EnhancedOrderFilter = () => {
-    const onSubmit = ({ ordering, status }: any) => {
+    const onSubmit = ({ ordering, status }: OrdersFilterValues) => {
         // TODO
         alert("The apply button has been clicked.");
 
