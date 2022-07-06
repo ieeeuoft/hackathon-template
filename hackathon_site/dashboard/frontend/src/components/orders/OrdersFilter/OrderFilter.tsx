@@ -22,7 +22,6 @@ type OrderByOptions = {
 
 type StatusCategories = [
     {
-        id: Number;
         status: OrderStatus;
         numOrders: Number;
     }
@@ -59,12 +58,10 @@ const CheckboxCategory = ({
             <div className={styles.filterCategory} key={i}>
                 <FormControlLabel
                     name={field.name}
-                    value={item.id}
+                    value={item.status}
                     control={<Checkbox color="primary" />}
                     label={item.status}
-                    checked={
-                        field.value ? field.value.includes(item.id.toString()) : false
-                    }
+                    checked={field.value ? field.value.includes(item.status) : false}
                 />
                 <Chip
                     size="small"
@@ -79,17 +76,14 @@ const CheckboxCategory = ({
 const OrderFilter = ({ handleReset, handleSubmit }: FormikValues) => {
     const status = [
         {
-            id: 1,
             status: "Pending",
             numOrders: 2,
         },
         {
-            id: 2,
             status: "Ready for Pick up",
             numOrders: 4,
         },
         {
-            id: 3,
             status: "Checked out",
             numOrders: 4,
         },
