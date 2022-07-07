@@ -12,7 +12,7 @@ import { isTeamModalVisibleSelector, closeTeamModalItem } from "slices/ui/uiSlic
 import { useDispatch, useSelector } from "react-redux";
 import { Grid } from "@material-ui/core";
 import { maxTeamSize } from "constants.js";
-import { leaveTeam } from "../../../slices/event/teamSlice";
+import { joinTeam, leaveTeam } from "../../../slices/event/teamSlice";
 
 interface TeamModalProps {
     teamCode: string;
@@ -39,10 +39,12 @@ const TeamInfoBlock = ({ teamCode, canChangeTeam, teamSize }: TeamModalProps) =>
 
 const TeamChangeForm = ({ canChangeTeam }: TeamModalProps) => {
     const [value, setValue] = React.useState("");
-
+    const dispatch = useDispatch();
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setValue(event.target.value);
     };
+
+    const handleJoinTeam = () => dispatch(joinTeam(value));
     return (
         <>
             <Typography variant={"h2"} className={styles.heading}>
@@ -65,7 +67,7 @@ const TeamChangeForm = ({ canChangeTeam }: TeamModalProps) => {
                             className={styles.teamButton}
                             variant="contained"
                             disabled={!canChangeTeam}
-                            onClick={() => alert(`The new teamcode is: ${value}`)}
+                            onClick={handleJoinTeam}
                         >
                             SUBMIT
                         </Button>

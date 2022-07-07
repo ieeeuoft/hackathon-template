@@ -14,6 +14,7 @@ import { cartReducerName, cartSelectors, OrderResponse } from "../hardware/cartS
 interface TeamExtraState {
     isLoading: boolean;
     isLeaveTeamLoading: boolean;
+    isJoinTeamLoading: boolean;
     error: string | null;
     team: Team | null;
 }
@@ -21,6 +22,7 @@ interface TeamExtraState {
 export const initialState: TeamExtraState = {
     isLoading: false,
     isLeaveTeamLoading: false,
+    isJoinTeamLoading: false,
     error: null,
     team: null,
 };
@@ -69,7 +71,6 @@ export const leaveTeam = createAsyncThunk<
             const response = await post<Team>("/api/event/teams/leave_team/", {
                 team_code: teamCode,
             });
-            dispatch(push("/"));
 
             dispatch(
                 displaySnackbar({
@@ -86,6 +87,44 @@ export const leaveTeam = createAsyncThunk<
             dispatch(
                 displaySnackbar({
                     message: `Failed to leave the team: Error ${e.response.status}`,
+                    options: { variant: "error" },
+                })
+            );
+            return rejectWithValue({
+                status: e.response.status,
+                message: errorData ?? e.response.message,
+            });
+        }
+    }
+);
+
+export const joinTeam = createAsyncThunk<
+    Team,
+    string,
+    { state: RootState; rejectValue: RejectValue; dispatch: AppDispatch }
+>(
+    `${teamReducerName}/joinTeam`,
+    async (teamCode, { dispatch, getState, rejectWithValue }) => {
+        try {
+            const response = await post<Team>(`/api/event/teams/join/${teamCode}/`, {
+                team_code: teamCode,
+            });
+
+            dispatch(
+                displaySnackbar({
+                    message: `You have joined the new team ${teamCode}.`,
+                    options: { variant: "success" },
+                })
+            );
+
+            return response.data;
+        } catch (e: any) {
+            // order reached quantity limits
+            const errorData = e.response?.data?.non_field_errors;
+
+            dispatch(
+                displaySnackbar({
+                    message: `Failed to join the team ${teamCode}: Error ${e.response.status}`,
                     options: { variant: "error" },
                 })
             );
@@ -140,6 +179,26 @@ const teamSlice = createSlice({
         );
 
         builder.addCase(leaveTeam.rejected, (state, { payload }) => {
+            state.error = payload?.message || "Something went wrong";
+        });
+
+        builder.addCase(joinTeam.pending, (state) => {
+            state.isJoinTeamLoading = true;
+            state.error = null;
+        });
+
+        builder.addCase(
+            joinTeam.fulfilled,
+            (state, { payload }: PayloadAction<Team>) => {
+                if (payload) {
+                    state.isJoinTeamLoading = false;
+                    state.error = null;
+                    state.team = payload;
+                }
+            }
+        );
+
+        builder.addCase(joinTeam.rejected, (state, { payload }) => {
             state.error = payload?.message || "Something went wrong";
         });
     },
