@@ -6,17 +6,21 @@ import {
 } from "@reduxjs/toolkit";
 import { AppDispatch, RootState } from "slices/store";
 import { Team } from "api/types";
-import { get } from "api/api";
+import { get, post } from "api/api";
 import { displaySnackbar } from "slices/ui/uiSlice";
+import { push } from "connected-react-router";
+import { cartReducerName, cartSelectors, OrderResponse } from "../hardware/cartSlice";
 
 interface TeamExtraState {
     isLoading: boolean;
+    isLeaveTeamLoading: boolean;
     error: string | null;
     team: Team | null;
 }
 
 export const initialState: TeamExtraState = {
     isLoading: false,
+    isLeaveTeamLoading: false,
     error: null,
     team: null,
 };
@@ -52,6 +56,47 @@ export const getCurrentTeam = createAsyncThunk<
     }
 });
 
+export const leaveTeam = createAsyncThunk<
+    Team,
+    void,
+    { state: RootState; rejectValue: RejectValue; dispatch: AppDispatch }
+>(
+    `${teamReducerName}/leaveTeam`,
+    async (_, { dispatch, getState, rejectWithValue }) => {
+        const teamCode = teamCodeSelector(getState());
+
+        try {
+            const response = await post<Team>("/api/event/teams/leave_team/", {
+                team_code: teamCode,
+            });
+            dispatch(push("/"));
+
+            dispatch(
+                displaySnackbar({
+                    message: `You have left the team.`,
+                    options: { variant: "success" },
+                })
+            );
+
+            return response.data;
+        } catch (e: any) {
+            // order reached quantity limits
+            const errorData = e.response?.data?.non_field_errors;
+
+            dispatch(
+                displaySnackbar({
+                    message: `Failed to leave the team: Error ${e.response.status}`,
+                    options: { variant: "error" },
+                })
+            );
+            return rejectWithValue({
+                status: e.response.status,
+                message: errorData ?? e.response.message,
+            });
+        }
+    }
+);
+
 // Slice
 const teamSlice = createSlice({
     name: teamReducerName,
@@ -75,6 +120,26 @@ const teamSlice = createSlice({
         );
 
         builder.addCase(getCurrentTeam.rejected, (state, { payload }) => {
+            state.error = payload?.message || "Something went wrong";
+        });
+
+        builder.addCase(leaveTeam.pending, (state) => {
+            state.isLeaveTeamLoading = true;
+            state.error = null;
+        });
+
+        builder.addCase(
+            leaveTeam.fulfilled,
+            (state, { payload }: PayloadAction<Team>) => {
+                if (payload) {
+                    state.isLeaveTeamLoading = false;
+                    state.error = null;
+                    state.team = payload;
+                }
+            }
+        );
+
+        builder.addCase(leaveTeam.rejected, (state, { payload }) => {
             state.error = payload?.message || "Something went wrong";
         });
     },

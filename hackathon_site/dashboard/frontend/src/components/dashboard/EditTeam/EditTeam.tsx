@@ -12,6 +12,7 @@ import { isTeamModalVisibleSelector, closeTeamModalItem } from "slices/ui/uiSlic
 import { useDispatch, useSelector } from "react-redux";
 import { Grid } from "@material-ui/core";
 import { maxTeamSize } from "constants.js";
+import { leaveTeam } from "../../../slices/event/teamSlice";
 
 interface TeamModalProps {
     teamCode: string;
@@ -79,6 +80,7 @@ export const EditTeam = ({ teamCode, canChangeTeam, teamSize }: TeamModalProps) 
     const dispatch = useDispatch();
     const closeTeamModal = () => dispatch(closeTeamModalItem());
     const isTeamModalVisible: boolean = useSelector(isTeamModalVisibleSelector);
+    const handleLeaveTeam = () => dispatch(leaveTeam());
 
     return (
         <SideSheetRight
@@ -121,6 +123,7 @@ export const EditTeam = ({ teamCode, canChangeTeam, teamSize }: TeamModalProps) 
                         type="submit"
                         disableElevation
                         disabled={!canChangeTeam}
+                        onClick={handleLeaveTeam}
                     >
                         LEAVE TEAM
                     </Button>
