@@ -200,6 +200,7 @@ const teamSlice = createSlice({
 
         builder.addCase(joinTeam.rejected, (state, { payload }) => {
             state.error = payload?.message || "Something went wrong";
+            state.isJoinTeamLoading = false;
         });
     },
 });
@@ -213,6 +214,16 @@ export const teamSliceSelector = (state: RootState) => state[teamReducerName];
 export const isLoadingSelector = createSelector(
     [teamSliceSelector],
     (teamSlice) => teamSlice.isLoading
+);
+
+export const isLeaveTeamLoadingSelector = createSelector(
+    [teamSliceSelector],
+    (teamSlice) => teamSlice.isLeaveTeamLoading
+);
+
+export const isJoinLoadingSelector = createSelector(
+    [teamSliceSelector],
+    (teamSlice) => teamSlice.isJoinTeamLoading
 );
 
 export const teamSelector = createSelector(

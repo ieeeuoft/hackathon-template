@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import Alert from "@material-ui/lab/Alert";
+import LinearProgress from "@material-ui/core/LinearProgress";
 
 import FileCopyIcon from "@material-ui/icons/FileCopy";
 import SideSheetRight from "components/general/SideSheetRight/SideSheetRight";
@@ -12,11 +13,18 @@ import { isTeamModalVisibleSelector, closeTeamModalItem } from "slices/ui/uiSlic
 import { useDispatch, useSelector } from "react-redux";
 import { Grid } from "@material-ui/core";
 import { maxTeamSize } from "constants.js";
-import { joinTeam, leaveTeam } from "../../../slices/event/teamSlice";
+import {
+    isJoinLoadingSelector,
+    isLeaveTeamLoadingSelector,
+    joinTeam,
+    leaveTeam,
+} from "../../../slices/event/teamSlice";
+import { teamCode } from "../../../testing/mockData";
 
 interface TeamModalProps {
     teamCode: string;
     canChangeTeam: boolean;
+    canLeaveTeam: boolean;
     teamSize: number;
 }
 
@@ -37,9 +45,10 @@ const TeamInfoBlock = ({ teamCode, canChangeTeam, teamSize }: TeamModalProps) =>
     );
 };
 
-const TeamChangeForm = ({ canChangeTeam }: TeamModalProps) => {
+const TeamChangeForm = ({ canChangeTeam, teamCode }: TeamModalProps) => {
     const [value, setValue] = React.useState("");
     const dispatch = useDispatch();
+    const isJoinTeamLoading = useSelector(isJoinLoadingSelector);
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setValue(event.target.value);
     };
@@ -66,7 +75,15 @@ const TeamChangeForm = ({ canChangeTeam }: TeamModalProps) => {
                             color={"primary"}
                             className={styles.teamButton}
                             variant="contained"
-                            disabled={!canChangeTeam}
+                            disabled={
+                                !canChangeTeam
+                                    ? true
+                                    : isJoinTeamLoading
+                                    ? true
+                                    : value == ""
+                                    ? true
+                                    : value == teamCode
+                            }
                             onClick={handleJoinTeam}
                         >
                             SUBMIT
@@ -78,11 +95,18 @@ const TeamChangeForm = ({ canChangeTeam }: TeamModalProps) => {
     );
 };
 
-export const EditTeam = ({ teamCode, canChangeTeam, teamSize }: TeamModalProps) => {
+export const EditTeam = ({
+    teamCode,
+    canChangeTeam,
+    canLeaveTeam,
+    teamSize,
+}: TeamModalProps) => {
     const dispatch = useDispatch();
     const closeTeamModal = () => dispatch(closeTeamModalItem());
     const isTeamModalVisible: boolean = useSelector(isTeamModalVisibleSelector);
     const handleLeaveTeam = () => dispatch(leaveTeam());
+    const isLeaveTeamLoading = useSelector(isLeaveTeamLoadingSelector);
+    const isJoinTeamLoading = useSelector(isJoinLoadingSelector);
 
     return (
         <SideSheetRight
@@ -102,6 +126,7 @@ export const EditTeam = ({ teamCode, canChangeTeam, teamSize }: TeamModalProps) 
                     <TeamInfoBlock
                         teamCode={teamCode}
                         canChangeTeam={false}
+                        canLeaveTeam={false}
                         teamSize={teamSize}
                     />
                     <Typography variant="body1" className={styles.heading}>
@@ -113,8 +138,15 @@ export const EditTeam = ({ teamCode, canChangeTeam, teamSize }: TeamModalProps) 
                     <TeamChangeForm
                         teamCode={teamCode}
                         canChangeTeam={canChangeTeam}
+                        canLeaveTeam={false}
                         teamSize={teamSize}
                     />
+                    {isJoinTeamLoading && (
+                        <LinearProgress style={{ marginTop: "10px" }} value={0} />
+                    )}
+                    {isLeaveTeamLoading && (
+                        <LinearProgress style={{ marginTop: "10px" }} value={0} />
+                    )}
                 </div>
                 <div className={styles.formButton}>
                     <Button
@@ -124,7 +156,7 @@ export const EditTeam = ({ teamCode, canChangeTeam, teamSize }: TeamModalProps) 
                         size="large"
                         type="submit"
                         disableElevation
-                        disabled={!canChangeTeam}
+                        disabled={!canLeaveTeam ? true : isLeaveTeamLoading}
                         onClick={handleLeaveTeam}
                     >
                         LEAVE TEAM
