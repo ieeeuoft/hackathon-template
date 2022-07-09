@@ -1,7 +1,7 @@
 from django.db import transaction
 from django.db.models import Q
 
-from rest_framework import generics, mixins, status
+from rest_framework import generics, mixins, status, permissions
 from rest_framework.exceptions import ValidationError, PermissionDenied
 from rest_framework.response import Response
 
@@ -9,7 +9,6 @@ from rest_framework.response import Response
 from event.serializers import (
     ProfileSerializer,
     CurrentProfileSerializer,
-    CreateProfileSerializer,
 )
 from event.models import User, Team as EventTeam, Profile
 from event.serializers import UserSerializer, TeamSerializer
@@ -164,34 +163,28 @@ class ProfileDetailView(mixins.UpdateModelMixin, generics.GenericAPIView):
         return self.partial_update(request, *args, **kwargs)
 
 
-class CurrentProfileView(mixins.UpdateModelMixin, generics.GenericAPIView):
+class CurrentProfileView(
+    mixins.UpdateModelMixin, mixins.CreateModelMixin, generics.GenericAPIView
+):
 
     queryset = Profile.objects.all()
 
-    def get_serializer_class(self):
-        if self.request.method == "PATCH":
-            return CurrentProfileSerializer
-        elif self.request.method == "POST":
-            return CreateProfileSerializer
+    serializer_class = CurrentProfileSerializer
 
     def get_object(self):
         return self.request.user.profile
+
     def get_permissions(self):
-        if self.request.method == "PATCH":
+        if self.request.method == "PATCH" or self.request.method == "GET":
             return [UserHasProfile()]
         elif self.request.method == "POST":
-            return []
+            return [permissions.IsAuthenticated()]
 
     def patch(self, request, *args, **kwargs):
         return self.partial_update(request, *args, **kwargs)
 
-
     def post(self, request, *args, **kwargs):
-        response_serializer = self.get_serializer(data=request.data)
-        response_serializer.is_valid(raise_exception=True)
-        response_serializer.save()
-
-        return Response(data=response_serializer.data, status=status.HTTP_201_CREATED,)
+        return self.create(request, *args, **kwargs)
 
 
 class CurrentTeamOrderListView(generics.ListAPIView):

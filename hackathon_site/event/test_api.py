@@ -461,9 +461,26 @@ class CurrentProfileViewTestCase(SetupUserMixin, APITestCase):
         }
         self.view = reverse("api:event:current-profile")
 
+    def _build_view(self, acknowledge_rules, e_signature):
+        return reverse("api:event:current-profile", kwargs=self.request_body)
+
     def test_user_not_logged_in(self):
         response = self.client.patch(self.view, self.request_body)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_user_can_has_profile(self):
+        # When posting, the user is assumed to be attending the hackathon
+        # The team should be increased by 1 since, the profile will be deleted
+        self.expected_response["attended"] = True
+        self.expected_response["team"] = 2
+
+        self.profile.delete()
+        self._login()
+        response = self.client.post(self.view, self.request_body)
+        data = response.json()
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(self.expected_response, data)
 
     def test_user_has_no_profile(self):
         self.profile.delete()

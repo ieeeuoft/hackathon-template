@@ -85,21 +85,25 @@ class CurrentProfileSerializer(ProfileSerializer):
         # ProfileSerializer update function and we want to keep the logic between these two update functions separate.
         return serializers.ModelSerializer.update(self, instance, validated_data)
 
-
-class CreateProfileSerializer(ProfileSerializer):
-    class Meta(ProfileSerializer.Meta):
-        read_only_fields = ("id", "team", "id_provided", "attended")
-
     def create(self, validated_data):
-        response_data = {"attended": True}
-        response_data["user"] = self.context["request"].user
-        response_data["id_provided"] = True
-        response_data["acknowledge_rules"] = validated_data.pop(
-            "acknowledge_rules", False
-        )
-        response_data["e_signature"] = validated_data.pop("e_signature", "NULL")
+        try:
+            self.context["request"].user.profile
+            raise serializers.ValidationError("User already has profile")
+        except:
 
-        return Profile.objects.create(**response_data)
+            response_data = {"attended": True}
+            response_data["id_provided"] = False
+            response_data["acknowledge_rules"] = validated_data.pop(
+                "acknowledge_rules", False
+            )
+            response_data["e_signature"] = validated_data.pop("e_signature", "NULL")
+            response_data["user"] = self.context["request"].user
+            response_data["id"] = self.context["request"].user.id
+
+            profile = Profile.objects.create(**response_data)
+            response_data["team"] = self.context["request"].user.profile.team
+
+            return response_data
 
 
 class UserSerializer(serializers.ModelSerializer):
