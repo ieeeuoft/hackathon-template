@@ -14,7 +14,7 @@ import {
     TableCell,
 } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
-import TeamPendingOrderTable from "../../components/teamDetail/TeamPendingOrderTable/TeamPendingOrderTable";
+import TeamPendingOrderTable from "components/teamDetail/TeamPendingOrderTable/TeamPendingOrderTable";
 
 export interface PageParams {
     id: string;

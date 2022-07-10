@@ -1,7 +1,6 @@
 import {
     Button,
     Checkbox,
-    FormControlLabel,
     Grid,
     Link,
     Paper,
@@ -12,7 +11,6 @@ import {
     TableHead,
     TableRow,
 } from "@material-ui/core";
-import Typography from "@material-ui/core/Typography";
 import { mockPendingOrders, mockHardware } from "testing/mockData";
 import React from "react";
 import Container from "@material-ui/core/Container";
@@ -20,12 +18,11 @@ import styles from "components/general/OrderTables/OrderTables.module.scss";
 import hardwareImagePlaceholder from "assets/images/placeholders/no-hardware-image.svg";
 import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
-import FormControl from "@material-ui/core/FormControl";
 import {
     GeneralOrderTableTitle,
     GeneralOrderTitle,
 } from "components/general/OrderTables/OrderTables";
-import { Formik, Field } from "formik";
+import { Formik } from "formik";
 
 const createDropdownList = (number: number) => {
     let entry = [];
