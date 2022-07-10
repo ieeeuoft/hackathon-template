@@ -74,183 +74,192 @@ export const TeamPendingOrderTable = () => {
                 orders.map((pendingOrder) => (
                     <Formik
                         initialValues={setInitialValues(pendingOrder.request)}
-                        onSubmit={(values) => alert(values)}
+                        onSubmit={(values) =>
+                            alert(JSON.stringify(values, undefined, 2))
+                        }
                     >
                         {(props) => (
-                            <div key={pendingOrder.id}>
-                                <GeneralOrderTableTitle
-                                    orderId={pendingOrder.id}
-                                    orderStatus={pendingOrder.status}
-                                />
-                                <TableContainer
-                                    component={Paper}
-                                    elevation={2}
-                                    square={true}
-                                >
-                                    <Table className={styles.table} size="small">
-                                        <TableHead>
-                                            <TableRow>
-                                                <TableCell
-                                                    className={styles.widthFixed}
-                                                />
-                                                <TableCell className={styles.width6}>
-                                                    Name
-                                                </TableCell>
-                                                <TableCell
-                                                    className={`${styles.width1} ${styles.noWrap}`}
-                                                >
-                                                    Model
-                                                </TableCell>
-                                                <TableCell
-                                                    className={`${styles.width1} ${styles.noWrap}`}
-                                                >
-                                                    Manufacturer
-                                                </TableCell>
-                                                <TableCell
-                                                    className={`${styles.width1} ${styles.noWrap}`}
-                                                >
-                                                    Qty requested
-                                                </TableCell>
-                                                <TableCell
-                                                    className={`${styles.width6} ${styles.noWrap}`}
-                                                >
-                                                    Qty granted
-                                                </TableCell>
-                                                <TableCell
-                                                    className={`${styles.width1} ${styles.noWrap}`}
-                                                >
-                                                    Time
-                                                </TableCell>
-                                                <TableCell
-                                                    className={`${styles.width1} ${styles.noWrap}`}
-                                                >
-                                                    <Checkbox color="primary" />
-                                                </TableCell>
-                                            </TableRow>
-                                        </TableHead>
-                                        <TableBody>
-                                            {pendingOrder.request.map((row) => (
-                                                <TableRow key={row.id}>
-                                                    <TableCell>
-                                                        <img
-                                                            className={styles.itemImg}
-                                                            src={
+                            <form onSubmit={props.handleSubmit}>
+                                <div key={pendingOrder.id}>
+                                    <GeneralOrderTableTitle
+                                        orderId={pendingOrder.id}
+                                        orderStatus={pendingOrder.status}
+                                    />
+                                    <TableContainer
+                                        component={Paper}
+                                        elevation={2}
+                                        square={true}
+                                    >
+                                        <Table className={styles.table} size="small">
+                                            <TableHead>
+                                                <TableRow>
+                                                    <TableCell
+                                                        className={styles.widthFixed}
+                                                    />
+                                                    <TableCell
+                                                        className={styles.width6}
+                                                    >
+                                                        Name
+                                                    </TableCell>
+                                                    <TableCell
+                                                        className={`${styles.width1} ${styles.noWrap}`}
+                                                    >
+                                                        Model
+                                                    </TableCell>
+                                                    <TableCell
+                                                        className={`${styles.width1} ${styles.noWrap}`}
+                                                    >
+                                                        Manufacturer
+                                                    </TableCell>
+                                                    <TableCell
+                                                        className={`${styles.width1} ${styles.noWrap}`}
+                                                    >
+                                                        Qty requested
+                                                    </TableCell>
+                                                    <TableCell
+                                                        className={`${styles.width6} ${styles.noWrap}`}
+                                                    >
+                                                        Qty granted
+                                                    </TableCell>
+                                                    <TableCell
+                                                        className={`${styles.width1} ${styles.noWrap}`}
+                                                    >
+                                                        Time
+                                                    </TableCell>
+                                                    <TableCell
+                                                        className={`${styles.width1} ${styles.noWrap}`}
+                                                    >
+                                                        <Checkbox color="primary" />
+                                                    </TableCell>
+                                                </TableRow>
+                                            </TableHead>
+                                            <TableBody>
+                                                {pendingOrder.request.map((row) => (
+                                                    <TableRow key={row.id}>
+                                                        <TableCell>
+                                                            <img
+                                                                className={
+                                                                    styles.itemImg
+                                                                }
+                                                                src={
+                                                                    hardware[row.id]
+                                                                        ?.picture ??
+                                                                    hardwareImagePlaceholder
+                                                                }
+                                                                alt={
+                                                                    hardware[row.id]
+                                                                        ?.name
+                                                                }
+                                                            />
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            {hardware[row.id]?.name}
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            {
                                                                 hardware[row.id]
-                                                                    ?.picture ??
-                                                                hardwareImagePlaceholder
+                                                                    ?.model_number
                                                             }
-                                                            alt={hardware[row.id]?.name}
-                                                        />
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        {hardware[row.id]?.name}
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        {hardware[row.id]?.model_number}
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        {hardware[row.id]?.manufacturer}
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        {row.requested_quantity}
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        <div
-                                                            style={{
-                                                                display: "flex",
-                                                                alignItems: "end",
-                                                            }}
-                                                        >
-                                                            <Link
-                                                                underline="always"
-                                                                color="textPrimary"
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            {
+                                                                hardware[row.id]
+                                                                    ?.manufacturer
+                                                            }
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            {row.requested_quantity}
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            <div
                                                                 style={{
-                                                                    marginRight: "15px",
-                                                                }}
-                                                                onClick={() => {
-                                                                    props.setFieldValue(
-                                                                        `${row.id}-quantity`,
-                                                                        row.requested_quantity
-                                                                    );
+                                                                    display: "flex",
+                                                                    alignItems: "end",
                                                                 }}
                                                             >
-                                                                All
-                                                            </Link>
-                                                            <Select
-                                                                value={
-                                                                    props.values[
-                                                                        `${row.id}-quantity`
-                                                                    ]
-                                                                }
+                                                                <Link
+                                                                    underline="always"
+                                                                    color="textPrimary"
+                                                                    style={{
+                                                                        marginRight:
+                                                                            "15px",
+                                                                    }}
+                                                                    onClick={() => {
+                                                                        props.setFieldValue(
+                                                                            `${row.id}-quantity`,
+                                                                            row.requested_quantity
+                                                                        );
+                                                                    }}
+                                                                >
+                                                                    All
+                                                                </Link>
+                                                                <Select
+                                                                    value={
+                                                                        props.values[
+                                                                            `${row.id}-quantity`
+                                                                        ]
+                                                                    }
+                                                                    onChange={
+                                                                        props.handleChange
+                                                                    }
+                                                                    label="Qty"
+                                                                    labelId="qtyLabel"
+                                                                    name={`${row.id}-quantity`}
+                                                                    id={`${row.id}-quantity`}
+                                                                >
+                                                                    {createDropdownList(
+                                                                        row.requested_quantity
+                                                                    )}
+                                                                </Select>
+                                                            </div>
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            {convertToDateTime(
+                                                                pendingOrder.created_at
+                                                            )}
+                                                        </TableCell>
+                                                        <TableCell align="center">
+                                                            <Checkbox
+                                                                color="primary"
+                                                                name={`${row.id}-checkbox`}
                                                                 onChange={
                                                                     props.handleChange
                                                                 }
-                                                                label="Qty"
-                                                                labelId="qtyLabel"
-                                                                name={`${row.id}-quantity`}
-                                                                id={`${row.id}-quantity`}
-                                                            >
-                                                                {createDropdownList(
-                                                                    row.requested_quantity
-                                                                )}
-                                                            </Select>
-                                                        </div>
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        {convertToDateTime(
-                                                            pendingOrder.created_at
-                                                        )}
-                                                    </TableCell>
-                                                    <TableCell align="center">
-                                                        <Checkbox
-                                                            color="primary"
-                                                            name={`${row.id}-checkbox`}
-                                                            onChange={
-                                                                props.handleChange
-                                                            }
-                                                        />
-                                                    </TableCell>
-                                                </TableRow>
-                                            ))}
-                                        </TableBody>
-                                    </Table>
-                                </TableContainer>
-                                <Grid
-                                    container
-                                    justifyContent="flex-end"
-                                    spacing={1}
-                                    style={{ marginTop: "10px" }}
-                                >
-                                    <Grid item>
-                                        <Button
-                                            color="secondary"
-                                            variant="text"
-                                            disableElevation
-                                        >
-                                            Reject Order
-                                        </Button>
+                                                            />
+                                                        </TableCell>
+                                                    </TableRow>
+                                                ))}
+                                            </TableBody>
+                                        </Table>
+                                    </TableContainer>
+                                    <Grid
+                                        container
+                                        justifyContent="flex-end"
+                                        spacing={1}
+                                        style={{ marginTop: "10px" }}
+                                    >
+                                        <Grid item>
+                                            <Button
+                                                color="secondary"
+                                                variant="text"
+                                                disableElevation
+                                            >
+                                                Reject Order
+                                            </Button>
+                                        </Grid>
+                                        <Grid item>
+                                            <Button
+                                                color="primary"
+                                                variant="contained"
+                                                type="submit"
+                                                disableElevation
+                                            >
+                                                Complete Order
+                                            </Button>
+                                        </Grid>
                                     </Grid>
-                                    <Grid item>
-                                        <Button
-                                            color="primary"
-                                            variant="contained"
-                                            type="submit"
-                                            disableElevation
-                                            onClick={() => {
-                                                alert(
-                                                    JSON.stringify(
-                                                        props.values,
-                                                        undefined,
-                                                        2
-                                                    )
-                                                );
-                                            }}
-                                        >
-                                            Complete Order
-                                        </Button>
-                                    </Grid>
-                                </Grid>
-                            </div>
+                                </div>
+                            </form>
                         )}
                     </Formik>
                 ))}
