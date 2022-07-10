@@ -124,13 +124,10 @@ export const TeamPendingOrderTable = () => {
                                                 >
                                                     Time
                                                 </TableCell>
-                                                <TableCell>
-                                                    <Checkbox
-                                                        color="primary"
-                                                        style={{
-                                                            marginLeft: "-15px",
-                                                        }}
-                                                    />
+                                                <TableCell
+                                                    className={`${styles.width1} ${styles.noWrap}`}
+                                                >
+                                                    <Checkbox color="primary" />
                                                 </TableCell>
                                             </TableRow>
                                         </TableHead>
@@ -207,19 +204,13 @@ export const TeamPendingOrderTable = () => {
                                                             pendingOrder.created_at
                                                         )}
                                                     </TableCell>
-                                                    <TableCell>
-                                                        <FormControlLabel
-                                                            control={
-                                                                <Checkbox color="primary" />
-                                                            }
-                                                            label=""
+                                                    <TableCell align="center">
+                                                        <Checkbox
+                                                            color="primary"
                                                             name={`${row.id}-checkbox`}
                                                             onChange={
                                                                 props.handleChange
                                                             }
-                                                            style={{
-                                                                marginLeft: "-15px",
-                                                            }}
                                                         />
                                                     </TableCell>
                                                 </TableRow>
