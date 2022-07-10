@@ -5,15 +5,7 @@ import TeamActionTable from "components/teamDetail/TeamActionTable/TeamActionTab
 
 import { RouteComponentProps } from "react-router-dom";
 import Header from "components/general/Header/Header";
-import {
-    Grid,
-    Paper,
-    Table,
-    TableContainer,
-    TableBody,
-    TableRow,
-    TableCell,
-} from "@material-ui/core";
+import { Grid } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 
 export interface PageParams {

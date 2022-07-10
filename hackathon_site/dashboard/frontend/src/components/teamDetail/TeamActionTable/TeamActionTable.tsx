@@ -5,8 +5,6 @@ import {
     ListItem,
     ListItemIcon,
     ListItemText,
-    TableRow,
-    Button,
 } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import React from "react";
@@ -14,8 +12,6 @@ import NotificationImportantIcon from "@material-ui/icons/NotificationImportant"
 import CallSplitIcon from "@material-ui/icons/CallSplit";
 import MergeTypeIcon from "@material-ui/icons/MergeType";
 import DeleteIcon from "@material-ui/icons/Delete";
-
-import styles from "./TeamActionsTable.module.scss";
 
 const TeamActionTable = () => {
     const actionButtons = [
@@ -61,7 +57,7 @@ const TeamActionTable = () => {
                     <ListItem
                         button
                         onClick={action.onClick}
-                        disabled={action.onClick == undefined}
+                        disabled={action.onClick === undefined}
                         style={{
                             flex: 1,
                         }}

@@ -28,7 +28,7 @@ export const TeamInfoTable = () => {
                             <TableCell>Name</TableCell>
                             <TableCell>Email</TableCell>
                             <TableCell>Phone</TableCell>
-                            <TableCell>ID</TableCell>
+                            <TableCell align="center">ID</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -39,13 +39,10 @@ export const TeamInfoTable = () => {
                                 </TableCell>
                                 <TableCell>{row.user.email}</TableCell>
                                 <TableCell>{row.user.phone}</TableCell>
-                                <TableCell>
+                                <TableCell align="center">
                                     <Checkbox
                                         checked={row.id_provided}
                                         color="primary"
-                                        style={{
-                                            marginLeft: "-15px",
-                                        }}
                                     />
                                 </TableCell>
                             </TableRow>
