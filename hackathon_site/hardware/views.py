@@ -168,4 +168,4 @@ class OrderItemReturnView(generics.GenericAPIView, mixins.UpdateModelMixin):
     permission_classes = [FullDjangoModelPermissions]
 
     def post(self, request, *args, **kwargs):
-        return self.
+        return self.post(request, *args, **kwargs)
