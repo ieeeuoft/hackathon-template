@@ -6,11 +6,13 @@ import {
 } from "@reduxjs/toolkit";
 import { APIListResponse, Order, OrderInTable, ReturnOrderInTable } from "api/types";
 import { AppDispatch, RootState } from "slices/store";
-import { get } from "api/api";
+import { get, patch } from "api/api";
 import { teamOrderListSerialization } from "api/helpers";
+import { displaySnackbar } from "slices/ui/uiSlice";
 
 interface OrderExtraState {
     isLoading: boolean;
+    cancelOrderLoading: boolean;
     error: string | null;
     next: string | null;
     hardwareInOrders: number[] | null;
@@ -20,6 +22,7 @@ interface OrderExtraState {
 
 const extraState: OrderExtraState = {
     isLoading: false,
+    cancelOrderLoading: false,
     error: null,
     next: null,
     hardwareInOrders: null,
@@ -56,6 +59,39 @@ export const getTeamOrders = createAsyncThunk<
     }
 });
 
+export const cancelOrderThunk = createAsyncThunk<
+    Order,
+    number,
+    { state: RootState; rejectValue: RejectValue; dispatch: AppDispatch }
+>(
+    `${orderReducerName}/cancelOrderThunk`,
+    async (orderId, { dispatch, rejectWithValue }) => {
+        try {
+            const response = await patch<Order>(`/api/hardware/orders/${orderId}`, {
+                status: "Cancelled",
+            });
+            dispatch(
+                displaySnackbar({
+                    message: `Order has been cancelled.`,
+                    options: { variant: "success" },
+                })
+            );
+            return response.data;
+        } catch (e: any) {
+            dispatch(
+                displaySnackbar({
+                    message: `Failed to cancel order: ${e.response?.data?.status[0]}`,
+                    options: { variant: "error" },
+                })
+            );
+            return rejectWithValue({
+                status: e.response.status,
+                message: e.response.message ?? e.response.data,
+            });
+        }
+    }
+);
+
 const orderSlice = createSlice({
     name: orderReducerName,
     initialState,
@@ -88,6 +124,21 @@ const orderSlice = createSlice({
             state.error =
                 payload?.message ||
                 "There was a problem retrieving orders. If this continues please contact hackathon organizers.";
+        });
+
+        builder.addCase(cancelOrderThunk.pending, (state) => {
+            state.cancelOrderLoading = true;
+        });
+
+        builder.addCase(cancelOrderThunk.fulfilled, (state, { payload }) => {
+            state.cancelOrderLoading = false;
+            if (payload) {
+                pendingOrderAdapter.removeOne(state, payload.id);
+            }
+        });
+
+        builder.addCase(cancelOrderThunk.rejected, (state, { payload }) => {
+            state.cancelOrderLoading = false;
         });
     },
 });
@@ -124,4 +175,9 @@ export const returnedOrdersSelector = createSelector(
 export const hardwareInOrdersSelector = createSelector(
     [orderSliceSelector],
     (orderSlice) => orderSlice.hardwareInOrders
+);
+
+export const cancelOrderLoadingSelector = createSelector(
+    [orderSliceSelector],
+    (orderSlice) => orderSlice.cancelOrderLoading
 );

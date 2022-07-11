@@ -9,7 +9,6 @@ import { mockAdminUser, mockUser } from "testing/mockData";
 import { userReducerName, fetchUserData } from "slices/users/userSlice";
 import { displaySnackbar } from "slices/ui/uiSlice";
 import withUserCheck from "components/HOCs/withUserCheck/withUserCheck";
-import { adminPages } from "constants.js";
 
 jest.mock("api/api"); // To make sure that fetchUserData() doesn't actually do anything
 
@@ -18,9 +17,9 @@ const mockStore = configureStore([thunk]);
 describe("withAuthenticationCheck", () => {
     const content = "Hello there";
     const ComponentToWrap = ({ children }) => <div>{children}</div>;
-    const WrappedComponent = withUserCheck(ComponentToWrap);
 
     it("calls fetchUserData() if the user is missing and displays a loading bar", () => {
+        const WrappedComponent = withUserCheck("both", ComponentToWrap);
         const mockState = {
             [userReducerName]: {
                 userData: {
@@ -46,6 +45,7 @@ describe("withAuthenticationCheck", () => {
     });
 
     it("Displays a snackbar and pushes to the 404 page if the user has no profile or admin access", () => {
+        const WrappedComponent = withUserCheck("both", ComponentToWrap);
         // Used by displaySnackbar
         jest.spyOn(global.Math, "random").mockReturnValue(0.45526621894095487);
 
@@ -79,6 +79,7 @@ describe("withAuthenticationCheck", () => {
     });
 
     it("Allow user to access page with admin permissions", () => {
+        const WrappedComponent = withUserCheck("admin", ComponentToWrap);
         const mockState = {
             [userReducerName]: {
                 userData: {
@@ -108,7 +109,11 @@ describe("withAuthenticationCheck", () => {
         const store = mockStore(mockState);
 
         const SecondaryComponent = () => <div>Secondary</div>;
-        const DoubleComponents = withUserCheck(ComponentToWrap, SecondaryComponent);
+        const DoubleComponents = withUserCheck(
+            "admin",
+            ComponentToWrap,
+            SecondaryComponent
+        );
         const { getByText } = render(<DoubleComponents>{content}</DoubleComponents>, {
             store,
         });
@@ -128,7 +133,11 @@ describe("withAuthenticationCheck", () => {
         const store = mockStore(mockState);
 
         const SecondaryComponent = () => <div>Secondary</div>;
-        const DoubleComponents = withUserCheck(ComponentToWrap, SecondaryComponent);
+        const DoubleComponents = withUserCheck(
+            "participant",
+            ComponentToWrap,
+            SecondaryComponent
+        );
         const { queryByText, getByText } = render(
             <DoubleComponents>{content}</DoubleComponents>,
             {
@@ -141,6 +150,7 @@ describe("withAuthenticationCheck", () => {
     });
 
     it("Renders the component with passed through props when the profile is set", () => {
+        const WrappedComponent = withUserCheck("both", ComponentToWrap);
         const mockState = {
             [userReducerName]: {
                 userData: {

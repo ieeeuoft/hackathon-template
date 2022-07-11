@@ -5,8 +5,8 @@ import Typography from "@material-ui/core/Typography";
 import DashCard from "components/dashboard/DashCard/DashCard";
 import TeamCard from "components/dashboard/TeamCard/TeamCard";
 import {
-    PendingTable,
-    CheckedOutTable,
+    PendingTables,
+    CheckedOutTables,
     ReturnedTable,
 } from "components/dashboard/ItemTable/ItemTable";
 import ProductOverview from "components/inventory/ProductOverview/ProductOverview";
@@ -14,7 +14,12 @@ import Header from "components/general/Header/Header";
 import { cardItems } from "testing/mockData";
 import { hackathonName } from "constants.js";
 import { useDispatch, useSelector } from "react-redux";
-import { getCurrentTeam, isLoadingSelector } from "slices/event/teamSlice";
+import {
+    getCurrentTeam,
+    isLoadingSelector,
+    teamCodeSelector,
+    teamSizeSelector,
+} from "slices/event/teamSlice";
 import { fulfillmentErrorSelector } from "slices/hardware/cartSlice";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import {
@@ -22,9 +27,16 @@ import {
     hardwareInOrdersSelector,
     orderErrorSelector,
 } from "slices/order/orderSlice";
-import { getHardwareWithFilters, setFilters } from "slices/hardware/hardwareSlice";
+import {
+    getHardwareWithFilters,
+    getUpdatedHardwareDetails,
+    setFilters,
+} from "slices/hardware/hardwareSlice";
 import { getCategories } from "slices/hardware/categorySlice";
 import AlertBox from "components/general/AlertBox/AlertBox";
+import { openTeamModalItem } from "../../slices/ui/uiSlice";
+import EditTeam from "components/dashboard/EditTeam/EditTeam";
+import { Edit } from "@material-ui/icons";
 
 const Dashboard = () => {
     const dispatch = useDispatch();
@@ -32,6 +44,8 @@ const Dashboard = () => {
     const orderFulfillmentError = useSelector(fulfillmentErrorSelector);
     const fetchOrderError = useSelector(orderErrorSelector);
     const hardwareInOrders = useSelector(hardwareInOrdersSelector);
+    const team_code = useSelector(teamCodeSelector);
+    const team_size = useSelector(teamSizeSelector);
 
     useEffect(() => {
         dispatch(getCurrentTeam());
@@ -46,10 +60,17 @@ const Dashboard = () => {
         }
     }, [dispatch, hardwareInOrders]);
 
+    const openEditTeamModal = () => dispatch(openTeamModalItem());
+
     return (
         <>
             <Header />
-            <ProductOverview showAddToCartButton={false} />
+            <ProductOverview showAddToCartButton />
+            <EditTeam
+                teamCode={team_code == null ? "None" : team_code}
+                canChangeTeam={true}
+                teamSize={team_size}
+            />
             <div className={styles.dashboard}>
                 <Typography variant="h1">{hackathonName} Hardware Dashboard</Typography>
                 {isTeamLoading ? (
@@ -75,7 +96,7 @@ const Dashboard = () => {
                             key={0}
                             data-testid="team"
                         >
-                            <TeamCard handleEditTeam={() => alert("Editing Team")} />
+                            <TeamCard handleEditTeam={openEditTeamModal} />
                         </Grid>
                         {cardItems.map(({ title, content }, i) => (
                             <Grid
@@ -102,8 +123,8 @@ const Dashboard = () => {
                 {fetchOrderError && <AlertBox error={fetchOrderError} />}
                 {/* TODO: add back in when incident reports are completed on the frontend */}
                 {/* <BrokenTable items={itemsBroken} openReportAlert={openBrokenTable} /> */}
-                <PendingTable />
-                <CheckedOutTable />
+                <PendingTables />
+                <CheckedOutTables />
                 <ReturnedTable />
             </div>
         </>
