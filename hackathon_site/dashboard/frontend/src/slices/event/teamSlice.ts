@@ -102,39 +102,36 @@ export const joinTeam = createAsyncThunk<
     Team,
     string,
     { state: RootState; rejectValue: RejectValue; dispatch: AppDispatch }
->(
-    `${teamReducerName}/joinTeam`,
-    async (teamCode, { dispatch, getState, rejectWithValue }) => {
-        try {
-            const response = await post<Team>(`/api/event/teams/join/${teamCode}/`, {
-                team_code: teamCode,
-            });
+>(`${teamReducerName}/joinTeam`, async (teamCode, { dispatch, rejectWithValue }) => {
+    try {
+        const response = await post<Team>(`/api/event/teams/join/${teamCode}/`, {
+            team_code: teamCode,
+        });
 
-            dispatch(
-                displaySnackbar({
-                    message: `You have joined the new team ${teamCode}.`,
-                    options: { variant: "success" },
-                })
-            );
+        dispatch(
+            displaySnackbar({
+                message: `You have joined the new team ${teamCode}.`,
+                options: { variant: "success" },
+            })
+        );
 
-            return response.data;
-        } catch (e: any) {
-            // order reached quantity limits
-            const errorData = e.response?.data?.non_field_errors;
+        return response.data;
+    } catch (e: any) {
+        // order reached quantity limits
+        const errorData = e.response?.data?.non_field_errors;
 
-            dispatch(
-                displaySnackbar({
-                    message: `Failed to join the team ${teamCode}: Error ${e.response.status}`,
-                    options: { variant: "error" },
-                })
-            );
-            return rejectWithValue({
-                status: e.response.status,
-                message: errorData ?? e.response.message,
-            });
-        }
+        dispatch(
+            displaySnackbar({
+                message: `Failed to join the team ${teamCode}: Error ${e.response.status}`,
+                options: { variant: "error" },
+            })
+        );
+        return rejectWithValue({
+            status: e.response.status,
+            message: errorData ?? e.response.message,
+        });
     }
-);
+});
 
 // Slice
 const teamSlice = createSlice({
