@@ -16,6 +16,7 @@ A website template for hackathons run by [IEEE University of Toronto Student Bra
 - Arsh Kadakia
 - Terry Luan
 - Eric Ji
+- Srinidhi Shankar
 
 ## Contents
 - [Requirements](#requirements)
