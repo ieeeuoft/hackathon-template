@@ -12,9 +12,6 @@ interface UIInitialState {
     inventory: {
         isProductOverviewVisible: boolean;
     };
-    team_detail: {
-        isPendingTableVisible: boolean;
-    };
     snackbars: {
         message: string;
         options: {
@@ -33,9 +30,6 @@ export const initialState: UIInitialState = {
     },
     inventory: {
         isProductOverviewVisible: false,
-    },
-    team_detail: {
-        isPendingTableVisible: true,
     },
     snackbars: [],
 };
@@ -98,10 +92,6 @@ const uiSlice = createSlice({
                 (snackbar) => snackbar.options.key !== key
             );
         },
-        toggleTeamPendingOrderTable: (state: UIState) => {
-            state.team_detail.isPendingTableVisible =
-                !state.team_detail.isPendingTableVisible;
-        },
     },
 });
 
@@ -117,7 +107,6 @@ export const {
     displaySnackbar,
     dismissSnackbar,
     removeSnackbar,
-    toggleTeamPendingOrderTable,
 } = actions;
 export default reducer;
 
@@ -146,8 +135,4 @@ export const isProductOverviewVisibleSelector = createSelector(
 export const isTeamModalVisibleSelector = createSelector(
     [uiSliceSelector],
     (uiSlice) => uiSlice.dashboard.isEditTeamVisible
-);
-export const isTeamPendingOrderTableVisible = createSelector(
-    [uiSliceSelector],
-    (uiSlice) => uiSlice.team_detail.isPendingTableVisible
 );

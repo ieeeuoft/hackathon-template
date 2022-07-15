@@ -23,11 +23,6 @@ import {
     GeneralOrderTitle,
 } from "components/general/OrderTables/OrderTables";
 import { Formik } from "formik";
-import { useDispatch, useSelector } from "react-redux";
-import {
-    isTeamPendingOrderTableVisible,
-    toggleTeamPendingOrderTable,
-} from "slices/ui/uiSlice";
 
 const createDropdownList = (number: number) => {
     let entry = [];
@@ -59,13 +54,8 @@ const convertToDateTime = (dateString: string) => {
 };
 
 export const TeamPendingOrderTable = () => {
-    const dispatch = useDispatch();
     const orders = mockPendingOrders;
     const hardware = mockHardware;
-    const isVisible = useSelector(isTeamPendingOrderTableVisible);
-    const toggleVisibility = () => {
-        dispatch(toggleTeamPendingOrderTable());
-    };
 
     return (
         <Container
@@ -76,12 +66,11 @@ export const TeamPendingOrderTable = () => {
             {orders.length > 0 && (
                 <GeneralOrderTitle
                     title="Requested Items"
-                    isVisible={isVisible}
-                    toggleVisibility={toggleVisibility}
+                    isVisible={true}
+                    toggleVisibility={() => alert("show/hide orders")}
                 />
             )}
-            {isVisible &&
-                orders.length &&
+            {orders.length &&
                 orders.map((pendingOrder) => (
                     <Formik
                         initialValues={setInitialValues(pendingOrder.request)}
