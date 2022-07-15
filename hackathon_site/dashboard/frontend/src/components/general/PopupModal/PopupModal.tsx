@@ -1,32 +1,38 @@
-import React, { useState } from "react";
+import React from "react";
 import Modal from "@material-ui/core/Modal";
 import Button from "@material-ui/core/Button";
+import styles from "components/general/PopupModal/PopupModal.module.scss";
+import { Box } from "@material-ui/core";
 
 interface PopupModalProps {
     title?: string;
-    description?: string;
+    description: string;
+    isVisible: boolean;
     submitText?: string;
     cancelText?: string;
-    handleSubmit(): any;
-    handleCancel?(): any;
+    submitHandler(): any;
+    cancelHandler?(): any;
 }
 
 const PopupModal = ({
     title,
     description,
+    isVisible,
     submitText,
     cancelText,
-    handleSubmit,
-    handleCancel,
+    submitHandler,
+    cancelHandler,
 }: PopupModalProps) => {
     return (
-        <Modal open>
-            <div>
-                <h1>{title}</h1>
-                <p>{description}</p>
-                <Button onSubmit={handleSubmit}>{submitText}</Button>
-                <Button onSubmit={handleCancel}>{cancelText}</Button>
-            </div>
+        <Modal open={isVisible}>
+            <Box className={styles.modalSize}>
+                <h1 className={styles.title}>{title}</h1>
+                <p className={styles.description}>{description}</p>
+                <div className={styles.buttons}>
+                    <Button onClick={cancelHandler}>{cancelText}</Button>
+                    <Button onClick={submitHandler}>{submitText}</Button>
+                </div>
+            </Box>
         </Modal>
     );
 };
