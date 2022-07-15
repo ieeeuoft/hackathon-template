@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import Header from "components/general/Header/Header";
 import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
