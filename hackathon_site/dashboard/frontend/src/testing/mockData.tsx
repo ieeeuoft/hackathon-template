@@ -8,6 +8,7 @@ import {
     Hardware,
     Order,
     OrderInTable,
+    PendingOrderInTable,
     ReturnOrderInTable,
     Team,
     User,
@@ -749,7 +750,7 @@ export const mockCheckedOutOrders: Order[] = [
 
 export const mockOrders: Order[] = mockCheckedOutOrders.concat(mockPendingOrders);
 
-export const mockPendingOrdersInTable: OrderInTable[] = [
+export const mockPendingOrdersInTable: PendingOrderInTable[] = [
     {
         id: 5,
         hardwareInTableRow: [
@@ -760,6 +761,7 @@ export const mockPendingOrdersInTable: OrderInTable[] = [
             },
         ],
         status: "Ready for Pickup",
+        created_at: "2021-10-17T18:28:44.691969-04:00",
     },
     {
         id: 4,
@@ -776,6 +778,7 @@ export const mockPendingOrdersInTable: OrderInTable[] = [
             },
         ],
         status: "Submitted",
+        created_at: "2021-10-17T18:28:44.691969-04:00",
     },
     {
         id: 3,
@@ -792,6 +795,7 @@ export const mockPendingOrdersInTable: OrderInTable[] = [
             },
         ],
         status: "Ready for Pickup",
+        created_at: "2021-10-17T18:28:44.691969-04:00",
     },
 ];
 
