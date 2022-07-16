@@ -44,7 +44,9 @@ class CurrentUserAPIView(generics.GenericAPIView, mixins.RetrieveModelMixin):
         return self.retrieve(request, *args, **kwargs)
 
 
-class CurrentUserReviewStatusAPIView(generics.GenericAPIView, mixins.RetrieveModelMixin):
+class CurrentUserReviewStatusAPIView(
+    generics.GenericAPIView, mixins.RetrieveModelMixin
+):
     """
     View to handle review status status of user
     """
