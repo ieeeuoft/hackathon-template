@@ -22,7 +22,7 @@ from event.serializers import (
     ProfileInUserSerializer,
     ProfileInTeamSerializer,
     UserInProfileSerializer,
-    UserAcceptanceSerializer,
+    UserReviewStatusSerializer,
 )
 from review.models import Review
 
@@ -857,34 +857,34 @@ class ProfileInTeamSerilializerTestCase(TestCase):
         self.assertEqual(profile_expected, profile_serialized)
 
 
-class UserAcceptanceSerializerTestCase(SetupUserMixin, TestCase):
+class UserReviewStatusSerializerTestCase(SetupUserMixin, TestCase):
     def setUp(self):
         super().setUp()
         self.application = self._apply_as_user(self.user)
 
     def test_serializer(self):
         self._review()
-        user_serialized = UserAcceptanceSerializer(self.user).data
+        user_serialized = UserReviewStatusSerializer(self.user).data
 
         user_expected = {
             "id": self.user.id,
             "first_name": self.user.first_name,
             "last_name": self.user.last_name,
             "email": self.user.email,
-            "acceptance": self.review.status,
+            "review_status": self.review.status,
         }
 
         self.assertEqual(user_expected, user_serialized)
 
     def test_serializer_no_review(self):
-        user_serialized = UserAcceptanceSerializer(self.user).data
+        user_serialized = UserReviewStatusSerializer(self.user).data
 
         user_expected = {
             "id": self.user.id,
             "first_name": self.user.first_name,
             "last_name": self.user.last_name,
             "email": self.user.email,
-            "acceptance": "None",
+            "review_status": "None",
         }
 
         self.assertEqual(user_expected, user_serialized)

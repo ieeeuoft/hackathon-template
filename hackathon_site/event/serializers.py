@@ -111,15 +111,15 @@ class TeamSerializer(serializers.ModelSerializer):
         )
 
 
-class UserAcceptanceSerializer(serializers.ModelSerializer):
-    acceptance = serializers.SerializerMethodField()
+class UserReviewStatusSerializer(serializers.ModelSerializer):
+    review_status = serializers.SerializerMethodField()
 
     class Meta:
         model = User
-        fields = ("id", "first_name", "last_name", "email", "acceptance")
+        fields = ("id", "first_name", "last_name", "email", "review_status")
 
     @staticmethod
-    def get_acceptance(user: User):
+    def get_review_status(user: User):
         try:
             return Review.objects.get(application__user=user).status
         except ObjectDoesNotExist:

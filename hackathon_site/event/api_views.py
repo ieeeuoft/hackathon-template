@@ -10,7 +10,7 @@ from rest_framework.response import Response
 from event.serializers import (
     ProfileSerializer,
     CurrentProfileSerializer,
-    UserAcceptanceSerializer,
+    UserReviewStatusSerializer,
 )
 from event.models import User, Team as EventTeam, Profile
 from event.serializers import UserSerializer, TeamSerializer
@@ -44,13 +44,13 @@ class CurrentUserAPIView(generics.GenericAPIView, mixins.RetrieveModelMixin):
         return self.retrieve(request, *args, **kwargs)
 
 
-class CurrentUserAcceptanceAPIView(generics.GenericAPIView, mixins.RetrieveModelMixin):
+class CurrentUserReviewStatusAPIView(generics.GenericAPIView, mixins.RetrieveModelMixin):
     """
-    View to handle acceptance status of user
+    View to handle review status status of user
     """
 
     queryset = User.objects.select_related("application")
-    serializer_class = UserAcceptanceSerializer
+    serializer_class = UserReviewStatusSerializer
 
     def get_object(self):
         queryset = self.get_queryset()
@@ -58,8 +58,8 @@ class CurrentUserAcceptanceAPIView(generics.GenericAPIView, mixins.RetrieveModel
 
     def get(self, request, *args, **kwargs):
         """
-        Get the current user's acceptance and user details
-        Reads the acceptance status of the current logged in user.
+        Get the current user's review status and user details
+        Reads the review status status of the current logged in user.
         """
         return self.retrieve(request, *args, **kwargs)
 

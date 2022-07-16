@@ -812,18 +812,18 @@ class TeamOrderDetailViewTestCase(SetupUserMixin, APITestCase):
         )
 
 
-class CurrentUserAcceptanceTestCase(SetupUserMixin, APITestCase):
+class CurrentUserReviewStatusTestCase(SetupUserMixin, APITestCase):
     def setUp(self):
         super().setUp()
-        self.view = reverse("api:event:current-user-acceptance")
+        self.view = reverse("api:event:current-user-review-status")
 
-    def get_expected_response(self, acceptance):
+    def get_expected_response(self, review_status):
         return {
             **{
                 attr: getattr(self.user, attr)
                 for attr in ("id", "first_name", "last_name", "email")
             },
-            "acceptance": acceptance,
+            "review_status": review_status,
         }
 
     def test_user_not_logged_in(self):

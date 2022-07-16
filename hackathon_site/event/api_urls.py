@@ -7,9 +7,9 @@ app_name = "event"
 urlpatterns = [
     path("users/user/", api_views.CurrentUserAPIView.as_view(), name="current-user"),
     path(
-        "users/user/acceptance",
-        api_views.CurrentUserAcceptanceAPIView.as_view(),
-        name="current-user-acceptance",
+        "users/user/review_status",
+        api_views.CurrentUserReviewStatusAPIView.as_view(),
+        name="current-user-review-status",
     ),
     path("teams/team/", api_views.CurrentTeamAPIView.as_view(), name="current-team"),
     re_path(
