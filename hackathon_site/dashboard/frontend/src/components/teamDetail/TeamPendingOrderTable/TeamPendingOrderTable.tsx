@@ -153,28 +153,33 @@ export const TeamPendingOrderTable = () => {
                                                                         styles.itemImg
                                                                     }
                                                                     src={
-                                                                        hardware[row.id]
-                                                                            ?.picture ??
+                                                                        hardware[
+                                                                            row.id - 1
+                                                                        ]?.picture ??
                                                                         hardwareImagePlaceholder
                                                                     }
                                                                     alt={
-                                                                        hardware[row.id]
-                                                                            ?.name
+                                                                        hardware[
+                                                                            row.id - 1
+                                                                        ]?.name
                                                                     }
                                                                 />
                                                             </TableCell>
                                                             <TableCell>
-                                                                {hardware[row.id]?.name}
+                                                                {
+                                                                    hardware[row.id - 1]
+                                                                        ?.name
+                                                                }
                                                             </TableCell>
                                                             <TableCell>
                                                                 {
-                                                                    hardware[row.id]
+                                                                    hardware[row.id - 1]
                                                                         ?.model_number
                                                                 }
                                                             </TableCell>
                                                             <TableCell>
                                                                 {
-                                                                    hardware[row.id]
+                                                                    hardware[row.id - 1]
                                                                         ?.manufacturer
                                                                 }
                                                             </TableCell>
