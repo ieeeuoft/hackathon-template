@@ -2,7 +2,6 @@ import {
     Order,
     OrderInTable,
     OrderItemTableRow,
-    PendingOrderInTable,
     ReturnedItem,
     ReturnOrderInTable,
 } from "api/types";
@@ -10,12 +9,12 @@ import {
 export const teamOrderListSerialization = (
     orders: Order[]
 ): {
-    pendingOrders: PendingOrderInTable[];
+    pendingOrders: OrderInTable[];
     checkedOutOrders: OrderInTable[];
     returnedOrders: ReturnOrderInTable[];
     hardwareIdsToFetch: number[];
 } => {
-    const pendingOrders: PendingOrderInTable[] = [];
+    const pendingOrders: OrderInTable[] = [];
     const checkedOutOrders: OrderInTable[] = [];
     const returnedOrders: ReturnOrderInTable[] = [];
     const hardwareIdsToFetch: Record<number, number> = {};
@@ -61,19 +60,14 @@ export const teamOrderListSerialization = (
                     id: order.id,
                     hardwareInOrder: returnedHardware,
                 });
-            else if (order.status === "Submitted")
-                pendingOrders.push({
-                    id: order.id,
-                    status: order.status,
-                    hardwareInTableRow: Object.values(hardwareItems),
-                    created_at: order.created_at,
-                });
-            else if (order.status === "Ready for Pickup")
-                checkedOutOrders.push({
-                    id: order.id,
-                    status: order.status,
-                    hardwareInTableRow: Object.values(hardwareItems),
-                });
+            (order.status === "Submitted" || order.status === "Ready for Pickup"
+                ? pendingOrders
+                : checkedOutOrders
+            ).push({
+                id: order.id,
+                status: order.status,
+                hardwareInTableRow: Object.values(hardwareItems),
+            });
         }
     });
     return {

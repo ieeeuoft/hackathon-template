@@ -120,13 +120,6 @@ export interface OrderInTable {
     status: OrderStatus;
 }
 
-export interface PendingOrderInTable {
-    id: number;
-    hardwareInTableRow: OrderItemTableRow[];
-    status: OrderStatus;
-    created_at: string;
-}
-
 export type ReturnedItem = ItemsInOrder & { quantity: number; time: string };
 export interface ReturnOrderInTable {
     id: number;
