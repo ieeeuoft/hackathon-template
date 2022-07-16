@@ -19,40 +19,35 @@ export const TeamInfoTable = () => {
             <Grid item>
                 <Typography variant="h2">Team info</Typography>
             </Grid>
-            <Grid item>
-                <TableContainer component={Paper}>
-                    <Table size="small">
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>Name</TableCell>
-                                <TableCell>Email</TableCell>
-                                <TableCell>Phone</TableCell>
-                                <TableCell>ID</TableCell>
+            <TableContainer component={Paper}>
+                <Table size="small">
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>Name</TableCell>
+                            <TableCell>Email</TableCell>
+                            <TableCell>Phone</TableCell>
+                            <TableCell align="center">ID</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {mockTeamMultiple.profiles.map((row) => (
+                            <TableRow key={row.user.id}>
+                                <TableCell>
+                                    {`${row.user.first_name} ${row.user.last_name}`}
+                                </TableCell>
+                                <TableCell>{row.user.email}</TableCell>
+                                <TableCell>{row.user.phone}</TableCell>
+                                <TableCell align="center">
+                                    <Checkbox
+                                        checked={row.id_provided}
+                                        color="primary"
+                                    />
+                                </TableCell>
                             </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {mockTeamMultiple.profiles.map((row) => (
-                                <TableRow key={row.user.id}>
-                                    <TableCell>
-                                        {`${row.user.first_name} ${row.user.last_name}`}
-                                    </TableCell>
-                                    <TableCell>{row.user.email}</TableCell>
-                                    <TableCell>{row.user.phone}</TableCell>
-                                    <TableCell>
-                                        <Checkbox
-                                            checked={row.id_provided}
-                                            color="primary"
-                                            style={{
-                                                marginLeft: "-15px",
-                                            }}
-                                        />
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-            </Grid>
+                        ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
         </Grid>
     );
 };
