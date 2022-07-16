@@ -3,8 +3,8 @@ import { render, screen } from "testing/utils";
 import { mockHardware, mockPendingOrdersInTable } from "testing/mockData";
 import TeamPendingOrderTable from "components/teamDetail/TeamPendingOrderTable/TeamPendingOrderTable";
 
-describe("team info table", () => {
-    test("renders team info table", () => {
+describe("team pending order table", () => {
+    test("renders team pending order table", () => {
         const { container } = render(<TeamPendingOrderTable />);
         // const checkboxes = container.getElementsByClassName("MuiCheckbox-root");
         expect(screen.getByText("Requested Items")).toBeInTheDocument();
