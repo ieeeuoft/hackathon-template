@@ -30,6 +30,8 @@ import {
 } from "slices/hardware/hardwareSlice";
 import { Category } from "api/types";
 import hardwareImagePlaceholder from "assets/images/placeholders/no-hardware-image.svg";
+import { hardwareSignOutEndDate, hardwareSignOutStartDate } from "constants.js";
+import { Tooltip } from "@material-ui/core";
 
 export const ERROR_MESSAGES = {
     quantityMissing: "Quantity is required",
@@ -69,6 +71,25 @@ export const AddToCartForm = ({
             ? Math.min(quantityRemaining, maxPerTeam)
             : quantityRemaining;
 
+    const currentDateTime = new Date();
+    const isOutsideSignOutPeriod =
+        currentDateTime < hardwareSignOutStartDate ||
+        currentDateTime > hardwareSignOutEndDate;
+
+    const addToCartButton = (
+        <Button
+            variant="contained"
+            color="primary"
+            fullWidth={true}
+            size="large"
+            type="submit"
+            onClick={handleSubmit}
+            disabled={dropdownNum === 0 || isOutsideSignOutPeriod}
+            disableElevation
+        >
+            Add to cart
+        </Button>
+    );
     return (
         <>
             <form className={styles.form} onSubmit={handleSubmit}>
@@ -86,18 +107,13 @@ export const AddToCartForm = ({
                     </Select>
                 </FormControl>
                 <div className={styles.formButton}>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        fullWidth={true}
-                        size="large"
-                        type="submit"
-                        onClick={handleSubmit}
-                        disabled={dropdownNum === 0}
-                        disableElevation
-                    >
-                        Add to cart
-                    </Button>
+                    {isOutsideSignOutPeriod ? (
+                        <Tooltip title="You cannot add items to cart because hardware sign out period has not begun or is already over">
+                            <span> {addToCartButton} </span>
+                        </Tooltip>
+                    ) : (
+                        addToCartButton
+                    )}
                 </div>
             </form>
         </>
