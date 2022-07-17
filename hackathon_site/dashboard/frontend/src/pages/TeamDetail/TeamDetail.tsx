@@ -14,7 +14,7 @@ import {
     TableCell,
 } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
-import TeamCheckoutOrderTable from "../../components/teamDetail/TeamCheckoutOrderTable/TeamCheckoutOrderTable";
+import TeamCheckoutOrderTable from "components/teamDetail/TeamCheckoutOrderTable/TeamCheckoutOrderTable";
 
 export interface PageParams {
     id: string;

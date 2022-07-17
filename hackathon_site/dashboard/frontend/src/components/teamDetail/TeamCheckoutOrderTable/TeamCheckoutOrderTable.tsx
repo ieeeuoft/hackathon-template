@@ -1,4 +1,5 @@
 import {
+    Box,
     Button,
     Checkbox,
     Container,
@@ -16,12 +17,13 @@ import {
 } from "@material-ui/core";
 
 import Typography from "@material-ui/core/Typography";
-import { mockTeamMultiple, mockCheckedOutOrders, mockHardware } from "testing/mockData";
 import React from "react";
 import Info from "@material-ui/icons/Info";
 import styles from "../../dashboard/ItemTable/ItemTable.module.scss";
 import hardwareImagePlaceholder from "assets/images/placeholders/no-hardware-image.svg";
 import IconButton from "@material-ui/core/IconButton";
+import { mockCheckedOutOrders, mockHardware } from "testing/mockData";
+import { Add } from "@material-ui/icons";
 
 export const TeamCheckoutOrderTable = () => {
     const hardware = mockHardware;
@@ -38,7 +40,7 @@ export const TeamCheckoutOrderTable = () => {
                             <Table size="small">
                                 <TableHead>
                                     <TableRow>
-                                        <TableCell>Picture</TableCell>
+                                        <TableCell></TableCell>
                                         <TableCell>Name</TableCell>
                                         <TableCell>Info</TableCell>
                                         <TableCell>Qty</TableCell>
@@ -65,9 +67,13 @@ export const TeamCheckoutOrderTable = () => {
                                                 hardware[row.id]?.name
                                             }`}</TableCell>
                                             <TableCell>
-                                                <TableCell align="left">
-                                                    <IconButton>
-                                                        <Info />
+                                                <TableCell>
+                                                    <IconButton size={"small"}>
+                                                        <Info
+                                                            style={{
+                                                                marginLeft: "-20px",
+                                                            }}
+                                                        />
                                                     </IconButton>
                                                 </TableCell>
                                             </TableCell>
@@ -90,22 +96,28 @@ export const TeamCheckoutOrderTable = () => {
                                                     ></Select>
                                                 </FormControl>
                                             </TableCell>
-                                            <TableCell align="right">{`${
+                                            <TableCell align="center">{`${
                                                 hardware[row.id]?.quantity_remaining
                                             }`}</TableCell>
                                             <TableCell>
                                                 <Select>
-                                                    <MenuItem>Healthy</MenuItem>
-                                                    <MenuItem>Heavily Used</MenuItem>
-                                                    <MenuItem>Broken</MenuItem>
-                                                    <MenuItem>Lost</MenuItem>
+                                                    <option value="Healthy">
+                                                        Healthy
+                                                    </option>
+                                                    <option value="Heavily Used">
+                                                        Heavily Used
+                                                    </option>
+                                                    <option value="Broken">
+                                                        Broken
+                                                    </option>
+                                                    <option value="Lost">Lost</option>
                                                 </Select>
                                             </TableCell>
                                             <TableCell>
                                                 <Checkbox
                                                     color="primary"
                                                     style={{
-                                                        marginLeft: "-15px",
+                                                        marginLeft: "-10px",
                                                     }}
                                                 />
                                             </TableCell>
@@ -115,11 +127,17 @@ export const TeamCheckoutOrderTable = () => {
                             </Table>
                         </TableContainer>
                     </Grid>
-                    <Grid container justifyContent="flex-end">
-                        <Button color="primary" variant="contained" disableElevation>
-                            Return Items
-                        </Button>
-                    </Grid>
+                    <Box pr={0.5} pt={1}>
+                        <Grid container justifyContent="flex-end">
+                            <Button
+                                color="primary"
+                                variant="contained"
+                                disableElevation
+                            >
+                                Return Items
+                            </Button>
+                        </Grid>
+                    </Box>
                 </Grid>
             ))}
         </Container>
