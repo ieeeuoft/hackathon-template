@@ -14,14 +14,25 @@ import {
     FormControl,
     Select,
     Typography,
+    IconButton,
 } from "@material-ui/core";
-import { mockHardware, mockCheckedOutOrders } from "testing/mockData";
 import React from "react";
 import hardwareImagePlaceholder from "assets/images/placeholders/no-hardware-image.svg";
 import Info from "@material-ui/icons/Info";
-import IconButton from "@material-ui/core/IconButton";
 import styles from "components/general/OrderTables/OrderTables.module.scss";
-import { inspect } from "util";
+import { mockHardware, mockCheckedOutOrders } from "testing/mockData";
+import { Formik, Field } from "formik";
+
+const setInitialValues = (request: { id: number; requested_quantity: number }[]) => {
+    let orderInitialValues: Record<string, string | boolean> = {};
+    request.forEach((orderItem) => {
+        orderInitialValues[`${orderItem.id}-quantity`] =
+            orderItem.requested_quantity.toString();
+        orderInitialValues[`${orderItem.id}-checkbox`] = false;
+    });
+    console.log(orderInitialValues);
+    return orderInitialValues;
+};
 
 export const TeamCheckoutOrderTable = () => {
     const orders = mockCheckedOutOrders;
