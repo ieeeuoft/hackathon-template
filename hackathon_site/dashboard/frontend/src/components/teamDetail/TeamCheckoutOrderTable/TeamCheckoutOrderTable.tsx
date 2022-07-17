@@ -1,53 +1,87 @@
 import {
-    Box,
     Button,
     Checkbox,
     Container,
-    FormControl,
     Grid,
-    MenuItem,
+    Link,
     Paper,
-    Select,
     Table,
     TableBody,
     TableCell,
     TableContainer,
     TableHead,
     TableRow,
+    FormControl,
+    Select,
+    Typography,
 } from "@material-ui/core";
-
-import Typography from "@material-ui/core/Typography";
+import { mockHardware, mockCheckedOutOrders } from "testing/mockData";
 import React from "react";
-import Info from "@material-ui/icons/Info";
-import styles from "../../dashboard/ItemTable/ItemTable.module.scss";
 import hardwareImagePlaceholder from "assets/images/placeholders/no-hardware-image.svg";
+import Info from "@material-ui/icons/Info";
 import IconButton from "@material-ui/core/IconButton";
-import { mockCheckedOutOrders, mockHardware } from "testing/mockData";
-import { Add } from "@material-ui/icons";
+import styles from "components/general/OrderTables/OrderTables.module.scss";
+import { inspect } from "util";
 
 export const TeamCheckoutOrderTable = () => {
-    const hardware = mockHardware;
     const orders = mockCheckedOutOrders;
+    const hardware = mockHardware;
+
     return (
-        <Container maxWidth={false} disableGutters={true}>
-            {orders.map((checkoutOrder) => (
-                <Grid container direction="column" spacing={1} item md={6} xs={12}>
-                    <Grid item>
-                        <Typography variant="h2">{`Order #${checkoutOrder.id}`}</Typography>
-                    </Grid>
-                    <Grid item>
-                        <TableContainer component={Paper}>
-                            <Table size="small">
+        <Container
+            className={styles.tableContainer}
+            maxWidth={false}
+            disableGutters={true}
+        >
+            {orders.length &&
+                orders.map((checkoutOrder) => (
+                    <div key={checkoutOrder.id}>
+                        <Grid item>
+                            <Typography variant="h2">{`Order #${checkoutOrder.id}`}</Typography>
+                        </Grid>
+                        <br />
+                        <TableContainer component={Paper} elevation={2} square={true}>
+                            <Table className={styles.table} size="small">
                                 <TableHead>
                                     <TableRow>
-                                        <TableCell></TableCell>
-                                        <TableCell>Name</TableCell>
-                                        <TableCell>Info</TableCell>
-                                        <TableCell>Qty</TableCell>
-                                        <TableCell>Qty to return</TableCell>
-                                        <TableCell>Qty remaining</TableCell>
-                                        <TableCell>Condition</TableCell>
-                                        <TableCell>Box</TableCell>
+                                        <TableCell className={styles.widthFixed} />
+                                        <TableCell className={styles.width6}>
+                                            Name
+                                        </TableCell>
+                                        <TableCell
+                                            className={`${styles.width1} ${styles.noWrap}`}
+                                        >
+                                            Info
+                                        </TableCell>
+                                        <TableCell
+                                            className={`${styles.width1} ${styles.noWrap}`}
+                                        >
+                                            Qty
+                                        </TableCell>
+                                        <TableCell
+                                            className={`${styles.width1} ${styles.noWrap}`}
+                                        >
+                                            Qty to return
+                                        </TableCell>
+                                        <TableCell
+                                            className={`${styles.width6} ${styles.noWrap}`}
+                                            align={"right"}
+                                        >
+                                            Qty remaining
+                                        </TableCell>
+                                        <TableCell
+                                            className={`${styles.width1} ${styles.noWrap}`}
+                                        >
+                                            Condition
+                                        </TableCell>
+                                        <TableCell>
+                                            <Checkbox
+                                                color="primary"
+                                                style={{
+                                                    marginLeft: "-15px",
+                                                }}
+                                            />
+                                        </TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
@@ -63,19 +97,17 @@ export const TeamCheckoutOrderTable = () => {
                                                     alt={hardware[row.id]?.name}
                                                 />
                                             </TableCell>
-                                            <TableCell>{`${
-                                                hardware[row.id]?.name
-                                            }`}</TableCell>
                                             <TableCell>
-                                                <TableCell>
-                                                    <IconButton size={"small"}>
-                                                        <Info
-                                                            style={{
-                                                                marginLeft: "-20px",
-                                                            }}
-                                                        />
-                                                    </IconButton>
-                                                </TableCell>
+                                                {hardware[row.id]?.name}
+                                            </TableCell>
+                                            <TableCell align={"center"}>
+                                                <IconButton size={"small"}>
+                                                    <Info
+                                                        style={{
+                                                            marginLeft: "-30px",
+                                                        }}
+                                                    />
+                                                </IconButton>
                                             </TableCell>
                                             <TableCell>
                                                 {`${
@@ -83,22 +115,39 @@ export const TeamCheckoutOrderTable = () => {
                                                 }`}
                                             </TableCell>
                                             <TableCell>
-                                                All
-                                                <FormControl
-                                                    variant="standard"
-                                                    hiddenLabel={true}
+                                                <div
+                                                    style={{
+                                                        display: "flex",
+                                                        alignItems: "end",
+                                                    }}
                                                 >
-                                                    <Select
-                                                        value={0}
-                                                        label="Qty"
-                                                        labelId="qtyLabel"
-                                                        name="quantity"
-                                                    ></Select>
-                                                </FormControl>
+                                                    <Link
+                                                        underline="always"
+                                                        color="textPrimary"
+                                                        style={{ marginRight: "15px" }}
+                                                    >
+                                                        All
+                                                    </Link>
+                                                    <FormControl
+                                                        variant="standard"
+                                                        hiddenLabel={true}
+                                                    >
+                                                        <Select
+                                                            label="Qty"
+                                                            labelId="qtyLabel"
+                                                            name="quantity"
+                                                        >
+                                                            <option value="1">1</option>
+                                                            <option value="2">2</option>
+                                                        </Select>
+                                                    </FormControl>
+                                                </div>
                                             </TableCell>
-                                            <TableCell align="center">{`${
-                                                hardware[row.id]?.quantity_remaining
-                                            }`}</TableCell>
+                                            <TableCell align={"right"}>
+                                                {`${
+                                                    hardware[row.id]?.quantity_remaining
+                                                }`}
+                                            </TableCell>
                                             <TableCell>
                                                 <Select>
                                                     <option value="Healthy">
@@ -117,7 +166,7 @@ export const TeamCheckoutOrderTable = () => {
                                                 <Checkbox
                                                     color="primary"
                                                     style={{
-                                                        marginLeft: "-10px",
+                                                        marginLeft: "-15px",
                                                     }}
                                                 />
                                             </TableCell>
@@ -126,20 +175,25 @@ export const TeamCheckoutOrderTable = () => {
                                 </TableBody>
                             </Table>
                         </TableContainer>
-                    </Grid>
-                    <Box pr={0.5} pt={1}>
-                        <Grid container justifyContent="flex-end">
-                            <Button
-                                color="primary"
-                                variant="contained"
-                                disableElevation
-                            >
-                                Return Items
-                            </Button>
+                        <Grid
+                            container
+                            justifyContent="flex-end"
+                            spacing={1}
+                            style={{ marginTop: "10px" }}
+                        >
+                            <Grid item>
+                                <Button
+                                    color="primary"
+                                    variant="contained"
+                                    disableElevation
+                                >
+                                    Return Items
+                                </Button>
+                            </Grid>
                         </Grid>
-                    </Box>
-                </Grid>
-            ))}
+                        <br />
+                    </div>
+                ))}
         </Container>
     );
 };
