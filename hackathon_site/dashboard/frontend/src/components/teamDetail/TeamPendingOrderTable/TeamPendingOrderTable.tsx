@@ -146,7 +146,10 @@ export const TeamPendingOrderTable = () => {
                                             <TableBody>
                                                 {pendingOrder.hardwareInTableRow.map(
                                                     (row) => (
-                                                        <TableRow key={row.id}>
+                                                        <TableRow
+                                                            key={row.id}
+                                                            data-testid={`table-${pendingOrder.id}-${row.id}`}
+                                                        >
                                                             <TableCell>
                                                                 <img
                                                                     className={
@@ -267,6 +270,7 @@ export const TeamPendingOrderTable = () => {
                                                 variant="contained"
                                                 type="submit"
                                                 disableElevation
+                                                data-testid={`complete-button-${pendingOrder.id}`}
                                             >
                                                 Complete Order
                                             </Button>
