@@ -10,7 +10,7 @@ interface PopupModalProps {
     isVisible: boolean;
     submitText?: string;
     cancelText?: string;
-    submitHandler(): any;
+    submitHandler?(): any;
     cancelHandler?(): any;
 }
 
@@ -26,11 +26,19 @@ const PopupModal = ({
     return (
         <Modal open={isVisible}>
             <Box className={styles.modalSize}>
-                <h1 className={styles.title}>{title}</h1>
+                {title && <h1 className={styles.title}>{title}</h1>}
                 <p className={styles.description}>{description}</p>
                 <div className={styles.buttons}>
-                    <Button onClick={cancelHandler}>{cancelText}</Button>
-                    <Button onClick={submitHandler}>{submitText}</Button>
+                    {cancelHandler ?? (
+                        <Button onClick={cancelHandler}>
+                            {cancelText ?? "Cancel"}
+                        </Button>
+                    )}
+                    {submitHandler ?? (
+                        <Button onClick={submitHandler}>
+                            {submitText ?? "Submit"}
+                        </Button>
+                    )}
                 </div>
             </Box>
         </Modal>
