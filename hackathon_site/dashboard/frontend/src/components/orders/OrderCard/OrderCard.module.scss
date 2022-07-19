@@ -1,0 +1,32 @@
+@import "../../../assets/abstracts/mixins";
+@import "../../../assets/abstracts/variables";
+
+.name {
+    padding: 6px 0px;
+}
+
+.container {
+    padding: 12px 4px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    min-height: 160px;
+}
+
+.title {
+    padding: 0px 0px;
+}
+
+.contentContainer {
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 4px;
+    padding-top: 4px;
+    // padding: 6px 0;
+}
+
+.contentContainer .title {
+    font-weight: 500;
+    font-style: normal;
+    font-size: 14px;
+}

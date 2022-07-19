@@ -9,11 +9,17 @@ import OrdersFilter from "components/orders/OrdersFilter/OrderFilter";
 import CloseIcon from "@material-ui/icons/Close";
 import IconButton from "@material-ui/core/IconButton";
 import styles from "./Orders.module.scss";
+import { mockPendingOrders } from "testing/mockData";
+import OrderCard from "components/orders/OrderCard/OrderCard";
 
 const Orders = () => {
     const [mobileOpen, setMobileOpen] = React.useState(false);
     const toggleFilter = () => {
         setMobileOpen(!mobileOpen);
+    };
+    const handleClick = (orderId: number) => {
+        alert(`The order you clicked is: #${orderId}`);
+        console.log(orderId);
     };
     return (
         <>
@@ -69,30 +75,29 @@ const Orders = () => {
                         </Grid>
                         <Grid item lg={12}>
                             <Grid container spacing={1} direction="row">
-                                {Array(12)
-                                    .fill("order card component")
-                                    .map((str, idx) => (
-                                        <Grid
-                                            item
-                                            lg={3}
-                                            md={4}
-                                            sm={6}
-                                            xs={12}
-                                            key={idx}
-                                        >
-                                            <div
-                                                style={{
-                                                    border: "1px solid black",
-                                                    borderRadius: "5px",
-                                                    padding: "10px",
-                                                    textAlign: "center",
-                                                    backgroundColor: "lightblue",
-                                                }}
-                                            >
-                                                {str}
-                                            </div>
-                                        </Grid>
-                                    ))}
+                                {mockPendingOrders.map((order, idx) => (
+                                    <Grid
+                                        item
+                                        lg={3}
+                                        md={4}
+                                        sm={6}
+                                        xs={12}
+                                        key={idx}
+                                        onClick={() => handleClick(order.id)}
+                                    >
+                                        <OrderCard
+                                            teamId={order.team_id}
+                                            orderQuantity={order.items.length}
+                                            timeOrdered={new Date(
+                                                order.created_at
+                                            ).toLocaleTimeString([], {
+                                                hour: "2-digit",
+                                                minute: "2-digit",
+                                            })}
+                                            id={order.id}
+                                        />
+                                    </Grid>
+                                ))}
                             </Grid>
                         </Grid>
                     </Grid>

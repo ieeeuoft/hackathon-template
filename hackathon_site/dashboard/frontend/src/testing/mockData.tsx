@@ -650,6 +650,27 @@ export const mockPendingOrders: Order[] = [
             },
         ],
     },
+    {
+        id: 7,
+        items: [
+            {
+                id: 12,
+                hardware_id: 10,
+                part_returned_health: null,
+            },
+        ],
+        team_id: 9,
+        team_code: "IEEE",
+        status: "Submitted",
+        created_at: "2021-10-17T00:18:44.691969-04:00",
+        updated_at: "2021-12-03T23:01:46.606892-05:00",
+        request: [
+            {
+                id: 10,
+                requested_quantity: 2,
+            },
+        ],
+    },
 ];
 
 export const mockCheckedOutOrders: Order[] = [
