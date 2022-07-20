@@ -85,17 +85,32 @@ const Orders = () => {
                                         key={idx}
                                         onClick={() => handleClick(order.id)}
                                     >
-                                        <OrderCard
-                                            teamId={order.team_id}
-                                            orderQuantity={order.items.length}
-                                            timeOrdered={new Date(
-                                                order.created_at
-                                            ).toLocaleTimeString([], {
-                                                hour: "2-digit",
-                                                minute: "2-digit",
-                                            })}
-                                            id={order.id}
-                                        />
+                                        {order.status === "Submitted" ? (
+                                            <OrderCard
+                                                teamId={order.team_id}
+                                                orderQuantity={order.items.length}
+                                                timeOrdered={new Date(
+                                                    order.created_at
+                                                ).toLocaleTimeString([], {
+                                                    hour: "2-digit",
+                                                    minute: "2-digit",
+                                                })}
+                                                id={order.id}
+                                            />
+                                        ) : (
+                                            <div
+                                                style={{
+                                                    border: "1px solid black",
+                                                    borderRadius: "5px",
+                                                    padding: "10px",
+                                                    textAlign: "center",
+                                                    backgroundColor: "lightblue",
+                                                    minHeight: "160px",
+                                                }}
+                                            >
+                                                {"Order Card Component"}
+                                            </div>
+                                        )}
                                     </Grid>
                                 ))}
                             </Grid>
