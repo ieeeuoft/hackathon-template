@@ -233,8 +233,7 @@ describe("submitOrder Thunk and Reducer", () => {
 
         expect(actions).toContainEqual(
             displaySnackbar({
-                message:
-                    "Failed to submit order: Hardware and/or Category limits reached",
+                message: "There are some problems with your order.",
                 options: { variant: "error" },
             })
         );
