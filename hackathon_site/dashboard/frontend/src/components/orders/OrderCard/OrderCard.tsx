@@ -21,9 +21,7 @@ const OrderCard = ({ teamCode, orderQuantity, timeOrdered, id }: OrderProps) => 
             <Container className={styles.container}>
                 {orderDetails.map((item, idx) => (
                     <Container className={styles.contentContainer} key={idx}>
-                        <Typography variant="body2" className={styles.title}>
-                            {item.title}
-                        </Typography>
+                        <Typography variant="body2">{item.title}</Typography>
                         <Typography variant="body2">{item.value}</Typography>
                     </Container>
                 ))}
