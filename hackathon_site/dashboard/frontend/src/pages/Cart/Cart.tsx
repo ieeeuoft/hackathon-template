@@ -19,7 +19,8 @@ import {
 import { RootState } from "slices/store";
 import { cartSelectors, cartTotalSelector } from "slices/hardware/cartSlice";
 import { getCategories } from "slices/hardware/categorySlice";
-import CartErrorBox from "components/cart/CartErrorBox";
+import CartErrorBox from "components/cart/CartErrorBox/CartErrorBox";
+import { getCurrentTeam } from "slices/event/teamSlice";
 
 const Cart = () => {
     const cartItems = useSelector(cartSelectors.selectAll);
@@ -33,6 +34,10 @@ const Cart = () => {
         )
     );
     const isHardwareLoading = useSelector(isHardwareLoadingSelector);
+
+    useEffect(() => {
+        dispatch(getCurrentTeam());
+    }, [dispatch]);
 
     useEffect(() => {
         if (isHardwareLoading) return;

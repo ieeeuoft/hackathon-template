@@ -1,6 +1,6 @@
 import React from "react";
 import { makeStoreWithEntities, render } from "testing/utils";
-import CartErrorBox from "./index";
+import CartErrorBox from "./CartErrorBox";
 import {
     mockCartItems,
     mockHardware,
