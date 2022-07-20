@@ -87,7 +87,7 @@ const Orders = () => {
                                     >
                                         {order.status === "Submitted" ? (
                                             <OrderCard
-                                                teamId={order.team_id}
+                                                teamCode={order.team_code}
                                                 orderQuantity={order.items.length}
                                                 timeOrdered={new Date(
                                                     order.created_at

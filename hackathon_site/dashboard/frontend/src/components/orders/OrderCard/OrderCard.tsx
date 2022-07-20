@@ -3,15 +3,15 @@ import styles from "./OrderCard.module.scss";
 import { Typography, Container, Card } from "@material-ui/core";
 
 interface OrderProps {
-    teamId: number;
+    teamCode: string;
     orderQuantity: number;
     timeOrdered: string;
     id: number;
 }
 
-const OrderCard = ({ teamId, orderQuantity, timeOrdered, id }: OrderProps) => {
-    const arr = [
-        { title: "Team", value: teamId },
+const OrderCard = ({ teamCode, orderQuantity, timeOrdered, id }: OrderProps) => {
+    const orderDetails = [
+        { title: "Team", value: teamCode },
         { title: "Order Qty", value: orderQuantity },
         { title: "Time ordered", value: timeOrdered },
         { title: "ID", value: id },
@@ -19,7 +19,7 @@ const OrderCard = ({ teamId, orderQuantity, timeOrdered, id }: OrderProps) => {
     return (
         <Card style={{ minHeight: "160px" }}>
             <Container className={styles.container}>
-                {arr.map((item, idx) => (
+                {orderDetails.map((item, idx) => (
                     <Container className={styles.contentContainer} key={idx}>
                         <Typography variant="body2" className={styles.title}>
                             {item.title}
