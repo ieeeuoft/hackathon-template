@@ -89,12 +89,7 @@ const Orders = () => {
                                             <OrderCard
                                                 teamCode={order.team_code}
                                                 orderQuantity={order.items.length}
-                                                timeOrdered={new Date(
-                                                    order.created_at
-                                                ).toLocaleTimeString([], {
-                                                    hour: "2-digit",
-                                                    minute: "2-digit",
-                                                })}
+                                                time={order.created_at}
                                                 id={order.id}
                                             />
                                         ) : (
@@ -114,6 +109,13 @@ const Orders = () => {
                                     </Grid>
                                 ))}
                             </Grid>
+
+                            {/* new Date(
+                                                    order.created_at
+                                                ).toLocaleTimeString([], {
+                                                    hour: "2-digit",
+                                                    minute: "2-digit",
+                                                }) */}
                         </Grid>
                     </Grid>
                 </Grid>

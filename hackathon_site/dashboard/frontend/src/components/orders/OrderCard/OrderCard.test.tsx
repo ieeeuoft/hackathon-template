@@ -7,14 +7,34 @@ describe("<OrderCard />", () => {
     test("renders order card without crashing", () => {
         const teamCode = mockPendingOrders[1].team_code;
         const orderQuantity = mockPendingOrders[1].items.length;
-        const timeOrdered = new Date(
-            mockPendingOrders[1].created_at
-        ).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+        const time = new Date(mockPendingOrders[1].created_at).toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+        });
         const id = mockPendingOrders[1].id;
+        const monthNames = [
+            "Jan",
+            "Feb",
+            "Mar",
+            "Apr",
+            "May",
+            "Jun",
+            "Jul",
+            "Aug",
+            "Sep",
+            "Oct",
+            "Nov",
+            "Dec",
+        ];
+        const date = new Date(time);
+        const month = monthNames[date.getMonth()];
+        const day = date.getDate();
+        const hoursAndMinutes = date.getHours() + ":" + date.getMinutes();
+
         const orderDetails = [
             { title: "Team", value: teamCode },
             { title: "Order Qty", value: orderQuantity },
-            { title: "Time ordered", value: timeOrdered },
+            { title: "Time ordered", value: `${month} ${day}, ${hoursAndMinutes}` },
             { title: "ID", value: id },
         ];
 
@@ -22,7 +42,7 @@ describe("<OrderCard />", () => {
             <OrderCard
                 teamCode={teamCode}
                 orderQuantity={orderQuantity}
-                timeOrdered={timeOrdered}
+                time={time}
                 id={id}
             />
         );
