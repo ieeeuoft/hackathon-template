@@ -17,7 +17,7 @@ const OrderCard = ({ teamCode, orderQuantity, timeOrdered, id }: OrderProps) => 
         { title: "ID", value: id },
     ];
     return (
-        <Card style={{ minHeight: "160px" }}>
+        <Card>
             <Container className={styles.container}>
                 {orderDetails.map((item, idx) => (
                     <Container className={styles.contentContainer} key={idx}>
