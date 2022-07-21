@@ -97,11 +97,9 @@ export const submitOrder = createAsyncThunk<
 
             dispatch(
                 displaySnackbar({
-                    message: `Failed to submit order: ${
-                        errorData
-                            ? "Hardware and/or Category limits reached"
-                            : `Error ${e.response.status}`
-                    }`,
+                    message: errorData
+                        ? "There are some problems with your order."
+                        : `Failed to submit order: Error ${e.response.status}`,
                     options: { variant: "error" },
                 })
             );

@@ -866,6 +866,21 @@ export const mockReturnedOrdersInTable: ReturnOrderInTable[] = [
     },
 ];
 
+export const status = [
+    {
+        status: "Pending",
+        numOrders: 2,
+    },
+    {
+        status: "Ready for Pick up",
+        numOrders: 4,
+    },
+    {
+        status: "Checked out",
+        numOrders: 4,
+    },
+];
+
 export const teamsList = [
     {
         TeamName: "Vandal",

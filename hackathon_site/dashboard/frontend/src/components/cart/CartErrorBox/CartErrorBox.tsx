@@ -2,11 +2,11 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { cartTotalSelector, errorSelector } from "slices/hardware/cartSlice";
 import Grid from "@material-ui/core/Grid";
-import { Alert, AlertTitle } from "@material-ui/lab";
 import { teamSizeSelector } from "slices/event/teamSlice";
 import { maxTeamSize, minTeamSize } from "constants.js";
 import AlertBox from "components/general/AlertBox/AlertBox";
 import { Link } from "@material-ui/core";
+import DateRestrictionAlert from "components/general/DateRestrictionAlert/DateRestrictionAlert";
 
 const CartErrorBox = () => {
     const cartQuantity = useSelector(cartTotalSelector);
@@ -21,26 +21,32 @@ const CartErrorBox = () => {
         <Grid direction="row" container>
             <Grid xs={12} sm={12} md={2} item />
             <Grid xs={12} sm={12} md={8} item>
+                <DateRestrictionAlert />
                 {orderSubmissionError && cartQuantity > 0 && (
                     <AlertBox
                         error={orderSubmissionError}
-                        type="info"
+                        type="error"
                         title="Unable to submit your order because:"
                     />
                 )}
                 {(teamSizeTooLarge || teamSizeTooSmall) && (
-                    <Alert severity="warning" style={{ margin: "15px 0px" }}>
-                        <AlertTitle>{`Team Size Too ${errorTitle}!`}</AlertTitle>
-                        {`There are too ${errorMessage} people on your team to place an
-                        order. We only allow teams between ${minTeamSize} to ${maxTeamSize} 
-                        people to checkout items. To join or leave a team please
-                        go to your `}
-                        <Link href="/" underline="always">
-                            {"Dashboard"}
-                        </Link>
-                        {` and click the EDIT
-                        button under your team.`}
-                    </Alert>
+                    <AlertBox
+                        body={
+                            <>
+                                {`There are too ${errorMessage} people on your team to place an
+                            order. We only allow teams between ${minTeamSize} to ${maxTeamSize} 
+                            people to checkout items. To join or leave a team please
+                            go to your `}
+                                <Link href="/" underline="always">
+                                    {"Dashboard"}
+                                </Link>
+                                {` and click the EDIT
+                            button under your team.`}
+                            </>
+                        }
+                        type="warning"
+                        title={`Team Size Too ${errorTitle}!`}
+                    />
                 )}
             </Grid>
         </Grid>

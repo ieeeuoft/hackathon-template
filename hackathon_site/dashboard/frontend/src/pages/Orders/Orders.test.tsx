@@ -1,7 +1,5 @@
 import React from "react";
-
 import { render } from "testing/utils";
-
 import Orders from "./Orders";
 
 test("Has necessary page elements", () => {

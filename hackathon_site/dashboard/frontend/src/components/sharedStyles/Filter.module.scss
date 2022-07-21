@@ -1,5 +1,5 @@
-@import "./../../../assets/abstracts/variables";
-@import "./../../../assets/abstracts/mixins";
+@import "./../../assets/abstracts/variables";
+@import "./../../assets/abstracts/mixins";
 
 .filter {
     height: 100%;
@@ -24,14 +24,17 @@
 
     &Category {
         @include flexPosition($jusCon: space-between, $alIte: center);
+
         &Chip {
             background-color: color(blueLight);
         }
     }
+
     &Btns {
         @include flexPosition($jusCon: center, $alIte: center);
         width: 100%;
         padding: 15px 10px;
+
         &Apply {
             width: auto;
             margin: 0 0 0 10px;
@@ -44,6 +47,7 @@
 
         &Paper {
             box-shadow: none;
+            padding: 24px;
         }
 
         &Btns {
@@ -55,6 +59,7 @@
                 0px -1px 10px 0px rgba(0, 0, 0, 0.12);
         }
     }
+
     &CircularProgress {
         margin-left: 1em;
     }
