@@ -1,5 +1,5 @@
 import React from "react";
-import { getByTestId, render, screen, within, waitFor, fireEvent } from "testing/utils";
+import { getByTestId, render, screen, within, fireEvent } from "testing/utils";
 import { mockHardware, mockPendingOrdersInTable } from "testing/mockData";
 import TeamPendingOrderTable from "components/teamDetail/TeamPendingOrderTable/TeamPendingOrderTable";
 
