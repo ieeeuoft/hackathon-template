@@ -102,6 +102,7 @@ const Orders = () => {
                                                     backgroundColor: "lightblue",
                                                     minHeight: "160px",
                                                 }}
+                                                data-testid={`order-item-${order.id}`}
                                             >
                                                 {"Order Card Component"}
                                             </div>
@@ -109,13 +110,6 @@ const Orders = () => {
                                     </Grid>
                                 ))}
                             </Grid>
-
-                            {/* new Date(
-                                                    order.created_at
-                                                ).toLocaleTimeString([], {
-                                                    hour: "2-digit",
-                                                    minute: "2-digit",
-                                                }) */}
                         </Grid>
                     </Grid>
                 </Grid>

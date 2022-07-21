@@ -38,7 +38,7 @@ const OrderCard = ({ teamCode, orderQuantity, time, id }: OrderProps) => {
 
     return (
         <Card>
-            <Container className={styles.container}>
+            <Container className={styles.container} data-testid={`order-item-${id}`}>
                 {orderDetails.map((item, idx) => (
                     <Container className={styles.contentContainer} key={idx}>
                         <Typography variant="body2" className={styles.title}>
