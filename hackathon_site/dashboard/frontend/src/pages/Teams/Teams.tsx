@@ -7,12 +7,19 @@ import styles from "pages/Teams/Teams.module.scss";
 
 import TeamCardAdmin from "components/team/TeamCardAdmin/TeamCardAdmin";
 import TeamSearchBar from "components/team/TeamSearchBar/TeamSearchBar";
-import { teamsList } from "testing/mockData";
-import { getAllTeams } from "../../slices/event/teamAdminSlice";
-import { useDispatch } from "react-redux";
+import {
+    getAllTeams,
+    isLoadingSelector,
+    teamAdminSelectors,
+} from "slices/event/teamAdminSlice";
+import { useDispatch, useSelector } from "react-redux";
+import LinearProgress from "@material-ui/core/LinearProgress";
 
 const Teams = () => {
     const dispatch = useDispatch();
+    const teamsList = useSelector(teamAdminSelectors.selectAll);
+
+    const isAdminTeamsLoading = useSelector(isLoadingSelector);
 
     useEffect(() => {
         dispatch(getAllTeams());
@@ -28,9 +35,14 @@ const Teams = () => {
             key={index}
             className={styles.teamsListGridItem}
             grid-template-column="true"
-            onClick={() => alert(`Goes to team-detail for team ${team.TeamName}`)}
+            onClick={() => alert(`Goes to team-detail for team ${team.team_code}`)}
         >
-            <TeamCardAdmin teamCode={team.TeamName} members={team.Members} />
+            <TeamCardAdmin
+                teamCode={team.team_code}
+                members={team.profiles.map(
+                    (member) => member.user.first_name + " " + member.user.last_name
+                )}
+            />
         </Grid>
     ));
 
@@ -39,7 +51,14 @@ const Teams = () => {
             <Header />
             <Typography variant="h1">Teams</Typography>
             <TeamSearchBar />
-            <Grid container>{CardComponents}</Grid>
+            {isAdminTeamsLoading ? (
+                <LinearProgress
+                    style={{ width: "100%", marginTop: "10%" }}
+                    data-testid="cart-linear-progress"
+                />
+            ) : (
+                <Grid container>{CardComponents}</Grid>
+            )}
         </>
     );
 };
