@@ -12,7 +12,7 @@ import {
     TableRow,
 } from "@material-ui/core";
 import { mockHardware, mockPendingOrdersInTable } from "testing/mockData";
-import React from "react";
+import React, { useState } from "react";
 import Container from "@material-ui/core/Container";
 import styles from "components/general/OrderTables/OrderTables.module.scss";
 import hardwareImagePlaceholder from "assets/images/placeholders/no-hardware-image.svg";
@@ -23,11 +23,6 @@ import {
     GeneralOrderTitle,
 } from "components/general/OrderTables/OrderTables";
 import { Formik } from "formik";
-import { useDispatch, useSelector } from "react-redux";
-import {
-    isTeamPendingOrderTableVisible,
-    toggleTeamPendingOrderTable,
-} from "slices/ui/uiSlice";
 
 const createDropdownList = (number: number) => {
     let entry = [];
@@ -55,18 +50,13 @@ const setInitialValues = (
     return orderInitalValues;
 };
 
-const convertToDateTime = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleString();
-};
-
 export const TeamPendingOrderTable = () => {
-    const dispatch = useDispatch();
     const orders = mockPendingOrdersInTable;
     const hardware = mockHardware;
-    const isVisible = useSelector(isTeamPendingOrderTableVisible);
+    const [visibility, setVisibility] = useState(false);
     const toggleVisibility = () => {
-        dispatch(toggleTeamPendingOrderTable());
+        // toggle visibility
+        setVisibility(!visibility);
     };
 
     return (
@@ -78,11 +68,11 @@ export const TeamPendingOrderTable = () => {
             {orders.length > 0 && (
                 <GeneralOrderTitle
                     title="Requested Items"
-                    isVisible={isVisible}
+                    isVisible={visibility}
                     toggleVisibility={toggleVisibility}
                 />
             )}
-            {isVisible &&
+            {visibility &&
                 orders.length &&
                 orders.map((pendingOrder) => (
                     <Formik
