@@ -12,7 +12,6 @@ import {
     TableHead,
     TableRow,
     FormControl,
-    Select,
     Typography,
     IconButton,
 } from "@material-ui/core";
@@ -21,7 +20,7 @@ import hardwareImagePlaceholder from "assets/images/placeholders/no-hardware-ima
 import Info from "@material-ui/icons/Info";
 import styles from "components/general/OrderTables/OrderTables.module.scss";
 import { mockHardware, mockCheckedOutOrders } from "testing/mockData";
-import { Formik, Field } from "formik";
+import { Formik, Field, FormikValues, Form } from "formik";
 
 const setInitialValues = (request: { id: number; requested_quantity: number }[]) => {
     let orderInitialValues: Record<string, string | boolean> = {};
@@ -38,6 +37,10 @@ export const TeamCheckoutOrderTable = () => {
     const orders = mockCheckedOutOrders;
     const hardware = mockHardware;
 
+    const handleSubmitExternal = async (values: FormikValues) => {
+        //    will be implemented with backend
+    };
+    // @ts-ignore
     return (
         <Container
             className={styles.tableContainer}
@@ -112,12 +115,13 @@ export const TeamCheckoutOrderTable = () => {
                                                 {hardware[row.id]?.name}
                                             </TableCell>
                                             <TableCell align={"center"}>
-                                                <IconButton size={"small"}>
-                                                    <Info
-                                                        style={{
-                                                            marginLeft: "-30px",
-                                                        }}
-                                                    />
+                                                <IconButton
+                                                    size={"small"}
+                                                    style={{
+                                                        marginLeft: "-65px",
+                                                    }}
+                                                >
+                                                    <Info />
                                                 </IconButton>
                                             </TableCell>
                                             <TableCell>
@@ -143,14 +147,26 @@ export const TeamCheckoutOrderTable = () => {
                                                         variant="standard"
                                                         hiddenLabel={true}
                                                     >
-                                                        <Select
-                                                            label="Qty"
-                                                            labelId="qtyLabel"
-                                                            name="quantity"
+                                                        <Formik
+                                                            initialValues={{}}
+                                                            onSubmit={
+                                                                handleSubmitExternal
+                                                            }
                                                         >
-                                                            <option value="1">1</option>
-                                                            <option value="2">2</option>
-                                                        </Select>
+                                                            <Form>
+                                                                <Field
+                                                                    as="select"
+                                                                    name="quantity"
+                                                                >
+                                                                    <option value="1">
+                                                                        1
+                                                                    </option>
+                                                                    <option value="2">
+                                                                        2
+                                                                    </option>
+                                                                </Field>
+                                                            </Form>
+                                                        </Formik>
                                                     </FormControl>
                                                 </div>
                                             </TableCell>
@@ -160,18 +176,30 @@ export const TeamCheckoutOrderTable = () => {
                                                 }`}
                                             </TableCell>
                                             <TableCell>
-                                                <Select>
-                                                    <option value="Healthy">
-                                                        Healthy
-                                                    </option>
-                                                    <option value="Heavily Used">
-                                                        Heavily Used
-                                                    </option>
-                                                    <option value="Broken">
-                                                        Broken
-                                                    </option>
-                                                    <option value="Lost">Lost</option>
-                                                </Select>
+                                                <Formik
+                                                    initialValues={{}}
+                                                    onSubmit={handleSubmitExternal}
+                                                >
+                                                    <Form>
+                                                        <Field
+                                                            as="select"
+                                                            name="condition"
+                                                        >
+                                                            <option value="Healthy">
+                                                                Healthy
+                                                            </option>
+                                                            <option value="Heavily Used">
+                                                                Heavily Used
+                                                            </option>
+                                                            <option value="Broken">
+                                                                Broken
+                                                            </option>
+                                                            <option value="Lost">
+                                                                Lost
+                                                            </option>
+                                                        </Field>
+                                                    </Form>
+                                                </Formik>
                                             </TableCell>
                                             <TableCell>
                                                 <Checkbox
