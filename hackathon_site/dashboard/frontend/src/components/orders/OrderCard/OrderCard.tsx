@@ -18,7 +18,7 @@ const OrderCard = ({ teamCode, orderQuantity, time, id }: OrderProps) => {
     const orderDetails = [
         { title: "Team", value: teamCode },
         { title: "Order Qty", value: orderQuantity },
-        { title: "Time ordered", value: `${month} ${day}, ${hoursAndMinutes}` },
+        { title: "Time", value: `${month} ${day}, ${hoursAndMinutes}` },
         { title: "ID", value: id },
     ];
 
@@ -30,7 +30,9 @@ const OrderCard = ({ teamCode, orderQuantity, time, id }: OrderProps) => {
                         <Typography variant="body2" className={styles.title}>
                             {item.title}
                         </Typography>
-                        <Typography variant="body2">{item.value}</Typography>
+                        <Typography variant="body2" style={{ textAlign: "end" }}>
+                            {item.value}
+                        </Typography>
                     </Container>
                 ))}
             </Container>
