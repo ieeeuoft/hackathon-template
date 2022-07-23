@@ -12,22 +12,8 @@ describe("<OrderCard />", () => {
             minute: "2-digit",
         });
         const id = mockPendingOrders[1].id;
-        const monthNames = [
-            "Jan",
-            "Feb",
-            "Mar",
-            "Apr",
-            "May",
-            "Jun",
-            "Jul",
-            "Aug",
-            "Sep",
-            "Oct",
-            "Nov",
-            "Dec",
-        ];
         const date = new Date(time);
-        const month = monthNames[date.getMonth()];
+        const month = date.toLocaleString("default", { month: "short" });
         const day = date.getDate();
         const hoursAndMinutes = date.getHours() + ":" + date.getMinutes();
 

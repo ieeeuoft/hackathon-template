@@ -13,20 +13,6 @@ describe("Orders Page", () => {
 
     test("Display correct order cards", () => {
         const { getByText, getByTestId } = render(<Orders />);
-        const monthNames = [
-            "Jan",
-            "Feb",
-            "Mar",
-            "Apr",
-            "May",
-            "Jun",
-            "Jul",
-            "Aug",
-            "Sep",
-            "Oct",
-            "Nov",
-            "Dec",
-        ];
         mockPendingOrders.forEach((order) => {
             const orderItem = getByTestId(`order-item-${order.id}`);
             const orderStatus = order.status;
@@ -34,7 +20,7 @@ describe("Orders Page", () => {
 
             if (orderStatus === "Submitted") {
                 const date = new Date(order.created_at);
-                const month = monthNames[date.getMonth()];
+                const month = date.toLocaleString("default", { month: "short" });
                 const day = date.getDate();
                 const hoursAndMinutes = date.getHours() + ":" + date.getMinutes();
 
