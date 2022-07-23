@@ -194,6 +194,7 @@ export const TeamPendingOrderTable = () => {
                                                                             marginRight:
                                                                                 "15px",
                                                                         }}
+                                                                        data-testid={`all-button`}
                                                                         onClick={() => {
                                                                             props.setFieldValue(
                                                                                 `${row.id}-quantity`,
@@ -217,6 +218,7 @@ export const TeamPendingOrderTable = () => {
                                                                         labelId="qtyLabel"
                                                                         name={`${row.id}-quantity`}
                                                                         id={`${row.id}-quantity`}
+                                                                        data-testid={`select`}
                                                                     >
                                                                         {createDropdownList(
                                                                             row.quantityGranted

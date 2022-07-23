@@ -1,6 +1,10 @@
 import React from "react";
 import { getByTestId, render, screen, within, fireEvent } from "testing/utils";
-import { mockHardware, mockPendingOrdersInTable } from "testing/mockData";
+import {
+    mockCartItems,
+    mockHardware,
+    mockPendingOrdersInTable,
+} from "testing/mockData";
 import TeamPendingOrderTable from "components/teamDetail/TeamPendingOrderTable/TeamPendingOrderTable";
 
 describe("team pending order table", () => {
@@ -35,6 +39,17 @@ describe("team pending order table", () => {
             });
             const submitButton = getByTestId(`complete-button-${currentOrder.id}`);
             fireEvent.click(submitButton);
+        });
+    });
+
+    test("All button changes the value correctly", () => {
+        const { getByTestId } = render(<TeamPendingOrderTable />);
+        mockPendingOrdersInTable.forEach((currentOrder) => {
+            currentOrder.hardwareInTableRow.forEach((currentRow) => {
+                const allButton = within(
+                    getByTestId(`table-${currentOrder.id}-${currentRow.id}`)
+                ).getByTestId(`all-button`);
+            });
         });
     });
 });
