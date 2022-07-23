@@ -41,13 +41,13 @@ const createDropdownList = (number: number) => {
 const setInitialValues = (
     request: { id: number; quantityRequested: number; quantityGranted: number }[]
 ) => {
-    let orderInitalValues: Record<string, string | boolean> = {};
+    let orderInitialValues: Record<string, string | boolean> = {};
     request.forEach((orderItem) => {
-        orderInitalValues[`${orderItem.id}-quantity`] =
+        orderInitialValues[`${orderItem.id}-quantity`] =
             orderItem.quantityGranted.toString();
-        orderInitalValues[`${orderItem.id}-checkbox`] = false;
+        orderInitialValues[`${orderItem.id}-checkbox`] = false;
     });
-    return orderInitalValues;
+    return orderInitialValues;
 };
 
 export const TeamPendingOrderTable = () => {
