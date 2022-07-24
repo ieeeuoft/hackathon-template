@@ -12,6 +12,10 @@ describe("team pending order table", () => {
         const { getByTestId } = render(<TeamPendingOrderTable />);
         expect(screen.getByText("Requested Items")).toBeInTheDocument();
 
+        // make the table visible
+        const visibilityButton = getByTestId(`visibility-button`);
+        fireEvent.click(visibilityButton);
+
         //loop through all pending orders
         mockPendingOrdersInTable.forEach((currentOrder) => {
             //loop through all the hardware in each order
@@ -37,13 +41,16 @@ describe("team pending order table", () => {
                     ).getByText(`${mockHardware[currentRow.id - 1].manufacturer}`)
                 ).toBeInTheDocument();
             });
-            // const submitButton = getByTestId(`complete-button-${currentOrder.id}`);
-            // fireEvent.click(submitButton);
         });
     });
 
     test("All button changes the value correctly", () => {
-        const { getByTestId } = render(<TeamPendingOrderTable />);
+        const { getByTestId, getByRole } = render(<TeamPendingOrderTable />);
+
+        // make the table visible
+        const visibilityButton = getByTestId(`visibility-button`);
+        fireEvent.click(visibilityButton);
+
         mockPendingOrdersInTable.forEach((currentOrder) => {
             currentOrder.hardwareInTableRow.forEach((currentRow) => {
                 const allButton = within(
@@ -51,13 +58,23 @@ describe("team pending order table", () => {
                 ).getByTestId(`all-button`);
                 const select = within(
                     getByTestId(`table-${currentOrder.id}-${currentRow.id}`)
-                ).getByTestId(`select`);
-                fireEvent.change(select, { target: { value: 0 } });
+                ).getByRole(`button`);
+                fireEvent.mouseDown(select);
+                // const listbox = within(
+                //     getByTestId(`table-${currentOrder.id}-${currentRow.id}`)
+                // ).getByRole("button");
+                const listbox = within(getByRole("listbox"));
+                fireEvent.click(listbox.getByText(`0`));
+                // expect(
+                //     within(
+                //         getByTestId(`table-${currentOrder.id}-${currentRow.id}`)
+                //     ).getByTestId(`select`)
+                // ).toHaveTextContent(currentRow.quantityGranted.toString());
                 expect(
                     within(
                         getByTestId(`table-${currentOrder.id}-${currentRow.id}`)
                     ).getByTestId(`select`)
-                ).toHaveTextContent(`0`);
+                ).toHaveTextContent("0");
             });
         });
     });

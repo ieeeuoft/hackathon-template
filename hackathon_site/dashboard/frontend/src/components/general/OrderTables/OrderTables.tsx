@@ -54,7 +54,11 @@ export const GeneralOrderTitle = ({
         <Typography variant="h2" className={styles.titleText}>
             {title}
         </Typography>
-        <Button onClick={toggleVisibility} color="primary">
+        <Button
+            onClick={toggleVisibility}
+            color="primary"
+            data-testid="visibility-button"
+        >
             {isVisible ? "Hide all" : "Show all"}
         </Button>
     </div>
