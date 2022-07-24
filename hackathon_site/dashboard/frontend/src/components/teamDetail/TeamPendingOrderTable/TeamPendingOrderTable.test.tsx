@@ -37,8 +37,8 @@ describe("team pending order table", () => {
                     ).getByText(`${mockHardware[currentRow.id - 1].manufacturer}`)
                 ).toBeInTheDocument();
             });
-            const submitButton = getByTestId(`complete-button-${currentOrder.id}`);
-            fireEvent.click(submitButton);
+            // const submitButton = getByTestId(`complete-button-${currentOrder.id}`);
+            // fireEvent.click(submitButton);
         });
     });
 
@@ -49,6 +49,15 @@ describe("team pending order table", () => {
                 const allButton = within(
                     getByTestId(`table-${currentOrder.id}-${currentRow.id}`)
                 ).getByTestId(`all-button`);
+                const select = within(
+                    getByTestId(`table-${currentOrder.id}-${currentRow.id}`)
+                ).getByTestId(`select`);
+                fireEvent.change(select, { target: { value: 0 } });
+                expect(
+                    within(
+                        getByTestId(`table-${currentOrder.id}-${currentRow.id}`)
+                    ).getByTestId(`select`)
+                ).toHaveTextContent(`0`);
             });
         });
     });
