@@ -13,7 +13,7 @@ import {
     teamAdminSelectors,
 } from "slices/event/teamAdminSlice";
 import { useDispatch, useSelector } from "react-redux";
-import LinearProgress from "@material-ui/core/LinearProgress";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 const Teams = () => {
     const dispatch = useDispatch();
@@ -40,7 +40,7 @@ const Teams = () => {
             <TeamCardAdmin
                 teamCode={team.team_code}
                 members={team.profiles.map(
-                    (member) => member.user.first_name + " " + member.user.last_name
+                    (member) => `${member.user.first_name} ${member.user.last_name}`
                 )}
             />
         </Grid>
@@ -52,10 +52,7 @@ const Teams = () => {
             <Typography variant="h1">Teams</Typography>
             <TeamSearchBar />
             {isAdminTeamsLoading ? (
-                <LinearProgress
-                    style={{ width: "100%", marginTop: "10%" }}
-                    data-testid="cart-linear-progress"
-                />
+                <CircularProgress size={25} data-testid="teams-circular-progress" />
             ) : (
                 <Grid container>{CardComponents}</Grid>
             )}

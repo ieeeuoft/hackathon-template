@@ -38,7 +38,9 @@ export const getAllTeams = createAsyncThunk<
     { state: RootState; rejectValue: RejectValue; dispatch: AppDispatch }
 >(`${teamAdminReducerName}/getAllTeams`, async (_, { dispatch, rejectWithValue }) => {
     try {
-        const response = await get<APIListResponse<Team>>("api/event/teams/");
+        const response = await get<APIListResponse<Team>>("/api/event/teams/", {
+            limit: 24,
+        });
         console.log(response.data);
         return response.data;
     } catch (e: any) {
