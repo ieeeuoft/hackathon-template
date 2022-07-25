@@ -34,7 +34,7 @@ const TeamDetail = ({ match }: RouteComponentProps<PageParams>) => {
                         alignSelf: "center",
                     }}
                 >
-                    <TeamInfoTable />
+                    <TeamInfoTable teamCode={match.params.id} />
                     <TeamActionTable />
                 </Grid>
             </Grid>
