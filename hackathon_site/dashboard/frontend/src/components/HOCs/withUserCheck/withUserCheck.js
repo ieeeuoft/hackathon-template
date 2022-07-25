@@ -33,7 +33,7 @@ export const UnconnectedUserCheck = ({
             });
             push("/404");
         }
-    }, [user, userType, fetchUserData, displaySnackbar, push]);
+    }, [user, userType, accessType, fetchUserData, displaySnackbar, push]);
 
     return user ? (
         userType === "participant" ? (

@@ -1,0 +1,112 @@
+@import "./../../assets/abstracts/variables";
+@import "./../../assets/abstracts/mixins";
+
+.orders {
+    max-width: 1800px;
+    width: 100%;
+
+    &Body {
+        display: flex;
+        flex-direction: row;
+        @include flexPosition($jusCon: space-between);
+
+        &Title {
+            font-size: 45px;
+        }
+
+        &Toolbar {
+            @include flexPosition($jusCon: flex-end);
+            width: 100px;
+            margin-bottom: 25px;
+            margin-left: auto;
+
+            &Div {
+                @include flexPosition($jusCon: space-between, $alIte: center);
+                width: auto;
+            }
+
+            &Search {
+                background-color: white;
+                width: 250px;
+            }
+
+            &IconButton {
+                margin: 2px;
+            }
+
+            &Divider {
+                margin: 0 10px;
+            }
+
+            &Refresh {
+                @include flexPosition($jusCon: space-between, $alIte: center);
+                white-space: nowrap;
+            }
+        }
+
+        @media (max-width: 725px) {
+            flex-direction: column;
+
+            &Toolbar {
+                margin-bottom: 10px;
+                margin-top: 10px;
+
+                &Search {
+                    width: 350px;
+                }
+
+                &Divider {
+                    display: none;
+                }
+            }
+        }
+
+        @include responsive(sm-down) {
+            &Toolbar {
+                flex-direction: column;
+                width: 100%;
+
+                &Search {
+                    width: 100%;
+                }
+
+                &IconButton {
+                    margin: 0px;
+                }
+
+                &Refresh {
+                    margin: 0px;
+                }
+            }
+        }
+    }
+
+    &FilterDrawer {
+        width: 280px;
+        flex-shrink: 0;
+        z-index: 1;
+        // padding: 12px;
+
+        &Top {
+            width: 100%;
+            @include flexPosition($jusCon: space-between, $alIte: center);
+
+            background-color: color(light1);
+            padding: 8px 15px;
+        }
+
+        svg {
+            fill: color(grey);
+        }
+
+        @include responsive(sm-down) {
+            padding: 4px 15px;
+        }
+
+        > h2 {
+            @include responsive(md-down) {
+                font-size: size(md) !important;
+            }
+        }
+    }
+}
