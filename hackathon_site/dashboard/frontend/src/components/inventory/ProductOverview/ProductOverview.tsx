@@ -7,6 +7,7 @@ import Select from "@material-ui/core/Select";
 import LaunchIcon from "@material-ui/icons/Launch";
 import InputLabel from "@material-ui/core/InputLabel";
 import Chip from "@material-ui/core/Chip";
+import CircularProgress from "@material-ui/core/CircularProgress";
 import SideSheetRight from "components/general/SideSheetRight/SideSheetRight";
 
 import * as Yup from "yup";
@@ -14,17 +15,23 @@ import { Formik, FormikValues } from "formik";
 
 import styles from "./ProductOverview.module.scss";
 import {
+    closeProductOverview,
     displaySnackbar,
-    hardwareBeingViewedSelector,
     isProductOverviewVisibleSelector,
-    removeProductOverviewItem,
 } from "slices/ui/uiSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { selectCategoriesByIds } from "slices/hardware/categorySlice";
 import { RootState } from "slices/store";
 import { addToCart, cartSelectors } from "slices/hardware/cartSlice";
+import {
+    hardwareInProductOverviewSelector,
+    isUpdateDetailsLoading,
+    removeProductOverviewItem,
+} from "slices/hardware/hardwareSlice";
 import { Category } from "api/types";
 import hardwareImagePlaceholder from "assets/images/placeholders/no-hardware-image.svg";
+import { hardwareSignOutEndDate, hardwareSignOutStartDate } from "constants.js";
+import { Tooltip } from "@material-ui/core";
 
 export const ERROR_MESSAGES = {
     quantityMissing: "Quantity is required",
@@ -64,6 +71,25 @@ export const AddToCartForm = ({
             ? Math.min(quantityRemaining, maxPerTeam)
             : quantityRemaining;
 
+    const currentDateTime = new Date();
+    const isOutsideSignOutPeriod =
+        currentDateTime < hardwareSignOutStartDate ||
+        currentDateTime > hardwareSignOutEndDate;
+
+    const addToCartButton = (
+        <Button
+            variant="contained"
+            color="primary"
+            fullWidth={true}
+            size="large"
+            type="submit"
+            onClick={handleSubmit}
+            disabled={dropdownNum === 0 || isOutsideSignOutPeriod}
+            disableElevation
+        >
+            Add to cart
+        </Button>
+    );
     return (
         <>
             <form className={styles.form} onSubmit={handleSubmit}>
@@ -81,18 +107,13 @@ export const AddToCartForm = ({
                     </Select>
                 </FormControl>
                 <div className={styles.formButton}>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        fullWidth={true}
-                        size="large"
-                        type="submit"
-                        onClick={handleSubmit}
-                        disabled={dropdownNum === 0}
-                        disableElevation
-                    >
-                        Add to cart
-                    </Button>
+                    {isOutsideSignOutPeriod ? (
+                        <Tooltip title="You cannot add items to cart because hardware sign out period has not begun or is already over">
+                            <span> {addToCartButton} </span>
+                        </Tooltip>
+                    ) : (
+                        addToCartButton
+                    )}
                 </div>
             </form>
         </>
@@ -286,13 +307,18 @@ export const ProductOverview = ({
     let maxPerTeam: number | null = null;
     let constraints: string[] = [];
 
+    const isLoading = useSelector(isUpdateDetailsLoading);
+
     const dispatch = useDispatch();
-    const closeProductOverview = () => dispatch(removeProductOverviewItem());
+    const closeProductOverviewPanel = () => {
+        dispatch(closeProductOverview());
+        dispatch(removeProductOverviewItem());
+    };
 
     const isProductOverviewVisible: boolean = useSelector(
         isProductOverviewVisibleSelector
     );
-    const hardware = useSelector(hardwareBeingViewedSelector);
+    const hardware = useSelector(hardwareInProductOverviewSelector);
     const categories = useSelector((state: RootState) =>
         selectCategoriesByIds(state, hardware?.categories || [])
     );
@@ -322,9 +348,18 @@ export const ProductOverview = ({
         <SideSheetRight
             title="Product Overview"
             isVisible={isProductOverviewVisible}
-            handleClose={closeProductOverview}
+            handleClose={closeProductOverviewPanel}
         >
-            {hardware ? (
+            {isLoading ? (
+                <CircularProgress
+                    data-testid="circular-progress"
+                    style={{
+                        position: "absolute",
+                        left: "50%",
+                        top: "50%",
+                    }}
+                />
+            ) : hardware ? (
                 <div className={styles.productOverview}>
                     <div className={styles.productOverviewDiv}>
                         <MainSection

@@ -1,9 +1,13 @@
 from collections import Counter
 import functools
+from datetime import datetime
+
 from django.db.models import Count, Q
 from django.core.exceptions import ObjectDoesNotExist
+from django.conf import settings
 from rest_framework import serializers
 
+from event.models import Profile
 from hardware.models import Hardware, Category, OrderItem, Order, Incident
 
 
@@ -194,10 +198,24 @@ class OrderCreateSerializer(serializers.Serializer):
 
     # check that the requests are within per-team constraints
     def validate(self, data):
+        # time restrictions
+        if datetime.now(settings.TZ_INFO) < settings.HARDWARE_SIGN_OUT_START_DATE:
+            raise serializers.ValidationError("Hardware sign out period has not begun")
+        if datetime.now(settings.TZ_INFO) > settings.HARDWARE_SIGN_OUT_END_DATE:
+            raise serializers.ValidationError("Hardware sign out period is over")
+
+        # permission restrictions
         try:
             user_profile = self.context["request"].user.profile
         except ObjectDoesNotExist:
             raise serializers.ValidationError("User does not have profile")
+
+        # team size restrictions
+        team_size = Profile.objects.filter(team__exact=user_profile.team).count()
+        if team_size < settings.MIN_MEMBERS or team_size > settings.MAX_MEMBERS:
+            raise serializers.ValidationError(
+                "User's team does not meet team size criteria"
+            )
         # requested_hardware is a Counter where the keys are <Hardware Object>'s
         # and values are <Int>'s
         requested_hardware = self.merge_requests(hardware_requests=data["hardware"])

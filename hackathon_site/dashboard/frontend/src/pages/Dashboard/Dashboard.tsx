@@ -5,8 +5,8 @@ import Typography from "@material-ui/core/Typography";
 import DashCard from "components/dashboard/DashCard/DashCard";
 import TeamCard from "components/dashboard/TeamCard/TeamCard";
 import {
-    PendingTable,
-    CheckedOutTable,
+    PendingTables,
+    CheckedOutTables,
     ReturnedTable,
 } from "components/dashboard/ItemTable/ItemTable";
 import ProductOverview from "components/inventory/ProductOverview/ProductOverview";
@@ -14,24 +14,36 @@ import Header from "components/general/Header/Header";
 import { cardItems } from "testing/mockData";
 import { hackathonName } from "constants.js";
 import { useDispatch, useSelector } from "react-redux";
-import { getCurrentTeam, isLoadingSelector } from "slices/event/teamSlice";
+import {
+    getCurrentTeam,
+    isLoadingSelector,
+    teamCodeSelector,
+    teamSizeSelector,
+} from "slices/event/teamSlice";
 import { fulfillmentErrorSelector } from "slices/hardware/cartSlice";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import {
     getTeamOrders,
     hardwareInOrdersSelector,
     orderErrorSelector,
+    isLoadingSelector as areOrdersLoadingSelector,
 } from "slices/order/orderSlice";
 import { getHardwareWithFilters, setFilters } from "slices/hardware/hardwareSlice";
 import { getCategories } from "slices/hardware/categorySlice";
 import AlertBox from "components/general/AlertBox/AlertBox";
+import { openTeamModalItem } from "slices/ui/uiSlice";
+import EditTeam from "components/dashboard/EditTeam/EditTeam";
+import DateRestrictionAlert from "components/general/DateRestrictionAlert/DateRestrictionAlert";
 
 const Dashboard = () => {
     const dispatch = useDispatch();
     const isTeamLoading = useSelector(isLoadingSelector);
+    const areOrdersLoading = useSelector(areOrdersLoadingSelector);
     const orderFulfillmentError = useSelector(fulfillmentErrorSelector);
     const fetchOrderError = useSelector(orderErrorSelector);
     const hardwareInOrders = useSelector(hardwareInOrdersSelector);
+    const team_code = useSelector(teamCodeSelector);
+    const team_size = useSelector(teamSizeSelector);
 
     useEffect(() => {
         dispatch(getCurrentTeam());
@@ -46,65 +58,75 @@ const Dashboard = () => {
         }
     }, [dispatch, hardwareInOrders]);
 
+    const openEditTeamModal = () => dispatch(openTeamModalItem());
+
     return (
         <>
             <Header />
-            <ProductOverview showAddToCartButton={false} />
+            <ProductOverview showAddToCartButton />
+            <EditTeam
+                teamCode={team_code == null ? "None" : team_code}
+                canChangeTeam={true}
+                teamSize={team_size}
+            />
             <div className={styles.dashboard}>
                 <Typography variant="h1">{hackathonName} Hardware Dashboard</Typography>
-                {isTeamLoading ? (
+                <DateRestrictionAlert />
+                {isTeamLoading || areOrdersLoading ? (
                     <LinearProgress
                         style={{ width: "100%", marginTop: 25 }}
                         data-testid="team-linear-progress"
                     />
                 ) : (
-                    <Grid
-                        container
-                        direction="row"
-                        justifyContent="flex-start"
-                        alignItems="flex-start"
-                        spacing={2}
-                        className={styles.dashboardGrid}
-                    >
+                    <>
                         <Grid
-                            item
-                            md={3}
-                            sm={4}
-                            xs={6}
-                            className={styles.dashboardGridItem}
-                            key={0}
-                            data-testid="team"
+                            container
+                            direction="row"
+                            justifyContent="flex-start"
+                            alignItems="flex-start"
+                            spacing={2}
+                            className={styles.dashboardGrid}
                         >
-                            <TeamCard handleEditTeam={() => alert("Editing Team")} />
-                        </Grid>
-                        {cardItems.map(({ title, content }, i) => (
                             <Grid
                                 item
                                 md={3}
                                 sm={4}
                                 xs={6}
                                 className={styles.dashboardGridItem}
-                                key={i + 1}
+                                key={0}
+                                data-testid="team"
                             >
-                                <DashCard title={title} content={content} />
+                                <TeamCard handleEditTeam={openEditTeamModal} />
                             </Grid>
-                        ))}
-                    </Grid>
-                )}
-                {orderFulfillmentError && (
-                    <AlertBox
-                        error={orderFulfillmentError.errors.map(
-                            ({ message }) => message
+                            {cardItems.map(({ title, content }, i) => (
+                                <Grid
+                                    item
+                                    md={3}
+                                    sm={4}
+                                    xs={6}
+                                    className={styles.dashboardGridItem}
+                                    key={i + 1}
+                                >
+                                    <DashCard title={title} content={content} />
+                                </Grid>
+                            ))}
+                        </Grid>
+                        {orderFulfillmentError && (
+                            <AlertBox
+                                error={orderFulfillmentError.errors.map(
+                                    ({ message }) => message
+                                )}
+                                title={`There were modifications made to order ${orderFulfillmentError.order_id}`}
+                            />
                         )}
-                        title={`There were modifications made to order ${orderFulfillmentError.order_id}`}
-                    />
+                        {fetchOrderError && <AlertBox error={fetchOrderError} />}
+                        {/* TODO: add back in when incident reports are completed on the frontend */}
+                        {/* <BrokenTable items={itemsBroken} openReportAlert={openBrokenTable} /> */}
+                        <PendingTables />
+                        <CheckedOutTables />
+                        <ReturnedTable />
+                    </>
                 )}
-                {fetchOrderError && <AlertBox error={fetchOrderError} />}
-                {/* TODO: add back in when incident reports are completed on the frontend */}
-                {/* <BrokenTable items={itemsBroken} openReportAlert={openBrokenTable} /> */}
-                <PendingTable />
-                <CheckedOutTable />
-                <ReturnedTable />
             </div>
         </>
     );

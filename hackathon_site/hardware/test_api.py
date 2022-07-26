@@ -1,13 +1,15 @@
 from datetime import datetime
 
+from dateutil.relativedelta import relativedelta
 from django.contrib.auth.models import Permission
+from django.test import override_settings
 from django.urls import reverse
 from django.conf import settings
 
-from rest_framework import status
+from rest_framework import status, serializers
 from rest_framework.test import APITestCase
 
-from event.models import Team, Profile
+from event.models import Team, User, Profile
 from hardware.models import Hardware, Category, Order, OrderItem, Incident
 from hardware.serializers import (
     HardwareSerializer,
@@ -931,6 +933,37 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
     def setUp(self):
         super().setUp()
         self.team = Team.objects.create()
+
+        self.user2 = User.objects.create_user(
+            username="frank@johnston.com",
+            password="hellothere31415",
+            email="frank@johnston.com",
+            first_name="Frank",
+            last_name="Johnston",
+        )
+        self.user3 = User.objects.create_user(
+            username="franklin@carmichael.com",
+            password="supersecret456",
+            email="franklin@carmichael.com",
+            first_name="Franklin",
+            last_name="Carmichael",
+        )
+        self.user4 = User.objects.create_user(
+            username="lawren@harris.com",
+            password="wxyz7890",
+            email="lawren@harris.com",
+            first_name="Lawren",
+            last_name="Harris",
+        )
+
+        self.user5 = User.objects.create_user(
+            username="law@henn.com",
+            password="wxyzdfs890",
+            email="law@henn.com",
+            first_name="Law",
+            last_name="Henn",
+        )
+
         self.category_limit_1 = Category.objects.create(
             name="category_limit_1", max_per_team=1
         )
@@ -942,19 +975,93 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
         )
         self.view = reverse("api:hardware:order-list")
 
+    def create_min_number_of_profiles(self):
+        Profile.objects.create(user=self.user, team=self.team)
+        Profile.objects.create(user=self.user2, team=self.team)
+
+    def create_order(self):
+        self.hardware1 = Hardware.objects.create(
+            name="aHardware",
+            model_number="model",
+            manufacturer="manufacturer",
+            datasheet="/datasheet/location/",
+            notes="notes",
+            quantity_available=10,
+            max_per_team=5,
+            picture="/picture/location",
+        )
+
+        self.order = Order.objects.create(
+            status="Cart",
+            team=self.team,
+            request={"hardware": [{"id": 1, "quantity": 2},]},
+        )
+
+        self.category1 = Category.objects.create(name="category1", max_per_team=4)
+
+        self.hardware1.categories.add(self.category1)
+
     def test_user_not_logged_in(self):
         response = self.client.get(self.view)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_user_has_no_profile(self):
+
         self._login()
         request_data = {"hardware": []}
         response = self.client.post(self.view, request_data)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
+    @override_settings(
+        HARDWARE_SIGN_OUT_START_DATE=datetime.now(settings.TZ_INFO)
+        + relativedelta(days=1)
+    )
+    def test_submitting_order_before_start_date(self):
+        self._login()
+        self.create_min_number_of_profiles()
+        simple_hardware = Hardware.objects.create(
+            name="name",
+            model_number="model",
+            manufacturer="manufacturer",
+            datasheet="/datasheet/location/",
+            notes="notes",
+            quantity_available=1,
+            max_per_team=1,
+            picture="/picture/location",
+        )
+        request_data = {"hardware": [{"id": simple_hardware.id, "quantity": 1}]}
+        response = self.client.post(self.view, request_data, format="json")
+        expected_response = {
+            "non_field_errors": ["Hardware sign out period has not begun"]
+        }
+        self.assertEqual(response.json(), expected_response)
+
+    @override_settings(
+        HARDWARE_SIGN_OUT_END_DATE=datetime.now(settings.TZ_INFO)
+        - relativedelta(days=1)
+    )
+    def test_submitting_order_after_end_date(self):
+        self._login()
+        self.create_min_number_of_profiles()
+        simple_hardware = Hardware.objects.create(
+            name="name",
+            model_number="model",
+            manufacturer="manufacturer",
+            datasheet="/datasheet/location/",
+            notes="notes",
+            quantity_available=1,
+            max_per_team=1,
+            picture="/picture/location",
+        )
+        request_data = {"hardware": [{"id": simple_hardware.id, "quantity": 1}]}
+        response = self.client.post(self.view, request_data, format="json")
+        expected_response = {"non_field_errors": ["Hardware sign out period is over"]}
+        self.assertEqual(response.json(), expected_response)
+
     def test_create_simple_order(self):
         self._login()
-        profile = self._make_event_profile()
+        self.create_min_number_of_profiles()
+
         simple_hardware = Hardware.objects.create(
             name="name",
             model_number="model",
@@ -985,7 +1092,8 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
 
     def test_invalid_input_hardware_limit(self):
         self._login()
-        self._make_event_profile()
+        self.create_min_number_of_profiles()
+
         hardware = Hardware.objects.create(
             name="name",
             model_number="model",
@@ -1014,7 +1122,8 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
 
     def test_invalid_input_hardware_limit_past_orders(self):
         self._login()
-        profile = self._make_event_profile()
+        self.create_min_number_of_profiles()
+
         hardware = Hardware.objects.create(
             name="name",
             model_number="model",
@@ -1070,7 +1179,8 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
 
     def test_hardware_limit_returned_orders(self):
         self._login()
-        profile = self._make_event_profile()
+        self.create_min_number_of_profiles()
+
         hardware = Hardware.objects.create(
             name="name",
             model_number="model",
@@ -1120,7 +1230,8 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
 
     def test_hardware_limit_cancelled_orders(self):
         self._login()
-        profile = self._make_event_profile()
+        self.create_min_number_of_profiles()
+
         hardware = Hardware.objects.create(
             name="name",
             model_number="model",
@@ -1159,7 +1270,8 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
 
     def test_invalid_input_category_limit(self):
         self._login()
-        profile = self._make_event_profile()
+        self.create_min_number_of_profiles()
+
         hardware = Hardware.objects.create(
             name="name",
             model_number="model",
@@ -1188,7 +1300,8 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
 
     def test_invalid_input_category_limit_past_orders(self):
         self._login()
-        profile = self._make_event_profile()
+        self.create_min_number_of_profiles()
+
         hardware = Hardware.objects.create(
             name="name",
             model_number="model",
@@ -1244,7 +1357,8 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
 
     def test_category_limit_returned_orders(self):
         self._login()
-        profile = self._make_event_profile()
+        self.create_min_number_of_profiles()
+
         hardware = Hardware.objects.create(
             name="name",
             model_number="model",
@@ -1294,7 +1408,8 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
 
     def test_category_limit_cancelled_orders(self):
         self._login()
-        profile = self._make_event_profile()
+        self.create_min_number_of_profiles()
+
         hardware = Hardware.objects.create(
             name="name",
             model_number="model",
@@ -1333,7 +1448,7 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
 
     def test_invalid_inputs_multiple_hardware(self):
         self._login()
-        profile = self._make_event_profile()
+        self.create_min_number_of_profiles()
 
         limited_hardware = Hardware.objects.create(
             name="name",
@@ -1383,7 +1498,7 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
 
     def test_multiple_hardware_success(self):
         self._login()
-        profile = self._make_event_profile()
+        self.create_min_number_of_profiles()
 
         hardware_1 = Hardware.objects.create(
             name="name",
@@ -1454,7 +1569,7 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
 
     def test_repeated_hardware_input_ids(self):
         self._login()
-        profile = self._make_event_profile()
+        self.create_min_number_of_profiles()
 
         hardware = Hardware.objects.create(
             name="name",
@@ -1501,7 +1616,7 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
         # we won't test the other contributing causes for "remaining quantities"
         # because they should be covered by the tests for remaining quantity field
         self._login()
-        profile = self._make_event_profile()
+        self.create_min_number_of_profiles()
 
         hardware = Hardware.objects.create(
             name="name",
@@ -1567,7 +1682,8 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
 
     def test_empty_input(self):
         self._login()
-        profile = self._make_event_profile()
+        self.create_min_number_of_profiles()
+
         hardware = Hardware.objects.create(
             name="name",
             model_number="model",
@@ -1594,7 +1710,8 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
 
     def test_no_remaining_quantities(self):
         self._login()
-        profile = self._make_event_profile()
+        self.create_min_number_of_profiles()
+
         hardware = Hardware.objects.create(
             name="name",
             model_number="model",
@@ -1630,6 +1747,34 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
             ],
         }
         self.assertEqual(response.json(), expected_response)
+
+    def test_team_less_min_order(self):
+        self._login()
+        self.create_order()
+        Profile.objects.create(user=self.user, team=self.team)
+
+        request_data = {"hardware": [{"id": self.hardware1.id, "quantity": 2}]}
+        response = self.client.post(self.view, request_data, format="json")
+        self.assertEqual(
+            response.json(),
+            {"non_field_errors": ["User's team does not meet team size criteria"]},
+        )
+
+    def test_team_more_max_order(self):
+        self._login()
+        self.create_order()
+
+        self.create_min_number_of_profiles()
+        Profile.objects.create(user=self.user3, team=self.team)
+        Profile.objects.create(user=self.user4, team=self.team)
+        Profile.objects.create(user=self.user5, team=self.team)
+
+        request_data = {"hardware": [{"id": self.hardware1.id, "quantity": 2}]}
+        response = self.client.post(self.view, request_data, format="json")
+        self.assertEqual(
+            response.json(),
+            {"non_field_errors": ["User's team does not meet team size criteria"]},
+        )
 
 
 class OrderListPatchTestCase(SetupUserMixin, APITestCase):

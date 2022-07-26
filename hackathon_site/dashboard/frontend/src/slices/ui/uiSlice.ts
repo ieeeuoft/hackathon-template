@@ -1,5 +1,4 @@
-import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Hardware } from "api/types";
+import { createSelector, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 
 // Slice
@@ -8,9 +7,9 @@ interface UIInitialState {
         isCheckedOutTableVisible: boolean;
         isReturnedTableVisible: boolean;
         isPendingTableVisible: boolean;
+        isEditTeamVisible: boolean;
     };
     inventory: {
-        hardwareItemBeingViewed: Hardware | null;
         isProductOverviewVisible: boolean;
     };
     snackbars: {
@@ -27,9 +26,9 @@ export const initialState: UIInitialState = {
         isCheckedOutTableVisible: true,
         isReturnedTableVisible: true,
         isPendingTableVisible: true,
+        isEditTeamVisible: false,
     },
     inventory: {
-        hardwareItemBeingViewed: null,
         isProductOverviewVisible: false,
     },
     snackbars: [],
@@ -51,16 +50,17 @@ const uiSlice = createSlice({
             state.dashboard.isPendingTableVisible =
                 !state.dashboard.isPendingTableVisible;
         },
-        setProductOverviewItem: (
-            state: UIState,
-            { payload }: PayloadAction<Hardware>
-        ) => {
-            state.inventory.hardwareItemBeingViewed = payload;
+        openProductOverview: (state: UIState) => {
             state.inventory.isProductOverviewVisible = true;
         },
-        removeProductOverviewItem: (state: UIState) => {
-            state.inventory.hardwareItemBeingViewed = null;
+        closeProductOverview: (state: UIState) => {
             state.inventory.isProductOverviewVisible = false;
+        },
+        openTeamModalItem: (state: UIState) => {
+            state.dashboard.isEditTeamVisible = true;
+        },
+        closeTeamModalItem: (state: UIState) => {
+            state.dashboard.isEditTeamVisible = false;
         },
         displaySnackbar: (state: UIState, { payload: { message, options = {} } }) => {
             if (!options.key) {
@@ -100,8 +100,10 @@ export const {
     toggleCheckedOutTable,
     toggleReturnedTable,
     togglePendingTable,
-    setProductOverviewItem,
-    removeProductOverviewItem,
+    openProductOverview,
+    closeProductOverview,
+    openTeamModalItem,
+    closeTeamModalItem,
     displaySnackbar,
     dismissSnackbar,
     removeSnackbar,
@@ -126,11 +128,11 @@ export const snackbarSelector = createSelector(
     [uiSliceSelector],
     (uiSlice) => uiSlice.snackbars
 );
-export const hardwareBeingViewedSelector = createSelector(
-    [uiSliceSelector],
-    (uiSlice) => uiSlice.inventory.hardwareItemBeingViewed
-);
 export const isProductOverviewVisibleSelector = createSelector(
     [uiSliceSelector],
     (uiSlice) => uiSlice.inventory.isProductOverviewVisible
+);
+export const isTeamModalVisibleSelector = createSelector(
+    [uiSliceSelector],
+    (uiSlice) => uiSlice.dashboard.isEditTeamVisible
 );

@@ -10,6 +10,7 @@ import {
     within,
     promiseResolveWithDelay,
     makeStoreWithEntities,
+    makeMockApiResponse,
 } from "testing/utils";
 import {
     cardItems,
@@ -17,35 +18,40 @@ import {
     mockCheckedOutOrders,
     mockHardware,
     mockOrders,
+    mockPendingOrders,
+    mockPendingOrdersInTable,
     mockTeam,
 } from "testing/mockData";
-import { get } from "api/api";
+import { get, patch } from "api/api";
 import { AxiosResponse } from "axios";
-import { Order, Team } from "api/types";
+import { Hardware, Order, Team } from "api/types";
+import { pendingOrderSelectors } from "slices/order/orderSlice";
 
 jest.mock("api/api", () => ({
     ...jest.requireActual("api/api"),
     get: jest.fn(),
+    patch: jest.fn(),
 }));
 const mockedGet = get as jest.MockedFunction<typeof get>;
+const mockedPatch = patch as jest.MockedFunction<typeof patch>;
 
 const hardwareUri = "/api/hardware/hardware/";
 const categoriesUri = "/api/hardware/categories/";
 const teamUri = "/api/event/teams/team/";
 const ordersUri = "/api/event/teams/team/orders/";
 
-const teamAPIResponse = { data: mockTeam } as AxiosResponse<Team>;
-
 const mockOrderAPI = (orders?: Order[]) =>
     when(mockedGet)
         .calledWith(ordersUri)
         .mockResolvedValue(makeMockApiListResponse<Order>(orders ?? mockOrders));
-const mockTeamAPI = (withDelay?: boolean) =>
+const mockTeamAPI = (withDelay?: boolean) => {
+    const teamAPIResponse = makeMockApiResponse(mockTeam);
     when(mockedGet)
         .calledWith(teamUri)
         .mockResolvedValue(
             withDelay ? promiseResolveWithDelay(teamAPIResponse, 500) : teamAPIResponse
         );
+};
 
 describe("Dashboard Page", () => {
     it("Renders correctly when the dashboard appears 4 cards and 3 tables", async () => {
@@ -63,9 +69,26 @@ describe("Dashboard Page", () => {
         });
         // TODO: add check for returned items and broken items when those are ready
     });
+
     it("Opens Product Overview with the correct hardware information", async () => {
+        const hardwareDetailUri = "/api/hardware/hardware/1/";
+        const newHardwareData: Hardware = {
+            id: mockCheckedOutOrders[0].items[0].hardware_id,
+            name: "Randome hardware",
+            model_number: "90",
+            manufacturer: "Tesla",
+            datasheet: "",
+            quantity_available: 5,
+            max_per_team: 6,
+            picture: "https://example.com/datasheet",
+            categories: [2],
+            quantity_remaining: 10,
+            notes: "notes on temp",
+        };
+
         const hardwareApiResponse = makeMockApiListResponse(mockHardware);
         const categoryApiResponse = makeMockApiListResponse(mockCategories);
+        const hardwareDetailApiResponse = makeMockApiResponse(newHardwareData);
         const hardware_ids = [1, 2, 3, 4, 10];
 
         mockOrderAPI();
@@ -75,37 +98,46 @@ describe("Dashboard Page", () => {
         when(mockedGet)
             .calledWith(categoriesUri, {})
             .mockResolvedValue(categoryApiResponse);
+        when(mockedGet)
+            .calledWith(hardwareDetailUri)
+            .mockResolvedValue(hardwareDetailApiResponse);
 
         const { getByTestId, getByText } = render(<Dashboard />);
 
-        const hardware = mockHardware.find(
-            ({ id }) => id === mockCheckedOutOrders[0].items[0].hardware_id
-        );
         const category = mockCategories.find(
-            ({ id }) => id === hardware?.categories[0]
+            ({ id }) => id === newHardwareData?.categories[0]
         );
 
-        if (hardware && category) {
+        if (category) {
+            await waitFor(() => {
+                expect(get).toHaveBeenNthCalledWith(1, teamUri);
+                expect(get).toHaveBeenNthCalledWith(2, categoriesUri, {});
+                expect(get).toHaveBeenNthCalledWith(3, ordersUri);
+                expect(get).toHaveBeenNthCalledWith(4, hardwareUri, { hardware_ids });
+            });
             await waitFor(() => {
                 const infoButton = within(
                     getByTestId(
-                        `checked-out-hardware-${hardware.id}-${mockCheckedOutOrders[0].id}`
+                        `checked-out-hardware-${newHardwareData.id}-${mockCheckedOutOrders[0].id}`
                     )
                 ).getByTestId("info-button");
                 fireEvent.click(infoButton);
+            });
+            await waitFor(() => {
+                expect(get).toHaveBeenNthCalledWith(5, hardwareDetailUri);
                 expect(getByText("Product Overview")).toBeVisible();
                 expect(
-                    getByText(`- Max ${hardware.max_per_team} of this item`)
+                    getByText(`- Max ${newHardwareData.max_per_team} of this item`)
                 ).toBeInTheDocument();
                 expect(
                     getByText(
-                        `- Max ${mockCategories[0].max_per_team} of items under category ${mockCategories[0].name}`
+                        `- Max ${category.max_per_team} of items under category ${category.name}`
                     )
                 ).toBeInTheDocument();
-                expect(getByText(hardware.model_number)).toBeInTheDocument();
-                expect(getByText(hardware.manufacturer)).toBeInTheDocument();
-                if (hardware.notes)
-                    expect(getByText(hardware.notes)).toBeInTheDocument();
+                expect(getByText(newHardwareData.model_number)).toBeInTheDocument();
+                expect(getByText(newHardwareData.manufacturer)).toBeInTheDocument();
+                if (newHardwareData.notes)
+                    expect(getByText(newHardwareData.notes)).toBeInTheDocument();
             });
         }
     });
@@ -124,6 +156,49 @@ describe("Dashboard Page", () => {
             expect(mockedGet).toHaveBeenCalledWith("/api/event/teams/team/");
         });
     });
+
+    it("Removes orders when cancel order button is clicked", async () => {
+        mockTeamAPI();
+        mockOrderAPI(mockPendingOrders);
+        const pendingOrderDetailUri = "/api/hardware/orders/4";
+        const pendingOrderResponse = makeMockApiResponse(mockPendingOrdersInTable[1]);
+        when(mockedPatch)
+            .calledWith(pendingOrderDetailUri, { status: "Cancelled" })
+            .mockResolvedValueOnce(pendingOrderResponse);
+
+        const store = makeStoreWithEntities({});
+
+        const { getByTestId, queryByText, getByText, getAllByText } = render(
+            <Dashboard />,
+            {
+                store,
+            }
+        );
+
+        await waitFor(() => {
+            mockPendingOrdersInTable.forEach((order) => {
+                expect(getByText(`Order #${order.id}`)).toBeInTheDocument();
+            });
+        });
+
+        const orderItem = getByTestId(
+            `pending-order-table-${mockPendingOrdersInTable[1].id}`
+        );
+        const cancelOrderBtn = within(orderItem).getByTestId("cancel-order-button");
+        fireEvent.click(cancelOrderBtn);
+
+        await waitFor(() => {
+            expect(mockedPatch).toHaveBeenCalledWith(`/api/hardware/orders/4`, {
+                status: "Cancelled",
+            });
+            expect(pendingOrderSelectors.selectById(store.getState(), 4)).toEqual(
+                undefined
+            );
+            expect(queryByText(/order #4/i)).toEqual(null);
+            expect(orderItem).not.toBeInTheDocument();
+            expect(cancelOrderBtn).not.toBeInTheDocument();
+        });
+    });
 });
 
 describe("Dashboard Page Error Messages", () => {
@@ -139,29 +214,38 @@ describe("Dashboard Page Error Messages", () => {
             },
             cartItems: [],
         });
+        mockTeamAPI();
         const { getByText } = render(<Dashboard />, { store });
 
-        getByText(/there were modifications made to order 1/i);
-        getByText(/no sensors left in inventory/i);
+        waitFor(() => {
+            getByText(/there were modifications made to order 1/i);
+            getByText(/no sensors left in inventory/i);
+        });
     });
 
     it("Shows error message when there is a problem retrieving orders", async () => {
-        mockedGet.mockRejectedValue({
-            response: {
-                status: 500,
-                message: "Something went wrong",
-            },
-        });
+        mockTeamAPI();
+        when(mockedGet)
+            .calledWith(ordersUri)
+            .mockRejectedValue({
+                response: {
+                    status: 500,
+                    message: "Something went wrong",
+                },
+            });
         const { findByText } = render(<Dashboard />);
         await findByText(/Something went wrong/i);
     });
 
     it("Shows default error message when there is a problem retrieving orders", async () => {
-        mockedGet.mockRejectedValue({
-            response: {
-                status: 500,
-            },
-        });
+        mockTeamAPI();
+        when(mockedGet)
+            .calledWith(ordersUri)
+            .mockRejectedValue({
+                response: {
+                    status: 500,
+                },
+            });
         const { findByText } = render(<Dashboard />);
         await findByText(
             /There was a problem retrieving orders. If this continues please contact hackathon organizers/i

@@ -1,22 +1,71 @@
 import React from "react";
-import ProductOverview, { EnhancedAddToCartForm } from "./ProductOverview";
+import ProductOverview, {
+    AddToCartForm,
+    EnhancedAddToCartForm,
+} from "./ProductOverview";
 import { mockCartItems, mockCategories, mockHardware } from "testing/mockData";
-import { render, fireEvent, waitFor, makeStoreWithEntities } from "testing/utils";
-import { makeStore } from "slices/store";
+import {
+    render,
+    fireEvent,
+    waitFor,
+    makeStoreWithEntities,
+    promiseResolveWithDelay,
+    when,
+    makeMockApiResponse,
+} from "testing/utils";
 import { cartSelectors } from "slices/hardware/cartSlice";
 import { SnackbarProvider } from "notistack";
 import SnackbarNotifier from "components/general/SnackbarNotifier/SnackbarNotifier";
-import { queryByText } from "@testing-library/react";
+import { get } from "api/api";
+import { getUpdatedHardwareDetails } from "slices/hardware/hardwareSlice";
+
+jest.mock("api/api", () => ({
+    ...jest.requireActual("api/api"),
+    get: jest.fn(),
+}));
+const mockedGet = get as jest.MockedFunction<typeof get>;
+
+const mockHardwareSignOutStartDate = jest.fn();
+const mockHardwareSignOutEndDate = jest.fn();
+jest.mock("constants.js", () => ({
+    get hardwareSignOutStartDate() {
+        return mockHardwareSignOutStartDate();
+    },
+    get hardwareSignOutEndDate() {
+        return mockHardwareSignOutEndDate();
+    },
+}));
+
+export const mockHardwareSignOutDates = (
+    numDaysRelativeToStart?: number,
+    numDaysRelativeToEnd?: number
+): {
+    start: Date;
+    end: Date;
+} => {
+    const currentDate = new Date();
+    const start = new Date();
+    const end = new Date();
+    start.setDate(currentDate.getDate() + (numDaysRelativeToStart ?? -1));
+    end.setDate(currentDate.getDate() + (numDaysRelativeToEnd ?? 1));
+    mockHardwareSignOutStartDate.mockReturnValue(start);
+    mockHardwareSignOutEndDate.mockReturnValue(end);
+    return { start, end };
+};
 
 describe("<ProductOverview />", () => {
-    test("all 3 parts of the product overview is there", () => {
-        const store = makeStore({
+    test("all 3 parts of the product overview is there", async () => {
+        const store = makeStoreWithEntities({
+            hardwareState: {
+                isUpdateDetailsLoading: false,
+                hardwareIdInProductOverview: 1,
+            },
             ui: {
                 inventory: {
-                    hardwareItemBeingViewed: mockHardware[0],
                     isProductOverviewVisible: true,
                 },
             },
+            hardware: mockHardware,
         });
 
         const { getByText } = render(<ProductOverview showAddToCartButton />, {
@@ -29,14 +78,55 @@ describe("<ProductOverview />", () => {
         expect(getByText("Add to cart")).toBeInTheDocument();
     });
 
-    test("all 3 parts of the product overview is there when hardware has no optional fields", () => {
-        const store = makeStore({
+    test("Displays a loader when loading", async () => {
+        const apiResponse = makeMockApiResponse({ ...mockHardware[1], id: 1 }, 200);
+
+        when(mockedGet)
+            .calledWith("/api/hardware/hardware/1/")
+            .mockReturnValue(promiseResolveWithDelay(apiResponse, 500));
+
+        const store = makeStoreWithEntities({
+            hardwareState: {
+                isUpdateDetailsLoading: false,
+            },
             ui: {
                 inventory: {
-                    hardwareItemBeingViewed: mockHardware[9],
                     isProductOverviewVisible: true,
                 },
             },
+            hardware: mockHardware,
+        });
+
+        const { getByText, queryByTestId } = render(
+            <ProductOverview showAddToCartButton />,
+            { store }
+        );
+
+        store.dispatch(getUpdatedHardwareDetails(1));
+
+        await waitFor(() => {
+            expect(queryByTestId("circular-progress")).toBeInTheDocument();
+        });
+
+        // After results have loaded, loader  should disappear
+        await waitFor(() => {
+            expect(queryByTestId("circular-progress")).not.toBeInTheDocument();
+            expect(getByText(mockHardware[1].name)).toBeInTheDocument();
+        });
+    });
+
+    test("all 3 parts of the product overview is there when hardware has no optional fields", () => {
+        const store = makeStoreWithEntities({
+            hardwareState: {
+                isUpdateDetailsLoading: false,
+                hardwareIdInProductOverview: mockHardware[9].id,
+            },
+            ui: {
+                inventory: {
+                    isProductOverviewVisible: true,
+                },
+            },
+            hardware: mockHardware,
         });
 
         const { getByText, queryByText } = render(
@@ -57,9 +147,12 @@ describe("<ProductOverview />", () => {
         const store = makeStoreWithEntities({
             hardware: [mockHardware[0]],
             categories: mockCategories,
+            hardwareState: {
+                isUpdateDetailsLoading: false,
+                hardwareIdInProductOverview: mockHardware[0].id,
+            },
             ui: {
                 inventory: {
-                    hardwareItemBeingViewed: mockHardware[0],
                     isProductOverviewVisible: true,
                 },
             },
@@ -86,11 +179,23 @@ describe("<ProductOverview />", () => {
         expect(getByText(minConstraint)).toBeInTheDocument();
     });
 
-    it("displays error message when unable to get hardware", () => {
-        const store = makeStore({
+    it("displays error message when unable to get hardware", async () => {
+        const failureResponse = {
+            response: {
+                status: 500,
+                message: "Something went wrong",
+            },
+        };
+
+        mockedGet.mockRejectedValue(failureResponse);
+
+        const store = makeStoreWithEntities({
+            hardware: mockHardware,
+            hardwareState: {
+                isUpdateDetailsLoading: false,
+            },
             ui: {
                 inventory: {
-                    hardwareItemBeingViewed: null,
                     isProductOverviewVisible: true,
                 },
             },
@@ -100,20 +205,27 @@ describe("<ProductOverview />", () => {
             store,
         });
 
-        expect(
-            getByText(
-                "Unable to display hardware. Please refresh the page and try again."
-            )
-        ).toBeInTheDocument();
+        store.dispatch(getUpdatedHardwareDetails(1));
+
+        await waitFor(() => {
+            expect(
+                getByText(
+                    "Unable to display hardware. Please refresh the page and try again."
+                )
+            ).toBeInTheDocument();
+        });
     });
 
     test("Add to Cart button adds hardware to cart store", async () => {
         const store = makeStoreWithEntities({
             hardware: [mockHardware[0]],
             categories: mockCategories,
+            hardwareState: {
+                isUpdateDetailsLoading: false,
+                hardwareIdInProductOverview: mockHardware[0].id,
+            },
             ui: {
                 inventory: {
-                    hardwareItemBeingViewed: mockHardware[0],
                     isProductOverviewVisible: true,
                 },
             },
@@ -148,9 +260,12 @@ describe("<ProductOverview />", () => {
         const store = makeStoreWithEntities({
             hardware: [mockHardware[0]],
             categories: mockCategories,
+            hardwareState: {
+                isUpdateDetailsLoading: false,
+                hardwareIdInProductOverview: mockHardware[0].id,
+            },
             ui: {
                 inventory: {
-                    hardwareItemBeingViewed: mockHardware[0],
                     isProductOverviewVisible: true,
                 },
             },
@@ -253,5 +368,20 @@ describe("<EnhancedAddToCartForm />", () => {
         fireEvent.mouseDown(getByRole("button", { name: "Qty 1" }));
 
         expect(getByText("3")).toBeInTheDocument();
+    });
+
+    test("button is disabled if date is not within hardware sign out period", () => {
+        mockHardwareSignOutDates(5, 10);
+        const { getByText } = render(
+            <EnhancedAddToCartForm
+                quantityRemaining={3}
+                maxPerTeam={5}
+                hardwareId={1}
+                name="Arduino"
+            />
+        );
+
+        const button = getByText("Add to cart").closest("button");
+        expect(button).toBeDisabled();
     });
 });
