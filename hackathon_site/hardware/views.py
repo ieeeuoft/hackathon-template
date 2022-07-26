@@ -1,3 +1,4 @@
+import json
 import logging
 
 from django_filters import rest_framework as filters
@@ -27,7 +28,7 @@ from hardware.serializers import (
     OrderCreateSerializer,
     OrderCreateResponseSerializer,
     OrderChangeSerializer,
-    OrderItemListSerializer, OrderItemReturnCreateSerializer,
+    OrderItemListSerializer, OrderItemReturnSerializer, OrderItemReturnResponseSerializer,
 )
 
 logger = logging.getLogger(__name__)
@@ -162,10 +163,19 @@ class OrderDetailView(generics.GenericAPIView, mixins.UpdateModelMixin):
     def patch(self, request, *args, **kwargs):
         return self.partial_update(request, *args, **kwargs)
 
-class OrderItemReturnView(generics.GenericAPIView, mixins.UpdateModelMixin):
-    queryset = Order.objects.all()
-    serializer_class = OrderItemReturnCreateSerializer
+class OrderItemReturnView(generics.GenericAPIView):
+    queryset = Order.objects.all().prefetch_related("items",)
+    serializer_class = OrderItemReturnSerializer
     permission_classes = [FullDjangoModelPermissions]
 
+    @transaction.atomic
+    @swagger_auto_schema(responses={201: OrderItemReturnResponseSerializer})
     def post(self, request, *args, **kwargs):
-        return self.post(request, *args, **kwargs)
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        create_response = serializer.save()
+        response_serializer = OrderItemReturnResponseSerializer(data=create_response)
+        if not response_serializer.is_valid():
+            logger.error(response_serializer.error_messages)
+            return HttpResponseServerError()
+        return Response(create_response, status=status.HTTP_201_CREATED)

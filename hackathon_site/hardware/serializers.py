@@ -333,13 +333,10 @@ class OrderCreateResponseSerializer(serializers.Serializer):
     errors = OrderCreateResponseErrorSerializer(many=True, required=True)
 
 
-class OrderItemReturnCreateSerializer(serializers.Serializer):
-    class OrderItemCreateHardwareSerializer(serializers.Serializer):
+class OrderItemReturnSerializer(serializers.Serializer):
+    class HardwareItemReturnSerializer(serializers.Serializer):
         HEALTH_CHOICES = [
-            ("Healthy", "Healthy"),
-            ("Heavily Used", "Heavily Used"),
-            ("Broken", "Broken"),
-            ("Lost", "Lost"),
+            "Healthy", "Heavily Used", "Broken", "Lost"
         ]
         id = serializers.PrimaryKeyRelatedField(
             queryset=Hardware.objects.all(), many=False, required=True
@@ -349,139 +346,58 @@ class OrderItemReturnCreateSerializer(serializers.Serializer):
             max_length=64, required=True
         )
 
-    hardware = OrderItemCreateHardwareSerializer(many=True, required=True)
-    order_id = serializers.SerializerMethodField()
+    hardware = HardwareItemReturnSerializer(many=True, required=True)
+    order = serializers.PrimaryKeyRelatedField(
+        queryset=Order.objects.all(), many=False, required=True
+    )
 
-    @staticmethod
-    def get_order_id(obj: OrderItem):
-        return obj.order.id
-
-
-    @staticmethod
-    def merge_requests(hardware_requests):
-        # hardware_requests is a list where each element is an OrderedDict
-        # with key value pairs
-        # "id": <Hardware Object>, and
-        # "quantity": <Int>
-        return functools.reduce(
-            lambda x, y: x + y,
-            [Counter({e["id"]: e["quantity"]}) for e in hardware_requests],
-            Counter(),
-        )
-
-    # check that the requests are within per-team constraints
     def validate(self, data):
-        try:
-            user_profile = self.context["request"].user.profile
-        except ObjectDoesNotExist:
-            raise serializers.ValidationError("User does not have profile")
-        team_size = Profile.objects.filter(team__exact=user_profile.team).count()
-        if team_size < settings.MIN_MEMBERS or team_size > settings.MAX_MEMBERS:
-            raise serializers.ValidationError(
-                "User's team does not meet team size criteria"
-            )
-        # requested_hardware is a Counter where the keys are <Hardware Object>'s
-        # and values are <Int>'s
-        requested_hardware = self.merge_requests(hardware_requests=data["hardware"])
-        if not requested_hardware:
-            raise serializers.ValidationError("No hardware submitted")
-        hardware_query = (
-            Hardware.objects.filter(
-                id__in=[hardware.id for hardware in requested_hardware.keys()],
-            )
-                .all()
-                .prefetch_related("categories", "order_items")
-        )
-        team_unreturned_orders = hardware_query.annotate(
-            past_order_count=Count(
-                "order_items",
-                filter=Q(order_items__part_returned_health__isnull=True)
-                       & ~Q(order_items__order__status="Cancelled")
-                       & Q(order_items__order__team=user_profile.team),
-                distinct=True,
-            )
-        )
-        category_counts = dict()
-        error_messages = []
-        for (hardware, requested_quantity) in requested_hardware.items():
-            team_hardware = team_unreturned_orders.get(id=hardware.id)
-            team_hardware_count = getattr(team_hardware, "past_order_count", 0)
-            if (team_hardware_count + requested_quantity) > hardware.max_per_team:
-                error_messages.append(
-                    "Maximum number of items for Hardware {} is reached (limit of {} per team)".format(
-                        hardware.name, hardware.max_per_team
-                    )
-                )
-            for category in hardware.categories.all():
-                category_counts[category] = (
-                        category_counts.get(category, 0)
-                        + team_hardware_count
-                        + requested_quantity
-                )
-        for (category, count) in category_counts.items():
-            if count > category.max_per_team:
-                error_messages.append(
-                    "Maximum number of items for the Category {} is reached (limit of {} items per team)".format(
-                        category.name, category.max_per_team
-                    )
-                )
-        if error_messages:
-            raise serializers.ValidationError(error_messages)
+        # get array of hardware and order id from data parameter
+        # TODO: make sure hardware array is >= 1 item, raise ValidationError
         return data
 
+
     def create(self, validated_data):
-        # validated data should already satisfy all constraints
-        requested_hardware = self.merge_requests(
-            hardware_requests=validated_data["hardware"]
-        )
+        # TODO: check if the number of hardware/order items in the order can be returned
+        #       e.g. if there are only 2 order items of hardware x but the request is to return 3 items, then return
+        #            the maximum amount (2) and return a warning message for that item (you can change
+        #            OrderItemReturnResponseSerializer to contain an errors property like OrderCreateResponseSerializer)
+        #       e.g. if there are 0 order items of hardware x but the request is to return > 1 items, then skip that
+        #            hardware item and return a warning message for that item
+        # TODO: check if status for the hardware item is valid, if not, then add an error for that item
+        hardware = validated_data["hardware"]
+        order = validated_data["order"]
+        order_items_in_order = OrderItem.objects.filter(order=order)
 
-        new_order = None
-        response_data = {"order_id": None, "hardware": [], "errors": []}
+        for hardware_item in hardware:
+            order_items_with_hardware = list(order_items_in_order.filter(
+                hardware=hardware_item["id"],
+                part_returned_health__isnull=True
+            ))
+            for quantity_idx in range(hardware_item["quantity"]):
+                order_items_with_hardware[quantity_idx].part_returned_health = hardware_item["part_returned_health"]
+                order_items_with_hardware[quantity_idx].save()
 
-        # The reason why doing this is because the id field stores the hardware object, django cannot translate hardware object into JSON. Therefore, loop has been used to get the hardware id and quantity requested
-        serialized_requested_hardware = []
-        for (hardware, requested_quantity) in requested_hardware.items():
-            serialized_requested_hardware.append(
-                {"id": hardware.id, "requested_quantity": requested_quantity}
-            )
+        response_data = {
+            "order_id": order.id,
+            "checked_out_items": [],
+            "returned_items": []
+        }
 
-        order_items = []
-        for (hardware, requested_quantity) in requested_hardware.items():
-            num_order_items = min(hardware.quantity_remaining, requested_quantity)
-            if num_order_items <= 0:
-                response_data["hardware"].append(
-                    {"hardware_id": hardware.id, "quantity_fulfilled": 0}
-                )
-                response_data["errors"].append(
-                    {
-                        "hardware_id": hardware.id,
-                        "message": "There are no {}s available".format(hardware.name),
-                    }
-                )
-                continue
-            if new_order is None:
-                new_order = Order.objects.create(
-                    team=self.context["request"].user.profile.team,
-                    status="Submitted",
-                    request=serialized_requested_hardware,
-                )
-                response_data["order_id"] = new_order.id
-            order_items += [
-                OrderItem(order=new_order, hardware=hardware)
-                for _ in range(num_order_items)
-            ]
-            response_data["hardware"].append(
-                {"hardware_id": hardware.id, "quantity_fulfilled": num_order_items}
-            )
-            if num_order_items != requested_quantity:
-                response_data["errors"].append(
-                    {
-                        "hardware_id": hardware.id,
-                        "message": "Only {} of {} {}(s) were available".format(
-                            num_order_items, requested_quantity, hardware.name,
-                        ),
-                    }
-                )
-        if order_items:
-            OrderItem.objects.bulk_create(order_items)
+        currently_checked_out_items = OrderItem.objects.filter(order=order)
+        for order_item in currently_checked_out_items:
+            serialized_order_item = OrderItemInOrderSerializer(order_item).data
+            if order_item.part_returned_health is None:
+                response_data["checked_out_items"].append(serialized_order_item)
+            else:
+                response_data["returned_items"].append(serialized_order_item)
+
         return response_data
+
+
+class OrderItemReturnResponseSerializer(serializers.Serializer):
+    order_id = serializers.PrimaryKeyRelatedField(
+        queryset=Order.objects.all(), many=False, required=True
+    )
+    checked_out_items = OrderItemInOrderSerializer(many=True, required=True)
+    returned_items = OrderItemInOrderSerializer(many=True, required=True)
