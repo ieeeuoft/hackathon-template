@@ -1,5 +1,7 @@
 from collections import Counter
 import functools
+from datetime import datetime
+
 from django.db.models import Count, Q
 from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings
@@ -195,10 +197,19 @@ class OrderCreateSerializer(serializers.Serializer):
 
     # check that the requests are within per-team constraints
     def validate(self, data):
+        # time restrictions
+        if datetime.now(settings.TZ_INFO) < settings.HARDWARE_SIGN_OUT_START_DATE:
+            raise serializers.ValidationError("Hardware sign out period has not begun")
+        if datetime.now(settings.TZ_INFO) > settings.HARDWARE_SIGN_OUT_END_DATE:
+            raise serializers.ValidationError("Hardware sign out period is over")
+
+        # permission restrictions
         try:
             user_profile = self.context["request"].user.profile
         except ObjectDoesNotExist:
             raise serializers.ValidationError("User does not have profile")
+
+        # team size restrictions
         team_size = Profile.objects.filter(team__exact=user_profile.team).count()
         if team_size < settings.MIN_MEMBERS or team_size > settings.MAX_MEMBERS:
             raise serializers.ValidationError(
