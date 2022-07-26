@@ -12,7 +12,12 @@ import {
 } from "slices/hardware/cartSlice";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { teamSizeSelector } from "slices/event/teamSlice";
-import { maxTeamSize, minTeamSize } from "constants.js";
+import {
+    hardwareSignOutEndDate,
+    hardwareSignOutStartDate,
+    maxTeamSize,
+    minTeamSize,
+} from "constants.js";
 
 const CartSummary = () => {
     const cartQuantity = useSelector(cartTotalSelector);
@@ -25,6 +30,11 @@ const CartSummary = () => {
             dispatch(submitOrder());
         }
     };
+    const currentDateTime = new Date();
+    const isOutsideSignOutPeriod =
+        currentDateTime < hardwareSignOutStartDate ||
+        currentDateTime > hardwareSignOutEndDate;
+
     return (
         <TitledPaper title="Cart Summary">
             <Container className={styles.qty}>
@@ -41,7 +51,12 @@ const CartSummary = () => {
                 color="primary"
                 variant="contained"
                 className={styles.btn}
-                disabled={cartQuantity === 0 || cartOrderLoading || !teamSizeValid}
+                disabled={
+                    cartQuantity === 0 ||
+                    cartOrderLoading ||
+                    !teamSizeValid ||
+                    isOutsideSignOutPeriod
+                }
                 onClick={onSubmit}
                 disableElevation
                 data-testid="submit-order-button"
