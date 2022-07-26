@@ -28,7 +28,9 @@ from hardware.serializers import (
     OrderCreateSerializer,
     OrderCreateResponseSerializer,
     OrderChangeSerializer,
-    OrderItemListSerializer, OrderItemReturnSerializer, OrderItemReturnResponseSerializer,
+    OrderItemListSerializer,
+    OrderItemReturnSerializer,
+    OrderItemReturnResponseSerializer,
 )
 
 logger = logging.getLogger(__name__)
@@ -162,6 +164,7 @@ class OrderDetailView(generics.GenericAPIView, mixins.UpdateModelMixin):
 
     def patch(self, request, *args, **kwargs):
         return self.partial_update(request, *args, **kwargs)
+
 
 class OrderItemReturnView(generics.GenericAPIView):
     queryset = Order.objects.all().prefetch_related("items",)

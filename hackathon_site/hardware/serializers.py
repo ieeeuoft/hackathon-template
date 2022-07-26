@@ -213,15 +213,15 @@ class OrderCreateSerializer(serializers.Serializer):
             Hardware.objects.filter(
                 id__in=[hardware.id for hardware in requested_hardware.keys()],
             )
-                .all()
-                .prefetch_related("categories", "order_items")
+            .all()
+            .prefetch_related("categories", "order_items")
         )
         team_unreturned_orders = hardware_query.annotate(
             past_order_count=Count(
                 "order_items",
                 filter=Q(order_items__part_returned_health__isnull=True)
-                       & ~Q(order_items__order__status="Cancelled")
-                       & Q(order_items__order__team=user_profile.team),
+                & ~Q(order_items__order__status="Cancelled")
+                & Q(order_items__order__team=user_profile.team),
                 distinct=True,
             )
         )
@@ -238,9 +238,9 @@ class OrderCreateSerializer(serializers.Serializer):
                 )
             for category in hardware.categories.all():
                 category_counts[category] = (
-                        category_counts.get(category, 0)
-                        + team_hardware_count
-                        + requested_quantity
+                    category_counts.get(category, 0)
+                    + team_hardware_count
+                    + requested_quantity
                 )
         for (category, count) in category_counts.items():
             if count > category.max_per_team:
@@ -335,16 +335,12 @@ class OrderCreateResponseSerializer(serializers.Serializer):
 
 class OrderItemReturnSerializer(serializers.Serializer):
     class HardwareItemReturnSerializer(serializers.Serializer):
-        HEALTH_CHOICES = [
-            "Healthy", "Heavily Used", "Broken", "Lost"
-        ]
+        HEALTH_CHOICES = ["Healthy", "Heavily Used", "Broken", "Lost"]
         id = serializers.PrimaryKeyRelatedField(
             queryset=Hardware.objects.all(), many=False, required=True
         )
         quantity = serializers.IntegerField(required=True)
-        part_returned_health = serializers.CharField(
-            max_length=64, required=True
-        )
+        part_returned_health = serializers.CharField(max_length=64, required=True)
 
     hardware = HardwareItemReturnSerializer(many=True, required=True)
     order = serializers.PrimaryKeyRelatedField(
@@ -355,7 +351,6 @@ class OrderItemReturnSerializer(serializers.Serializer):
         # get array of hardware and order id from data parameter
         # TODO: make sure hardware array is >= 1 item, raise ValidationError
         return data
-
 
     def create(self, validated_data):
         # TODO: check if the number of hardware/order items in the order can be returned
@@ -370,18 +365,21 @@ class OrderItemReturnSerializer(serializers.Serializer):
         order_items_in_order = OrderItem.objects.filter(order=order)
 
         for hardware_item in hardware:
-            order_items_with_hardware = list(order_items_in_order.filter(
-                hardware=hardware_item["id"],
-                part_returned_health__isnull=True
-            ))
+            order_items_with_hardware = list(
+                order_items_in_order.filter(
+                    hardware=hardware_item["id"], part_returned_health__isnull=True
+                )
+            )
             for quantity_idx in range(hardware_item["quantity"]):
-                order_items_with_hardware[quantity_idx].part_returned_health = hardware_item["part_returned_health"]
+                order_items_with_hardware[
+                    quantity_idx
+                ].part_returned_health = hardware_item["part_returned_health"]
                 order_items_with_hardware[quantity_idx].save()
 
         response_data = {
             "order_id": order.id,
             "checked_out_items": [],
-            "returned_items": []
+            "returned_items": [],
         }
 
         currently_checked_out_items = OrderItem.objects.filter(order=order)
