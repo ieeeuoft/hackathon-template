@@ -86,24 +86,21 @@ class CurrentProfileSerializer(ProfileSerializer):
         return serializers.ModelSerializer.update(self, instance, validated_data)
 
     def create(self, validated_data):
-        try:
-            self.context["request"].user.profile
+        if hasattr(self.context["request"].user, "profile"):
             raise serializers.ValidationError("User already has profile")
-        except:
 
-            response_data = {"attended": True}
-            response_data["id_provided"] = False
-            response_data["acknowledge_rules"] = validated_data.pop(
-                "acknowledge_rules", False
-            )
-            response_data["e_signature"] = validated_data.pop("e_signature", "NULL")
-            response_data["user"] = self.context["request"].user
-            response_data["id"] = self.context["request"].user.id
+        response_data = {
+            "attended": True,
+            "id_provided": False,
+            "acknowledge_rules": validated_data.pop("acknowledge_rules", False),
+            "e_signature": validated_data.pop("e_signature", "NULL"),
+            "user": self.context["request"].user,
+            "id": self.context["request"].user.id,
+        }
 
-            profile = Profile.objects.create(**response_data)
-            response_data["team"] = self.context["request"].user.profile.team
+        profile = Profile.objects.create(**response_data)
 
-            return response_data
+        return response_data
 
 
 class UserSerializer(serializers.ModelSerializer):
