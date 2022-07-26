@@ -4,20 +4,32 @@ import {
     createSelector,
     createSlice,
 } from "@reduxjs/toolkit";
-import { AppDispatch, RootState } from "../store";
-import { get } from "../../api/api";
-import { APIListResponse, Order } from "../../api/types";
-import { displaySnackbar } from "../ui/uiSlice";
+import { AppDispatch, RootState } from "slices/store";
+import { get } from "api/api";
+import { APIListResponse, Order, OrderInTable, ReturnOrderInTable } from "api/types";
+import { displaySnackbar } from "slices/ui/uiSlice";
+import { teamOrderListSerialization } from "api/helpers";
 
-const simpleState = {
+interface TeamExtraState {
+    isLoading: boolean;
+    error: null | string;
+    next: string | null;
+    hardwareIdsToFetch: number[] | null;
+    returnedOrders: ReturnOrderInTable[];
+}
+
+const extraState: TeamExtraState = {
     isLoading: false,
     error: null,
+    next: null,
+    hardwareIdsToFetch: null,
+    returnedOrders: [],
 };
 
-const teamOrderAdapter = createEntityAdapter();
+const teamOrderAdapter = createEntityAdapter<OrderInTable>();
 
 export const teamOrderReducerName = "teamOrder";
-const initialState = teamOrderAdapter.getInitialState(simpleState);
+export const initialState = teamOrderAdapter.getInitialState(extraState);
 
 interface RejectValue {
     status: number;
@@ -32,7 +44,6 @@ export const getAdminTeamOrders = createAsyncThunk<
     `${teamOrderReducerName}/getAdminTeamOrders`,
     async (team_code, { rejectWithValue, dispatch }) => {
         try {
-            throw Error("errorrr");
             const response = await get<APIListResponse<Order>>(
                 "/api/hardware/orders/",
                 {
@@ -50,8 +61,8 @@ export const getAdminTeamOrders = createAsyncThunk<
                 })
             );
             return rejectWithValue({
-                status: 500,
-                message: "oh no!",
+                status: e.response.status,
+                message: e.response.message ?? e.response.data,
             });
         }
     }
@@ -60,48 +71,72 @@ export const getAdminTeamOrders = createAsyncThunk<
 const teamOrderSlice = createSlice({
     name: teamOrderReducerName,
     initialState,
-    reducers: {
-        // TODO: remove later
-        setIsLoading: (state, props) => {
-            state.isLoading = !state.isLoading;
-            console.log(state, props.payload);
-        },
-        addTeamOrder: (state, { payload }) => {
-            teamOrderAdapter.addOne(state, payload);
-        },
-    },
+    reducers: {},
     extraReducers: (builder) => {
         builder.addCase(getAdminTeamOrders.pending, (state) => {
-            // while the api is being called (not completed yet)
             state.isLoading = true;
             state.error = null;
         });
         builder.addCase(getAdminTeamOrders.fulfilled, (state, { payload }) => {
-            // when the api call completes
             state.isLoading = false;
             state.error = null;
-
-            teamOrderAdapter.setMany(state, payload.results);
+            state.next = payload.next;
+            const {
+                pendingOrders,
+                checkedOutOrders,
+                returnedOrders,
+                hardwareIdsToFetch,
+            } = teamOrderListSerialization(payload.results);
+            teamOrderAdapter.setAll(state, [...pendingOrders, ...checkedOutOrders]);
+            state.returnedOrders = returnedOrders;
+            state.hardwareIdsToFetch = hardwareIdsToFetch;
         });
         builder.addCase(getAdminTeamOrders.rejected, (state, { payload }) => {
-            // error occurs
-            state.error = payload?.message ?? "something went wrong :(";
+            state.isLoading = false;
+            state.error =
+                payload?.message ??
+                "There was a problem retrieving orders. If this continues please contact hackathon organizers.";
         });
     },
 });
 
 export const { actions, reducer } = teamOrderSlice;
 export default reducer;
-// destructuring actions
-export const { setIsLoading, addTeamOrder } = actions;
 
 // Selectors
-const teamOrderSliceSelector = (state: RootState) => state[teamOrderReducerName];
+export const teamOrderSliceSelector = (state: RootState) => state[teamOrderReducerName];
 
-export const teamOrderAdapterSelector =
+export const teamOrderAdapterSelectors =
     teamOrderAdapter.getSelectors(teamOrderSliceSelector);
 
 export const isLoadingSelector = createSelector(
     [teamOrderSliceSelector],
     (teamOrderSlice) => teamOrderSlice.isLoading
+);
+
+export const errorSelector = createSelector(
+    [teamOrderSliceSelector],
+    (teamOrderSlice) => teamOrderSlice.error
+);
+
+export const hardwareInOrdersSelector = createSelector(
+    [teamOrderSliceSelector],
+    (teamOrderSlice) => teamOrderSlice.hardwareIdsToFetch
+);
+
+export const pendingOrderSelectors = createSelector(
+    [teamOrderAdapterSelectors.selectAll, teamOrderSliceSelector],
+    (orders) => {
+        orders.filter(
+            (order) =>
+                order.status === "Submitted" || order.status == "Ready for Pickup"
+        );
+    }
+);
+
+export const checkedOutOrderSelectors = createSelector(
+    [teamOrderAdapterSelectors.selectAll, teamOrderSliceSelector],
+    (orders) => {
+        orders.filter((order) => order.status === "Picked Up");
+    }
 );
