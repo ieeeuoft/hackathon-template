@@ -53,9 +53,8 @@ const setInitialValues = (
 export const TeamPendingOrderTable = () => {
     const orders = mockPendingOrdersInTable;
     const hardware = mockHardware;
-    const [visibility, setVisibility] = useState(false);
+    const [visibility, setVisibility] = useState(true);
     const toggleVisibility = () => {
-        // toggle visibility
         setVisibility(!visibility);
     };
 
