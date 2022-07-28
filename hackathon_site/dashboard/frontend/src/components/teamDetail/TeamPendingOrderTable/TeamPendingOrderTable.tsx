@@ -128,7 +128,22 @@ export const TeamPendingOrderTable = () => {
                                                     <TableCell
                                                         className={`${styles.width1} ${styles.noWrap}`}
                                                     >
-                                                        <Checkbox color="primary" />
+                                                        <Checkbox
+                                                            color="primary"
+                                                            name={`master-check-${pendingOrder.id}`}
+                                                            onChange={(e) => {
+                                                                if (e.target.checked) {
+                                                                    pendingOrder.hardwareInTableRow.map(
+                                                                        (row) => {
+                                                                            props.setFieldValue(
+                                                                                `${row.id}-checkbox`,
+                                                                                true
+                                                                            );
+                                                                        }
+                                                                    );
+                                                                }
+                                                            }}
+                                                        />
                                                     </TableCell>
                                                 </TableRow>
                                             </TableHead>
@@ -228,6 +243,11 @@ export const TeamPendingOrderTable = () => {
                                                             <TableCell align="center">
                                                                 <Checkbox
                                                                     color="primary"
+                                                                    checked={
+                                                                        props.values[
+                                                                            `${row.id}-checkbox`
+                                                                        ] === true
+                                                                    }
                                                                     name={`${row.id}-checkbox`}
                                                                     onChange={
                                                                         props.handleChange
