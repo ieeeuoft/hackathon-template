@@ -130,7 +130,7 @@ export const TeamPendingOrderTable = () => {
                                                     >
                                                         <Checkbox
                                                             color="primary"
-                                                            name={`checkall-${pendingOrder.id}`}
+                                                            data-testid={`checkall-${pendingOrder.id}`}
                                                             onChange={(e) => {
                                                                 if (e.target.checked) {
                                                                     pendingOrder.hardwareInTableRow.map(
@@ -252,6 +252,7 @@ export const TeamPendingOrderTable = () => {
                                                                     onChange={
                                                                         props.handleChange
                                                                     }
+                                                                    data-testid={`${row.id}-checkbox`}
                                                                 />
                                                             </TableCell>
                                                         </TableRow>
