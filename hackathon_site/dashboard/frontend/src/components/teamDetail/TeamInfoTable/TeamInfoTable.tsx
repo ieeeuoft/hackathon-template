@@ -16,20 +16,20 @@ import { useSelector } from "react-redux";
 import {
     isLoadingSelector,
     teamDetailAdapterSelector,
-} from "../../../slices/event/teamDetailSlice";
+} from "slices/event/teamDetailSlice";
 
 export const TeamInfoTable = () => {
     const isTeamInfoLoading = useSelector(isLoadingSelector);
     const teamInfo = useSelector(teamDetailAdapterSelector.selectAll) as any[];
 
-    if (isTeamInfoLoading) {
-        return <LinearProgress />;
-    } else {
-        return (
-            <Grid container direction="column" spacing={1} item md={6} xs={12}>
-                <Grid item>
-                    <Typography variant="h2">Team info</Typography>
-                </Grid>
+    return (
+        <Grid container direction="column" spacing={1} item md={6} xs={12}>
+            <Grid item>
+                <Typography variant="h2">Team info</Typography>
+            </Grid>
+            {isTeamInfoLoading ? (
+                <LinearProgress data-testid="team-info-linear-progress" />
+            ) : (
                 <TableContainer component={Paper}>
                     <Table size="small">
                         <TableHead>
@@ -52,6 +52,7 @@ export const TeamInfoTable = () => {
                                         <Checkbox
                                             checked={row.id_provided}
                                             color="primary"
+                                            role="checkbox"
                                         />
                                     </TableCell>
                                 </TableRow>
@@ -59,9 +60,9 @@ export const TeamInfoTable = () => {
                         </TableBody>
                     </Table>
                 </TableContainer>
-            </Grid>
-        );
-    }
+            )}
+        </Grid>
+    );
 };
 
 export default TeamInfoTable;

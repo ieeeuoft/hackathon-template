@@ -6,8 +6,8 @@ import {
 } from "@reduxjs/toolkit";
 import { AppDispatch, RootState } from "slices/store";
 import { displaySnackbar } from "slices/ui/uiSlice";
-import { get } from "../../api/api";
-import { Team } from "../../api/types";
+import { get } from "api/api";
+import { Team } from "api/types";
 
 const teamDetailAdapter = createEntityAdapter();
 
@@ -18,7 +18,7 @@ const simpleState = {
 
 export const teamDetailReducerName = "teamDetail";
 
-const initialState = teamDetailAdapter.getInitialState(simpleState);
+export const initialState = teamDetailAdapter.getInitialState(simpleState);
 
 interface RejectValue {
     status: number;
@@ -38,15 +38,15 @@ export const getTeamInfoData = createAsyncThunk<
         } catch (e: any) {
             dispatch(
                 displaySnackbar({
-                    message: e.message,
+                    message: `Failed to retrieve team info: Error ${e.response.status}`,
                     options: {
                         variant: "error",
                     },
                 })
             );
             return rejectWithValue({
-                status: 500,
-                message: "error",
+                status: e.response.status,
+                message: e.response.data,
             });
         }
     }
@@ -81,7 +81,8 @@ const { reducer } = teamDetailSlice;
 export default reducer;
 
 // Selectors
-const teamDetailSliceSelector = (state: RootState) => state[teamDetailReducerName];
+export const teamDetailSliceSelector = (state: RootState) =>
+    state[teamDetailReducerName];
 
 export const teamDetailAdapterSelector = teamDetailAdapter.getSelectors(
     teamDetailSliceSelector

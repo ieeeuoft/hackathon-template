@@ -8,7 +8,7 @@ import Header from "components/general/Header/Header";
 import { Grid } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import { useDispatch } from "react-redux";
-import { getTeamInfoData } from "../../slices/event/teamDetailSlice";
+import { getTeamInfoData } from "slices/event/teamDetailSlice";
 
 export interface PageParams {
     id: string;
