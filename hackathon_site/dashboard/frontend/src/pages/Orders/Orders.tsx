@@ -9,11 +9,17 @@ import OrdersFilter from "components/orders/OrdersFilter/OrderFilter";
 import CloseIcon from "@material-ui/icons/Close";
 import IconButton from "@material-ui/core/IconButton";
 import styles from "./Orders.module.scss";
+import { mockPendingOrders } from "testing/mockData";
+import OrderCard from "components/orders/OrderCard/OrderCard";
 
 const Orders = () => {
     const [mobileOpen, setMobileOpen] = React.useState(false);
     const toggleFilter = () => {
         setMobileOpen(!mobileOpen);
+    };
+    const handleClick = (orderId: number) => {
+        alert(`The order you clicked is: #${orderId}`);
+        console.log(orderId);
     };
     return (
         <>
@@ -69,17 +75,24 @@ const Orders = () => {
                         </Grid>
                         <Grid item lg={12}>
                             <Grid container spacing={1} direction="row">
-                                {Array(12)
-                                    .fill("order card component")
-                                    .map((str, idx) => (
-                                        <Grid
-                                            item
-                                            lg={3}
-                                            md={4}
-                                            sm={6}
-                                            xs={12}
-                                            key={idx}
-                                        >
+                                {mockPendingOrders.map((order, idx) => (
+                                    <Grid
+                                        item
+                                        lg={3}
+                                        md={4}
+                                        sm={6}
+                                        xs={12}
+                                        key={idx}
+                                        onClick={() => handleClick(order.id)}
+                                    >
+                                        {order.status === "Submitted" ? (
+                                            <OrderCard
+                                                teamCode={order.team_code}
+                                                orderQuantity={order.items.length}
+                                                time={order.created_at}
+                                                id={order.id}
+                                            />
+                                        ) : (
                                             <div
                                                 style={{
                                                     border: "1px solid black",
@@ -87,12 +100,15 @@ const Orders = () => {
                                                     padding: "10px",
                                                     textAlign: "center",
                                                     backgroundColor: "lightblue",
+                                                    minHeight: "160px",
                                                 }}
+                                                data-testid={`order-item-${order.id}`}
                                             >
-                                                {str}
+                                                {"Order Card Component"}
                                             </div>
-                                        </Grid>
-                                    ))}
+                                        )}
+                                    </Grid>
+                                ))}
                             </Grid>
                         </Grid>
                     </Grid>
