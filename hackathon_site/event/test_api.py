@@ -468,20 +468,6 @@ class CurrentProfileViewTestCase(SetupUserMixin, APITestCase):
         response = self.client.patch(self.view, self.request_body)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
-    def test_user_can_has_profile(self):
-        # When posting, the user is assumed to be attending the hackathon
-        # The team should be increased by 1 since, the profile will be deleted
-        self.expected_response["attended"] = True
-        self.expected_response["team"] = 2
-
-        self.profile.delete()
-        self._login()
-        response = self.client.post(self.view, self.request_body)
-        data = response.json()
-
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(self.expected_response, data)
-
     def test_user_has_no_profile(self):
         self.profile.delete()
         self._login()
@@ -537,6 +523,65 @@ class CurrentProfileViewTestCase(SetupUserMixin, APITestCase):
         data = response.json()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(expected_response, data)
+
+
+class CreateProfileViewTestCase(SetupUserMixin, APITestCase):
+    def setUp(self):
+        super().setUp()
+        self.profile = self._make_event_profile(user=self.user)
+        self.request_body = {
+            "acknowledge_rules": True,
+            "e_signature": "user signature",
+        }
+        self.expected_response = {
+            "attended": True,
+            "id_provided": False,
+            "acknowledge_rules": True,
+            "e_signature": "user signature",
+            # "team": self.profile.team_id,
+        }
+        self.view = reverse("api:event:current-profile")
+
+    def _build_view(self, acknowledge_rules, e_signature):
+        return reverse("api:event:current-profile", kwargs=self.request_body)
+
+    def test_user_not_logged_in(self):
+        # Test that permissions work
+        response = self.client.post(self.view, self.request_body)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_user_can_has_profile(self):
+        # Test that the response is correct when creating profile
+        # When posting, the user is assumed to be attending the hackathon
+        # The team should be increased by 1 since, the profile will be deleted
+
+        self.profile.delete()
+        self._login()
+        response = self.client.post(self.view, self.request_body)
+        data = response.json()
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(self.expected_response, data)
+
+    def test_user_can_actually_has_profile(self):
+        # Queries the database to test that the profile has actually been created properly
+        # When posting, the user is assumed to be attending the hackathon
+        # The team should be increased by 1 since, the profile will be deleted
+        self.profile.delete()
+        self._login()
+        response = self.client.post(self.view, self.request_body)
+        data = response.json()
+
+        database_profile = Profile.objects.get(user=self.user)
+
+        self.assertIsNotNone(database_profile)
+
+    def test_user_already_has_profile(self):
+        # "The bad path". The user attempts to create a new profile,
+        # when they already have a profile
+        self._login()
+        response = self.client.post(self.view, self.request_body)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 
 class CurrentTeamOrderListViewTestCase(SetupUserMixin, APITestCase):

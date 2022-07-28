@@ -99,7 +99,10 @@ class CurrentProfileSerializer(ProfileSerializer):
 
         profile = Profile.objects.create(**response_data)
 
-        return response_data
+        return {
+            **response_data,
+            # "team": self.profile.team_id
+        }
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -130,3 +133,4 @@ class ProfileCreateResponseSerializer(serializers.Serializer):
     id_provided = serializers.BooleanField()
     acknowledge_rules = serializers.BooleanField()
     e_signature = serializers.CharField()
+    # team = serializers.CharField()

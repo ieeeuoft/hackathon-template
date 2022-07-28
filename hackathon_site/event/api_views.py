@@ -196,7 +196,6 @@ class CurrentProfileView(
         if not response_serializer.is_valid():
             return HttpResponseServerError()
         response_data = response_serializer.data
-        print(f"create_response is {response_data}")
         return Response(response_data, status=status.HTTP_201_CREATED)
 
 
