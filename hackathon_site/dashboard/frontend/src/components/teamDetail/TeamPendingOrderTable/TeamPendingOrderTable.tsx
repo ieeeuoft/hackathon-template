@@ -130,7 +130,7 @@ export const TeamPendingOrderTable = () => {
                                                     >
                                                         <Checkbox
                                                             color="primary"
-                                                            name={`master-check-${pendingOrder.id}`}
+                                                            name={`checkall-${pendingOrder.id}`}
                                                             onChange={(e) => {
                                                                 if (e.target.checked) {
                                                                     pendingOrder.hardwareInTableRow.map(
