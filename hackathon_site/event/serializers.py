@@ -95,7 +95,6 @@ class CurrentProfileSerializer(ProfileSerializer):
             "acknowledge_rules": validated_data.pop("acknowledge_rules", False),
             "e_signature": validated_data.pop("e_signature", "NULL"),
             "user": self.context["request"].user,
-            "id": self.context["request"].user.id,
         }
 
         profile = Profile.objects.create(**response_data)
@@ -124,3 +123,10 @@ class TeamSerializer(serializers.ModelSerializer):
             "updated_at",
             "profiles",
         )
+
+
+class ProfileCreateResponseSerializer(serializers.Serializer):
+    attended = serializers.BooleanField()
+    id_provided = serializers.BooleanField()
+    acknowledge_rules = serializers.BooleanField()
+    e_signature = serializers.CharField()

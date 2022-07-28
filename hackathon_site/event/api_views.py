@@ -1,6 +1,8 @@
 from django.db import transaction
 from django.db.models import Q
 from django.conf import settings
+from django.http import HttpResponseServerError
+from drf_yasg.utils import swagger_auto_schema
 
 from rest_framework import generics, mixins, status, permissions
 from rest_framework.exceptions import ValidationError, PermissionDenied
@@ -10,6 +12,7 @@ from rest_framework.response import Response
 from event.serializers import (
     ProfileSerializer,
     CurrentProfileSerializer,
+    ProfileCreateResponseSerializer,
 )
 from event.models import User, Team as EventTeam, Profile
 from event.serializers import UserSerializer, TeamSerializer
@@ -184,8 +187,17 @@ class CurrentProfileView(
     def patch(self, request, *args, **kwargs):
         return self.partial_update(request, *args, **kwargs)
 
+    @swagger_auto_schema(responses={201: ProfileCreateResponseSerializer})
     def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        create_response = serializer.save()
+        response_serializer = ProfileCreateResponseSerializer(data=create_response)
+        if not response_serializer.is_valid():
+            return HttpResponseServerError()
+        response_data = response_serializer.data
+        print(f"create_response is {response_data}")
+        return Response(response_data, status=status.HTTP_201_CREATED)
 
 
 class CurrentTeamOrderListView(generics.ListAPIView):
