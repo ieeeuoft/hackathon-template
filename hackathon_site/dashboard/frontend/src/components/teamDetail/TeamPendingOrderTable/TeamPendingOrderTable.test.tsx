@@ -12,10 +12,6 @@ describe("team pending order table", () => {
         const { getByTestId } = render(<TeamPendingOrderTable />);
         expect(screen.getByText("Requested Items")).toBeInTheDocument();
 
-        // make the table visible
-        const visibilityButton = getByTestId(`visibility-button`);
-        fireEvent.click(visibilityButton);
-
         //loop through all pending orders
         mockPendingOrdersInTable.forEach((currentOrder) => {
             //loop through all the hardware in each order
@@ -46,10 +42,6 @@ describe("team pending order table", () => {
 
     test("All button changes the value correctly", () => {
         const { getByTestId, getByRole } = render(<TeamPendingOrderTable />);
-
-        // make the table visible
-        const visibilityButton = getByTestId(`visibility-button`);
-        fireEvent.click(visibilityButton);
 
         mockPendingOrdersInTable.forEach((currentOrder) => {
             currentOrder.hardwareInTableRow.forEach((currentRow) => {
@@ -83,5 +75,9 @@ describe("team pending order table", () => {
                 ).toHaveTextContent(currentRow.quantityGranted.toString());
             });
         });
+    });
+
+    test("Check all button works correctly", () => {
+        const { getByTestId, getByRole } = render(<TeamPendingOrderTable />);
     });
 });
