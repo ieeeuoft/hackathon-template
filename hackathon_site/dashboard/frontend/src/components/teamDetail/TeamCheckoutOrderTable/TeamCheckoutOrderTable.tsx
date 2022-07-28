@@ -14,6 +14,8 @@ import {
     FormControl,
     Typography,
     IconButton,
+    MenuItem,
+    Select,
 } from "@material-ui/core";
 import React from "react";
 import hardwareImagePlaceholder from "assets/images/placeholders/no-hardware-image.svg";
@@ -21,17 +23,6 @@ import Info from "@material-ui/icons/Info";
 import styles from "components/general/OrderTables/OrderTables.module.scss";
 import { mockHardware, mockCheckedOutOrders } from "testing/mockData";
 import { Formik, Field, FormikValues, Form } from "formik";
-
-const setInitialValues = (request: { id: number; requested_quantity: number }[]) => {
-    let orderInitialValues: Record<string, string | boolean> = {};
-    request.forEach((orderItem) => {
-        orderInitialValues[`${orderItem.id}-quantity`] =
-            orderItem.requested_quantity.toString();
-        orderInitialValues[`${orderItem.id}-checkbox`] = false;
-    });
-    console.log(orderInitialValues);
-    return orderInitialValues;
-};
 
 export const TeamCheckoutOrderTable = () => {
     const orders = mockCheckedOutOrders;
@@ -153,19 +144,17 @@ export const TeamCheckoutOrderTable = () => {
                                                                 handleSubmitExternal
                                                             }
                                                         >
-                                                            <Form>
-                                                                <Field
-                                                                    as="select"
-                                                                    name="quantity"
-                                                                >
-                                                                    <option value="1">
-                                                                        1
-                                                                    </option>
-                                                                    <option value="2">
-                                                                        2
-                                                                    </option>
-                                                                </Field>
-                                                            </Form>
+                                                            <Select
+                                                                name="quantity"
+                                                                defaultValue={"1"}
+                                                            >
+                                                                <MenuItem value="1">
+                                                                    1
+                                                                </MenuItem>
+                                                                <MenuItem value="2">
+                                                                    2
+                                                                </MenuItem>
+                                                            </Select>
                                                         </Formik>
                                                     </FormControl>
                                                 </div>
@@ -180,25 +169,23 @@ export const TeamCheckoutOrderTable = () => {
                                                     initialValues={{}}
                                                     onSubmit={handleSubmitExternal}
                                                 >
-                                                    <Form>
-                                                        <Field
-                                                            as="select"
-                                                            name="condition"
-                                                        >
-                                                            <option value="Healthy">
-                                                                Healthy
-                                                            </option>
-                                                            <option value="Heavily Used">
-                                                                Heavily Used
-                                                            </option>
-                                                            <option value="Broken">
-                                                                Broken
-                                                            </option>
-                                                            <option value="Lost">
-                                                                Lost
-                                                            </option>
-                                                        </Field>
-                                                    </Form>
+                                                    <Select
+                                                        name="condition"
+                                                        defaultValue={"Healthy"}
+                                                    >
+                                                        <MenuItem value="Healthy">
+                                                            Healthy
+                                                        </MenuItem>
+                                                        <MenuItem value="Heavily Used">
+                                                            Heavily Used
+                                                        </MenuItem>
+                                                        <MenuItem value="Broken">
+                                                            Broken
+                                                        </MenuItem>
+                                                        <MenuItem value="Lost">
+                                                            Lost
+                                                        </MenuItem>
+                                                    </Select>
                                                 </Formik>
                                             </TableCell>
                                             <TableCell>
