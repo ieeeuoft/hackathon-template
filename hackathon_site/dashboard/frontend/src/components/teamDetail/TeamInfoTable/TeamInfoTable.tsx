@@ -1,7 +1,4 @@
-import { RouteComponentProps } from "react-router-dom";
-
 import {
-    Button,
     Checkbox,
     Grid,
     LinearProgress,
@@ -14,13 +11,12 @@ import {
     TableRow,
 } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
-import React, { useEffect } from "react";
+import React from "react";
 import { useSelector } from "react-redux";
 import {
     isLoadingSelector,
     teamDetailAdapterSelector,
 } from "../../../slices/event/teamDetailSlice";
-import { Team } from "../../../api/types";
 
 export const TeamInfoTable = () => {
     const isTeamInfoLoading = useSelector(isLoadingSelector);

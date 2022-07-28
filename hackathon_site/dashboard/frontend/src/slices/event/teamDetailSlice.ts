@@ -77,7 +77,7 @@ const teamDetailSlice = createSlice({
     },
 });
 
-const { actions, reducer } = teamDetailSlice;
+const { reducer } = teamDetailSlice;
 export default reducer;
 
 // Selectors
