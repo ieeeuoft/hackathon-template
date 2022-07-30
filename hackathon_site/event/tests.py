@@ -786,12 +786,6 @@ class ProfileSerializerTestCase(TestCase):
         }
         self.assertEqual(profile_expected, profile_serialized)
 
-    def test_readonly_serializer_fields(self):
-        self.assertEqual(
-            ProfileSerializer.Meta.read_only_fields,
-            ("id", "team", "acknowledge_rules", "e_signature"),
-        )
-
 
 class CurrentProfileSerializerTestCase(TestCase):
     def test_readonly_serializer_fields(self):

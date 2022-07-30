@@ -27,7 +27,6 @@ class ProfileSerializer(serializers.ModelSerializer):
             "e_signature",
             "team",
         )
-        read_only_fields = ("id", "team", "acknowledge_rules", "e_signature")
 
 
 class ProfileInUserSerializer(serializers.ModelSerializer):
@@ -94,15 +93,13 @@ class CurrentProfileSerializer(ProfileSerializer):
             "id_provided": False,
             "acknowledge_rules": validated_data.pop("acknowledge_rules", False),
             "e_signature": validated_data.pop("e_signature", "NULL"),
-            "user": self.context["request"].user,
         }
 
-        profile = Profile.objects.create(**response_data)
-        
-        return {
-            **response_data,
-            "team": profile.team.team_code
-        }
+        profile = Profile.objects.create(
+            **{**response_data, "user": self.context["request"].user}
+        )
+
+        return {**response_data, "team": profile.team.team_code, "id": profile.id}
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -128,9 +125,5 @@ class TeamSerializer(serializers.ModelSerializer):
         )
 
 
-class ProfileCreateResponseSerializer(serializers.Serializer):
-    attended = serializers.BooleanField()
-    id_provided = serializers.BooleanField()
-    acknowledge_rules = serializers.BooleanField()
-    e_signature = serializers.CharField()
+class ProfileCreateResponseSerializer(ProfileSerializer):
     team = serializers.CharField()
