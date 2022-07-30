@@ -13,14 +13,17 @@ from event.serializers import (
     ProfileSerializer,
     CurrentProfileSerializer,
     ProfileCreateResponseSerializer,
+    UserReviewStatusSerializer,
 )
 from event.models import User, Team as EventTeam, Profile
 from event.serializers import UserSerializer, TeamSerializer
-from hardware.serializers import IncidentCreateSerializer, OrderListSerializer
+from hardware.serializers import (
+    IncidentCreateSerializer,
+    OrderListSerializer,
+    TeamOrderChangeSerializer,
+)
 from event.permissions import UserHasProfile, FullDjangoModelPermissions
-
 from hardware.models import OrderItem, Order, Incident
-from hardware.serializers import OrderListSerializer, TeamOrderChangeSerializer
 
 
 class CurrentUserAPIView(generics.GenericAPIView, mixins.RetrieveModelMixin):
@@ -42,6 +45,28 @@ class CurrentUserAPIView(generics.GenericAPIView, mixins.RetrieveModelMixin):
 
         Reads the profile of the current logged in user. User details and
         group list are nested within the profile and user object, respectively.
+        """
+        return self.retrieve(request, *args, **kwargs)
+
+
+class CurrentUserReviewStatusAPIView(
+    generics.GenericAPIView, mixins.RetrieveModelMixin
+):
+    """
+    View to handle review status status of user
+    """
+
+    queryset = User.objects.select_related("application")
+    serializer_class = UserReviewStatusSerializer
+
+    def get_object(self):
+        queryset = self.get_queryset()
+        return generics.get_object_or_404(queryset, id=self.request.user.id)
+
+    def get(self, request, *args, **kwargs):
+        """
+        Get the current user's review status and user details
+        Reads the review status status of the current logged in user.
         """
         return self.retrieve(request, *args, **kwargs)
 

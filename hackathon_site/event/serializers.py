@@ -1,7 +1,9 @@
 from django.contrib.auth.models import Group
+from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import serializers
 
 from event.models import Profile, User, Team
+from review.models import Review
 
 
 class GroupSerializer(serializers.ModelSerializer):
@@ -127,3 +129,18 @@ class TeamSerializer(serializers.ModelSerializer):
 
 class ProfileCreateResponseSerializer(ProfileSerializer):
     team = serializers.CharField()
+
+
+class UserReviewStatusSerializer(serializers.ModelSerializer):
+    review_status = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = ("id", "first_name", "last_name", "email", "review_status")
+
+    @staticmethod
+    def get_review_status(user: User):
+        try:
+            return Review.objects.get(application__user=user).status
+        except ObjectDoesNotExist:
+            return "None"
