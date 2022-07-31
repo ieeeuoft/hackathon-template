@@ -4,14 +4,10 @@ import {
     mockOrders,
     mockPendingOrdersInTable,
     mockReturnedOrdersInTable,
+    mockTeam,
 } from "testing/mockData";
-import {
-    makeMockApiListResponse,
-    makeMockApiResponse,
-    makeStoreWithEntities,
-    waitFor,
-} from "testing/utils";
-import { get, patch } from "api/api";
+import { makeMockApiListResponse, makeStoreWithEntities, waitFor } from "testing/utils";
+import { get } from "api/api";
 import { displaySnackbar } from "slices/ui/uiSlice";
 import thunk, { ThunkDispatch } from "redux-thunk";
 import { AnyAction } from "redux";
@@ -22,8 +18,13 @@ import {
     teamOrderSliceSelector,
     isLoadingSelector,
     errorSelector,
-    teamOrderAdapterSelectors,
+    teamOrderSelectors,
     hardwareInOrdersSelector,
+    getAdminTeamOrders,
+    returnedOrdersSelector,
+    pendingOrdersSelector,
+    checkedOutOrdersSelector,
+    TeamOrderState,
 } from "./teamOrderSlice";
 
 jest.mock("api/api", () => ({
@@ -32,11 +33,10 @@ jest.mock("api/api", () => ({
     patch: jest.fn(),
 }));
 const mockedGet = get as jest.MockedFunction<typeof get>;
-const mockedPatch = patch as jest.MockedFunction<typeof patch>;
 
 type DispatchExts = ThunkDispatch<RootState, void, AnyAction>;
 const mockStore = configureStore<RootState, DispatchExts>([thunk]);
-const mockStateWithTeamOrderState = (teamOrderState?: Partial<OrderState>) => ({
+const mockStateWithTeamOrderState = (teamOrderState?: Partial<TeamOrderState>) => ({
     ...store.getState(),
     [teamOrderReducerName]: {
         ...initialState,
@@ -51,10 +51,12 @@ const mockState: RootState = {
     },
 };
 
+const combinedOrders = [...mockPendingOrdersInTable, ...mockCheckedOutOrdersInTable];
+
 describe("Selectors", () => {
     const mockState = mockStateWithTeamOrderState();
 
-    test("orderSliceSelector returns the team order store", () => {
+    test("teamOrderSliceSelector returns the team order store", () => {
         expect(teamOrderSliceSelector(mockState)).toEqual(
             mockState[teamOrderReducerName]
         );
@@ -67,43 +69,44 @@ describe("Selectors", () => {
         expect(isLoadingSelector(loadingFalseState)).toEqual(false);
     });
 
-    test("orderErrorSelector", () => {
+    test("teamOrderErrorSelector", () => {
         const errorExistsState = mockStateWithTeamOrderState({ error: "exists" });
         const errorNullState = mockStateWithTeamOrderState({ error: null });
         expect(errorSelector(errorExistsState)).toEqual("exists");
         expect(errorSelector(errorNullState)).toEqual(null);
     });
 
-    // TODO
-    test("orders selector", () => {
+    test("team orders selector", () => {
         const store = makeStoreWithEntities({
-            pendingOrders: mockPendingOrdersInTable,
+            teamDetailOrders: combinedOrders,
         });
-        expect(teamOrderAdapterSelectors.selectIds(store.getState())).toEqual(
-            mockPendingOrdersInTable.map(({ id }) => id)
+        expect(teamOrderSelectors.selectIds(store.getState())).toEqual(
+            combinedOrders.map(({ id }) => id)
         );
     });
 
     test("hardwareInOrdersSelector", () => {
         const hasHardwareInOrders = mockStateWithTeamOrderState({
-            hardwareInOrders: [1, 2, 3],
+            hardwareIdsToFetch: [1, 2, 3],
         });
         expect(hardwareInOrdersSelector(hasHardwareInOrders)).toEqual([1, 2, 3]);
     });
 });
 
-// TODO
 describe("getTeamOrders Thunk", () => {
     it("Updates the store on API success", async () => {
+        const { team_code } = mockTeam;
         const response = makeMockApiListResponse(mockOrders);
         mockedGet.mockResolvedValueOnce(response);
 
         const store = makeStore();
-        await store.dispatch(getTeamOrders());
+        await store.dispatch(getAdminTeamOrders(team_code));
 
         await waitFor(() => {
-            expect(mockedGet).toHaveBeenCalledWith("/api/event/teams/team/orders/");
-            expect(pendingOrderSelectors.selectAll(store.getState())).toEqual(
+            expect(mockedGet).toHaveBeenCalledWith("/api/hardware/orders/", {
+                team_code,
+            });
+            expect(pendingOrdersSelector(store.getState())).toEqual(
                 mockPendingOrdersInTable
             );
             expect(checkedOutOrdersSelector(store.getState())).toEqual(
@@ -129,11 +132,33 @@ describe("getTeamOrders Thunk", () => {
         mockedGet.mockRejectedValue(failureResponse);
 
         const store = makeStore();
-        await store.dispatch(getTeamOrders());
+        await store.dispatch(getAdminTeamOrders(mockTeam.team_code));
 
-        expect(store.getState()[orderReducerName]).toHaveProperty(
+        expect(store.getState()[teamOrderReducerName]).toHaveProperty(
             "error",
             failureResponse.response.message
+        );
+    });
+
+    it("Dispatches snackbar on api failure", async () => {
+        const failureResponse = {
+            response: {
+                status: 500,
+                message: "There was a problem loading orders",
+            },
+        };
+
+        mockedGet.mockRejectedValue(failureResponse);
+
+        const store = mockStore(mockState);
+        await store.dispatch(getAdminTeamOrders(mockTeam.team_code));
+        const actions = store.getActions();
+
+        expect(actions).toContainEqual(
+            displaySnackbar({
+                message: "There was a problem loading orders",
+                options: { variant: "error" },
+            })
         );
     });
 });

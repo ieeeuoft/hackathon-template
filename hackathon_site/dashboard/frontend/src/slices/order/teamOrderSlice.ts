@@ -26,10 +26,11 @@ const extraState: TeamExtraState = {
     returnedOrders: [],
 };
 
-const teamOrderAdapter = createEntityAdapter<OrderInTable>();
+const teamOrders = createEntityAdapter<OrderInTable>();
 
 export const teamOrderReducerName = "teamOrder";
-export const initialState = teamOrderAdapter.getInitialState(extraState);
+export const initialState = teamOrders.getInitialState(extraState);
+export type TeamOrderState = typeof initialState;
 
 interface RejectValue {
     status: number;
@@ -54,7 +55,7 @@ export const getAdminTeamOrders = createAsyncThunk<
         } catch (e: any) {
             dispatch(
                 displaySnackbar({
-                    message: e.message,
+                    message: e.response.message,
                     options: {
                         variant: "error",
                     },
@@ -87,7 +88,7 @@ const teamOrderSlice = createSlice({
                 returnedOrders,
                 hardwareIdsToFetch,
             } = teamOrderListSerialization(payload.results);
-            teamOrderAdapter.setAll(state, [...pendingOrders, ...checkedOutOrders]);
+            teamOrders.setAll(state, [...pendingOrders, ...checkedOutOrders]);
             state.returnedOrders = returnedOrders;
             state.hardwareIdsToFetch = hardwareIdsToFetch;
         });
@@ -106,8 +107,7 @@ export default reducer;
 // Selectors
 export const teamOrderSliceSelector = (state: RootState) => state[teamOrderReducerName];
 
-export const teamOrderAdapterSelectors =
-    teamOrderAdapter.getSelectors(teamOrderSliceSelector);
+export const teamOrderSelectors = teamOrders.getSelectors(teamOrderSliceSelector);
 
 export const isLoadingSelector = createSelector(
     [teamOrderSliceSelector],
@@ -124,19 +124,21 @@ export const hardwareInOrdersSelector = createSelector(
     (teamOrderSlice) => teamOrderSlice.hardwareIdsToFetch
 );
 
-export const pendingOrderSelectors = createSelector(
-    [teamOrderAdapterSelectors.selectAll, teamOrderSliceSelector],
-    (orders) => {
+export const pendingOrdersSelector = createSelector(
+    [teamOrderSelectors.selectAll, teamOrderSliceSelector],
+    (orders) =>
         orders.filter(
             (order) =>
                 order.status === "Submitted" || order.status == "Ready for Pickup"
-        );
-    }
+        )
 );
 
-export const checkedOutOrderSelectors = createSelector(
-    [teamOrderAdapterSelectors.selectAll, teamOrderSliceSelector],
-    (orders) => {
-        orders.filter((order) => order.status === "Picked Up");
-    }
+export const checkedOutOrdersSelector = createSelector(
+    [teamOrderSelectors.selectAll, teamOrderSliceSelector],
+    (orders) => orders.filter((order) => order.status === "Picked Up")
+);
+
+export const returnedOrdersSelector = createSelector(
+    [teamOrderSliceSelector],
+    (teamOrderSlice) => teamOrderSlice.returnedOrders
 );
