@@ -29,6 +29,8 @@ import {
 } from "slices/hardware/hardwareSlice";
 import { getCategories } from "slices/hardware/categorySlice";
 import { Grid } from "@material-ui/core";
+import { userTypeSelector } from "slices/users/userSlice";
+import DateRestrictionAlert from "components/general/DateRestrictionAlert/DateRestrictionAlert";
 
 const Inventory = () => {
     const dispatch = useDispatch();
@@ -36,6 +38,7 @@ const Inventory = () => {
     const count = useSelector(hardwareCountSelector);
     const isMoreLoading = useSelector(isMoreLoadingSelector);
     const isLoading = useSelector(isLoadingSelector);
+    const userType = useSelector(userTypeSelector);
 
     const [mobileOpen, setMobileOpen] = React.useState(false);
     const toggleFilter = () => {
@@ -81,6 +84,8 @@ const Inventory = () => {
                 </Drawer>
 
                 <Typography variant="h1">Hardware Inventory</Typography>
+
+                {userType === "participant" && <DateRestrictionAlert />}
 
                 <Grid container spacing={2} className={styles.inventoryBody}>
                     <Grid item md={3} xl={2}>
