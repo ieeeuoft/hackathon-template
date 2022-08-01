@@ -133,11 +133,20 @@ export const TeamPendingOrderTable = () => {
                                                             data-testid={`checkall-${pendingOrder.id}`}
                                                             onChange={(e) => {
                                                                 if (e.target.checked) {
-                                                                    pendingOrder.hardwareInTableRow.map(
+                                                                    pendingOrder.hardwareInTableRow.forEach(
                                                                         (row) => {
                                                                             props.setFieldValue(
                                                                                 `${row.id}-checkbox`,
                                                                                 true
+                                                                            );
+                                                                        }
+                                                                    );
+                                                                } else {
+                                                                    pendingOrder.hardwareInTableRow.forEach(
+                                                                        (row) => {
+                                                                            props.setFieldValue(
+                                                                                `${row.id}-checkbox`,
+                                                                                false
                                                                             );
                                                                         }
                                                                     );

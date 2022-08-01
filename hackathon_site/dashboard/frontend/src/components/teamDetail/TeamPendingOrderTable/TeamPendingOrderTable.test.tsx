@@ -1,5 +1,13 @@
 import React from "react";
-import { getByTestId, render, screen, within, fireEvent } from "testing/utils";
+import {
+    getByTestId,
+    render,
+    screen,
+    within,
+    fireEvent,
+    act,
+    waitFor,
+} from "testing/utils";
 import {
     mockCartItems,
     mockHardware,
@@ -40,7 +48,7 @@ describe("team pending order table", () => {
         });
     });
 
-    test("All button changes the value correctly", () => {
+    test("All button changes the dropdown to maximum value", () => {
         const { getByTestId, getByRole } = render(<TeamPendingOrderTable />);
 
         mockPendingOrdersInTable.forEach((currentOrder) => {
@@ -76,27 +84,43 @@ describe("team pending order table", () => {
             });
         });
     });
-
-    test("Check all button works correctly", () => {
-        const { getByTestId, getByRole } = render(<TeamPendingOrderTable />);
-        mockPendingOrdersInTable.forEach((currentOrder) => {
-            const checkallBox = getByTestId(`checkall-${currentOrder.id}`);
-
-            fireEvent.click(checkallBox);
-            fireEvent.mouseDown(checkallBox);
-
-            currentOrder.hardwareInTableRow.forEach((currentRow) => {
-                console.log(
-                    within(getByTestId(`table-${currentOrder.id}-${currentRow.id}`))
-                        .getByTestId(`${currentRow.id}-checkbox`)
-                        .classList.toString()
-                );
-                expect(
-                    within(getByTestId(`table-${currentOrder.id}-${currentRow.id}`))
-                        .getByTestId(`${currentRow.id}-checkbox`)
-                        .classList.contains("Mui-checked")
-                ).toBe(true);
+    test("Check all button checks and unchecks every row", async () => {
+        const { getByTestId } = render(<TeamPendingOrderTable />);
+        const currentOrder = mockPendingOrdersInTable[0];
+        const checkallBox = getByTestId(`checkall-${currentOrder.id}`).querySelector(
+            'input[type="checkbox"]'
+        );
+        if (checkallBox) {
+            await act(async () => {
+                fireEvent.click(checkallBox);
+                await waitFor(() => {
+                    expect(checkallBox).toBeChecked();
+                    currentOrder.hardwareInTableRow.forEach((currentRow) => {
+                        expect(
+                            within(
+                                getByTestId(`table-${currentOrder.id}-${currentRow.id}`)
+                            )
+                                .getByTestId(`${currentRow.id}-checkbox`)
+                                .querySelector('input[type="checkbox"]')
+                        ).toBeChecked();
+                    });
+                });
             });
-        });
+            await act(async () => {
+                fireEvent.click(checkallBox);
+                await waitFor(() => {
+                    expect(checkallBox).not.toBeChecked();
+                    currentOrder.hardwareInTableRow.forEach((currentRow) => {
+                        expect(
+                            within(
+                                getByTestId(`table-${currentOrder.id}-${currentRow.id}`)
+                            )
+                                .getByTestId(`${currentRow.id}-checkbox`)
+                                .querySelector('input[type="checkbox"]')
+                        ).not.toBeChecked();
+                    });
+                });
+            });
+        }
     });
 });
