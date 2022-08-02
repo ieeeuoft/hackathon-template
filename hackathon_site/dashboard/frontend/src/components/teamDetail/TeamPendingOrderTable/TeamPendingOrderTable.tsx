@@ -132,25 +132,15 @@ export const TeamPendingOrderTable = () => {
                                                             color="primary"
                                                             data-testid={`checkall-${pendingOrder.id}`}
                                                             onChange={(e) => {
-                                                                if (e.target.checked) {
-                                                                    pendingOrder.hardwareInTableRow.forEach(
-                                                                        (row) => {
-                                                                            props.setFieldValue(
-                                                                                `${row.id}-checkbox`,
-                                                                                true
-                                                                            );
-                                                                        }
-                                                                    );
-                                                                } else {
-                                                                    pendingOrder.hardwareInTableRow.forEach(
-                                                                        (row) => {
-                                                                            props.setFieldValue(
-                                                                                `${row.id}-checkbox`,
-                                                                                false
-                                                                            );
-                                                                        }
-                                                                    );
-                                                                }
+                                                                pendingOrder.hardwareInTableRow.forEach(
+                                                                    (row) => {
+                                                                        props.setFieldValue(
+                                                                            `${row.id}-checkbox`,
+                                                                            e.target
+                                                                                .checked
+                                                                        );
+                                                                    }
+                                                                );
                                                             }}
                                                         />
                                                     </TableCell>
