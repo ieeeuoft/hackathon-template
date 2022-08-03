@@ -80,4 +80,33 @@
             }
         }
     }
+
+    &FilterDrawer {
+        width: 280px;
+        flex-shrink: 0;
+        z-index: 1;
+        // padding: 12px;
+
+        &Top {
+            width: 100%;
+            @include flexPosition($jusCon: space-between, $alIte: center);
+
+            background-color: color(light1);
+            padding: 8px 15px;
+        }
+
+        svg {
+            fill: color(grey);
+        }
+
+        @include responsive(sm-down) {
+            padding: 4px 15px;
+        }
+
+        > h2 {
+            @include responsive(md-down) {
+                font-size: size(md) !important;
+            }
+        }
+    }
 }

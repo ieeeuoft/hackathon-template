@@ -21,13 +21,13 @@ describe("Error Box displays correctly with the right information", () => {
         mockErrorList.forEach((error) => getByText(new RegExp(error, "i")));
     });
 
-    it("Shows only error text", () => {
-        const { getByText, queryByText, queryByTestId } = render(
+    it("Shows only error text and title", () => {
+        const { getByText, queryByTestId } = render(
             <AlertBox error={mockSingleError} title={mockErrorTitle} />
         );
 
         expect(queryByTestId("alert-error-list")).not.toBeInTheDocument();
-        expect(queryByText(new RegExp(mockErrorTitle, "i"))).not.toBeInTheDocument();
+        expect(getByText(new RegExp(mockErrorTitle, "i"))).toBeInTheDocument();
         getByText(new RegExp(mockSingleError, "i"));
     });
 
