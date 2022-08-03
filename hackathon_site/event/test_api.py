@@ -701,7 +701,7 @@ class EventTeamDetailViewTestCase(SetupUserMixin, APITestCase):
             content_type__app_label="event", codename="view_team"
         )
         super().setUp()
-        self.view = reverse("api:event:team-detail", args=[self.team.pk])
+        self.view = reverse("api:event:team_code", args=[self.team.pk])
 
     def test_team_get_not_login(self):
         response = self.client.get(self.view)
