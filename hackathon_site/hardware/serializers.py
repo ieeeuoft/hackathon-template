@@ -3,7 +3,7 @@ import functools
 from datetime import datetime
 
 from django.db.models import Count, Q
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.conf import settings
 from rest_framework import serializers
 
@@ -360,6 +360,11 @@ class OrderItemReturnSerializer(serializers.Serializer):
 
     def validate(self, data):
         # get array of hardware and order id from data parameter
+        hardware_array = data["hardware"]
+        if len(hardware_array) < 1:
+            raise ValidationError(
+                "Hardware array size must be greater or equal to one."
+            )
         # TODO: make sure hardware array is >= 1 item, raise ValidationError
         return data
 
@@ -375,23 +380,63 @@ class OrderItemReturnSerializer(serializers.Serializer):
         order = validated_data["order"]
         order_items_in_order = OrderItem.objects.filter(order=order)
 
+        response_data = {
+            "order_id": order.id,
+            "checked_out_items": [],
+            "returned_items": [],
+            "errors": [],
+        }
+
         for hardware_item in hardware:
             order_items_with_hardware = list(
                 order_items_in_order.filter(
                     hardware=hardware_item["id"], part_returned_health__isnull=True
                 )
             )
-            for quantity_idx in range(hardware_item["quantity"]):
-                order_items_with_hardware[
-                    quantity_idx
-                ].part_returned_health = hardware_item["part_returned_health"]
-                order_items_with_hardware[quantity_idx].save()
 
-        response_data = {
-            "order_id": order.id,
-            "checked_out_items": [],
-            "returned_items": [],
-        }
+            if len(order_items_with_hardware) == 0 and hardware_item["quantity"] > 1:
+                response_data["errors"].append(
+                    {
+                        "hardware_id": hardware_item.id,
+                        "message": "There are 0 order items for this hardware. No hardware items were returned",
+                    }
+                )
+                # continue
+
+            max_available_quantity = hardware_item["quantity"]
+            if len(order_items_with_hardware) < hardware_item["quantity"]:
+                max_available_quantity = len(order_items_with_hardware)
+                response_data["errors"].append(
+                    {
+                        "hardware_id": hardware_item["id"],
+                        "message": "Requested quantity was {} higher than available. {} was returned ".format(
+                            (
+                                hardware_item["quantity"]
+                                - len(order_items_with_hardware)
+                            ),
+                            max_available_quantity,
+                        ),
+                    }
+                )
+
+            for quantity_idx in range(max_available_quantity):
+                valid_status = False
+                for status in hardware_item["HEALTH_CHOICES"]:
+                    if status == hardware_item["part_returned_health"]:
+                        valid_status = True
+                if valid_status == False:
+                    response_data["errors"].append(
+                        {
+                            "hardware_id": hardware_item["id"],
+                            "message": "There is no valid status selected",
+                        }
+                    )
+                else:
+                    # continue
+                    order_items_with_hardware[
+                        quantity_idx
+                    ].part_returned_health = hardware_item["part_returned_health"]
+                    order_items_with_hardware[quantity_idx].save()
 
         currently_checked_out_items = OrderItem.objects.filter(order=order)
         for order_item in currently_checked_out_items:
@@ -410,3 +455,4 @@ class OrderItemReturnResponseSerializer(serializers.Serializer):
     )
     checked_out_items = OrderItemInOrderSerializer(many=True, required=True)
     returned_items = OrderItemInOrderSerializer(many=True, required=True)
+    errors = OrderItemReturnSerializer(many=True, required=True)

@@ -1006,7 +1006,6 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_user_has_no_profile(self):
-
         self._login()
         request_data = {"hardware": []}
         response = self.client.post(self.view, request_data)
@@ -1853,3 +1852,72 @@ class OrderListPatchTestCase(SetupUserMixin, APITestCase):
             response.json(), {"status": ["Cannot change the status for this order."]},
         )
         self.assertFalse(request_data["status"] == Order.objects.get(id=self.pk).status)
+
+
+class OrderItemReturnViewTestCase(SetupUserMixin, APITestCase):
+    def setUp(self):
+        super().setUp()
+        self.team = Team.objects.create()
+        self.order = Order.objects.create(
+            status="Cart",
+            team=self.team,
+            request={"hardware": [{"id": 1, "quantity": 2}]},
+        )
+        self.permissions = Permission.objects.filter(
+            content_type__app_label="hardware", codename="change_order"
+        )
+
+        self.hardware = Hardware.objects.create(
+            name="name",
+            model_number="model",
+            manufacturer="manufacturer",
+            datasheet="/datasheet/location/",
+            notes="notes",
+            quantity_available=4,
+            max_per_team=3,
+            picture="/picture/location",
+        )
+
+        self.order_item = OrderItem.objects.create(
+            order=self.order, hardware=self.hardware,
+        )
+
+        self.request_data = {
+            "hardware": [{"id": 1, "quantity": 1, "part_returned_health": "Healthy"}],
+            "order": self.order_item.id,
+        }
+
+        self.view = reverse("api:hardware:order-return")
+
+    def test_user_not_logged_in(self):
+        response = self.client.post(self.view, self.request_data)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_incorrect_permissions(self):
+        self._login()
+        response = self.client.post(self.view, self.request_data)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_successful_status_change(self):
+        self._login(self.permissions)
+        response = self.client.post(self.view, self.request_data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            self.request_data["hardware"][0]["part_returned_health"],
+            OrderItem.objects.get(id=self.order_item.id).part_returned_health,
+        )
+
+    def test_successful_post(self):
+        self._login()
+        response = self.client.post(self.view, self.request_data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        similar_attributes = [
+            "state",
+            "time_occurred",
+            "description",
+            "order_item",
+        ]
+        final_response = response.json()
+        del final_response["id"]
+        for attribute in similar_attributes:
+            self.assertEqual(final_response[attribute], self.request_data[attribute])
