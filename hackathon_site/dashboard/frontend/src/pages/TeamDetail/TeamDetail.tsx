@@ -7,8 +7,11 @@ import { RouteComponentProps } from "react-router-dom";
 import Header from "components/general/Header/Header";
 import { Grid } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
+
 import { useDispatch } from "react-redux";
 import { getTeamInfoData } from "slices/event/teamDetailSlice";
+
+import TeamPendingOrderTable from "components/teamDetail/TeamPendingOrderTable/TeamPendingOrderTable";
 
 export interface PageParams {
     id: string;
@@ -44,6 +47,9 @@ const TeamDetail = ({ match }: RouteComponentProps<PageParams>) => {
                 >
                     <TeamInfoTable />
                     <TeamActionTable />
+                </Grid>
+                <Grid item container direction="column" spacing={2}>
+                    <TeamPendingOrderTable />
                 </Grid>
             </Grid>
         </>
