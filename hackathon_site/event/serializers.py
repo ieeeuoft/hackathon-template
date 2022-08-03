@@ -93,8 +93,8 @@ class CurrentProfileSerializer(ProfileSerializer):
         response_data = {
             "attended": True,
             "id_provided": False,
-            "acknowledge_rules": validated_data.pop("acknowledge_rules", False),
-            "e_signature": validated_data.pop("e_signature", "NULL"),
+            "acknowledge_rules": validated_data.pop("acknowledge_rules"),
+            "e_signature": validated_data.pop("e_signature"),
         }
 
         profile = Profile.objects.create(
