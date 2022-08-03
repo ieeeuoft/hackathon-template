@@ -542,18 +542,12 @@ class CreateProfileViewTestCase(SetupUserMixin, APITestCase):
         }
         self.view = reverse("api:event:current-profile")
 
-    def _build_view(self, acknowledge_rules, e_signature):
-        return reverse("api:event:current-profile", kwargs=self.request_body)
-
     def test_user_not_logged_in(self):
         # Test that permissions work
         response = self.client.post(self.view, self.request_body)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
-    def test_user_can_has_profile(self):
-        # Test that the response is correct when creating profile
-        # When posting, the user is assumed to be attending the hackathon
-        # The team should be increased by 1 since, the profile will be deleted
+    def test_user_can_have_profile(self):
 
         self.profile.delete()
         self._login()
@@ -563,18 +557,9 @@ class CreateProfileViewTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(self.expected_response, data)
 
-    def test_user_can_actually_has_profile(self):
-        # Queries the database to test that the profile has actually been created properly
-        # When posting, the user is assumed to be attending the hackathon
-        # The team should be increased by 1 since, the profile will be deleted
-        self.profile.delete()
-        self._login()
-        response = self.client.post(self.view, self.request_body)
-        data = response.json()
-
         database_profile = Profile.objects.get(user=self.user)
-
         self.assertIsNotNone(database_profile)
+
 
     def test_user_already_has_profile(self):
         # "The bad path". The user attempts to create a new profile,
