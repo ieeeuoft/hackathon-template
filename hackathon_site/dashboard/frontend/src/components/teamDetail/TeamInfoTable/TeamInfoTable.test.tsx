@@ -18,49 +18,26 @@ describe("Team info table", () => {
         const teamInfoApiResponse = makeMockApiResponse(mockTeam);
 
         when(mockedGet)
-            .calledWith("/api/event/teams/1/")
+            .calledWith("/api/event/teams/2/")
             .mockResolvedValue(teamInfoApiResponse);
 
-        const { getByText, queryByTestId, getAllByRole } = render(<TeamInfoTable />);
+        const { getByText, queryAllByTestId, queryByTestId, getAllByRole } = render(
+            <TeamInfoTable />
+        );
 
-        const firstNames = mockTeam.profiles.map((user) => {
-            return user.user.first_name;
-        });
-        const lastNames = mockTeam.profiles.map((user) => {
-            return user.user.last_name;
-        });
-        const emails = mockTeam.profiles.map((user) => {
-            return user.user.email;
-        });
-        let numIdsProvided = 0;
-        mockTeam.profiles.forEach((user) => {
-            if (user.id_provided) numIdsProvided++;
-        });
+        const checkboxes = queryAllByTestId("checkbox");
 
-        await waitFor(() => {
-            expect(queryByTestId("team-info-linear-progress")).toBeInTheDocument();
+        mockTeam.profiles.forEach((user, index) => {
+            expect(getByText(user.user.first_name)).toBeInTheDocument();
+            expect(getByText(user.user.last_name)).toBeInTheDocument();
+            expect(getByText(user.user.email)).toBeInTheDocument();
+            if (user.id_provided) {
+                expect(
+                    checkboxes[index].classList.contains("Mui-checked")
+                ).toBeTruthy();
+            } else {
+                expect(checkboxes[index].classList.contains("Mui-checked")).toBeFalsy();
+            }
         });
-
-        await waitFor(() => {
-            expect(mockedGet).toHaveBeenCalledWith("/api/event/teams/1/");
-        });
-
-        let numChecked = 0;
-        const checkboxesActual = getAllByRole("checkbox");
-        checkboxesActual.forEach((element) => {
-            if (element.classList.contains("Mui-checked")) numChecked++;
-        });
-
-        expect(getByText("Team info")).toBeInTheDocument();
-        firstNames.forEach((firstName) => {
-            expect(getByText(firstName)).toBeInTheDocument;
-        });
-        lastNames.forEach((lastName) => {
-            expect(getByText(lastName)).toBeInTheDocument;
-        });
-        emails.forEach((email) => {
-            expect(getByText(email)).toBeInTheDocument;
-        });
-        expect(numIdsProvided).toEqual(numChecked);
     });
 });

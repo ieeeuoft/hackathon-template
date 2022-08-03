@@ -13,11 +13,18 @@ import { get } from "api/api";
 import { makeMockApiResponse, waitFor } from "testing/utils";
 import { mockTeam } from "testing/mockData";
 import { useSelector } from "react-redux";
+import { displaySnackbar } from "slices/ui/uiSlice";
+import thunk, { ThunkDispatch } from "redux-thunk";
+import { AnyAction } from "redux";
+import configureStore from "redux-mock-store";
 
 jest.mock("api/api", () => ({
     ...jest.requireActual("api/api"),
     get: jest.fn(),
 }));
+
+type DispatchExts = ThunkDispatch<RootState, void, AnyAction>;
+const mockStore = configureStore<RootState, DispatchExts>([thunk]);
 
 const mockedGet = get as jest.MockedFunction<typeof get>;
 
@@ -72,15 +79,28 @@ describe("getTeamInfoData thunk", () => {
     });
 
     it("Updates error status on API failure", async () => {
-        const mockResponse = makeMockApiResponse(mockTeam);
-        mockedGet.mockRejectedValueOnce(mockResponse);
+        // TODO: seperate test for error selector using makeStore() instead of mockStore(), everything else same
+        const failureResponse = {
+            response: {
+                status: 404,
+                message: "Failed to retrieve team info: Error 404",
+            },
+        };
+        mockedGet.mockRejectedValueOnce(failureResponse);
 
-        const store = makeStore();
-        await store.dispatch(getTeamInfoData("1"));
+        const store = mockStore(mockState);
+        await store.dispatch(getTeamInfoData("abc"));
 
-        await waitFor(() => {
-            expect(mockedGet).toHaveBeenCalledWith("/api/event/teams/1/");
-            expect(errorSelector(store.getState())).toBeTruthy();
-        });
+        expect(mockedGet).toHaveBeenCalledWith("/api/event/teams/abc/");
+        expect(errorSelector(store.getState())).toBeTruthy();
+
+        const actions = store.getActions();
+
+        expect(actions).toContainEqual(
+            displaySnackbar({
+                message: "Failed to retrieve team info: Error 404",
+                options: { variant: "error" },
+            })
+        );
     });
 });

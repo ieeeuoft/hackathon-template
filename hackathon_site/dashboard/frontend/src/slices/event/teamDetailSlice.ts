@@ -7,18 +7,18 @@ import {
 import { AppDispatch, RootState } from "slices/store";
 import { displaySnackbar } from "slices/ui/uiSlice";
 import { get } from "api/api";
-import { Team } from "api/types";
+import { ProfileWithUser, Team, User, UserWithoutProfile } from "api/types";
 
-const teamDetailAdapter = createEntityAdapter();
-
-const simpleState = {
+const extraState = {
     isLoading: false,
     error: null,
 };
 
+const teamDetailAdapter = createEntityAdapter<ProfileWithUser>();
+
 export const teamDetailReducerName = "teamDetail";
 
-export const initialState = teamDetailAdapter.getInitialState(simpleState);
+export const initialState = teamDetailAdapter.getInitialState(extraState);
 
 interface RejectValue {
     status: number;
@@ -38,7 +38,8 @@ export const getTeamInfoData = createAsyncThunk<
         } catch (e: any) {
             dispatch(
                 displaySnackbar({
-                    message: `Failed to retrieve team info: Error ${e.response.status}`,
+                    // TODO: if it's not found, display prettier error, else display generic message
+                    message: `Failed to retrieve team info`,
                     options: {
                         variant: "error",
                     },
@@ -46,7 +47,8 @@ export const getTeamInfoData = createAsyncThunk<
             );
             return rejectWithValue({
                 status: e.response.status,
-                message: e.response.data,
+                // TODO: if it's not found, display prettier error, else display generic message
+                message: e.response.detail,
             });
         }
     }
@@ -58,21 +60,18 @@ const teamDetailSlice = createSlice({
     reducers: {},
     extraReducers: (builder) => {
         builder.addCase(getTeamInfoData.pending, (state) => {
-            // while the api is being called
             state.isLoading = true;
             state.error = null;
         });
         builder.addCase(getTeamInfoData.fulfilled, (state, { payload }) => {
-            // when the api call completes
             state.isLoading = false;
             state.error = null;
 
             teamDetailAdapter.setMany(state, payload.profiles);
         });
         builder.addCase(getTeamInfoData.rejected, (state, { payload }) => {
-            // when the api call fails
             state.isLoading = false;
-            state.error = payload?.message ?? "something went wrong";
+            state.error = payload?.message ?? "Something went wrong";
         });
     },
 });

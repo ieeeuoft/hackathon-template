@@ -6,6 +6,8 @@ import { mockTeamMultiple } from "testing/mockData";
 import TeamDetail, { PageParams } from "pages/TeamDetail/TeamDetail";
 import { RouteComponentProps } from "react-router-dom";
 
+// TODO: test that /teams/{id} api was called once
+
 test("renders without crashing", () => {
     const teamDetailProps = {
         match: {

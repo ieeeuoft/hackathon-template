@@ -20,7 +20,7 @@ import {
 
 export const TeamInfoTable = () => {
     const isTeamInfoLoading = useSelector(isLoadingSelector);
-    const teamInfo = useSelector(teamDetailAdapterSelector.selectAll) as any[];
+    const teamInfo = useSelector(teamDetailAdapterSelector.selectAll);
 
     return (
         <Grid container direction="column" spacing={1} item md={6} xs={12}>
@@ -52,7 +52,7 @@ export const TeamInfoTable = () => {
                                         <Checkbox
                                             checked={row.id_provided}
                                             color="primary"
-                                            role="checkbox"
+                                            data-testid="checkbox"
                                         />
                                     </TableCell>
                                 </TableRow>
