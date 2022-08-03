@@ -24,6 +24,7 @@ class HardwareSerializer(serializers.ModelSerializer):
             "notes",
             "max_per_team",
             "picture",
+            "image_url",
             "categories",
             "quantity_remaining",
         )

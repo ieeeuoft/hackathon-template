@@ -276,6 +276,7 @@ class HardwareDetailViewTestCase(SetupUserMixin, APITestCase):
             "notes": None,
             "max_per_team": 1,
             "picture": "http://testserver/media/picture/location",
+            "image_url": None,
         }
 
         response = self.client.get(self.view)

@@ -56,6 +56,7 @@ class Hardware(models.Model):
     notes = models.TextField(null=True)
     max_per_team = models.IntegerField(null=True)
     picture = models.ImageField(upload_to="uploads/hardware/pictures/", null=False)
+    image_url = models.CharField(max_length=500, null=True)
     categories = models.ManyToManyField(Category)
 
     created_at = models.DateTimeField(auto_now_add=True, null=False)
