@@ -90,11 +90,19 @@ class CurrentProfileSerializer(ProfileSerializer):
         if hasattr(self.context["request"].user, "profile"):
             raise serializers.ValidationError("User already has profile")
 
+        acknowledge_rules = validated_data.pop("acknowledge_rules", None)
+        e_signature = validated_data.pop("e_signature", None)
+
+        if not acknowledge_rules or not e_signature:
+            raise serializers.ValidationError(
+                "Must have acknowledge_rules and e_signature"
+            )
+
         response_data = {
             "attended": True,
             "id_provided": False,
-            "acknowledge_rules": validated_data.pop("acknowledge_rules"),
-            "e_signature": validated_data.pop("e_signature"),
+            "acknowledge_rules": acknowledge_rules,
+            "e_signature": e_signature,
         }
 
         profile = Profile.objects.create(
@@ -129,6 +137,7 @@ class TeamSerializer(serializers.ModelSerializer):
 
 class ProfileCreateResponseSerializer(ProfileSerializer):
     team = serializers.CharField()
+    id = serializers.IntegerField()
 
 
 class UserReviewStatusSerializer(serializers.ModelSerializer):

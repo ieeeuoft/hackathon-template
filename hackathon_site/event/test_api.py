@@ -538,6 +538,7 @@ class CreateProfileViewTestCase(SetupUserMixin, APITestCase):
             "id_provided": False,
             "acknowledge_rules": True,
             "e_signature": "user signature",
+            "id": self.profile.id + 1,
         }
         self.view = reverse("api:event:current-profile")
 
