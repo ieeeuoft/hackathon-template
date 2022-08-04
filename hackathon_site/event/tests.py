@@ -798,11 +798,13 @@ class CurrentProfileSerializerTestCase(TestCase):
             first_name="Foo",
             last_name="Bar",
         )
+
     def test_readonly_serializer_fields(self):
         self.assertEqual(
             CurrentProfileSerializer.Meta.read_only_fields,
             ("id", "team", "id_provided", "attended"),
         )
+
     def test_serializer(self):
 
         profile = Profile.objects.create(user=self.user)
