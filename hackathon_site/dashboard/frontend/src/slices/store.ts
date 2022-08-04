@@ -33,7 +33,7 @@ const reducers = {
     [orderReducerName]: orderReducer,
     [userReducerName]: userReducer,
     [uiReducerName]: uiReducer,
-    [teamAdminReducerName]: teamAdminReducer, // Eric Changes
+    [teamAdminReducerName]: teamAdminReducer,
     router: connectRouter(history),
 };
 

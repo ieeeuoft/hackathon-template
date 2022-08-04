@@ -13,6 +13,8 @@ jest.mock("api/api", () => ({
 }));
 const mockedGet = get as jest.MockedFunction<typeof get>;
 
+const responseTime = 24;
+
 const teamsUri = "/api/event/teams/";
 
 describe("Teams Page", () => {
@@ -20,7 +22,7 @@ describe("Teams Page", () => {
         const teamsApiResponse = makeMockApiListResponse(mockTeams);
 
         when(mockedGet)
-            .calledWith(teamsUri, { limit: 24 })
+            .calledWith(teamsUri, { limit: responseTime })
             .mockResolvedValue(teamsApiResponse);
 
         const { getByText, queryByTestId } = render(<Teams />);
@@ -36,13 +38,17 @@ describe("Teams Page", () => {
         });
 
         await waitFor(() => {
-            expect(get).toHaveBeenNthCalledWith(1, teamsUri, { limit: 24 });
+            expect(mockedGet).toHaveBeenCalledWith(teamsUri, {
+                limit: responseTime,
+            });
 
             teamCodes.forEach((teamCode) => {
                 expect(getByText("Team " + teamCode)).toBeInTheDocument();
             });
 
-            expect(mockedGet).toHaveBeenCalledWith("/api/event/teams/", { limit: 24 });
+            expect(mockedGet).toHaveBeenCalledWith(teamsUri, {
+                limit: responseTime,
+            });
 
             allTeamMembers.forEach((members) => {
                 members.forEach((member) => {

@@ -1,4 +1,4 @@
-import store, { makeStore, RootState } from "../store";
+import store, { makeStore, RootState } from "slices/store";
 import {
     teamAdminReducerName,
     initialState,
@@ -6,10 +6,10 @@ import {
     isLoadingSelector,
     getAllTeams,
     teamAdminSelectors,
-} from "./teamAdminSlice";
-import { makeMockApiListResponse, waitFor } from "../../testing/utils";
-import { mockTeams } from "../../testing/mockData";
-import { get } from "../../api/api";
+} from "slices/event/teamAdminSlice";
+import { makeMockApiListResponse, waitFor } from "testing/utils";
+import { mockTeams } from "testing/mockData";
+import { get } from "api/api";
 
 jest.mock("api/api", () => ({
     ...jest.requireActual("api/api"),
@@ -23,7 +23,7 @@ const mockState: RootState = {
 };
 
 describe("Selectors", () => {
-    test("teamAdminSliceSelector returns the isLoading state", () => {
+    test("teamAdminSliceSelector returns teamAdminSlice", () => {
         expect(teamAdminSliceSelector(mockState)).toEqual(
             mockState[teamAdminReducerName]
         );

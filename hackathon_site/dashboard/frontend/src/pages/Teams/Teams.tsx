@@ -18,7 +18,6 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 const Teams = () => {
     const dispatch = useDispatch();
     const teamsList = useSelector(teamAdminSelectors.selectAll);
-
     const isAdminTeamsLoading = useSelector(isLoadingSelector);
 
     useEffect(() => {

@@ -9,6 +9,7 @@ import { APIListResponse, Team } from "api/types";
 import { AppDispatch, RootState } from "slices/store";
 import { displaySnackbar } from "slices/ui/uiSlice";
 
+// TODO
 interface TeamAdminExtraState {
     errorState: string | null;
     isMoreLoading: boolean;
@@ -26,6 +27,8 @@ const extraState: TeamAdminExtraState = {
     isMoreLoading: false,
 };
 
+const responseTime = 24;
+
 export const teamAdminReducerName = "adminTeam";
 const teamAdminAdapter = createEntityAdapter<Team>();
 export const initialState = teamAdminAdapter.getInitialState(extraState);
@@ -39,9 +42,8 @@ export const getAllTeams = createAsyncThunk<
 >(`${teamAdminReducerName}/getAllTeams`, async (_, { dispatch, rejectWithValue }) => {
     try {
         const response = await get<APIListResponse<Team>>("/api/event/teams/", {
-            limit: 24,
+            limit: responseTime,
         });
-        console.log(response.data);
         return response.data;
     } catch (e: any) {
         dispatch(
@@ -74,7 +76,7 @@ const teamAdminSlice = createSlice({
         });
 
         builder.addCase(getAllTeams.rejected, (state, { payload }) => {
-            state.isMoreLoading = false;
+            state.isLoading = false;
             state.errorState = payload?.message || "Something went wrong";
         });
     },
