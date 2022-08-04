@@ -65,8 +65,6 @@ class ProfileInTeamSerializer(serializers.ModelSerializer):
 
 
 class CurrentProfileSerializer(ProfileSerializer):
-    team = serializers.CharField()
-
     class Meta(ProfileSerializer.Meta):
         read_only_fields = (
             "id",
