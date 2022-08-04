@@ -560,6 +560,7 @@ class CreateProfileViewTestCase(SetupUserMixin, APITestCase):
 
         database_profile = Profile.objects.get(user=self.user)
         self.assertIsNotNone(database_profile)
+        self.assertEqual(self.user, database_profile.user)
 
     def test_not_including_required_fields(self):
         self.profile.delete()
