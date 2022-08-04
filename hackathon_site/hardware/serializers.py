@@ -224,15 +224,15 @@ class OrderCreateSerializer(serializers.Serializer):
             Hardware.objects.filter(
                 id__in=[hardware.id for hardware in requested_hardware.keys()],
             )
-                .all()
-                .prefetch_related("categories", "order_items")
+            .all()
+            .prefetch_related("categories", "order_items")
         )
         team_unreturned_orders = hardware_query.annotate(
             past_order_count=Count(
                 "order_items",
                 filter=Q(order_items__part_returned_health__isnull=True)
-                       & ~Q(order_items__order__status="Cancelled")
-                       & Q(order_items__order__team=user_profile.team),
+                & ~Q(order_items__order__status="Cancelled")
+                & Q(order_items__order__team=user_profile.team),
                 distinct=True,
             )
         )
@@ -249,9 +249,9 @@ class OrderCreateSerializer(serializers.Serializer):
                 )
             for category in hardware.categories.all():
                 category_counts[category] = (
-                        category_counts.get(category, 0)
-                        + team_hardware_count
-                        + requested_quantity
+                    category_counts.get(category, 0)
+                    + team_hardware_count
+                    + requested_quantity
                 )
         for (category, count) in category_counts.items():
             if count > category.max_per_team:
@@ -362,9 +362,7 @@ class OrderItemReturnSerializer(serializers.Serializer):
         # get array of hardware and order id from data parameter
         hardware_array = data["hardware"]
         if len(hardware_array) < 1:
-            raise ValidationError(
-                "No hardware specified in return request"
-            )
+            raise ValidationError("No hardware specified in return request")
         # TODO: make sure hardware array is >= 1 item, raise ValidationError
         return data
 
@@ -398,8 +396,7 @@ class OrderItemReturnSerializer(serializers.Serializer):
                 response_data["errors"].append(
                     {
                         "hardware_id": hardware_item["id"],
-                        "message":
-                            "There are no checked out items for this hardware, all have already been returned.",
+                        "message": "There are no checked out items for this hardware, all have already been returned.",
                     }
                 )
 
@@ -414,7 +411,10 @@ class OrderItemReturnSerializer(serializers.Serializer):
                 )
 
             for quantity_idx in range(max_available_quantity):
-                if hardware_item["part_returned_health"] not in OrderItemReturnSerializer.HardwareItemReturnSerializer.HEALTH_CHOICES:
+                if (
+                    hardware_item["part_returned_health"]
+                    not in OrderItemReturnSerializer.HardwareItemReturnSerializer.HEALTH_CHOICES
+                ):
                     response_data["errors"].append(
                         {
                             "hardware_id": hardware_item["id"],
