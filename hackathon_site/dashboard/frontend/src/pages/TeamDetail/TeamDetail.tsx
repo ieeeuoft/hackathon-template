@@ -24,7 +24,7 @@ const TeamDetail = ({ match }: RouteComponentProps<PageParams>) => {
     const dispatch = useDispatch();
     useEffect(() => {
         dispatch(getTeamInfoData(teamCode));
-    }, []);
+    }, [dispatch, teamCode]);
     const error = useSelector(errorSelector);
 
     return (

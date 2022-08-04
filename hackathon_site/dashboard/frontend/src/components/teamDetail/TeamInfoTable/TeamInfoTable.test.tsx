@@ -1,11 +1,5 @@
 import React from "react";
-import {
-    makeMockApiResponse,
-    makeStoreWithEntities,
-    render,
-    waitFor,
-    when,
-} from "testing/utils";
+import { makeMockApiResponse, render, when } from "testing/utils";
 import { mockTeam } from "testing/mockData";
 import { get } from "api/api";
 
@@ -28,11 +22,12 @@ describe("Team info table", () => {
             .calledWith(`/api/event/teams/${mockTeam.id}/`)
             .mockResolvedValue(teamInfoApiResponse);
 
-        // render table and check that all data is there
         const store = makeStore();
         await store.dispatch(getTeamInfoData(mockTeam.id.toString()));
 
-        const { getByText, queryAllByTestId } = render(<TeamInfoTable />, { store });
+        const { getByText, queryAllByTestId } = render(<TeamInfoTable />, {
+            store,
+        });
 
         const checkboxes = queryAllByTestId("checkbox");
 

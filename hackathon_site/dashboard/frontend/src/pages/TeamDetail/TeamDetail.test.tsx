@@ -1,17 +1,13 @@
 import React from "react";
 
-import { render, screen } from "testing/utils";
+import { render, screen, waitFor } from "testing/utils";
 
 import { mockTeam, mockTeamMultiple } from "testing/mockData";
 import TeamDetail, { PageParams } from "pages/TeamDetail/TeamDetail";
 import { RouteComponentProps } from "react-router-dom";
-import { get } from "../../api/api";
+import { get } from "api/api";
 import { AxiosResponse } from "axios";
-import { Team } from "../../api/types";
-import TeamInfoTable from "../../components/teamDetail/TeamInfoTable/TeamInfoTable";
-import { makeStore } from "../../slices/store";
 
-// TODO: test that /teams/{id} api was called once
 jest.mock("api/api", () => ({
     ...jest.requireActual("api/api"),
     get: jest.fn(),
@@ -19,7 +15,7 @@ jest.mock("api/api", () => ({
 
 const mockedGet = get as jest.MockedFunction<typeof get>;
 
-test("renders without crashing", () => {
+test("renders loading component and then data without crashing", () => {
     const teamDetailProps = {
         match: {
             params: {
@@ -29,6 +25,8 @@ test("renders without crashing", () => {
     } as RouteComponentProps<PageParams>;
     render(<TeamDetail {...teamDetailProps} />);
 
+    expect(screen.getByTestId("team-info-linear-progress")).toBeInTheDocument();
+
     expect(
         screen.getByText(`Team ${teamDetailProps.match.params.id} Overview`)
     ).toBeInTheDocument();
@@ -36,8 +34,7 @@ test("renders without crashing", () => {
     expect(mockedGet).toHaveBeenCalledWith(`/api/event/teams/${mockTeamMultiple.id}/`);
 });
 
-test("displays 404 error when the requested team id is not found", () => {
-    // render the page with an error
+test("displays 404 error when the requested team id is not found", async () => {
     const failureResponse = {
         response: {
             status: 404,
@@ -55,7 +52,12 @@ test("displays 404 error when the requested team id is not found", () => {
             },
         },
     } as RouteComponentProps<PageParams>;
-    // const store = makeStore();
+
     render(<TeamDetail {...teamDetailProps} />);
-    expect(screen.getByText("Could not find team code: Error 404")).toBeInTheDocument();
+
+    await waitFor(() => {
+        expect(
+            screen.getByText("Could not find team code: Error 404")
+        ).toBeInTheDocument();
+    });
 });

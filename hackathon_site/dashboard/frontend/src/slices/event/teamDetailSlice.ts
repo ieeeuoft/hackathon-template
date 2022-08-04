@@ -7,7 +7,7 @@ import {
 import { AppDispatch, RootState } from "slices/store";
 import { displaySnackbar } from "slices/ui/uiSlice";
 import { get } from "api/api";
-import { ProfileWithUser, Team, User, UserWithoutProfile } from "api/types";
+import { ProfileWithUser, Team } from "api/types";
 
 const extraState = {
     isLoading: false,
