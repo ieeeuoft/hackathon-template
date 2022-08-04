@@ -538,7 +538,6 @@ class CreateProfileViewTestCase(SetupUserMixin, APITestCase):
             "id_provided": False,
             "acknowledge_rules": True,
             "e_signature": "user signature",
-            "team": self.profile.team.team_code,
         }
         self.view = reverse("api:event:current-profile")
 
@@ -553,6 +552,7 @@ class CreateProfileViewTestCase(SetupUserMixin, APITestCase):
         self._login()
         response = self.client.post(self.view, self.request_body)
         data = response.json()
+        self.expected_response["team"] = data["team"]
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(self.expected_response, data)
@@ -560,6 +560,14 @@ class CreateProfileViewTestCase(SetupUserMixin, APITestCase):
         database_profile = Profile.objects.get(user=self.user)
         self.assertIsNotNone(database_profile)
 
+    def test_not_including_required_fields(self):
+        self.profile.delete()
+        self._login()
+        response = self.client.post(self.view, {"e_signature": "user signature",})
+        print(f"reponse is {response}")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        response = self.client.post(self.view, {"acknowledge_rules": True,})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_user_already_has_profile(self):
         # "The bad path". The user attempts to create a new profile,
@@ -567,6 +575,8 @@ class CreateProfileViewTestCase(SetupUserMixin, APITestCase):
         self._login()
         response = self.client.post(self.view, self.request_body)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        data = response.json()
+        self.assertEqual(data[0], "User already has profile")
 
 
 class CurrentTeamOrderListViewTestCase(SetupUserMixin, APITestCase):
