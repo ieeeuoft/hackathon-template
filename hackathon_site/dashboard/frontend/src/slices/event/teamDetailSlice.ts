@@ -36,10 +36,13 @@ export const getTeamInfoData = createAsyncThunk<
             const response = await get<Team>(`/api/event/teams/${teamId}/`);
             return response.data;
         } catch (e: any) {
+            const message =
+                e.response.statusText === "Not Found"
+                    ? `Could not find team code: Error ${e.response.status}`
+                    : `Something went wrong: Error ${e.response.status}`;
             dispatch(
                 displaySnackbar({
-                    // TODO: if it's not found, display prettier error, else display generic message
-                    message: `Failed to retrieve team info`,
+                    message,
                     options: {
                         variant: "error",
                     },
@@ -47,8 +50,7 @@ export const getTeamInfoData = createAsyncThunk<
             );
             return rejectWithValue({
                 status: e.response.status,
-                // TODO: if it's not found, display prettier error, else display generic message
-                message: e.response.detail,
+                message,
             });
         }
     }

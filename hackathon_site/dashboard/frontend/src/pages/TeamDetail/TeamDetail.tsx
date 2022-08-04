@@ -32,7 +32,7 @@ const TeamDetail = ({ match }: RouteComponentProps<PageParams>) => {
             <Header />
 
             {error ? (
-                <AlertBox />
+                <AlertBox error={error} />
             ) : (
                 <Grid container direction="column" spacing={6}>
                     <Grid item xs={12}>

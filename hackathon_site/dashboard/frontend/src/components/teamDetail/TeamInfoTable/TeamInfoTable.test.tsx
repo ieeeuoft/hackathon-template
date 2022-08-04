@@ -1,10 +1,17 @@
 import React from "react";
-import { makeMockApiResponse, render, waitFor, when } from "testing/utils";
+import {
+    makeMockApiResponse,
+    makeStoreWithEntities,
+    render,
+    waitFor,
+    when,
+} from "testing/utils";
 import { mockTeam } from "testing/mockData";
 import { get } from "api/api";
 
 import TeamInfoTable from "components/teamDetail/TeamInfoTable/TeamInfoTable";
 import { makeStore } from "slices/store";
+import { getTeamInfoData } from "slices/event/teamDetailSlice";
 
 jest.mock("api/api", () => ({
     ...jest.requireActual("api/api"),
@@ -18,18 +25,21 @@ describe("Team info table", () => {
         const teamInfoApiResponse = makeMockApiResponse(mockTeam);
 
         when(mockedGet)
-            .calledWith("/api/event/teams/2/")
+            .calledWith(`/api/event/teams/${mockTeam.id}/`)
             .mockResolvedValue(teamInfoApiResponse);
 
-        const { getByText, queryAllByTestId, queryByTestId, getAllByRole } = render(
-            <TeamInfoTable />
-        );
+        // render table and check that all data is there
+        const store = makeStore();
+        await store.dispatch(getTeamInfoData(mockTeam.id.toString()));
+
+        const { getByText, queryAllByTestId } = render(<TeamInfoTable />, { store });
 
         const checkboxes = queryAllByTestId("checkbox");
 
         mockTeam.profiles.forEach((user, index) => {
-            expect(getByText(user.user.first_name)).toBeInTheDocument();
-            expect(getByText(user.user.last_name)).toBeInTheDocument();
+            expect(
+                getByText(`${user.user.first_name} ${user.user.last_name}`)
+            ).toBeInTheDocument();
             expect(getByText(user.user.email)).toBeInTheDocument();
             if (user.id_provided) {
                 expect(

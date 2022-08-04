@@ -10,7 +10,7 @@ import {
 } from "slices/event/teamDetailSlice";
 
 import { get } from "api/api";
-import { makeMockApiResponse, waitFor } from "testing/utils";
+import { makeMockApiResponse, makeStoreWithEntities, waitFor } from "testing/utils";
 import { mockTeam } from "testing/mockData";
 import { useSelector } from "react-redux";
 import { displaySnackbar } from "slices/ui/uiSlice";
@@ -31,6 +31,14 @@ const mockedGet = get as jest.MockedFunction<typeof get>;
 const mockState: RootState = {
     ...store.getState(),
     [teamDetailReducerName]: initialState,
+};
+
+const failureResponse = {
+    response: {
+        status: 404,
+        statusText: "Not Found",
+        message: "Could not find team code: Error 404",
+    },
 };
 
 describe("Selectors", () => {
@@ -78,29 +86,30 @@ describe("getTeamInfoData thunk", () => {
         });
     });
 
-    it("Updates error status on API failure", async () => {
-        // TODO: seperate test for error selector using makeStore() instead of mockStore(), everything else same
-        const failureResponse = {
-            response: {
-                status: 404,
-                message: "Failed to retrieve team info: Error 404",
-            },
-        };
+    it("Dispatches snackbar on API failure", async () => {
         mockedGet.mockRejectedValueOnce(failureResponse);
 
         const store = mockStore(mockState);
         await store.dispatch(getTeamInfoData("abc"));
 
         expect(mockedGet).toHaveBeenCalledWith("/api/event/teams/abc/");
-        expect(errorSelector(store.getState())).toBeTruthy();
 
         const actions = store.getActions();
 
         expect(actions).toContainEqual(
             displaySnackbar({
-                message: "Failed to retrieve team info: Error 404",
+                message: "Could not find team code: Error 404",
                 options: { variant: "error" },
             })
         );
+    });
+
+    it("Updates error state on API failure", async () => {
+        mockedGet.mockRejectedValueOnce(failureResponse);
+
+        const store = makeStore();
+        await store.dispatch(getTeamInfoData("abc"));
+
+        expect(errorSelector(store.getState())).toBeTruthy();
     });
 });
