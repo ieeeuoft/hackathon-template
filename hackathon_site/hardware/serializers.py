@@ -224,15 +224,15 @@ class OrderCreateSerializer(serializers.Serializer):
             Hardware.objects.filter(
                 id__in=[hardware.id for hardware in requested_hardware.keys()],
             )
-            .all()
-            .prefetch_related("categories", "order_items")
+                .all()
+                .prefetch_related("categories", "order_items")
         )
         team_unreturned_orders = hardware_query.annotate(
             past_order_count=Count(
                 "order_items",
                 filter=Q(order_items__part_returned_health__isnull=True)
-                & ~Q(order_items__order__status="Cancelled")
-                & Q(order_items__order__team=user_profile.team),
+                       & ~Q(order_items__order__status="Cancelled")
+                       & Q(order_items__order__team=user_profile.team),
                 distinct=True,
             )
         )
@@ -249,9 +249,9 @@ class OrderCreateSerializer(serializers.Serializer):
                 )
             for category in hardware.categories.all():
                 category_counts[category] = (
-                    category_counts.get(category, 0)
-                    + team_hardware_count
-                    + requested_quantity
+                        category_counts.get(category, 0)
+                        + team_hardware_count
+                        + requested_quantity
                 )
         for (category, count) in category_counts.items():
             if count > category.max_per_team:
@@ -363,7 +363,7 @@ class OrderItemReturnSerializer(serializers.Serializer):
         hardware_array = data["hardware"]
         if len(hardware_array) < 1:
             raise ValidationError(
-                "Hardware array size must be greater or equal to one."
+                "No hardware specified in return request"
             )
         # TODO: make sure hardware array is >= 1 item, raise ValidationError
         return data
@@ -397,11 +397,11 @@ class OrderItemReturnSerializer(serializers.Serializer):
             if len(order_items_with_hardware) == 0 and hardware_item["quantity"] > 1:
                 response_data["errors"].append(
                     {
-                        "hardware_id": hardware_item.id,
-                        "message": "There are 0 order items for this hardware. No hardware items were returned",
+                        "hardware_id": hardware_item["id"],
+                        "message":
+                            "There are no checked out items for this hardware, all have already been returned.",
                     }
                 )
-                # continue
 
             max_available_quantity = hardware_item["quantity"]
             if len(order_items_with_hardware) < hardware_item["quantity"]:
@@ -409,34 +409,23 @@ class OrderItemReturnSerializer(serializers.Serializer):
                 response_data["errors"].append(
                     {
                         "hardware_id": hardware_item["id"],
-                        "message": "Requested quantity was {} higher than available. {} was returned ".format(
-                            (
-                                hardware_item["quantity"]
-                                - len(order_items_with_hardware)
-                            ),
-                            max_available_quantity,
-                        ),
+                        "message": f"Requested quantity of {hardware_item['quantity'] - len(order_items_with_hardware)} was higher than available. {max_available_quantity} were returned.",
                     }
                 )
 
             for quantity_idx in range(max_available_quantity):
-                valid_status = False
-                for status in hardware_item["HEALTH_CHOICES"]:
-                    if status == hardware_item["part_returned_health"]:
-                        valid_status = True
-                if valid_status == False:
+                if hardware_item["part_returned_health"] not in OrderItemReturnSerializer.HardwareItemReturnSerializer.HEALTH_CHOICES:
                     response_data["errors"].append(
                         {
                             "hardware_id": hardware_item["id"],
                             "message": "There is no valid status selected",
                         }
                     )
-                else:
-                    # continue
-                    order_items_with_hardware[
-                        quantity_idx
-                    ].part_returned_health = hardware_item["part_returned_health"]
-                    order_items_with_hardware[quantity_idx].save()
+                    continue
+                order_items_with_hardware[
+                    quantity_idx
+                ].part_returned_health = hardware_item["part_returned_health"]
+                order_items_with_hardware[quantity_idx].save()
 
         currently_checked_out_items = OrderItem.objects.filter(order=order)
         for order_item in currently_checked_out_items:
@@ -450,9 +439,17 @@ class OrderItemReturnSerializer(serializers.Serializer):
 
 
 class OrderItemReturnResponseSerializer(serializers.Serializer):
+    class OrderReturnResponseErrorSerializer(serializers.Serializer):
+        hardware_id = serializers.PrimaryKeyRelatedField(
+            queryset=Hardware.objects.all(), many=False, required=True
+        )
+        message = serializers.CharField(
+            max_length=None, min_length=None, allow_blank=False
+        )
+
     order_id = serializers.PrimaryKeyRelatedField(
         queryset=Order.objects.all(), many=False, required=True
     )
     checked_out_items = OrderItemInOrderSerializer(many=True, required=True)
     returned_items = OrderItemInOrderSerializer(many=True, required=True)
-    errors = OrderItemReturnSerializer(many=True, required=True)
+    errors = OrderReturnResponseErrorSerializer(many=True, required=True)
