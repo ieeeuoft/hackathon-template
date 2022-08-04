@@ -65,6 +65,7 @@ class ProfileInTeamSerializer(serializers.ModelSerializer):
 
 
 class CurrentProfileSerializer(ProfileSerializer):
+    team = serializers.CharField()
     class Meta(ProfileSerializer.Meta):
         read_only_fields = (
             "id",
@@ -108,7 +109,6 @@ class CurrentProfileSerializer(ProfileSerializer):
         profile = Profile.objects.create(
             **{**response_data, "user": self.context["request"].user}
         )
-
         return {**response_data, "team": profile.team.team_code, "id": profile.id}
 
 

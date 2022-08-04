@@ -23,6 +23,7 @@ from event.serializers import (
     ProfileInTeamSerializer,
     UserInProfileSerializer,
     UserReviewStatusSerializer,
+    ProfileCreateResponseSerializer,
 )
 from review.models import Review
 
@@ -790,11 +791,35 @@ class ProfileSerializerTestCase(TestCase):
 
 
 class CurrentProfileSerializerTestCase(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username="foo@bar.com",
+            password="foobar123",
+            first_name="Foo",
+            last_name="Bar",
+        )
     def test_readonly_serializer_fields(self):
         self.assertEqual(
             CurrentProfileSerializer.Meta.read_only_fields,
             ("id", "team", "id_provided", "attended"),
         )
+    def test_serializer(self):
+
+        profile = Profile.objects.create(user=self.user)
+        profile_serializedA = CurrentProfileSerializer(profile)
+        profile_serializedB = ProfileCreateResponseSerializer(profile_serializedA.data)
+        profile_expected = {
+            "id": profile.id,
+            "id_provided": profile.id_provided,
+            "attended": profile.attended,
+            "acknowledge_rules": profile.acknowledge_rules,
+            "e_signature": profile.e_signature,
+            "team": profile.team.team_code,
+        }
+
+        self.assertEqual(profile_expected, profile_serializedA.data)
+
+        self.assertEqual(profile_expected, profile_serializedB.data)
 
 
 class ProfileInUserSerializerTestCase(TestCase):
