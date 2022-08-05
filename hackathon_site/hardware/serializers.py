@@ -435,6 +435,7 @@ class OrderItemReturnSerializer(serializers.Serializer):
             else:
                 response_data["returned_items"].append(serialized_order_item)
 
+        print(response_data)
         return response_data
 
 

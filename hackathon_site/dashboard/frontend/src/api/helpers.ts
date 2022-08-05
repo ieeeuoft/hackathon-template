@@ -60,6 +60,7 @@ export const teamOrderListSerialization = (
                     id: order.id,
                     hardwareInOrder: returnedHardware,
                 });
+            // if order is returned, then do not run line 64 and beyond, maybe use continue
             (order.status === "Submitted" || order.status === "Ready for Pickup"
                 ? pendingOrders
                 : checkedOutOrders

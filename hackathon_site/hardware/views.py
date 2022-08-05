@@ -177,8 +177,10 @@ class OrderItemReturnView(generics.GenericAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         create_response = serializer.save()
+        print(create_response)
         response_serializer = OrderItemReturnResponseSerializer(data=create_response)
+        print(response_serializer)
         if not response_serializer.is_valid():
             logger.error(response_serializer.error_messages)
             return HttpResponseServerError()
-        return Response(create_response, status=status.HTTP_201_CREATED)
+        return Response(response_serializer.data, status=status.HTTP_201_CREATED)
