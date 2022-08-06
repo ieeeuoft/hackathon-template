@@ -110,6 +110,8 @@ describe("getTeamInfoData thunk", () => {
         const store = makeStore();
         await store.dispatch(getTeamInfoData("abc"));
 
-        expect(errorSelector(store.getState())).toBeTruthy();
+        expect(errorSelector(store.getState())).toBe(
+            "Could not find team code: Error 404"
+        );
     });
 });

@@ -9,7 +9,12 @@ import { displaySnackbar } from "slices/ui/uiSlice";
 import { get } from "api/api";
 import { ProfileWithUser, Team } from "api/types";
 
-const extraState = {
+interface TeamDetailExtraState {
+    isLoading: boolean;
+    error: string | null;
+}
+
+const extraState: TeamDetailExtraState = {
     isLoading: false,
     error: null,
 };

@@ -20,7 +20,7 @@ import {
 
 export const TeamInfoTable = () => {
     const isTeamInfoLoading = useSelector(isLoadingSelector);
-    const teamInfo = useSelector(teamDetailAdapterSelector.selectAll);
+    const profiles = useSelector(teamDetailAdapterSelector.selectAll);
 
     return (
         <Grid container direction="column" spacing={1} item md={6} xs={12}>
@@ -41,7 +41,7 @@ export const TeamInfoTable = () => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {teamInfo.map((row, index) => (
+                            {profiles.map((row, index) => (
                                 <TableRow key={index}>
                                     <TableCell>
                                         {`${row.user.first_name} ${row.user.last_name}`}

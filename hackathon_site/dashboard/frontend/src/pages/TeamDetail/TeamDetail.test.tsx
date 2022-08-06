@@ -15,49 +15,46 @@ jest.mock("api/api", () => ({
 
 const mockedGet = get as jest.MockedFunction<typeof get>;
 
-test("renders loading component and then data without crashing", () => {
-    const teamDetailProps = {
-        match: {
-            params: {
-                id: mockTeamMultiple.id.toString(),
-            },
+const teamDetailProps = {
+    match: {
+        params: {
+            id: mockTeamMultiple.id.toString(),
         },
-    } as RouteComponentProps<PageParams>;
-    render(<TeamDetail {...teamDetailProps} />);
+    },
+} as RouteComponentProps<PageParams>;
 
-    expect(screen.getByTestId("team-info-linear-progress")).toBeInTheDocument();
+describe("<TeamDetail />", () => {
+    test("renders loading component and then data without crashing", () => {
+        render(<TeamDetail {...teamDetailProps} />);
 
-    expect(
-        screen.getByText(`Team ${teamDetailProps.match.params.id} Overview`)
-    ).toBeInTheDocument();
+        expect(screen.getByTestId("team-info-linear-progress")).toBeInTheDocument();
 
-    expect(mockedGet).toHaveBeenCalledWith(`/api/event/teams/${mockTeamMultiple.id}/`);
-});
-
-test("displays 404 error when the requested team id is not found", async () => {
-    const failureResponse = {
-        response: {
-            status: 404,
-            statusText: "Not Found",
-            message: "Could not find team code: Error 404",
-        },
-    };
-
-    mockedGet.mockRejectedValueOnce(failureResponse);
-
-    const teamDetailProps = {
-        match: {
-            params: {
-                id: "abc",
-            },
-        },
-    } as RouteComponentProps<PageParams>;
-
-    render(<TeamDetail {...teamDetailProps} />);
-
-    await waitFor(() => {
         expect(
-            screen.getByText("Could not find team code: Error 404")
+            screen.getByText(`Team ${teamDetailProps.match.params.id} Overview`)
         ).toBeInTheDocument();
+
+        expect(mockedGet).toHaveBeenCalledWith(
+            `/api/event/teams/${mockTeamMultiple.id}/`
+        );
+    });
+
+    test("displays 404 error when the requested team id is not found", async () => {
+        const failureResponse = {
+            response: {
+                status: 404,
+                statusText: "Not Found",
+                message: "Could not find team code: Error 404",
+            },
+        };
+
+        mockedGet.mockRejectedValueOnce(failureResponse);
+
+        render(<TeamDetail {...teamDetailProps} />);
+
+        await waitFor(() => {
+            expect(
+                screen.getByText("Could not find team code: Error 404")
+            ).toBeInTheDocument();
+        });
     });
 });
