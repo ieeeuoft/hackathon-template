@@ -43,7 +43,11 @@ export const InventoryGrid = () => {
                         onClick={() => openProductOverviewPanel(item.id)}
                     >
                         <Item
-                            image={item.picture ?? hardwareImagePlaceholder}
+                            image={
+                                item.picture ??
+                                item.image_url ??
+                                hardwareImagePlaceholder
+                            }
                             title={item.name}
                             total={item.quantity_available}
                             currentStock={item.quantity_remaining}
