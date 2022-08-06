@@ -1,21 +1,18 @@
 import React from "react";
-import styles from "./ItemTable.module.scss";
-import Typography from "@material-ui/core/Typography";
-import Paper from "@material-ui/core/Paper";
-import Container from "@material-ui/core/Container";
-import IconButton from "@material-ui/core/IconButton";
-import Button from "@material-ui/core/Button";
-import Chip from "@material-ui/core/Chip";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableContainer from "@material-ui/core/TableContainer";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
+import styles from "components/general/OrderTables/OrderTables.module.scss";
+import {
+    Button,
+    Paper,
+    Container,
+    IconButton,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+} from "@material-ui/core";
 import Info from "@material-ui/icons/Info";
-import Error from "@material-ui/icons/Error";
-import WatchLater from "@material-ui/icons/WatchLater";
-import CheckCircle from "@material-ui/icons/CheckCircle";
 import { useDispatch, useSelector } from "react-redux";
 import {
     isCheckedOutTableVisibleSelector,
@@ -26,7 +23,6 @@ import {
     togglePendingTable,
     toggleReturnedTable,
 } from "slices/ui/uiSlice";
-import { OrderStatus } from "api/types";
 import {
     getUpdatedHardwareDetails,
     hardwareSelectors,
@@ -40,37 +36,10 @@ import {
     cancelOrderThunk,
     cancelOrderLoadingSelector,
 } from "slices/order/orderSlice";
-
-export const ChipStatus = ({ status }: { status: OrderStatus | "Error" }) => {
-    switch (status) {
-        case "Ready for Pickup":
-            return (
-                <Chip
-                    icon={<CheckCircle />}
-                    label="Ready for pickup"
-                    className={`${styles.chipGreen} ${styles.chip}`}
-                />
-            );
-        case "Submitted":
-            return (
-                <Chip
-                    icon={<WatchLater />}
-                    label="In progress"
-                    className={`${styles.chipOrange} ${styles.chip}`}
-                />
-            );
-        case "Error":
-            return (
-                <Chip
-                    icon={<Error />}
-                    label="Visit the tech station"
-                    className={`${styles.chipRed} ${styles.chip}`}
-                />
-            );
-        default:
-            return null;
-    }
-};
+import {
+    GeneralOrderTitle,
+    GeneralOrderTableTitle,
+} from "components/general/OrderTables/OrderTables";
 
 export const CheckedOutTables = () =>
     // TODO: for incident reports
@@ -94,14 +63,13 @@ export const CheckedOutTables = () =>
                 maxWidth={false}
                 disableGutters={true}
             >
-                <div className={styles.title}>
-                    <Typography variant="h2" className={styles.titleText}>
-                        Checked out items
-                    </Typography>
-                    <Button onClick={toggleVisibility} color="primary">
-                        {isVisible ? "Hide all" : "Show all"}
-                    </Button>
-                </div>
+                <GeneralOrderTitle
+                    {...{
+                        title: "Checked out items",
+                        isVisible,
+                        toggleVisibility,
+                    }}
+                />
 
                 {isVisible &&
                     (!orders.length || fetchOrdersError ? (
@@ -113,18 +81,7 @@ export const CheckedOutTables = () =>
                     ) : (
                         orders.map((checkedOutOrder) => (
                             <div key={checkedOutOrder.id}>
-                                <Container
-                                    className={styles.titleChip}
-                                    maxWidth={false}
-                                    disableGutters={true}
-                                >
-                                    <Typography
-                                        variant="h2"
-                                        className={styles.titleChipText}
-                                    >
-                                        Order #{checkedOutOrder.id}
-                                    </Typography>
-                                </Container>
+                                <GeneralOrderTableTitle orderId={checkedOutOrder.id} />
                                 <TableContainer
                                     component={Paper}
                                     elevation={2}
@@ -179,6 +136,8 @@ export const CheckedOutTables = () =>
                                                                 src={
                                                                     hardware[row.id]
                                                                         ?.picture ??
+                                                                    hardware[row.id]
+                                                                        ?.image_url ??
                                                                     hardwareImagePlaceholder
                                                                 }
                                                                 alt={
@@ -247,14 +206,13 @@ export const ReturnedTable = () => {
             maxWidth={false}
             disableGutters={true}
         >
-            <div className={styles.title}>
-                <Typography variant="h2" className={styles.titleText}>
-                    Returned items
-                </Typography>
-                <Button onClick={toggleVisibility} color="primary">
-                    {isVisible ? "Hide all" : "Show all"}
-                </Button>
-            </div>
+            <GeneralOrderTitle
+                {...{
+                    title: "Returned items",
+                    isVisible,
+                    toggleVisibility,
+                }}
+            />
 
             {isVisible &&
                 (!orders.length || fetchOrdersError ? (
@@ -266,18 +224,7 @@ export const ReturnedTable = () => {
                 ) : (
                     orders.map((order) => (
                         <div key={order.id}>
-                            <Container
-                                className={styles.titleChip}
-                                maxWidth={false}
-                                disableGutters={true}
-                            >
-                                <Typography
-                                    variant="h2"
-                                    className={styles.titleChipText}
-                                >
-                                    Order #{order.id}
-                                </Typography>
-                            </Container>
+                            <GeneralOrderTableTitle orderId={order.id} />
                             <TableContainer
                                 component={Paper}
                                 elevation={2}
@@ -326,6 +273,8 @@ export const ReturnedTable = () => {
                                                         src={
                                                             hardware[row.hardware_id]
                                                                 ?.picture ??
+                                                            hardware[row.hardware_id]
+                                                                ?.image_url ??
                                                             hardwareImagePlaceholder
                                                         }
                                                         alt={
@@ -380,14 +329,13 @@ export const PendingTables = () => {
             disableGutters={true}
         >
             {orders.length > 0 && (
-                <div className={styles.title}>
-                    <Typography variant="h2" className={styles.titleText}>
-                        Pending Orders
-                    </Typography>
-                    <Button onClick={toggleVisibility} color="primary">
-                        {isVisible ? "Hide all" : "Show all"}
-                    </Button>
-                </div>
+                <GeneralOrderTitle
+                    {...{
+                        title: "Pending Orders",
+                        isVisible,
+                        toggleVisibility,
+                    }}
+                />
             )}
 
             {isVisible &&
@@ -397,23 +345,10 @@ export const PendingTables = () => {
                         key={pendingOrder.id}
                         data-testid={`pending-order-table-${pendingOrder.id}`}
                     >
-                        <Container
-                            className={styles.titleChip}
-                            maxWidth={false}
-                            disableGutters={true}
-                        >
-                            <Typography variant="h2" className={styles.titleChipText}>
-                                Order #{pendingOrder.id}
-                            </Typography>
-
-                            <Container
-                                className={styles.titleChipSpace}
-                                maxWidth={false}
-                                disableGutters={true}
-                            >
-                                <ChipStatus status={pendingOrder.status} />
-                            </Container>
-                        </Container>
+                        <GeneralOrderTableTitle
+                            orderId={pendingOrder.id}
+                            orderStatus={pendingOrder.status}
+                        />
                         <TableContainer component={Paper} elevation={2} square={true}>
                             <Table
                                 className={styles.table}
@@ -452,6 +387,7 @@ export const PendingTables = () => {
                                                     className={styles.itemImg}
                                                     src={
                                                         hardware[row.id]?.picture ??
+                                                        hardware[row.id]?.image_url ??
                                                         hardwareImagePlaceholder
                                                     }
                                                     alt={hardware[row.id]?.name}
