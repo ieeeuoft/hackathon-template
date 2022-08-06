@@ -136,6 +136,8 @@ export const CheckedOutTables = () =>
                                                                 src={
                                                                     hardware[row.id]
                                                                         ?.picture ??
+                                                                    hardware[row.id]
+                                                                        ?.image_url ??
                                                                     hardwareImagePlaceholder
                                                                 }
                                                                 alt={
@@ -271,6 +273,8 @@ export const ReturnedTable = () => {
                                                         src={
                                                             hardware[row.hardware_id]
                                                                 ?.picture ??
+                                                            hardware[row.hardware_id]
+                                                                ?.image_url ??
                                                             hardwareImagePlaceholder
                                                         }
                                                         alt={
@@ -383,6 +387,7 @@ export const PendingTables = () => {
                                                     className={styles.itemImg}
                                                     src={
                                                         hardware[row.id]?.picture ??
+                                                        hardware[row.id]?.image_url ??
                                                         hardwareImagePlaceholder
                                                     }
                                                     alt={hardware[row.id]?.name}
