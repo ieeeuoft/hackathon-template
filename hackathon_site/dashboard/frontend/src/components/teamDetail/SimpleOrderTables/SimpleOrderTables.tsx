@@ -45,7 +45,7 @@ const TableCheckbox = ({
             <FormControlLabel
                 name={field.name}
                 value={option}
-                control={<Checkbox color="primary" data-testid={option} />}
+                control={<Checkbox color="primary" />}
                 label=""
                 checked={field.value?.includes(option)}
                 onChange={(e, checked) => {

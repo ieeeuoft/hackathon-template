@@ -63,25 +63,17 @@ describe("<SimplePendingOrderFulfillmentTable />", () => {
         );
 
         if (order) {
-            const {
-                getByText,
-                getByTestId: getByCheckboxId,
-                getByDisplayValue,
-            } = within(getByTestId(`admin-simple-pending-order-${order.id}`));
+            const { getByText, getByDisplayValue } = within(
+                getByTestId(`admin-simple-pending-order-${order.id}`)
+            );
             expect(getByText(/complete order/i).parentNode).toBeDisabled();
             await act(async () => {
                 for (const { id } of order.hardwareInTableRow) {
-                    const checkbox = getByCheckboxId(`hardware-${id}`).querySelector(
-                        'input[type="checkbox"]'
-                    );
+                    const checkbox = getByDisplayValue(`hardware-${id}`);
                     expect(checkbox).not.toBeChecked();
                     if (checkbox) fireEvent.click(checkbox);
                     await waitFor(() => {
-                        expect(
-                            getByCheckboxId(`hardware-${id}`).querySelector(
-                                'input[type="checkbox"]'
-                            )
-                        ).toBeChecked();
+                        expect(checkbox).toBeChecked();
                     });
                 }
             });
