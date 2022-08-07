@@ -16,6 +16,7 @@ export interface Hardware {
     quantity_available: number;
     max_per_team?: number;
     picture?: string;
+    image_url?: string;
     categories: number[];
     quantity_remaining: number;
     notes?: string;

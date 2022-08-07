@@ -1,8 +1,17 @@
+import os
+from urllib.parse import urlparse
+
+import requests
 from client_side_image_cropping import ClientsideCroppingWidget, DcsicAdminMixin
 from django import forms
 from django.contrib import admin
+from django.core.files.base import ContentFile
 from django.db import models
 from django.utils.html import mark_safe
+from import_export import resources
+from import_export.admin import ImportMixin
+from import_export.widgets import ManyToManyWidget
+from import_export.fields import Field
 
 from hardware.models import Hardware, Category, Order, Incident, OrderItem
 
@@ -176,16 +185,51 @@ class IncidentInline(admin.TabularInline):
         return False
 
 
+class CategoryResource(resources.ModelResource):
+    class Meta:
+        model = Category
+        exclude = (
+            "id",
+            "created_at",
+            "updated_at",
+        )
+        import_id_fields = ("name",)
+
+
 @admin.register(Category)
-class CategoryAdmin(admin.ModelAdmin):
+class CategoryAdmin(ImportMixin, admin.ModelAdmin):
+    resource_class = CategoryResource
     list_display = ("id", "name", "max_per_team")
     list_display_links = ("id", "name")
     search_fields = ("id", "name")
     inlines = (HardwareCategoryInline,)
 
 
+class HardwareResource(resources.ModelResource):
+    categories = Field(
+        column_name="categories",
+        attribute="categories",
+        widget=ManyToManyWidget(Category, ",", "name"),
+    )
+
+    class Meta:
+        model = Hardware
+        exclude = (
+            "id",
+            "created_at",
+            "updated_at",
+            "picture",
+        )
+        import_id_fields = (
+            "name",
+            "model_number",
+            "manufacturer",
+        )
+
+
 @admin.register(Hardware)
-class HardwareAdmin(DcsicAdminMixin, admin.ModelAdmin):
+class HardwareAdmin(DcsicAdminMixin, ImportMixin, admin.ModelAdmin):
+    resource_class = HardwareResource
     list_display = (
         "id",
         "name",
