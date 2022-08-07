@@ -1,5 +1,5 @@
 import { mockPendingOrdersInTable, mockReturnedOrdersInTable } from "testing/mockData";
-import React, { ChangeEvent, useState } from "react";
+import React, { useState } from "react";
 import Container from "@material-ui/core/Container";
 import styles from "components/general/OrderTables/OrderTables.module.scss";
 import { Checkbox, FormGroup, Grid, TableCell, Tooltip } from "@material-ui/core";
@@ -45,7 +45,7 @@ const TableCheckbox = ({
             <FormControlLabel
                 name={field.name}
                 value={option}
-                control={<Checkbox color="primary" />}
+                control={<Checkbox color="primary" data-testid={option} />}
                 label=""
                 checked={field.value?.includes(option)}
                 onChange={(e, checked) => {

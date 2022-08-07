@@ -62,32 +62,32 @@ describe("<SimplePendingOrderFulfillmentTable />", () => {
             ({ status }) => status === "Submitted"
         );
 
-        console.log(order);
         if (order) {
-            const { getByDisplayValue, getByText, getByRole } = within(
-                getByTestId(`admin-simple-pending-order-${order.id}`)
-            );
+            const {
+                getByText,
+                getByTestId: getByCheckboxId,
+                getByDisplayValue,
+            } = within(getByTestId(`admin-simple-pending-order-${order.id}`));
             expect(getByText(/complete order/i).parentNode).toBeDisabled();
             await act(async () => {
-                order.hardwareInTableRow.forEach(({ id }) => {
-                    console.log(getByRole(`itemIdsChecked`));
-                    const checkbox = getByDisplayValue(`hardware-${id}`);
-                    console.log(checkbox.nodeName, checkbox.className);
+                for (const { id } of order.hardwareInTableRow) {
+                    const checkbox = getByCheckboxId(`hardware-${id}`).querySelector(
+                        'input[type="checkbox"]'
+                    );
                     expect(checkbox).not.toBeChecked();
-                    fireEvent.click(checkbox);
-                });
-
-                // await waitFor(() => {
-                //     order.hardwareInTableRow.forEach(({ id }) => {
-                //         const checkbox = getByDisplayValue(`hardware-${id}`).querySelector('input[type="checkbox"]');
-                //         expect(checkbox).toBeChecked();
-                //     });
-                // })
-
-                // await waitFor(() => {
-                //     expect(getByDisplayValue("checkAll")).toBeChecked();
-                //     expect(getByText(/complete order/i).closest("button")).toBeEnabled();
-                // });
+                    if (checkbox) fireEvent.click(checkbox);
+                    await waitFor(() => {
+                        expect(
+                            getByCheckboxId(`hardware-${id}`).querySelector(
+                                'input[type="checkbox"]'
+                            )
+                        ).toBeChecked();
+                    });
+                }
+            });
+            await waitFor(() => {
+                expect(getByDisplayValue("checkAll")).toBeChecked();
+                expect(getByText(/complete order/i).closest("button")).toBeEnabled();
             });
         }
     });
