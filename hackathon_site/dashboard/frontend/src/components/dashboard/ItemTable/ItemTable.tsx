@@ -138,6 +138,8 @@ export const CheckedOutTables = () =>
                                                                 src={
                                                                     hardware[row.id]
                                                                         ?.picture ??
+                                                                    hardware[row.id]
+                                                                        ?.image_url ??
                                                                     hardwareImagePlaceholder
                                                                 }
                                                                 alt={
