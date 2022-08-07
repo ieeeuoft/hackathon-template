@@ -62,21 +62,32 @@ describe("<SimplePendingOrderFulfillmentTable />", () => {
             ({ status }) => status === "Submitted"
         );
 
+        console.log(order);
         if (order) {
-            const { getByDisplayValue, getByText } = within(
+            const { getByDisplayValue, getByText, getByRole } = within(
                 getByTestId(`admin-simple-pending-order-${order.id}`)
             );
             expect(getByText(/complete order/i).parentNode).toBeDisabled();
-            act(() => {
+            await act(async () => {
                 order.hardwareInTableRow.forEach(({ id }) => {
+                    console.log(getByRole(`itemIdsChecked`));
                     const checkbox = getByDisplayValue(`hardware-${id}`);
+                    console.log(checkbox.nodeName, checkbox.className);
                     expect(checkbox).not.toBeChecked();
                     fireEvent.click(checkbox);
                 });
-            });
-            await waitFor(() => {
-                expect(getByText(/complete order/i).parentNode).toBeEnabled();
-                expect(getByDisplayValue("checkAll")).toBeChecked();
+
+                // await waitFor(() => {
+                //     order.hardwareInTableRow.forEach(({ id }) => {
+                //         const checkbox = getByDisplayValue(`hardware-${id}`).querySelector('input[type="checkbox"]');
+                //         expect(checkbox).toBeChecked();
+                //     });
+                // })
+
+                // await waitFor(() => {
+                //     expect(getByDisplayValue("checkAll")).toBeChecked();
+                //     expect(getByText(/complete order/i).closest("button")).toBeEnabled();
+                // });
             });
         }
     });

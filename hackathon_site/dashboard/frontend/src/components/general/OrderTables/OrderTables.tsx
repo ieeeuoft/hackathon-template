@@ -1,16 +1,14 @@
 import styles from "./OrderTables.module.scss";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
-import React, { ReactElement, useState } from "react";
+import React, { ReactElement } from "react";
 import Container from "@material-ui/core/Container";
-import { Hardware, OrderInTable, OrderStatus, ReturnOrderInTable } from "api/types";
+import { OrderInTable, OrderStatus, ReturnOrderInTable } from "api/types";
 import Chip from "@material-ui/core/Chip";
 import CheckCircle from "@material-ui/icons/CheckCircle";
 import WatchLater from "@material-ui/icons/WatchLater";
 import Error from "@material-ui/icons/Error";
 import {
-    Checkbox,
-    Grid,
     Paper,
     Table,
     TableBody,
@@ -22,7 +20,6 @@ import {
 import hardwareImagePlaceholder from "assets/images/placeholders/no-hardware-image.svg";
 import { useSelector } from "react-redux";
 import { hardwareSelectors } from "slices/hardware/hardwareSlice";
-import { mockPendingOrdersInTable, mockReturnedOrdersInTable } from "testing/mockData";
 
 export const ChipStatus = ({ status }: { status: OrderStatus | "Error" }) => {
     switch (status) {
@@ -70,7 +67,11 @@ export const GeneralOrderTitle = ({
             {title}
         </Typography>
         {!!toggleVisibility && (
-            <Button onClick={toggleVisibility} color="primary">
+            <Button
+                onClick={toggleVisibility}
+                color="primary"
+                data-testid="visibility-button"
+            >
                 {isVisible ? "Hide all" : "Show all"}
             </Button>
         )}
