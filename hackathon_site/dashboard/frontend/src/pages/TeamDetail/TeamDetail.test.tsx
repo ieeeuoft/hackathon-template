@@ -1,6 +1,6 @@
 import React from "react";
 
-import { render, screen, waitFor } from "testing/utils";
+import { render, screen, waitFor, when } from "testing/utils";
 
 import { mockTeam, mockTeamMultiple } from "testing/mockData";
 import TeamDetail, { PageParams } from "pages/TeamDetail/TeamDetail";
@@ -47,7 +47,9 @@ describe("<TeamDetail />", () => {
             },
         };
 
-        mockedGet.mockRejectedValueOnce(failureResponse);
+        when(mockedGet)
+            .calledWith(`/api/event/teams/${mockTeamMultiple.id}/`)
+            .mockRejectedValue(failureResponse);
 
         render(<TeamDetail {...teamDetailProps} />);
 
