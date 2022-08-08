@@ -133,7 +133,9 @@ export const CartCard = ({ hardware_id, quantity, error }: CartCardProps) => {
         >
             <CardMedia
                 className={styles.CartPic}
-                image={hardware.picture ?? hardwareImagePlaceholder}
+                image={
+                    hardware.picture ?? hardware.image_url ?? hardwareImagePlaceholder
+                }
                 alt={hardware.name}
                 component="img"
             />
