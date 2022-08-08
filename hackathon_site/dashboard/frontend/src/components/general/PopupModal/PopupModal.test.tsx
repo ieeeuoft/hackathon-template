@@ -54,3 +54,32 @@ test("cancel function is being passed into popup modal without crashing", () => 
     fireEvent.click(getByText("cancel"));
     expect(cancelFunction).toHaveBeenCalled();
 });
+
+test("cancel and submit functions are NOT being passed into popup modal without crashing", () => {
+    const { getByText } = render(
+        <PopupModal
+            description={"Example Description"}
+            isVisible={true}
+            cancelText={"cancel"}
+            submitText={"submit"}
+            title={"Test Modal"}
+        ></PopupModal>
+    );
+    fireEvent.click(getByText("Example Description"));
+});
+
+test("cancel and submit text are NOT being passed into popup modal without crashing", () => {
+    const cancelFunction = jest.fn();
+    const submitFunction = jest.fn();
+    const { getByText } = render(
+        <PopupModal
+            description={"Example Description"}
+            isVisible={true}
+            submitHandler={submitFunction}
+            cancelHandler={cancelFunction}
+            title={"Test Modal"}
+        ></PopupModal>
+    );
+    fireEvent.click(getByText("Cancel"));
+    fireEvent.click(getByText("Submit"));
+});
