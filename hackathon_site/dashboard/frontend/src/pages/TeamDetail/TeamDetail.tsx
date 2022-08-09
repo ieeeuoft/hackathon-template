@@ -43,7 +43,6 @@ const TeamDetail = ({ match }: RouteComponentProps<PageParams>) => {
                     <TeamPendingOrderTable />
                 </Grid>
                 <Grid item>
-                    <Typography variant="h2">Checkout Items</Typography>
                     <TeamCheckoutOrderTable />
                 </Grid>
             </Grid>
