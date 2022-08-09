@@ -22,12 +22,14 @@ import categoryReducer, { categoryReducerName } from "slices/hardware/categorySl
 import cartReducer, { cartReducerName } from "slices/hardware/cartSlice";
 import teamReducer, { teamReducerName } from "slices/event/teamSlice";
 import teamAdminReducer, { teamAdminReducerName } from "slices/event/teamAdminSlice";
+import teamDetailReducer, { teamDetailReducerName } from "slices/event/teamDetailSlice";
 
 export const history = createBrowserHistory();
 
 const reducers = {
     [cartReducerName]: cartReducer,
     [teamReducerName]: teamReducer,
+    [teamDetailReducerName]: teamDetailReducer,
     [categoryReducerName]: categoryReducer,
     [hardwareReducerName]: hardwareReducer,
     [orderReducerName]: orderReducer,
