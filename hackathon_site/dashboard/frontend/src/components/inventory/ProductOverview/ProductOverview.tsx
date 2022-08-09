@@ -367,7 +367,11 @@ export const ProductOverview = ({
                             quantityAvailable={hardware.quantity_available}
                             quantityRemaining={hardware.quantity_remaining}
                             categories={categoryNames}
-                            picture={hardware.picture ?? hardwareImagePlaceholder}
+                            picture={
+                                hardware.picture ??
+                                hardware.image_url ??
+                                hardwareImagePlaceholder
+                            }
                         />
                         <DetailInfoSection
                             manufacturer={hardware.manufacturer}
