@@ -20,7 +20,7 @@ import hardwareReducer, { hardwareReducerName } from "slices/hardware/hardwareSl
 import orderReducer, { orderReducerName } from "slices/order/orderSlice";
 import categoryReducer, { categoryReducerName } from "slices/hardware/categorySlice";
 import cartReducer, { cartReducerName } from "slices/hardware/cartSlice";
-import teamReducer, { teamReducerName } from "./event/teamSlice";
+import teamReducer, { teamReducerName } from "slices/event/teamSlice";
 import teamAdminReducer, { teamAdminReducerName } from "slices/event/teamAdminSlice";
 
 export const history = createBrowserHistory();

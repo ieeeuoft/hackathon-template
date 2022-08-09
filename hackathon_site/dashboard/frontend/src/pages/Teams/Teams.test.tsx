@@ -2,8 +2,8 @@ import React from "react";
 
 import { makeMockApiListResponse, render } from "testing/utils";
 import { get } from "api/api";
-import { mockTeams } from "../../testing/mockData";
-import { waitFor, when } from "../../testing/utils";
+import { mockTeams } from "testing/mockData";
+import { waitFor, when } from "testing/utils";
 import Teams from "./Teams";
 import { queryByTestId } from "@testing-library/react";
 
@@ -44,10 +44,6 @@ describe("Teams Page", () => {
 
             teamCodes.forEach((teamCode) => {
                 expect(getByText("Team " + teamCode)).toBeInTheDocument();
-            });
-
-            expect(mockedGet).toHaveBeenCalledWith(teamsUri, {
-                limit: responseTime,
             });
 
             allTeamMembers.forEach((members) => {

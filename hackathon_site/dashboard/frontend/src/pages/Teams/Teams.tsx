@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-// import styles from "./Teams.module.scss";
 import Header from "components/general/Header/Header";
 import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
@@ -14,11 +13,13 @@ import {
 } from "slices/event/teamAdminSlice";
 import { useDispatch, useSelector } from "react-redux";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import { useHistory } from "react-router-dom";
 
 const Teams = () => {
     const dispatch = useDispatch();
     const teamsList = useSelector(teamAdminSelectors.selectAll);
     const isAdminTeamsLoading = useSelector(isLoadingSelector);
+    const history = useHistory();
 
     useEffect(() => {
         dispatch(getAllTeams());
@@ -34,7 +35,7 @@ const Teams = () => {
             key={index}
             className={styles.teamsListGridItem}
             grid-template-column="true"
-            onClick={() => alert(`Goes to team-detail for team ${team.team_code}`)}
+            onClick={() => history.push(`/team/${team.team_code}`)}
         >
             <TeamCardAdmin
                 teamCode={team.team_code}

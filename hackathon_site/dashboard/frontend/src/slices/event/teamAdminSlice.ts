@@ -27,7 +27,7 @@ const extraState: TeamAdminExtraState = {
     isMoreLoading: false,
 };
 
-const responseTime = 24;
+export const RESPONSE_TIME = 24;
 
 export const teamAdminReducerName = "adminTeam";
 const teamAdminAdapter = createEntityAdapter<Team>();
@@ -42,13 +42,13 @@ export const getAllTeams = createAsyncThunk<
 >(`${teamAdminReducerName}/getAllTeams`, async (_, { dispatch, rejectWithValue }) => {
     try {
         const response = await get<APIListResponse<Team>>("/api/event/teams/", {
-            limit: responseTime,
+            limit: RESPONSE_TIME,
         });
         return response.data;
     } catch (e: any) {
         dispatch(
             displaySnackbar({
-                message: `Failed to fetch hardware data: Error ${e.response.status}`,
+                message: `Failed to fetch team data: Error ${e.response.status}`,
                 options: { variant: "error" },
             })
         );
