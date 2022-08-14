@@ -185,13 +185,9 @@ export const TeamCheckoutOrderTable = () => {
                                                                         ?.name
                                                                 }
                                                             </TableCell>
-                                                            <TableCell align={"center"}>
+                                                            <TableCell>
                                                                 <IconButton
                                                                     size={"small"}
-                                                                    style={{
-                                                                        marginLeft:
-                                                                            "-30px",
-                                                                    }}
                                                                 >
                                                                     <Info />
                                                                 </IconButton>
