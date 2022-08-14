@@ -810,3 +810,46 @@ class TeamOrderDetailViewTestCase(SetupUserMixin, APITestCase):
         self.assertFalse(
             self.request_data["status"] == Order.objects.get(id=self.pk).status
         )
+
+
+class CurrentUserReviewStatusTestCase(SetupUserMixin, APITestCase):
+    def setUp(self):
+        super().setUp()
+        self.view = reverse("api:event:current-user-review-status")
+
+    def get_expected_response(self, review_status):
+        return {
+            **{
+                attr: getattr(self.user, attr)
+                for attr in ("id", "first_name", "last_name", "email")
+            },
+            "review_status": review_status,
+        }
+
+    def test_user_not_logged_in(self):
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_user_has_no_application(self):
+        self._login()
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.json()
+        self.assertEqual(self.get_expected_response("None"), data)
+
+    def test_user_has_no_review(self):
+        self.application = self._apply_as_user(self.user)
+        self._login()
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.json()
+        self.assertEqual(self.get_expected_response("None"), data)
+
+    def test_user_has_review_and_application(self):
+        self.application = self._apply_as_user(self.user)
+        self._review()
+        self._login()
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.json()
+        self.assertEqual(self.get_expected_response("Accepted"), data)
