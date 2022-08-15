@@ -25,7 +25,7 @@ describe("<SimplePendingOrderFulfillmentTable />", () => {
         });
     });
 
-    it("Does not show complete order button for Ready to Pickup orders", () => {
+    it("Shows complete order button for Submitted Orders and picked up button for Ready to Pickup orders", () => {
         const { getByTestId } = render(<SimplePendingOrderFulfillmentTable />);
 
         mockPendingOrdersInTable.forEach(({ id, status }) => {
@@ -35,9 +35,13 @@ describe("<SimplePendingOrderFulfillmentTable />", () => {
                 );
                 expect(getByText(`Order #${id}`)).toBeInTheDocument();
                 expect(getByText(/reject order/i)).toBeInTheDocument();
-                if (status === "Submitted")
+                if (status === "Submitted") {
                     expect(getByText(/complete order/i)).toBeInTheDocument();
-                else expect(queryByText(/complete order/i)).not.toBeInTheDocument();
+                    expect(queryByText(/picked up/i)).not.toBeInTheDocument();
+                } else {
+                    expect(queryByText(/complete order/i)).not.toBeInTheDocument();
+                    expect(getByText(/picked up/i)).toBeInTheDocument();
+                }
             }
         });
     });

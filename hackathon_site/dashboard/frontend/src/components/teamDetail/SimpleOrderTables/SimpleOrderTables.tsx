@@ -207,6 +207,24 @@ export const SimplePendingOrderFulfillmentTable = () => {
                                 {pendingOrder.status === "Submitted" && (
                                     <CompleteOrderButton order={pendingOrder} />
                                 )}
+                                {pendingOrder.status === "Ready for Pickup" && (
+                                    <Grid item>
+                                        <Tooltip
+                                            title="Ensure that you've collected a piece of ID before the team picks up the order"
+                                            placement="top"
+                                        >
+                                            <span>
+                                                <Button
+                                                    color="secondary"
+                                                    variant="contained"
+                                                    disableElevation
+                                                >
+                                                    Picked Up
+                                                </Button>
+                                            </span>
+                                        </Tooltip>
+                                    </Grid>
+                                )}
                             </Grid>
                         </Form>
                     </Formik>
