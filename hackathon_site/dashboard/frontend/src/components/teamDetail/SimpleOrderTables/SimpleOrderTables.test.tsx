@@ -42,6 +42,33 @@ describe("<SimplePendingOrderFulfillmentTable />", () => {
         });
     });
 
+    it("Does not show checkboxes for Ready to Pickup orders", () => {
+        const { getByTestId } = render(<SimplePendingOrderFulfillmentTable />);
+
+        const order = mockPendingOrdersInTable.find(
+            ({ status }) => status === "Submitted"
+        );
+
+        mockPendingOrdersInTable.forEach((order) => {
+            const { queryByDisplayValue, getByDisplayValue } = within(
+                getByTestId(`admin-simple-pending-order-${order.id}`)
+            );
+            if (order.status == "Submitted") {
+                order.hardwareInTableRow.forEach(({ id }) => {
+                    expect(getByDisplayValue(`hardware-${id}`)).toBeInTheDocument();
+                });
+                expect(getByDisplayValue("checkAll")).toBeInTheDocument();
+            } else {
+                order.hardwareInTableRow.forEach(({ id }) => {
+                    expect(
+                        queryByDisplayValue(`hardware-${id}`)
+                    ).not.toBeInTheDocument();
+                });
+                expect(queryByDisplayValue("checkAll")).not.toBeInTheDocument();
+            }
+        });
+    });
+
     it("Disables complete order button when items are unchecked", () => {
         const { getByTestId } = render(<SimplePendingOrderFulfillmentTable />);
 

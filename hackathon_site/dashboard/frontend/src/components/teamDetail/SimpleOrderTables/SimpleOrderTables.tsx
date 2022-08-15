@@ -87,7 +87,7 @@ const TableCheckAll = ({
     );
 };
 
-const getExtraColumn = (order: OrderInTable) => ({
+const enableCheckboxColumn = (order: OrderInTable) => ({
     extraColumn: {
         header: (
             <TableCell className={`${styles.width1} ${styles.noWrap}`} align="center">
@@ -186,7 +186,7 @@ export const SimplePendingOrderFulfillmentTable = () => {
                                 {...{
                                     pendingOrder,
                                     ...(pendingOrder.status === "Submitted" &&
-                                        getExtraColumn(pendingOrder)),
+                                        enableCheckboxColumn(pendingOrder)),
                                 }}
                             />
                             <Grid
