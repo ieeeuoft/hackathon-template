@@ -117,9 +117,7 @@ class CurrentProfileSerializer(ProfileSerializer):
             "e_signature": e_signature,
         }
 
-        profile = Profile.objects.create(
-            **{**response_data, "user": current_user}
-        )
+        profile = Profile.objects.create(**{**response_data, "user": current_user})
         return {**response_data, "team": profile.team.team_code}
 
 

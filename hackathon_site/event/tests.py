@@ -824,7 +824,9 @@ class CreateProfileSerializerTestCase(TestCase):
             "e_signature": self.profile.e_signature,
             "team": self.profile.team.team_code,
         }
-        serialized_profile = ProfileCreateResponseSerializer(data=profile_create_response)
+        serialized_profile = ProfileCreateResponseSerializer(
+            data=profile_create_response
+        )
         self.assertEqual(serialized_profile.is_valid(), True)
         self.assertEqual(profile_create_response, serialized_profile.data)
 

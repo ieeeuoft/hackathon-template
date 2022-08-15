@@ -569,18 +569,26 @@ class CreateProfileViewTestCase(SetupUserMixin, APITestCase):
     def test_acknowledge_rules_is_false(self):
         self._review(application=self._apply_as_user(self.user))
         self._login()
-        response = self.client.post(self.view, {"e_signature": "user signature", "acknowledge_rules": False})
+        response = self.client.post(
+            self.view, {"e_signature": "user signature", "acknowledge_rules": False}
+        )
         data = response.json()
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(data[0], "User must acknowledge rules and provide an e_signature")
+        self.assertEqual(
+            data[0], "User must acknowledge rules and provide an e_signature"
+        )
 
     def test_e_signature_is_empty(self):
         self._review(application=self._apply_as_user(self.user))
         self._login()
-        response = self.client.post(self.view, {"e_signature": "", "acknowledge_rules": True})
+        response = self.client.post(
+            self.view, {"e_signature": "", "acknowledge_rules": True}
+        )
         data = response.json()
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(data[0], "User must acknowledge rules and provide an e_signature")
+        self.assertEqual(
+            data[0], "User must acknowledge rules and provide an e_signature"
+        )
 
     def test_user_already_has_profile(self):
         self._make_event_profile(user=self.user)
@@ -596,7 +604,10 @@ class CreateProfileViewTestCase(SetupUserMixin, APITestCase):
         response = self.client.post(self.view, self.request_body)
         data = response.json()
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(data[0], "User has not been reviewed yet, Hardware Signout Site cannot be accessed until reviewed")
+        self.assertEqual(
+            data[0],
+            "User has not been reviewed yet, Hardware Signout Site cannot be accessed until reviewed",
+        )
 
     def test_user_review_rejected(self):
         self._review(application=self._apply_as_user(self.user), status="Rejected")
@@ -604,7 +615,9 @@ class CreateProfileViewTestCase(SetupUserMixin, APITestCase):
         response = self.client.post(self.view, self.request_body)
         data = response.json()
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(data[0], "User has not been accepted to participate in hackathon")
+        self.assertEqual(
+            data[0], "User has not been accepted to participate in hackathon"
+        )
 
 
 class CurrentTeamOrderListViewTestCase(SetupUserMixin, APITestCase):
