@@ -16,6 +16,7 @@ export interface Hardware {
     quantity_available: number;
     max_per_team?: number;
     picture?: string;
+    image_url?: string;
     categories: number[];
     quantity_remaining: number;
     notes?: string;
@@ -61,7 +62,7 @@ export type Group = {
     name: string;
 };
 
-interface UserWithoutProfile {
+export interface UserWithoutProfile {
     id: number;
     first_name: string;
     last_name: string;
@@ -72,11 +73,7 @@ export interface slkdf extends ProfileWithoutTeamNumber {
     user: UserWithoutProfile;
 }
 export interface User extends UserWithoutProfile {
-    profile:
-        | (ProfileWithoutTeamNumber & {
-              user: UserWithoutProfile;
-          })
-        | null;
+    profile: ProfileWithUser | null;
     groups: Group[];
 }
 
@@ -85,9 +82,11 @@ export interface Team {
     team_code: string;
     created_at: string;
     updated_at: string;
-    profiles: (ProfileWithoutTeamNumber & {
-        user: UserWithoutProfile;
-    })[];
+    profiles: ProfileWithUser[];
+}
+
+export interface ProfileWithUser extends ProfileWithoutTeamNumber {
+    user: UserWithoutProfile;
 }
 
 /** Orders API */
