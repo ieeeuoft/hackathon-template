@@ -53,8 +53,9 @@ const TeamActionTable = () => {
                     flex: 1,
                 }}
             >
-                {actionButtons.map((action) => (
+                {actionButtons.map((action, index) => (
                     <ListItem
+                        key={index}
                         button
                         onClick={action.onClick}
                         disabled={action.onClick === undefined}
