@@ -10,18 +10,16 @@ import { APIListResponse, Order, OrderInTable, ReturnOrderInTable } from "api/ty
 import { displaySnackbar } from "slices/ui/uiSlice";
 import { teamOrderListSerialization } from "api/helpers";
 
-interface TeamExtraState {
+interface TeamOrderExtraState {
     isLoading: boolean;
     error: null | string;
-    next: string | null;
     hardwareIdsToFetch: number[] | null;
     returnedOrders: ReturnOrderInTable[];
 }
 
-const extraState: TeamExtraState = {
+const extraState: TeamOrderExtraState = {
     isLoading: false,
     error: null,
-    next: null,
     hardwareIdsToFetch: null,
     returnedOrders: [],
 };
@@ -81,7 +79,6 @@ const teamOrderSlice = createSlice({
         builder.addCase(getAdminTeamOrders.fulfilled, (state, { payload }) => {
             state.isLoading = false;
             state.error = null;
-            state.next = payload.next;
             const {
                 pendingOrders,
                 checkedOutOrders,
@@ -129,7 +126,7 @@ export const pendingOrdersSelector = createSelector(
     (orders) =>
         orders.filter(
             (order) =>
-                order.status === "Submitted" || order.status == "Ready for Pickup"
+                order.status === "Submitted" || order.status === "Ready for Pickup"
         )
 );
 

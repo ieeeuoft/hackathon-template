@@ -69,9 +69,6 @@ export interface UserWithoutProfile {
     email: string;
 }
 
-export interface slkdf extends ProfileWithoutTeamNumber {
-    user: UserWithoutProfile;
-}
 export interface User extends UserWithoutProfile {
     profile: ProfileWithUser | null;
     groups: Group[];

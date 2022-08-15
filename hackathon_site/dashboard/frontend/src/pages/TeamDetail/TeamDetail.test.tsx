@@ -10,10 +10,6 @@ jest.mock("api/api", () => ({
     ...jest.requireActual("api/api"),
     get: jest.fn(),
 }));
-jest.mock("api/api", () => ({
-    ...jest.requireActual("api/api"),
-    get: jest.fn(),
-}));
 
 const orderAPI = "/api/hardware/orders/";
 

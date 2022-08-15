@@ -21,7 +21,7 @@ import orderReducer, { orderReducerName } from "slices/order/orderSlice";
 import categoryReducer, { categoryReducerName } from "slices/hardware/categorySlice";
 import cartReducer, { cartReducerName } from "slices/hardware/cartSlice";
 import teamDetailReducer, { teamDetailReducerName } from "slices/event/teamDetailSlice";
-import teamReducer, { teamReducerName } from "./event/teamSlice";
+import teamReducer, { teamReducerName } from "slices/event/teamSlice";
 import teamOrderReducer, { teamOrderReducerName } from "slices/order/teamOrderSlice";
 
 export const history = createBrowserHistory();

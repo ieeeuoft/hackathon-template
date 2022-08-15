@@ -25,13 +25,11 @@ import {
     pendingOrdersSelector,
     checkedOutOrdersSelector,
     TeamOrderState,
-} from "./teamOrderSlice";
-import exp from "constants";
+} from "slices/order/teamOrderSlice";
 
 jest.mock("api/api", () => ({
     ...jest.requireActual("api/api"),
     get: jest.fn(),
-    patch: jest.fn(),
 }));
 const mockedGet = get as jest.MockedFunction<typeof get>;
 
