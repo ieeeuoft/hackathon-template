@@ -805,23 +805,28 @@ class CurrentProfileSerializerTestCase(TestCase):
             ("id", "team", "id_provided", "attended"),
         )
 
+
+class CreateProfileSerializerTestCase(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username="foo@bar.com",
+            password="foobar123",
+            first_name="Foo",
+            last_name="Bar",
+        )
+        self.profile = Profile.objects.create(user=self.user)
+
     def test_serializer(self):
-
-        profile = Profile.objects.create(user=self.user)
-        profile_serializedA = CurrentProfileSerializer(profile)
-        profile_serializedB = ProfileCreateResponseSerializer(profile_serializedA.data)
-        profile_expected = {
-            "id": profile.id,
-            "id_provided": profile.id_provided,
-            "attended": profile.attended,
-            "acknowledge_rules": profile.acknowledge_rules,
-            "e_signature": profile.e_signature,
-            "team": profile.team.team_code,
+        profile_create_response = {
+            "id_provided": self.profile.id_provided,
+            "attended": self.profile.attended,
+            "acknowledge_rules": self.profile.acknowledge_rules,
+            "e_signature": self.profile.e_signature,
+            "team": self.profile.team.team_code,
         }
-
-        self.assertEqual(profile_expected, profile_serializedA.data)
-
-        self.assertEqual(profile_expected, profile_serializedB.data)
+        serialized_profile = ProfileCreateResponseSerializer(data=profile_create_response)
+        self.assertEqual(serialized_profile.is_valid(), True)
+        self.assertEqual(profile_create_response, serialized_profile.data)
 
 
 class ProfileInUserSerializerTestCase(TestCase):

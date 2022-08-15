@@ -461,9 +461,6 @@ class CurrentProfileViewTestCase(SetupUserMixin, APITestCase):
         }
         self.view = reverse("api:event:current-profile")
 
-    def _build_view(self, acknowledge_rules, e_signature):
-        return reverse("api:event:current-profile", kwargs=self.request_body)
-
     def test_user_not_logged_in(self):
         response = self.client.patch(self.view, self.request_body)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
@@ -528,7 +525,6 @@ class CurrentProfileViewTestCase(SetupUserMixin, APITestCase):
 class CreateProfileViewTestCase(SetupUserMixin, APITestCase):
     def setUp(self):
         super().setUp()
-        self.profile = self._make_event_profile(user=self.user)
         self.request_body = {
             "acknowledge_rules": True,
             "e_signature": "user signature",
@@ -538,47 +534,77 @@ class CreateProfileViewTestCase(SetupUserMixin, APITestCase):
             "id_provided": False,
             "acknowledge_rules": True,
             "e_signature": "user signature",
-            "id": self.profile.id + 1,
         }
         self.view = reverse("api:event:current-profile")
 
     def test_user_not_logged_in(self):
-        # Test that permissions work
         response = self.client.post(self.view, self.request_body)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_user_can_have_profile(self):
-
-        self.profile.delete()
+        self._review(application=self._apply_as_user(self.user))
         self._login()
         response = self.client.post(self.view, self.request_body)
         data = response.json()
-        self.expected_response["team"] = data["team"]
+
+        profile_created = Profile.objects.get(user=self.user)
+        self.assertIsNotNone(profile_created)
+
+        self.expected_response = {
+            **self.expected_response,
+            "team": profile_created.team.team_code,
+        }
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(self.expected_response, data)
 
-        database_profile = Profile.objects.get(user=self.user)
-        self.assertIsNotNone(database_profile)
-        self.assertEqual(self.user, database_profile.user)
-
     def test_not_including_required_fields(self):
-        self.profile.delete()
+        self._review(application=self._apply_as_user(self.user))
         self._login()
         response = self.client.post(self.view, {"e_signature": "user signature",})
-        print(f"reponse is {response}")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         response = self.client.post(self.view, {"acknowledge_rules": True,})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
+    def test_acknowledge_rules_is_false(self):
+        self._review(application=self._apply_as_user(self.user))
+        self._login()
+        response = self.client.post(self.view, {"e_signature": "user signature", "acknowledge_rules": False})
+        data = response.json()
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(data[0], "User must acknowledge rules and provide an e_signature")
+
+    def test_e_signature_is_empty(self):
+        self._review(application=self._apply_as_user(self.user))
+        self._login()
+        response = self.client.post(self.view, {"e_signature": "", "acknowledge_rules": True})
+        data = response.json()
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(data[0], "User must acknowledge rules and provide an e_signature")
+
     def test_user_already_has_profile(self):
-        # "The bad path". The user attempts to create a new profile,
-        # when they already have a profile
+        self._make_event_profile(user=self.user)
         self._login()
         response = self.client.post(self.view, self.request_body)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         data = response.json()
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(data[0], "User already has profile")
+
+    def test_user_has_not_been_reviewed(self):
+        self.application = self._apply_as_user(self.user)
+        self._login()
+        response = self.client.post(self.view, self.request_body)
+        data = response.json()
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(data[0], "User has not been reviewed yet, Hardware Signout Site cannot be accessed until reviewed")
+
+    def test_user_review_rejected(self):
+        self._review(application=self._apply_as_user(self.user), status="Rejected")
+        self._login()
+        response = self.client.post(self.view, self.request_body)
+        data = response.json()
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(data[0], "User has not been accepted to participate in hackathon")
 
 
 class CurrentTeamOrderListViewTestCase(SetupUserMixin, APITestCase):

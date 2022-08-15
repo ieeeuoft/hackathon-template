@@ -87,15 +87,27 @@ class CurrentProfileSerializer(ProfileSerializer):
         return serializers.ModelSerializer.update(self, instance, validated_data)
 
     def create(self, validated_data):
-        if hasattr(self.context["request"].user, "profile"):
+        current_user = self.context["request"].user
+        if hasattr(current_user, "profile"):
             raise serializers.ValidationError("User already has profile")
+
+        try:
+            review_status = Review.objects.get(application__user=current_user).status
+            if review_status != "Accepted":
+                raise serializers.ValidationError(
+                    "User has not been accepted to participate in hackathon"
+                )
+        except Review.DoesNotExist:
+            raise serializers.ValidationError(
+                "User has not been reviewed yet, Hardware Signout Site cannot be accessed until reviewed"
+            )
 
         acknowledge_rules = validated_data.pop("acknowledge_rules", None)
         e_signature = validated_data.pop("e_signature", None)
 
         if not acknowledge_rules or not e_signature:
             raise serializers.ValidationError(
-                "Must have acknowledge_rules and e_signature"
+                "User must acknowledge rules and provide an e_signature"
             )
 
         response_data = {
@@ -106,9 +118,9 @@ class CurrentProfileSerializer(ProfileSerializer):
         }
 
         profile = Profile.objects.create(
-            **{**response_data, "user": self.context["request"].user}
+            **{**response_data, "user": current_user}
         )
-        return {**response_data, "team": profile.team.team_code, "id": profile.id}
+        return {**response_data, "team": profile.team.team_code}
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -135,8 +147,7 @@ class TeamSerializer(serializers.ModelSerializer):
 
 
 class ProfileCreateResponseSerializer(ProfileSerializer):
-    team = serializers.CharField()
-    id = serializers.IntegerField()
+    team = serializers.CharField(required=True)
 
 
 class UserReviewStatusSerializer(serializers.ModelSerializer):
