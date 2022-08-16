@@ -7,6 +7,7 @@ import { RouteComponentProps } from "react-router-dom";
 import Header from "components/general/Header/Header";
 import { Grid } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
+import { getAdminTeamOrders } from "slices/order/teamOrderSlice";
 
 import { useDispatch, useSelector } from "react-redux";
 import { errorSelector, getTeamInfoData } from "slices/event/teamDetailSlice";
@@ -19,18 +20,24 @@ export interface PageParams {
 }
 
 const TeamDetail = ({ match }: RouteComponentProps<PageParams>) => {
+    const dispatch = useDispatch();
+
     // TODO: change api to use team_code instead of team_id
     const teamCode = match.params.id;
     const error = useSelector(errorSelector);
-    const dispatch = useDispatch();
     useEffect(() => {
         dispatch(getTeamInfoData(teamCode));
     }, [dispatch, teamCode]);
 
+    useEffect(() => {
+        if (!error) {
+            dispatch(getAdminTeamOrders(teamCode));
+        }
+    }, [dispatch]);
+
     return (
         <>
             <Header />
-
             {error ? (
                 <AlertBox error={error} />
             ) : (
