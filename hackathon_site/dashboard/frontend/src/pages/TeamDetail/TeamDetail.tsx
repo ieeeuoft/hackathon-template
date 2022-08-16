@@ -12,6 +12,7 @@ import {
     AdminReturnedItemsTable,
     SimplePendingOrderFulfillmentTable,
 } from "components/teamDetail/SimpleOrderTables/SimpleOrderTables";
+import { getAdminTeamOrders } from "slices/order/teamOrderSlice";
 
 import { useDispatch, useSelector } from "react-redux";
 import { errorSelector, getTeamInfoData } from "slices/event/teamDetailSlice";
@@ -22,18 +23,24 @@ export interface PageParams {
 }
 
 const TeamDetail = ({ match }: RouteComponentProps<PageParams>) => {
+    const dispatch = useDispatch();
+
     // TODO: change api to use team_code instead of team_id
     const teamCode = match.params.id;
     const error = useSelector(errorSelector);
-    const dispatch = useDispatch();
     useEffect(() => {
         dispatch(getTeamInfoData(teamCode));
     }, [dispatch, teamCode]);
 
+    useEffect(() => {
+        if (!error) {
+            dispatch(getAdminTeamOrders(teamCode));
+        }
+    }, [dispatch, error]);
+
     return (
         <>
             <Header />
-
             {error ? (
                 <AlertBox error={error} />
             ) : (
