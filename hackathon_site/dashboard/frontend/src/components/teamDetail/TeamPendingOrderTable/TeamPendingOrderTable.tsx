@@ -81,6 +81,7 @@ export const TeamPendingOrderTable = () => {
                         onSubmit={(values) =>
                             alert(JSON.stringify(values, undefined, 2))
                         }
+                        key={pendingOrder.id}
                     >
                         {(props) => (
                             <form onSubmit={props.handleSubmit}>
