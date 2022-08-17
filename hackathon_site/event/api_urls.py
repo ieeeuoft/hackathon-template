@@ -39,7 +39,11 @@ urlpatterns = [
         api_views.CurrentTeamOrderListView.as_view(),
         name="team-orders",
     ),
-    re_path("teams/(?P<team_code>[A-Z0-9]{5})/", api_views.TeamDetailView.as_view(), name="team-detail"),
+    re_path(
+        "teams/(?P<team_code>[A-Z0-9]{5})/",
+        api_views.TeamDetailView.as_view(),
+        name="team-detail",
+    ),
     path(
         "teams/team/orders/<int:pk>/",
         api_views.TeamOrderDetailView.as_view(),

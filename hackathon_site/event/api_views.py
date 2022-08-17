@@ -216,7 +216,7 @@ class TeamDetailView(mixins.RetrieveModelMixin, generics.GenericAPIView):
     permission_classes = [FullDjangoModelPermissions]
     lookup_field = "team_code"
     queryset = EventTeam.objects.all()
-    
+
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
 
