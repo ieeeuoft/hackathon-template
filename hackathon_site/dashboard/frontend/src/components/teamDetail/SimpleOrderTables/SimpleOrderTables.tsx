@@ -1,4 +1,3 @@
-import { mockPendingOrdersInTable, mockReturnedOrdersInTable } from "testing/mockData";
 import React, { useState } from "react";
 import Container from "@material-ui/core/Container";
 import styles from "components/general/OrderTables/OrderTables.module.scss";
@@ -19,6 +18,11 @@ import {
 } from "formik";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import { OrderInTable } from "api/types";
+import { useSelector } from "react-redux";
+import {
+    pendingOrdersSelector,
+    returnedOrdersSelector,
+} from "slices/order/teamOrderSlice";
 
 interface SimpleOrderFormValues {
     itemIdsChecked: string[];
@@ -142,7 +146,7 @@ const CompleteOrderButton = ({ order }: { order: OrderInTable }) => {
 };
 
 export const SimplePendingOrderFulfillmentTable = () => {
-    const orders = mockPendingOrdersInTable;
+    const orders = useSelector(pendingOrdersSelector);
 
     const [isVisible, setVisibility] = useState(true);
     const toggleVisibility = () => setVisibility(!isVisible);
@@ -234,7 +238,7 @@ export const SimplePendingOrderFulfillmentTable = () => {
 };
 
 export const AdminReturnedItemsTable = () => {
-    const orders = mockReturnedOrdersInTable;
+    const orders = useSelector(returnedOrdersSelector);
 
     const [isVisible, setVisibility] = useState(true);
     const toggleVisibility = () => setVisibility(!isVisible);

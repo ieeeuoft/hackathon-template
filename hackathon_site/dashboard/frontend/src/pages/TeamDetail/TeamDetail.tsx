@@ -12,11 +12,18 @@ import {
     AdminReturnedItemsTable,
     SimplePendingOrderFulfillmentTable,
 } from "components/teamDetail/SimpleOrderTables/SimpleOrderTables";
-import { getAdminTeamOrders } from "slices/order/teamOrderSlice";
+import {
+    getAdminTeamOrders,
+    hardwareInOrdersSelector,
+} from "slices/order/teamOrderSlice";
 
 import { useDispatch, useSelector } from "react-redux";
 import { errorSelector, getTeamInfoData } from "slices/event/teamDetailSlice";
 import AlertBox from "components/general/AlertBox/AlertBox";
+import {
+    getHardwareWithFilters,
+    setFilters,
+} from "../../slices/hardware/hardwareSlice";
 
 export interface PageParams {
     id: string;
@@ -28,15 +35,19 @@ const TeamDetail = ({ match }: RouteComponentProps<PageParams>) => {
     // TODO: change api to use team_code instead of team_id
     const teamCode = match.params.id;
     const error = useSelector(errorSelector);
+    const hardwareIdsRequired = useSelector(hardwareInOrdersSelector);
+
     useEffect(() => {
         dispatch(getTeamInfoData(teamCode));
+        dispatch(getAdminTeamOrders(teamCode));
     }, [dispatch, teamCode]);
 
     useEffect(() => {
-        if (!error) {
-            dispatch(getAdminTeamOrders(teamCode));
+        if (hardwareIdsRequired) {
+            dispatch(setFilters({ hardware_ids: hardwareIdsRequired }));
+            dispatch(getHardwareWithFilters());
         }
-    }, [dispatch, error]);
+    }, [dispatch, hardwareIdsRequired]);
 
     return (
         <>
