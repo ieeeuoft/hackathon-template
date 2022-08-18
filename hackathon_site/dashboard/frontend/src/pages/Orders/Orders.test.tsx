@@ -24,7 +24,7 @@ describe("Orders Page", () => {
                 const day = date.getDate();
                 const hoursAndMinutes = date.getHours() + ":" + date.getMinutes();
 
-                expect(orderDetails.getByText(order.id)).toBeInTheDocument();
+                expect(orderDetails.getByText(order.id));
                 expect(orderDetails.getByText(order.items.length)).toBeInTheDocument();
                 expect(orderDetails.getByText(order.team_code)).toBeInTheDocument();
                 expect(

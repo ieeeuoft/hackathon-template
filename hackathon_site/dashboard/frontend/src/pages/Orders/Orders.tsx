@@ -9,8 +9,9 @@ import OrdersFilter from "components/orders/OrdersFilter/OrderFilter";
 import CloseIcon from "@material-ui/icons/Close";
 import IconButton from "@material-ui/core/IconButton";
 import styles from "./Orders.module.scss";
-import { mockPendingOrders } from "testing/mockData";
+import { mockCheckedOutOrders, mockPendingOrders } from "testing/mockData";
 import OrderCard from "components/orders/OrderCard/OrderCard";
+import OrderCheckedOut from "components/orders/OrderCard/OrderCheckedOut";
 
 const Orders = () => {
     const [mobileOpen, setMobileOpen] = React.useState(false);
@@ -75,6 +76,42 @@ const Orders = () => {
                         </Grid>
                         <Grid item lg={12}>
                             <Grid container spacing={1} direction="row">
+                                {mockCheckedOutOrders.map((order, idx) => (
+                                    <Grid
+                                        item
+                                        lg={3}
+                                        md={4}
+                                        sm={6}
+                                        xs={12}
+                                        key={idx}
+                                        onClick={() => handleClick(order.id)}
+                                    >
+                                        {order.status === "Picked Up" ||
+                                        order.status === "Ready for Pickup" ? (
+                                            <OrderCheckedOut
+                                                team={order.team_code}
+                                                orderQuantity={order.items.length}
+                                                timeOrdered={order.created_at}
+                                                //receivedIDs={order.}
+                                                id={order.id}
+                                            />
+                                        ) : (
+                                            <div
+                                                style={{
+                                                    border: "1px solid black",
+                                                    borderRadius: "5px",
+                                                    padding: "10px",
+                                                    textAlign: "center",
+                                                    backgroundColor: "lightblue",
+                                                    minHeight: "160px",
+                                                }}
+                                                data-testid={`order-item-${order.id}`}
+                                            >
+                                                {"Order Card Component"}
+                                            </div>
+                                        )}
+                                    </Grid>
+                                ))}
                                 {mockPendingOrders.map((order, idx) => (
                                     <Grid
                                         item

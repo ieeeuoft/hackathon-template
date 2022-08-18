@@ -745,6 +745,41 @@ export const mockCheckedOutOrders: Order[] = [
             },
         ],
     },
+    {
+        id: 4,
+        items: [
+            {
+                id: 3,
+                hardware_id: 1,
+                part_returned_health: "Healthy",
+            },
+            {
+                id: 4,
+                hardware_id: 1,
+                part_returned_health: null,
+            },
+            {
+                id: 5,
+                hardware_id: 2,
+                part_returned_health: null,
+            },
+        ],
+        team_id: 2,
+        team_code: "IEEE",
+        status: "Ready for Pickup",
+        created_at: "2021-10-17T18:28:44.691969-04:00",
+        updated_at: "2021-12-03T23:01:45.606892-05:00",
+        request: [
+            {
+                id: 1,
+                requested_quantity: 2,
+            },
+            {
+                id: 2,
+                requested_quantity: 1,
+            },
+        ],
+    },
 ];
 
 export const mockOrders: Order[] = mockCheckedOutOrders.concat(mockPendingOrders);
