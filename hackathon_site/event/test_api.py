@@ -542,7 +542,7 @@ class CreateProfileViewTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_user_can_have_profile(self):
-        self._review(application=self._apply_as_user(self.user))
+        self._review(application=self._apply_as_user(self.user, rsvp=True))
         self._login()
         response = self.client.post(self.view, self.request_body)
         data = response.json()
@@ -559,7 +559,7 @@ class CreateProfileViewTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(self.expected_response, data)
 
     def test_not_including_required_fields(self):
-        self._review(application=self._apply_as_user(self.user))
+        self._review(application=self._apply_as_user(self.user, rsvp=True))
         self._login()
         response = self.client.post(self.view, {"e_signature": "user signature",})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -567,7 +567,7 @@ class CreateProfileViewTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_acknowledge_rules_is_false(self):
-        self._review(application=self._apply_as_user(self.user))
+        self._review(application=self._apply_as_user(self.user, rsvp=True))
         self._login()
         response = self.client.post(
             self.view, {"e_signature": "user signature", "acknowledge_rules": False}
@@ -579,7 +579,7 @@ class CreateProfileViewTestCase(SetupUserMixin, APITestCase):
         )
 
     def test_e_signature_is_empty(self):
-        self._review(application=self._apply_as_user(self.user))
+        self._review(application=self._apply_as_user(self.user, rsvp=True))
         self._login()
         response = self.client.post(
             self.view, {"e_signature": "", "acknowledge_rules": True}
@@ -598,8 +598,29 @@ class CreateProfileViewTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(data[0], "User already has profile")
 
+    def test_user_has_not_completed_application(self):
+        self._login()
+        response = self.client.post(self.view, self.request_body)
+        data = response.json()
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            data[0],
+            "User has not completed their application to the hackathon. Please do so to access the Hardware Signout Site",
+        )
+
+    def test_user_has_not_rsvp(self):
+        self._apply_as_user(self.user)
+        self._login()
+        response = self.client.post(self.view, self.request_body)
+        data = response.json()
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            data[0],
+            "User has not RSVP'd to the hackathon. Please RSVP to access the Hardware Signout Site",
+        )
+
     def test_user_has_not_been_reviewed(self):
-        self.application = self._apply_as_user(self.user)
+        self._apply_as_user(self.user, rsvp=True)
         self._login()
         response = self.client.post(self.view, self.request_body)
         data = response.json()
@@ -610,7 +631,7 @@ class CreateProfileViewTestCase(SetupUserMixin, APITestCase):
         )
 
     def test_user_review_rejected(self):
-        self._review(application=self._apply_as_user(self.user), status="Rejected")
+        self._review(application=self._apply_as_user(self.user, rsvp=True), status="Rejected")
         self._login()
         response = self.client.post(self.view, self.request_body)
         data = response.json()

@@ -3,6 +3,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import serializers
 
 from event.models import Profile, User, Team
+from registration.models import Application
 from review.models import Review
 
 
@@ -90,6 +91,17 @@ class CurrentProfileSerializer(ProfileSerializer):
         current_user = self.context["request"].user
         if hasattr(current_user, "profile"):
             raise serializers.ValidationError("User already has profile")
+
+        try:
+            rsvp_status = Application.objects.get(user=current_user).rsvp
+            if not rsvp_status:
+                raise serializers.ValidationError(
+                    "User has not RSVP'd to the hackathon. Please RSVP to access the Hardware Signout Site"
+                )
+        except Application.DoesNotExist:
+            raise serializers.ValidationError(
+                "User has not completed their application to the hackathon. Please do so to access the Hardware Signout Site"
+            )
 
         try:
             review_status = Review.objects.get(application__user=current_user).status
