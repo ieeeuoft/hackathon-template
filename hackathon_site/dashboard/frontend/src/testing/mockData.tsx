@@ -8,6 +8,7 @@ import {
     Hardware,
     Order,
     OrderInTable,
+    Profile,
     ReturnOrderInTable,
     Team,
     User,
@@ -208,6 +209,15 @@ export const mockAdminUser: User = {
 };
 
 // Team Detail
+export const mockProfile: Profile = {
+    id: 1,
+    id_provided: false,
+    attended: false,
+    acknowledge_rules: true,
+    e_signature: "mock profile",
+    team: 1,
+};
+
 export const mockTeam: Team = {
     id: 1,
     team_code: "A48E5",
