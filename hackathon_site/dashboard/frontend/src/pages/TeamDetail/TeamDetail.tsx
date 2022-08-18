@@ -24,7 +24,7 @@ const TeamDetail = ({ match }: RouteComponentProps<PageParams>) => {
 
     // TODO: change api to use team_code instead of team_id
     const teamCode = match.params.id;
-    const error = useSelector(errorSelector);
+    const error: string | string[] | null = useSelector(errorSelector);
     useEffect(() => {
         dispatch(getTeamInfoData(teamCode));
     }, [dispatch, teamCode]);

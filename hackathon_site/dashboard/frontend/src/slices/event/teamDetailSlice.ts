@@ -6,8 +6,8 @@ import {
 } from "@reduxjs/toolkit";
 import { AppDispatch, RootState } from "slices/store";
 import { displaySnackbar } from "slices/ui/uiSlice";
-import { get } from "api/api";
-import { ProfileWithUser, Team } from "api/types";
+import { get, patch } from "api/api";
+import { Profile, ProfileWithUser, Team } from "api/types";
 
 interface TeamDetailExtraState {
     isLoading: boolean;
@@ -29,6 +29,46 @@ interface RejectValue {
     status: number;
     message: any;
 }
+
+interface idProvidedParameters {
+    profileId: number;
+    idProvided: boolean;
+    attended: boolean;
+}
+
+export const updateParticipantIdProvided = createAsyncThunk<
+    Profile,
+    idProvidedParameters,
+    { state: RootState; rejectValue: RejectValue; dispatch: AppDispatch }
+>(
+    `${teamDetailReducerName}/updateParticipantIdProvided`,
+    async ({ profileId, idProvided, attended }, { rejectWithValue, dispatch }) => {
+        try {
+            const response = await patch<Profile>(`/api/event/profiles/${profileId}/`, {
+                id_provided: !idProvided,
+                attended: attended,
+            });
+            return response.data;
+        } catch (e: any) {
+            const message =
+                e.response.statusText === "Not Found"
+                    ? `Could not find participant: Error ${e.response.status}`
+                    : `Something went wrong: Error ${e.response.status}`;
+            dispatch(
+                displaySnackbar({
+                    message,
+                    options: {
+                        variant: "error",
+                    },
+                })
+            );
+            return rejectWithValue({
+                status: e.response.status,
+                message,
+            });
+        }
+    }
+);
 
 export const getTeamInfoData = createAsyncThunk<
     Team,
@@ -78,6 +118,26 @@ const teamDetailSlice = createSlice({
         });
         builder.addCase(getTeamInfoData.rejected, (state, { payload }) => {
             state.isLoading = false;
+            state.error = payload?.message ?? "Something went wrong";
+        });
+        builder.addCase(updateParticipantIdProvided.pending, (state) => {
+            state.isLoading = true;
+            state.error = null;
+        });
+        builder.addCase(updateParticipantIdProvided.fulfilled, (state, { payload }) => {
+            state.isLoading = false;
+            state.error = null;
+
+            const updateObject = {
+                id: payload.id,
+                changes: {
+                    id_provided: payload.id_provided,
+                },
+            };
+            teamDetailAdapter.updateOne(state, updateObject);
+        });
+        builder.addCase(updateParticipantIdProvided.rejected, (state, { payload }) => {
+            state.isLoading = true;
             state.error = payload?.message ?? "Something went wrong";
         });
     },

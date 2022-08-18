@@ -11,15 +11,17 @@ import {
     TableRow,
 } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
-import React from "react";
-import { useSelector } from "react-redux";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
     isLoadingSelector,
     teamDetailAdapterSelector,
+    updateParticipantIdProvided,
 } from "slices/event/teamDetailSlice";
 
 export const TeamInfoTable = () => {
-    const isTeamInfoLoading = useSelector(isLoadingSelector);
+    const dispatch = useDispatch();
+    const isTeamInfoLoading: boolean = useSelector(isLoadingSelector);
     const profiles = useSelector(teamDetailAdapterSelector.selectAll);
 
     return (
@@ -52,7 +54,17 @@ export const TeamInfoTable = () => {
                                         <Checkbox
                                             checked={row.id_provided}
                                             color="primary"
+                                            disabled={isTeamInfoLoading}
                                             data-testid="checkbox"
+                                            onChange={(event) => {
+                                                dispatch(
+                                                    updateParticipantIdProvided({
+                                                        profileId: row.id,
+                                                        idProvided: row.id_provided,
+                                                        attended: row.attended,
+                                                    })
+                                                );
+                                            }}
                                         />
                                     </TableCell>
                                 </TableRow>
