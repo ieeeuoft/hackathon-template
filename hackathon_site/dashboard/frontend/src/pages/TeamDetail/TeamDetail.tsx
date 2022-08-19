@@ -32,7 +32,6 @@ export interface PageParams {
 const TeamDetail = ({ match }: RouteComponentProps<PageParams>) => {
     const dispatch = useDispatch();
 
-    // TODO: change api to use team_code instead of team_id
     const teamCode = match.params.id;
     const error = useSelector(errorSelector);
     const hardwareIdsRequired = useSelector(hardwareInOrdersSelector);
