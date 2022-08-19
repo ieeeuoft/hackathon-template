@@ -20,10 +20,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { errorSelector, getTeamInfoData } from "slices/event/teamDetailSlice";
 import AlertBox from "components/general/AlertBox/AlertBox";
-import {
-    getHardwareWithFilters,
-    setFilters,
-} from "../../slices/hardware/hardwareSlice";
+import { getHardwareWithFilters, setFilters } from "slices/hardware/hardwareSlice";
 
 export interface PageParams {
     id: string;

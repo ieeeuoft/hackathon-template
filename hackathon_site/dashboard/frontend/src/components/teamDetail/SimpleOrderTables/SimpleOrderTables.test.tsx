@@ -1,16 +1,34 @@
-import { fireEvent, render, within, act } from "testing/utils";
-import { mockPendingOrdersInTable, mockReturnedOrdersInTable } from "testing/mockData";
+import { fireEvent, render, within, act, makeStoreWithEntities } from "testing/utils";
+import {
+    mockCheckedOutOrdersInTable,
+    mockHardware,
+    mockPendingOrdersInTable,
+    mockReturnedOrdersInTable,
+} from "testing/mockData";
 import React from "react";
 import {
     AdminReturnedItemsTable,
     SimplePendingOrderFulfillmentTable,
 } from "./SimpleOrderTables";
 import { waitFor } from "@testing-library/react";
+import { RootStore } from "slices/store";
+
+const mockOrdersInTable = mockPendingOrdersInTable.concat(mockCheckedOutOrdersInTable);
 
 describe("<SimplePendingOrderFulfillmentTable />", () => {
+    let store: RootStore;
+
+    beforeEach(() => {
+        store = makeStoreWithEntities({
+            hardware: mockHardware,
+            teamDetailOrders: mockOrdersInTable,
+        });
+    });
+
     it("Shows tables by default and toggles visibility when button is clicked", async () => {
         const { getByText, queryByText } = render(
-            <SimplePendingOrderFulfillmentTable />
+            <SimplePendingOrderFulfillmentTable />,
+            { store }
         );
         const button = getByText(/hide all/i);
 
@@ -26,7 +44,9 @@ describe("<SimplePendingOrderFulfillmentTable />", () => {
     });
 
     it("Shows complete order button for Submitted Orders and picked up button for Ready to Pickup orders", () => {
-        const { getByTestId } = render(<SimplePendingOrderFulfillmentTable />);
+        const { getByTestId } = render(<SimplePendingOrderFulfillmentTable />, {
+            store,
+        });
 
         mockPendingOrdersInTable.forEach(({ id, status }) => {
             if (status !== "Cancelled") {
@@ -47,11 +67,9 @@ describe("<SimplePendingOrderFulfillmentTable />", () => {
     });
 
     it("Does not show checkboxes for Ready to Pickup orders", () => {
-        const { getByTestId } = render(<SimplePendingOrderFulfillmentTable />);
-
-        const order = mockPendingOrdersInTable.find(
-            ({ status }) => status === "Submitted"
-        );
+        const { getByTestId } = render(<SimplePendingOrderFulfillmentTable />, {
+            store,
+        });
 
         mockPendingOrdersInTable.forEach((order) => {
             const { queryByDisplayValue, getByDisplayValue } = within(
@@ -74,7 +92,9 @@ describe("<SimplePendingOrderFulfillmentTable />", () => {
     });
 
     it("Disables complete order button when items are unchecked", () => {
-        const { getByTestId } = render(<SimplePendingOrderFulfillmentTable />);
+        const { getByTestId } = render(<SimplePendingOrderFulfillmentTable />, {
+            store,
+        });
 
         mockPendingOrdersInTable
             .filter(({ status }) => status === "Submitted")
@@ -87,7 +107,9 @@ describe("<SimplePendingOrderFulfillmentTable />", () => {
     });
 
     it("Enables complete order button when items are all checked", async () => {
-        const { getByTestId } = render(<SimplePendingOrderFulfillmentTable />);
+        const { getByTestId } = render(<SimplePendingOrderFulfillmentTable />, {
+            store,
+        });
 
         const order = mockPendingOrdersInTable.find(
             ({ status }) => status === "Submitted"
@@ -116,7 +138,9 @@ describe("<SimplePendingOrderFulfillmentTable />", () => {
     });
 
     test("Check All checkbox is unchecked when some/all rows are unchecked", async () => {
-        const { getByTestId } = render(<SimplePendingOrderFulfillmentTable />);
+        const { getByTestId } = render(<SimplePendingOrderFulfillmentTable />, {
+            store,
+        });
 
         const order = mockPendingOrdersInTable.find(
             ({ status }) => status === "Submitted"
@@ -147,8 +171,21 @@ describe("<SimplePendingOrderFulfillmentTable />", () => {
 });
 
 describe("<AdminReturnedItemsTable />", () => {
+    let store: RootStore;
+
+    beforeEach(() => {
+        store = makeStoreWithEntities({
+            hardware: mockHardware,
+            teamDetailOrderState: {
+                returnedOrders: mockReturnedOrdersInTable,
+            },
+        });
+    });
+
     it("Shows tables by default and toggles visibility when button is clicked", async () => {
-        const { getByText, queryByText } = render(<AdminReturnedItemsTable />);
+        const { getByText, queryByText } = render(<AdminReturnedItemsTable />, {
+            store,
+        });
         const button = getByText(/hide all/i);
 
         mockReturnedOrdersInTable.map(({ id }) => {

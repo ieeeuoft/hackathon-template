@@ -7,10 +7,10 @@ import {
     waitFor,
     makeMockApiResponse,
 } from "testing/utils";
-import { mockHardware, mockOrders, mockTeam, mockTeamMultiple } from "testing/mockData";
+import { mockOrders, mockTeam, mockTeamMultiple } from "testing/mockData";
 import TeamDetail, { PageParams } from "pages/TeamDetail/TeamDetail";
 import { RouteComponentProps } from "react-router-dom";
-import { Hardware, Order, Team } from "api/types";
+import { Order } from "api/types";
 import { get } from "api/api";
 
 jest.mock("api/api", () => ({
@@ -25,7 +25,7 @@ const mockedGet = get as jest.MockedFunction<typeof get>;
 const teamDetailProps = {
     match: {
         params: {
-            id: mockTeamMultiple.id.toString(),
+            id: mockTeamMultiple.team_code,
         },
     },
 } as RouteComponentProps<PageParams>;
@@ -38,7 +38,7 @@ describe("<TeamDetail />", () => {
             .calledWith(orderAPI, { team_code: teamDetailProps.match.params.id })
             .mockResolvedValue(teamOrderAPIResponse);
         when(mockedGet)
-            .calledWith(`/api/event/teams/${mockTeamMultiple.id}/`)
+            .calledWith(`/api/event/teams/${mockTeamMultiple.team_code}/`)
             .mockResolvedValue(teamDetailAPIResponse);
 
         render(<TeamDetail {...teamDetailProps} />);
@@ -48,7 +48,7 @@ describe("<TeamDetail />", () => {
         await waitFor(() => {
             expect(mockedGet).toHaveBeenNthCalledWith(
                 1,
-                `/api/event/teams/${mockTeamMultiple.id}/`
+                `/api/event/teams/${mockTeamMultiple.team_code}/`
             );
             expect(mockedGet).toHaveBeenNthCalledWith(2, orderAPI, {
                 team_code: teamDetailProps.match.params.id,
@@ -73,7 +73,7 @@ describe("<TeamDetail />", () => {
         };
 
         when(mockedGet)
-            .calledWith(`/api/event/teams/${mockTeamMultiple.id}/`)
+            .calledWith(`/api/event/teams/${mockTeamMultiple.team_code}/`)
             .mockRejectedValue(failureResponse);
 
         render(<TeamDetail {...teamDetailProps} />);
