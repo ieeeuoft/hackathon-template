@@ -18,7 +18,7 @@ const mockedGet = get as jest.MockedFunction<typeof get>;
 const teamDetailProps = {
     match: {
         params: {
-            id: mockTeamMultiple.id.toString(),
+            code: mockTeamMultiple.id.toString(),
         },
     },
 } as RouteComponentProps<PageParams>;
@@ -27,20 +27,20 @@ describe("<TeamDetail />", () => {
     test("renders loading component and then data without crashing", () => {
         const teamOrderAPIResponse = makeMockApiListResponse<Order>(mockOrders);
         when(mockedGet)
-            .calledWith(orderAPI, { team_code: teamDetailProps.match.params.id })
+            .calledWith(orderAPI, { team_code: teamDetailProps.match.params.code })
             .mockResolvedValue(teamOrderAPIResponse);
 
         render(<TeamDetail {...teamDetailProps} />);
 
         expect(screen.getByTestId("team-info-linear-progress")).toBeInTheDocument();
         expect(
-            screen.getByText(`Team ${teamDetailProps.match.params.id} Overview`)
+            screen.getByText(`Team ${teamDetailProps.match.params.code} Overview`)
         ).toBeInTheDocument();
         expect(mockedGet).toHaveBeenCalledWith(
             `/api/event/teams/${mockTeamMultiple.id}/`
         );
         expect(mockedGet).toBeCalledWith(orderAPI, {
-            team_code: teamDetailProps.match.params.id,
+            team_code: teamDetailProps.match.params.code,
         });
     });
 
