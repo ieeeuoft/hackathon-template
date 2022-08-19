@@ -62,7 +62,7 @@ class SetupUserMixin:
             "conduct_agree": True,
             "data_agree": True,
             "resume": "uploads/resumes/my_resume.pdf",
-            **kwargs
+            **kwargs,
         }
         return Application.objects.create(user=user, team=team, **application_data)
 

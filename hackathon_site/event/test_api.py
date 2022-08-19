@@ -631,7 +631,9 @@ class CreateProfileViewTestCase(SetupUserMixin, APITestCase):
         )
 
     def test_user_review_rejected(self):
-        self._review(application=self._apply_as_user(self.user, rsvp=True), status="Rejected")
+        self._review(
+            application=self._apply_as_user(self.user, rsvp=True), status="Rejected"
+        )
         self._login()
         response = self.client.post(self.view, self.request_body)
         data = response.json()
