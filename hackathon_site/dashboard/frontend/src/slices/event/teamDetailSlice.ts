@@ -10,12 +10,14 @@ import { get, patch } from "api/api";
 import { Profile, ProfileWithUser, Team } from "api/types";
 
 interface TeamDetailExtraState {
-    isLoading: boolean;
+    isTeamInfoLoading: boolean;
+    isParticipantIdLoading: boolean;
     error: string | null;
 }
 
 const extraState: TeamDetailExtraState = {
-    isLoading: false,
+    isTeamInfoLoading: false,
+    isParticipantIdLoading: false,
     error: null,
 };
 
@@ -33,7 +35,6 @@ interface RejectValue {
 interface idProvidedParameters {
     profileId: number;
     idProvided: boolean;
-    attended: boolean;
 }
 
 export const updateParticipantIdProvided = createAsyncThunk<
@@ -42,17 +43,16 @@ export const updateParticipantIdProvided = createAsyncThunk<
     { state: RootState; rejectValue: RejectValue; dispatch: AppDispatch }
 >(
     `${teamDetailReducerName}/updateParticipantIdProvided`,
-    async ({ profileId, idProvided, attended }, { rejectWithValue, dispatch }) => {
+    async ({ profileId, idProvided }, { rejectWithValue, dispatch }) => {
         try {
             const response = await patch<Profile>(`/api/event/profiles/${profileId}/`, {
-                id_provided: !idProvided,
-                attended: attended,
+                id_provided: idProvided,
             });
             return response.data;
         } catch (e: any) {
             const message =
                 e.response.statusText === "Not Found"
-                    ? `Could not find participant: Error ${e.response.status}`
+                    ? `Could not update participant id status: Error ${e.response.status}`
                     : `Something went wrong: Error ${e.response.status}`;
             dispatch(
                 displaySnackbar({
@@ -107,25 +107,25 @@ const teamDetailSlice = createSlice({
     reducers: {},
     extraReducers: (builder) => {
         builder.addCase(getTeamInfoData.pending, (state) => {
-            state.isLoading = true;
+            state.isTeamInfoLoading = true;
             state.error = null;
         });
         builder.addCase(getTeamInfoData.fulfilled, (state, { payload }) => {
-            state.isLoading = false;
+            state.isTeamInfoLoading = false;
             state.error = null;
 
             teamDetailAdapter.setMany(state, payload.profiles);
         });
         builder.addCase(getTeamInfoData.rejected, (state, { payload }) => {
-            state.isLoading = false;
+            state.isTeamInfoLoading = false;
             state.error = payload?.message ?? "Something went wrong";
         });
         builder.addCase(updateParticipantIdProvided.pending, (state) => {
-            state.isLoading = true;
+            state.isParticipantIdLoading = true;
             state.error = null;
         });
         builder.addCase(updateParticipantIdProvided.fulfilled, (state, { payload }) => {
-            state.isLoading = false;
+            state.isParticipantIdLoading = false;
             state.error = null;
 
             const updateObject = {
@@ -135,10 +135,6 @@ const teamDetailSlice = createSlice({
                 },
             };
             teamDetailAdapter.updateOne(state, updateObject);
-        });
-        builder.addCase(updateParticipantIdProvided.rejected, (state, { payload }) => {
-            state.isLoading = true;
-            state.error = payload?.message ?? "Something went wrong";
         });
     },
 });
@@ -153,9 +149,14 @@ export const teamDetailSliceSelector = (state: RootState) =>
 export const teamDetailAdapterSelector = teamDetailAdapter.getSelectors(
     teamDetailSliceSelector
 );
-export const isLoadingSelector = createSelector(
+export const isTeamInfoLoadingSelector = createSelector(
     [teamDetailSliceSelector],
-    (teamDetailSlice) => teamDetailSlice.isLoading
+    (teamDetailSlice) => teamDetailSlice.isTeamInfoLoading
+);
+
+export const isParticipantIdLoadingSelector = createSelector(
+    [teamDetailSliceSelector],
+    (teamDetailSlice) => teamDetailSlice.isParticipantIdLoading
 );
 
 export const errorSelector = createSelector(

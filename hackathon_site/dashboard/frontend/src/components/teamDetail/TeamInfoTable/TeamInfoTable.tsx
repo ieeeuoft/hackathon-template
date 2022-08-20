@@ -14,14 +14,16 @@ import Typography from "@material-ui/core/Typography";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
-    isLoadingSelector,
+    isParticipantIdLoadingSelector,
+    isTeamInfoLoadingSelector,
     teamDetailAdapterSelector,
     updateParticipantIdProvided,
 } from "slices/event/teamDetailSlice";
 
 export const TeamInfoTable = () => {
     const dispatch = useDispatch();
-    const isTeamInfoLoading: boolean = useSelector(isLoadingSelector);
+    const isTeamInfoLoading: boolean = useSelector(isTeamInfoLoadingSelector);
+    const isParticipantIdLoading: boolean = useSelector(isParticipantIdLoadingSelector);
     const profiles = useSelector(teamDetailAdapterSelector.selectAll);
 
     return (
@@ -54,14 +56,13 @@ export const TeamInfoTable = () => {
                                         <Checkbox
                                             checked={row.id_provided}
                                             color="primary"
-                                            disabled={isTeamInfoLoading}
+                                            disabled={isParticipantIdLoading}
                                             data-testid="checkbox"
                                             onChange={(event) => {
                                                 dispatch(
                                                     updateParticipantIdProvided({
                                                         profileId: row.id,
-                                                        idProvided: row.id_provided,
-                                                        attended: row.attended,
+                                                        idProvided: !row.id_provided,
                                                     })
                                                 );
                                             }}

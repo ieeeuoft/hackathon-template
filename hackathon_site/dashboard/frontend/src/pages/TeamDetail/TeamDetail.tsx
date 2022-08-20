@@ -23,7 +23,7 @@ const TeamDetail = ({ match }: RouteComponentProps<PageParams>) => {
     const dispatch = useDispatch();
 
     const teamCode = match.params.id;
-    const error: string | string[] | null = useSelector(errorSelector);
+    const error = useSelector(errorSelector);
     useEffect(() => {
         dispatch(getTeamInfoData(teamCode));
     }, [dispatch, teamCode]);

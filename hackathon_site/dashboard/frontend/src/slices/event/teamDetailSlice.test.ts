@@ -3,7 +3,7 @@ import {
     errorSelector,
     getTeamInfoData,
     initialState,
-    isLoadingSelector,
+    isTeamInfoLoadingSelector,
     teamDetailAdapterSelector,
     teamDetailReducerName,
     teamDetailSliceSelector,
@@ -48,7 +48,7 @@ const profileFailureResponse = {
     response: {
         status: 404,
         statusText: "Not Found",
-        message: "Could not find participant: Error 404",
+        message: "Could not update participant id status: Error 404",
     },
 };
 
@@ -59,24 +59,24 @@ describe("Selectors", () => {
         );
     });
 
-    test("isLoadingSelector", () => {
+    test("isTeamInfoLoadingSelector", () => {
         const loadingTrueState = {
             ...mockState,
             [teamDetailReducerName]: {
                 ...initialState,
-                isLoading: true,
+                isTeamInfoLoading: true,
             },
         };
         const loadingFalseState = {
             ...mockState,
             [teamDetailReducerName]: {
                 ...initialState,
-                isLoading: false,
+                isTeamInfoLoading: false,
             },
         };
 
-        expect(isLoadingSelector(loadingTrueState)).toEqual(true);
-        expect(isLoadingSelector(loadingFalseState)).toEqual(false);
+        expect(isTeamInfoLoadingSelector(loadingTrueState)).toEqual(true);
+        expect(isTeamInfoLoadingSelector(loadingFalseState)).toEqual(false);
     });
 });
 
@@ -145,15 +145,13 @@ describe("updateParticipantIdProvided thunk", () => {
         await store.dispatch(
             updateParticipantIdProvided({
                 profileId: mockProfile.id,
-                idProvided: mockProfile.id_provided,
-                attended: mockProfile.attended,
+                idProvided: !mockProfile.id_provided,
             })
         );
 
         // expect id_provided for that profile to have been changed in the store
         await waitFor(() => {
             expect(mockedPatch).toHaveBeenCalledWith("/api/event/profiles/1/", {
-                attended: mockProfile.attended,
                 id_provided: !mockProfile.id_provided,
             });
             expect(errorSelector(store.getState())).toBeFalsy();
@@ -170,13 +168,11 @@ describe("updateParticipantIdProvided thunk", () => {
         await store.dispatch(
             updateParticipantIdProvided({
                 profileId: mockProfile.id,
-                idProvided: mockProfile.id_provided,
-                attended: mockProfile.attended,
+                idProvided: !mockProfile.id_provided,
             })
         );
 
         expect(mockedPatch).toHaveBeenCalledWith("/api/event/profiles/1/", {
-            attended: mockProfile.attended,
             id_provided: !mockProfile.id_provided,
         });
 
@@ -184,25 +180,9 @@ describe("updateParticipantIdProvided thunk", () => {
 
         expect(actions).toContainEqual(
             displaySnackbar({
-                message: "Could not find participant: Error 404",
+                message: "Could not update participant id status: Error 404",
                 options: { variant: "error" },
             })
-        );
-    });
-    it("Updates error state on API failure", async () => {
-        mockedPatch.mockRejectedValueOnce(profileFailureResponse);
-
-        const store = makeStore();
-        await store.dispatch(
-            updateParticipantIdProvided({
-                profileId: mockProfile.id,
-                idProvided: mockProfile.id_provided,
-                attended: mockProfile.attended,
-            })
-        );
-
-        expect(errorSelector(store.getState())).toBe(
-            "Could not find participant: Error 404"
         );
     });
 });
