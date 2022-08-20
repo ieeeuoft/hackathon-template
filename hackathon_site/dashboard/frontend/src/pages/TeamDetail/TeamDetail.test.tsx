@@ -18,7 +18,7 @@ const mockedGet = get as jest.MockedFunction<typeof get>;
 const teamDetailProps = {
     match: {
         params: {
-            code: mockTeamMultiple.id.toString(),
+            code: mockTeamMultiple.team_code.toString(),
         },
     },
 } as RouteComponentProps<PageParams>;
@@ -37,7 +37,7 @@ describe("<TeamDetail />", () => {
             screen.getByText(`Team ${teamDetailProps.match.params.code} Overview`)
         ).toBeInTheDocument();
         expect(mockedGet).toHaveBeenCalledWith(
-            `/api/event/teams/${mockTeamMultiple.id}/`
+            `/api/event/teams/${mockTeamMultiple.team_code}/`
         );
         expect(mockedGet).toBeCalledWith(orderAPI, {
             team_code: teamDetailProps.match.params.code,
@@ -54,7 +54,7 @@ describe("<TeamDetail />", () => {
         };
 
         when(mockedGet)
-            .calledWith(`/api/event/teams/${mockTeamMultiple.id}/`)
+            .calledWith(`/api/event/teams/${mockTeamMultiple.team_code}/`)
             .mockRejectedValue(failureResponse);
 
         render(<TeamDetail {...teamDetailProps} />);
