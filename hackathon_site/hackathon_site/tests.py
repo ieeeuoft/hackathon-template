@@ -44,7 +44,7 @@ class SetupUserMixin:
         return Profile.objects.create(user=user, team=team, **profile_data)
 
     @staticmethod
-    def _apply_as_user(user, team=None):
+    def _apply_as_user(user, team=None, **kwargs):
         if team is None:
             team = RegistrationTeam.objects.create()
 
@@ -62,6 +62,7 @@ class SetupUserMixin:
             "conduct_agree": True,
             "data_agree": True,
             "resume": "uploads/resumes/my_resume.pdf",
+            **kwargs,
         }
         return Application.objects.create(user=user, team=team, **application_data)
 
