@@ -32,7 +32,7 @@ const TeamDetail = ({ match }: RouteComponentProps<PageParams>) => {
         if (!error) {
             dispatch(getAdminTeamOrders(teamCode));
         }
-    }, [dispatch]);
+    }, [dispatch, error, teamCode]);
 
     return (
         <>
