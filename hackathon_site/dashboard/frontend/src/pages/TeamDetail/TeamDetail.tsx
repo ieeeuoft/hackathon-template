@@ -16,13 +16,13 @@ import AlertBox from "components/general/AlertBox/AlertBox";
 import TeamPendingOrderTable from "components/teamDetail/TeamPendingOrderTable/TeamPendingOrderTable";
 
 export interface PageParams {
-    id: string;
+    code: string;
 }
 
 const TeamDetail = ({ match }: RouteComponentProps<PageParams>) => {
     const dispatch = useDispatch();
 
-    const teamCode = match.params.id;
+    const teamCode = match.params.code;
     const error = useSelector(errorSelector);
     useEffect(() => {
         dispatch(getTeamInfoData(teamCode));
