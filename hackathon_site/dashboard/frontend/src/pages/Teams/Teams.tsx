@@ -39,9 +39,7 @@ const Teams = () => {
         >
             <TeamCardAdmin
                 teamCode={team.team_code}
-                members={team.profiles.map(
-                    (member) => `${member.user.first_name} ${member.user.last_name}`
-                )}
+                members={team.profiles}
             />
         </Grid>
     ));

@@ -6,13 +6,12 @@ import {
     isLoadingSelector,
     getAllTeams,
     teamAdminSelectors,
-    RESPONSE_TIME,
+    NUM_TEAM_LIMIT,
 } from "slices/event/teamAdminSlice";
 import { makeMockApiListResponse, waitFor } from "testing/utils";
 import { mockTeams } from "testing/mockData";
-import { get, post } from "api/api";
-import { cartReducerName, submitOrder } from "../hardware/cartSlice";
-import { displaySnackbar } from "../ui/uiSlice";
+import { get } from "api/api";
+import { displaySnackbar } from "slices/ui/uiSlice";
 import thunk, { ThunkDispatch } from "redux-thunk";
 import { AnyAction } from "redux";
 import configureStore from "redux-mock-store";
@@ -76,7 +75,7 @@ describe("getAllTeams thunk", () => {
 
         await waitFor(() => {
             expect(mockedGet).toHaveBeenCalledWith("/api/event/teams/", {
-                limit: RESPONSE_TIME,
+                limit: NUM_TEAM_LIMIT,
             });
             expect(teamAdminSelectors.selectAll(store.getState())).toEqual(mockTeams);
         });

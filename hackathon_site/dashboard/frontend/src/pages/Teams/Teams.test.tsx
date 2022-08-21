@@ -2,18 +2,17 @@ import React from "react";
 
 import { makeMockApiListResponse, render } from "testing/utils";
 import { get } from "api/api";
-import { mockTeams } from "testing/mockData";
+import {mockTeams} from "testing/mockData";
 import { waitFor, when } from "testing/utils";
 import Teams from "./Teams";
 import { queryByTestId } from "@testing-library/react";
+import {NUM_TEAM_LIMIT} from "slices/event/teamAdminSlice";
 
 jest.mock("api/api", () => ({
     ...jest.requireActual("api/api"),
     get: jest.fn(),
 }));
 const mockedGet = get as jest.MockedFunction<typeof get>;
-
-const responseTime = 24;
 
 const teamsUri = "/api/event/teams/";
 
@@ -22,16 +21,10 @@ describe("Teams Page", () => {
         const teamsApiResponse = makeMockApiListResponse(mockTeams);
 
         when(mockedGet)
-            .calledWith(teamsUri, { limit: responseTime })
+            .calledWith(teamsUri, { limit: NUM_TEAM_LIMIT })
             .mockResolvedValue(teamsApiResponse);
 
         const { getByText, queryByTestId } = render(<Teams />);
-        const teamCodes = mockTeams.map((team) => team.team_code);
-        const allTeamMembers = mockTeams.map((team) =>
-            team.profiles.map(
-                (member) => `${member.user.first_name} ${member.user.last_name}`
-            )
-        );
 
         await waitFor(() => {
             expect(queryByTestId("teams-circular-progress")).toBeInTheDocument();
@@ -39,18 +32,15 @@ describe("Teams Page", () => {
 
         await waitFor(() => {
             expect(mockedGet).toHaveBeenCalledWith(teamsUri, {
-                limit: responseTime,
+                limit: NUM_TEAM_LIMIT,
             });
 
-            teamCodes.forEach((teamCode) => {
-                expect(getByText("Team " + teamCode)).toBeInTheDocument();
-            });
-
-            allTeamMembers.forEach((members) => {
-                members.forEach((member) => {
-                    expect(getByText(member)).toBeInTheDocument();
-                });
-            });
+            mockTeams.forEach((team) => {
+                expect(getByText("Team " + team.team_code)).toBeInTheDocument();
+                team.profiles.forEach((profile) => {
+                    expect(getByText(`${profile.user.first_name} ${profile.user.last_name}`)).toBeInTheDocument();
+                })
+            })
         });
     });
 });

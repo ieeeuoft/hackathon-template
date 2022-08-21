@@ -9,7 +9,6 @@ import { APIListResponse, Team } from "api/types";
 import { AppDispatch, RootState } from "slices/store";
 import { displaySnackbar } from "slices/ui/uiSlice";
 
-// TODO
 interface TeamAdminExtraState {
     errorState: string | null;
     isMoreLoading: boolean;
@@ -27,7 +26,7 @@ const extraState: TeamAdminExtraState = {
     isMoreLoading: false,
 };
 
-export const RESPONSE_TIME = 24;
+export const NUM_TEAM_LIMIT = 24;
 
 export const teamAdminReducerName = "adminTeam";
 const teamAdminAdapter = createEntityAdapter<Team>();
@@ -42,7 +41,7 @@ export const getAllTeams = createAsyncThunk<
 >(`${teamAdminReducerName}/getAllTeams`, async (_, { dispatch, rejectWithValue }) => {
     try {
         const response = await get<APIListResponse<Team>>("/api/event/teams/", {
-            limit: RESPONSE_TIME,
+            limit: NUM_TEAM_LIMIT,
         });
         return response.data;
     } catch (e: any) {
