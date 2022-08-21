@@ -933,3 +933,5 @@ export const teamsList = [
         Members: ["Name1", "Name2", "Name3", "Name4"],
     },
 ];
+
+export const mockTeams: Team[] = [mockTeam, mockValidTeam];

@@ -114,7 +114,7 @@ const teamDetailSlice = createSlice({
             state.isTeamInfoLoading = false;
             state.error = null;
 
-            teamDetailAdapter.setMany(state, payload.profiles);
+            teamDetailAdapter.setAll(state, payload.profiles);
         });
         builder.addCase(getTeamInfoData.rejected, (state, { payload }) => {
             state.isTeamInfoLoading = false;
