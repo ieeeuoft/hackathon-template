@@ -17,14 +17,13 @@ import TeamPendingOrderTable from "components/teamDetail/TeamPendingOrderTable/T
 import TeamCheckoutOrderTable from "components/teamDetail/TeamCheckoutOrderTable/TeamCheckoutOrderTable";
 
 export interface PageParams {
-    id: string;
+    code: string;
 }
 
 const TeamDetail = ({ match }: RouteComponentProps<PageParams>) => {
     const dispatch = useDispatch();
 
-    // TODO: change api to use team_code instead of team_id
-    const teamCode = match.params.id;
+    const teamCode = match.params.code;
     const error = useSelector(errorSelector);
     useEffect(() => {
         dispatch(getTeamInfoData(teamCode));
