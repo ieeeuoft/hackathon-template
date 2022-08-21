@@ -12,13 +12,15 @@ import { Profile, ProfileWithUser, Team } from "api/types";
 interface TeamDetailExtraState {
     isTeamInfoLoading: boolean;
     isParticipantIdLoading: boolean;
-    error: string | null;
+    teamInfoError: string | null;
+    participantIdError: string | null;
 }
 
 const extraState: TeamDetailExtraState = {
     isTeamInfoLoading: false,
     isParticipantIdLoading: false,
-    error: null,
+    teamInfoError: null,
+    participantIdError: null,
 };
 
 const teamDetailAdapter = createEntityAdapter<ProfileWithUser>();
@@ -76,9 +78,9 @@ export const getTeamInfoData = createAsyncThunk<
     { state: RootState; rejectValue: RejectValue; dispatch: AppDispatch }
 >(
     `${teamDetailReducerName}/getTeamInfoData`,
-    async (teamId, { rejectWithValue, dispatch }) => {
+    async (teamCode, { rejectWithValue, dispatch }) => {
         try {
-            const response = await get<Team>(`/api/event/teams/${teamId}/`);
+            const response = await get<Team>(`/api/event/teams/${teamCode}/`);
             return response.data;
         } catch (e: any) {
             const message =
@@ -108,23 +110,25 @@ const teamDetailSlice = createSlice({
     extraReducers: (builder) => {
         builder.addCase(getTeamInfoData.pending, (state) => {
             state.isTeamInfoLoading = true;
-            state.error = null;
+            state.teamInfoError = null;
         });
         builder.addCase(getTeamInfoData.fulfilled, (state, { payload }) => {
             state.isTeamInfoLoading = false;
-            state.error = null;
+            state.teamInfoError = null;
 
             teamDetailAdapter.setAll(state, payload.profiles);
         });
         builder.addCase(getTeamInfoData.rejected, (state, { payload }) => {
             state.isTeamInfoLoading = false;
-            state.error = payload?.message ?? "Something went wrong";
+            state.teamInfoError = payload?.message ?? "Something went wrong";
         });
         builder.addCase(updateParticipantIdProvided.pending, (state) => {
             state.isParticipantIdLoading = true;
+            state.participantIdError = null;
         });
         builder.addCase(updateParticipantIdProvided.fulfilled, (state, { payload }) => {
             state.isParticipantIdLoading = false;
+            state.participantIdError = null;
 
             const updateObject = {
                 id: payload.id,
@@ -134,8 +138,9 @@ const teamDetailSlice = createSlice({
             };
             teamDetailAdapter.updateOne(state, updateObject);
         });
-        builder.addCase(updateParticipantIdProvided.rejected, (state) => {
+        builder.addCase(updateParticipantIdProvided.rejected, (state, { payload }) => {
             state.isParticipantIdLoading = false;
+            state.participantIdError = payload?.message ?? "Something went wrong";
         });
     },
 });
@@ -160,7 +165,12 @@ export const isParticipantIdLoadingSelector = createSelector(
     (teamDetailSlice) => teamDetailSlice.isParticipantIdLoading
 );
 
-export const errorSelector = createSelector(
+export const teamInfoErrorSelector = createSelector(
     [teamDetailSliceSelector],
-    (teamDetailSlice) => teamDetailSlice.error
+    (teamDetailSlice) => teamDetailSlice.teamInfoError
+);
+
+export const updateParticipantIdErrorSelector = createSelector(
+    [teamDetailSliceSelector],
+    (teamDetailSlice) => teamDetailSlice.participantIdError
 );

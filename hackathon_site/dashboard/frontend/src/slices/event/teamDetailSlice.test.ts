@@ -1,12 +1,14 @@
 import store, { makeStore, RootState } from "slices/store";
 import {
-    errorSelector,
     getTeamInfoData,
     initialState,
+    isParticipantIdLoadingSelector,
     isTeamInfoLoadingSelector,
     teamDetailAdapterSelector,
     teamDetailReducerName,
     teamDetailSliceSelector,
+    teamInfoErrorSelector,
+    updateParticipantIdErrorSelector,
     updateParticipantIdProvided,
 } from "slices/event/teamDetailSlice";
 
@@ -78,6 +80,26 @@ describe("Selectors", () => {
         expect(isTeamInfoLoadingSelector(loadingTrueState)).toEqual(true);
         expect(isTeamInfoLoadingSelector(loadingFalseState)).toEqual(false);
     });
+
+    test("isParticipantIdLoadingSelector", () => {
+        const loadingTrueState = {
+            ...mockState,
+            [teamDetailReducerName]: {
+                ...initialState,
+                isParticipantIdLoading: true,
+            },
+        };
+        const loadingFalseState = {
+            ...mockState,
+            [teamDetailReducerName]: {
+                ...initialState,
+                isParticipantIdLoading: false,
+            },
+        };
+
+        expect(isParticipantIdLoadingSelector(loadingTrueState)).toEqual(true);
+        expect(isParticipantIdLoadingSelector(loadingFalseState)).toEqual(false);
+    });
 });
 
 describe("getTeamInfoData thunk", () => {
@@ -92,7 +114,7 @@ describe("getTeamInfoData thunk", () => {
             expect(mockedGet).toHaveBeenCalledWith(
                 `/api/event/teams/${mockTeam.team_code}/`
             );
-            expect(errorSelector(store.getState())).toBeFalsy();
+            expect(teamInfoErrorSelector(store.getState())).toBeFalsy();
             expect(teamDetailAdapterSelector.selectAll(store.getState())).toEqual(
                 mockTeam.profiles
             );
@@ -123,7 +145,7 @@ describe("getTeamInfoData thunk", () => {
         const store = makeStore();
         await store.dispatch(getTeamInfoData("abc"));
 
-        expect(errorSelector(store.getState())).toBe(
+        expect(teamInfoErrorSelector(store.getState())).toBe(
             "Could not find team code: Error 404"
         );
     });
@@ -159,7 +181,7 @@ describe("updateParticipantIdProvided thunk", () => {
                     id_provided: !mockProfile.id_provided,
                 }
             );
-            expect(errorSelector(store.getState())).toBeFalsy();
+            expect(updateParticipantIdErrorSelector(store.getState())).toBeFalsy();
             expect(
                 teamDetailAdapterSelector.selectById(store.getState(), mockProfile.id)
                     ?.id_provided

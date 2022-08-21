@@ -14,9 +14,11 @@ import Typography from "@material-ui/core/Typography";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
+    getTeamInfoData,
     isParticipantIdLoadingSelector,
     isTeamInfoLoadingSelector,
     teamDetailAdapterSelector,
+    updateParticipantIdErrorSelector,
     updateParticipantIdProvided,
 } from "slices/event/teamDetailSlice";
 
