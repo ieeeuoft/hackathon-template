@@ -82,8 +82,7 @@ const Acknowledgement = () => {
                     ) : (
                         <Fade in={showAcknowledgements} timeout={1000}>
                             <div>
-                                {" "}
-                                <AcknowledgementForm isLoading={false} />{" "}
+                                <AcknowledgementForm isLoading={false} />
                             </div>
                         </Fade>
                     )

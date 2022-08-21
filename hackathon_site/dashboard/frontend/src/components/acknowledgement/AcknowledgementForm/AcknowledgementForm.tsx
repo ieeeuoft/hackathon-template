@@ -13,7 +13,7 @@ import { Formik, Field, FormikValues, FieldProps } from "formik";
 import * as Yup from "yup";
 import { Paper } from "@material-ui/core";
 import { useDispatch } from "react-redux";
-import { createProfile } from "../../../slices/users/userSlice";
+import { createProfile } from "slices/users/userSlice";
 
 interface AcknowledgementFormValues {
     eSignature: string;
