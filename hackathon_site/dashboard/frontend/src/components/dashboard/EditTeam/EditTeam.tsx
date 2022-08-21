@@ -7,6 +7,7 @@ import LinearProgress from "@material-ui/core/LinearProgress";
 
 import FileCopyIcon from "@material-ui/icons/FileCopy";
 import SideSheetRight from "components/general/SideSheetRight/SideSheetRight";
+import { Formik, Form, Field, FormikValues } from "formik";
 
 import styles from "./EditTeam.module.scss";
 import { isTeamModalVisibleSelector, closeTeamModalItem } from "slices/ui/uiSlice";
@@ -53,44 +54,64 @@ const TeamChangeForm = ({ canChangeTeam, teamCode }: TeamModalProps) => {
         setValue(event.target.value);
     };
 
-    const handleJoinTeam = () => dispatch(joinTeam(value));
+    const handleSubmitExternal = async (values: FormikValues) => {
+        console.log(values);
+        dispatch(joinTeam(values.teamCode));
+    };
+
     return (
         <>
             <Typography variant={"h2"} className={styles.heading}>
                 Join a different team
             </Typography>
-            <form noValidate autoComplete="off" className={styles.teamForm}>
-                <Grid container spacing={3}>
-                    <Grid item xs={8}>
-                        <TextField
-                            fullWidth={true}
-                            label="Team code"
-                            variant="outlined"
-                            value={value}
-                            onChange={handleChange}
-                        />
-                    </Grid>
-                    <Grid item>
-                        <Button
-                            color={"primary"}
-                            className={styles.teamButton}
-                            variant="contained"
-                            disabled={
-                                !canChangeTeam
-                                    ? true
-                                    : isJoinTeamLoading
-                                    ? true
-                                    : value == ""
-                                    ? true
-                                    : value == teamCode
-                            }
-                            onClick={handleJoinTeam}
-                        >
-                            SUBMIT
-                        </Button>
-                    </Grid>
-                </Grid>
-            </form>
+            <Formik
+                initialValues={{
+                    teamCode: "",
+                }}
+                onSubmit={handleSubmitExternal}
+            >
+                {({ errors, handleSubmit, handleChange, values }) => (
+                    <form
+                        noValidate
+                        onSubmit={handleSubmit}
+                        autoComplete="off"
+                        className={styles.teamForm}
+                    >
+                        <Grid container spacing={3}>
+                            <Grid item xs={8}>
+                                <TextField
+                                    fullWidth={true}
+                                    label="Team code"
+                                    name="teamCode"
+                                    variant="outlined"
+                                    value={values.teamCode}
+                                    onChange={handleChange}
+                                />
+                            </Grid>
+                            <Grid item>
+                                <Button
+                                    color={"primary"}
+                                    className={styles.teamButton}
+                                    variant="contained"
+                                    disabled={
+                                        !canChangeTeam
+                                            ? true
+                                            : isJoinTeamLoading
+                                            ? true
+                                            : values.teamCode == ""
+                                            ? true
+                                            : values.teamCode == teamCode
+                                    }
+                                    // onClick={handleJoinTeam}
+                                    type="submit"
+                                >
+                                    SUBMIT
+                                </Button>
+                            </Grid>
+                        </Grid>
+                    </form>
+                )}
+            </Formik>
         </>
     );
 };
@@ -156,7 +177,11 @@ export const EditTeam = ({
                         size="large"
                         type="submit"
                         disableElevation
-                        disabled={!canLeaveTeam ? true : isLeaveTeamLoading}
+                        disabled={
+                            !canLeaveTeam
+                                ? true
+                                : isJoinTeamLoading || isLeaveTeamLoading
+                        }
                         onClick={handleLeaveTeam}
                     >
                         LEAVE TEAM
