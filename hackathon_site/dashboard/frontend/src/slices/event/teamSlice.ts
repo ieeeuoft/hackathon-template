@@ -7,7 +7,7 @@ import {
 import { AppDispatch, RootState } from "slices/store";
 import { Team } from "api/types";
 import { get, post } from "api/api";
-import { displaySnackbar } from "slices/ui/uiSlice";
+import { closeTeamModalItem, displaySnackbar } from "slices/ui/uiSlice";
 import { push } from "connected-react-router";
 import { cartReducerName, cartSelectors, OrderResponse } from "../hardware/cartSlice";
 
@@ -78,6 +78,7 @@ export const leaveTeam = createAsyncThunk<
                     options: { variant: "success" },
                 })
             );
+            dispatch(closeTeamModalItem());
 
             return response.data;
         } catch (e: any) {
@@ -114,6 +115,7 @@ export const joinTeam = createAsyncThunk<
                 options: { variant: "success" },
             })
         );
+        dispatch(closeTeamModalItem());
 
         return response.data;
     } catch (e: any) {
