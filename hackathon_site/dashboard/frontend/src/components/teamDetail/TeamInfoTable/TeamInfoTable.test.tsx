@@ -1,19 +1,22 @@
 import React from "react";
 import { makeMockApiResponse, queryByTestId, render, when } from "testing/utils";
-import { mockTeam } from "testing/mockData";
-import { get } from "api/api";
+import {mockProfile, mockTeam} from "testing/mockData";
+import {get, patch} from "api/api";
 
 import TeamInfoTable from "components/teamDetail/TeamInfoTable/TeamInfoTable";
 import { makeStore } from "slices/store";
 import { getTeamInfoData } from "slices/event/teamDetailSlice";
 import userEvent from "@testing-library/user-event";
+import {fireEvent, waitFor} from "@testing-library/react";
 
 jest.mock("api/api", () => ({
     ...jest.requireActual("api/api"),
     get: jest.fn(),
+    patch: jest.fn(),
 }));
 
 const mockedGet = get as jest.MockedFunction<typeof get>;
+const mockedPatch = patch as jest.MockedFunction<typeof patch>;
 
 describe("Team info table", () => {
     it("Renders team info table", async () => {
@@ -26,23 +29,20 @@ describe("Team info table", () => {
         const store = makeStore();
         await store.dispatch(getTeamInfoData(mockTeam.id.toString()));
 
-        const { getByText, queryAllByTestId } = render(<TeamInfoTable />, {
+        const { getByText, getByTestId } = render(<TeamInfoTable />, {
             store,
         });
 
-        const checkboxes = queryAllByTestId("checkbox");
-
-        mockTeam.profiles.forEach((user, index) => {
+        mockTeam.profiles.forEach((profile, index) => {
+            const idProvidedCheckbox = getByTestId(`id-provided-check-${profile.id}`).querySelector('input[type="checkbox"]')
             expect(
-                getByText(`${user.user.first_name} ${user.user.last_name}`)
+                getByText(`${profile.user.first_name} ${profile.user.last_name}`)
             ).toBeInTheDocument();
-            expect(getByText(user.user.email)).toBeInTheDocument();
-            if (user.id_provided) {
-                expect(
-                    checkboxes[index].classList.contains("Mui-checked")
-                ).toBeTruthy();
+            expect(getByText(profile.user.email)).toBeInTheDocument();
+            if (profile.id_provided) {
+                expect(idProvidedCheckbox).toBeChecked();
             } else {
-                expect(checkboxes[index].classList.contains("Mui-checked")).toBeFalsy();
+                expect(idProvidedCheckbox).not.toBeChecked();
             }
         });
     });
@@ -50,37 +50,35 @@ describe("Team info table", () => {
         // NOTE: this test relies on at least one checkbox being rendered, so at least one profile in mockTeam
         // setup and render teamInfoTable
         const teamInfoApiResponse = makeMockApiResponse(mockTeam);
+        const profile = mockTeam.profiles[0]
 
         when(mockedGet)
-            .calledWith(`/api/event/teams/${mockTeam.id}/`)
+            .calledWith(`/api/event/teams/${mockTeam.team_code}/`)
             .mockResolvedValue(teamInfoApiResponse);
+        when(mockedPatch)
+            .calledWith(`/api/event/profiles/${profile.id}/`, {
+                id_provided: !profile.id_provided,
+            })
+            .mockResolvedValue(makeMockApiResponse({
+                ...mockProfile,
+                id_provided: !profile.id_provided
+            }));
 
         const store = makeStore();
         await store.dispatch(getTeamInfoData(mockTeam.id.toString()));
 
-        const { getByText, queryByTestId } = render(<TeamInfoTable />, {
+        const { getByTestId } = render(<TeamInfoTable />, {
             store,
         });
 
-        let checkbox = queryByTestId("checkbox");
-        if (!checkbox) return false;
-        checkbox = checkbox.querySelector('input[type="checkbox"]');
-        if (!checkbox) return false;
-        // @ts-ignore
-        const checkedBefore = checkbox.checked;
-
-        // click checkbox, expect it to now be checked
-        checkbox = queryByTestId("checkbox");
-        if (!checkbox) return false;
-        userEvent.click(checkbox);
-        checkbox = checkbox.querySelector('input[type="checkbox"]');
-        if (!checkbox) return false;
-        if (checkedBefore) {
-            // @ts-ignore
-            expect(checkbox.cheked).toBeTruthy();
-        } else {
-            // @ts-ignore
-            expect(checkbox.checked).toBeFalsy();
-        }
+        const idProvidedCheckbox = getByTestId(`id-provided-check-${profile.id}`).querySelector('input[type="checkbox"]')
+        expect(idProvidedCheckbox).not.toBeChecked();
+        if (idProvidedCheckbox) fireEvent.click(idProvidedCheckbox)
+        await waitFor(() => {
+            expect(mockedPatch).toHaveBeenCalledWith(`/api/event/profiles/${profile.id}/`, {
+                id_provided: !profile.id_provided,
+            })
+            expect(idProvidedCheckbox).toBeChecked()
+        })
     });
 });

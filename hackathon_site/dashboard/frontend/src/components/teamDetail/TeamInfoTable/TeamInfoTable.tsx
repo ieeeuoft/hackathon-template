@@ -1,4 +1,4 @@
-import {
+              import {
     Checkbox,
     Grid,
     LinearProgress,
@@ -57,7 +57,7 @@ export const TeamInfoTable = () => {
                                             checked={row.id_provided}
                                             color="primary"
                                             disabled={isParticipantIdLoading}
-                                            data-testid="checkbox"
+                                            data-testid={`id-provided-check-${row.id}`}
                                             onChange={(event) => {
                                                 dispatch(
                                                     updateParticipantIdProvided({
