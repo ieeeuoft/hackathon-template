@@ -1,12 +1,12 @@
 import React from "react";
 import { makeMockApiResponse, render, when } from "testing/utils";
-import {mockProfile, mockTeam} from "testing/mockData";
-import {get, patch} from "api/api";
+import { mockProfile, mockTeam } from "testing/mockData";
+import { get, patch } from "api/api";
 
 import TeamInfoTable from "components/teamDetail/TeamInfoTable/TeamInfoTable";
 import { makeStore } from "slices/store";
 import { getTeamInfoData } from "slices/event/teamDetailSlice";
-import {fireEvent, waitFor} from "@testing-library/react";
+import { fireEvent, waitFor } from "@testing-library/react";
 
 jest.mock("api/api", () => ({
     ...jest.requireActual("api/api"),
@@ -33,7 +33,9 @@ describe("Team info table", () => {
         });
 
         mockTeam.profiles.forEach((profile, index) => {
-            const idProvidedCheckbox = getByTestId(`id-provided-check-${profile.id}`).querySelector('input[type="checkbox"]')
+            const idProvidedCheckbox = getByTestId(
+                `id-provided-check-${profile.id}`
+            ).querySelector('input[type="checkbox"]');
             expect(
                 getByText(`${profile.user.first_name} ${profile.user.last_name}`)
             ).toBeInTheDocument();
@@ -48,7 +50,7 @@ describe("Team info table", () => {
 
     it("updates checkbox on click", async () => {
         const teamInfoApiResponse = makeMockApiResponse(mockTeam);
-        const profile = mockTeam.profiles[0]
+        const profile = mockTeam.profiles[0];
 
         when(mockedGet)
             .calledWith(`/api/event/teams/${mockTeam.team_code}/`)
@@ -57,10 +59,12 @@ describe("Team info table", () => {
             .calledWith(`/api/event/profiles/${profile.id}/`, {
                 id_provided: !profile.id_provided,
             })
-            .mockResolvedValue(makeMockApiResponse({
-                ...mockProfile,
-                id_provided: !profile.id_provided
-            }));
+            .mockResolvedValue(
+                makeMockApiResponse({
+                    ...mockProfile,
+                    id_provided: !profile.id_provided,
+                })
+            );
 
         const store = makeStore();
         await store.dispatch(getTeamInfoData(mockTeam.id.toString()));
@@ -69,14 +73,19 @@ describe("Team info table", () => {
             store,
         });
 
-        const idProvidedCheckbox = getByTestId(`id-provided-check-${profile.id}`).querySelector('input[type="checkbox"]')
+        const idProvidedCheckbox = getByTestId(
+            `id-provided-check-${profile.id}`
+        ).querySelector('input[type="checkbox"]');
         expect(idProvidedCheckbox).not.toBeChecked();
-        if (idProvidedCheckbox) fireEvent.click(idProvidedCheckbox)
+        if (idProvidedCheckbox) fireEvent.click(idProvidedCheckbox);
         await waitFor(() => {
-            expect(mockedPatch).toHaveBeenCalledWith(`/api/event/profiles/${profile.id}/`, {
-                id_provided: !profile.id_provided,
-            })
-            expect(idProvidedCheckbox).toBeChecked()
-        })
+            expect(mockedPatch).toHaveBeenCalledWith(
+                `/api/event/profiles/${profile.id}/`,
+                {
+                    id_provided: !profile.id_provided,
+                }
+            );
+            expect(idProvidedCheckbox).toBeChecked();
+        });
     });
 });
