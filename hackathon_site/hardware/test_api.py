@@ -1,10 +1,12 @@
 from datetime import datetime
 
+from dateutil.relativedelta import relativedelta
 from django.contrib.auth.models import Permission
+from django.test import override_settings
 from django.urls import reverse
 from django.conf import settings
 
-from rest_framework import status
+from rest_framework import status, serializers
 from rest_framework.test import APITestCase
 
 from event.models import Team, User, Profile
@@ -276,6 +278,7 @@ class HardwareDetailViewTestCase(SetupUserMixin, APITestCase):
             "notes": None,
             "max_per_team": 1,
             "picture": "http://testserver/media/picture/location",
+            "image_url": None,
         }
 
         response = self.client.get(self.view)
@@ -1004,10 +1007,57 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_user_has_no_profile(self):
+
         self._login()
         request_data = {"hardware": []}
         response = self.client.post(self.view, request_data)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @override_settings(
+        HARDWARE_SIGN_OUT_START_DATE=datetime.now(settings.TZ_INFO)
+        + relativedelta(days=1)
+    )
+    def test_submitting_order_before_start_date(self):
+        self._login()
+        self.create_min_number_of_profiles()
+        simple_hardware = Hardware.objects.create(
+            name="name",
+            model_number="model",
+            manufacturer="manufacturer",
+            datasheet="/datasheet/location/",
+            notes="notes",
+            quantity_available=1,
+            max_per_team=1,
+            picture="/picture/location",
+        )
+        request_data = {"hardware": [{"id": simple_hardware.id, "quantity": 1}]}
+        response = self.client.post(self.view, request_data, format="json")
+        expected_response = {
+            "non_field_errors": ["Hardware sign out period has not begun"]
+        }
+        self.assertEqual(response.json(), expected_response)
+
+    @override_settings(
+        HARDWARE_SIGN_OUT_END_DATE=datetime.now(settings.TZ_INFO)
+        - relativedelta(days=1)
+    )
+    def test_submitting_order_after_end_date(self):
+        self._login()
+        self.create_min_number_of_profiles()
+        simple_hardware = Hardware.objects.create(
+            name="name",
+            model_number="model",
+            manufacturer="manufacturer",
+            datasheet="/datasheet/location/",
+            notes="notes",
+            quantity_available=1,
+            max_per_team=1,
+            picture="/picture/location",
+        )
+        request_data = {"hardware": [{"id": simple_hardware.id, "quantity": 1}]}
+        response = self.client.post(self.view, request_data, format="json")
+        expected_response = {"non_field_errors": ["Hardware sign out period is over"]}
+        self.assertEqual(response.json(), expected_response)
 
     def test_create_simple_order(self):
         self._login()
@@ -1804,18 +1854,3 @@ class OrderListPatchTestCase(SetupUserMixin, APITestCase):
             response.json(), {"status": ["Cannot change the status for this order."]},
         )
         self.assertFalse(request_data["status"] == Order.objects.get(id=self.pk).status)
-
-
-class MinMaxTeamOrderTestCase(SetupUserMixin, APITestCase):
-    def setUp(self):
-        super().setUp()
-        self.team = Team.objects.create()
-        self.profile = Profile.objects.create(user=self.user, team=self.team)
-
-        self.user2 = User.objects.create_user(
-            username="frank@johnston.com",
-            password="hellothere31415",
-            email="frank@johnston.com",
-            first_name="Frank",
-            last_name="Johnston",
-        )

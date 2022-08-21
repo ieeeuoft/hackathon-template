@@ -522,6 +522,127 @@ class CurrentProfileViewTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(expected_response, data)
 
 
+class CreateProfileViewTestCase(SetupUserMixin, APITestCase):
+    def setUp(self):
+        super().setUp()
+        self.request_body = {
+            "acknowledge_rules": True,
+            "e_signature": "user signature",
+        }
+        self.expected_response = {
+            "attended": True,
+            "id_provided": False,
+            "acknowledge_rules": True,
+            "e_signature": "user signature",
+        }
+        self.view = reverse("api:event:current-profile")
+
+    def test_user_not_logged_in(self):
+        response = self.client.post(self.view, self.request_body)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_user_can_have_profile(self):
+        self._review(application=self._apply_as_user(self.user, rsvp=True))
+        self._login()
+        response = self.client.post(self.view, self.request_body)
+        data = response.json()
+
+        profile_created = Profile.objects.get(user=self.user)
+        self.assertIsNotNone(profile_created)
+
+        self.expected_response = {
+            **self.expected_response,
+            "team": profile_created.team.team_code,
+        }
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(self.expected_response, data)
+
+    def test_not_including_required_fields(self):
+        self._review(application=self._apply_as_user(self.user, rsvp=True))
+        self._login()
+        response = self.client.post(self.view, {"e_signature": "user signature",})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        response = self.client.post(self.view, {"acknowledge_rules": True,})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_acknowledge_rules_is_false(self):
+        self._review(application=self._apply_as_user(self.user, rsvp=True))
+        self._login()
+        response = self.client.post(
+            self.view, {"e_signature": "user signature", "acknowledge_rules": False}
+        )
+        data = response.json()
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            data[0], "User must acknowledge rules and provide an e_signature"
+        )
+
+    def test_e_signature_is_empty(self):
+        self._review(application=self._apply_as_user(self.user, rsvp=True))
+        self._login()
+        response = self.client.post(
+            self.view, {"e_signature": "", "acknowledge_rules": True}
+        )
+        data = response.json()
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            data[0], "User must acknowledge rules and provide an e_signature"
+        )
+
+    def test_user_already_has_profile(self):
+        self._make_event_profile(user=self.user)
+        self._login()
+        response = self.client.post(self.view, self.request_body)
+        data = response.json()
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(data[0], "User already has profile")
+
+    def test_user_has_not_completed_application(self):
+        self._login()
+        response = self.client.post(self.view, self.request_body)
+        data = response.json()
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            data[0],
+            "User has not completed their application to the hackathon. Please do so to access the Hardware Signout Site",
+        )
+
+    def test_user_has_not_rsvp(self):
+        self._apply_as_user(self.user)
+        self._login()
+        response = self.client.post(self.view, self.request_body)
+        data = response.json()
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            data[0],
+            "User has not RSVP'd to the hackathon. Please RSVP to access the Hardware Signout Site",
+        )
+
+    def test_user_has_not_been_reviewed(self):
+        self._apply_as_user(self.user, rsvp=True)
+        self._login()
+        response = self.client.post(self.view, self.request_body)
+        data = response.json()
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            data[0],
+            "User has not been reviewed yet, Hardware Signout Site cannot be accessed until reviewed",
+        )
+
+    def test_user_review_rejected(self):
+        self._review(
+            application=self._apply_as_user(self.user, rsvp=True), status="Rejected"
+        )
+        self._login()
+        response = self.client.post(self.view, self.request_body)
+        data = response.json()
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            data[0], "User has not been accepted to participate in hackathon"
+        )
+
+
 class CurrentTeamOrderListViewTestCase(SetupUserMixin, APITestCase):
     def setUp(self):
         super().setUp()
@@ -701,20 +822,22 @@ class EventTeamDetailViewTestCase(SetupUserMixin, APITestCase):
             content_type__app_label="event", codename="view_team"
         )
         super().setUp()
-        self.view = reverse("api:event:team-detail", args=[self.team.pk])
+
+    def _build_view(self, team_code):
+        return reverse("api:event:team-detail", kwargs={"team_code": team_code})
 
     def test_team_get_not_login(self):
-        response = self.client.get(self.view)
+        response = self.client.get(self._build_view("56ABD"))
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_team_get_no_permissions(self):
         self._login()
-        response = self.client.get(self.view)
+        response = self.client.get(self._build_view("56ABD"))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_team_get_has_permissions(self):
         self._login(self.permissions)
-        response = self.client.get(self.view)
+        response = self.client.get(self._build_view(self.team.team_code))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         queryset = Team.objects.filter(team_code=self.team)
 
@@ -810,3 +933,46 @@ class TeamOrderDetailViewTestCase(SetupUserMixin, APITestCase):
         self.assertFalse(
             self.request_data["status"] == Order.objects.get(id=self.pk).status
         )
+
+
+class CurrentUserReviewStatusTestCase(SetupUserMixin, APITestCase):
+    def setUp(self):
+        super().setUp()
+        self.view = reverse("api:event:current-user-review-status")
+
+    def get_expected_response(self, review_status):
+        return {
+            **{
+                attr: getattr(self.user, attr)
+                for attr in ("id", "first_name", "last_name", "email")
+            },
+            "review_status": review_status,
+        }
+
+    def test_user_not_logged_in(self):
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_user_has_no_application(self):
+        self._login()
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.json()
+        self.assertEqual(self.get_expected_response("None"), data)
+
+    def test_user_has_no_review(self):
+        self.application = self._apply_as_user(self.user)
+        self._login()
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.json()
+        self.assertEqual(self.get_expected_response("None"), data)
+
+    def test_user_has_review_and_application(self):
+        self.application = self._apply_as_user(self.user)
+        self._review()
+        self._login()
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.json()
+        self.assertEqual(self.get_expected_response("Accepted"), data)

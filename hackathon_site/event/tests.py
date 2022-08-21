@@ -12,7 +12,7 @@ from rest_framework import status
 
 from event.models import Profile, User, Team as EventTeam
 from hackathon_site.tests import SetupUserMixin
-from registration.models import Team as RegistrationTeam
+from registration.models import Team as RegistrationTeam, Application
 
 from event.serializers import (
     UserSerializer,
@@ -22,7 +22,10 @@ from event.serializers import (
     ProfileInUserSerializer,
     ProfileInTeamSerializer,
     UserInProfileSerializer,
+    UserReviewStatusSerializer,
+    ProfileCreateResponseSerializer,
 )
+from review.models import Review
 
 
 class ProfileTestCase(TestCase):
@@ -786,19 +789,46 @@ class ProfileSerializerTestCase(TestCase):
         }
         self.assertEqual(profile_expected, profile_serialized)
 
-    def test_readonly_serializer_fields(self):
-        self.assertEqual(
-            ProfileSerializer.Meta.read_only_fields,
-            ("id", "team", "acknowledge_rules", "e_signature"),
-        )
-
 
 class CurrentProfileSerializerTestCase(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username="foo@bar.com",
+            password="foobar123",
+            first_name="Foo",
+            last_name="Bar",
+        )
+
     def test_readonly_serializer_fields(self):
         self.assertEqual(
             CurrentProfileSerializer.Meta.read_only_fields,
             ("id", "team", "id_provided", "attended"),
         )
+
+
+class CreateProfileSerializerTestCase(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username="foo@bar.com",
+            password="foobar123",
+            first_name="Foo",
+            last_name="Bar",
+        )
+        self.profile = Profile.objects.create(user=self.user)
+
+    def test_serializer(self):
+        profile_create_response = {
+            "id_provided": self.profile.id_provided,
+            "attended": self.profile.attended,
+            "acknowledge_rules": self.profile.acknowledge_rules,
+            "e_signature": self.profile.e_signature,
+            "team": self.profile.team.team_code,
+        }
+        serialized_profile = ProfileCreateResponseSerializer(
+            data=profile_create_response
+        )
+        self.assertEqual(serialized_profile.is_valid(), True)
+        self.assertEqual(profile_create_response, serialized_profile.data)
 
 
 class ProfileInUserSerializerTestCase(TestCase):
@@ -853,3 +883,36 @@ class ProfileInTeamSerilializerTestCase(TestCase):
         }
 
         self.assertEqual(profile_expected, profile_serialized)
+
+
+class UserReviewStatusSerializerTestCase(SetupUserMixin, TestCase):
+    def setUp(self):
+        super().setUp()
+        self.application = self._apply_as_user(self.user)
+
+    def test_serializer(self):
+        self._review()
+        user_serialized = UserReviewStatusSerializer(self.user).data
+
+        user_expected = {
+            "id": self.user.id,
+            "first_name": self.user.first_name,
+            "last_name": self.user.last_name,
+            "email": self.user.email,
+            "review_status": self.review.status,
+        }
+
+        self.assertEqual(user_expected, user_serialized)
+
+    def test_serializer_no_review(self):
+        user_serialized = UserReviewStatusSerializer(self.user).data
+
+        user_expected = {
+            "id": self.user.id,
+            "first_name": self.user.first_name,
+            "last_name": self.user.last_name,
+            "email": self.user.email,
+            "review_status": "None",
+        }
+
+        self.assertEqual(user_expected, user_serialized)
