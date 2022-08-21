@@ -169,16 +169,15 @@ const teamSlice = createSlice({
         builder.addCase(
             leaveTeam.fulfilled,
             (state, { payload }: PayloadAction<Team>) => {
-                if (payload) {
-                    state.isLeaveTeamLoading = false;
-                    state.error = null;
-                    state.team = payload;
-                }
+                state.isLeaveTeamLoading = false;
+                state.error = null;
+                state.team = payload;
             }
         );
 
         builder.addCase(leaveTeam.rejected, (state, { payload }) => {
             state.error = payload?.message || "Something went wrong";
+            state.isLeaveTeamLoading = false;
         });
 
         builder.addCase(joinTeam.pending, (state) => {
@@ -189,11 +188,9 @@ const teamSlice = createSlice({
         builder.addCase(
             joinTeam.fulfilled,
             (state, { payload }: PayloadAction<Team>) => {
-                if (payload) {
-                    state.isJoinTeamLoading = false;
-                    state.error = null;
-                    state.team = payload;
-                }
+                state.isJoinTeamLoading = false;
+                state.error = null;
+                state.team = payload;
             }
         );
 
