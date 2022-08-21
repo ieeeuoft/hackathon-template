@@ -1,12 +1,11 @@
 import React from "react";
-import { makeMockApiResponse, queryByTestId, render, when } from "testing/utils";
+import { makeMockApiResponse, render, when } from "testing/utils";
 import {mockProfile, mockTeam} from "testing/mockData";
 import {get, patch} from "api/api";
 
 import TeamInfoTable from "components/teamDetail/TeamInfoTable/TeamInfoTable";
 import { makeStore } from "slices/store";
 import { getTeamInfoData } from "slices/event/teamDetailSlice";
-import userEvent from "@testing-library/user-event";
 import {fireEvent, waitFor} from "@testing-library/react";
 
 jest.mock("api/api", () => ({
@@ -46,9 +45,8 @@ describe("Team info table", () => {
             }
         });
     });
+
     it("updates checkbox on click", async () => {
-        // NOTE: this test relies on at least one checkbox being rendered, so at least one profile in mockTeam
-        // setup and render teamInfoTable
         const teamInfoApiResponse = makeMockApiResponse(mockTeam);
         const profile = mockTeam.profiles[0]
 
