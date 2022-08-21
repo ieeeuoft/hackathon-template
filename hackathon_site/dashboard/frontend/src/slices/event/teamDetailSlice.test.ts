@@ -86,10 +86,12 @@ describe("getTeamInfoData thunk", () => {
         mockedGet.mockResolvedValueOnce(mockResponse);
 
         const store = makeStore();
-        await store.dispatch(getTeamInfoData("1"));
+        await store.dispatch(getTeamInfoData(mockTeam.team_code));
 
         await waitFor(() => {
-            expect(mockedGet).toHaveBeenCalledWith("/api/event/teams/1/");
+            expect(mockedGet).toHaveBeenCalledWith(
+                `/api/event/teams/${mockTeam.team_code}/`
+            );
             expect(errorSelector(store.getState())).toBeFalsy();
             expect(teamDetailAdapterSelector.selectAll(store.getState())).toEqual(
                 mockTeam.profiles
@@ -134,7 +136,7 @@ describe("updateParticipantIdProvided thunk", () => {
         mockedGet.mockResolvedValueOnce(mockResponse);
 
         const store = makeStore();
-        await store.dispatch(getTeamInfoData("1"));
+        await store.dispatch(getTeamInfoData(mockTeam.team_code));
 
         // change one profile in store
         const mockProfileResponse = { ...mockProfile };
@@ -151,9 +153,12 @@ describe("updateParticipantIdProvided thunk", () => {
 
         // expect id_provided for that profile to have been changed in the store
         await waitFor(() => {
-            expect(mockedPatch).toHaveBeenCalledWith("/api/event/profiles/1/", {
-                id_provided: !mockProfile.id_provided,
-            });
+            expect(mockedPatch).toHaveBeenCalledWith(
+                `/api/event/profiles/${mockProfile.id}/`,
+                {
+                    id_provided: !mockProfile.id_provided,
+                }
+            );
             expect(errorSelector(store.getState())).toBeFalsy();
             expect(
                 teamDetailAdapterSelector.selectById(store.getState(), mockProfile.id)
@@ -172,9 +177,12 @@ describe("updateParticipantIdProvided thunk", () => {
             })
         );
 
-        expect(mockedPatch).toHaveBeenCalledWith("/api/event/profiles/1/", {
-            id_provided: !mockProfile.id_provided,
-        });
+        expect(mockedPatch).toHaveBeenCalledWith(
+            `/api/event/profiles/${mockProfile.id}/`,
+            {
+                id_provided: !mockProfile.id_provided,
+            }
+        );
 
         const actions = store.getActions();
 

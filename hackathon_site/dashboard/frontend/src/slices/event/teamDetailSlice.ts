@@ -122,11 +122,9 @@ const teamDetailSlice = createSlice({
         });
         builder.addCase(updateParticipantIdProvided.pending, (state) => {
             state.isParticipantIdLoading = true;
-            state.error = null;
         });
         builder.addCase(updateParticipantIdProvided.fulfilled, (state, { payload }) => {
             state.isParticipantIdLoading = false;
-            state.error = null;
 
             const updateObject = {
                 id: payload.id,
@@ -135,6 +133,9 @@ const teamDetailSlice = createSlice({
                 },
             };
             teamDetailAdapter.updateOne(state, updateObject);
+        });
+        builder.addCase(updateParticipantIdProvided.rejected, (state) => {
+            state.isParticipantIdLoading = false;
         });
     },
 });

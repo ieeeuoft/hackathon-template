@@ -22,11 +22,11 @@ describe("Team info table", () => {
         const teamInfoApiResponse = makeMockApiResponse(mockTeam);
 
         when(mockedGet)
-            .calledWith(`/api/event/teams/${mockTeam.id}/`)
+            .calledWith(`/api/event/teams/${mockTeam.team_code}/`)
             .mockResolvedValue(teamInfoApiResponse);
 
         const store = makeStore();
-        await store.dispatch(getTeamInfoData(mockTeam.id.toString()));
+        await store.dispatch(getTeamInfoData(mockTeam.team_code));
 
         const { getByText, getByTestId } = render(<TeamInfoTable />, {
             store,
@@ -67,7 +67,7 @@ describe("Team info table", () => {
             );
 
         const store = makeStore();
-        await store.dispatch(getTeamInfoData(mockTeam.id.toString()));
+        await store.dispatch(getTeamInfoData(mockTeam.team_code));
 
         const { getByTestId } = render(<TeamInfoTable />, {
             store,
