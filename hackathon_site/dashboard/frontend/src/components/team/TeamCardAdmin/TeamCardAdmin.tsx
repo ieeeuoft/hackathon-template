@@ -3,7 +3,7 @@ import styles from "./TeamCardAdmin.module.scss";
 import Container from "@material-ui/core/Container";
 import Typography from "@material-ui/core/Typography";
 import Card from "@material-ui/core/Card";
-import {ProfileWithUser} from "api/types";
+import { ProfileWithUser } from "api/types";
 
 interface CardProps {
     teamCode: string;

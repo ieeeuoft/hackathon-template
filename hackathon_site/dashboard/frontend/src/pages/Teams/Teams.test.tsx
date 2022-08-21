@@ -2,11 +2,11 @@ import React from "react";
 
 import { makeMockApiListResponse, render } from "testing/utils";
 import { get } from "api/api";
-import {mockTeams} from "testing/mockData";
+import { mockTeams } from "testing/mockData";
 import { waitFor, when } from "testing/utils";
 import Teams from "./Teams";
 import { queryByTestId } from "@testing-library/react";
-import {NUM_TEAM_LIMIT} from "slices/event/teamAdminSlice";
+import { NUM_TEAM_LIMIT } from "slices/event/teamAdminSlice";
 
 jest.mock("api/api", () => ({
     ...jest.requireActual("api/api"),
@@ -38,9 +38,13 @@ describe("Teams Page", () => {
             mockTeams.forEach((team) => {
                 expect(getByText("Team " + team.team_code)).toBeInTheDocument();
                 team.profiles.forEach((profile) => {
-                    expect(getByText(`${profile.user.first_name} ${profile.user.last_name}`)).toBeInTheDocument();
-                })
-            })
+                    expect(
+                        getByText(
+                            `${profile.user.first_name} ${profile.user.last_name}`
+                        )
+                    ).toBeInTheDocument();
+                });
+            });
         });
     });
 });
