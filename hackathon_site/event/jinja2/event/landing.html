@@ -9,14 +9,14 @@
 {% endblock %}
 
 {% block nav_links %}
-    <li><a href="#about">About</a></li>
-    <li><a href="#schedule">Schedule</a></li>
-    <li><a href="#faq">FAQ</a></li>
-    <li><a href="#sponsors">Sponsors</a></li>
-    <li><a href="#contact">Contact</a></li>
-    {% if request.user.is_authenticated %}
-        <li><a href="{{ url("event:dashboard") }}">Dashboard</a></li>                     
-    {% endif %}
+<li><a href="#about">About</a></li>
+<li><a href="#schedule">Schedule</a></li>
+<li><a href="#faq">FAQ</a></li>
+<li><a href="#sponsors">Sponsors</a></li>
+<li><a href="#contact">Contact</a></li>
+{% if request.user.is_authenticated %}
+<li><a href="{{ url(" event:dashboard") }}">Dashboard</a></li>
+{% endif %}
 {% endblock %}
 
 {% block body %}
@@ -160,28 +160,43 @@
                     <ul class="collapsible">
                         <li>
                             <div class="collapsible-header">
+                                I don’t have a team, what do I do?
+                            </div>
+                            <div class="collapsible-body">
+                                <span>All teams competing must have 3 or 4 members, but you do not need a full team to
+                                    apply. We have a team formation channel on Discord as well as a team formation event
+                                    scheduled before hacking starts, so you can connect with other participants that
+                                    don’t have a team yet.</span>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="collapsible-header">
                                 What is a hackathon?
                             </div>
                             <div class="collapsible-body">
-                                <span>A hackathon is a big bonanza where people from everyone doing everything come together to create projects together with the newest and most exciting tech.</span>
+                                <span>A hackathon is a sprint-like design event wherein computer programmers and others
+                                    collaborate intensively on software projects.</span>
                             </div>
                         </li>
                         <li>
                             <div class="collapsible-header">
-                                How much does it cost?
-                            </div>
-                            <div class="collapsible-body">
-                                <span>Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</span>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="collapsible-header">
-                                When can I expect to hear back after I applied?
+                                What if I have no experience? Can I still come?
                             </div>
                             <div class="collapsible-body">
                                 <span>
-                                    Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
-                                    occaecat cupidatat non proiden.
+                                    Yes! NewHacks is for everyone, especially for beginners. You will have the
+                                    opportunity to learn technical skills from industry mentors. Also, if you ever get
+                                    stuck on your project just ask one of the mentors!
+                                </span>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="collapsible-header">
+                                What is the minimum and maximum size of a team?
+                            </div>
+                            <div class="collapsible-body">
+                                <span>
+                                    To compete you must be in a team of 3 or 4 members including yourself
                                 </span>
                             </div>
                         </li>
@@ -192,34 +207,62 @@
                     <ul class="collapsible">
                         <li>
                             <div class="collapsible-header">
-                                Who can apply? What if I have no experience?
+                                How much does it cost to participate?
                             </div>
                             <div class="collapsible-body">
                                 <span>
-                                    Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto 
-                                    beatae vitae dicta sunt explicabo
+                                    NewHacks is an event for new and inexperienced hackers that has no entry fee. It is
+                                    your choice If you would like to buy and bring your own hardware and equipment to
+                                    the event. For those who do not already have there own hardware and equipment and do
+                                    not want to buy it, equipment will be available at ther event for borrowing, however
+                                    must be returned at the end of NewHacks.
                                 </span>
                             </div>
                         </li>
                         <li>
                             <div class="collapsible-header">
-                                What equipment and support will be provided?
+                                Can I keep what I make?
                             </div>
                             <div class="collapsible-body">
                                 <span>
-                                    Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi
-                                    nesciunt.
+                                    If you borrow equipment during the event, the equipment must be disassembled and
+                                    returned. If you bring your own equipment and hardware to the event, of course you
+                                    can bring it home.
                                 </span>
                             </div>
                         </li>
                         <li>
                             <div class="collapsible-header">
-                                How do hackathons work?
+                                How do I apply with a team?
                             </div>
                             <div class="collapsible-body">
                                 <span>
-                                    Sunt in culpa qui officia deserunt mollit anim id est laborum.
+                                    You only need to fill out your individual application, receive an acceptance, and
+                                    form a team with other accepted hackers. Teams are not required in advance; you're
+                                    welcome to form a team with other hackers on the first day of the event! When you
+                                    demo, you will provide the names of all of your team members.
                                 </span>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="collapsible-header">
+                                When can I expect to hear back?
+                            </div>
+                            <div class="collapsible-body">
+                                <span>
+                                    Acceptances will be sent out on a rolling basis, so apply early!
+                                </span>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="collapsible-header">
+                                When is the deadline to apply?
+                            </div>
+                            <div class="collapsible-body">
+                                <span>
+                                    This is still TBD. Please Check back later
+                                </span>
+                                <!-- TODO-->
                             </div>
                         </li>
                     </ul>
