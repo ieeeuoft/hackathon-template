@@ -79,6 +79,7 @@ export const get = <T>(
         uri += "?" + new URLSearchParams(params).toString();
     }
 
+    console.log(uri);
     return axios.get<T>(`${SERVER_URL}/${uri}`, makeConfig());
 };
 
