@@ -23,13 +23,13 @@ import AlertBox from "components/general/AlertBox/AlertBox";
 import { getHardwareWithFilters, setFilters } from "slices/hardware/hardwareSlice";
 
 export interface PageParams {
-    id: string;
+    code: string;
 }
 
 const TeamDetail = ({ match }: RouteComponentProps<PageParams>) => {
     const dispatch = useDispatch();
 
-    const teamCode = match.params.id;
+    const teamCode = match.params.code;
     const error = useSelector(errorSelector);
     const hardwareIdsRequired = useSelector(hardwareInOrdersSelector);
 

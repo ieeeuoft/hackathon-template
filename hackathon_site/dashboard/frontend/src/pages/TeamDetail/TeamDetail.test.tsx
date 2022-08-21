@@ -25,7 +25,7 @@ const mockedGet = get as jest.MockedFunction<typeof get>;
 const teamDetailProps = {
     match: {
         params: {
-            id: mockTeamMultiple.team_code,
+            code: mockTeamMultiple.team_code.toString(),
         },
     },
 } as RouteComponentProps<PageParams>;
@@ -35,7 +35,7 @@ describe("<TeamDetail />", () => {
         const teamOrderAPIResponse = makeMockApiListResponse<Order>(mockOrders);
         const teamDetailAPIResponse = makeMockApiResponse(mockTeam);
         when(mockedGet)
-            .calledWith(orderAPI, { team_code: teamDetailProps.match.params.id })
+            .calledWith(orderAPI, { team_code: teamDetailProps.match.params.code })
             .mockResolvedValue(teamOrderAPIResponse);
         when(mockedGet)
             .calledWith(`/api/event/teams/${mockTeamMultiple.team_code}/`)
@@ -51,7 +51,7 @@ describe("<TeamDetail />", () => {
                 `/api/event/teams/${mockTeamMultiple.team_code}/`
             );
             expect(mockedGet).toHaveBeenNthCalledWith(2, orderAPI, {
-                team_code: teamDetailProps.match.params.id,
+                team_code: teamDetailProps.match.params.code,
             });
             expect(mockedGet).toHaveBeenNthCalledWith(3, "/api/hardware/hardware/", {
                 hardware_ids: [1, 2, 3, 4, 10],
@@ -59,7 +59,7 @@ describe("<TeamDetail />", () => {
         });
 
         expect(
-            screen.getByText(`Team ${teamDetailProps.match.params.id} Overview`)
+            screen.getByText(`Team ${teamDetailProps.match.params.code} Overview`)
         ).toBeInTheDocument();
     });
 
