@@ -1,8 +1,10 @@
 from django.db import transaction
 from django.db.models import Q
 from django.conf import settings
+from django.http import HttpResponseServerError
+from drf_yasg.utils import swagger_auto_schema
 
-from rest_framework import generics, mixins, status
+from rest_framework import generics, mixins, status, permissions
 from rest_framework.exceptions import ValidationError, PermissionDenied
 from rest_framework.response import Response
 
@@ -10,15 +12,18 @@ from rest_framework.response import Response
 from event.serializers import (
     ProfileSerializer,
     CurrentProfileSerializer,
+    ProfileCreateResponseSerializer,
     UserReviewStatusSerializer,
 )
 from event.models import User, Team as EventTeam, Profile
 from event.serializers import UserSerializer, TeamSerializer
-from hardware.serializers import IncidentCreateSerializer, OrderListSerializer
+from hardware.serializers import (
+    IncidentCreateSerializer,
+    OrderListSerializer,
+    TeamOrderChangeSerializer,
+)
 from event.permissions import UserHasProfile, FullDjangoModelPermissions
-
 from hardware.models import OrderItem, Order, Incident
-from hardware.serializers import OrderListSerializer, TeamOrderChangeSerializer
 
 
 class CurrentUserAPIView(generics.GenericAPIView, mixins.RetrieveModelMixin):
@@ -187,17 +192,36 @@ class ProfileDetailView(mixins.UpdateModelMixin, generics.GenericAPIView):
         return self.partial_update(request, *args, **kwargs)
 
 
-class CurrentProfileView(mixins.UpdateModelMixin, generics.GenericAPIView):
+class CurrentProfileView(
+    mixins.UpdateModelMixin, mixins.CreateModelMixin, generics.GenericAPIView
+):
 
     queryset = Profile.objects.all()
+
     serializer_class = CurrentProfileSerializer
-    permission_classes = [UserHasProfile]
 
     def get_object(self):
         return self.request.user.profile
 
+    def get_permissions(self):
+        if self.request.method == "PATCH" or self.request.method == "GET":
+            return [UserHasProfile()]
+        elif self.request.method == "POST":
+            return [permissions.IsAuthenticated()]
+
     def patch(self, request, *args, **kwargs):
         return self.partial_update(request, *args, **kwargs)
+
+    @swagger_auto_schema(responses={201: ProfileCreateResponseSerializer})
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        create_response = serializer.save()
+        response_serializer = ProfileCreateResponseSerializer(data=create_response)
+        if not response_serializer.is_valid():
+            return HttpResponseServerError()
+        response_data = response_serializer.data
+        return Response(response_data, status=status.HTTP_201_CREATED)
 
 
 class CurrentTeamOrderListView(generics.ListAPIView):
@@ -212,9 +236,10 @@ class CurrentTeamOrderListView(generics.ListAPIView):
 
 
 class TeamDetailView(mixins.RetrieveModelMixin, generics.GenericAPIView):
-    queryset = EventTeam.objects.all()
     serializer_class = TeamSerializer
     permission_classes = [FullDjangoModelPermissions]
+    lookup_field = "team_code"
+    queryset = EventTeam.objects.all()
 
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)

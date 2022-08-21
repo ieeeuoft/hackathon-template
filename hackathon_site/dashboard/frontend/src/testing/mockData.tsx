@@ -715,7 +715,7 @@ export const mockCheckedOutOrders: Order[] = [
         ],
     },
     {
-        id: 3,
+        id: 7,
         items: [
             {
                 id: 10,
@@ -797,7 +797,7 @@ export const mockPendingOrdersInTable: OrderInTable[] = [
 
 export const mockCheckedOutOrdersInTable: OrderInTable[] = [
     {
-        id: 3,
+        id: 7,
         hardwareInTableRow: [
             {
                 id: 10,
@@ -853,7 +853,7 @@ export const mockReturnedOrdersInTable: ReturnOrderInTable[] = [
         ],
     },
     {
-        id: 3,
+        id: 7,
         hardwareInOrder: [
             {
                 id: 11,
