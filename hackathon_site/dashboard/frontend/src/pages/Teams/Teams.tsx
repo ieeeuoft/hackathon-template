@@ -35,7 +35,7 @@ const Teams = () => {
             key={index}
             className={styles.teamsListGridItem}
             grid-template-column="true"
-            onClick={() => history.push(`/team/${team.team_code}`)}
+            onClick={() => history.push(`/teams/${team.team_code}`)}
         >
             <TeamCardAdmin teamCode={team.team_code} members={team.profiles} />
         </Grid>
