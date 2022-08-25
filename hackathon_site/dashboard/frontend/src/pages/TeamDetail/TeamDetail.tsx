@@ -7,6 +7,7 @@ import { RouteComponentProps } from "react-router-dom";
 import Header from "components/general/Header/Header";
 import { Grid } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
+import { getAdminTeamOrders } from "slices/order/teamOrderSlice";
 
 import { useDispatch, useSelector } from "react-redux";
 import { errorSelector, getTeamInfoData } from "slices/event/teamDetailSlice";
@@ -16,22 +17,27 @@ import TeamPendingOrderTable from "components/teamDetail/TeamPendingOrderTable/T
 import TeamCheckoutOrderTable from "components/teamDetail/TeamCheckoutOrderTable/TeamCheckoutOrderTable";
 
 export interface PageParams {
-    id: string;
+    code: string;
 }
 
 const TeamDetail = ({ match }: RouteComponentProps<PageParams>) => {
-    // TODO: change api to use team_code instead of team_id
-    const teamCode = match.params.id;
-    const error = useSelector(errorSelector);
     const dispatch = useDispatch();
+
+    const teamCode = match.params.code;
+    const error = useSelector(errorSelector);
     useEffect(() => {
         dispatch(getTeamInfoData(teamCode));
     }, [dispatch, teamCode]);
 
+    useEffect(() => {
+        if (!error) {
+            dispatch(getAdminTeamOrders(teamCode));
+        }
+    }, [dispatch]);
+
     return (
         <>
             <Header />
-
             {error ? (
                 <AlertBox error={error} />
             ) : (
@@ -56,7 +62,7 @@ const TeamDetail = ({ match }: RouteComponentProps<PageParams>) => {
                     <Grid item container direction="column" spacing={2}>
                         <TeamPendingOrderTable />
                     </Grid>
-                    <Grid item>
+                    <Grid item container direction="column" spacing={2}>
                         <TeamCheckoutOrderTable />
                     </Grid>
                 </Grid>

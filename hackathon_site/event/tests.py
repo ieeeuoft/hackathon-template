@@ -23,6 +23,7 @@ from event.serializers import (
     ProfileInTeamSerializer,
     UserInProfileSerializer,
     UserReviewStatusSerializer,
+    ProfileCreateResponseSerializer,
 )
 from review.models import Review
 
@@ -788,19 +789,46 @@ class ProfileSerializerTestCase(TestCase):
         }
         self.assertEqual(profile_expected, profile_serialized)
 
-    def test_readonly_serializer_fields(self):
-        self.assertEqual(
-            ProfileSerializer.Meta.read_only_fields,
-            ("id", "team", "acknowledge_rules", "e_signature"),
-        )
-
 
 class CurrentProfileSerializerTestCase(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username="foo@bar.com",
+            password="foobar123",
+            first_name="Foo",
+            last_name="Bar",
+        )
+
     def test_readonly_serializer_fields(self):
         self.assertEqual(
             CurrentProfileSerializer.Meta.read_only_fields,
             ("id", "team", "id_provided", "attended"),
         )
+
+
+class CreateProfileSerializerTestCase(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username="foo@bar.com",
+            password="foobar123",
+            first_name="Foo",
+            last_name="Bar",
+        )
+        self.profile = Profile.objects.create(user=self.user)
+
+    def test_serializer(self):
+        profile_create_response = {
+            "id_provided": self.profile.id_provided,
+            "attended": self.profile.attended,
+            "acknowledge_rules": self.profile.acknowledge_rules,
+            "e_signature": self.profile.e_signature,
+            "team": self.profile.team.team_code,
+        }
+        serialized_profile = ProfileCreateResponseSerializer(
+            data=profile_create_response
+        )
+        self.assertEqual(serialized_profile.is_valid(), True)
+        self.assertEqual(profile_create_response, serialized_profile.data)
 
 
 class ProfileInUserSerializerTestCase(TestCase):
