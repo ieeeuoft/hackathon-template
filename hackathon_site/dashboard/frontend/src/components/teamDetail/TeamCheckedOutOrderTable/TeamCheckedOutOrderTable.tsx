@@ -253,6 +253,13 @@ export const TeamCheckedOutOrderTable = () => {
                                                             </TableCell>
                                                             <TableCell>
                                                                 <Select
+                                                                    value={
+                                                                        props.values[
+                                                                            `${row.id}-condition`
+                                                                        ]
+                                                                    }
+                                                                    label="Condition"
+                                                                    labelId="conditionLabel"
                                                                     name="condition"
                                                                     defaultValue={
                                                                         "Healthy"
