@@ -62,7 +62,7 @@ export type Group = {
     name: string;
 };
 
-interface UserWithoutProfile {
+export interface UserWithoutProfile {
     id: number;
     first_name: string;
     last_name: string;
@@ -70,11 +70,7 @@ interface UserWithoutProfile {
 }
 
 export interface User extends UserWithoutProfile {
-    profile:
-        | (ProfileWithoutTeamNumber & {
-              user: UserWithoutProfile;
-          })
-        | null;
+    profile: ProfileWithUser | null;
     groups: Group[];
 }
 
@@ -83,9 +79,11 @@ export interface Team {
     team_code: string;
     created_at: string;
     updated_at: string;
-    profiles: (ProfileWithoutTeamNumber & {
-        user: UserWithoutProfile;
-    })[];
+    profiles: ProfileWithUser[];
+}
+
+export interface ProfileWithUser extends ProfileWithoutTeamNumber {
+    user: UserWithoutProfile;
 }
 
 /** Orders API */
