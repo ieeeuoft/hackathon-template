@@ -10,7 +10,11 @@ import Typography from "@material-ui/core/Typography";
 import { getAdminTeamOrders } from "slices/order/teamOrderSlice";
 
 import { useDispatch, useSelector } from "react-redux";
-import { errorSelector, getTeamInfoData } from "slices/event/teamDetailSlice";
+import {
+    getTeamInfoData,
+    teamInfoErrorSelector,
+    updateParticipantIdErrorSelector,
+} from "slices/event/teamDetailSlice";
 import AlertBox from "components/general/AlertBox/AlertBox";
 
 import TeamPendingOrderTable from "components/teamDetail/TeamPendingOrderTable/TeamPendingOrderTable";
@@ -22,23 +26,31 @@ export interface PageParams {
 const TeamDetail = ({ match }: RouteComponentProps<PageParams>) => {
     const dispatch = useDispatch();
 
-    const teamCode = match.params.code;
-    const error = useSelector(errorSelector);
+    const teamCode = match.params.code.toUpperCase();
+    const teamInfoError = useSelector(teamInfoErrorSelector);
+
+    const updateParticipantIdError = useSelector(updateParticipantIdErrorSelector);
+    if (
+        updateParticipantIdError === "Could not update participant id status: Error 404"
+    ) {
+        dispatch(getTeamInfoData(teamCode));
+    }
+
     useEffect(() => {
         dispatch(getTeamInfoData(teamCode));
     }, [dispatch, teamCode]);
 
     useEffect(() => {
-        if (!error) {
+        if (!teamInfoError) {
             dispatch(getAdminTeamOrders(teamCode));
         }
-    }, [dispatch]);
+    }, [dispatch, teamInfoError, teamCode]);
 
     return (
         <>
             <Header />
-            {error ? (
-                <AlertBox error={error} />
+            {teamInfoError ? (
+                <AlertBox error={teamInfoError} />
             ) : (
                 <Grid container direction="column" spacing={6}>
                     <Grid item xs={12}>
