@@ -14,7 +14,7 @@ import { errorSelector, getTeamInfoData } from "slices/event/teamDetailSlice";
 import AlertBox from "components/general/AlertBox/AlertBox";
 
 import TeamPendingOrderTable from "components/teamDetail/TeamPendingOrderTable/TeamPendingOrderTable";
-import TeamCheckoutOrderTable from "components/teamDetail/TeamCheckoutOrderTable/TeamCheckoutOrderTable";
+import TeamCheckedOutOrderTable from "components/teamDetail/TeamCheckedOutOrderTable/TeamCheckedOutOrderTable";
 
 export interface PageParams {
     code: string;
@@ -63,7 +63,7 @@ const TeamDetail = ({ match }: RouteComponentProps<PageParams>) => {
                         <TeamPendingOrderTable />
                     </Grid>
                     <Grid item container direction="column" spacing={2}>
-                        <TeamCheckoutOrderTable />
+                        <TeamCheckedOutOrderTable />
                     </Grid>
                 </Grid>
             )}

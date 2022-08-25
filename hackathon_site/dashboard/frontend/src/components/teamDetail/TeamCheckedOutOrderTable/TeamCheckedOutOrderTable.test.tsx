@@ -13,12 +13,12 @@ import {
     mockHardware,
     mockCheckedOutOrdersInTable,
 } from "testing/mockData";
-import TeamCheckoutOrderTable from "components/teamDetail/TeamCheckoutOrderTable/TeamCheckoutOrderTable";
+import TeamCheckedOutOrderTable from "components/teamDetail/TeamCheckedOutOrderTable/TeamCheckedOutOrderTable";
 
 describe("team pending order table", () => {
     test("renders team pending order table", () => {
-        const { getByTestId } = render(<TeamCheckoutOrderTable />);
-        expect(screen.getByText("Checkout Items")).toBeInTheDocument();
+        const { getByTestId } = render(<TeamCheckedOutOrderTable />);
+        expect(screen.getByText("Checked Out Items")).toBeInTheDocument();
 
         //loop through all pending orders
         mockCheckedOutOrdersInTable.forEach((currentOrder) => {
@@ -49,8 +49,7 @@ describe("team pending order table", () => {
     });
 
     test("All button changes the dropdown to maximum value", () => {
-        const { getByTestId, getByRole } = render(<TeamCheckoutOrderTable />);
-
+        const { getByTestId, getByRole } = render(<TeamCheckedOutOrderTable />);
         mockCheckedOutOrdersInTable.forEach((currentOrder) => {
             currentOrder.hardwareInTableRow.forEach((currentRow) => {
                 expect(
@@ -62,7 +61,7 @@ describe("team pending order table", () => {
         });
     });
     test("Check all button checks and unchecks every row", async () => {
-        const { getByTestId } = render(<TeamCheckoutOrderTable />);
+        const { getByTestId } = render(<TeamCheckedOutOrderTable />);
         const currentOrder = mockCheckedOutOrdersInTable[0];
         const checkallBox = getByTestId(`checkall-${currentOrder.id}`).querySelector(
             'input[type="checkbox"]'

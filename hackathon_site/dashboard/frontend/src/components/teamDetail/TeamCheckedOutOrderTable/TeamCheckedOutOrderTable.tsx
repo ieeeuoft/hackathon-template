@@ -52,7 +52,7 @@ const setInitialValues = (
     return orderInitialValues;
 };
 
-export const TeamCheckoutOrderTable = () => {
+export const TeamCheckedOutOrderTable = () => {
     const orders = mockCheckedOutOrdersInTable;
     const hardware = mockHardware;
     const [visibility, setVisibility] = useState(true);
@@ -68,17 +68,17 @@ export const TeamCheckoutOrderTable = () => {
         >
             {orders.length > 0 && (
                 <GeneralOrderTitle
-                    title="Checkout Items"
+                    title="Checked Out Items"
                     isVisible={visibility}
                     toggleVisibility={toggleVisibility}
                 />
             )}
             {visibility &&
                 orders.length &&
-                orders.map((checkoutOrder) => (
+                orders.map((checkedOutOrder) => (
                     <Formik
                         initialValues={setInitialValues(
-                            checkoutOrder.hardwareInTableRow
+                            checkedOutOrder.hardwareInTableRow
                         )}
                         onSubmit={(values) =>
                             alert(JSON.stringify(values, undefined, 2))
@@ -86,10 +86,10 @@ export const TeamCheckoutOrderTable = () => {
                     >
                         {(props) => (
                             <form onSubmit={props.handleSubmit}>
-                                <div key={checkoutOrder.id}>
+                                <div key={checkedOutOrder.id}>
                                     <GeneralOrderTableTitle
-                                        orderId={checkoutOrder.id}
-                                        orderStatus={checkoutOrder.status}
+                                        orderId={checkedOutOrder.id}
+                                        orderStatus={checkedOutOrder.status}
                                     />
                                     <TableContainer
                                         component={Paper}
@@ -138,9 +138,9 @@ export const TeamCheckoutOrderTable = () => {
                                                     >
                                                         <Checkbox
                                                             color="primary"
-                                                            data-testid={`checkall-${checkoutOrder.id}`}
+                                                            data-testid={`checkall-${checkedOutOrder.id}`}
                                                             onChange={(e) => {
-                                                                checkoutOrder.hardwareInTableRow.forEach(
+                                                                checkedOutOrder.hardwareInTableRow.forEach(
                                                                     (row) => {
                                                                         props.setFieldValue(
                                                                             `${row.id}-checkbox`,
@@ -155,11 +155,11 @@ export const TeamCheckoutOrderTable = () => {
                                                 </TableRow>
                                             </TableHead>
                                             <TableBody>
-                                                {checkoutOrder.hardwareInTableRow.map(
+                                                {checkedOutOrder.hardwareInTableRow.map(
                                                     (row) => (
                                                         <TableRow
                                                             key={row.id}
-                                                            data-testid={`table-${checkoutOrder.id}-${row.id}`}
+                                                            data-testid={`table-${checkedOutOrder.id}-${row.id}`}
                                                         >
                                                             <TableCell>
                                                                 <img
@@ -305,7 +305,7 @@ export const TeamCheckoutOrderTable = () => {
                                                 variant="contained"
                                                 type="submit"
                                                 disableElevation
-                                                data-testid={`return-button-${checkoutOrder.id}`}
+                                                data-testid={`return-button-${checkedOutOrder.id}`}
                                             >
                                                 Return Items
                                             </Button>
@@ -320,4 +320,4 @@ export const TeamCheckoutOrderTable = () => {
     );
 };
 
-export default TeamCheckoutOrderTable;
+export default TeamCheckedOutOrderTable;
