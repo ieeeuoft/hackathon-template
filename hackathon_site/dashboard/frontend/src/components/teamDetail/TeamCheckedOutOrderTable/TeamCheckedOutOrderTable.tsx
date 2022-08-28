@@ -48,6 +48,7 @@ const setInitialValues = (
         orderInitialValues[`${orderItem.id}-quantity`] =
             orderItem.quantityGranted.toString();
         orderInitialValues[`${orderItem.id}-checkbox`] = false;
+        orderInitialValues[`${orderItem.id}-condtion`] = "Healthy";
     });
     return orderInitialValues;
 };
@@ -258,9 +259,13 @@ export const TeamCheckedOutOrderTable = () => {
                                                                             `${row.id}-condition`
                                                                         ]
                                                                     }
+                                                                    onChange={
+                                                                        props.handleChange
+                                                                    }
                                                                     label="Condition"
                                                                     labelId="conditionLabel"
-                                                                    name="condition"
+                                                                    name={`${row.id}-condition`}
+                                                                    id={`${row.id}-condition`}
                                                                     defaultValue={
                                                                         "Healthy"
                                                                     }
