@@ -7,7 +7,7 @@ import styles from "pages/Teams/Teams.module.scss";
 import TeamCardAdmin from "components/team/TeamCardAdmin/TeamCardAdmin";
 import TeamSearchBar from "components/team/TeamSearchBar/TeamSearchBar";
 import {
-    getAllTeams,
+    getTeamsWithSearchThunk,
     isLoadingSelector,
     teamAdminSelectors,
 } from "slices/event/teamAdminSlice";
@@ -22,7 +22,7 @@ const Teams = () => {
     const history = useHistory();
 
     useEffect(() => {
-        dispatch(getAllTeams());
+        dispatch(getTeamsWithSearchThunk());
     }, [dispatch]);
 
     const CardComponents = teamsList.map((team, index) => (

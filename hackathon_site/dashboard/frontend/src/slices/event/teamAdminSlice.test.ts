@@ -4,12 +4,12 @@ import {
     initialState,
     teamAdminSliceSelector,
     isLoadingSelector,
-    getAllTeams,
+    getTeamsWithSearchThunk,
     teamAdminSelectors,
     NUM_TEAM_LIMIT,
 } from "slices/event/teamAdminSlice";
 import { makeMockApiListResponse, waitFor } from "testing/utils";
-import { mockTeams } from "testing/mockData";
+import { mockTeam, mockTeams } from "testing/mockData";
 import { get } from "api/api";
 import { displaySnackbar } from "slices/ui/uiSlice";
 import thunk, { ThunkDispatch } from "redux-thunk";
@@ -58,7 +58,7 @@ describe("Selectors", () => {
     });
 });
 
-describe("getAllTeams thunk", () => {
+describe("getTeamsWithSearchThunk thunk", () => {
     const apiFailureResponse = {
         response: {
             status: 500,
@@ -66,12 +66,25 @@ describe("getAllTeams thunk", () => {
         },
     };
 
+    it("Get all Teams with Search Query", async () => {
+        const mockResponse = makeMockApiListResponse(mockTeams);
+        mockedGet.mockResolvedValueOnce(mockResponse);
+        const search: string = mockTeam.team_code;
+
+        const store = makeStore();
+        await store.dispatch(getTeamsWithSearchThunk(search));
+
+        await waitFor(() => {
+            expect(teamAdminSelectors.selectAll(store.getState())).toEqual(mockTeams);
+        });
+    });
+
     it("Updates the store on API success", async () => {
         const mockResponse = makeMockApiListResponse(mockTeams);
         mockedGet.mockResolvedValueOnce(mockResponse);
 
         const store = makeStore();
-        await store.dispatch(getAllTeams());
+        await store.dispatch(getTeamsWithSearchThunk());
 
         await waitFor(() => {
             expect(mockedGet).toHaveBeenCalledWith("/api/event/teams/", {
@@ -85,7 +98,7 @@ describe("getAllTeams thunk", () => {
         mockedGet.mockRejectedValueOnce(apiFailureResponse);
 
         const store = mockStore(mockState);
-        await store.dispatch(getAllTeams());
+        await store.dispatch(getTeamsWithSearchThunk());
 
         const actions = store.getActions();
 
