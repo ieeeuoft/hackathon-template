@@ -94,12 +94,12 @@ const TableCheckAll = ({
 const enableCheckboxColumn = (order: OrderInTable) => ({
     extraColumn: {
         header: (
-            <TableCell className={`${styles.width1} ${styles.noWrap}`} align="center">
+            <TableCell className={`${styles.widthCheckbox}`}>
                 <Field name="checkAll" component={TableCheckAll} order={order} />
             </TableCell>
         ),
         body: (id: number) => (
-            <TableCell className={`${styles.width1} ${styles.noWrap}`} align="center">
+            <TableCell className={`${styles.widthCheckbox}`}>
                 <Field
                     name="itemIdsChecked"
                     component={TableCheckbox}

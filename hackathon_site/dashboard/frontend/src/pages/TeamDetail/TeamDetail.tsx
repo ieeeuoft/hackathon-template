@@ -13,12 +13,17 @@ import {
     SimplePendingOrderFulfillmentTable,
 } from "components/teamDetail/SimpleOrderTables/SimpleOrderTables";
 import {
+    errorSelector,
     getAdminTeamOrders,
     hardwareInOrdersSelector,
 } from "slices/order/teamOrderSlice";
 
 import { useDispatch, useSelector } from "react-redux";
-import { errorSelector, getTeamInfoData } from "slices/event/teamDetailSlice";
+import {
+    getTeamInfoData,
+    teamInfoErrorSelector,
+    updateParticipantIdErrorSelector,
+} from "slices/event/teamDetailSlice";
 import AlertBox from "components/general/AlertBox/AlertBox";
 import { getHardwareWithFilters, setFilters } from "slices/hardware/hardwareSlice";
 
@@ -29,9 +34,17 @@ export interface PageParams {
 const TeamDetail = ({ match }: RouteComponentProps<PageParams>) => {
     const dispatch = useDispatch();
 
-    const teamCode = match.params.code;
-    const error = useSelector(errorSelector);
     const hardwareIdsRequired = useSelector(hardwareInOrdersSelector);
+    const teamCode = match.params.code.toUpperCase();
+    const teamInfoError = useSelector(teamInfoErrorSelector);
+    const orderError = useSelector(errorSelector);
+
+    const updateParticipantIdError = useSelector(updateParticipantIdErrorSelector);
+    if (
+        updateParticipantIdError === "Could not update participant id status: Error 404"
+    ) {
+        dispatch(getTeamInfoData(teamCode));
+    }
 
     useEffect(() => {
         dispatch(getTeamInfoData(teamCode));
@@ -48,8 +61,8 @@ const TeamDetail = ({ match }: RouteComponentProps<PageParams>) => {
     return (
         <>
             <Header />
-            {error ? (
-                <AlertBox error={error} />
+            {teamInfoError ? (
+                <AlertBox error={teamInfoError} />
             ) : (
                 <Grid container direction="column" spacing={6}>
                     <Grid item xs={12}>
@@ -69,9 +82,15 @@ const TeamDetail = ({ match }: RouteComponentProps<PageParams>) => {
                         <TeamActionTable />
                     </Grid>
                     <Grid item container direction="column" spacing={2}>
-                        <SimplePendingOrderFulfillmentTable />
-                        <Divider className={styles.dividerMargin} />
-                        <AdminReturnedItemsTable />
+                        {orderError ? (
+                            <AlertBox error={orderError} />
+                        ) : (
+                            <>
+                                <SimplePendingOrderFulfillmentTable />
+                                <Divider className={styles.dividerMargin} />
+                                <AdminReturnedItemsTable />
+                            </>
+                        )}
                     </Grid>
                 </Grid>
             )}
