@@ -43,7 +43,6 @@ export const getTeamsWithSearchThunk = createAsyncThunk<
     `${teamAdminReducerName}/getTeamsWithSearchThunk`,
     async (search, { dispatch, rejectWithValue }) => {
         try {
-            console.log("Search used:" + search);
             const response = await get<APIListResponse<Team>>("/api/event/teams/", {
                 limit: NUM_TEAM_LIMIT,
                 search,
