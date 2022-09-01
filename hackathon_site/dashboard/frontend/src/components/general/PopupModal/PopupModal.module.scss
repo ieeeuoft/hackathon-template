@@ -10,12 +10,13 @@
 .modalGrid {
     background-color: white;
     padding: 1em;
-    @include responsive(sm-down) {
-        width: 200px;
-    }
     width: 350px;
+    @include responsive(sm-down) {
+        width: 85vw;
+    }
 }
 
 .title {
     text-align: center;
+    font-size: 25px;
 }
