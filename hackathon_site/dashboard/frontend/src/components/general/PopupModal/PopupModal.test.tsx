@@ -1,4 +1,4 @@
-import { render } from "../../../testing/utils";
+import { render } from "testing/utils";
 import PopupModal from "./PopupModal";
 import React from "react";
 import { fireEvent } from "@testing-library/react";
@@ -13,7 +13,7 @@ test("renders general popup modal without crashing", () => {
             cancelText={"cancel"}
             submitText={"submit"}
             title={"Test Modal"}
-        ></PopupModal>
+        />
     );
     expect(getByText("Example Description")).toBeInTheDocument();
     expect(getByText("cancel")).toBeInTheDocument();
@@ -32,7 +32,7 @@ test("submit function is being passed into popup modal without crashing", () => 
             cancelText={"cancel"}
             submitText={"submit"}
             title={"Test Modal"}
-        ></PopupModal>
+        />
     );
     fireEvent.click(getByText("submit"));
     expect(submitFunction).toHaveBeenCalled();
@@ -49,7 +49,7 @@ test("cancel function is being passed into popup modal without crashing", () => 
             cancelText={"cancel"}
             submitText={"submit"}
             title={"Test Modal"}
-        ></PopupModal>
+        />
     );
     fireEvent.click(getByText("cancel"));
     expect(cancelFunction).toHaveBeenCalled();
@@ -63,9 +63,11 @@ test("cancel and submit functions are NOT being passed into popup modal without 
             cancelText={"cancel"}
             submitText={"submit"}
             title={"Test Modal"}
-        ></PopupModal>
+        />
     );
     fireEvent.click(getByText("Example Description"));
+    expect(() => getByText("cancel")).toThrow("Unable to find an element");
+    expect(() => getByText("submit")).toThrow("Unable to find an element");
 });
 
 test("cancel and submit text are NOT being passed into popup modal without crashing", () => {
@@ -78,8 +80,10 @@ test("cancel and submit text are NOT being passed into popup modal without crash
             submitHandler={submitFunction}
             cancelHandler={cancelFunction}
             title={"Test Modal"}
-        ></PopupModal>
+        />
     );
+    expect(getByText("Cancel")).toBeInTheDocument();
+    expect(getByText("Submit")).toBeInTheDocument();
     fireEvent.click(getByText("Cancel"));
     fireEvent.click(getByText("Submit"));
 });
