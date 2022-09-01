@@ -22,7 +22,7 @@ const Teams = () => {
     const history = useHistory();
 
     useEffect(() => {
-        dispatch(getTeamsWithSearchThunk());
+        dispatch(getTeamsWithSearchThunk(""));
     }, [dispatch]);
 
     const CardComponents = teamsList.map((team, index) => (

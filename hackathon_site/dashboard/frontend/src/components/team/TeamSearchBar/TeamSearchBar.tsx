@@ -8,20 +8,25 @@ import SearchIcon from "@material-ui/icons/Search";
 import { getTeamsWithSearchThunk } from "slices/event/teamAdminSlice";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
+import { Formik, FormikValues } from "formik";
 
-const TeamSearchBar = () => {
-    const dispatch = useDispatch();
-    const [search, setSearch] = useState("");
-    const handleSubmit = (search: string) => {
-        dispatch(getTeamsWithSearchThunk(search));
-    };
+interface SearchValues {
+    search: string;
+}
 
-    const handleChange = (e: any) => {
-        setSearch(e.target.value);
-    };
-
+const TeamSearchBar = ({
+    handleChange,
+    handleReset,
+    handleSubmit,
+    values: { search },
+}: FormikValues) => {
     return (
-        <form autoComplete="off" className={styles.searchBar}>
+        <form
+            onReset={handleReset}
+            onSubmit={handleSubmit}
+            autoComplete="off"
+            className={styles.searchBar}
+        >
             <Box display="flex" flexDirection="row">
                 <TextField
                     id="search-input"
@@ -34,18 +39,14 @@ const TeamSearchBar = () => {
                     InputProps={{
                         endAdornment: (
                             <InputAdornment position="end">
-                                <IconButton>
+                                <IconButton onClick={handleReset}>
                                     <CloseIcon />
                                 </IconButton>
                             </InputAdornment>
                         ),
                     }}
                 />
-                <IconButton
-                    color="primary"
-                    aria-label="Search"
-                    onClick={() => handleSubmit(search)}
-                >
+                <IconButton color="primary" aria-label="Search" onClick={handleSubmit}>
                     <SearchIcon />
                 </IconButton>
             </Box>
@@ -53,4 +54,32 @@ const TeamSearchBar = () => {
     );
 };
 
-export default TeamSearchBar;
+export const TeamSearch = () => {
+    const initialValues = {
+        search: "",
+    };
+
+    const dispatch = useDispatch();
+
+    const onSubmit = ({ search }: SearchValues) => {
+        dispatch(getTeamsWithSearchThunk(search));
+    };
+
+    const onReset = () => {
+        dispatch(getTeamsWithSearchThunk(initialValues.search));
+    };
+
+    return (
+        <Formik
+            initialValues={initialValues}
+            onSubmit={onSubmit}
+            onReset={onReset}
+            validateOnBlur={false}
+            validateOnChange={false}
+        >
+            {(formikProps) => <TeamSearchBar {...formikProps} />}
+        </Formik>
+    );
+};
+
+export default TeamSearch;
