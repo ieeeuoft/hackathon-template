@@ -12,14 +12,20 @@ import {
 } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import React from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
-    isLoadingSelector,
+    getTeamInfoData,
+    isParticipantIdLoadingSelector,
+    isTeamInfoLoadingSelector,
     teamDetailAdapterSelector,
+    updateParticipantIdErrorSelector,
+    updateParticipantIdProvided,
 } from "slices/event/teamDetailSlice";
 
 export const TeamInfoTable = () => {
-    const isTeamInfoLoading = useSelector(isLoadingSelector);
+    const dispatch = useDispatch();
+    const isTeamInfoLoading: boolean = useSelector(isTeamInfoLoadingSelector);
+    const isParticipantIdLoading: boolean = useSelector(isParticipantIdLoadingSelector);
     const profiles = useSelector(teamDetailAdapterSelector.selectAll);
 
     return (
@@ -52,7 +58,16 @@ export const TeamInfoTable = () => {
                                         <Checkbox
                                             checked={row.id_provided}
                                             color="primary"
-                                            data-testid="checkbox"
+                                            disabled={isParticipantIdLoading}
+                                            data-testid={`id-provided-check-${row.id}`}
+                                            onChange={(event) => {
+                                                dispatch(
+                                                    updateParticipantIdProvided({
+                                                        profileId: row.id,
+                                                        idProvided: !row.id_provided,
+                                                    })
+                                                );
+                                            }}
                                         />
                                     </TableCell>
                                 </TableRow>

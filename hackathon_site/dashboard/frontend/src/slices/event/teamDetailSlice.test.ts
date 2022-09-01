@@ -1,17 +1,20 @@
 import store, { makeStore, RootState } from "slices/store";
 import {
-    errorSelector,
     getTeamInfoData,
     initialState,
-    isLoadingSelector,
+    isParticipantIdLoadingSelector,
+    isTeamInfoLoadingSelector,
     teamDetailAdapterSelector,
     teamDetailReducerName,
     teamDetailSliceSelector,
+    teamInfoErrorSelector,
+    updateParticipantIdErrorSelector,
+    updateParticipantIdProvided,
 } from "slices/event/teamDetailSlice";
 
-import { get } from "api/api";
+import { get, patch } from "api/api";
 import { makeMockApiResponse, makeStoreWithEntities, waitFor } from "testing/utils";
-import { mockTeam } from "testing/mockData";
+import { mockTeam, mockProfile } from "testing/mockData";
 import { useSelector } from "react-redux";
 import { displaySnackbar } from "slices/ui/uiSlice";
 import thunk, { ThunkDispatch } from "redux-thunk";
@@ -21,23 +24,33 @@ import configureStore from "redux-mock-store";
 jest.mock("api/api", () => ({
     ...jest.requireActual("api/api"),
     get: jest.fn(),
+    patch: jest.fn(),
 }));
 
 type DispatchExts = ThunkDispatch<RootState, void, AnyAction>;
 const mockStore = configureStore<RootState, DispatchExts>([thunk]);
 
 const mockedGet = get as jest.MockedFunction<typeof get>;
+const mockedPatch = patch as jest.MockedFunction<typeof patch>;
 
 const mockState: RootState = {
     ...store.getState(),
     [teamDetailReducerName]: initialState,
 };
 
-const failureResponse = {
+const teamFailureResponse = {
     response: {
         status: 404,
         statusText: "Not Found",
         message: "Could not find team code: Error 404",
+    },
+};
+
+const profileFailureResponse = {
+    response: {
+        status: 404,
+        statusText: "Not Found",
+        message: "Could not update participant id status: Error 404",
     },
 };
 
@@ -48,24 +61,44 @@ describe("Selectors", () => {
         );
     });
 
-    test("isLoadingSelector", () => {
+    test("isTeamInfoLoadingSelector", () => {
         const loadingTrueState = {
             ...mockState,
             [teamDetailReducerName]: {
                 ...initialState,
-                isLoading: true,
+                isTeamInfoLoading: true,
             },
         };
         const loadingFalseState = {
             ...mockState,
             [teamDetailReducerName]: {
                 ...initialState,
-                isLoading: false,
+                isTeamInfoLoading: false,
             },
         };
 
-        expect(isLoadingSelector(loadingTrueState)).toEqual(true);
-        expect(isLoadingSelector(loadingFalseState)).toEqual(false);
+        expect(isTeamInfoLoadingSelector(loadingTrueState)).toEqual(true);
+        expect(isTeamInfoLoadingSelector(loadingFalseState)).toEqual(false);
+    });
+
+    test("isParticipantIdLoadingSelector", () => {
+        const loadingTrueState = {
+            ...mockState,
+            [teamDetailReducerName]: {
+                ...initialState,
+                isParticipantIdLoading: true,
+            },
+        };
+        const loadingFalseState = {
+            ...mockState,
+            [teamDetailReducerName]: {
+                ...initialState,
+                isParticipantIdLoading: false,
+            },
+        };
+
+        expect(isParticipantIdLoadingSelector(loadingTrueState)).toEqual(true);
+        expect(isParticipantIdLoadingSelector(loadingFalseState)).toEqual(false);
     });
 });
 
@@ -75,11 +108,13 @@ describe("getTeamInfoData thunk", () => {
         mockedGet.mockResolvedValueOnce(mockResponse);
 
         const store = makeStore();
-        await store.dispatch(getTeamInfoData("1"));
+        await store.dispatch(getTeamInfoData(mockTeam.team_code));
 
         await waitFor(() => {
-            expect(mockedGet).toHaveBeenCalledWith("/api/event/teams/1/");
-            expect(errorSelector(store.getState())).toBeFalsy();
+            expect(mockedGet).toHaveBeenCalledWith(
+                `/api/event/teams/${mockTeam.team_code}/`
+            );
+            expect(teamInfoErrorSelector(store.getState())).toBeFalsy();
             expect(teamDetailAdapterSelector.selectAll(store.getState())).toEqual(
                 mockTeam.profiles
             );
@@ -87,7 +122,7 @@ describe("getTeamInfoData thunk", () => {
     });
 
     it("Dispatches snackbar on API failure", async () => {
-        mockedGet.mockRejectedValueOnce(failureResponse);
+        mockedGet.mockRejectedValueOnce(teamFailureResponse);
 
         const store = mockStore(mockState);
         await store.dispatch(getTeamInfoData("abc"));
@@ -105,13 +140,79 @@ describe("getTeamInfoData thunk", () => {
     });
 
     it("Updates error state on API failure", async () => {
-        mockedGet.mockRejectedValueOnce(failureResponse);
+        mockedGet.mockRejectedValueOnce(teamFailureResponse);
 
         const store = makeStore();
         await store.dispatch(getTeamInfoData("abc"));
 
-        expect(errorSelector(store.getState())).toBe(
+        expect(teamInfoErrorSelector(store.getState())).toBe(
             "Could not find team code: Error 404"
+        );
+    });
+});
+
+describe("updateParticipantIdProvided thunk", () => {
+    it("Updates the store on API success", async () => {
+        // populate store
+        let mockResponse = makeMockApiResponse(mockTeam);
+        mockedGet.mockResolvedValueOnce(mockResponse);
+
+        const store = makeStore();
+        await store.dispatch(getTeamInfoData(mockTeam.team_code));
+
+        // change one profile in store
+        const mockProfileResponse = { ...mockProfile };
+        mockProfileResponse.id_provided = true;
+        mockResponse = makeMockApiResponse(mockProfileResponse);
+        mockedPatch.mockResolvedValueOnce(mockResponse);
+
+        await store.dispatch(
+            updateParticipantIdProvided({
+                profileId: mockProfile.id,
+                idProvided: !mockProfile.id_provided,
+            })
+        );
+
+        // expect id_provided for that profile to have been changed in the store
+        await waitFor(() => {
+            expect(mockedPatch).toHaveBeenCalledWith(
+                `/api/event/profiles/${mockProfile.id}/`,
+                {
+                    id_provided: !mockProfile.id_provided,
+                }
+            );
+            expect(updateParticipantIdErrorSelector(store.getState())).toBeFalsy();
+            expect(
+                teamDetailAdapterSelector.selectById(store.getState(), mockProfile.id)
+                    ?.id_provided
+            ).toEqual(!mockProfile.id_provided);
+        });
+    });
+    it("Dispatches snackbar on API failure", async () => {
+        mockedPatch.mockRejectedValueOnce(profileFailureResponse);
+
+        const store = mockStore(mockState);
+        await store.dispatch(
+            updateParticipantIdProvided({
+                profileId: mockProfile.id,
+                idProvided: !mockProfile.id_provided,
+            })
+        );
+
+        expect(mockedPatch).toHaveBeenCalledWith(
+            `/api/event/profiles/${mockProfile.id}/`,
+            {
+                id_provided: !mockProfile.id_provided,
+            }
+        );
+
+        const actions = store.getActions();
+
+        expect(actions).toContainEqual(
+            displaySnackbar({
+                message: "Could not update participant id status: Error 404",
+                options: { variant: "error" },
+            })
         );
     });
 });
