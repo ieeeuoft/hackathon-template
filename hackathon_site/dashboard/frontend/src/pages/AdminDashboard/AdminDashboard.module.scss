@@ -20,8 +20,23 @@
     line-height: 19px;
 }
 
-.section {
+.dashboard {
     width: 100%;
+}
+
+.section {
+    margin-bottom: 1rem;
+}
+
+.orderCard {
+    width: 225px;
+    height: 164px;
+}
+
+.orderCardGrid {
+    width: 225px;
+    height: 164px;
+    overflow-x: scroll;
 }
 
 .overviewCardGrid {
