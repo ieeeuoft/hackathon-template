@@ -21,7 +21,7 @@ describe("Teams Page", () => {
         const teamsApiResponse = makeMockApiListResponse(mockTeams);
 
         when(mockedGet)
-            .calledWith(teamsUri, { limit: NUM_TEAM_LIMIT })
+            .calledWith(teamsUri, { limit: NUM_TEAM_LIMIT, search: "" })
             .mockResolvedValue(teamsApiResponse);
 
         const { getByText, queryByTestId } = render(<Teams />);
@@ -33,6 +33,7 @@ describe("Teams Page", () => {
         await waitFor(() => {
             expect(mockedGet).toHaveBeenCalledWith(teamsUri, {
                 limit: NUM_TEAM_LIMIT,
+                search: "",
             });
 
             mockTeams.forEach((team) => {
