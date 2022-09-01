@@ -82,6 +82,10 @@
     &Buffer {
         padding-right: 300px !important;
     }
+    &Checkbox {
+        width: 300px;
+        padding-left: 250px;
+    }
     &Fixed {
         width: 80px;
     }
@@ -92,6 +96,10 @@
         &Buffer {
             width: 0px;
             padding: 0px !important;
+        }
+        &Checkbox {
+            width: 50px;
+            padding-left: 0px;
         }
     }
 }
