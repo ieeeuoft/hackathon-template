@@ -25,6 +25,7 @@ import {
     updateParticipantIdErrorSelector,
 } from "slices/event/teamDetailSlice";
 import AlertBox from "components/general/AlertBox/AlertBox";
+import TeamCheckedOutOrderTable from "components/teamDetail/TeamCheckedOutOrderTable/TeamCheckedOutOrderTable";
 import { getHardwareWithFilters, setFilters } from "slices/hardware/hardwareSlice";
 
 export interface PageParams {
@@ -87,6 +88,8 @@ const TeamDetail = ({ match }: RouteComponentProps<PageParams>) => {
                         ) : (
                             <>
                                 <SimplePendingOrderFulfillmentTable />
+                                <Divider className={styles.dividerMargin} />
+                                <TeamCheckedOutOrderTable />
                                 <Divider className={styles.dividerMargin} />
                                 <AdminReturnedItemsTable />
                             </>
