@@ -52,7 +52,6 @@ const Teams = () => {
             ) : (
                 <Grid container>{CardComponents}</Grid>
             )}
-            <Grid container>{CardComponents}</Grid>
         </>
     );
 };
