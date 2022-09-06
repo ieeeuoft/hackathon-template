@@ -10,6 +10,7 @@
 .modalGrid {
     background-color: white;
     padding: 1em;
+    border-radius: 5px;
     width: 350px;
     @include responsive(sm-down) {
         width: 85vw;

@@ -55,21 +55,6 @@ test("cancel function is being passed into popup modal without crashing", () => 
     expect(cancelFunction).toHaveBeenCalled();
 });
 
-test("cancel and submit functions are NOT being passed into popup modal without crashing", () => {
-    const { getByText } = render(
-        <PopupModal
-            description={"Example Description"}
-            isVisible={true}
-            cancelText={"cancel"}
-            submitText={"submit"}
-            title={"Test Modal"}
-        />
-    );
-    fireEvent.click(getByText("Example Description"));
-    expect(() => getByText("cancel")).toThrow("Unable to find an element");
-    expect(() => getByText("submit")).toThrow("Unable to find an element");
-});
-
 test("cancel and submit text are NOT being passed into popup modal without crashing", () => {
     const cancelFunction = jest.fn();
     const submitFunction = jest.fn();
