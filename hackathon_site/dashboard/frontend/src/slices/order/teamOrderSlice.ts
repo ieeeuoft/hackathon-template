@@ -4,8 +4,9 @@ import {
     createSelector,
     createSlice,
 } from "@reduxjs/toolkit";
+import { OrderStatus } from "api/types";
 import { AppDispatch, RootState } from "slices/store";
-import { get } from "api/api";
+import { get, patch } from "api/api";
 import { APIListResponse, Order, OrderInTable, ReturnOrderInTable } from "api/types";
 import { displaySnackbar } from "slices/ui/uiSlice";
 import { teamOrderListSerialization } from "api/helpers";
@@ -15,6 +16,12 @@ interface TeamOrderExtraState {
     error: null | string;
     hardwareIdsToFetch: number[] | null;
     returnedOrders: ReturnOrderInTable[];
+}
+
+interface updateOrderAttributes {
+    id: number;
+    status: OrderStatus;
+    request: string;
 }
 
 const extraState: TeamOrderExtraState = {
@@ -67,6 +74,38 @@ export const getAdminTeamOrders = createAsyncThunk<
     }
 );
 
+export const updateOrderStatus = createAsyncThunk<
+    Order,
+    updateOrderAttributes,
+    { state: RootState; rejectValue: RejectValue; dispatch: AppDispatch }
+>(
+    `${teamOrderReducerName}/updateOrderStatus`,
+    async (updateOrderData, { rejectWithValue, dispatch }) => {
+        const { id, ...patchData } = updateOrderData;
+        try {
+            const response = await patch<Order>(
+                `/api/hardware/orders/${id}/`,
+                patchData
+            );
+            console.log(response.data);
+            return response.data;
+        } catch (e: any) {
+            dispatch(
+                displaySnackbar({
+                    message: e.response.message,
+                    options: {
+                        variant: "error",
+                    },
+                })
+            );
+            return rejectWithValue({
+                status: e.response.status,
+                message: e.response.message ?? e.response.data,
+            });
+        }
+    }
+);
+
 const teamOrderSlice = createSlice({
     name: teamOrderReducerName,
     initialState,
@@ -90,6 +129,21 @@ const teamOrderSlice = createSlice({
             state.hardwareIdsToFetch = hardwareIdsToFetch;
         });
         builder.addCase(getAdminTeamOrders.rejected, (state, { payload }) => {
+            state.isLoading = false;
+            state.error =
+                payload?.message ??
+                "There was a problem retrieving orders. If this continues please contact hackathon organizers.";
+        });
+        builder.addCase(updateOrderStatus.pending, (state) => {
+            state.isLoading = true;
+            state.error = null;
+        });
+        builder.addCase(updateOrderStatus.fulfilled, (state, { payload }) => {
+            state.isLoading = false;
+            state.error = null;
+            // TODO: finish this part
+        });
+        builder.addCase(updateOrderStatus.rejected, (state, { payload }) => {
             state.isLoading = false;
             state.error =
                 payload?.message ??
