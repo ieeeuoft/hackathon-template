@@ -25,7 +25,11 @@ import {
 import { Formik } from "formik";
 import { useDispatch, useSelector } from "react-redux";
 import { pendingOrderSelectors } from "slices/order/orderSlice";
-import { updateOrderAttributes, updateOrderStatus } from "slices/order/teamOrderSlice";
+import {
+    isLoadingSelector,
+    updateOrderAttributes,
+    updateOrderStatus,
+} from "slices/order/teamOrderSlice";
 import { hardwareSelectors } from "slices/hardware/hardwareSlice";
 
 const createDropdownList = (number: number) => {
@@ -58,6 +62,7 @@ export const TeamPendingOrderTable = () => {
     const dispatch = useDispatch();
     const orders = useSelector(pendingOrderSelectors.selectAll);
     const hardware = useSelector(hardwareSelectors.selectEntities);
+    const isLoading = useSelector(isLoadingSelector);
     const [visibility, setVisibility] = useState(true);
     const toggleVisibility = () => {
         setVisibility(!visibility);
@@ -282,6 +287,13 @@ export const TeamPendingOrderTable = () => {
                                     >
                                         <Grid item>
                                             <Button
+                                                onClick={() =>
+                                                    updateOrder(
+                                                        pendingOrder.id,
+                                                        "Cancelled",
+                                                        "string"
+                                                    )
+                                                }
                                                 color="secondary"
                                                 variant="text"
                                                 disableElevation
@@ -296,6 +308,13 @@ export const TeamPendingOrderTable = () => {
                                                 type="submit"
                                                 disableElevation
                                                 data-testid={`complete-button-${pendingOrder.id}`}
+                                                onClick={() =>
+                                                    updateOrder(
+                                                        pendingOrder.id,
+                                                        "Ready for Pickup",
+                                                        "string"
+                                                    )
+                                                }
                                             >
                                                 Complete Order
                                             </Button>
