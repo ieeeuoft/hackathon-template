@@ -18,7 +18,7 @@ interface TeamOrderExtraState {
     returnedOrders: ReturnOrderInTable[];
 }
 
-interface updateOrderAttributes {
+export interface updateOrderAttributes {
     id: number;
     status: OrderStatus;
     request: string;

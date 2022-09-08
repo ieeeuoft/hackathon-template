@@ -11,7 +11,7 @@ import {
     TableHead,
     TableRow,
 } from "@material-ui/core";
-import { mockHardware, mockPendingOrdersInTable } from "testing/mockData";
+import { OrderStatus } from "api/types";
 import React, { useState } from "react";
 import Container from "@material-ui/core/Container";
 import styles from "components/general/OrderTables/OrderTables.module.scss";
@@ -23,6 +23,10 @@ import {
     GeneralOrderTitle,
 } from "components/general/OrderTables/OrderTables";
 import { Formik } from "formik";
+import { useDispatch, useSelector } from "react-redux";
+import { pendingOrderSelectors } from "slices/order/orderSlice";
+import { updateOrderAttributes, updateOrderStatus } from "slices/order/teamOrderSlice";
+import { hardwareSelectors } from "slices/hardware/hardwareSlice";
 
 const createDropdownList = (number: number) => {
     let entry = [];
@@ -51,11 +55,20 @@ const setInitialValues = (
 };
 
 export const TeamPendingOrderTable = () => {
-    const orders = mockPendingOrdersInTable;
-    const hardware = mockHardware;
+    const dispatch = useDispatch();
+    const orders = useSelector(pendingOrderSelectors.selectAll);
+    const hardware = useSelector(hardwareSelectors.selectEntities);
     const [visibility, setVisibility] = useState(true);
     const toggleVisibility = () => {
         setVisibility(!visibility);
+    };
+    const updateOrder = (orderId: number, status: OrderStatus, request: string) => {
+        const updateOrderData: updateOrderAttributes = {
+            id: orderId,
+            status: status,
+            request: request,
+        };
+        dispatch(updateOrderStatus(updateOrderData));
     };
 
     return (
