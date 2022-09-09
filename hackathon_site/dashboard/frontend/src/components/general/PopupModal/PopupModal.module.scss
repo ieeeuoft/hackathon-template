@@ -1,0 +1,23 @@
+@import "../../../assets/abstracts/mixins";
+@import "../../../assets/abstracts/variables";
+
+.modal {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modalGrid {
+    background-color: white;
+    padding: 1em;
+    border-radius: 5px;
+    width: 350px;
+    @include responsive(sm-down) {
+        width: 85vw;
+    }
+}
+
+.title {
+    text-align: center;
+    font-size: 25px;
+}
