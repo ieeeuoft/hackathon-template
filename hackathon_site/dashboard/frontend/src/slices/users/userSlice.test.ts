@@ -390,7 +390,7 @@ describe("logIn Thunk and Reducer", () => {
     });
 });
 
-describe("logOut Thunk and Reducer", () => {
+describe("UserAcceptance Thunk and Reducer", () => {
     describe("Reducers", () => {
         test("Pending", () => {
             expect(reducer(initialState, logout.pending).logout.isLoading).toBe(true);
@@ -429,7 +429,7 @@ describe("logOut Thunk and Reducer", () => {
         });
     });
 
-    test("Successful logout", async () => {
+    test("Successfully fetched user acceptance", async () => {
         const response: AxiosResponse = makeMockApiResponse({ key: "abc123" });
         mockedPost.mockResolvedValueOnce(response);
 
@@ -447,7 +447,94 @@ describe("logOut Thunk and Reducer", () => {
         expect(actions).toContainEqual(push("/"));
     });
 
-    test("Failed logout", async () => {
+    test("Failed to fetch user acceptance", async () => {
+        const error = {
+            response: { status: 999, data: { detail: "Something went wrong" } },
+        };
+        mockedPost.mockRejectedValueOnce(error);
+
+        const store = mockStore(mockState);
+        await store.dispatch(logout());
+
+        const actions = store.getActions();
+
+        expect(actions).toEqual([
+            expect.objectContaining({
+                type: logout.pending.type,
+            }),
+            displaySnackbar({
+                message: error.response.data.detail,
+                options: { variant: "error" },
+            }),
+            expect.objectContaining({
+                type: logout.rejected.type,
+                payload: {
+                    status: error.response.status,
+                    message: error.response.data,
+                },
+            }),
+        ]);
+    });
+});
+
+describe("Create Profile Thunk and Reducer", () => {
+    describe("Reducers", () => {
+        test("Pending", () => {
+            expect(reducer(initialState, logout.pending).logout.isLoading).toBe(true);
+        });
+
+        test("Fulfilled", () => {
+            const resultState = reducer(
+                reducer(
+                    reducer(initialState, logIn.fulfilled),
+                    fetchUserData.fulfilled(mockUser, "fulfilled")
+                ),
+                logout.fulfilled
+            );
+            expect(resultState).toEqual(
+                expect.objectContaining({
+                    isAuthenticated: false,
+                    logout: { isLoading: false, failure: null },
+                })
+            );
+            expect(resultState.userData.user).toBeNull();
+        });
+
+        test("Rejected by rejectWithValue", () => {
+            const expectedFailureResponse = { status: 999, message: "Some message" };
+            const action = logout.rejected(
+                { message: "Rejected", name: "forbidden" },
+                "some-id",
+                undefined,
+                expectedFailureResponse
+            );
+            expect(reducer(initialState, action)).toEqual(
+                expect.objectContaining({
+                    logout: { isLoading: false, failure: expectedFailureResponse },
+                })
+            );
+        });
+    });
+
+    test("Successfully created user's profile", async () => {
+        const response: AxiosResponse = makeMockApiResponse({ key: "abc123" });
+        mockedPost.mockResolvedValueOnce(response);
+
+        const store = mockStore(mockState);
+        await store.dispatch(logout());
+
+        const actions = store.getActions();
+
+        expect(actions).toContainEqual(
+            expect.objectContaining({
+                type: logout.fulfilled.type,
+                payload: response.data,
+            })
+        );
+        expect(actions).toContainEqual(push("/"));
+    });
+
+    test("Failed to create user profile", async () => {
         const error = {
             response: { status: 999, data: { detail: "Something went wrong" } },
         };

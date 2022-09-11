@@ -25,12 +25,14 @@ import {
     UserHasBeenGrantedAccessMessage,
 } from "components/acknowledgement/UserAcceptanceStatus/UserAcceptanceStatus";
 import AlertBox from "components/general/AlertBox/AlertBox";
+import { hardwareSignOutStartDate } from "../../constants";
+import { push } from "connected-react-router";
 
 const Acknowledgement = () => {
     const dispatch = useDispatch();
     const userType = useSelector(userTypeSelector);
     const {
-        error,
+        error: getAcceptanceError,
         isLoading,
         user: acceptanceUser,
     } = useSelector(userAcceptanceSelector);
@@ -44,7 +46,10 @@ const Acknowledgement = () => {
     const [showAcknowledgements, setShowAcknowledgements] = useState(false);
 
     useEffect(() => {
-        if (userDoesNotHaveRole) {
+        const today = new Date();
+        if (hardwareSignOutStartDate > today) {
+            push("/404");
+        } else if (userDoesNotHaveRole) {
             dispatch(fetchUserAcceptanceStatus());
         }
     }, [dispatch, userDoesNotHaveRole]);
@@ -53,9 +58,9 @@ const Acknowledgement = () => {
         <>
             <Header showNavbar={false} />
             <Container maxWidth="lg">
-                {error ? (
+                {getAcceptanceError ? (
                     <AlertBox
-                        error={error?.message ?? error}
+                        error={getAcceptanceError?.message ?? getAcceptanceError}
                         title="An error has occurred"
                         type="error"
                     />

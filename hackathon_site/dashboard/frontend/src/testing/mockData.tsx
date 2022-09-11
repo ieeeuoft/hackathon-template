@@ -215,7 +215,7 @@ export const mockProfile: Profile = {
     attended: false,
     acknowledge_rules: true,
     e_signature: "mock profile",
-    team: 1,
+    team: "ABCDE",
 };
 
 export const mockTeam: Team = {
