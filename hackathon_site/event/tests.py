@@ -777,7 +777,9 @@ class ProfileSerializerTestCase(TestCase):
     def test_serializer(self):
         team = EventTeam.objects.create()
 
-        profile = Profile.objects.create(user=self.user, team=team, phone_number="1234567890")
+        profile = Profile.objects.create(
+            user=self.user, team=team, phone_number="1234567890"
+        )
         profile_serialized = ProfileSerializer(profile).data
         profile_expected = {
             "id": profile.id,
@@ -845,7 +847,9 @@ class ProfileInUserSerializerTestCase(TestCase):
     def test_serializer(self):
         team = EventTeam.objects.create()
 
-        profile = Profile.objects.create(user=self.user, team=team, phone_number="1234567890")
+        profile = Profile.objects.create(
+            user=self.user, team=team, phone_number="1234567890"
+        )
         profile_serialized = ProfileInUserSerializer(profile).data
 
         profile_expected = {
@@ -873,7 +877,9 @@ class ProfileInTeamSerilializerTestCase(TestCase):
     def test_serializer(self):
         team = EventTeam.objects.create()
 
-        profile = Profile.objects.create(user=self.user, team=team, phone_number="1234567890")
+        profile = Profile.objects.create(
+            user=self.user, team=team, phone_number="1234567890"
+        )
         profile_serialized = ProfileInTeamSerializer(profile).data
 
         profile_expected = {

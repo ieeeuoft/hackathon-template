@@ -7,14 +7,23 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('event', '0005_hardware_site_admins_v2'),
+        ("event", "0005_hardware_site_admins_v2"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='profile',
-            name='phone_number',
-            field=models.CharField(default='8022818076', max_length=20, validators=[django.core.validators.RegexValidator('^(?:\\+\\d{1,3})?\\s?\\(?\\d{3}\\)?[\\s-]?\\d{3}[\\s-]?\\d{4}$', message='Enter a valid phone number.')]),
+            model_name="profile",
+            name="phone_number",
+            field=models.CharField(
+                default="8022818076",
+                max_length=20,
+                validators=[
+                    django.core.validators.RegexValidator(
+                        "^(?:\\+\\d{1,3})?\\s?\\(?\\d{3}\\)?[\\s-]?\\d{3}[\\s-]?\\d{4}$",
+                        message="Enter a valid phone number.",
+                    )
+                ],
+            ),
             preserve_default=False,
         ),
     ]

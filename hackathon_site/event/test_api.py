@@ -403,7 +403,7 @@ class ProfileDetailViewTestCase(SetupUserMixin, APITestCase):
             "acknowledge_rules": False,
             "e_signature": None,
             "team": self.profile.team_id,
-            "phone_number": "1234567890"
+            "phone_number": "1234567890",
         }
         self.view = reverse("api:event:profile-detail", kwargs={"pk": self.profile.id})
 
@@ -436,7 +436,7 @@ class ProfileDetailViewTestCase(SetupUserMixin, APITestCase):
             "acknowledge_rules": False,
             "e_signature": None,
             "team": self.profile.team_id,
-            "phone_number": "1234567890"
+            "phone_number": "1234567890",
         }
 
         response = self.client.patch(self.view, request_body)
@@ -499,7 +499,7 @@ class CurrentProfileViewTestCase(SetupUserMixin, APITestCase):
         new_request_body = {
             "acknowledge_rules": False,
             "e_signature": "new signature",
-            "phone_number": "1234567890"
+            "phone_number": "1234567890",
         }
         # acknowledge_rules and e_signature do not change
         response2 = self.client.patch(self.view, new_request_body)
@@ -541,7 +541,7 @@ class CreateProfileViewTestCase(SetupUserMixin, APITestCase):
             "id_provided": False,
             "acknowledge_rules": True,
             "e_signature": "user signature",
-            "phone_number": "1234567890"
+            "phone_number": "1234567890",
         }
         self.view = reverse("api:event:current-profile")
 
@@ -578,7 +578,12 @@ class CreateProfileViewTestCase(SetupUserMixin, APITestCase):
         self._review(application=self._apply_as_user(self.user, rsvp=True))
         self._login()
         response = self.client.post(
-            self.view, {"e_signature": "user signature", "acknowledge_rules": False, "phone_number": "1234567890"}
+            self.view,
+            {
+                "e_signature": "user signature",
+                "acknowledge_rules": False,
+                "phone_number": "1234567890",
+            },
         )
         data = response.json()
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -590,7 +595,12 @@ class CreateProfileViewTestCase(SetupUserMixin, APITestCase):
         self._review(application=self._apply_as_user(self.user, rsvp=True))
         self._login()
         response = self.client.post(
-            self.view, {"e_signature": "", "acknowledge_rules": True, "phone_number": "1234567890"}
+            self.view,
+            {
+                "e_signature": "",
+                "acknowledge_rules": True,
+                "phone_number": "1234567890",
+            },
         )
         data = response.json()
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
