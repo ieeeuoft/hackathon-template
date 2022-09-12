@@ -8,6 +8,7 @@ import DashCard from "components/dashboard/DashCard/DashCard";
 import { cardItems } from "testing/mockData";
 import Paper from "@material-ui/core/Paper";
 import Card from "@material-ui/core/Card";
+import OrderCard from "components/orders/OrderCard/OrderCard";
 
 const Titles = [
     "123 items checked out",
@@ -18,12 +19,12 @@ const Titles = [
     "test item",
 ];
 const Orders = [
-    [3, 4, "11:30AM", 1342],
-    [7, 44, "11:34AM", 3024],
-    [33, 21, "11:39AM", 412],
-    [22, 14, "11:40AM", 2031],
-    [13, 2, "11:49AM", 1938],
-    [10, 5, "11:50AM", 1823],
+    ["3", 4, "01/01/2022", 1342],
+    ["7", 44, "02/02/2023", 3024],
+    ["33", 21, "03/03/2024", 412],
+    ["22", 14, "04/04/2023", 2031],
+    ["13", 2, "05/05/2021", 1938],
+    ["10", 5, "03/03/2020", 1823],
 ];
 const orderTitles = ["Team", "Order Qty", "Time ordered", "ID"];
 const AdminDashboard = () => {
@@ -65,44 +66,12 @@ const AdminDashboard = () => {
                     >
                         {Orders.map((order) => (
                             <Grid item xs={2} className={styles.orderCard}>
-                                <Paper className={styles.orderCard}>
-                                    <Card className={styles.orderCard}>
-                                        <span
-                                            style={{
-                                                float: "left",
-                                                textAlign: "left",
-                                                margin: 16,
-                                            }}
-                                        >
-                                            {orderTitles[0]}
-                                            <br />
-                                            <br />
-                                            {orderTitles[1]}
-                                            <br />
-                                            <br />
-                                            {orderTitles[2]}
-                                            <br />
-                                            <br />
-                                            {orderTitles[3]}
-                                            <br />
-                                        </span>
-                                        <span
-                                            style={{
-                                                float: "right",
-                                                textAlign: "right",
-                                                margin: 16,
-                                            }}
-                                        >
-                                            {order[0]} <br />
-                                            <br />
-                                            {order[1]} <br />
-                                            <br />
-                                            {order[2]} <br />
-                                            <br />
-                                            {order[3]} <br />
-                                        </span>
-                                    </Card>
-                                </Paper>
+                                <OrderCard
+                                    teamCode={order[0].toString()}
+                                    orderQuantity={Number(order[1])}
+                                    time={order[2].toString()}
+                                    id={Number(order[3])}
+                                />
                             </Grid>
                         ))}
                     </Grid>
