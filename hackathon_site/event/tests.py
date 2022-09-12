@@ -777,7 +777,7 @@ class ProfileSerializerTestCase(TestCase):
     def test_serializer(self):
         team = EventTeam.objects.create()
 
-        profile = Profile.objects.create(user=self.user, team=team)
+        profile = Profile.objects.create(user=self.user, team=team, phone_number="1234567890")
         profile_serialized = ProfileSerializer(profile).data
         profile_expected = {
             "id": profile.id,
@@ -786,6 +786,7 @@ class ProfileSerializerTestCase(TestCase):
             "acknowledge_rules": profile.acknowledge_rules,
             "e_signature": profile.e_signature,
             "team": team.id,
+            "phone_number": profile.phone_number,
         }
         self.assertEqual(profile_expected, profile_serialized)
 
@@ -814,7 +815,7 @@ class CreateProfileSerializerTestCase(TestCase):
             first_name="Foo",
             last_name="Bar",
         )
-        self.profile = Profile.objects.create(user=self.user)
+        self.profile = Profile.objects.create(user=self.user, phone_number="1234567890")
 
     def test_serializer(self):
         profile_create_response = {
@@ -823,6 +824,7 @@ class CreateProfileSerializerTestCase(TestCase):
             "acknowledge_rules": self.profile.acknowledge_rules,
             "e_signature": self.profile.e_signature,
             "team": self.profile.team.team_code,
+            "phone_number": self.profile.phone_number,
         }
         serialized_profile = ProfileCreateResponseSerializer(
             data=profile_create_response
@@ -843,7 +845,7 @@ class ProfileInUserSerializerTestCase(TestCase):
     def test_serializer(self):
         team = EventTeam.objects.create()
 
-        profile = Profile.objects.create(user=self.user, team=team)
+        profile = Profile.objects.create(user=self.user, team=team, phone_number="1234567890")
         profile_serialized = ProfileInUserSerializer(profile).data
 
         profile_expected = {
@@ -853,6 +855,7 @@ class ProfileInUserSerializerTestCase(TestCase):
             "acknowledge_rules": profile.acknowledge_rules,
             "e_signature": profile.e_signature,
             "user": UserInProfileSerializer(profile.user).data,
+            "phone_number": profile.phone_number,
         }
 
         self.assertEqual(profile_expected, profile_serialized)
@@ -870,7 +873,7 @@ class ProfileInTeamSerilializerTestCase(TestCase):
     def test_serializer(self):
         team = EventTeam.objects.create()
 
-        profile = Profile.objects.create(user=self.user, team=team)
+        profile = Profile.objects.create(user=self.user, team=team, phone_number="1234567890")
         profile_serialized = ProfileInTeamSerializer(profile).data
 
         profile_expected = {
@@ -880,6 +883,7 @@ class ProfileInTeamSerilializerTestCase(TestCase):
             "acknowledge_rules": profile.acknowledge_rules,
             "e_signature": profile.e_signature,
             "user": UserInProfileSerializer(profile.user).data,
+            "phone_number": profile.phone_number,
         }
 
         self.assertEqual(profile_expected, profile_serialized)

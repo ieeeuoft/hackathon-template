@@ -25,6 +25,7 @@ class ProfileSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "id_provided",
+            "phone_number",
             "attended",
             "acknowledge_rules",
             "e_signature",
@@ -43,6 +44,7 @@ class ProfileInUserSerializer(serializers.ModelSerializer):
             "attended",
             "acknowledge_rules",
             "e_signature",
+            "phone_number",
             "user",
         )
 
@@ -58,6 +60,7 @@ class ProfileInTeamSerializer(serializers.ModelSerializer):
             "attended",
             "acknowledge_rules",
             "e_signature",
+            "phone_number",
             "user",
         )
 

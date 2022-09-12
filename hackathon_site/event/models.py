@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.core import validators
 import uuid
 
 User = get_user_model()
@@ -26,6 +27,16 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     team = models.ForeignKey(
         Team, related_name="profiles", on_delete=models.CASCADE, null=False
+    )
+    phone_number = models.CharField(
+        max_length=20,
+        null=False,
+        validators=[
+            validators.RegexValidator(
+                r"^(?:\+\d{1,3})?\s?\(?\d{3}\)?[\s-]?\d{3}[\s-]?\d{4}$",
+                message="Enter a valid phone number.",
+            )
+        ],
     )
     id_provided = models.BooleanField(default=False, null=False)
     attended = models.BooleanField(default=False, null=False)
