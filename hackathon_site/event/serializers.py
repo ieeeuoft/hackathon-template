@@ -130,6 +130,7 @@ class CurrentProfileSerializer(ProfileSerializer):
             "id_provided": False,
             "acknowledge_rules": acknowledge_rules,
             "e_signature": e_signature,
+            "phone_number": Application.objects.get(user=current_user).phone_number,
         }
 
         profile = Profile.objects.create(**{**response_data, "user": current_user})
