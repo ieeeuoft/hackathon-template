@@ -4,12 +4,14 @@ from django_filters import rest_framework as filters
 from django.db import transaction
 from django.http import HttpResponseServerError
 from drf_yasg.utils import swagger_auto_schema
+from django.template.loader import render_to_string
 
 from rest_framework import generics, mixins, status, permissions
 from rest_framework.response import Response
 from rest_framework.filters import SearchFilter, OrderingFilter
 
 from event.permissions import UserHasProfile, FullDjangoModelPermissions
+from hackathon_site import settings
 from hardware.api_filters import (
     HardwareFilter,
     OrderFilter,
@@ -124,6 +126,9 @@ class OrderListView(generics.ListAPIView):
     ordering_fields = ("created_at",)
     search_fields = ("team__team_code", "id")
 
+    create_order_email_subject_template = "registration/emails/create_order/create_order_email_subject.txt"
+    create_order_email_body_template = "registration/emails/create_order/create_order_email_body.html"
+
     def get_serializer_class(self):
         try:
             return self.serializer_method_classes[self.request.method]
@@ -151,6 +156,27 @@ class OrderListView(generics.ListAPIView):
             logger.error(response_serializer.error_messages)
             return HttpResponseServerError()
         response_data = response_serializer.data
+
+        # Create context data for rendering the template. Note that this assumes that both the message
+        # and html_message have identical context data
+        render_to_string_context = {
+            "user": request.user,
+            "request": request,
+            "order_response": response_data
+        }
+
+        request.user.email_user(
+            subject=self.create_order_email_subject_template,
+            message=render_to_string(
+                self.create_order_email_body_template,
+                render_to_string_context,  # Pass context data to the template
+            ),
+            html_message=render_to_string(
+                self.create_order_email_body_template,
+                render_to_string_context,  # Pass context data to the template
+            ),
+            from_email=settings.DEFAULT_FROM_EMAIL,
+        )
         return Response(response_data, status=status.HTTP_201_CREATED)
 
 
