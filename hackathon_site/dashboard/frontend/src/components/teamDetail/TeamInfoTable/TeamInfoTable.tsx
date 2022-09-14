@@ -14,11 +14,9 @@ import Typography from "@material-ui/core/Typography";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
-    getTeamInfoData,
     isParticipantIdLoadingSelector,
     isTeamInfoLoadingSelector,
     teamDetailAdapterSelector,
-    updateParticipantIdErrorSelector,
     updateParticipantIdProvided,
 } from "slices/event/teamDetailSlice";
 
@@ -53,7 +51,15 @@ export const TeamInfoTable = () => {
                                         {`${row.user.first_name} ${row.user.last_name}`}
                                     </TableCell>
                                     <TableCell>{row.user.email}</TableCell>
-                                    <TableCell>802-207-9999</TableCell>
+                                    <TableCell>
+                                        {`${row.phone_number.substring(
+                                            0,
+                                            3
+                                        )}-${row.phone_number.substring(
+                                            3,
+                                            6
+                                        )}-${row.phone_number.substring(6, 10)}`}
+                                    </TableCell>
                                     <TableCell align="center">
                                         <Checkbox
                                             checked={row.id_provided}
