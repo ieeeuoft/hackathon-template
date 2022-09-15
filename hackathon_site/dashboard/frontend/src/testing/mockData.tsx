@@ -8,6 +8,7 @@ import {
     Hardware,
     Order,
     OrderInTable,
+    Profile,
     ReturnOrderInTable,
     Team,
     User,
@@ -208,6 +209,15 @@ export const mockAdminUser: User = {
 };
 
 // Team Detail
+export const mockProfile: Profile = {
+    id: 1,
+    id_provided: false,
+    attended: false,
+    acknowledge_rules: true,
+    e_signature: "mock profile",
+    team: 1,
+};
+
 export const mockTeam: Team = {
     id: 1,
     team_code: "A48E5",
@@ -715,7 +725,7 @@ export const mockCheckedOutOrders: Order[] = [
         ],
     },
     {
-        id: 3,
+        id: 7,
         items: [
             {
                 id: 10,
@@ -797,7 +807,7 @@ export const mockPendingOrdersInTable: OrderInTable[] = [
 
 export const mockCheckedOutOrdersInTable: OrderInTable[] = [
     {
-        id: 3,
+        id: 7,
         hardwareInTableRow: [
             {
                 id: 10,
@@ -853,7 +863,7 @@ export const mockReturnedOrdersInTable: ReturnOrderInTable[] = [
         ],
     },
     {
-        id: 3,
+        id: 7,
         hardwareInOrder: [
             {
                 id: 11,
@@ -923,3 +933,5 @@ export const teamsList = [
         Members: ["Name1", "Name2", "Name3", "Name4"],
     },
 ];
+
+export const mockTeams: Team[] = [mockTeam, mockValidTeam];

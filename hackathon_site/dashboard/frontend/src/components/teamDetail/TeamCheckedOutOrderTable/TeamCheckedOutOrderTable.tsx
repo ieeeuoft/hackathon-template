@@ -2,6 +2,7 @@ import {
     Button,
     Checkbox,
     Grid,
+    IconButton,
     Link,
     Paper,
     Table,
@@ -11,7 +12,7 @@ import {
     TableHead,
     TableRow,
 } from "@material-ui/core";
-import { mockHardware, mockPendingOrdersInTable } from "testing/mockData";
+import { mockHardware, mockCheckedOutOrdersInTable } from "testing/mockData";
 import React, { useState } from "react";
 import Container from "@material-ui/core/Container";
 import styles from "components/general/OrderTables/OrderTables.module.scss";
@@ -23,6 +24,7 @@ import {
     GeneralOrderTitle,
 } from "components/general/OrderTables/OrderTables";
 import { Formik } from "formik";
+import Info from "@material-ui/icons/Info";
 
 const createDropdownList = (number: number) => {
     let entry = [];
@@ -46,12 +48,13 @@ const setInitialValues = (
         orderInitialValues[`${orderItem.id}-quantity`] =
             orderItem.quantityGranted.toString();
         orderInitialValues[`${orderItem.id}-checkbox`] = false;
+        orderInitialValues[`${orderItem.id}-condtion`] = "Healthy";
     });
     return orderInitialValues;
 };
 
-export const TeamPendingOrderTable = () => {
-    const orders = mockPendingOrdersInTable;
+export const TeamCheckedOutOrderTable = () => {
+    const orders = mockCheckedOutOrdersInTable;
     const hardware = mockHardware;
     const [visibility, setVisibility] = useState(true);
     const toggleVisibility = () => {
@@ -66,29 +69,28 @@ export const TeamPendingOrderTable = () => {
         >
             {orders.length > 0 && (
                 <GeneralOrderTitle
-                    title="Requested Items"
+                    title="Checked Out Items"
                     isVisible={visibility}
                     toggleVisibility={toggleVisibility}
                 />
             )}
             {visibility &&
                 orders.length &&
-                orders.map((pendingOrder) => (
+                orders.map((checkedOutOrder) => (
                     <Formik
                         initialValues={setInitialValues(
-                            pendingOrder.hardwareInTableRow
+                            checkedOutOrder.hardwareInTableRow
                         )}
                         onSubmit={(values) =>
                             alert(JSON.stringify(values, undefined, 2))
                         }
-                        key={pendingOrder.id}
                     >
                         {(props) => (
                             <form onSubmit={props.handleSubmit}>
-                                <div key={pendingOrder.id}>
+                                <div key={checkedOutOrder.id}>
                                     <GeneralOrderTableTitle
-                                        orderId={pendingOrder.id}
-                                        orderStatus={pendingOrder.status}
+                                        orderId={checkedOutOrder.id}
+                                        orderStatus={checkedOutOrder.status}
                                     />
                                     <TableContainer
                                         component={Paper}
@@ -109,31 +111,37 @@ export const TeamPendingOrderTable = () => {
                                                     <TableCell
                                                         className={`${styles.width1} ${styles.noWrap}`}
                                                     >
-                                                        Model
+                                                        Info
                                                     </TableCell>
                                                     <TableCell
                                                         className={`${styles.width1} ${styles.noWrap}`}
                                                     >
-                                                        Manufacturer
+                                                        Qty
                                                     </TableCell>
                                                     <TableCell
                                                         className={`${styles.width1} ${styles.noWrap}`}
                                                     >
-                                                        Qty requested
+                                                        Qty to return
                                                     </TableCell>
                                                     <TableCell
                                                         className={`${styles.width6} ${styles.noWrap}`}
+                                                        align={"right"}
                                                     >
-                                                        Qty granted
+                                                        Qty remaining
+                                                    </TableCell>
+                                                    <TableCell
+                                                        className={`${styles.width1} ${styles.noWrap}`}
+                                                    >
+                                                        Condition
                                                     </TableCell>
                                                     <TableCell
                                                         className={`${styles.width1} ${styles.noWrap}`}
                                                     >
                                                         <Checkbox
                                                             color="primary"
-                                                            data-testid={`checkall-${pendingOrder.id}`}
+                                                            data-testid={`checkall-${checkedOutOrder.id}`}
                                                             onChange={(e) => {
-                                                                pendingOrder.hardwareInTableRow.forEach(
+                                                                checkedOutOrder.hardwareInTableRow.forEach(
                                                                     (row) => {
                                                                         props.setFieldValue(
                                                                             `${row.id}-checkbox`,
@@ -148,11 +156,11 @@ export const TeamPendingOrderTable = () => {
                                                 </TableRow>
                                             </TableHead>
                                             <TableBody>
-                                                {pendingOrder.hardwareInTableRow.map(
+                                                {checkedOutOrder.hardwareInTableRow.map(
                                                     (row) => (
                                                         <TableRow
                                                             key={row.id}
-                                                            data-testid={`table-${pendingOrder.id}-${row.id}`}
+                                                            data-testid={`table-${checkedOutOrder.id}-${row.id}`}
                                                         >
                                                             <TableCell>
                                                                 <img
@@ -179,19 +187,17 @@ export const TeamPendingOrderTable = () => {
                                                                 }
                                                             </TableCell>
                                                             <TableCell>
-                                                                {
-                                                                    hardware[row.id - 1]
-                                                                        ?.model_number
-                                                                }
+                                                                <IconButton
+                                                                    size={"small"}
+                                                                >
+                                                                    <Info />
+                                                                </IconButton>
                                                             </TableCell>
                                                             <TableCell>
                                                                 {
                                                                     hardware[row.id - 1]
-                                                                        ?.manufacturer
+                                                                        ?.quantity_available
                                                                 }
-                                                            </TableCell>
-                                                            <TableCell>
-                                                                {row.quantityRequested}
                                                             </TableCell>
                                                             <TableCell>
                                                                 <div
@@ -240,6 +246,44 @@ export const TeamPendingOrderTable = () => {
                                                                     </Select>
                                                                 </div>
                                                             </TableCell>
+                                                            <TableCell align={"right"}>
+                                                                {
+                                                                    hardware[row.id - 1]
+                                                                        ?.quantity_remaining
+                                                                }
+                                                            </TableCell>
+                                                            <TableCell>
+                                                                <Select
+                                                                    value={
+                                                                        props.values[
+                                                                            `${row.id}-condition`
+                                                                        ]
+                                                                    }
+                                                                    onChange={
+                                                                        props.handleChange
+                                                                    }
+                                                                    label="Condition"
+                                                                    labelId="conditionLabel"
+                                                                    name={`${row.id}-condition`}
+                                                                    id={`${row.id}-condition`}
+                                                                    defaultValue={
+                                                                        "Healthy"
+                                                                    }
+                                                                >
+                                                                    <MenuItem value="Healthy">
+                                                                        Healthy
+                                                                    </MenuItem>
+                                                                    <MenuItem value="Heavily Used">
+                                                                        Heavily Used
+                                                                    </MenuItem>
+                                                                    <MenuItem value="Broken">
+                                                                        Broken
+                                                                    </MenuItem>
+                                                                    <MenuItem value="Lost">
+                                                                        Lost
+                                                                    </MenuItem>
+                                                                </Select>
+                                                            </TableCell>
                                                             <TableCell align="center">
                                                                 <Checkbox
                                                                     color="primary"
@@ -269,22 +313,13 @@ export const TeamPendingOrderTable = () => {
                                     >
                                         <Grid item>
                                             <Button
-                                                color="secondary"
-                                                variant="text"
-                                                disableElevation
-                                            >
-                                                Reject Order
-                                            </Button>
-                                        </Grid>
-                                        <Grid item>
-                                            <Button
                                                 color="primary"
                                                 variant="contained"
                                                 type="submit"
                                                 disableElevation
-                                                data-testid={`complete-button-${pendingOrder.id}`}
+                                                data-testid={`return-button-${checkedOutOrder.id}`}
                                             >
-                                                Complete Order
+                                                Return Items
                                             </Button>
                                         </Grid>
                                     </Grid>
@@ -297,4 +332,4 @@ export const TeamPendingOrderTable = () => {
     );
 };
 
-export default TeamPendingOrderTable;
+export default TeamCheckedOutOrderTable;

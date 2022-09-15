@@ -1,41 +1,91 @@
 import React from "react";
-import { render, screen } from "testing/utils";
-import { mockTeamMultiple } from "testing/mockData";
+import { makeMockApiResponse, render, when } from "testing/utils";
+import { mockProfile, mockTeam } from "testing/mockData";
+import { get, patch } from "api/api";
 
 import TeamInfoTable from "components/teamDetail/TeamInfoTable/TeamInfoTable";
+import { makeStore } from "slices/store";
+import { getTeamInfoData } from "slices/event/teamDetailSlice";
+import { fireEvent, waitFor } from "@testing-library/react";
 
-describe("team info table", () => {
-    test("renders team info table", () => {
-        const { container } = render(<TeamInfoTable />);
-        const checkboxes = container.getElementsByClassName("MuiCheckbox-root");
+jest.mock("api/api", () => ({
+    ...jest.requireActual("api/api"),
+    get: jest.fn(),
+    patch: jest.fn(),
+}));
 
-        expect(screen.getByText("Team info")).toBeInTheDocument();
+const mockedGet = get as jest.MockedFunction<typeof get>;
+const mockedPatch = patch as jest.MockedFunction<typeof patch>;
 
-        for (let i = 0; i < mockTeamMultiple.profiles.length; i++) {
-            // renders all user names
+describe("Team info table", () => {
+    it("Renders team info table", async () => {
+        const teamInfoApiResponse = makeMockApiResponse(mockTeam);
+
+        when(mockedGet)
+            .calledWith(`/api/event/teams/${mockTeam.team_code}/`)
+            .mockResolvedValue(teamInfoApiResponse);
+
+        const store = makeStore();
+        await store.dispatch(getTeamInfoData(mockTeam.team_code));
+
+        const { getByText, getByTestId } = render(<TeamInfoTable />, {
+            store,
+        });
+
+        mockTeam.profiles.forEach((profile, index) => {
+            const idProvidedCheckbox = getByTestId(
+                `id-provided-check-${profile.id}`
+            ).querySelector('input[type="checkbox"]');
             expect(
-                screen.getByText(
-                    `${mockTeamMultiple.profiles[i].user.first_name} ${mockTeamMultiple.profiles[i].user.last_name}`
-                )
+                getByText(`${profile.user.first_name} ${profile.user.last_name}`)
             ).toBeInTheDocument();
-
-            // renders all user emails
-            expect(
-                screen.getByText(mockTeamMultiple.profiles[i].user.email)
-            ).toBeInTheDocument();
-
-            // renders all user phone numbers
-            expect(
-                screen.getByText(mockTeamMultiple.profiles[i].user.phone)
-            ).toBeInTheDocument();
-
-            // renders checkboxes correctly checked
-            // NOTE: this test assumes that users are rendered in the table in the same order that they are stored in the json test data
-            if (mockTeamMultiple.profiles[i].id_provided) {
-                expect(checkboxes[i].classList.contains("Mui-checked")).toBe(true);
+            expect(getByText(profile.user.email)).toBeInTheDocument();
+            if (profile.id_provided) {
+                expect(idProvidedCheckbox).toBeChecked();
             } else {
-                expect(checkboxes[i].classList.contains("Mui-checked")).toBe(false);
+                expect(idProvidedCheckbox).not.toBeChecked();
             }
-        }
+        });
+    });
+
+    it("updates checkbox on click", async () => {
+        const teamInfoApiResponse = makeMockApiResponse(mockTeam);
+        const profile = mockTeam.profiles[0];
+
+        when(mockedGet)
+            .calledWith(`/api/event/teams/${mockTeam.team_code}/`)
+            .mockResolvedValue(teamInfoApiResponse);
+        when(mockedPatch)
+            .calledWith(`/api/event/profiles/${profile.id}/`, {
+                id_provided: !profile.id_provided,
+            })
+            .mockResolvedValue(
+                makeMockApiResponse({
+                    ...mockProfile,
+                    id_provided: !profile.id_provided,
+                })
+            );
+
+        const store = makeStore();
+        await store.dispatch(getTeamInfoData(mockTeam.team_code));
+
+        const { getByTestId } = render(<TeamInfoTable />, {
+            store,
+        });
+
+        const idProvidedCheckbox = getByTestId(
+            `id-provided-check-${profile.id}`
+        ).querySelector('input[type="checkbox"]');
+        expect(idProvidedCheckbox).not.toBeChecked();
+        if (idProvidedCheckbox) fireEvent.click(idProvidedCheckbox);
+        await waitFor(() => {
+            expect(mockedPatch).toHaveBeenCalledWith(
+                `/api/event/profiles/${profile.id}/`,
+                {
+                    id_provided: !profile.id_provided,
+                }
+            );
+            expect(idProvidedCheckbox).toBeChecked();
+        });
     });
 });

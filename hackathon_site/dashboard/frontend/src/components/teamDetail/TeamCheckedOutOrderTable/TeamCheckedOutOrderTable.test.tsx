@@ -11,66 +11,47 @@ import {
 import {
     mockCartItems,
     mockHardware,
-    mockPendingOrdersInTable,
+    mockCheckedOutOrdersInTable,
 } from "testing/mockData";
-import TeamPendingOrderTable from "components/teamDetail/TeamPendingOrderTable/TeamPendingOrderTable";
+import TeamCheckedOutOrderTable from "components/teamDetail/TeamCheckedOutOrderTable/TeamCheckedOutOrderTable";
 
 describe("team pending order table", () => {
     test("renders team pending order table", () => {
-        const { getByTestId } = render(<TeamPendingOrderTable />);
-        expect(screen.getByText("Requested Items")).toBeInTheDocument();
+        const { getByTestId } = render(<TeamCheckedOutOrderTable />);
+        expect(screen.getByText("Checked Out Items")).toBeInTheDocument();
 
-        mockPendingOrdersInTable.forEach((currentOrder) => {
+        //loop through all pending orders
+        mockCheckedOutOrdersInTable.forEach((currentOrder) => {
+            //loop through all the hardware in each order
             currentOrder.hardwareInTableRow.forEach((currentRow) => {
+                // renders all hardware names
                 expect(
                     within(
                         getByTestId(`table-${currentOrder.id}-${currentRow.id}`)
                     ).getByText(`${mockHardware[currentRow.id - 1].name}`)
                 ).toBeInTheDocument();
 
+                // renders all hardware quantity available
                 expect(
                     within(
                         getByTestId(`table-${currentOrder.id}-${currentRow.id}`)
-                    ).getByText(`${mockHardware[currentRow.id - 1].model_number}`)
+                    ).getByText(`${mockHardware[currentRow.id - 1].quantity_available}`)
                 ).toBeInTheDocument();
 
+                // renders all hardware quantity remaining
                 expect(
                     within(
                         getByTestId(`table-${currentOrder.id}-${currentRow.id}`)
-                    ).getByText(`${mockHardware[currentRow.id - 1].manufacturer}`)
+                    ).getByText(`${mockHardware[currentRow.id - 1].quantity_remaining}`)
                 ).toBeInTheDocument();
             });
         });
     });
 
     test("All button changes the dropdown to maximum value", () => {
-        const { getByTestId, getByRole } = render(<TeamPendingOrderTable />);
-
-        mockPendingOrdersInTable.forEach((currentOrder) => {
+        const { getByTestId, getByRole } = render(<TeamCheckedOutOrderTable />);
+        mockCheckedOutOrdersInTable.forEach((currentOrder) => {
             currentOrder.hardwareInTableRow.forEach((currentRow) => {
-                const allButton = within(
-                    getByTestId(`table-${currentOrder.id}-${currentRow.id}`)
-                ).getByTestId(`all-button`);
-
-                const select = within(
-                    getByTestId(`table-${currentOrder.id}-${currentRow.id}`)
-                ).getByRole(`button`);
-
-                //set the select option to 0
-                fireEvent.mouseDown(select);
-
-                const listbox = within(getByRole("listbox"));
-
-                fireEvent.click(listbox.getByText(`0`));
-
-                expect(
-                    within(
-                        getByTestId(`table-${currentOrder.id}-${currentRow.id}`)
-                    ).getByTestId(`select`)
-                ).toHaveTextContent("0");
-
-                fireEvent.click(allButton);
-
                 expect(
                     within(
                         getByTestId(`table-${currentOrder.id}-${currentRow.id}`)
@@ -80,8 +61,8 @@ describe("team pending order table", () => {
         });
     });
     test("Check all button checks and unchecks every row", async () => {
-        const { getByTestId } = render(<TeamPendingOrderTable />);
-        const currentOrder = mockPendingOrdersInTable[0];
+        const { getByTestId } = render(<TeamCheckedOutOrderTable />);
+        const currentOrder = mockCheckedOutOrdersInTable[0];
         const checkallBox = getByTestId(`checkall-${currentOrder.id}`).querySelector(
             'input[type="checkbox"]'
         );
