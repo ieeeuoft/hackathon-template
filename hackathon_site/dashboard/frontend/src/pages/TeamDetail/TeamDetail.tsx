@@ -1,13 +1,22 @@
 import React, { useEffect } from "react";
+import styles from "./TeamDetail.module.scss";
 
 import TeamInfoTable from "components/teamDetail/TeamInfoTable/TeamInfoTable";
 import TeamActionTable from "components/teamDetail/TeamActionTable/TeamActionTable";
 
 import { RouteComponentProps } from "react-router-dom";
 import Header from "components/general/Header/Header";
-import { Grid } from "@material-ui/core";
+import { Grid, Divider } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
-import { getAdminTeamOrders } from "slices/order/teamOrderSlice";
+import {
+    AdminReturnedItemsTable,
+    SimplePendingOrderFulfillmentTable,
+} from "components/teamDetail/SimpleOrderTables/SimpleOrderTables";
+import {
+    errorSelector,
+    getAdminTeamOrders,
+    hardwareInOrdersSelector,
+} from "slices/order/teamOrderSlice";
 
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -16,8 +25,8 @@ import {
     updateParticipantIdErrorSelector,
 } from "slices/event/teamDetailSlice";
 import AlertBox from "components/general/AlertBox/AlertBox";
-
-import TeamPendingOrderTable from "components/teamDetail/TeamPendingOrderTable/TeamPendingOrderTable";
+import TeamCheckedOutOrderTable from "components/teamDetail/TeamCheckedOutOrderTable/TeamCheckedOutOrderTable";
+import { getHardwareWithFilters, setFilters } from "slices/hardware/hardwareSlice";
 
 export interface PageParams {
     code: string;
@@ -26,8 +35,10 @@ export interface PageParams {
 const TeamDetail = ({ match }: RouteComponentProps<PageParams>) => {
     const dispatch = useDispatch();
 
+    const hardwareIdsRequired = useSelector(hardwareInOrdersSelector);
     const teamCode = match.params.code.toUpperCase();
     const teamInfoError = useSelector(teamInfoErrorSelector);
+    const orderError = useSelector(errorSelector);
 
     const updateParticipantIdError = useSelector(updateParticipantIdErrorSelector);
     if (
@@ -38,13 +49,15 @@ const TeamDetail = ({ match }: RouteComponentProps<PageParams>) => {
 
     useEffect(() => {
         dispatch(getTeamInfoData(teamCode));
+        dispatch(getAdminTeamOrders(teamCode));
     }, [dispatch, teamCode]);
 
     useEffect(() => {
-        if (!teamInfoError) {
-            dispatch(getAdminTeamOrders(teamCode));
+        if (hardwareIdsRequired) {
+            dispatch(setFilters({ hardware_ids: hardwareIdsRequired }));
+            dispatch(getHardwareWithFilters());
         }
-    }, [dispatch, teamInfoError, teamCode]);
+    }, [dispatch, hardwareIdsRequired]);
 
     return (
         <>
@@ -56,7 +69,6 @@ const TeamDetail = ({ match }: RouteComponentProps<PageParams>) => {
                     <Grid item xs={12}>
                         <Typography variant="h1">Team {teamCode} Overview</Typography>
                     </Grid>
-
                     <Grid
                         item
                         container
@@ -71,7 +83,17 @@ const TeamDetail = ({ match }: RouteComponentProps<PageParams>) => {
                         <TeamActionTable />
                     </Grid>
                     <Grid item container direction="column" spacing={2}>
-                        <TeamPendingOrderTable />
+                        {orderError ? (
+                            <AlertBox error={orderError} />
+                        ) : (
+                            <>
+                                <SimplePendingOrderFulfillmentTable />
+                                <Divider className={styles.dividerMargin} />
+                                <TeamCheckedOutOrderTable />
+                                <Divider className={styles.dividerMargin} />
+                                <AdminReturnedItemsTable />
+                            </>
+                        )}
                     </Grid>
                 </Grid>
             )}
