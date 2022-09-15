@@ -6,6 +6,7 @@ import styles from "pages/Teams/Teams.module.scss";
 
 import TeamCardAdmin from "components/team/TeamCardAdmin/TeamCardAdmin";
 import TeamSearchBar from "components/team/TeamSearchBar/TeamSearchBar";
+
 import {
     getTeamsWithSearchThunk,
     isLoadingSelector,
