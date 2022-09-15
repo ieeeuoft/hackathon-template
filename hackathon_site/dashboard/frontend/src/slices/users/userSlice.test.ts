@@ -25,7 +25,9 @@ import {
     fetchUserData,
     userTypeSelector,
     fetchUserAcceptanceStatus,
-    createProfile, userAcceptanceSelector, createProfileSelector,
+    createProfile,
+    userAcceptanceSelector,
+    createProfileSelector,
 } from "slices/users/userSlice";
 import rootStore, { RootState } from "slices/store";
 import { AnyAction } from "redux";
