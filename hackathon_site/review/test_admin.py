@@ -296,7 +296,7 @@ class TeamReviewChangeAdminTestCase(SetupUserMixin, TestCase):
             )
             self.assertTrue(permission in group_perms)
 
-    def test_reviewer_group_correct_permissions(self):
+    def test_hss_group_correct_permissions(self):
         """
         Ensure the reviewer group has all the permissions it is supposed to and nothing else.
         """
@@ -321,6 +321,10 @@ class TeamReviewChangeAdminTestCase(SetupUserMixin, TestCase):
             "hardware.delete_order",
             "hardware.view_orderitem",
             "hardware.change_orderitem",
+            "event.change_profile",
+            "event.delete_profile",
+            "event.view_profile",
+            "hardware.add_orderitem",
         )
 
         self.assertEqual(
