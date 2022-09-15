@@ -25,7 +25,7 @@ import {
     fetchUserData,
     userTypeSelector,
     fetchUserAcceptanceStatus,
-    createProfile,
+    createProfile, userAcceptanceSelector, createProfileSelector,
 } from "slices/users/userSlice";
 import rootStore, { RootState } from "slices/store";
 import { AnyAction } from "redux";
@@ -107,13 +107,13 @@ describe("Selectors", () => {
     });
 
     test("userAcceptanceSelector returns the user acceptance response", () => {
-        expect(userSelector(mockState)).toEqual(
+        expect(userAcceptanceSelector(mockState)).toEqual(
             mockState[userReducerName].userAcceptance
         );
     });
 
     test("createProfileSelector returns the current profile response", () => {
-        expect(userSelector(mockState)).toEqual(
+        expect(createProfileSelector(mockState)).toEqual(
             mockState[userReducerName].createProfile
         );
     });
