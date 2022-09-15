@@ -67,11 +67,10 @@ export const TeamPendingOrderTable = () => {
     const toggleVisibility = () => {
         setVisibility(!visibility);
     };
-    const updateOrder = (orderId: number, status: OrderStatus, request: string) => {
+    const updateOrder = (orderId: number, status: OrderStatus) => {
         const updateOrderData: updateOrderAttributes = {
             id: orderId,
             status: status,
-            request: request,
         };
         dispatch(updateOrderStatus(updateOrderData));
     };
@@ -97,7 +96,7 @@ export const TeamPendingOrderTable = () => {
                             pendingOrder.hardwareInTableRow
                         )}
                         onSubmit={(values) =>
-                            alert(JSON.stringify(values, undefined, 2))
+                            console.log(JSON.stringify(values, undefined, 2))
                         }
                         key={pendingOrder.id}
                     >
@@ -290,10 +289,10 @@ export const TeamPendingOrderTable = () => {
                                                 onClick={() =>
                                                     updateOrder(
                                                         pendingOrder.id,
-                                                        "Cancelled",
-                                                        "string"
+                                                        "Cancelled"
                                                     )
                                                 }
+                                                disabled={isLoading}
                                                 color="secondary"
                                                 variant="text"
                                                 disableElevation
@@ -311,10 +310,10 @@ export const TeamPendingOrderTable = () => {
                                                 onClick={() =>
                                                     updateOrder(
                                                         pendingOrder.id,
-                                                        "Ready for Pickup",
-                                                        "string"
+                                                        "Ready for Pickup"
                                                     )
                                                 }
+                                                disabled={isLoading}
                                             >
                                                 Complete Order
                                             </Button>

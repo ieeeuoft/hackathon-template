@@ -21,7 +21,6 @@ interface TeamOrderExtraState {
 export interface updateOrderAttributes {
     id: number;
     status: OrderStatus;
-    request: string;
 }
 
 const extraState: TeamOrderExtraState = {
@@ -87,12 +86,24 @@ export const updateOrderStatus = createAsyncThunk<
                 `/api/hardware/orders/${id}/`,
                 patchData
             );
+            dispatch(
+                displaySnackbar({
+                    message: `Order status has been changed.`,
+                    options: {
+                        variant: "success",
+                    },
+                })
+            );
             console.log(response.data);
             return response.data;
         } catch (e: any) {
+            const message =
+                e.response.statusText === "Not Found"
+                    ? `Could not update order status: Error ${e.response.status}`
+                    : `Something went wrong: Error ${e.response.status}`;
             dispatch(
                 displaySnackbar({
-                    message: e.response.message,
+                    message,
                     options: {
                         variant: "error",
                     },
@@ -141,7 +152,13 @@ const teamOrderSlice = createSlice({
         builder.addCase(updateOrderStatus.fulfilled, (state, { payload }) => {
             state.isLoading = false;
             state.error = null;
-            // TODO: finish this part
+            const updateObject = {
+                id: payload.id,
+                changes: {
+                    status: payload.status,
+                },
+            };
+            teamOrders.updateOne(state, updateObject);
         });
         builder.addCase(updateOrderStatus.rejected, (state, { payload }) => {
             state.isLoading = false;
