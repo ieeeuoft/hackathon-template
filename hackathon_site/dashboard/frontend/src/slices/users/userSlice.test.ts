@@ -3,7 +3,13 @@ import thunk, { ThunkDispatch } from "redux-thunk";
 import { push } from "connected-react-router";
 
 import { post, get } from "api/api";
-import { mockAdminUser, mockUser } from "testing/mockData";
+import {
+    mockAdminUser,
+    mockProfile,
+    mockProfileRequestBody,
+    mockUser,
+    mockUserWithReviewStatus,
+} from "testing/mockData";
 import { displaySnackbar } from "slices/ui/uiSlice";
 import {
     userSliceSelector,
@@ -18,12 +24,14 @@ import {
     logout,
     fetchUserData,
     userTypeSelector,
+    fetchUserAcceptanceStatus,
+    createProfile,
 } from "slices/users/userSlice";
 import rootStore, { RootState } from "slices/store";
 import { AnyAction } from "redux";
 import { makeMockApiResponse, when } from "testing/utils";
 import { AxiosResponse } from "axios";
-import { User } from "api/types";
+import { Profile, User, UserWithReviewStatus } from "api/types";
 
 jest.mock("api/api", () => ({
     ...jest.requireActual("api/api"),
@@ -96,6 +104,18 @@ describe("Selectors", () => {
 
     test("logoutSelector returns the logout object", () => {
         expect(logoutSelector(mockState)).toEqual(mockState[userReducerName].logout);
+    });
+
+    test("userAcceptanceSelector returns the user acceptance response", () => {
+        expect(userSelector(mockState)).toEqual(
+            mockState[userReducerName].userAcceptance
+        );
+    });
+
+    test("createProfileSelector returns the current profile response", () => {
+        expect(userSelector(mockState)).toEqual(
+            mockState[userReducerName].createProfile
+        );
     });
 });
 
@@ -393,81 +413,88 @@ describe("logIn Thunk and Reducer", () => {
 describe("UserAcceptance Thunk and Reducer", () => {
     describe("Reducers", () => {
         test("Pending", () => {
-            expect(reducer(initialState, logout.pending).logout.isLoading).toBe(true);
+            expect(
+                reducer(initialState, fetchUserAcceptanceStatus.pending).userAcceptance
+                    .isLoading
+            ).toBe(true);
         });
 
         test("Fulfilled", () => {
-            const resultState = reducer(
+            expect(
                 reducer(
-                    reducer(initialState, logIn.fulfilled),
-                    fetchUserData.fulfilled(mockUser, "fulfilled")
-                ),
-                logout.fulfilled
-            );
-            expect(resultState).toEqual(
-                expect.objectContaining({
-                    isAuthenticated: false,
-                    logout: { isLoading: false, failure: null },
-                })
-            );
-            expect(resultState.userData.user).toBeNull();
+                    initialState,
+                    fetchUserAcceptanceStatus.fulfilled(
+                        mockUserWithReviewStatus,
+                        "fulfilled"
+                    )
+                ).userAcceptance
+            ).toEqual({
+                user: mockUserWithReviewStatus,
+                isLoading: false,
+                error: null,
+            });
         });
 
         test("Rejected by rejectWithValue", () => {
             const expectedFailureResponse = { status: 999, message: "Some message" };
-            const action = logout.rejected(
-                { message: "Rejected", name: "forbidden" },
+            const action = fetchUserAcceptanceStatus.rejected(
+                { message: "Rejected", name: "Error" },
                 "some-id",
                 undefined,
                 expectedFailureResponse
             );
             expect(reducer(initialState, action)).toEqual(
                 expect.objectContaining({
-                    logout: { isLoading: false, failure: expectedFailureResponse },
+                    userAcceptance: {
+                        user: null,
+                        isLoading: false,
+                        error: expectedFailureResponse,
+                    },
                 })
             );
         });
     });
 
     test("Successfully fetched user acceptance", async () => {
-        const response: AxiosResponse = makeMockApiResponse({ key: "abc123" });
-        mockedPost.mockResolvedValueOnce(response);
+        const response: AxiosResponse<UserWithReviewStatus> = makeMockApiResponse(
+            mockUserWithReviewStatus
+        );
+        mockedGet.mockResolvedValueOnce(response);
 
         const store = mockStore(mockState);
-        await store.dispatch(logout());
+        await store.dispatch(fetchUserAcceptanceStatus());
 
         const actions = store.getActions();
 
         expect(actions).toContainEqual(
             expect.objectContaining({
-                type: logout.fulfilled.type,
+                type: fetchUserAcceptanceStatus.fulfilled.type,
                 payload: response.data,
             })
         );
-        expect(actions).toContainEqual(push("/"));
     });
 
     test("Failed to fetch user acceptance", async () => {
         const error = {
-            response: { status: 999, data: { detail: "Something went wrong" } },
+            response: { status: 999, data: "Something went wrong" },
         };
-        mockedPost.mockRejectedValueOnce(error);
+        mockedGet.mockRejectedValueOnce(error);
 
         const store = mockStore(mockState);
-        await store.dispatch(logout());
+        await store.dispatch(fetchUserAcceptanceStatus());
 
         const actions = store.getActions();
 
         expect(actions).toEqual([
             expect.objectContaining({
-                type: logout.pending.type,
+                type: fetchUserAcceptanceStatus.pending.type,
             }),
             displaySnackbar({
-                message: error.response.data.detail,
+                message: `Failed to fetch user acceptance data: Error ${error.response.status}`,
                 options: { variant: "error" },
             }),
             expect.objectContaining({
-                type: logout.rejected.type,
+                type: fetchUserAcceptanceStatus.rejected.type,
                 payload: {
                     status: error.response.status,
                     message: error.response.data,
@@ -477,84 +504,89 @@ describe("UserAcceptance Thunk and Reducer", () => {
     });
 });
 
-describe("Create Profile Thunk and Reducer", () => {
+describe("createProfile Thunk and Reducer", () => {
     describe("Reducers", () => {
         test("Pending", () => {
-            expect(reducer(initialState, logout.pending).logout.isLoading).toBe(true);
+            expect(
+                reducer(initialState, createProfile.pending).createProfile.isLoading
+            ).toBe(true);
         });
 
         test("Fulfilled", () => {
-            const resultState = reducer(
+            expect(
                 reducer(
-                    reducer(initialState, logIn.fulfilled),
-                    fetchUserData.fulfilled(mockUser, "fulfilled")
-                ),
-                logout.fulfilled
-            );
-            expect(resultState).toEqual(
-                expect.objectContaining({
-                    isAuthenticated: false,
-                    logout: { isLoading: false, failure: null },
-                })
-            );
-            expect(resultState.userData.user).toBeNull();
+                    initialState,
+                    createProfile.fulfilled(
+                        mockProfile,
+                        "fulfilled",
+                        mockProfileRequestBody
+                    )
+                ).createProfile
+            ).toEqual({
+                profile: mockProfile,
+                isLoading: false,
+                error: null,
+            });
         });
 
         test("Rejected by rejectWithValue", () => {
             const expectedFailureResponse = { status: 999, message: "Some message" };
-            const action = logout.rejected(
-                { message: "Rejected", name: "forbidden" },
+            const action = createProfile.rejected(
+                { message: "Rejected", name: "Error" },
                 "some-id",
-                undefined,
+                mockProfileRequestBody,
                 expectedFailureResponse
             );
             expect(reducer(initialState, action)).toEqual(
                 expect.objectContaining({
-                    logout: { isLoading: false, failure: expectedFailureResponse },
+                    createProfile: {
+                        profile: null,
+                        isLoading: false,
+                        error: expectedFailureResponse,
+                    },
                 })
             );
         });
     });
 
-    test("Successfully created user's profile", async () => {
-        const response: AxiosResponse = makeMockApiResponse({ key: "abc123" });
+    test("Successfully created profile", async () => {
+        const response: AxiosResponse<Profile> = makeMockApiResponse(mockProfile);
         mockedPost.mockResolvedValueOnce(response);
 
         const store = mockStore(mockState);
-        await store.dispatch(logout());
+        await store.dispatch(createProfile(mockProfileRequestBody));
 
         const actions = store.getActions();
 
         expect(actions).toContainEqual(
             expect.objectContaining({
-                type: logout.fulfilled.type,
+                type: createProfile.fulfilled.type,
                 payload: response.data,
             })
         );
-        expect(actions).toContainEqual(push("/"));
     });
 
-    test("Failed to create user profile", async () => {
+    test("Failed to fetch user acceptance", async () => {
         const error = {
-            response: { status: 999, data: { detail: "Something went wrong" } },
+            response: { status: 999, data: "Something went wrong" },
         };
         mockedPost.mockRejectedValueOnce(error);
 
         const store = mockStore(mockState);
-        await store.dispatch(logout());
+        await store.dispatch(createProfile(mockProfileRequestBody));
 
         const actions = store.getActions();
 
         expect(actions).toEqual([
             expect.objectContaining({
-                type: logout.pending.type,
+                type: createProfile.pending.type,
             }),
             displaySnackbar({
-                message: error.response.data.detail,
+                message: `Failed to grant permissions to Hardware Signout Site: Error ${error.response.status}`,
                 options: { variant: "error" },
             }),
             expect.objectContaining({
-                type: logout.rejected.type,
+                type: createProfile.rejected.type,
                 payload: {
                     status: error.response.status,
                     message: error.response.data,

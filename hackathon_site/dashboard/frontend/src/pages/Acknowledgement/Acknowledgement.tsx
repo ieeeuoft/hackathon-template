@@ -25,7 +25,7 @@ import {
     UserHasBeenGrantedAccessMessage,
 } from "components/acknowledgement/UserAcceptanceStatus/UserAcceptanceStatus";
 import AlertBox from "components/general/AlertBox/AlertBox";
-import { hardwareSignOutStartDate } from "../../constants";
+import { hardwareSignOutStartDate } from "constants.js";
 import { push } from "connected-react-router";
 
 const Acknowledgement = () => {
@@ -42,7 +42,6 @@ const Acknowledgement = () => {
         profile,
     } = useSelector(createProfileSelector);
     const userDoesNotHaveRole = userType === "none";
-
     const [showAcknowledgements, setShowAcknowledgements] = useState(false);
 
     useEffect(() => {
@@ -66,7 +65,7 @@ const Acknowledgement = () => {
                     />
                 ) : userDoesNotHaveRole ? (
                     isLoading ? (
-                        <LinearProgress />
+                        <LinearProgress data-testid="userReviewStatusLoadingBar" />
                     ) : !showAcknowledgements ? (
                         <UserAcceptanceMessage
                             status={acceptanceUser?.review_status ?? "Incomplete"}
@@ -75,7 +74,7 @@ const Acknowledgement = () => {
                     ) : createProfileError ? (
                         <AlertBox
                             error={createProfileError?.message ?? createProfileError}
-                            title="An error has occurred"
+                            title="An error has occurred while granting you permissions"
                             type="error"
                         />
                     ) : createProfileLoading ? (
@@ -108,9 +107,7 @@ const SuccessMessage = () => {
             <Grid item lg={6} xs={12}>
                 <Card style={{ padding: "15px 5px" }}>
                     <Typography style={{ fontSize: "25px" }} align="center">
-                        {user?.first_name}, you're ready to get started. We've placed
-                        you in Team {profile?.team} but you can leave and join another
-                        team anytime.
+                        {`${user?.first_name}, you're ready to get started. We've placed you in Team ${profile?.team} but you can leave and join another team anytime.`}
                     </Typography>
                     <Box
                         style={{

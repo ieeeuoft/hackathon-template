@@ -7,7 +7,7 @@ export const UserAcceptanceMessage = ({
     status,
     handleGetStarted,
 }: {
-    status: keyof typeof ACCEPTANCE_MESSAGES;
+    status: "Accepted" | "Waitlisted" | "Rejected" | "Incomplete";
     handleGetStarted(): any;
 }) => {
     const ACCEPTANCE_MESSAGES: {
@@ -78,8 +78,7 @@ export const UserAcceptanceMessage = ({
                     <Link
                         href={`${process.env.REACT_APP_DEV_SERVER_URL}/registration/application/`}
                     >
-                        {" "}
-                        here{" "}
+                        here
                     </Link>{" "}
                     and view your application status{" "}
                     <Link href={`${process.env.REACT_APP_DEV_SERVER_URL}/dashboard/`}>
@@ -91,7 +90,7 @@ export const UserAcceptanceMessage = ({
         },
     });
     return (
-        <>
+        <div data-testid="userReviewStatusMessage">
             <Typography variant="h1">{ACCEPTANCE_MESSAGES[status].title}</Typography>
             <Grid container justifyContent="center">
                 <Grid item lg={4} md={4} sm={6} xs={12}>
@@ -103,7 +102,7 @@ export const UserAcceptanceMessage = ({
             </Grid>
             <Divider style={{ margin: "20px 0px" }} />
             {ACCEPTANCE_MESSAGES[status].actionMessage}
-        </>
+        </div>
     );
 };
 

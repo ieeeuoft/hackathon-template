@@ -73,7 +73,7 @@ export interface UserWithoutProfile {
 }
 
 export interface UserWithReviewStatus extends UserWithoutProfile {
-    review_status: string;
+    review_status: "Accepted" | "Waitlisted" | "Rejected" | "Incomplete";
 }
 
 export interface User extends UserWithoutProfile {

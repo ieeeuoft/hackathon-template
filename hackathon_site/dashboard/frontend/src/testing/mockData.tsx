@@ -9,9 +9,12 @@ import {
     Order,
     OrderInTable,
     Profile,
+    ProfileRequestBody,
     ReturnOrderInTable,
     Team,
     User,
+    UserWithoutProfile,
+    UserWithReviewStatus,
 } from "api/types";
 import { CartItem } from "api/types";
 import { adminGroup } from "constants.js";
@@ -206,6 +209,23 @@ export const mockAdminUser: User = {
             name: adminGroup,
         },
     ],
+};
+
+export const mockUserWithoutProfile: UserWithoutProfile = {
+    id: 1,
+    first_name: "Foo",
+    last_name: "Bar",
+    email: "foo@bar.com",
+};
+
+export const mockUserWithReviewStatus: UserWithReviewStatus = {
+    ...mockUserWithoutProfile,
+    review_status: "Accepted",
+};
+
+export const mockProfileRequestBody: ProfileRequestBody = {
+    acknowledge_rules: true,
+    e_signature: "signature",
 };
 
 // Team Detail
