@@ -1,48 +1,91 @@
 import React from "react";
 import { makeMockApiResponse, render, when } from "testing/utils";
-import { mockTeam } from "testing/mockData";
-import { get } from "api/api";
+import { mockProfile, mockTeam } from "testing/mockData";
+import { get, patch } from "api/api";
 
 import TeamInfoTable from "components/teamDetail/TeamInfoTable/TeamInfoTable";
 import { makeStore } from "slices/store";
 import { getTeamInfoData } from "slices/event/teamDetailSlice";
+import { fireEvent, waitFor } from "@testing-library/react";
 
 jest.mock("api/api", () => ({
     ...jest.requireActual("api/api"),
     get: jest.fn(),
+    patch: jest.fn(),
 }));
 
 const mockedGet = get as jest.MockedFunction<typeof get>;
+const mockedPatch = patch as jest.MockedFunction<typeof patch>;
 
 describe("Team info table", () => {
     it("Renders team info table", async () => {
         const teamInfoApiResponse = makeMockApiResponse(mockTeam);
 
         when(mockedGet)
-            .calledWith(`/api/event/teams/${mockTeam.id}/`)
+            .calledWith(`/api/event/teams/${mockTeam.team_code}/`)
             .mockResolvedValue(teamInfoApiResponse);
 
         const store = makeStore();
-        await store.dispatch(getTeamInfoData(mockTeam.id.toString()));
+        await store.dispatch(getTeamInfoData(mockTeam.team_code));
 
-        const { getByText, queryAllByTestId } = render(<TeamInfoTable />, {
+        const { getByText, getByTestId } = render(<TeamInfoTable />, {
             store,
         });
 
-        const checkboxes = queryAllByTestId("checkbox");
-
-        mockTeam.profiles.forEach((user, index) => {
+        mockTeam.profiles.forEach((profile, index) => {
+            const idProvidedCheckbox = getByTestId(
+                `id-provided-check-${profile.id}`
+            ).querySelector('input[type="checkbox"]');
             expect(
-                getByText(`${user.user.first_name} ${user.user.last_name}`)
+                getByText(`${profile.user.first_name} ${profile.user.last_name}`)
             ).toBeInTheDocument();
-            expect(getByText(user.user.email)).toBeInTheDocument();
-            if (user.id_provided) {
-                expect(
-                    checkboxes[index].classList.contains("Mui-checked")
-                ).toBeTruthy();
+            expect(getByText(profile.user.email)).toBeInTheDocument();
+            if (profile.id_provided) {
+                expect(idProvidedCheckbox).toBeChecked();
             } else {
-                expect(checkboxes[index].classList.contains("Mui-checked")).toBeFalsy();
+                expect(idProvidedCheckbox).not.toBeChecked();
             }
+        });
+    });
+
+    it("updates checkbox on click", async () => {
+        const teamInfoApiResponse = makeMockApiResponse(mockTeam);
+        const profile = mockTeam.profiles[0];
+
+        when(mockedGet)
+            .calledWith(`/api/event/teams/${mockTeam.team_code}/`)
+            .mockResolvedValue(teamInfoApiResponse);
+        when(mockedPatch)
+            .calledWith(`/api/event/profiles/${profile.id}/`, {
+                id_provided: !profile.id_provided,
+            })
+            .mockResolvedValue(
+                makeMockApiResponse({
+                    ...mockProfile,
+                    id_provided: !profile.id_provided,
+                })
+            );
+
+        const store = makeStore();
+        await store.dispatch(getTeamInfoData(mockTeam.team_code));
+
+        const { getByTestId } = render(<TeamInfoTable />, {
+            store,
+        });
+
+        const idProvidedCheckbox = getByTestId(
+            `id-provided-check-${profile.id}`
+        ).querySelector('input[type="checkbox"]');
+        expect(idProvidedCheckbox).not.toBeChecked();
+        if (idProvidedCheckbox) fireEvent.click(idProvidedCheckbox);
+        await waitFor(() => {
+            expect(mockedPatch).toHaveBeenCalledWith(
+                `/api/event/profiles/${profile.id}/`,
+                {
+                    id_provided: !profile.id_provided,
+                }
+            );
+            expect(idProvidedCheckbox).toBeChecked();
         });
     });
 });
