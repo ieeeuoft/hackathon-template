@@ -11,7 +11,7 @@ import {
     TableHead,
     TableRow,
 } from "@material-ui/core";
-import { OrderInTable, OrderStatus } from "api/types";
+import { OrderInTable, OrderStatus, Hardware } from "api/types";
 import React, { useState } from "react";
 import Container from "@material-ui/core/Container";
 import styles from "components/general/OrderTables/OrderTables.module.scss";
@@ -57,9 +57,17 @@ const setInitialValues = (
     return orderInitialValues;
 };
 
-export const TeamPendingOrderTable = ({ orders }: { orders: OrderInTable[] }) => {
+export const TeamPendingOrderTable = ({
+    orders,
+    optionalHardware,
+}: {
+    orders: OrderInTable[];
+    optionalHardware: null | Hardware[];
+}) => {
     const dispatch = useDispatch();
-    const hardware = useSelector(hardwareSelectors.selectEntities);
+    const hardwareFromSelector = useSelector(hardwareSelectors.selectEntities);
+    const hardware = optionalHardware ?? hardwareFromSelector;
+    console.log(hardware);
     const isLoading = useSelector(isLoadingSelector);
     const [visibility, setVisibility] = useState(true);
     const toggleVisibility = () => {
@@ -175,33 +183,28 @@ export const TeamPendingOrderTable = ({ orders }: { orders: OrderInTable[] }) =>
                                                                         styles.itemImg
                                                                     }
                                                                     src={
-                                                                        hardware[
-                                                                            row.id - 1
-                                                                        ]?.picture ??
+                                                                        hardware[row.id]
+                                                                            ?.picture ??
                                                                         hardwareImagePlaceholder
                                                                     }
                                                                     alt={
-                                                                        hardware[
-                                                                            row.id - 1
-                                                                        ]?.name
+                                                                        hardware[row.id]
+                                                                            ?.name
                                                                     }
                                                                 />
                                                             </TableCell>
                                                             <TableCell>
-                                                                {
-                                                                    hardware[row.id - 1]
-                                                                        ?.name
-                                                                }
+                                                                {hardware[row.id]?.name}
                                                             </TableCell>
                                                             <TableCell>
                                                                 {
-                                                                    hardware[row.id - 1]
+                                                                    hardware[row.id]
                                                                         ?.model_number
                                                                 }
                                                             </TableCell>
                                                             <TableCell>
                                                                 {
-                                                                    hardware[row.id - 1]
+                                                                    hardware[row.id]
                                                                         ?.manufacturer
                                                                 }
                                                             </TableCell>

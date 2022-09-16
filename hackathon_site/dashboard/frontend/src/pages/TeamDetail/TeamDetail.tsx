@@ -27,8 +27,13 @@ import {
 } from "slices/event/teamDetailSlice";
 import AlertBox from "components/general/AlertBox/AlertBox";
 import TeamCheckedOutOrderTable from "components/teamDetail/TeamCheckedOutOrderTable/TeamCheckedOutOrderTable";
-import { getHardwareWithFilters, setFilters } from "slices/hardware/hardwareSlice";
+import {
+    getHardwareWithFilters,
+    hardwareSelectors,
+    setFilters,
+} from "slices/hardware/hardwareSlice";
 import TeamPendingOrderTable from "components/teamDetail/TeamPendingOrderTable/TeamPendingOrderTable";
+import { mockPendingOrdersInTable, mockHardware } from "../../testing/mockData";
 
 export interface PageParams {
     code: string;
@@ -42,6 +47,7 @@ const TeamDetail = ({ match }: RouteComponentProps<PageParams>) => {
     const teamInfoError = useSelector(teamInfoErrorSelector);
     const orderError = useSelector(errorSelector);
     const pendingOrders = useSelector(pendingOrdersSelector);
+    const hardware = useSelector(hardwareSelectors.selectEntities);
 
     const updateParticipantIdError = useSelector(updateParticipantIdErrorSelector);
     if (
@@ -90,7 +96,10 @@ const TeamDetail = ({ match }: RouteComponentProps<PageParams>) => {
                             <AlertBox error={orderError} />
                         ) : (
                             <>
-                                <TeamPendingOrderTable orders={pendingOrders} />
+                                <TeamPendingOrderTable
+                                    orders={pendingOrders}
+                                    optionalHardware={null}
+                                />
                                 <Divider className={styles.dividerMargin} />
                                 <TeamCheckedOutOrderTable />
                                 <Divider className={styles.dividerMargin} />
