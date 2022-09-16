@@ -25,11 +25,9 @@ import {
 import { Formik } from "formik";
 import { useDispatch, useSelector } from "react-redux";
 import {
-    getAdminTeamOrders,
     isLoadingSelector,
     UpdateOrderAttributes,
     updateOrderStatus,
-    pendingOrdersSelector,
 } from "slices/order/teamOrderSlice";
 import { hardwareSelectors } from "slices/hardware/hardwareSlice";
 
