@@ -31,12 +31,6 @@ class Profile(models.Model):
     phone_number = models.CharField(
         max_length=20,
         null=False,
-        validators=[
-            validators.RegexValidator(
-                r"^(?:\+\d{1,3})?\s?\(?\d{3}\)?[\s-]?\d{3}[\s-]?\d{4}$",
-                message="Enter a valid phone number.",
-            )
-        ],
     )
     id_provided = models.BooleanField(default=False, null=False)
     attended = models.BooleanField(default=False, null=False)
