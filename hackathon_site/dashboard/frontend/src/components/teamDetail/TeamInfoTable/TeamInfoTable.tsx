@@ -26,6 +26,23 @@ export const TeamInfoTable = () => {
     const isParticipantIdLoading: boolean = useSelector(isParticipantIdLoadingSelector);
     const profiles = useSelector(teamDetailAdapterSelector.selectAll);
 
+    const formatPhoneNumber = (phone_number: String) => {
+        const cleaned = ("" + phone_number).replace(/\D/g, "");
+        if (cleaned.length > 10) {
+            cleaned.split("").reverse().join("");
+            const end = cleaned.slice(-4, -1) + cleaned.slice(-1);
+            const middle = cleaned.slice(-7, -4);
+            const begin = cleaned.slice(-10, -7);
+            const intl = cleaned.slice(0, cleaned.length - 10);
+            return `+${intl} (${begin}) ${middle}-${end}`;
+        } else {
+            const begin = cleaned.substring(0, 3);
+            const middle = cleaned.substring(3, 6);
+            const end = cleaned.substring(6, 10);
+            return `(${begin}) ${middle}-${end}`;
+        }
+    };
+
     return (
         <Grid container direction="column" spacing={1} item md={6} xs={12}>
             <Grid item>
@@ -52,13 +69,7 @@ export const TeamInfoTable = () => {
                                     </TableCell>
                                     <TableCell>{row.user.email}</TableCell>
                                     <TableCell>
-                                        {`${row.phone_number.substring(
-                                            0,
-                                            3
-                                        )}-${row.phone_number.substring(
-                                            3,
-                                            6
-                                        )}-${row.phone_number.substring(6, 10)}`}
+                                        {formatPhoneNumber(row.phone_number)}
                                     </TableCell>
                                     <TableCell align="center">
                                         <Checkbox
