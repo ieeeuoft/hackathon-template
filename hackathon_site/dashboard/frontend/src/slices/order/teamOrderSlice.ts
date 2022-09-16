@@ -18,7 +18,7 @@ interface TeamOrderExtraState {
     returnedOrders: ReturnOrderInTable[];
 }
 
-export interface updateOrderAttributes {
+export interface UpdateOrderAttributes {
     id: number;
     status: OrderStatus;
 }
@@ -75,7 +75,7 @@ export const getAdminTeamOrders = createAsyncThunk<
 
 export const updateOrderStatus = createAsyncThunk<
     Order,
-    updateOrderAttributes,
+    UpdateOrderAttributes,
     { state: RootState; rejectValue: RejectValue; dispatch: AppDispatch }
 >(
     `${teamOrderReducerName}/updateOrderStatus`,

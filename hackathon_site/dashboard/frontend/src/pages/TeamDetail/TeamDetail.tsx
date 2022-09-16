@@ -16,6 +16,7 @@ import {
     errorSelector,
     getAdminTeamOrders,
     hardwareInOrdersSelector,
+    pendingOrdersSelector,
 } from "slices/order/teamOrderSlice";
 
 import { useDispatch, useSelector } from "react-redux";
@@ -27,6 +28,7 @@ import {
 import AlertBox from "components/general/AlertBox/AlertBox";
 import TeamCheckedOutOrderTable from "components/teamDetail/TeamCheckedOutOrderTable/TeamCheckedOutOrderTable";
 import { getHardwareWithFilters, setFilters } from "slices/hardware/hardwareSlice";
+import TeamPendingOrderTable from "components/teamDetail/TeamPendingOrderTable/TeamPendingOrderTable";
 
 export interface PageParams {
     code: string;
@@ -39,6 +41,7 @@ const TeamDetail = ({ match }: RouteComponentProps<PageParams>) => {
     const teamCode = match.params.code.toUpperCase();
     const teamInfoError = useSelector(teamInfoErrorSelector);
     const orderError = useSelector(errorSelector);
+    const pendingOrders = useSelector(pendingOrdersSelector);
 
     const updateParticipantIdError = useSelector(updateParticipantIdErrorSelector);
     if (
@@ -87,7 +90,7 @@ const TeamDetail = ({ match }: RouteComponentProps<PageParams>) => {
                             <AlertBox error={orderError} />
                         ) : (
                             <>
-                                <SimplePendingOrderFulfillmentTable />
+                                <TeamPendingOrderTable orders={pendingOrders} />
                                 <Divider className={styles.dividerMargin} />
                                 <TeamCheckedOutOrderTable />
                                 <Divider className={styles.dividerMargin} />

@@ -11,7 +11,7 @@ import {
     TableHead,
     TableRow,
 } from "@material-ui/core";
-import { OrderStatus } from "api/types";
+import { OrderInTable, OrderStatus } from "api/types";
 import React, { useState } from "react";
 import Container from "@material-ui/core/Container";
 import styles from "components/general/OrderTables/OrderTables.module.scss";
@@ -24,11 +24,12 @@ import {
 } from "components/general/OrderTables/OrderTables";
 import { Formik } from "formik";
 import { useDispatch, useSelector } from "react-redux";
-import { pendingOrderSelectors } from "slices/order/orderSlice";
 import {
+    getAdminTeamOrders,
     isLoadingSelector,
-    updateOrderAttributes,
+    UpdateOrderAttributes,
     updateOrderStatus,
+    pendingOrdersSelector,
 } from "slices/order/teamOrderSlice";
 import { hardwareSelectors } from "slices/hardware/hardwareSlice";
 
@@ -58,9 +59,8 @@ const setInitialValues = (
     return orderInitialValues;
 };
 
-export const TeamPendingOrderTable = () => {
+export const TeamPendingOrderTable = ({ orders }: { orders: OrderInTable[] }) => {
     const dispatch = useDispatch();
-    const orders = useSelector(pendingOrderSelectors.selectAll);
     const hardware = useSelector(hardwareSelectors.selectEntities);
     const isLoading = useSelector(isLoadingSelector);
     const [visibility, setVisibility] = useState(true);
@@ -68,7 +68,7 @@ export const TeamPendingOrderTable = () => {
         setVisibility(!visibility);
     };
     const updateOrder = (orderId: number, status: OrderStatus) => {
-        const updateOrderData: updateOrderAttributes = {
+        const updateOrderData: UpdateOrderAttributes = {
             id: orderId,
             status: status,
         };
@@ -292,7 +292,11 @@ export const TeamPendingOrderTable = () => {
                                                         "Cancelled"
                                                     )
                                                 }
-                                                disabled={isLoading}
+                                                disabled={
+                                                    isLoading ||
+                                                    pendingOrder.status ===
+                                                        "Ready for Pickup"
+                                                }
                                                 color="secondary"
                                                 variant="text"
                                                 disableElevation
@@ -307,13 +311,17 @@ export const TeamPendingOrderTable = () => {
                                                 type="submit"
                                                 disableElevation
                                                 data-testid={`complete-button-${pendingOrder.id}`}
-                                                onClick={() =>
+                                                onClick={() => {
                                                     updateOrder(
                                                         pendingOrder.id,
                                                         "Ready for Pickup"
-                                                    )
+                                                    );
+                                                }}
+                                                disabled={
+                                                    isLoading ||
+                                                    pendingOrder.status ===
+                                                        "Ready for Pickup"
                                                 }
-                                                disabled={isLoading}
                                             >
                                                 Complete Order
                                             </Button>
