@@ -1,7 +1,6 @@
 import re
 from unittest.mock import patch
-from datetime import datetime, timedelta
-
+from datetime import datetime, timedelta, date
 
 from django.core import mail
 from django.contrib.auth.models import Group
@@ -805,7 +804,7 @@ class CurrentProfileSerializerTestCase(TestCase):
     def test_readonly_serializer_fields(self):
         self.assertEqual(
             CurrentProfileSerializer.Meta.read_only_fields,
-            ("id", "team", "id_provided", "attended"),
+            ("id", "team", "id_provided", "attended", "phone_number"),
         )
 
 
@@ -817,7 +816,25 @@ class CreateProfileSerializerTestCase(TestCase):
             first_name="Foo",
             last_name="Bar",
         )
-        self.profile = Profile.objects.create(user=self.user, phone_number="1234567890")
+        self.team = RegistrationTeam.objects.create()
+
+        application_data = {
+            "birthday": date(2000, 1, 1),
+            "gender": "no-answer",
+            "ethnicity": "no-answer",
+            "phone_number": "1234567890",
+            "school": "UofT",
+            "study_level": "other",
+            "graduation_year": 2020,
+            "q1": "hi",
+            "q2": "there",
+            "q3": "foo",
+            "conduct_agree": True,
+            "data_agree": True,
+            "resume": "uploads/resumes/my_resume.pdf",
+        }
+        self.application = Application.objects.create(user=self.user, team=self.team, **application_data)
+        self.profile = Profile.objects.create(user=self.user)
 
     def test_serializer(self):
         profile_create_response = {
@@ -826,7 +843,7 @@ class CreateProfileSerializerTestCase(TestCase):
             "acknowledge_rules": self.profile.acknowledge_rules,
             "e_signature": self.profile.e_signature,
             "team": self.profile.team.team_code,
-            "phone_number": self.profile.phone_number,
+            "phone_number": self.application.phone_number,
         }
         serialized_profile = ProfileCreateResponseSerializer(
             data=profile_create_response

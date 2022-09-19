@@ -75,6 +75,7 @@ class CurrentProfileSerializer(ProfileSerializer):
             "team",
             "id_provided",
             "attended",
+            "phone_number",
         )
 
     def update(self, instance: Profile, validated_data):

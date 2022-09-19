@@ -452,7 +452,6 @@ class CurrentProfileViewTestCase(SetupUserMixin, APITestCase):
         self.request_body = {
             "acknowledge_rules": True,
             "e_signature": "user signature",
-            "phone_number": "1234567890",
         }
         self.expected_response = {
             "id": self.profile.id,
@@ -499,7 +498,6 @@ class CurrentProfileViewTestCase(SetupUserMixin, APITestCase):
         new_request_body = {
             "acknowledge_rules": False,
             "e_signature": "new signature",
-            "phone_number": "1234567890",
         }
         # acknowledge_rules and e_signature do not change
         response2 = self.client.patch(self.view, new_request_body)
@@ -534,7 +532,6 @@ class CreateProfileViewTestCase(SetupUserMixin, APITestCase):
         self.request_body = {
             "acknowledge_rules": True,
             "e_signature": "user signature",
-            "phone_number": "1234567890",
         }
         self.expected_response = {
             "attended": True,
@@ -582,7 +579,6 @@ class CreateProfileViewTestCase(SetupUserMixin, APITestCase):
             {
                 "e_signature": "user signature",
                 "acknowledge_rules": False,
-                "phone_number": "1234567890",
             },
         )
         data = response.json()
@@ -599,7 +595,6 @@ class CreateProfileViewTestCase(SetupUserMixin, APITestCase):
             {
                 "e_signature": "",
                 "acknowledge_rules": True,
-                "phone_number": "1234567890",
             },
         )
         data = response.json()
@@ -805,9 +800,6 @@ class TeamIncidentListViewPostTestCase(SetupUserMixin, APITestCase):
         Profile.objects.create(user=self.user, team=self.team)
 
         response = self.client.post(self.view, request_data)
-
-        print(response)
-        print(request_data)
 
         self.assertEqual(
             response.json(), {"detail": "Can only create incidents for your own team."}
