@@ -1,6 +1,6 @@
-import json
 import logging
 
+from django.conf import settings
 from django_filters import rest_framework as filters
 from django.db import transaction
 from django.http import HttpResponseServerError
@@ -10,7 +10,7 @@ from rest_framework import generics, mixins, status, permissions
 from rest_framework.response import Response
 from rest_framework.filters import SearchFilter, OrderingFilter
 
-from event.permissions import UserHasProfile, FullDjangoModelPermissions
+from event.permissions import UserHasProfile, FullDjangoModelPermissions, UserIsAdmin
 from hardware.api_filters import (
     HardwareFilter,
     OrderFilter,
@@ -169,7 +169,7 @@ class OrderDetailView(generics.GenericAPIView, mixins.UpdateModelMixin):
 class OrderItemReturnView(generics.GenericAPIView):
     queryset = Order.objects.all().prefetch_related("items",)
     serializer_class = OrderItemReturnSerializer
-    permission_classes = [FullDjangoModelPermissions]
+    permission_classes = [UserIsAdmin]
 
     @transaction.atomic
     @swagger_auto_schema(responses={201: OrderItemReturnResponseSerializer})
@@ -177,10 +177,8 @@ class OrderItemReturnView(generics.GenericAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         create_response = serializer.save()
-        print(create_response)
         response_serializer = OrderItemReturnResponseSerializer(data=create_response)
-        print(response_serializer)
         if not response_serializer.is_valid():
-            logger.error(response_serializer.error_messages)
+            logger.error(response_serializer.errors)
             return HttpResponseServerError()
-        return Response(response_serializer.data, status=status.HTTP_201_CREATED)
+        return Response(create_response, status=status.HTTP_201_CREATED)
