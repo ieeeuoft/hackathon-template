@@ -232,7 +232,7 @@ export const createProfile = createAsyncThunk<
         } catch (e: any) {
             dispatch(
                 displaySnackbar({
-                    message: `Failed to grant permissions to Hardware Signout Site: Error ${e.response.status}`,
+                    message: `An error has occurred! We couldn't grant you permission to access Hardware Signout Site: Error ${e.response.status}`,
                     options: { variant: "error" },
                 })
             );

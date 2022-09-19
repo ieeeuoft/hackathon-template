@@ -584,7 +584,7 @@ describe("createProfile Thunk and Reducer", () => {
                 type: createProfile.pending.type,
             }),
             displaySnackbar({
-                message: `Failed to grant permissions to Hardware Signout Site: Error ${error.response.status}`,
+                message: `An error has occurred! We couldn't grant you permission to access Hardware Signout Site: Error ${error.response.status}`,
                 options: { variant: "error" },
             }),
             expect.objectContaining({
