@@ -575,11 +575,7 @@ class CreateProfileViewTestCase(SetupUserMixin, APITestCase):
         self._review(application=self._apply_as_user(self.user, rsvp=True))
         self._login()
         response = self.client.post(
-            self.view,
-            {
-                "e_signature": "user signature",
-                "acknowledge_rules": False,
-            },
+            self.view, {"e_signature": "user signature", "acknowledge_rules": False,},
         )
         data = response.json()
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -591,11 +587,7 @@ class CreateProfileViewTestCase(SetupUserMixin, APITestCase):
         self._review(application=self._apply_as_user(self.user, rsvp=True))
         self._login()
         response = self.client.post(
-            self.view,
-            {
-                "e_signature": "",
-                "acknowledge_rules": True,
-            },
+            self.view, {"e_signature": "", "acknowledge_rules": True,},
         )
         data = response.json()
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)

@@ -833,7 +833,9 @@ class CreateProfileSerializerTestCase(TestCase):
             "data_agree": True,
             "resume": "uploads/resumes/my_resume.pdf",
         }
-        self.application = Application.objects.create(user=self.user, team=self.team, **application_data)
+        self.application = Application.objects.create(
+            user=self.user, team=self.team, **application_data
+        )
         self.profile = Profile.objects.create(user=self.user)
 
     def test_serializer(self):
