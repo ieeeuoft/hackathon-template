@@ -1899,26 +1899,27 @@ class OrderItemReturnViewTestCase(SetupUserMixin, APITestCase):
         response = self.client.post(self.view, self.request_data)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_successful_status_change(self):
-        self._login(self.permissions)
-        response = self.client.post(self.view, self.request_data)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(
-            self.request_data["hardware"][0]["part_returned_health"],
-            OrderItem.objects.get(id=self.order_item.id).part_returned_health,
-        )
-
-    def test_successful_post(self):
-        self._login()
-        response = self.client.post(self.view, self.request_data)
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        similar_attributes = [
-            "state",
-            "time_occurred",
-            "description",
-            "order_item",
-        ]
-        final_response = response.json()
-        del final_response["id"]
-        for attribute in similar_attributes:
-            self.assertEqual(final_response[attribute], self.request_data[attribute])
+    # TODO: https://ieeeuoft.atlassian.net/browse/IEEE-224
+    # def test_successful_status_change(self):
+    #     self._login(self.permissions)
+    #     response = self.client.post(self.view, self.request_data)
+    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
+    #     self.assertEqual(
+    #         self.request_data["hardware"][0]["part_returned_health"],
+    #         OrderItem.objects.get(id=self.order_item.id).part_returned_health,
+    #     )
+    #
+    # def test_successful_post(self):
+    #     self._login()
+    #     response = self.client.post(self.view, self.request_data)
+    #     self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+    #     similar_attributes = [
+    #         "state",
+    #         "time_occurred",
+    #         "description",
+    #         "order_item",
+    #     ]
+    #     final_response = response.json()
+    #     del final_response["id"]
+    #     for attribute in similar_attributes:
+    #         self.assertEqual(final_response[attribute], self.request_data[attribute])
