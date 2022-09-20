@@ -16,10 +16,19 @@ import {
     mockPendingOrdersInTable,
 } from "testing/mockData";
 import TeamPendingOrderTable from "components/teamDetail/TeamPendingOrderTable/TeamPendingOrderTable";
+import { RootStore } from "../../../slices/store";
 
 describe("team pending order table", () => {
+    let store: RootStore;
+
+    beforeEach(() => {
+        store = makeStoreWithEntities({
+            hardware: mockHardware,
+            teamDetailOrders: mockPendingOrdersInTable,
+        });
+    });
     test("renders team pending order table", () => {
-        const { getByTestId } = render(<TeamPendingOrderTable />);
+        const { getByTestId } = render(<TeamPendingOrderTable />, { store });
         expect(screen.getByText("Requested Items")).toBeInTheDocument();
 
         mockPendingOrdersInTable.forEach((currentOrder) => {
@@ -46,7 +55,7 @@ describe("team pending order table", () => {
     });
 
     test("All button changes the dropdown to maximum value", () => {
-        const { getByTestId, getByRole } = render(<TeamPendingOrderTable />);
+        const { getByTestId, getByRole } = render(<TeamPendingOrderTable />, { store });
 
         mockPendingOrdersInTable.forEach((currentOrder) => {
             currentOrder.hardwareInTableRow.forEach((currentRow) => {
@@ -82,7 +91,7 @@ describe("team pending order table", () => {
         });
     });
     test("Check all button checks and unchecks every row", async () => {
-        const { getByTestId } = render(<TeamPendingOrderTable />);
+        const { getByTestId } = render(<TeamPendingOrderTable />, { store });
         const currentOrder = mockPendingOrdersInTable[0];
         const checkallBox = getByTestId(`checkall-${currentOrder.id}`).querySelector(
             'input[type="checkbox"]'

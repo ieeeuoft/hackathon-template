@@ -167,13 +167,6 @@ export const SimplePendingOrderFulfillmentTable = () => {
         dispatch(updateOrderStatus(updateOrderData));
     };
 
-    // TODO: update order status via patch request
-    const handleSubmit = (values: FormikValues, { id, status }: UpdateOrderValues) => {
-        console.log(values);
-        console.log(id);
-        console.log(status);
-    };
-
     return (
         <Container
             className={styles.tableContainer}

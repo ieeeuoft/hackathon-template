@@ -64,8 +64,8 @@ const setInitialValues = (
 
 export const TeamPendingOrderTable = () => {
     const dispatch = useDispatch();
-    const orders = mockPendingOrdersInTable;
-    const hardware = mockHardwareWithBuffer;
+    const orders = useSelector(pendingOrdersSelector);
+    const hardware = useSelector(hardwareSelectors.selectEntities);
     const isLoading = useSelector(isLoadingSelector);
     const [visibility, setVisibility] = useState(true);
     const toggleVisibility = () => {
@@ -100,6 +100,7 @@ export const TeamPendingOrderTable = () => {
                             pendingOrder.hardwareInTableRow
                         )}
                         onSubmit={(values) =>
+                            //TODO update the order when submitting the form
                             console.log(JSON.stringify(values, undefined, 2))
                         }
                         key={pendingOrder.id}
