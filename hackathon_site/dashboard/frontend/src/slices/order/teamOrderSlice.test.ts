@@ -39,8 +39,8 @@ import {
     teamDetailAdapterSelector,
     updateParticipantIdErrorSelector,
     updateParticipantIdProvided,
-} from "../event/teamDetailSlice";
-import { OrderStatus } from "../../api/types";
+} from "slices/event/teamDetailSlice";
+import { OrderStatus } from "api/types";
 
 jest.mock("api/api", () => ({
     ...jest.requireActual("api/api"),

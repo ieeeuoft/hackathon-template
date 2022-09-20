@@ -17,16 +17,23 @@ import {
     useFormikContext,
 } from "formik";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
-import { OrderInTable } from "api/types";
-import { useSelector } from "react-redux";
+import { OrderInTable, OrderStatus } from "api/types";
+import { useDispatch, useSelector } from "react-redux";
 import {
     pendingOrdersSelector,
     returnedOrdersSelector,
+    UpdateOrderAttributes,
+    updateOrderStatus,
 } from "slices/order/teamOrderSlice";
 
 interface SimpleOrderFormValues {
     itemIdsChecked: string[];
     checkAll: boolean;
+}
+
+interface UpdateOrderValues {
+    id: number;
+    status: OrderStatus;
 }
 
 const TableCheckbox = ({
@@ -146,14 +153,25 @@ const CompleteOrderButton = ({ order }: { order: OrderInTable }) => {
 };
 
 export const SimplePendingOrderFulfillmentTable = () => {
+    const dispatch = useDispatch();
     const orders = useSelector(pendingOrdersSelector);
 
     const [isVisible, setVisibility] = useState(true);
     const toggleVisibility = () => setVisibility(!isVisible);
 
+    const updateOrder = (orderId: number, status: OrderStatus) => {
+        const updateOrderData: UpdateOrderAttributes = {
+            id: orderId,
+            status: status,
+        };
+        dispatch(updateOrderStatus(updateOrderData));
+    };
+
     // TODO: update order status via patch request
-    const handleSubmit = (values: FormikValues) => {
+    const handleSubmit = (values: FormikValues, { id, status }: UpdateOrderValues) => {
         console.log(values);
+        console.log(id);
+        console.log(status);
     };
 
     return (
@@ -181,7 +199,9 @@ export const SimplePendingOrderFulfillmentTable = () => {
                             itemIdsChecked: [],
                             checkAll: false,
                         }}
-                        onSubmit={handleSubmit}
+                        onSubmit={(values) => {
+                            updateOrder(pendingOrder.id, "Ready for Pickup");
+                        }}
                     >
                         <Form
                             data-testid={`admin-simple-pending-order-${pendingOrder.id}`}
@@ -204,6 +224,9 @@ export const SimplePendingOrderFulfillmentTable = () => {
                                         color="secondary"
                                         variant="text"
                                         disableElevation
+                                        onClick={() =>
+                                            updateOrder(pendingOrder.id, "Cancelled")
+                                        }
                                     >
                                         Reject Order
                                     </Button>

@@ -22,14 +22,19 @@ import {
     GeneralOrderTableTitle,
     GeneralOrderTitle,
 } from "components/general/OrderTables/OrderTables";
-import { Formik } from "formik";
+import { Formik, FormikValues } from "formik";
 import { useDispatch, useSelector } from "react-redux";
 import {
     isLoadingSelector,
+    pendingOrdersSelector,
     UpdateOrderAttributes,
     updateOrderStatus,
 } from "slices/order/teamOrderSlice";
 import { hardwareSelectors } from "slices/hardware/hardwareSlice";
+import {
+    mockHardwareWithBuffer,
+    mockPendingOrdersInTable,
+} from "../../../testing/mockData";
 
 const createDropdownList = (number: number) => {
     let entry = [];
@@ -57,17 +62,10 @@ const setInitialValues = (
     return orderInitialValues;
 };
 
-export const TeamPendingOrderTable = ({
-    orders,
-    optionalHardware,
-}: {
-    orders: OrderInTable[];
-    optionalHardware: null | Hardware[];
-}) => {
+export const TeamPendingOrderTable = () => {
     const dispatch = useDispatch();
-    const hardwareFromSelector = useSelector(hardwareSelectors.selectEntities);
-    const hardware = optionalHardware ?? hardwareFromSelector;
-    console.log(hardware);
+    const orders = mockPendingOrdersInTable;
+    const hardware = mockHardwareWithBuffer;
     const isLoading = useSelector(isLoadingSelector);
     const [visibility, setVisibility] = useState(true);
     const toggleVisibility = () => {
@@ -287,17 +285,13 @@ export const TeamPendingOrderTable = ({
                                     >
                                         <Grid item>
                                             <Button
-                                                onClick={() =>
-                                                    updateOrder(
-                                                        pendingOrder.id,
-                                                        "Cancelled"
-                                                    )
-                                                }
-                                                disabled={
-                                                    isLoading ||
-                                                    pendingOrder.status ===
-                                                        "Ready for Pickup"
-                                                }
+                                                // onClick={() =>
+                                                //     updateOrder(
+                                                //         pendingOrder.id,
+                                                //         "Cancelled"
+                                                //     )
+                                                // }
+                                                disabled={isLoading}
                                                 color="secondary"
                                                 variant="text"
                                                 disableElevation
@@ -312,12 +306,12 @@ export const TeamPendingOrderTable = ({
                                                 type="submit"
                                                 disableElevation
                                                 data-testid={`complete-button-${pendingOrder.id}`}
-                                                onClick={() => {
-                                                    updateOrder(
-                                                        pendingOrder.id,
-                                                        "Ready for Pickup"
-                                                    );
-                                                }}
+                                                // onClick={() => {
+                                                //     updateOrder(
+                                                //         pendingOrder.id,
+                                                //         "Ready for Pickup"
+                                                //     );
+                                                // }}
                                                 disabled={
                                                     isLoading ||
                                                     pendingOrder.status ===
