@@ -196,7 +196,6 @@ export const GeneralReturnTable = ({
 }) => {
     const hardware = useSelector(hardwareSelectors.selectEntities);
 
-    console.log(orders);
     return (
         <Container
             className={styles.tableContainer}
