@@ -155,6 +155,7 @@ export const GeneralPendingTable = ({
                                         className={styles.itemImg}
                                         src={
                                             hardware[row.id]?.picture ??
+                                            hardware[row.id]?.image_url ??
                                             hardwareImagePlaceholder
                                         }
                                         alt={hardware[row.id]?.name}
@@ -195,6 +196,7 @@ export const GeneralReturnTable = ({
 }) => {
     const hardware = useSelector(hardwareSelectors.selectEntities);
 
+    console.log(orders);
     return (
         <Container
             className={styles.tableContainer}
@@ -268,6 +270,8 @@ export const GeneralReturnTable = ({
                                                         src={
                                                             hardware[row.hardware_id]
                                                                 ?.picture ??
+                                                            hardware[row.hardware_id]
+                                                                ?.image_url ??
                                                             hardwareImagePlaceholder
                                                         }
                                                         alt={
