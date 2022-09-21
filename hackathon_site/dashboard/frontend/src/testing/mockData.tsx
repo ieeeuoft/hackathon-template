@@ -178,6 +178,7 @@ export const mockUser: User = {
         attended: false,
         acknowledge_rules: false,
         e_signature: null,
+        phone_number: "1234567890",
         user: {
             id: 1,
             first_name: "Foo",
@@ -214,6 +215,7 @@ export const mockProfile: Profile = {
     id_provided: false,
     attended: false,
     acknowledge_rules: true,
+    phone_number: "1234567890",
     e_signature: "mock profile",
     team: 1,
 };
@@ -230,6 +232,7 @@ export const mockTeam: Team = {
             attended: false,
             acknowledge_rules: false,
             e_signature: null,
+            phone_number: "1234567890",
             user: {
                 id: 1,
                 first_name: "Foo",
@@ -318,6 +321,7 @@ export const mockValidTeam: Team = {
             attended: true,
             acknowledge_rules: true,
             e_signature: null,
+            phone_number: "1234567890",
             user: {
                 id: 2,
                 first_name: "Foothe",
@@ -331,6 +335,7 @@ export const mockValidTeam: Team = {
             attended: true,
             acknowledge_rules: true,
             e_signature: null,
+            phone_number: "1234567890",
             user: {
                 id: 3,
                 first_name: "Foothe",
@@ -354,6 +359,7 @@ export const mockLargeTeam: Team = {
             attended: true,
             acknowledge_rules: true,
             e_signature: null,
+            phone_number: "1234567890",
             user: {
                 id: 4,
                 first_name: "Foothe",
@@ -367,6 +373,7 @@ export const mockLargeTeam: Team = {
             attended: true,
             acknowledge_rules: true,
             e_signature: null,
+            phone_number: "1234567890",
             user: {
                 id: 5,
                 first_name: "Foothe",
@@ -380,6 +387,7 @@ export const mockLargeTeam: Team = {
             attended: true,
             acknowledge_rules: true,
             e_signature: null,
+            phone_number: "1234567890",
             user: {
                 id: 6,
                 first_name: "Foothe",
@@ -393,6 +401,7 @@ export const mockLargeTeam: Team = {
             attended: true,
             acknowledge_rules: true,
             e_signature: null,
+            phone_number: "1234567890",
             user: {
                 id: 7,
                 first_name: "Foothe",
@@ -406,6 +415,7 @@ export const mockLargeTeam: Team = {
             attended: true,
             acknowledge_rules: true,
             e_signature: null,
+            phone_number: "1234567890",
             user: {
                 id: 8,
                 first_name: "Foothe",

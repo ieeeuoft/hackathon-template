@@ -52,6 +52,7 @@ export interface Profile {
     attended: boolean;
     acknowledge_rules: boolean;
     e_signature: string | null;
+    phone_number: string;
     team: number;
 }
 
