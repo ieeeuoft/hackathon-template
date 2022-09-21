@@ -67,7 +67,6 @@ const Dashboard = () => {
             <EditTeam
                 teamCode={team_code == null ? "None" : team_code}
                 canChangeTeam={true}
-                canLeaveTeam={team_size !== 1}
                 teamSize={team_size}
             />
             <div className={styles.dashboard}>

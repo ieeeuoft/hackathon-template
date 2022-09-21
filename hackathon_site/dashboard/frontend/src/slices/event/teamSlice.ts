@@ -84,10 +84,11 @@ export const leaveTeam = createAsyncThunk<
         } catch (e: any) {
             // order reached quantity limits
             const errorData = e.response?.data?.non_field_errors;
+            console.log("errordata", e.response);
 
             dispatch(
                 displaySnackbar({
-                    message: `Failed to leave the team: Error ${e.response.status}`,
+                    message: `Failed to leave the team: Error ${e.response.data.detail}`,
                     options: { variant: "error" },
                 })
             );
@@ -124,7 +125,7 @@ export const joinTeam = createAsyncThunk<
 
         dispatch(
             displaySnackbar({
-                message: `Failed to join the team ${teamCode}: Error ${e.response.status}`,
+                message: `Failed to join the team ${teamCode}: Error ${e.response.data.detail}`,
                 options: { variant: "error" },
             })
         );

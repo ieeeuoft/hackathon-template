@@ -25,7 +25,6 @@ import { teamCode } from "../../../testing/mockData";
 interface TeamModalProps {
     teamCode: string;
     canChangeTeam: boolean;
-    canLeaveTeam: boolean;
     teamSize: number;
 }
 
@@ -116,12 +115,7 @@ const TeamChangeForm = ({ canChangeTeam, teamCode }: TeamModalProps) => {
     );
 };
 
-export const EditTeam = ({
-    teamCode,
-    canChangeTeam,
-    canLeaveTeam,
-    teamSize,
-}: TeamModalProps) => {
+export const EditTeam = ({ teamCode, canChangeTeam, teamSize }: TeamModalProps) => {
     const dispatch = useDispatch();
     const closeTeamModal = () => dispatch(closeTeamModalItem());
     const isTeamModalVisible: boolean = useSelector(isTeamModalVisibleSelector);
@@ -147,7 +141,6 @@ export const EditTeam = ({
                     <TeamInfoBlock
                         teamCode={teamCode}
                         canChangeTeam={false}
-                        canLeaveTeam={false}
                         teamSize={teamSize}
                     />
                     <Typography variant="body1" className={styles.heading}>
@@ -159,7 +152,6 @@ export const EditTeam = ({
                     <TeamChangeForm
                         teamCode={teamCode}
                         canChangeTeam={canChangeTeam}
-                        canLeaveTeam={false}
                         teamSize={teamSize}
                     />
                     {isJoinTeamLoading && (
@@ -177,11 +169,7 @@ export const EditTeam = ({
                         size="large"
                         type="submit"
                         disableElevation
-                        disabled={
-                            !canLeaveTeam
-                                ? true
-                                : isJoinTeamLoading || isLeaveTeamLoading
-                        }
+                        disabled={isJoinTeamLoading || isLeaveTeamLoading}
                         onClick={handleLeaveTeam}
                     >
                         LEAVE TEAM
