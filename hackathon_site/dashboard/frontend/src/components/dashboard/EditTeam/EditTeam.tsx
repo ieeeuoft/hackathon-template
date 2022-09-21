@@ -80,7 +80,7 @@ const TeamChangeForm = ({ canChangeTeam, teamCode }: TeamModalProps) => {
                             <Grid item xs={8}>
                                 <TextField
                                     fullWidth={true}
-                                    label="Team code"
+                                    label="Team Code"
                                     name="teamCode"
                                     variant="outlined"
                                     value={values.teamCode}

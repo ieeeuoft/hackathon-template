@@ -122,10 +122,10 @@ export const joinTeam = createAsyncThunk<
     } catch (e: any) {
         // order reached quantity limits
         const errorData = e.response?.data?.non_field_errors;
-
+        console.log(e.response);
         dispatch(
             displaySnackbar({
-                message: `Failed to join the team ${teamCode}: Error ${e.response.data.detail}`,
+                message: `Failed to join the team ${teamCode}: Error ${e.response.statusText}`,
                 options: { variant: "error" },
             })
         );
