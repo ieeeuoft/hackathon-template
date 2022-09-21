@@ -296,13 +296,16 @@ class TeamOrderDetailView(mixins.UpdateModelMixin, generics.GenericAPIView):
                 }
                 send_mail(
                     subject=render_to_string(
-                        self.update_order_email_subject_template, render_to_string_context
+                        self.update_order_email_subject_template,
+                        render_to_string_context,
                     ),
                     message=render_to_string(
-                        self.update_order_email_template_admin, render_to_string_context,
+                        self.update_order_email_template_admin,
+                        render_to_string_context,
                     ),
                     html_message=render_to_string(
-                        self.update_order_email_template_admin, render_to_string_context,
+                        self.update_order_email_template_admin,
+                        render_to_string_context,
                     ),
                     from_email=settings.DEFAULT_FROM_EMAIL,
                     connection=connection,

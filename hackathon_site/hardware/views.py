@@ -267,13 +267,16 @@ class OrderDetailView(generics.GenericAPIView, mixins.UpdateModelMixin):
                 }
                 send_mail(
                     subject=render_to_string(
-                        self.update_order_email_subject_template, render_to_string_context
+                        self.update_order_email_subject_template,
+                        render_to_string_context,
                     ),
                     message=render_to_string(
-                        self.update_order_email_template_admin, render_to_string_context,
+                        self.update_order_email_template_admin,
+                        render_to_string_context,
                     ),
                     html_message=render_to_string(
-                        self.update_order_email_template_admin, render_to_string_context,
+                        self.update_order_email_template_admin,
+                        render_to_string_context,
                     ),
                     from_email=settings.DEFAULT_FROM_EMAIL,
                     connection=connection,
@@ -338,7 +341,9 @@ class OrderItemReturnView(generics.GenericAPIView):
             return HttpResponseServerError()
 
         if len(create_response["returned_items"]) > 0:
-            profiles = Profile.objects.filter(team__team_code=create_response["team_code"])
+            profiles = Profile.objects.filter(
+                team__team_code=create_response["team_code"]
+            )
             connection = mail.get_connection(fail_silently=False)
             connection.open()
 
@@ -350,7 +355,8 @@ class OrderItemReturnView(generics.GenericAPIView):
                 }
                 send_mail(
                     subject=render_to_string(
-                        self.return_order_email_subject_template, render_to_string_context
+                        self.return_order_email_subject_template,
+                        render_to_string_context,
                     ),
                     message=render_to_string(
                         self.return_order_email_body_template_admin,

@@ -424,10 +424,12 @@ class OrderItemReturnSerializer(serializers.Serializer):
                 order_items_with_hardware[quantity_idx].save()
 
             if max_available_quantity > 0:
-                response_data["returned_items"].append({
-                    "hardware_id": hardware_item["id"].id,
-                    "quantity": max_available_quantity
-                })
+                response_data["returned_items"].append(
+                    {
+                        "hardware_id": hardware_item["id"].id,
+                        "quantity": max_available_quantity,
+                    }
+                )
 
         return response_data
 
