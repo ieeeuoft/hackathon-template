@@ -283,57 +283,58 @@ class TeamOrderDetailView(mixins.UpdateModelMixin, generics.GenericAPIView):
     def patch(self, request, *args, **kwargs):
         response = self.partial_update(request, *args, **kwargs)
 
-        profiles = Profile.objects.filter(team__exact=response.data["team_id"])
-        connection = mail.get_connection(fail_silently=False)
-        connection.open()
+        if hasattr(request.data, "status"):
+            profiles = Profile.objects.filter(team__exact=response.data["team_id"])
+            connection = mail.get_connection(fail_silently=False)
+            connection.open()
 
-        try:
-            render_to_string_context = {
-                "recipient": "Hardware Inventory Admins",
-                "order": response.data,
-                "order_status_message": f'{ORDER_STATUS_MSG[response.data["status"]]} by {request.user.first_name}',
-            }
-            send_mail(
-                subject=render_to_string(
-                    self.update_order_email_subject_template, render_to_string_context
-                ),
-                message=render_to_string(
-                    self.update_order_email_template_admin, render_to_string_context,
-                ),
-                html_message=render_to_string(
-                    self.update_order_email_template_admin, render_to_string_context,
-                ),
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                connection=connection,
-                recipient_list=[settings.HSS_ADMIN_EMAIL],
-            )
-            for profile in profiles:
+            try:
                 render_to_string_context = {
-                    **render_to_string_context,
-                    "recipient": profile.user,
-                    "order_status_closing_message": ORDER_STATUS_CLOSING_MSG[
-                        response.data["status"]
-                    ],
+                    "recipient": "Hardware Inventory Admins",
+                    "order": response.data,
+                    "order_status_message": f'{ORDER_STATUS_MSG[response.data["status"]]} by {request.user.first_name}',
                 }
-                profile.user.email_user(
+                send_mail(
                     subject=render_to_string(
-                        self.update_order_email_subject_template,
-                        render_to_string_context,
+                        self.update_order_email_subject_template, render_to_string_context
                     ),
                     message=render_to_string(
-                        self.update_order_email_template_participant,
-                        render_to_string_context,
+                        self.update_order_email_template_admin, render_to_string_context,
                     ),
                     html_message=render_to_string(
-                        self.update_order_email_template_participant,
-                        render_to_string_context,
+                        self.update_order_email_template_admin, render_to_string_context,
                     ),
                     from_email=settings.DEFAULT_FROM_EMAIL,
                     connection=connection,
+                    recipient_list=[settings.HSS_ADMIN_EMAIL],
                 )
-        except Exception as e:
-            logger.error(e)
-            raise e
-        finally:
-            connection.close()
+                for profile in profiles:
+                    render_to_string_context = {
+                        **render_to_string_context,
+                        "recipient": profile.user,
+                        "order_status_closing_message": ORDER_STATUS_CLOSING_MSG[
+                            response.data["status"]
+                        ],
+                    }
+                    profile.user.email_user(
+                        subject=render_to_string(
+                            self.update_order_email_subject_template,
+                            render_to_string_context,
+                        ),
+                        message=render_to_string(
+                            self.update_order_email_template_participant,
+                            render_to_string_context,
+                        ),
+                        html_message=render_to_string(
+                            self.update_order_email_template_participant,
+                            render_to_string_context,
+                        ),
+                        from_email=settings.DEFAULT_FROM_EMAIL,
+                        connection=connection,
+                    )
+            except Exception as e:
+                logger.error(e)
+                raise e
+            finally:
+                connection.close()
         return response
