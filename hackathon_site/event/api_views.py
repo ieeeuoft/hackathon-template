@@ -283,7 +283,7 @@ class TeamOrderDetailView(mixins.UpdateModelMixin, generics.GenericAPIView):
     def patch(self, request, *args, **kwargs):
         response = self.partial_update(request, *args, **kwargs)
 
-        if hasattr(request.data, "status"):
+        if "status" in request.data:
             profiles = Profile.objects.filter(team__exact=response.data["team_id"])
             connection = mail.get_connection(fail_silently=False)
             connection.open()
