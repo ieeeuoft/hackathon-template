@@ -10,6 +10,8 @@ import { get, post } from "api/api";
 import { closeTeamModalItem, displaySnackbar } from "slices/ui/uiSlice";
 import { push } from "connected-react-router";
 import { cartReducerName, cartSelectors, OrderResponse } from "../hardware/cartSlice";
+import { useDispatch } from "react-redux";
+import { getTeamOrders } from "../order/orderSlice";
 
 interface TeamExtraState {
     isLoading: boolean;
@@ -87,7 +89,7 @@ export const leaveTeam = createAsyncThunk<
 
             dispatch(
                 displaySnackbar({
-                    message: `Failed to leave the team: Error ${e.response.data.detail}`,
+                    message: `Failed to leave the team: ${e.response.data.detail}`,
                     options: { variant: "error" },
                 })
             );
@@ -116,6 +118,7 @@ export const joinTeam = createAsyncThunk<
             })
         );
         dispatch(closeTeamModalItem());
+        dispatch(getTeamOrders());
 
         return response.data;
     } catch (e: any) {
@@ -123,7 +126,7 @@ export const joinTeam = createAsyncThunk<
         const errorData = e.response?.data?.non_field_errors;
         dispatch(
             displaySnackbar({
-                message: `Failed to join the team ${teamCode}: Error ${e.response.statusText}`,
+                message: `Failed to join the team ${teamCode}: ${e.response.statusText}`,
                 options: { variant: "error" },
             })
         );

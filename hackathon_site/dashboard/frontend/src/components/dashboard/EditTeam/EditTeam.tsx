@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
@@ -7,7 +7,7 @@ import LinearProgress from "@material-ui/core/LinearProgress";
 
 import FileCopyIcon from "@material-ui/icons/FileCopy";
 import SideSheetRight from "components/general/SideSheetRight/SideSheetRight";
-import { Formik, Form, Field, FormikValues } from "formik";
+import { Formik, FormikValues } from "formik";
 
 import styles from "./EditTeam.module.scss";
 import { isTeamModalVisibleSelector, closeTeamModalItem } from "slices/ui/uiSlice";
@@ -19,9 +19,7 @@ import {
     isLeaveTeamLoadingSelector,
     joinTeam,
     leaveTeam,
-} from "../../../slices/event/teamSlice";
-import { teamCode } from "../../../testing/mockData";
-import { getTeamOrders } from "../../../slices/order/orderSlice";
+} from "slices/event/teamSlice";
 
 interface TeamModalProps {
     teamCode: string;
@@ -29,7 +27,7 @@ interface TeamModalProps {
     teamSize: number;
 }
 
-const TeamInfoBlock = ({ teamCode, canChangeTeam, teamSize }: TeamModalProps) => {
+const TeamInfoBlock = ({ teamCode, teamSize }: TeamModalProps) => {
     return (
         <Alert severity="info" icon={false} className={styles.alertBox}>
             Team code:
@@ -47,16 +45,11 @@ const TeamInfoBlock = ({ teamCode, canChangeTeam, teamSize }: TeamModalProps) =>
 };
 
 const TeamChangeForm = ({ canChangeTeam, teamCode }: TeamModalProps) => {
-    const [value, setValue] = React.useState("");
     const dispatch = useDispatch();
     const isJoinTeamLoading = useSelector(isJoinLoadingSelector);
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setValue(event.target.value);
-    };
 
-    const handleSubmitExternal = async (values: FormikValues) => {
+    const handleSubmitExternal = (values: FormikValues) => {
         dispatch(joinTeam(values.teamCode));
-        dispatch(getTeamOrders);
     };
 
     return (
@@ -154,12 +147,10 @@ export const EditTeam = ({ teamCode, canChangeTeam, teamSize }: TeamModalProps) 
                         canChangeTeam={canChangeTeam}
                         teamSize={teamSize}
                     />
-                    {isJoinTeamLoading && (
-                        <LinearProgress style={{ marginTop: "10px" }} value={0} />
-                    )}
-                    {isLeaveTeamLoading && (
-                        <LinearProgress style={{ marginTop: "10px" }} value={0} />
-                    )}
+                    {isJoinTeamLoading ||
+                        (isLeaveTeamLoading && (
+                            <LinearProgress style={{ marginTop: "10px" }} value={0} />
+                        ))}
                 </div>
                 <div className={styles.formButton}>
                     <Button
