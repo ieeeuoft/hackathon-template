@@ -12,11 +12,10 @@ import {
 import {
     mockCartItems,
     mockHardware,
-    mockHardwareWithBuffer,
     mockPendingOrdersInTable,
 } from "testing/mockData";
 import TeamPendingOrderTable from "components/teamDetail/TeamPendingOrderTable/TeamPendingOrderTable";
-import { RootStore } from "../../../slices/store";
+import { RootStore } from "slices/store";
 
 describe("team pending order table", () => {
     let store: RootStore;
@@ -36,19 +35,19 @@ describe("team pending order table", () => {
                 expect(
                     within(
                         getByTestId(`table-${currentOrder.id}-${currentRow.id}`)
-                    ).getByText(`${mockHardwareWithBuffer[currentRow.id].name}`)
+                    ).getByText(`${mockHardware[currentRow.id - 1].name}`)
                 ).toBeInTheDocument();
 
                 expect(
                     within(
                         getByTestId(`table-${currentOrder.id}-${currentRow.id}`)
-                    ).getByText(`${mockHardwareWithBuffer[currentRow.id].model_number}`)
+                    ).getByText(`${mockHardware[currentRow.id - 1].model_number}`)
                 ).toBeInTheDocument();
 
                 expect(
                     within(
                         getByTestId(`table-${currentOrder.id}-${currentRow.id}`)
-                    ).getByText(`${mockHardwareWithBuffer[currentRow.id].manufacturer}`)
+                    ).getByText(`${mockHardware[currentRow.id - 1].manufacturer}`)
                 ).toBeInTheDocument();
             });
         });

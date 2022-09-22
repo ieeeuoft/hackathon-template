@@ -212,18 +212,23 @@ export const SimplePendingOrderFulfillmentTable = () => {
                                 spacing={1}
                                 style={{ marginTop: "10px" }}
                             >
-                                <Grid item>
-                                    <Button
-                                        color="secondary"
-                                        variant="text"
-                                        disableElevation
-                                        onClick={() =>
-                                            updateOrder(pendingOrder.id, "Cancelled")
-                                        }
-                                    >
-                                        Reject Order
-                                    </Button>
-                                </Grid>
+                                {pendingOrder.status === "Submitted" && (
+                                    <Grid item>
+                                        <Button
+                                            color="secondary"
+                                            variant="text"
+                                            disableElevation
+                                            onClick={() =>
+                                                updateOrder(
+                                                    pendingOrder.id,
+                                                    "Cancelled"
+                                                )
+                                            }
+                                        >
+                                            Reject Order
+                                        </Button>
+                                    </Grid>
+                                )}
                                 {pendingOrder.status === "Submitted" && (
                                     <CompleteOrderButton order={pendingOrder} />
                                 )}
@@ -238,6 +243,12 @@ export const SimplePendingOrderFulfillmentTable = () => {
                                                     color="secondary"
                                                     variant="contained"
                                                     disableElevation
+                                                    onClick={() =>
+                                                        updateOrder(
+                                                            pendingOrder.id,
+                                                            "Picked Up"
+                                                        )
+                                                    }
                                                 >
                                                     Picked Up
                                                 </Button>

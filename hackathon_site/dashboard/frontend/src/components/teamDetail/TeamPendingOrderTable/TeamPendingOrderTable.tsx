@@ -22,7 +22,7 @@ import {
     GeneralOrderTableTitle,
     GeneralOrderTitle,
 } from "components/general/OrderTables/OrderTables";
-import { Formik, FormikValues } from "formik";
+import { Formik } from "formik";
 import { useDispatch, useSelector } from "react-redux";
 import {
     isLoadingSelector,
@@ -31,10 +31,6 @@ import {
     updateOrderStatus,
 } from "slices/order/teamOrderSlice";
 import { hardwareSelectors } from "slices/hardware/hardwareSlice";
-import {
-    mockHardwareWithBuffer,
-    mockPendingOrdersInTable,
-} from "../../../testing/mockData";
 
 const createDropdownList = (number: number) => {
     let entry = [];

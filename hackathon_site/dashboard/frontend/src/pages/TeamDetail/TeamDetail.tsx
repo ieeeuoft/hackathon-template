@@ -26,12 +26,7 @@ import {
 } from "slices/event/teamDetailSlice";
 import AlertBox from "components/general/AlertBox/AlertBox";
 import TeamCheckedOutOrderTable from "components/teamDetail/TeamCheckedOutOrderTable/TeamCheckedOutOrderTable";
-import {
-    getHardwareWithFilters,
-    hardwareSelectors,
-    setFilters,
-} from "slices/hardware/hardwareSlice";
-import TeamPendingOrderTable from "components/teamDetail/TeamPendingOrderTable/TeamPendingOrderTable";
+import { getHardwareWithFilters, setFilters } from "slices/hardware/hardwareSlice";
 
 export interface PageParams {
     code: string;
