@@ -17,6 +17,19 @@ class UserHasProfile(permissions.IsAuthenticated):
         )
 
 
+class UserIsAdmin(permissions.IsAuthenticated):
+    """
+    Allows access only to authenticate users with admin permissions.
+    """
+
+    def has_permission(self, request, view):
+        return (
+            super().has_permission(request, view)
+            and request.user
+            and request.user.groups.filter(name="Hardware Site Admins").exists()
+        )
+
+
 class FullDjangoModelPermissions(DjangoModelPermissions):
     """
     Adds view permission requirements, which are otherwise not checked by DjangoModelPermissions
