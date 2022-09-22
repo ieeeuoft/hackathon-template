@@ -56,6 +56,9 @@ export interface Profile extends ProfileRequestBody {
     id_provided: boolean;
     attended: boolean;
     team: string;
+    acknowledge_rules: boolean;
+    e_signature: string | null;
+    phone_number: string;
 }
 
 type ProfileWithoutTeamNumber = Omit<Profile, "team">;

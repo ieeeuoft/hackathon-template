@@ -184,7 +184,7 @@ class SetupUserMixin:
         if user is None:
             user = self.user
 
-        return Profile.objects.create(user=user, team=team)
+        return Profile.objects.create(user=user, team=team, phone_number="1234567890")
 
 
 @override_settings(IN_TESTING=False)
