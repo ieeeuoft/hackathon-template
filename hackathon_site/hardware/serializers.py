@@ -373,12 +373,24 @@ class OrderItemReturnSerializer(serializers.Serializer):
 
         response_data = {
             "order_id": order.id,
-            "checked_out_items": [],
             "returned_items": [],
+            "team_code": order.team.team_code,
             "errors": [],
         }
 
         for hardware_item in hardware:
+            if (
+                hardware_item["part_returned_health"]
+                not in OrderItemReturnSerializer.HardwareItemReturnSerializer.HEALTH_CHOICES
+            ):
+                response_data["errors"].append(
+                    {
+                        "hardware_id": hardware_item["id"].id,
+                        "message": f"Invalid part health return status for hardware item {hardware_item['id'].name}",
+                    }
+                )
+                continue
+
             order_items_with_hardware = list(
                 order_items_in_order.filter(
                     hardware=hardware_item["id"], part_returned_health__isnull=True
@@ -406,29 +418,18 @@ class OrderItemReturnSerializer(serializers.Serializer):
                     )
 
             for quantity_idx in range(max_available_quantity):
-                if (
-                    hardware_item["part_returned_health"]
-                    not in OrderItemReturnSerializer.HardwareItemReturnSerializer.HEALTH_CHOICES
-                ):
-                    response_data["errors"].append(
-                        {
-                            "hardware_id": hardware_item["id"].id,
-                            "message": f"Invalid part health return status for hardware item {hardware_item['id'].name}",
-                        }
-                    )
-                    continue
                 order_items_with_hardware[
                     quantity_idx
                 ].part_returned_health = hardware_item["part_returned_health"]
                 order_items_with_hardware[quantity_idx].save()
 
-        currently_checked_out_items = OrderItem.objects.filter(order=order)
-        for order_item in currently_checked_out_items:
-            serialized_order_item = OrderItemInOrderSerializer(order_item).data
-            if order_item.part_returned_health is None:
-                response_data["checked_out_items"].append(serialized_order_item)
-            else:
-                response_data["returned_items"].append(serialized_order_item)
+            if max_available_quantity > 0:
+                response_data["returned_items"].append(
+                    {
+                        "hardware_id": hardware_item["id"].id,
+                        "quantity": max_available_quantity,
+                    }
+                )
 
         return response_data
 
@@ -442,9 +443,15 @@ class OrderItemReturnResponseSerializer(serializers.Serializer):
             max_length=None, min_length=None, allow_blank=False
         )
 
+    class OrderReturnResponseReturnItemSerializer(serializers.Serializer):
+        hardware_id = serializers.PrimaryKeyRelatedField(
+            queryset=Hardware.objects.all(), many=False, required=True
+        )
+        quantity = serializers.IntegerField(required=True)
+
     order_id = serializers.PrimaryKeyRelatedField(
         queryset=Order.objects.all(), many=False, required=True
     )
-    checked_out_items = OrderItemInOrderSerializer(many=True, required=True)
-    returned_items = OrderItemInOrderSerializer(many=True, required=True)
+    team_code = serializers.CharField(required=True)
+    returned_items = OrderReturnResponseReturnItemSerializer(many=True, required=True)
     errors = OrderReturnResponseErrorSerializer(many=True, required=True)

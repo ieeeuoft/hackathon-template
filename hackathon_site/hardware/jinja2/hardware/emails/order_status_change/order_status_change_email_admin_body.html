@@ -1,0 +1,9 @@
+<p>Hello {{ recipient|striptags }},</p>
+
+<p>We are notifying you that Team {{ order.team_code }}'s Order #{{ order.id }} {{ order_status_message }}</p>
+{% if order.status != "Cancelled" %}
+    <p> Click <a href="{{ hss_url }}teams/{{ order.team_code }}#order{{order.id}}">here</a> to view more information about the order.</p>
+{% endif %}
+<p>Best,<br>
+The {{ hackathon_name }} Team
+</p>
