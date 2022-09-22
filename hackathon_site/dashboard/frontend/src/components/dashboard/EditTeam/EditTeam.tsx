@@ -21,6 +21,7 @@ import {
     leaveTeam,
 } from "../../../slices/event/teamSlice";
 import { teamCode } from "../../../testing/mockData";
+import { getTeamOrders } from "../../../slices/order/orderSlice";
 
 interface TeamModalProps {
     teamCode: string;
@@ -54,8 +55,8 @@ const TeamChangeForm = ({ canChangeTeam, teamCode }: TeamModalProps) => {
     };
 
     const handleSubmitExternal = async (values: FormikValues) => {
-        console.log(values);
         dispatch(joinTeam(values.teamCode));
+        dispatch(getTeamOrders);
     };
 
     return (
@@ -101,7 +102,6 @@ const TeamChangeForm = ({ canChangeTeam, teamCode }: TeamModalProps) => {
                                             ? true
                                             : values.teamCode == teamCode
                                     }
-                                    // onClick={handleJoinTeam}
                                     type="submit"
                                 >
                                     SUBMIT
