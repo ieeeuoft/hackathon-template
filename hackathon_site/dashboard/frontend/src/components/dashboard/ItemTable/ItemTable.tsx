@@ -82,7 +82,10 @@ export const CheckedOutTables = () =>
                         </Paper>
                     ) : (
                         orders.map((checkedOutOrder) => (
-                            <div key={checkedOutOrder.id}>
+                            <div
+                                id={`order${checkedOutOrder.id}`}
+                                key={checkedOutOrder.id}
+                            >
                                 <GeneralOrderTableTitle orderId={checkedOutOrder.id} />
                                 <TableContainer
                                     component={Paper}
@@ -241,26 +244,29 @@ export const PendingTables = () => {
                 orders.length > 0 &&
                 orders.map((pendingOrder) => (
                     <div
+                        id={`order${pendingOrder.id}`}
                         key={pendingOrder.id}
                         data-testid={`pending-order-table-${pendingOrder.id}`}
                     >
                         <GeneralPendingTable {...{ pendingOrder }} />
-                        <div
-                            style={{
-                                display: "flex",
-                                justifyContent: "flex-end",
-                                marginTop: "10px",
-                            }}
-                        >
-                            <Button
-                                onClick={() => cancelOrder(pendingOrder.id)}
-                                disabled={isCancelOrderLoading}
-                                color="secondary"
-                                data-testid="cancel-order-button"
+                        {pendingOrder.status !== "Ready for Pickup" && (
+                            <div
+                                style={{
+                                    display: "flex",
+                                    justifyContent: "flex-end",
+                                    marginTop: "10px",
+                                }}
                             >
-                                Cancel order
-                            </Button>
-                        </div>
+                                <Button
+                                    onClick={() => cancelOrder(pendingOrder.id)}
+                                    disabled={isCancelOrderLoading}
+                                    color="secondary"
+                                    data-testid="cancel-order-button"
+                                >
+                                    Cancel order
+                                </Button>
+                            </div>
+                        )}
                     </div>
                 ))}
         </Container>

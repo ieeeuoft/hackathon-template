@@ -160,7 +160,7 @@ describe("Dashboard Page", () => {
     it("Removes orders when cancel order button is clicked", async () => {
         mockTeamAPI();
         mockOrderAPI(mockPendingOrders);
-        const pendingOrderDetailUri = "/api/hardware/orders/4";
+        const pendingOrderDetailUri = "/api/event/teams/team/orders/4";
         const pendingOrderResponse = makeMockApiResponse(mockPendingOrdersInTable[1]);
         when(mockedPatch)
             .calledWith(pendingOrderDetailUri, { status: "Cancelled" })
@@ -188,7 +188,7 @@ describe("Dashboard Page", () => {
         fireEvent.click(cancelOrderBtn);
 
         await waitFor(() => {
-            expect(mockedPatch).toHaveBeenCalledWith(`/api/hardware/orders/4`, {
+            expect(mockedPatch).toHaveBeenCalledWith(`/api/event/teams/team/orders/4`, {
                 status: "Cancelled",
             });
             expect(pendingOrderSelectors.selectById(store.getState(), 4)).toEqual(
