@@ -17,9 +17,21 @@ export const UnconnectedUserCheck = ({
     accessType,
     ...passThroughProps
 }) => {
+    const isParticipantOnboarding =
+        (userType === "none" || userType === "participant") && accessType === "onboard";
+
     useEffect(() => {
         if (!user) {
             fetchUserData();
+            return;
+        }
+
+        if (isParticipantOnboarding) {
+            return;
+        }
+
+        if (userType === "none") {
+            push("/acknowledgement");
             return;
         }
 
@@ -33,10 +45,18 @@ export const UnconnectedUserCheck = ({
             });
             push("/404");
         }
-    }, [user, userType, accessType, fetchUserData, displaySnackbar, push]);
+    }, [
+        user,
+        userType,
+        accessType,
+        fetchUserData,
+        displaySnackbar,
+        push,
+        isParticipantOnboarding,
+    ]);
 
     return user ? (
-        userType === "participant" ? (
+        userType === "participant" || isParticipantOnboarding ? (
             <PrimaryComponent {...passThroughProps} />
         ) : userType === "admin" ? (
             SecondaryComponent === undefined ? (

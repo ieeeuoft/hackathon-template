@@ -4,7 +4,7 @@ import { push } from "connected-react-router";
 import { get, post } from "api/api";
 import { displaySnackbar } from "slices/ui/uiSlice";
 import { AppDispatch, RootState } from "slices/store";
-import { User } from "api/types";
+import { Profile, ProfileRequestBody, User, UserWithReviewStatus } from "api/types";
 import { adminGroup } from "constants.js";
 
 interface LoginResponse {
@@ -17,6 +17,20 @@ interface LoginResponse {
 interface UserInitialState {
     userData: {
         user: User | null;
+        isLoading: boolean;
+        error: {
+            message: string;
+        } | null;
+    };
+    userAcceptance: {
+        user: UserWithReviewStatus | null;
+        isLoading: boolean;
+        error: {
+            message: string;
+        } | null;
+    };
+    createProfile: {
+        profile: Profile | null;
         isLoading: boolean;
         error: {
             message: string;
@@ -41,6 +55,16 @@ export const userReducerName = "user";
 export const initialState: UserInitialState = {
     userData: {
         user: null,
+        isLoading: false,
+        error: null,
+    },
+    userAcceptance: {
+        user: null,
+        isLoading: false,
+        error: null,
+    },
+    createProfile: {
+        profile: null,
         isLoading: false,
         error: null,
     },
@@ -106,6 +130,33 @@ export const fetchUserData = createAsyncThunk<
     }
 });
 
+export const fetchUserAcceptanceStatus = createAsyncThunk<
+    UserWithReviewStatus,
+    void,
+    { state: RootState; rejectValue: RejectValue; dispatch: AppDispatch }
+>(
+    `${userReducerName}/fetchUserAcceptanceStatus`,
+    async (arg, { dispatch, rejectWithValue }) => {
+        try {
+            const response = await get<UserWithReviewStatus>(
+                "/api/event/users/user/review_status/"
+            );
+            return response.data;
+        } catch (e: any) {
+            dispatch(
+                displaySnackbar({
+                    message: `Failed to fetch user acceptance data: Error ${e.response.status}`,
+                    options: { variant: "error" },
+                })
+            );
+            return rejectWithValue({
+                status: e.response.status,
+                message: e.response.data,
+            });
+        }
+    }
+);
+
 export const logIn = createAsyncThunk<
     LoginResponse,
     { email: string; password: string },
@@ -165,6 +216,34 @@ export const logout = createAsyncThunk<
     }
 });
 
+export const createProfile = createAsyncThunk<
+    Profile,
+    ProfileRequestBody,
+    { state: RootState; rejectValue: RejectValue; dispatch: AppDispatch }
+>(
+    `${userReducerName}/createProfile`,
+    async (profileRequestBody, { dispatch, rejectWithValue }) => {
+        try {
+            const response = await post<Profile>(
+                "/api/event/profiles/profile/",
+                profileRequestBody
+            );
+            return response.data;
+        } catch (e: any) {
+            dispatch(
+                displaySnackbar({
+                    message: `An error has occurred! We couldn't grant you permission to access Hardware Signout Site: Error ${e.response.status}`,
+                    options: { variant: "error" },
+                })
+            );
+            return rejectWithValue({
+                status: e.response.status,
+                message: e.response.data,
+            });
+        }
+    }
+);
+
 // Slice
 const userSlice = createSlice({
     name: "user",
@@ -217,6 +296,38 @@ const userSlice = createSlice({
             state.logout.failure = payload || { message: "An error has occurred" };
             state.logout.isLoading = false;
         });
+
+        builder.addCase(fetchUserAcceptanceStatus.pending, (state) => {
+            state.userAcceptance.isLoading = true;
+        });
+
+        builder.addCase(fetchUserAcceptanceStatus.fulfilled, (state, { payload }) => {
+            state.userAcceptance.user = payload;
+            state.userAcceptance.isLoading = false;
+            state.userAcceptance.error = null;
+        });
+
+        builder.addCase(fetchUserAcceptanceStatus.rejected, (state, { payload }) => {
+            state.userAcceptance.error = payload || {
+                message: "An error has occurred",
+            };
+            state.userAcceptance.isLoading = false;
+        });
+
+        builder.addCase(createProfile.pending, (state) => {
+            state.createProfile.isLoading = true;
+        });
+
+        builder.addCase(createProfile.fulfilled, (state, { payload }) => {
+            state.createProfile.profile = payload;
+            state.createProfile.isLoading = false;
+            state.createProfile.error = null;
+        });
+
+        builder.addCase(createProfile.rejected, (state, { payload }) => {
+            state.createProfile.error = payload || { message: "An error has occurred" };
+            state.createProfile.isLoading = false;
+        });
     },
 });
 
@@ -252,4 +363,14 @@ export const loginSelector = createSelector(
 export const logoutSelector = createSelector(
     [userSliceSelector],
     (userSlice) => userSlice.logout
+);
+
+export const userAcceptanceSelector = createSelector(
+    [userSliceSelector],
+    (userSlice) => userSlice.userAcceptance
+);
+
+export const createProfileSelector = createSelector(
+    [userSliceSelector],
+    (userSlice) => userSlice.createProfile
 );
