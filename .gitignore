@@ -145,6 +145,7 @@ cython_debug/
 # Collected static files and media files
 hackathon_site/static/
 hackathon_site/media/
+hackathon_site/emails/
 
 # Database persistent data
 development/.postgres-data/
