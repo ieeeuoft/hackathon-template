@@ -46,14 +46,19 @@ export interface Category {
 }
 
 /** Event API */
-export interface Profile {
+export interface ProfileRequestBody {
+    acknowledge_rules: boolean;
+    e_signature: string | null;
+}
+
+export interface Profile extends ProfileRequestBody {
     id: number;
     id_provided: boolean;
     attended: boolean;
+    team: string;
     acknowledge_rules: boolean;
     e_signature: string | null;
     phone_number: string;
-    team: number;
 }
 
 type ProfileWithoutTeamNumber = Omit<Profile, "team">;
@@ -68,6 +73,10 @@ export interface UserWithoutProfile {
     first_name: string;
     last_name: string;
     email: string;
+}
+
+export interface UserWithReviewStatus extends UserWithoutProfile {
+    review_status: "Accepted" | "Waitlisted" | "Rejected" | "Incomplete" | "None";
 }
 
 export interface User extends UserWithoutProfile {
