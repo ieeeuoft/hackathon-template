@@ -5,23 +5,33 @@ import {
     createSlice,
 } from "@reduxjs/toolkit";
 import { AppDispatch, RootState } from "slices/store";
-import { get } from "api/api";
-import { APIListResponse, Order, OrderInTable, ReturnOrderInTable } from "api/types";
+import { get, post } from "api/api";
+import {
+    APIListResponse,
+    Order,
+    OrderInTable,
+    // OrderStatus,
+    ReturnOrderInTable,
+} from "api/types";
 import { displaySnackbar } from "slices/ui/uiSlice";
 import { teamOrderListSerialization } from "api/helpers";
 
 interface TeamOrderExtraState {
     isLoading: boolean;
     error: null | string;
+    returnError: null | string;
     hardwareIdsToFetch: number[] | null;
     returnedOrders: ReturnOrderInTable[];
+    returnedIsLoading: boolean;
 }
 
 const extraState: TeamOrderExtraState = {
     isLoading: false,
     error: null,
+    returnError: null,
     hardwareIdsToFetch: null,
     returnedOrders: [],
+    returnedIsLoading: false,
 };
 
 const teamOrders = createEntityAdapter<OrderInTable>();
@@ -67,6 +77,78 @@ export const getAdminTeamOrders = createAsyncThunk<
     }
 );
 
+export interface ReturnOrderRequest {
+    hardware: [
+        {
+            id: number;
+            quantity: number;
+            part_returned_health: string;
+        }
+    ];
+    order: number;
+}
+
+export interface ReturnOrderResponse {
+    order_id: number;
+    team_code: string;
+    returned_items: [
+        {
+            hardware_id: number;
+            quantity: number;
+        }
+    ];
+    errors: [
+        {
+            hardware_id: number;
+            message: string;
+        }
+    ];
+}
+
+export const returnItems = createAsyncThunk<
+    ReturnOrderResponse,
+    ReturnOrderRequest,
+    { state: RootState; rejectValue: RejectValue; dispatch: AppDispatch }
+>(
+    `${teamOrderReducerName}/returnItems`,
+    async (returnItemsData, { rejectWithValue, dispatch }) => {
+        const { ...postData } = returnItemsData;
+        try {
+            const response = await post<Order>(
+                `/api/hardware/orders/returns/`,
+                postData
+            );
+            dispatch(
+                displaySnackbar({
+                    message: `Order ${response.data.order_id} has been returned.`,
+                    options: {
+                        variant: "success",
+                    },
+                })
+            );
+            dispatch(getAdminTeamOrders(response.data.team_code));
+            return response.data;
+        } catch (e: any) {
+            const message =
+                e.response.statusText === "Not Found"
+                    ? `Could not return order: Error ${e.response.status}`
+                    : `Something went wrong: Error ${e.response.status}`;
+            dispatch(
+                displaySnackbar({
+                    message,
+                    options: {
+                        variant: "error",
+                    },
+                })
+            );
+            return rejectWithValue({
+                status: e.response.status,
+                message: e.response.message ?? e.response.data,
+            });
+        }
+    }
+);
+
 const teamOrderSlice = createSlice({
     name: teamOrderReducerName,
     initialState,
@@ -94,6 +176,20 @@ const teamOrderSlice = createSlice({
             state.error =
                 payload?.message ??
                 "There was a problem retrieving orders. If this continues please contact hackathon organizers.";
+        });
+        builder.addCase(returnItems.pending, (state) => {
+            state.returnedIsLoading = true;
+            state.returnError = null;
+        });
+        builder.addCase(returnItems.fulfilled, (state, { payload }) => {
+            state.returnedIsLoading = false;
+            state.returnError = null;
+        });
+        builder.addCase(returnItems.rejected, (state, { payload }) => {
+            state.returnedIsLoading = false;
+            state.returnError =
+                payload?.message ??
+                "There was a problem returning orders. If this continues please contact any IEEE Web Team Exec.";
         });
     },
 });

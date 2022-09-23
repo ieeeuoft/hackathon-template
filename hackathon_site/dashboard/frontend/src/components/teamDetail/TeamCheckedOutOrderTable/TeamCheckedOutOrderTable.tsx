@@ -23,8 +23,9 @@ import {
     GeneralOrderTableTitle,
     GeneralOrderTitle,
 } from "components/general/OrderTables/OrderTables";
-import { Formik } from "formik";
+import { Formik, FormikValues } from "formik";
 import Info from "@material-ui/icons/Info";
+import { useDispatch } from "react-redux";
 
 const createDropdownList = (number: number) => {
     let entry = [];
@@ -60,6 +61,23 @@ export const TeamCheckedOutOrderTable = () => {
     const toggleVisibility = () => {
         setVisibility(!visibility);
     };
+    const dispatch = useDispatch();
+
+    // export interface ReturnOrderRequest {
+    //     hardware: [
+    //         {
+    //             id: number;
+    //             quantity: number;
+    //             part_returned_health: string;
+    //         }
+    //     ];
+    //     order: number;
+    // }
+
+    const handleReturnOrder = (values: FormikValues) => {
+        // comvert formik to correct format here
+        // dispatch(returnItems(values));
+    };
 
     return (
         <Container
@@ -81,9 +99,10 @@ export const TeamCheckedOutOrderTable = () => {
                         initialValues={setInitialValues(
                             checkedOutOrder.hardwareInTableRow
                         )}
-                        onSubmit={(values) =>
-                            alert(JSON.stringify(values, undefined, 2))
-                        }
+                        onSubmit={(values) => {
+                            alert(JSON.stringify(values, undefined, 2));
+                            handleReturnOrder(values);
+                        }}
                     >
                         {(props) => (
                             <form onSubmit={props.handleSubmit}>
