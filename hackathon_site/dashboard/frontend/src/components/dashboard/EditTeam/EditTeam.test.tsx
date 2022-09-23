@@ -1,6 +1,8 @@
 import React from "react";
 import EditTeam from "components/dashboard/EditTeam/EditTeam";
 import { render, fireEvent, makeStoreWithEntities } from "testing/utils";
+import { act, getByLabelText, getByTestId } from "@testing-library/react";
+import { waitFor } from "../../../testing/utils";
 
 Object.assign(navigator, {
     clipboard: {
@@ -29,7 +31,26 @@ describe("<EditTeam />", () => {
         expect(getByText("ABCDE")).toBeInTheDocument();
     });
 
-    test("Both buttons are disabled when canChangeTeam is false", async () => {
+    test("Buttons should be disabled if the user doesn't type anything", async () => {
+        const store = makeStoreWithEntities({
+            ui: {
+                dashboard: {
+                    isEditTeamVisible: true,
+                },
+            },
+        });
+        const { getByText, getByTestId } = render(
+            <EditTeam teamCode={"ABCDE"} canChangeTeam={false} teamSize={1} />,
+            {
+                store,
+            }
+        );
+
+        const button_submit = getByText("SUBMIT").closest("button");
+        expect(button_submit).toBeDisabled();
+    });
+
+    test("Buttons should be disabled if the user type their current team code", async () => {
         const store = makeStoreWithEntities({
             ui: {
                 dashboard: {
@@ -44,14 +65,14 @@ describe("<EditTeam />", () => {
             }
         );
 
+        const input_field = document.querySelectorAll("[name=teamCode]")[0];
+        fireEvent.change(input_field, { target: { value: "ABCDE" } });
+
         const button_submit = getByText("SUBMIT").closest("button");
         expect(button_submit).toBeDisabled();
-
-        const button_leave_team = getByText("LEAVE TEAM").closest("button");
-        expect(button_leave_team).toBeDisabled();
     });
 
-    test("Both buttons are not disabled when canChangeTeam is true", async () => {
+    test("If the team code is not found", async () => {
         const store = makeStoreWithEntities({
             ui: {
                 dashboard: {
@@ -60,17 +81,69 @@ describe("<EditTeam />", () => {
             },
         });
         const { getByText } = render(
-            <EditTeam teamCode={"ABCDE"} canChangeTeam={true} teamSize={1} />,
+            <EditTeam teamCode={"ABCDE"} canChangeTeam={false} teamSize={1} />,
             {
                 store,
             }
         );
 
-        const button_submit = getByText("SUBMIT").closest("button");
-        expect(button_submit).not.toBeDisabled();
+        const input_field = document.querySelectorAll("[name=teamCode]")[0];
+        fireEvent.change(input_field, { target: { value: "noutfound" } });
 
-        const button_leave_team = getByText("LEAVE TEAM").closest("button");
-        expect(button_leave_team).not.toBeDisabled();
+        const button_submit = getByText("SUBMIT");
+        fireEvent.click(button_submit);
+
+        waitFor(() => {
+            getByText(/Failed to join the team noutfound: Error Not Found/i);
+        });
+    });
+
+    test("When user want to leave the team, and the team has order, then the request should be rejected", async () => {
+        const store = makeStoreWithEntities({
+            ui: {
+                dashboard: {
+                    isEditTeamVisible: true,
+                },
+            },
+        });
+        const { getByText } = render(
+            <EditTeam teamCode={"ABCDE"} canChangeTeam={false} teamSize={1} />,
+            {
+                store,
+            }
+        );
+
+        const button_submit = getByText("LEAVE TEAM");
+        fireEvent.click(button_submit);
+
+        waitFor(() => {
+            getByText(
+                /Failed to leave the team: Error Cannot leave a team with already processed orders/i
+            );
+        });
+    });
+
+    test("Leave team successful", async () => {
+        const store = makeStoreWithEntities({
+            ui: {
+                dashboard: {
+                    isEditTeamVisible: true,
+                },
+            },
+        });
+        const { getByText } = render(
+            <EditTeam teamCode={"ABCDE"} canChangeTeam={false} teamSize={1} />,
+            {
+                store,
+            }
+        );
+
+        const button_submit = getByText("LEAVE TEAM");
+        fireEvent.click(button_submit);
+
+        waitFor(() => {
+            getByText(/You have left the team./i);
+        });
     });
 
     test("Copy team code to clipboard", async () => {
