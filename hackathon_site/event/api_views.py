@@ -116,6 +116,12 @@ class LeaveTeamView(generics.GenericAPIView):
         profile = request.user.profile
         team = profile.team
 
+        if Profile.objects.filter(team__exact=team).count() <= 1:
+            raise ValidationError(
+                {"detail": "Cannot leave a team with only 1 member"},
+                code=status.HTTP_400_BAD_REQUEST,
+            )
+
         # Raise 400 if team has active orders
         active_orders = OrderItem.objects.filter(
             ~Q(order__status="Cancelled"), Q(order__team=team),

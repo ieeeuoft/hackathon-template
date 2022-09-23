@@ -3,15 +3,23 @@ import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import Alert from "@material-ui/lab/Alert";
+import LinearProgress from "@material-ui/core/LinearProgress";
 
 import FileCopyIcon from "@material-ui/icons/FileCopy";
 import SideSheetRight from "components/general/SideSheetRight/SideSheetRight";
+import { Formik, FormikValues } from "formik";
 
 import styles from "./EditTeam.module.scss";
 import { isTeamModalVisibleSelector, closeTeamModalItem } from "slices/ui/uiSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { Grid } from "@material-ui/core";
 import { maxTeamSize } from "constants.js";
+import {
+    isJoinLoadingSelector,
+    isLeaveTeamLoadingSelector,
+    joinTeam,
+    leaveTeam,
+} from "slices/event/teamSlice";
 
 interface TeamModalProps {
     teamCode: string;
@@ -19,7 +27,7 @@ interface TeamModalProps {
     teamSize: number;
 }
 
-const TeamInfoBlock = ({ teamCode, canChangeTeam, teamSize }: TeamModalProps) => {
+const TeamInfoBlock = ({ teamCode, teamSize }: TeamModalProps) => {
     return (
         <Alert severity="info" icon={false} className={styles.alertBox}>
             Team code:
@@ -36,41 +44,66 @@ const TeamInfoBlock = ({ teamCode, canChangeTeam, teamSize }: TeamModalProps) =>
     );
 };
 
-const TeamChangeForm = ({ canChangeTeam }: TeamModalProps) => {
-    const [value, setValue] = React.useState("");
+const TeamChangeForm = ({ canChangeTeam, teamCode }: TeamModalProps) => {
+    const dispatch = useDispatch();
+    const isJoinTeamLoading = useSelector(isJoinLoadingSelector);
 
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setValue(event.target.value);
+    const handleSubmitExternal = (values: FormikValues) => {
+        dispatch(joinTeam(values.teamCode));
     };
+
     return (
         <>
             <Typography variant={"h2"} className={styles.heading}>
                 Join a different team
             </Typography>
-            <form noValidate autoComplete="off" className={styles.teamForm}>
-                <Grid container spacing={3}>
-                    <Grid item xs={8}>
-                        <TextField
-                            fullWidth={true}
-                            label="Team code"
-                            variant="outlined"
-                            value={value}
-                            onChange={handleChange}
-                        />
-                    </Grid>
-                    <Grid item>
-                        <Button
-                            color={"primary"}
-                            className={styles.teamButton}
-                            variant="contained"
-                            disabled={!canChangeTeam}
-                            onClick={() => alert(`The new teamcode is: ${value}`)}
-                        >
-                            SUBMIT
-                        </Button>
-                    </Grid>
-                </Grid>
-            </form>
+            <Formik
+                initialValues={{
+                    teamCode: "",
+                }}
+                onSubmit={handleSubmitExternal}
+            >
+                {({ errors, handleSubmit, handleChange, values }) => (
+                    <form
+                        noValidate
+                        onSubmit={handleSubmit}
+                        autoComplete="off"
+                        className={styles.teamForm}
+                    >
+                        <Grid container spacing={3}>
+                            <Grid item xs={8}>
+                                <TextField
+                                    fullWidth={true}
+                                    label="Team Code"
+                                    name="teamCode"
+                                    variant="outlined"
+                                    value={values.teamCode}
+                                    onChange={handleChange}
+                                />
+                            </Grid>
+                            <Grid item>
+                                <Button
+                                    color={"primary"}
+                                    className={styles.teamButton}
+                                    variant="contained"
+                                    disabled={
+                                        !canChangeTeam
+                                            ? true
+                                            : isJoinTeamLoading
+                                            ? true
+                                            : values.teamCode == ""
+                                            ? true
+                                            : values.teamCode == teamCode
+                                    }
+                                    type="submit"
+                                >
+                                    SUBMIT
+                                </Button>
+                            </Grid>
+                        </Grid>
+                    </form>
+                )}
+            </Formik>
         </>
     );
 };
@@ -79,6 +112,9 @@ export const EditTeam = ({ teamCode, canChangeTeam, teamSize }: TeamModalProps) 
     const dispatch = useDispatch();
     const closeTeamModal = () => dispatch(closeTeamModalItem());
     const isTeamModalVisible: boolean = useSelector(isTeamModalVisibleSelector);
+    const handleLeaveTeam = () => dispatch(leaveTeam());
+    const isLeaveTeamLoading = useSelector(isLeaveTeamLoadingSelector);
+    const isJoinTeamLoading = useSelector(isJoinLoadingSelector);
 
     return (
         <SideSheetRight
@@ -111,6 +147,10 @@ export const EditTeam = ({ teamCode, canChangeTeam, teamSize }: TeamModalProps) 
                         canChangeTeam={canChangeTeam}
                         teamSize={teamSize}
                     />
+                    {isJoinTeamLoading ||
+                        (isLeaveTeamLoading && (
+                            <LinearProgress style={{ marginTop: "10px" }} value={0} />
+                        ))}
                 </div>
                 <div className={styles.formButton}>
                     <Button
@@ -120,7 +160,8 @@ export const EditTeam = ({ teamCode, canChangeTeam, teamSize }: TeamModalProps) 
                         size="large"
                         type="submit"
                         disableElevation
-                        disabled={!canChangeTeam}
+                        disabled={isJoinTeamLoading || isLeaveTeamLoading}
+                        onClick={handleLeaveTeam}
                     >
                         LEAVE TEAM
                     </Button>
