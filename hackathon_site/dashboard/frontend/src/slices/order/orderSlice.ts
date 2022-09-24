@@ -67,9 +67,12 @@ export const cancelOrderThunk = createAsyncThunk<
     `${orderReducerName}/cancelOrderThunk`,
     async (orderId, { dispatch, rejectWithValue }) => {
         try {
-            const response = await patch<Order>(`/api/hardware/orders/${orderId}`, {
-                status: "Cancelled",
-            });
+            const response = await patch<Order>(
+                `/api/event/teams/team/orders/${orderId}`,
+                {
+                    status: "Cancelled",
+                }
+            );
             dispatch(
                 displaySnackbar({
                     message: `Order has been cancelled.`,

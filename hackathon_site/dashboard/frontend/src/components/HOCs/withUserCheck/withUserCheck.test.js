@@ -44,7 +44,37 @@ describe("withAuthenticationCheck", () => {
         ]);
     });
 
-    it("Displays a snackbar and pushes to the 404 page if the user has no profile or admin access", () => {
+    it("Displays a snackbar and pushes to the 404 page if participant user has no admin access", () => {
+        const WrappedComponent = withUserCheck("admin", ComponentToWrap);
+        // Used by displaySnackbar
+        jest.spyOn(global.Math, "random").mockReturnValue(0.45526621894095487);
+
+        const mockState = {
+            [userReducerName]: {
+                userData: {
+                    user: mockUser,
+                },
+            },
+        };
+
+        const store = mockStore(mockState);
+
+        render(<WrappedComponent>{content}</WrappedComponent>, {
+            store,
+        });
+
+        expect(store.getActions()).toEqual([
+            displaySnackbar({
+                message: "You do not have permission to access this page",
+                options: { variant: "error" },
+            }),
+            push("/404"),
+        ]);
+
+        global.Math.random.mockRestore();
+    });
+
+    it("Redirects user to acknowledgement page if user type is none", () => {
         const WrappedComponent = withUserCheck("both", ComponentToWrap);
         // Used by displaySnackbar
         jest.spyOn(global.Math, "random").mockReturnValue(0.45526621894095487);
@@ -67,6 +97,48 @@ describe("withAuthenticationCheck", () => {
         });
 
         expect(queryByText(content)).not.toBeInTheDocument();
+        expect(store.getActions()).toEqual([push("/acknowledgement")]);
+
+        global.Math.random.mockRestore();
+    });
+
+    it("Allows none-type or participant users to access onboarding pages", () => {
+        const WrappedComponent = withUserCheck("onboard", ComponentToWrap);
+        const mockState = {
+            [userReducerName]: {
+                userData: {
+                    user: mockUser,
+                },
+            },
+        };
+
+        const store = mockStore(mockState);
+
+        const { getByText } = render(<WrappedComponent>{content}</WrappedComponent>, {
+            store,
+        });
+
+        expect(getByText(content)).toBeInTheDocument();
+    });
+
+    it("Prevents admins from accessing onboarding pages", () => {
+        const WrappedComponent = withUserCheck("onboard", ComponentToWrap);
+        const mockState = {
+            [userReducerName]: {
+                userData: {
+                    user: mockAdminUser,
+                },
+            },
+        };
+
+        jest.spyOn(global.Math, "random").mockReturnValue(0.45526621894095487);
+
+        const store = mockStore(mockState);
+
+        render(<WrappedComponent>{content}</WrappedComponent>, {
+            store,
+        });
+
         expect(store.getActions()).toEqual([
             displaySnackbar({
                 message: "You do not have permission to access this page",

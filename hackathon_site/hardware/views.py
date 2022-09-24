@@ -1,15 +1,20 @@
 import logging
 
+from django.conf import settings
+from django.core import mail
+from django.core.mail import send_mail
 from django_filters import rest_framework as filters
 from django.db import transaction
 from django.http import HttpResponseServerError
 from drf_yasg.utils import swagger_auto_schema
+from django.template.loader import render_to_string
 
 from rest_framework import generics, mixins, status, permissions
 from rest_framework.response import Response
 from rest_framework.filters import SearchFilter, OrderingFilter
 
-from event.permissions import UserHasProfile, FullDjangoModelPermissions
+from event.models import Profile
+from event.permissions import UserHasProfile, FullDjangoModelPermissions, UserIsAdmin
 from hardware.api_filters import (
     HardwareFilter,
     OrderFilter,
@@ -28,9 +33,23 @@ from hardware.serializers import (
     OrderCreateResponseSerializer,
     OrderChangeSerializer,
     OrderItemListSerializer,
+    OrderItemReturnSerializer,
+    OrderItemReturnResponseSerializer,
 )
 
 logger = logging.getLogger(__name__)
+
+ORDER_STATUS_MSG = {
+    "Ready for Pickup": "is Ready for Pickup!",
+    "Picked Up": "has been Picked Up!",
+    "Cancelled": f"was Cancelled by a {settings.HACKATHON_NAME} Exec.",
+}
+
+ORDER_STATUS_CLOSING_MSG = {
+    "Ready for Pickup": "Please go to the Tech Team Station to retrieve your order.",
+    "Picked Up": "Take good care of your hardware and Happy Hacking! Remember to return the items when you are finished using them.",
+    "Cancelled": f"A {settings.HACKATHON_NAME} exec will be in contact with you shortly. If you don't hear back from them soon, please go to the Tech Team Station for more information on why your order was cancelled.",
+}
 
 
 class HardwareListView(mixins.ListModelMixin, generics.GenericAPIView):
@@ -124,6 +143,16 @@ class OrderListView(generics.ListAPIView):
     ordering_fields = ("created_at",)
     search_fields = ("team__team_code", "id")
 
+    create_order_email_subject_template = (
+        "hardware/emails/create_order/create_order_email_subject.txt"
+    )
+    create_order_email_body_template_participant = (
+        "hardware/emails/create_order/create_order_email_body.html"
+    )
+    create_order_email_body_template_admin = (
+        "hardware/emails/create_order/create_order_email_admin_body.html"
+    )
+
     def get_serializer_class(self):
         try:
             return self.serializer_method_classes[self.request.method]
@@ -151,6 +180,59 @@ class OrderListView(generics.ListAPIView):
             logger.error(response_serializer.error_messages)
             return HttpResponseServerError()
         response_data = response_serializer.data
+
+        profiles = Profile.objects.filter(team__exact=request.user.profile.team)
+        connection = mail.get_connection(fail_silently=False)
+        connection.open()
+
+        try:
+            render_to_string_context = {
+                "requester": request.user,
+                "recipient": "Hardware Inventory Admins",
+                "order": response_data,
+            }
+            send_mail(
+                subject=render_to_string(
+                    self.create_order_email_subject_template, render_to_string_context
+                ),
+                message=render_to_string(
+                    self.create_order_email_body_template_admin,
+                    render_to_string_context,
+                ),
+                html_message=render_to_string(
+                    self.create_order_email_body_template_admin,
+                    render_to_string_context,
+                ),
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                connection=connection,
+                recipient_list=[settings.HSS_ADMIN_EMAIL],
+            )
+            for profile in profiles:
+                render_to_string_context = {
+                    **render_to_string_context,
+                    "recipient": profile.user,
+                }
+                profile.user.email_user(
+                    subject=render_to_string(
+                        self.create_order_email_subject_template,
+                        render_to_string_context,
+                    ),
+                    message=render_to_string(
+                        self.create_order_email_body_template_participant,
+                        render_to_string_context,
+                    ),
+                    html_message=render_to_string(
+                        self.create_order_email_body_template_participant,
+                        render_to_string_context,
+                    ),
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    connection=connection,
+                )
+        except Exception as e:
+            logger.error(e)
+            raise e
+        finally:
+            connection.close()
         return Response(response_data, status=status.HTTP_201_CREATED)
 
 
@@ -159,5 +241,159 @@ class OrderDetailView(generics.GenericAPIView, mixins.UpdateModelMixin):
     serializer_class = OrderChangeSerializer
     permission_classes = [FullDjangoModelPermissions]
 
+    update_order_email_subject_template = (
+        "hardware/emails/order_status_change/order_status_change_email_subject.txt"
+    )
+    update_order_email_template_participant = (
+        "hardware/emails/order_status_change/order_status_change_email_body.html"
+    )
+    update_order_email_template_admin = (
+        "hardware/emails/order_status_change/order_status_change_email_admin_body.html"
+    )
+
     def patch(self, request, *args, **kwargs):
-        return self.partial_update(request, *args, **kwargs)
+        response = self.partial_update(request, *args, **kwargs)
+
+        if "status" in request.data:
+            profiles = Profile.objects.filter(team__exact=response.data["team_id"])
+            connection = mail.get_connection(fail_silently=False)
+            connection.open()
+
+            try:
+                render_to_string_context = {
+                    "recipient": "Hardware Inventory Admins",
+                    "order": response.data,
+                    "order_status_message": ORDER_STATUS_MSG[response.data["status"]],
+                }
+                send_mail(
+                    subject=render_to_string(
+                        self.update_order_email_subject_template,
+                        render_to_string_context,
+                    ),
+                    message=render_to_string(
+                        self.update_order_email_template_admin,
+                        render_to_string_context,
+                    ),
+                    html_message=render_to_string(
+                        self.update_order_email_template_admin,
+                        render_to_string_context,
+                    ),
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    connection=connection,
+                    recipient_list=[settings.HSS_ADMIN_EMAIL],
+                )
+                for profile in profiles:
+                    render_to_string_context = {
+                        **render_to_string_context,
+                        "recipient": profile.user,
+                        "order_status_closing_message": ORDER_STATUS_CLOSING_MSG[
+                            response.data["status"]
+                        ],
+                    }
+                    profile.user.email_user(
+                        subject=render_to_string(
+                            self.update_order_email_subject_template,
+                            render_to_string_context,
+                        ),
+                        message=render_to_string(
+                            self.update_order_email_template_participant,
+                            render_to_string_context,
+                        ),
+                        html_message=render_to_string(
+                            self.update_order_email_template_participant,
+                            render_to_string_context,
+                        ),
+                        from_email=settings.DEFAULT_FROM_EMAIL,
+                        connection=connection,
+                    )
+            except Exception as e:
+                logger.error(e)
+                raise e
+            finally:
+                connection.close()
+        return response
+
+
+class OrderItemReturnView(generics.GenericAPIView):
+    queryset = Order.objects.all().prefetch_related("items",)
+    serializer_class = OrderItemReturnSerializer
+    permission_classes = [UserIsAdmin]
+
+    return_order_email_subject_template = (
+        "hardware/emails/return_order/return_order_email_subject.txt"
+    )
+    return_order_email_body_template_participant = (
+        "hardware/emails/return_order/return_order_email_body.html"
+    )
+    return_order_email_body_template_admin = (
+        "hardware/emails/return_order/return_order_email_admin_body.html"
+    )
+
+    @transaction.atomic
+    @swagger_auto_schema(responses={201: OrderItemReturnResponseSerializer})
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        create_response = serializer.save()
+        response_serializer = OrderItemReturnResponseSerializer(data=create_response)
+        if not response_serializer.is_valid():
+            logger.error(response_serializer.errors)
+            return HttpResponseServerError()
+
+        if len(create_response["returned_items"]) > 0:
+            profiles = Profile.objects.filter(
+                team__team_code=create_response["team_code"]
+            )
+            connection = mail.get_connection(fail_silently=False)
+            connection.open()
+
+            try:
+                render_to_string_context = {
+                    "requester": request.user,
+                    "recipient": "Hardware Inventory Admins",
+                    "order": create_response,
+                }
+                send_mail(
+                    subject=render_to_string(
+                        self.return_order_email_subject_template,
+                        render_to_string_context,
+                    ),
+                    message=render_to_string(
+                        self.return_order_email_body_template_admin,
+                        render_to_string_context,
+                    ),
+                    html_message=render_to_string(
+                        self.return_order_email_body_template_admin,
+                        render_to_string_context,
+                    ),
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    connection=connection,
+                    recipient_list=[settings.HSS_ADMIN_EMAIL],
+                )
+                for profile in profiles:
+                    render_to_string_context = {
+                        **render_to_string_context,
+                        "recipient": profile.user,
+                    }
+                    profile.user.email_user(
+                        subject=render_to_string(
+                            self.return_order_email_subject_template,
+                            render_to_string_context,
+                        ),
+                        message=render_to_string(
+                            self.return_order_email_body_template_participant,
+                            render_to_string_context,
+                        ),
+                        html_message=render_to_string(
+                            self.return_order_email_body_template_participant,
+                            render_to_string_context,
+                        ),
+                        from_email=settings.DEFAULT_FROM_EMAIL,
+                        connection=connection,
+                    )
+            except Exception as e:
+                logger.error(e)
+                raise e
+            finally:
+                connection.close()
+        return Response(create_response, status=status.HTTP_201_CREATED)

@@ -177,7 +177,7 @@ describe("cancelOrderThunk Thunk", () => {
 
         store.dispatch(cancelOrderThunk(4));
         await waitFor(() => {
-            expect(mockedPatch).toHaveBeenCalledWith(`/api/hardware/orders/4`, {
+            expect(mockedPatch).toHaveBeenCalledWith(`/api/event/teams/team/orders/4`, {
                 status: "Cancelled",
             });
             expect(pendingOrderSelectors.selectById(store.getState(), 4)).toEqual(
