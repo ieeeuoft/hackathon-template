@@ -12,7 +12,6 @@ import {
     TableHead,
     TableRow,
 } from "@material-ui/core";
-import { mockHardware, mockCheckedOutOrdersInTable } from "testing/mockData";
 import React, { useState } from "react";
 import Container from "@material-ui/core/Container";
 import styles from "components/general/OrderTables/OrderTables.module.scss";
@@ -25,7 +24,13 @@ import {
 } from "components/general/OrderTables/OrderTables";
 import { Formik, FormikValues } from "formik";
 import Info from "@material-ui/icons/Info";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import {
+    checkedOutOrdersSelector,
+    returnItems,
+    ReturnOrderRequest,
+} from "slices/order/teamOrderSlice";
+import { hardwareSelectors } from "../../../slices/hardware/hardwareSlice";
 
 const createDropdownList = (number: number) => {
     let entry = [];
@@ -49,14 +54,14 @@ const setInitialValues = (
         orderInitialValues[`${orderItem.id}-quantity`] =
             orderItem.quantityGranted.toString();
         orderInitialValues[`${orderItem.id}-checkbox`] = false;
-        orderInitialValues[`${orderItem.id}-condtion`] = "Healthy";
+        orderInitialValues[`${orderItem.id}-condition`] = "Healthy";
     });
     return orderInitialValues;
 };
 
 export const TeamCheckedOutOrderTable = () => {
-    const orders = mockCheckedOutOrdersInTable;
-    const hardware = mockHardware;
+    const orders = useSelector(checkedOutOrdersSelector);
+    const hardware = useSelector(hardwareSelectors.selectEntities);
     const [visibility, setVisibility] = useState(true);
     const toggleVisibility = () => {
         setVisibility(!visibility);
@@ -76,7 +81,17 @@ export const TeamCheckedOutOrderTable = () => {
 
     const handleReturnOrder = (values: FormikValues) => {
         // comvert formik to correct format here
-        // dispatch(returnItems(values));
+        // const returnOrderData: ReturnOrderRequest = {
+        //     hardware: [
+        //         {
+        //             id: number,
+        //             quantity: number,
+        //             part_returned_health: string,
+        //         }
+        //     ],
+        //     order: values.
+        // };
+        // dispatch(returnItems(returnOrderData));
     };
 
     return (
