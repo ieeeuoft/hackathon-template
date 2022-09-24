@@ -72,17 +72,6 @@ export const TeamCheckedOutOrderTable = () => {
     };
     const dispatch = useDispatch();
 
-    // export interface ReturnOrderRequest {
-    //     hardware: [
-    //         {
-    //             id: number;
-    //             quantity: number;
-    //             part_returned_health: string;
-    //         }
-    //     ];
-    //     order: number;
-    // }
-
     const handleReturnOrder = (values: FormikValues, orderId: number) => {
         try {
             // convert formik to correct format here
