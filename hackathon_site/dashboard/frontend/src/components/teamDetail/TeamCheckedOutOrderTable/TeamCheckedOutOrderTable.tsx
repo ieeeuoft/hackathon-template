@@ -27,6 +27,7 @@ import Info from "@material-ui/icons/Info";
 import { useDispatch, useSelector } from "react-redux";
 import {
     checkedOutOrdersSelector,
+    errorSelector,
     returnItems,
     ReturnOrderRequest,
 } from "slices/order/teamOrderSlice";
@@ -61,6 +62,7 @@ const setInitialValues = (
 
 export const TeamCheckedOutOrderTable = () => {
     const orders = useSelector(checkedOutOrdersSelector);
+    const fetchOrdersError = useSelector(errorSelector);
     const hardware = useSelector(hardwareSelectors.selectEntities);
     const [visibility, setVisibility] = useState(true);
     const toggleVisibility = () => {
@@ -100,267 +102,290 @@ export const TeamCheckedOutOrderTable = () => {
             maxWidth={false}
             disableGutters={true}
         >
-            {orders.length > 0 && (
-                <GeneralOrderTitle
-                    title="Checked Out Items"
-                    isVisible={visibility}
-                    toggleVisibility={toggleVisibility}
-                />
-            )}
+            <GeneralOrderTitle
+                title="Checked Out Items"
+                isVisible={visibility}
+                toggleVisibility={toggleVisibility}
+            />
             {visibility &&
-                orders.length &&
-                orders.map((checkedOutOrder) => (
-                    <Formik
-                        initialValues={setInitialValues(
-                            checkedOutOrder.hardwareInTableRow
-                        )}
-                        onSubmit={(values) => {
-                            alert(JSON.stringify(values, undefined, 2));
-                            handleReturnOrder(values);
-                        }}
-                    >
-                        {(props) => (
-                            <form onSubmit={props.handleSubmit}>
-                                <div key={checkedOutOrder.id}>
-                                    <GeneralOrderTableTitle
-                                        orderId={checkedOutOrder.id}
-                                        orderStatus={checkedOutOrder.status}
-                                    />
-                                    <TableContainer
-                                        component={Paper}
-                                        elevation={2}
-                                        square={true}
-                                    >
-                                        <Table className={styles.table} size="small">
-                                            <TableHead>
-                                                <TableRow>
-                                                    <TableCell
-                                                        className={styles.widthFixed}
-                                                    />
-                                                    <TableCell
-                                                        className={styles.width6}
-                                                    >
-                                                        Name
-                                                    </TableCell>
-                                                    <TableCell
-                                                        className={`${styles.width1} ${styles.noWrap}`}
-                                                    >
-                                                        Info
-                                                    </TableCell>
-                                                    <TableCell
-                                                        className={`${styles.width1} ${styles.noWrap}`}
-                                                    >
-                                                        Qty
-                                                    </TableCell>
-                                                    <TableCell
-                                                        className={`${styles.width1} ${styles.noWrap}`}
-                                                    >
-                                                        Qty to return
-                                                    </TableCell>
-                                                    <TableCell
-                                                        className={`${styles.width6} ${styles.noWrap}`}
-                                                        align={"right"}
-                                                    >
-                                                        Qty remaining
-                                                    </TableCell>
-                                                    <TableCell
-                                                        className={`${styles.width1} ${styles.noWrap}`}
-                                                    >
-                                                        Condition
-                                                    </TableCell>
-                                                    <TableCell
-                                                        className={`${styles.width1} ${styles.noWrap}`}
-                                                    >
-                                                        <Checkbox
-                                                            color="primary"
-                                                            data-testid={`checkall-${checkedOutOrder.id}`}
-                                                            onChange={(e) => {
-                                                                checkedOutOrder.hardwareInTableRow.forEach(
-                                                                    (row) => {
-                                                                        props.setFieldValue(
-                                                                            `${row.id}-checkbox`,
-                                                                            e.target
-                                                                                .checked
-                                                                        );
-                                                                    }
-                                                                );
-                                                            }}
+                (!orders.length || fetchOrdersError ? (
+                    <Paper elevation={2} className={styles.empty} square={true}>
+                        {fetchOrdersError
+                            ? `Unable to view checked out items.`
+                            : "You have no items checked out yet. View our inventory."}
+                    </Paper>
+                ) : (
+                    orders.map((checkedOutOrder) => (
+                        <Formik
+                            initialValues={setInitialValues(
+                                checkedOutOrder.hardwareInTableRow
+                            )}
+                            onSubmit={(values) => {
+                                alert(JSON.stringify(values, undefined, 2));
+                                handleReturnOrder(values);
+                            }}
+                        >
+                            {(props) => (
+                                <form onSubmit={props.handleSubmit}>
+                                    <div key={checkedOutOrder.id}>
+                                        <GeneralOrderTableTitle
+                                            orderId={checkedOutOrder.id}
+                                            orderStatus={checkedOutOrder.status}
+                                        />
+                                        <TableContainer
+                                            component={Paper}
+                                            elevation={2}
+                                            square={true}
+                                        >
+                                            <Table
+                                                className={styles.table}
+                                                size="small"
+                                            >
+                                                <TableHead>
+                                                    <TableRow>
+                                                        <TableCell
+                                                            className={
+                                                                styles.widthFixed
+                                                            }
                                                         />
-                                                    </TableCell>
-                                                </TableRow>
-                                            </TableHead>
-                                            <TableBody>
-                                                {checkedOutOrder.hardwareInTableRow.map(
-                                                    (row) => (
-                                                        <TableRow
-                                                            key={row.id}
-                                                            data-testid={`table-${checkedOutOrder.id}-${row.id}`}
+                                                        <TableCell
+                                                            className={styles.width6}
                                                         >
-                                                            <TableCell>
-                                                                <img
-                                                                    className={
-                                                                        styles.itemImg
-                                                                    }
-                                                                    src={
-                                                                        hardware[
-                                                                            row.id - 1
-                                                                        ]?.picture ??
-                                                                        hardwareImagePlaceholder
-                                                                    }
-                                                                    alt={
+                                                            Name
+                                                        </TableCell>
+                                                        <TableCell
+                                                            className={`${styles.width1} ${styles.noWrap}`}
+                                                        >
+                                                            Info
+                                                        </TableCell>
+                                                        <TableCell
+                                                            className={`${styles.width1} ${styles.noWrap}`}
+                                                        >
+                                                            Qty
+                                                        </TableCell>
+                                                        <TableCell
+                                                            className={`${styles.width1} ${styles.noWrap}`}
+                                                        >
+                                                            Qty to return
+                                                        </TableCell>
+                                                        <TableCell
+                                                            className={`${styles.width6} ${styles.noWrap}`}
+                                                            align={"right"}
+                                                        >
+                                                            Qty remaining
+                                                        </TableCell>
+                                                        <TableCell
+                                                            className={`${styles.width1} ${styles.noWrap}`}
+                                                        >
+                                                            Condition
+                                                        </TableCell>
+                                                        <TableCell
+                                                            className={`${styles.width1} ${styles.noWrap}`}
+                                                        >
+                                                            <Checkbox
+                                                                color="primary"
+                                                                data-testid={`checkall-${checkedOutOrder.id}`}
+                                                                onChange={(e) => {
+                                                                    checkedOutOrder.hardwareInTableRow.forEach(
+                                                                        (row) => {
+                                                                            props.setFieldValue(
+                                                                                `${row.id}-checkbox`,
+                                                                                e.target
+                                                                                    .checked
+                                                                            );
+                                                                        }
+                                                                    );
+                                                                }}
+                                                            />
+                                                        </TableCell>
+                                                    </TableRow>
+                                                </TableHead>
+                                                <TableBody>
+                                                    {checkedOutOrder.hardwareInTableRow.map(
+                                                        (row) => (
+                                                            <TableRow
+                                                                key={row.id}
+                                                                data-testid={`table-${checkedOutOrder.id}-${row.id}`}
+                                                            >
+                                                                <TableCell>
+                                                                    <img
+                                                                        className={
+                                                                            styles.itemImg
+                                                                        }
+                                                                        src={
+                                                                            hardware[
+                                                                                row.id -
+                                                                                    1
+                                                                            ]
+                                                                                ?.picture ??
+                                                                            hardwareImagePlaceholder
+                                                                        }
+                                                                        alt={
+                                                                            hardware[
+                                                                                row.id -
+                                                                                    1
+                                                                            ]?.name
+                                                                        }
+                                                                    />
+                                                                </TableCell>
+                                                                <TableCell>
+                                                                    {
                                                                         hardware[
                                                                             row.id - 1
                                                                         ]?.name
                                                                     }
-                                                                />
-                                                            </TableCell>
-                                                            <TableCell>
-                                                                {
-                                                                    hardware[row.id - 1]
-                                                                        ?.name
-                                                                }
-                                                            </TableCell>
-                                                            <TableCell>
-                                                                <IconButton
-                                                                    size={"small"}
-                                                                >
-                                                                    <Info />
-                                                                </IconButton>
-                                                            </TableCell>
-                                                            <TableCell>
-                                                                {
-                                                                    hardware[row.id - 1]
-                                                                        ?.quantity_available
-                                                                }
-                                                            </TableCell>
-                                                            <TableCell>
-                                                                <div
-                                                                    style={{
-                                                                        display: "flex",
-                                                                        alignItems:
-                                                                            "end",
-                                                                    }}
-                                                                >
-                                                                    <Link
-                                                                        underline="always"
-                                                                        color="textPrimary"
+                                                                </TableCell>
+                                                                <TableCell>
+                                                                    <IconButton
+                                                                        size={"small"}
+                                                                    >
+                                                                        <Info />
+                                                                    </IconButton>
+                                                                </TableCell>
+                                                                <TableCell>
+                                                                    {
+                                                                        hardware[
+                                                                            row.id - 1
+                                                                        ]
+                                                                            ?.quantity_available
+                                                                    }
+                                                                </TableCell>
+                                                                <TableCell>
+                                                                    <div
                                                                         style={{
-                                                                            marginRight:
-                                                                                "15px",
-                                                                        }}
-                                                                        data-testid={`all-button`}
-                                                                        onClick={() => {
-                                                                            props.setFieldValue(
-                                                                                `${row.id}-quantity`,
-                                                                                row.quantityGranted
-                                                                            );
+                                                                            display:
+                                                                                "flex",
+                                                                            alignItems:
+                                                                                "end",
                                                                         }}
                                                                     >
-                                                                        All
-                                                                    </Link>
+                                                                        <Link
+                                                                            underline="always"
+                                                                            color="textPrimary"
+                                                                            style={{
+                                                                                marginRight:
+                                                                                    "15px",
+                                                                            }}
+                                                                            data-testid={`all-button`}
+                                                                            onClick={() => {
+                                                                                props.setFieldValue(
+                                                                                    `${row.id}-quantity`,
+                                                                                    row.quantityGranted
+                                                                                );
+                                                                            }}
+                                                                        >
+                                                                            All
+                                                                        </Link>
+                                                                        <Select
+                                                                            value={
+                                                                                props
+                                                                                    .values[
+                                                                                    `${row.id}-quantity`
+                                                                                ]
+                                                                            }
+                                                                            onChange={
+                                                                                props.handleChange
+                                                                            }
+                                                                            label="Qty"
+                                                                            labelId="qtyLabel"
+                                                                            name={`${row.id}-quantity`}
+                                                                            id={`${row.id}-quantity`}
+                                                                            data-testid={`select`}
+                                                                        >
+                                                                            {createDropdownList(
+                                                                                row.quantityGranted
+                                                                            )}
+                                                                        </Select>
+                                                                    </div>
+                                                                </TableCell>
+                                                                <TableCell
+                                                                    align={"right"}
+                                                                >
+                                                                    {
+                                                                        hardware[
+                                                                            row.id - 1
+                                                                        ]
+                                                                            ?.quantity_remaining
+                                                                    }
+                                                                </TableCell>
+                                                                <TableCell>
                                                                     <Select
                                                                         value={
                                                                             props
                                                                                 .values[
-                                                                                `${row.id}-quantity`
+                                                                                `${row.id}-condition`
                                                                             ]
                                                                         }
                                                                         onChange={
                                                                             props.handleChange
                                                                         }
-                                                                        label="Qty"
-                                                                        labelId="qtyLabel"
-                                                                        name={`${row.id}-quantity`}
-                                                                        id={`${row.id}-quantity`}
-                                                                        data-testid={`select`}
+                                                                        label="Condition"
+                                                                        labelId="conditionLabel"
+                                                                        name={`${row.id}-condition`}
+                                                                        id={`${row.id}-condition`}
+                                                                        defaultValue={
+                                                                            "Healthy"
+                                                                        }
                                                                     >
-                                                                        {createDropdownList(
-                                                                            row.quantityGranted
-                                                                        )}
+                                                                        <MenuItem value="Healthy">
+                                                                            Healthy
+                                                                        </MenuItem>
+                                                                        <MenuItem value="Heavily Used">
+                                                                            Heavily Used
+                                                                        </MenuItem>
+                                                                        <MenuItem value="Broken">
+                                                                            Broken
+                                                                        </MenuItem>
+                                                                        <MenuItem value="Lost">
+                                                                            Lost
+                                                                        </MenuItem>
                                                                     </Select>
-                                                                </div>
-                                                            </TableCell>
-                                                            <TableCell align={"right"}>
-                                                                {
-                                                                    hardware[row.id - 1]
-                                                                        ?.quantity_remaining
-                                                                }
-                                                            </TableCell>
-                                                            <TableCell>
-                                                                <Select
-                                                                    value={
-                                                                        props.values[
-                                                                            `${row.id}-condition`
-                                                                        ]
-                                                                    }
-                                                                    onChange={
-                                                                        props.handleChange
-                                                                    }
-                                                                    label="Condition"
-                                                                    labelId="conditionLabel"
-                                                                    name={`${row.id}-condition`}
-                                                                    id={`${row.id}-condition`}
-                                                                    defaultValue={
-                                                                        "Healthy"
-                                                                    }
-                                                                >
-                                                                    <MenuItem value="Healthy">
-                                                                        Healthy
-                                                                    </MenuItem>
-                                                                    <MenuItem value="Heavily Used">
-                                                                        Heavily Used
-                                                                    </MenuItem>
-                                                                    <MenuItem value="Broken">
-                                                                        Broken
-                                                                    </MenuItem>
-                                                                    <MenuItem value="Lost">
-                                                                        Lost
-                                                                    </MenuItem>
-                                                                </Select>
-                                                            </TableCell>
-                                                            <TableCell align="center">
-                                                                <Checkbox
-                                                                    color="primary"
-                                                                    checked={
-                                                                        props.values[
-                                                                            `${row.id}-checkbox`
-                                                                        ] === true
-                                                                    }
-                                                                    name={`${row.id}-checkbox`}
-                                                                    onChange={
-                                                                        props.handleChange
-                                                                    }
-                                                                    data-testid={`${row.id}-checkbox`}
-                                                                />
-                                                            </TableCell>
-                                                        </TableRow>
-                                                    )
-                                                )}
-                                            </TableBody>
-                                        </Table>
-                                    </TableContainer>
-                                    <Grid
-                                        container
-                                        justifyContent="flex-end"
-                                        spacing={1}
-                                        style={{ marginTop: "10px" }}
-                                    >
-                                        <Grid item>
-                                            <Button
-                                                color="primary"
-                                                variant="contained"
-                                                type="submit"
-                                                disableElevation
-                                                data-testid={`return-button-${checkedOutOrder.id}`}
-                                            >
-                                                Return Items
-                                            </Button>
+                                                                </TableCell>
+                                                                <TableCell align="center">
+                                                                    <Checkbox
+                                                                        color="primary"
+                                                                        checked={
+                                                                            props
+                                                                                .values[
+                                                                                `${row.id}-checkbox`
+                                                                            ] === true
+                                                                        }
+                                                                        name={`${row.id}-checkbox`}
+                                                                        onChange={
+                                                                            props.handleChange
+                                                                        }
+                                                                        data-testid={`${row.id}-checkbox`}
+                                                                    />
+                                                                </TableCell>
+                                                            </TableRow>
+                                                        )
+                                                    )}
+                                                </TableBody>
+                                            </Table>
+                                        </TableContainer>
+                                        <Grid
+                                            container
+                                            justifyContent="flex-end"
+                                            spacing={1}
+                                            style={{ marginTop: "10px" }}
+                                        >
+                                            <Grid item>
+                                                <Button
+                                                    color="primary"
+                                                    variant="contained"
+                                                    type="submit"
+                                                    disableElevation
+                                                    data-testid={`return-button-${checkedOutOrder.id}`}
+                                                >
+                                                    Return Items
+                                                </Button>
+                                            </Grid>
                                         </Grid>
-                                    </Grid>
-                                </div>
-                            </form>
-                        )}
-                    </Formik>
+                                    </div>
+                                </form>
+                            )}
+                        </Formik>
+                    ))
                 ))}
         </Container>
     );

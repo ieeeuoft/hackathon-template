@@ -43,7 +43,7 @@ describe("<SimplePendingOrderFulfillmentTable />", () => {
         });
     });
 
-    it("Shows complete order button for Submitted Orders and picked up button for Ready to Pickup orders", () => {
+    it("Shows complete order button for Submitted Orders, shows picked up button and removes reject order button for Ready to Pickup orders", () => {
         const { getByTestId } = render(<SimplePendingOrderFulfillmentTable />, {
             store,
         });
@@ -54,7 +54,11 @@ describe("<SimplePendingOrderFulfillmentTable />", () => {
                     getByTestId(`admin-simple-pending-order-${id}`)
                 );
                 expect(getByText(`Order #${id}`)).toBeInTheDocument();
-                expect(getByText(/reject order/i)).toBeInTheDocument();
+                if (status === "Ready for Pickup") {
+                    expect(queryByText(/reject order/i)).not.toBeInTheDocument();
+                } else {
+                    expect(getByText(/reject order/i)).toBeInTheDocument();
+                }
                 if (status === "Submitted") {
                     expect(getByText(/complete order/i)).toBeInTheDocument();
                     expect(queryByText(/picked up/i)).not.toBeInTheDocument();

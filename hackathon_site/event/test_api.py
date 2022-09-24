@@ -212,6 +212,14 @@ class LeaveTeamTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def check_leave_and_delete(self):
+        other_user = User.objects.create_user(
+            username="other_user@bar.com",
+            password=self.password,
+            first_name="other_user",
+            last_name="Bar",
+            email="other_user@bar.com",
+        )
+        Profile.objects.create(team=self.profile.team, user=other_user)
         old_team = self.profile.team
         response = self.client.post(self.view)
         self.user.refresh_from_db()
@@ -220,7 +228,7 @@ class LeaveTeamTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(response.data["id"], self.user.profile.team.pk)
         self.assertNotEqual(old_team.pk, self.user.profile.team.pk)
         self.assertEqual(
-            Team.objects.filter(team_code=old_team.team_code).exists(), False
+            Team.objects.filter(team_code=old_team.team_code).exists(), True
         )
 
     def check_cannot_leave(self):
