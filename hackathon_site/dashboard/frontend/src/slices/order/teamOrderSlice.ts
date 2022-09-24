@@ -6,7 +6,7 @@ import {
 } from "@reduxjs/toolkit";
 import { OrderStatus } from "api/types";
 import { AppDispatch, RootState } from "slices/store";
-import { get, patch } from "api/api";
+import { get, post, patch } from "api/api";
 import { APIListResponse, Order, OrderInTable, ReturnOrderInTable } from "api/types";
 import { displaySnackbar } from "slices/ui/uiSlice";
 import { teamOrderListSerialization } from "api/helpers";
@@ -16,6 +16,7 @@ interface TeamOrderExtraState {
     error: null | string;
     hardwareIdsToFetch: number[] | null;
     returnedOrders: ReturnOrderInTable[];
+    returnedIsLoading: boolean;
 }
 
 export interface UpdateOrderAttributes {
@@ -28,6 +29,7 @@ const extraState: TeamOrderExtraState = {
     error: null,
     hardwareIdsToFetch: null,
     returnedOrders: [],
+    returnedIsLoading: false,
 };
 
 const teamOrders = createEntityAdapter<OrderInTable>();
@@ -60,6 +62,71 @@ export const getAdminTeamOrders = createAsyncThunk<
             dispatch(
                 displaySnackbar({
                     message: e.response.message,
+                    options: {
+                        variant: "error",
+                    },
+                })
+            );
+            return rejectWithValue({
+                status: e.response.status,
+                message: e.response.message ?? e.response.data,
+            });
+        }
+    }
+);
+
+export interface ReturnOrderRequest {
+    hardware: {
+        id: number;
+        quantity: number;
+        part_returned_health: string;
+    }[];
+    order: number;
+}
+
+export interface ReturnOrderResponse {
+    order_id: number;
+    team_code: string;
+    returned_items: {
+        hardware_id: number;
+        quantity: number;
+    }[];
+    errors: {
+        hardware_id: number;
+        message: string;
+    }[];
+}
+
+export const returnItems = createAsyncThunk<
+    ReturnOrderResponse,
+    ReturnOrderRequest,
+    { state: RootState; rejectValue: RejectValue; dispatch: AppDispatch }
+>(
+    `${teamOrderReducerName}/returnItems`,
+    async (returnItemsData, { rejectWithValue, dispatch }) => {
+        try {
+            const response = await post<ReturnOrderResponse>(
+                `/api/hardware/orders/returns/`,
+                returnItemsData
+            );
+            dispatch(
+                displaySnackbar({
+                    message: `Order ${response.data.order_id} has been returned.`,
+                    options: {
+                        variant: "success",
+                    },
+                })
+            );
+            dispatch(getAdminTeamOrders(response.data.team_code));
+            return response.data;
+        } catch (e: any) {
+            const message =
+                e.response.statusText === "Not Found"
+                    ? `Could not return order: Error ${e.response.status}`
+                    : `Something went wrong: Error ${e.response.status}`;
+            dispatch(
+                displaySnackbar({
+                    message,
                     options: {
                         variant: "error",
                     },
@@ -144,6 +211,16 @@ const teamOrderSlice = createSlice({
                 payload?.message ??
                 "There was a problem retrieving orders. If this continues please contact hackathon organizers.";
         });
+        builder.addCase(returnItems.pending, (state) => {
+            state.returnedIsLoading = true;
+        });
+        builder.addCase(returnItems.fulfilled, (state, { payload }) => {
+            state.returnedIsLoading = false;
+        });
+        builder.addCase(returnItems.rejected, (state, { payload }) => {
+            state.returnedIsLoading = false;
+        });
+
         builder.addCase(updateOrderStatus.pending, (state) => {
             state.isLoading = true;
             state.error = null;
@@ -184,6 +261,11 @@ export const isLoadingSelector = createSelector(
 export const errorSelector = createSelector(
     [teamOrderSliceSelector],
     (teamOrderSlice) => teamOrderSlice.error
+);
+
+export const isReturnedLoadingSelector = createSelector(
+    [teamOrderSliceSelector],
+    (teamOrderSlice) => teamOrderSlice.returnedIsLoading
 );
 
 export const hardwareInOrdersSelector = createSelector(
