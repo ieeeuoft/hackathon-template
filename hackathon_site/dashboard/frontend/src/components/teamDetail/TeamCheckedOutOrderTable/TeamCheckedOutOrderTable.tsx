@@ -127,6 +127,7 @@ export const TeamCheckedOutOrderTable = () => {
                             onSubmit={(values) => {
                                 handleReturnOrder(values, checkedOutOrder.id);
                             }}
+                            key={checkedOutOrder.id}
                         >
                             {(props) => (
                                 <form onSubmit={props.handleSubmit}>
