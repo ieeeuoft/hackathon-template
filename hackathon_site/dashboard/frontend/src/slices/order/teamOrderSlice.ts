@@ -14,7 +14,6 @@ import { teamOrderListSerialization } from "api/helpers";
 interface TeamOrderExtraState {
     isLoading: boolean;
     error: null | string;
-    returnError: null | string;
     hardwareIdsToFetch: number[] | null;
     returnedOrders: ReturnOrderInTable[];
     returnedIsLoading: boolean;
@@ -28,7 +27,6 @@ export interface UpdateOrderAttributes {
 const extraState: TeamOrderExtraState = {
     isLoading: false,
     error: null,
-    returnError: null,
     hardwareIdsToFetch: null,
     returnedOrders: [],
     returnedIsLoading: false,
@@ -78,31 +76,25 @@ export const getAdminTeamOrders = createAsyncThunk<
 );
 
 export interface ReturnOrderRequest {
-    hardware: [
-        {
-            id: number;
-            quantity: number;
-            part_returned_health: string;
-        }
-    ];
+    hardware: {
+        id: number;
+        quantity: number;
+        part_returned_health: string;
+    }[];
     order: number;
 }
 
 export interface ReturnOrderResponse {
     order_id: number;
     team_code: string;
-    returned_items: [
-        {
-            hardware_id: number;
-            quantity: number;
-        }
-    ];
-    errors: [
-        {
-            hardware_id: number;
-            message: string;
-        }
-    ];
+    returned_items: {
+        hardware_id: number;
+        quantity: number;
+    }[];
+    errors: {
+        hardware_id: number;
+        message: string;
+    }[];
 }
 
 export const returnItems = createAsyncThunk<
@@ -112,11 +104,10 @@ export const returnItems = createAsyncThunk<
 >(
     `${teamOrderReducerName}/returnItems`,
     async (returnItemsData, { rejectWithValue, dispatch }) => {
-        const { ...postData } = returnItemsData;
         try {
-            const response = await post<Order>(
+            const response = await post<ReturnOrderResponse>(
                 `/api/hardware/orders/returns/`,
-                postData
+                returnItemsData
             );
             dispatch(
                 displaySnackbar({
@@ -222,17 +213,12 @@ const teamOrderSlice = createSlice({
         });
         builder.addCase(returnItems.pending, (state) => {
             state.returnedIsLoading = true;
-            state.returnError = null;
         });
         builder.addCase(returnItems.fulfilled, (state, { payload }) => {
             state.returnedIsLoading = false;
-            state.returnError = null;
         });
         builder.addCase(returnItems.rejected, (state, { payload }) => {
             state.returnedIsLoading = false;
-            state.returnError =
-                payload?.message ??
-                "There was a problem returning orders. If this continues please contact any IEEE Web Team Exec.";
         });
 
         builder.addCase(updateOrderStatus.pending, (state) => {
@@ -275,6 +261,11 @@ export const isLoadingSelector = createSelector(
 export const errorSelector = createSelector(
     [teamOrderSliceSelector],
     (teamOrderSlice) => teamOrderSlice.error
+);
+
+export const isReturnedLoadingSelector = createSelector(
+    [teamOrderSliceSelector],
+    (teamOrderSlice) => teamOrderSlice.returnedIsLoading
 );
 
 export const hardwareInOrdersSelector = createSelector(

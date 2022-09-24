@@ -28,15 +28,16 @@ import { useDispatch, useSelector } from "react-redux";
 import {
     checkedOutOrdersSelector,
     errorSelector,
+    isReturnedLoadingSelector,
     returnItems,
-    ReturnOrderRequest,
 } from "slices/order/teamOrderSlice";
-import { hardwareSelectors } from "../../../slices/hardware/hardwareSlice";
+import { hardwareSelectors } from "slices/hardware/hardwareSlice";
+import { displaySnackbar } from "slices/ui/uiSlice";
 
 const createDropdownList = (number: number) => {
     let entry = [];
 
-    for (let i = 0; i <= number; i++) {
+    for (let i = 1; i <= number; i++) {
         entry.push(
             <MenuItem key={i} role="quantity" value={i.toString()}>
                 {i}
@@ -63,6 +64,7 @@ const setInitialValues = (
 export const TeamCheckedOutOrderTable = () => {
     const orders = useSelector(checkedOutOrdersSelector);
     const fetchOrdersError = useSelector(errorSelector);
+    const returnIsLoading = useSelector(isReturnedLoadingSelector);
     const hardware = useSelector(hardwareSelectors.selectEntities);
     const [visibility, setVisibility] = useState(true);
     const toggleVisibility = () => {
@@ -81,19 +83,32 @@ export const TeamCheckedOutOrderTable = () => {
     //     order: number;
     // }
 
-    const handleReturnOrder = (values: FormikValues) => {
-        // comvert formik to correct format here
-        // const returnOrderData: ReturnOrderRequest = {
-        //     hardware: [
-        //         {
-        //             id: number,
-        //             quantity: number,
-        //             part_returned_health: string,
-        //         }
-        //     ],
-        //     order: values.
-        // };
-        // dispatch(returnItems(returnOrderData));
+    const handleReturnOrder = (values: FormikValues, orderId: number) => {
+        try {
+            // convert formik to correct format here
+            const hardware = [];
+            const keys = Object.keys(values);
+            for (let i = 0; i < keys.length; i += 3) {
+                const id = parseInt(keys[i].split("-")[0]);
+                if (values[keys[i + 1]]) {
+                    hardware.push({
+                        id,
+                        quantity: values[keys[i]],
+                        part_returned_health: values[keys[i + 2]],
+                    });
+                }
+            }
+            dispatch(returnItems({ hardware, order: orderId }));
+        } catch (e) {
+            dispatch(
+                displaySnackbar({
+                    message: "There was an error parsing orders.",
+                    options: {
+                        variant: "error",
+                    },
+                })
+            );
+        }
     };
 
     return (
@@ -121,8 +136,7 @@ export const TeamCheckedOutOrderTable = () => {
                                 checkedOutOrder.hardwareInTableRow
                             )}
                             onSubmit={(values) => {
-                                alert(JSON.stringify(values, undefined, 2));
-                                handleReturnOrder(values);
+                                handleReturnOrder(values, checkedOutOrder.id);
                             }}
                         >
                             {(props) => (
@@ -158,11 +172,11 @@ export const TeamCheckedOutOrderTable = () => {
                                                         >
                                                             Info
                                                         </TableCell>
-                                                        <TableCell
-                                                            className={`${styles.width1} ${styles.noWrap}`}
-                                                        >
-                                                            Qty
-                                                        </TableCell>
+                                                        {/*<TableCell*/}
+                                                        {/*    className={`${styles.width1} ${styles.noWrap}`}*/}
+                                                        {/*>*/}
+                                                        {/*    Qty*/}
+                                                        {/*</TableCell>*/}
                                                         <TableCell
                                                             className={`${styles.width1} ${styles.noWrap}`}
                                                         >
@@ -214,25 +228,26 @@ export const TeamCheckedOutOrderTable = () => {
                                                                         }
                                                                         src={
                                                                             hardware[
-                                                                                row.id -
-                                                                                    1
+                                                                                row.id
                                                                             ]
                                                                                 ?.picture ??
+                                                                            hardware[
+                                                                                row.id
+                                                                            ]
+                                                                                ?.image_url ??
                                                                             hardwareImagePlaceholder
                                                                         }
                                                                         alt={
                                                                             hardware[
-                                                                                row.id -
-                                                                                    1
+                                                                                row.id
                                                                             ]?.name
                                                                         }
                                                                     />
                                                                 </TableCell>
                                                                 <TableCell>
                                                                     {
-                                                                        hardware[
-                                                                            row.id - 1
-                                                                        ]?.name
+                                                                        hardware[row.id]
+                                                                            ?.name
                                                                     }
                                                                 </TableCell>
                                                                 <TableCell>
@@ -242,14 +257,13 @@ export const TeamCheckedOutOrderTable = () => {
                                                                         <Info />
                                                                     </IconButton>
                                                                 </TableCell>
-                                                                <TableCell>
-                                                                    {
-                                                                        hardware[
-                                                                            row.id - 1
-                                                                        ]
-                                                                            ?.quantity_available
-                                                                    }
-                                                                </TableCell>
+                                                                {/* TODO: Add total quantity column */}
+                                                                {/*<TableCell>*/}
+                                                                {/*    {*/}
+                                                                {/*        hardware[row.id]*/}
+                                                                {/*            ?.quantity_available*/}
+                                                                {/*    }*/}
+                                                                {/*</TableCell>*/}
                                                                 <TableCell>
                                                                     <div
                                                                         style={{
@@ -302,10 +316,7 @@ export const TeamCheckedOutOrderTable = () => {
                                                                     align={"right"}
                                                                 >
                                                                     {
-                                                                        hardware[
-                                                                            row.id - 1
-                                                                        ]
-                                                                            ?.quantity_remaining
+                                                                        row.quantityGranted
                                                                     }
                                                                 </TableCell>
                                                                 <TableCell>
@@ -375,6 +386,7 @@ export const TeamCheckedOutOrderTable = () => {
                                                     variant="contained"
                                                     type="submit"
                                                     disableElevation
+                                                    disabled={returnIsLoading}
                                                     data-testid={`return-button-${checkedOutOrder.id}`}
                                                 >
                                                     Return Items
