@@ -65,7 +65,12 @@ const AdminDashboard = () => {
                         className="orderCardGrid"
                     >
                         {Orders.map((order) => (
-                            <Grid item xs={2} className={styles.orderCard}>
+                            <Grid
+                                item
+                                xs={2}
+                                className={styles.orderCard}
+                                style={{ width: "225px", height: "164px" }}
+                            >
                                 <OrderCard
                                     teamCode={order[0].toString()}
                                     orderQuantity={Number(order[1])}
