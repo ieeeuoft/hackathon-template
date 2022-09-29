@@ -16,6 +16,15 @@ import {
 import { CartItem } from "api/types";
 import { adminGroup } from "constants.js";
 
+export const overviewTitles = [
+    "123 items checked out",
+    "200 participants",
+    "14 teams",
+    "123 orders",
+    "7 broken/lost items",
+    "test item",
+];
+
 // For DashCard on Dashboard
 export const cardItems = [
     {
