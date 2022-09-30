@@ -63,7 +63,7 @@ const AdminDashboard = () => {
                                         0
                                     )}
                                     time={pendingOrder.updated_at}
-                                    id={pendingOrder.id}
+                                    id={pendingOrder.team_id}
                                 />
                             </Grid>
                         ))}
