@@ -28,7 +28,12 @@ const AdminDashboard = () => {
                         className="overviewCardGrid"
                     >
                         {overviewTitles.map((title) => (
-                            <Grid item xs={2} className={styles.overViewCard}>
+                            <Grid
+                                item
+                                xs={2}
+                                className={styles.overViewCard}
+                                key={title}
+                            >
                                 <Paper className={styles.overviewCard}>
                                     <Card className={styles.overviewCard}>{title}</Card>
                                 </Paper>
@@ -54,6 +59,7 @@ const AdminDashboard = () => {
                                 xs={2}
                                 className={styles.orderCard}
                                 style={{ width: "225px", height: "164px" }}
+                                key={pendingOrder.team_code}
                             >
                                 <OrderCard
                                     teamCode={pendingOrder.team_code}

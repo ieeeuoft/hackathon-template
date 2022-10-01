@@ -1,5 +1,5 @@
 import React from "react";
-import Dashboard from "pages/Dashboard/Dashboard";
+import AdminDashboard from "pages/AdminDashboard/AdminDashboard";
 
 import { render, waitFor } from "testing/utils";
 
@@ -7,7 +7,7 @@ import { mockPendingOrders, overviewTitles } from "testing/mockData";
 
 describe("Admin Dashboard Page", () => {
     it("Renders correctly when the dashboard appears 4 Pending Order cards and all Overview Cards", async () => {
-        const { queryByText, getByText } = render(<Dashboard />);
+        const { queryByText, getByText } = render(<AdminDashboard />);
 
         await waitFor(() => {
             for (let title of overviewTitles) {
