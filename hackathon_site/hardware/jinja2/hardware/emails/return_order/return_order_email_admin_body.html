@@ -1,0 +1,26 @@
+<p>Hello {{ recipient|striptags }},</p>
+
+<p>This is confirmation that {{ requester.first_name|striptags }} has marked the following items as returned for Order #{{ order.order_id }} made by Team #{{ order.team_code }}.</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>Item ID</th>
+            <th>Quantity Returned</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in order.returned_items %}
+            <tr>
+                <td> {{ item.hardware_id }} </td>
+                <td> {{ item.quantity }} </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<p> Click <a href="{{ hss_url }}teams/{{order.team_code}}#order{{order.order_id}}">here</a> to view more information about the order.</p>
+
+<p>Best,<br>
+The {{ hackathon_name }} Team
+</p>

@@ -212,6 +212,14 @@ class LeaveTeamTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def check_leave_and_delete(self):
+        other_user = User.objects.create_user(
+            username="other_user@bar.com",
+            password=self.password,
+            first_name="other_user",
+            last_name="Bar",
+            email="other_user@bar.com",
+        )
+        Profile.objects.create(team=self.profile.team, user=other_user)
         old_team = self.profile.team
         response = self.client.post(self.view)
         self.user.refresh_from_db()
@@ -220,7 +228,7 @@ class LeaveTeamTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(response.data["id"], self.user.profile.team.pk)
         self.assertNotEqual(old_team.pk, self.user.profile.team.pk)
         self.assertEqual(
-            Team.objects.filter(team_code=old_team.team_code).exists(), False
+            Team.objects.filter(team_code=old_team.team_code).exists(), True
         )
 
     def check_cannot_leave(self):
@@ -403,6 +411,7 @@ class ProfileDetailViewTestCase(SetupUserMixin, APITestCase):
             "acknowledge_rules": False,
             "e_signature": None,
             "team": self.profile.team_id,
+            "phone_number": "1234567890",
         }
         self.view = reverse("api:event:profile-detail", kwargs={"pk": self.profile.id})
 
@@ -435,6 +444,7 @@ class ProfileDetailViewTestCase(SetupUserMixin, APITestCase):
             "acknowledge_rules": False,
             "e_signature": None,
             "team": self.profile.team_id,
+            "phone_number": "1234567890",
         }
 
         response = self.client.patch(self.view, request_body)
@@ -458,6 +468,7 @@ class CurrentProfileViewTestCase(SetupUserMixin, APITestCase):
             "acknowledge_rules": True,
             "e_signature": "user signature",
             "team": self.profile.team_id,
+            "phone_number": "1234567890",
         }
         self.view = reverse("api:event:current-profile")
 
@@ -514,6 +525,7 @@ class CurrentProfileViewTestCase(SetupUserMixin, APITestCase):
             "acknowledge_rules": True,
             "e_signature": None,
             "team": self.profile.team_id,
+            "phone_number": "1234567890",
         }
 
         response = self.client.patch(self.view, request_body)
@@ -534,6 +546,7 @@ class CreateProfileViewTestCase(SetupUserMixin, APITestCase):
             "id_provided": False,
             "acknowledge_rules": True,
             "e_signature": "user signature",
+            "phone_number": "1234567890",
         }
         self.view = reverse("api:event:current-profile")
 
@@ -570,7 +583,7 @@ class CreateProfileViewTestCase(SetupUserMixin, APITestCase):
         self._review(application=self._apply_as_user(self.user, rsvp=True))
         self._login()
         response = self.client.post(
-            self.view, {"e_signature": "user signature", "acknowledge_rules": False}
+            self.view, {"e_signature": "user signature", "acknowledge_rules": False,},
         )
         data = response.json()
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -582,7 +595,7 @@ class CreateProfileViewTestCase(SetupUserMixin, APITestCase):
         self._review(application=self._apply_as_user(self.user, rsvp=True))
         self._login()
         response = self.client.post(
-            self.view, {"e_signature": "", "acknowledge_rules": True}
+            self.view, {"e_signature": "", "acknowledge_rules": True,},
         )
         data = response.json()
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -787,9 +800,6 @@ class TeamIncidentListViewPostTestCase(SetupUserMixin, APITestCase):
         Profile.objects.create(user=self.user, team=self.team)
 
         response = self.client.post(self.view, request_data)
-
-        print(response)
-        print(request_data)
 
         self.assertEqual(
             response.json(), {"detail": "Can only create incidents for your own team."}

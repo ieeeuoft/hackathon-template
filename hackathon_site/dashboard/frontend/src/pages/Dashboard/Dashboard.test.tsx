@@ -160,7 +160,7 @@ describe("Dashboard Page", () => {
     it("Removes orders when cancel order button is clicked", async () => {
         mockTeamAPI();
         mockOrderAPI(mockPendingOrders);
-        const pendingOrderDetailUri = "/api/hardware/orders/4";
+        const pendingOrderDetailUri = "/api/event/teams/team/orders/4";
         const pendingOrderResponse = makeMockApiResponse(mockPendingOrdersInTable[1]);
         when(mockedPatch)
             .calledWith(pendingOrderDetailUri, { status: "Cancelled" })
@@ -188,7 +188,7 @@ describe("Dashboard Page", () => {
         fireEvent.click(cancelOrderBtn);
 
         await waitFor(() => {
-            expect(mockedPatch).toHaveBeenCalledWith(`/api/hardware/orders/4`, {
+            expect(mockedPatch).toHaveBeenCalledWith(`/api/event/teams/team/orders/4`, {
                 status: "Cancelled",
             });
             expect(pendingOrderSelectors.selectById(store.getState(), 4)).toEqual(
@@ -202,6 +202,58 @@ describe("Dashboard Page", () => {
 });
 
 describe("Dashboard Page Error Messages", () => {
+    it("Renders order info box when there are fulfillment errors", () => {
+        const store = makeStoreWithEntities({
+            cartState: {
+                fulfillmentError: {
+                    order_id: 1,
+                    errors: [
+                        { hardware_id: 1, message: "No sensors left in inventory" },
+                    ],
+                },
+            },
+            cartItems: [],
+        });
+        mockTeamAPI();
+        const { getByText } = render(<Dashboard />, { store });
+
+        waitFor(() => {
+            getByText(/there were modifications made to order 1/i);
+            getByText(/no sensors left in inventory/i);
+        });
+    });
+
+    it("Shows error message when there is a problem retrieving orders", async () => {
+        mockTeamAPI();
+        when(mockedGet)
+            .calledWith(ordersUri)
+            .mockRejectedValue({
+                response: {
+                    status: 500,
+                    message: "Something went wrong",
+                },
+            });
+        const { findByText } = render(<Dashboard />);
+        await findByText(/Something went wrong/i);
+    });
+
+    it("Shows default error message when there is a problem retrieving orders", async () => {
+        mockTeamAPI();
+        when(mockedGet)
+            .calledWith(ordersUri)
+            .mockRejectedValue({
+                response: {
+                    status: 500,
+                },
+            });
+        const { findByText } = render(<Dashboard />);
+        await findByText(
+            /There was a problem retrieving orders. If this continues please contact hackathon organizers/i
+        );
+    });
+});
+
+describe("Dashboard Page Edit Team Model", () => {
     it("Renders order info box when there are fulfillment errors", () => {
         const store = makeStoreWithEntities({
             cartState: {
