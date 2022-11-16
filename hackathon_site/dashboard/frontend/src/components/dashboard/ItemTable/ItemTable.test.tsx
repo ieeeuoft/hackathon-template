@@ -14,7 +14,7 @@ import {
     mockReturnedOrdersInTable,
 } from "testing/mockData";
 import { ReturnOrderInTable } from "api/types";
-import { getAllByText } from "@testing-library/react";
+import { getAllByText, queryAllByText } from "@testing-library/react";
 
 describe("<PendingTables />", () => {
     it("Shows pending items and status chip", () => {
@@ -77,6 +77,22 @@ describe("<PendingTables />", () => {
         fireEvent.click(button);
         expect(getByText(/show all/i)).toBeInTheDocument();
         expect(queryByText(/cancel order/i)).toBeNull();
+    });
+
+    it("cancel order modal shows when cancel order button is clicked", () => {
+        const store = makeStoreWithEntities({
+            pendingOrders: mockPendingOrdersInTable,
+        });
+        const { getByText, getAllByText } = render(<PendingTables />, {
+            store,
+        });
+        const button = getByText(/cancel order/i);
+        fireEvent.click(button);
+
+        const cancelOrderModalMessage = getAllByText(
+            "Your team will be notified upon cancellation"
+        );
+        expect(cancelOrderModalMessage[0]).toBeInTheDocument();
     });
 });
 
