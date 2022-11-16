@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styles from "components/general/OrderTables/OrderTables.module.scss";
 import {
     Button,
@@ -42,6 +42,7 @@ import {
     GeneralPendingTable,
     GeneralReturnTable,
 } from "components/general/OrderTables/OrderTables";
+import PopupModal from "components/general/PopupModal/PopupModal";
 
 export const CheckedOutTables = () =>
     // TODO: for incident reports
@@ -223,6 +224,16 @@ export const PendingTables = () => {
     const isCancelOrderLoading = useSelector(cancelOrderLoadingSelector);
     const toggleVisibility = () => dispatch(togglePendingTable());
     const cancelOrder = (orderId: number) => dispatch(cancelOrderThunk(orderId));
+    const [showCancelOrderModal, setShowCancelOrderModal] = useState(false);
+
+    const closeModal = () => {
+        setShowCancelOrderModal(false);
+    };
+
+    const submitModal = (cancelOrderId: number) => {
+        cancelOrder(cancelOrderId); // Perform Cancellation
+        setShowCancelOrderModal(false);
+    };
 
     return (
         <Container
@@ -258,7 +269,7 @@ export const PendingTables = () => {
                                 }}
                             >
                                 <Button
-                                    onClick={() => cancelOrder(pendingOrder.id)}
+                                    onClick={() => setShowCancelOrderModal(true)}
                                     disabled={isCancelOrderLoading}
                                     color="secondary"
                                     data-testid="cancel-order-button"
@@ -267,6 +278,15 @@ export const PendingTables = () => {
                                 </Button>
                             </div>
                         )}
+                        <PopupModal
+                            description={"Your team will be notified upon cancellation"}
+                            isVisible={showCancelOrderModal}
+                            submitHandler={() => submitModal(pendingOrder.id)}
+                            cancelText={"Nevermind"}
+                            submitText={"Cancel Order"}
+                            cancelHandler={closeModal}
+                            title={"Are you sure?"}
+                        />
                     </div>
                 ))}
         </Container>
