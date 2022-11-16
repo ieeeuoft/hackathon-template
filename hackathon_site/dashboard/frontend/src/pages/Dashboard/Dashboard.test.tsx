@@ -187,6 +187,10 @@ describe("Dashboard Page", () => {
         const cancelOrderBtn = within(orderItem).getByTestId("cancel-order-button");
         fireEvent.click(cancelOrderBtn);
 
+        // Make sure cancel order button on modal is called
+        const confirmCancelOrderBtn = getAllByText(/cancel order/i);
+        fireEvent.click(confirmCancelOrderBtn[2]);
+
         await waitFor(() => {
             expect(mockedPatch).toHaveBeenCalledWith(`/api/event/teams/team/orders/4`, {
                 status: "Cancelled",
