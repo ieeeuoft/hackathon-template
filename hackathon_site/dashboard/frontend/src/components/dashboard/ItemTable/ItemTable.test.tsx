@@ -78,21 +78,6 @@ describe("<PendingTables />", () => {
         expect(getByText(/show all/i)).toBeInTheDocument();
         expect(queryByText(/cancel order/i)).toBeNull();
     });
-
-    it("cancel order modal shows when cancel order button is clicked", () => {
-        const store = makeStoreWithEntities({
-            pendingOrders: mockPendingOrdersInTable,
-        });
-        const { getByText } = render(<PendingTables />, {
-            store,
-        });
-        const button = getByText(/cancel order/i);
-        fireEvent.click(button);
-
-        expect(
-            getByText("Your team will be notified upon cancellation")
-        ).toBeInTheDocument();
-    });
 });
 
 describe("<CheckedOutTables />", () => {
