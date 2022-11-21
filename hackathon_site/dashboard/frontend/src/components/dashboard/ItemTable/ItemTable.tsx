@@ -11,6 +11,8 @@ import {
     TableContainer,
     TableHead,
     TableRow,
+    Fade,
+    Grow,
 } from "@material-ui/core";
 import Info from "@material-ui/icons/Info";
 import { useDispatch, useSelector } from "react-redux";
@@ -276,17 +278,19 @@ export const PendingTables = () => {
                                 >
                                     Cancel order
                                 </Button>
+                                <PopupModal
+                                    description={
+                                        "Are you sure you want to cancel this order? The team will be notified."
+                                    }
+                                    isVisible={showCancelOrderModal}
+                                    submitHandler={() => submitModal(pendingOrder.id)}
+                                    cancelText={"Go Back"}
+                                    submitText={"Delete Order"}
+                                    cancelHandler={closeModal}
+                                    title={"Careful!"}
+                                />
                             </div>
                         )}
-                        <PopupModal
-                            description={"Your team will be notified upon cancellation"}
-                            isVisible={showCancelOrderModal}
-                            submitHandler={() => submitModal(pendingOrder.id)}
-                            cancelText={"Nevermind"}
-                            submitText={"Cancel Order"}
-                            cancelHandler={closeModal}
-                            title={"Are you sure?"}
-                        />
                     </div>
                 ))}
         </Container>
