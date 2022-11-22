@@ -168,12 +168,9 @@ describe("Dashboard Page", () => {
 
         const store = makeStoreWithEntities({});
 
-        const { getByTestId, queryByText, getByText, getAllByText } = render(
-            <Dashboard />,
-            {
-                store,
-            }
-        );
+        const { getByTestId, queryByText, getByText } = render(<Dashboard />, {
+            store,
+        });
 
         await waitFor(() => {
             mockPendingOrdersInTable.forEach((order) => {
@@ -186,6 +183,10 @@ describe("Dashboard Page", () => {
         );
         const cancelOrderBtn = within(orderItem).getByTestId("cancel-order-button");
         fireEvent.click(cancelOrderBtn);
+
+        // Make sure cancel order button on modal is called
+        const confirmCancelOrderBtn = getByText(/Delete Order/i);
+        fireEvent.click(confirmCancelOrderBtn);
 
         await waitFor(() => {
             expect(mockedPatch).toHaveBeenCalledWith(`/api/event/teams/team/orders/4`, {
