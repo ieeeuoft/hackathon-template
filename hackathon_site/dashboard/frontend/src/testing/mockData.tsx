@@ -29,6 +29,11 @@ export const cardItems = [
                 url: "https://www.facebook.com",
                 icon: <OpenInNew />,
             },
+            {
+                name: "Hardware Signout Site",
+                url: "https://hardware.newhacks.ca",
+                icon: <OpenInNew />,
+            },
         ],
     },
     {
@@ -939,21 +944,6 @@ export const mockReturnedOrdersInTable: ReturnOrderInTable[] = [
                 time: `${timeForOrderItem11.toLocaleTimeString()} (${timeForOrderItem11.toDateString()})`,
             },
         ],
-    },
-];
-
-export const status = [
-    {
-        status: "Pending",
-        numOrders: 2,
-    },
-    {
-        status: "Ready for Pick up",
-        numOrders: 4,
-    },
-    {
-        status: "Checked out",
-        numOrders: 4,
     },
 ];
 
