@@ -45,6 +45,7 @@ const RadioOrderBy = ({ field, options }: FieldProps & { options: OrderByOptions
                 name={field.name}
                 value={item.value}
                 label={item.label}
+                data-testid={item.label}
                 control={<Radio color="primary" />}
                 checked={field.value === item.value}
                 key={i}
@@ -63,6 +64,7 @@ const OrderFilter = ({ handleReset, handleSubmit }: FormikValues) => {
                 <div className={styles.filterCategory} key={i}>
                     <FormControlLabel
                         name={field.name}
+                        data-testid={item.status}
                         value={item.status}
                         control={<Checkbox color="primary" />}
                         label={item.status}
