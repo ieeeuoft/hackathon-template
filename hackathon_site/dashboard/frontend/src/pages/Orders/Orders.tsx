@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Header from "components/general/Header/Header";
 import Typography from "@material-ui/core/Typography";
 import { Divider, Drawer, Grid, Hidden } from "@material-ui/core";
@@ -9,10 +9,19 @@ import OrdersFilter from "components/orders/OrdersFilter/OrderFilter";
 import CloseIcon from "@material-ui/icons/Close";
 import IconButton from "@material-ui/core/IconButton";
 import styles from "./Orders.module.scss";
-import { mockPendingOrders } from "testing/mockData";
 import OrderCard from "components/orders/OrderCard/OrderCard";
+import { useDispatch, useSelector } from "react-redux";
+import {
+    adminOrderSelectors,
+    getOrdersWithFilters,
+} from "slices/order/adminOrderSlice";
+import { mockPendingOrders } from "testing/mockData";
 
 const Orders = () => {
+    const dispatch = useDispatch();
+    useEffect(() => {
+        dispatch(getOrdersWithFilters());
+    }, [dispatch]);
     const [mobileOpen, setMobileOpen] = React.useState(false);
     const toggleFilter = () => {
         setMobileOpen(!mobileOpen);
@@ -21,6 +30,8 @@ const Orders = () => {
         alert(`The order you clicked is: #${orderId}`);
         console.log(orderId);
     };
+    const allOrders = useSelector(adminOrderSelectors.selectAll);
+
     return (
         <>
             <Header />
@@ -85,27 +96,16 @@ const Orders = () => {
                                         key={idx}
                                         onClick={() => handleClick(order.id)}
                                     >
-                                        {order.status === "Submitted" ? (
+                                        {(order.status === "Submitted" ||
+                                            order.status === "Ready for Pickup") && (
                                             <OrderCard
                                                 teamCode={order.team_code}
                                                 orderQuantity={order.items.length}
                                                 time={order.created_at}
                                                 id={order.id}
-                                            />
-                                        ) : (
-                                            <div
-                                                style={{
-                                                    border: "1px solid black",
-                                                    borderRadius: "5px",
-                                                    padding: "10px",
-                                                    textAlign: "center",
-                                                    backgroundColor: "lightblue",
-                                                    minHeight: "160px",
-                                                }}
+                                                status={order.status}
                                                 data-testid={`order-item-${order.id}`}
-                                            >
-                                                {"Order Card Component"}
-                                            </div>
+                                            />
                                         )}
                                     </Grid>
                                 ))}

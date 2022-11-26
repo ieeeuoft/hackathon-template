@@ -7,9 +7,10 @@ interface OrderProps {
     orderQuantity: number;
     time: string;
     id: number;
+    status: string;
 }
 
-const OrderCard = ({ teamCode, orderQuantity, time, id }: OrderProps) => {
+const OrderCard = ({ teamCode, orderQuantity, time, id, status }: OrderProps) => {
     const date = new Date(time);
     const month = date.toLocaleString("default", { month: "short" });
     const day = date.getDate();
@@ -20,6 +21,7 @@ const OrderCard = ({ teamCode, orderQuantity, time, id }: OrderProps) => {
         { title: "Order Qty", value: orderQuantity },
         { title: "Time", value: `${month} ${day}, ${hoursAndMinutes}` },
         { title: "ID", value: id },
+        { title: "Status", value: status },
     ];
 
     return (
