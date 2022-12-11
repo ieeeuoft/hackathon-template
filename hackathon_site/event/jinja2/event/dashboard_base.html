@@ -131,6 +131,32 @@
                 {% endif %}
             </div>
 
+            {% if application is not none %}
+            <div class="borderTopDiv z-depth-3">
+                <h2 class="formH2" id="faq">Application Answers</h2>
+
+                <p class="applicationQuestionAnswer">Birthday: {{application.birthday}}</p>
+
+                <p class="applicationQuestionAnswer">Ethnicity: {{application.ethnicity}}</p>
+
+                <p class="applicationQuestionAnswer">Phone Number: {{application.phone_number}}</p>
+
+                <p class="applicationQuestionAnswer">School: {{application.school}}</p>
+
+                <p class="applicationQuestionAnswer">Study Level: {{application.study_level}}</p>
+
+                <p class="applicationQuestionAnswer">Graduation Year: {{application.graduation_year}}</p>
+
+                <p class="applicationQuestionAnswer">First question: {{application.q1}}</p>
+                
+                <p class="applicationQuestionAnswer">Second question: {{application.q2}}</p>
+
+                <p class="applicationQuestionAnswer">Third question: {{application.q3}}</p>
+                
+                <p class="applicationQuestionAnswer">Resume: {{application.resume}}</p>
+            </div>
+            {% endif %}
+
             {% if is_registration_open() or application is not none %}
             <div class="borderTopDiv z-depth-3">
                 <h2 class="formH2">Apply as a team</h2>

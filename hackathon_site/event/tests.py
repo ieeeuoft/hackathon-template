@@ -190,6 +190,18 @@ class DashboardTestCase(SetupUserMixin, TestCase):
         )
         self.assertContains(response, "Application Complete")
 
+        # Application answers appears
+        self.assertContains(response, self.user.application.birthday)
+        self.assertContains(response, self.user.application.ethnicity)
+        self.assertContains(response, self.user.application.phone_number)
+        self.assertContains(response, self.user.application.school)
+        self.assertContains(response, self.user.application.study_level)
+        self.assertContains(response, self.user.application.graduation_year)
+        self.assertContains(response, self.user.application.q1)
+        self.assertContains(response, self.user.application.q2)
+        self.assertContains(response, self.user.application.q3)
+        # self.assertContains(response, )
+
         # Leave team link appears
         self.assertContains(response, "Leave team")
         self.assertContains(response, reverse("registration:leave-team"))
