@@ -35,6 +35,8 @@ def environment(**options):
             "participant_package_link": settings.PARTICIPANT_PACKAGE_LINK,
             "chat_room_name": settings.CHAT_ROOM[0],
             "chat_room_link": settings.CHAT_ROOM[1],
+            "using_teams": settings.TEAMS,
+            "using_rsvp": settings.RSVP,
         }
     )
     return env

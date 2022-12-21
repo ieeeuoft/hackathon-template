@@ -8,14 +8,7 @@ import {
     GeneralPendingTable,
     GeneralReturnTable,
 } from "components/general/OrderTables/OrderTables";
-import {
-    Field,
-    FieldProps,
-    Form,
-    Formik,
-    FormikValues,
-    useFormikContext,
-} from "formik";
+import { Field, FieldProps, Form, Formik, useFormikContext } from "formik";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import { OrderInTable, OrderStatus } from "api/types";
 import { useDispatch, useSelector } from "react-redux";
@@ -29,11 +22,6 @@ import {
 interface SimpleOrderFormValues {
     itemIdsChecked: string[];
     checkAll: boolean;
-}
-
-interface UpdateOrderValues {
-    id: number;
-    status: OrderStatus;
 }
 
 const TableCheckbox = ({
