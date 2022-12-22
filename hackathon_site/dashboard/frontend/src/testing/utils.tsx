@@ -40,6 +40,11 @@ import {
     teamOrderReducerName,
     TeamOrderState,
 } from "slices/order/teamOrderSlice";
+import {
+    initialState as userInitialState,
+    userReducerName,
+    UserState,
+} from "slices/users/userSlice";
 
 export const withRouter = (component: React.ComponentElement<any, any>) => (
     <BrowserRouter>{component}</BrowserRouter>
@@ -131,6 +136,7 @@ export interface StoreEntities {
     pendingOrders?: OrderInTable[];
     teamDetailOrders?: OrderInTable[];
     teamDetailOrderState?: Partial<TeamOrderState>;
+    user?: Partial<UserState>;
 }
 
 export const makeStoreWithEntities = (entities: StoreEntities) => {
@@ -238,6 +244,13 @@ export const makeStoreWithEntities = (entities: StoreEntities) => {
         }
 
         preloadedState[teamOrderReducerName] = teamOrderState;
+    }
+
+    if (entities.user) {
+        preloadedState[userReducerName] = {
+            ...userInitialState,
+            ...entities.user,
+        };
     }
 
     return makeStore(preloadedState);
