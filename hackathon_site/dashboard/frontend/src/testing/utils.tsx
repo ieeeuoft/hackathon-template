@@ -10,7 +10,14 @@ import {
 import { makeStore, RootStore, RootState } from "slices/store";
 import { SnackbarProvider } from "notistack";
 import { AxiosResponse } from "axios";
-import { APIListResponse, CartItem, Category, Hardware, OrderInTable } from "api/types";
+import {
+    APIListResponse,
+    CartItem,
+    Category,
+    Hardware,
+    OrderInTable,
+    Team,
+} from "api/types";
 import {
     hardwareReducerName,
     HardwareState,
@@ -40,6 +47,11 @@ import {
     teamOrderReducerName,
     TeamOrderState,
 } from "slices/order/teamOrderSlice";
+import {
+    initialState as teamAdminInitialState,
+    teamAdminReducerName,
+    TeamAdminState,
+} from "slices/event/teamAdminSlice";
 
 export const withRouter = (component: React.ComponentElement<any, any>) => (
     <BrowserRouter>{component}</BrowserRouter>
@@ -126,6 +138,7 @@ export interface StoreEntities {
     ui?: DeepPartial<UIState>;
     cartItems?: CartItem[];
     team?: DeepPartial<TeamState>;
+    teams?: Team[];
     cartState?: DeepPartial<CartState>;
     orderState?: Partial<OrderState>;
     pendingOrders?: OrderInTable[];
@@ -238,6 +251,21 @@ export const makeStoreWithEntities = (entities: StoreEntities) => {
         }
 
         preloadedState[teamOrderReducerName] = teamOrderState;
+    }
+
+    if (entities.teams) {
+        const teamAdminState: TeamAdminState = {
+            ...teamAdminInitialState,
+            ids: [],
+            entities: {},
+        };
+
+        for (const order of entities.teams) {
+            teamAdminState.ids.push(order.id);
+            teamAdminState.entities[order.id] = order;
+        }
+
+        preloadedState[teamAdminReducerName] = teamAdminState;
     }
 
     return makeStore(preloadedState);
