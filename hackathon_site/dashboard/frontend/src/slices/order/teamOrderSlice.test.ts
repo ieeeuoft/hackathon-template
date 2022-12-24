@@ -3,7 +3,7 @@ import {
     mockCheckedOutOrdersInTable,
     mockOrders,
     mockPendingOrdersInTable,
-    mockProfile,
+    mockReturnedOrder,
     mockReturnedOrdersInTable,
     mockSubmittedOrder,
     mockTeam,
@@ -14,7 +14,7 @@ import {
     makeStoreWithEntities,
     waitFor,
 } from "testing/utils";
-import { get, patch } from "api/api";
+import { get, patch, post } from "api/api";
 import { displaySnackbar } from "slices/ui/uiSlice";
 import thunk, { ThunkDispatch } from "redux-thunk";
 import { AnyAction } from "redux";
@@ -33,6 +33,8 @@ import {
     checkedOutOrdersSelector,
     TeamOrderState,
     updateOrderStatus,
+    isReturnedLoadingSelector,
+    returnItems,
 } from "slices/order/teamOrderSlice";
 import {
     getTeamInfoData,
@@ -45,10 +47,12 @@ import { OrderStatus } from "api/types";
 jest.mock("api/api", () => ({
     ...jest.requireActual("api/api"),
     get: jest.fn(),
+    post: jest.fn(),
     patch: jest.fn(),
 }));
 
 const mockedGet = get as jest.MockedFunction<typeof get>;
+const mockedPost = post as jest.MockedFunction<typeof post>;
 const mockedPatch = patch as jest.MockedFunction<typeof patch>;
 
 type DispatchExts = ThunkDispatch<RootState, void, AnyAction>;
@@ -76,6 +80,14 @@ const statusFailureResponse = {
     },
 };
 
+const returnStatusFailureResponse = {
+    response: {
+        status: 404,
+        statusText: "Not Found",
+        message: "Could not return order: Error 404",
+    },
+};
+
 const combinedOrders = [...mockPendingOrdersInTable, ...mockCheckedOutOrdersInTable];
 
 describe("Selectors", () => {
@@ -85,6 +97,17 @@ describe("Selectors", () => {
         expect(teamOrderSliceSelector(mockState)).toEqual(
             mockState[teamOrderReducerName]
         );
+    });
+
+    test("isReturnedLoadingSelector", () => {
+        const loadingTrueState = mockStateWithTeamOrderState({
+            returnedIsLoading: true,
+        });
+        const loadingFalseState = mockStateWithTeamOrderState({
+            returnedIsLoading: false,
+        });
+        expect(isReturnedLoadingSelector(loadingTrueState)).toEqual(true);
+        expect(isReturnedLoadingSelector(loadingFalseState)).toEqual(false);
     });
 
     test("isLoadingSelector", () => {
@@ -248,6 +271,64 @@ describe("updateOrderStatus Thunk", () => {
         expect(actions).toContainEqual(
             displaySnackbar({
                 message: "Could not update order status: Error 404",
+                options: { variant: "error" },
+            })
+        );
+    });
+});
+
+describe("returnItems Thunk", () => {
+    const hardware = [
+        {
+            id: mockReturnedOrder[0].returned_items[0].hardware_id,
+            quantity: mockReturnedOrder[0].returned_items[0].quantity,
+            part_returned_health: "Healthy",
+        },
+    ];
+    it("Returns items on API success", async () => {
+        // populate the store
+        const { team_code } = mockTeam;
+        let mockResponse = makeMockApiListResponse(mockOrders);
+        mockedGet.mockResolvedValueOnce(mockResponse);
+        const store = makeStore();
+        await store.dispatch(getAdminTeamOrders(team_code));
+
+        const mockReturnOrderResponse = { ...mockReturnedOrder };
+        mockResponse = makeMockApiResponse(mockReturnOrderResponse);
+        mockedPost.mockResolvedValueOnce(mockResponse);
+        await store.dispatch(
+            returnItems({ hardware, order: mockReturnedOrder[0].order_id })
+        );
+
+        await waitFor(() => {
+            expect(mockedPost).toHaveBeenCalledWith(`/api/hardware/orders/returns/`, {
+                hardware,
+                order: mockReturnedOrder[0].order_id,
+            });
+            expect(returnedOrdersSelector(store.getState())).toEqual(
+                mockReturnedOrdersInTable
+            );
+        });
+    });
+
+    it("Dispatches snackbar on API failure", async () => {
+        mockedPost.mockRejectedValueOnce(returnStatusFailureResponse);
+
+        const store = mockStore(mockState);
+        await store.dispatch(
+            returnItems({ hardware, order: mockCheckedOutOrdersInTable[0].id })
+        );
+
+        expect(mockedPost).toHaveBeenCalledWith(`/api/hardware/orders/returns/`, {
+            hardware,
+            order: mockCheckedOutOrdersInTable[0].id,
+        });
+
+        const actions = store.getActions();
+
+        expect(actions).toContainEqual(
+            displaySnackbar({
+                message: "Could not return order: Error 404",
                 options: { variant: "error" },
             })
         );
