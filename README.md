@@ -15,6 +15,7 @@ A website template for hackathons run by [IEEE University of Toronto Student Bra
 - Terry Luan
 - Eric Ji
 - Carmen Chau
+- Samuel Liu
 
 ## Contents
 - [Requirements](#requirements)
