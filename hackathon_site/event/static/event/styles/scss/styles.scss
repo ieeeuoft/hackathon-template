@@ -12,6 +12,7 @@ p {
 .icon-block {
     padding: 0 15px;
 }
+
 .icon-block .material-icons {
     font-size: inherit;
 }
@@ -38,17 +39,21 @@ body {
 strong {
     font-weight: 700;
 }
+
 // End of general HTML stuff
 
 // Colors
 .backgroundColor {
+
     // Change the background colors of each page here!
     &Landing {
         background-color: color(backgroundColor);
     }
+
     &FormBase {
         background-color: color(backgroundColor);
     }
+
     &Dashboard {
         background-color: color(backgroundColor);
     }
@@ -107,9 +112,11 @@ strong {
         background-color: color(errorOnHover) !important;
     }
 }
+
 .active {
     color: color(secondary);
 }
+
 // End of colors
 
 // Formatting stuff
@@ -144,6 +151,7 @@ strong {
         padding: 0 !important;
     }
 }
+
 // End of formatting stuff
 
 // Navbar stuff
@@ -176,6 +184,7 @@ strong {
 .sidenav-trigger {
     margin-left: 0 !important;
 }
+
 // End of navbar stuff
 
 // Landing section
@@ -190,6 +199,7 @@ strong {
         margin-top: 0;
     }
 }
+
 // End of landing section
 
 // "About" section
@@ -198,6 +208,7 @@ strong {
         margin: 20px 0;
     }
 }
+
 .countdown {
     @include flexPosition($jusCon: center, $alIte: center);
 
@@ -233,6 +244,7 @@ strong {
 #day3 {
     margin: -20px 0 0;
 }
+
 // End of "About" section
 
 // "Schedule" section
@@ -257,11 +269,13 @@ strong {
         p {
             font-size: size(lg);
         }
+
         &Time {
             width: 70px;
         }
     }
 }
+
 // End of "Schedule" section
 
 // "Sponsors" section
@@ -275,6 +289,7 @@ strong {
         padding-bottom: 50px;
     }
 }
+
 // End of "Sponsors" section
 
 // "Hackathon stats" section
@@ -290,6 +305,7 @@ strong {
         margin-bottom: 25px;
     }
 }
+
 // End of "Hackathon stats" section
 
 // "FAQ" section
@@ -309,6 +325,7 @@ strong {
     box-shadow: none;
     margin: 0;
 }
+
 .collapsible-header {
     background-color: transparent;
 }
@@ -338,6 +355,7 @@ strong {
         height: 200px;
     }
 }
+
 // End of video section
 
 // Carousel section
@@ -348,13 +366,14 @@ strong {
         opacity: 1 !important;
         height: 333px !important;
 
-        > img {
+        >img {
             width: auto !important;
             height: 100%;
             transform: translateX(-120px);
         }
     }
 }
+
 // End of carousel section
 
 // Footer section
@@ -378,6 +397,7 @@ strong {
         }
     }
 }
+
 // End of section
 
 // Login stuff
@@ -444,9 +464,11 @@ strong {
             font-size: 40px;
             margin-bottom: 20px;
         }
+
         &H2 {
             font-size: 24px;
         }
+
         &H3 {
             font-size: size(xl);
         }
@@ -469,15 +491,16 @@ strong {
 }
 
 .input-field {
-    input:not([type]):focus:not([readonly]) + label,
-    input[type="text"]:focus:not([readonly]) + label,
-    input[type="password"]:focus:not([readonly]) + label,
-    input[type="email"]:focus:not([readonly]) + label,
-    input[type="date"]:focus:not([readonly]) + label,
-    input[type="tel"]:focus:not([readonly]) + label,
-    input[type="number"]:focus:not([readonly]) + label,
-    input[type="search"]:focus:not([readonly]) + label,
-    textarea.materialize-textarea:focus:not([readonly]) + label {
+
+    input:not([type]):focus:not([readonly])+label,
+    input[type="text"]:focus:not([readonly])+label,
+    input[type="password"]:focus:not([readonly])+label,
+    input[type="email"]:focus:not([readonly])+label,
+    input[type="date"]:focus:not([readonly])+label,
+    input[type="tel"]:focus:not([readonly])+label,
+    input[type="number"]:focus:not([readonly])+label,
+    input[type="search"]:focus:not([readonly])+label,
+    textarea.materialize-textarea:focus:not([readonly])+label {
         color: color(primary);
     }
 
@@ -495,6 +518,7 @@ strong {
         box-shadow: 0 1px 0 0 color(primary);
     }
 }
+
 // End of form stuff
 
 // Dashboard stuff
@@ -523,4 +547,16 @@ strong {
         margin: 5px 0 20px;
     }
 }
+
+.application {
+    &Question {
+        font-weight: bold;
+        margin: 10px 0 0;
+    }
+
+    &Answer {
+        margin: 5px 0 20px;
+    }
+}
+
 // End of dashboard stuff
