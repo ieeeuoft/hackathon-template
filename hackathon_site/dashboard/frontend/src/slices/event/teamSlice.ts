@@ -8,10 +8,7 @@ import { AppDispatch, RootState } from "slices/store";
 import { Team } from "api/types";
 import { get, post } from "api/api";
 import { closeTeamModalItem, displaySnackbar } from "slices/ui/uiSlice";
-import { push } from "connected-react-router";
-import { cartReducerName, cartSelectors, OrderResponse } from "../hardware/cartSlice";
-import { useDispatch } from "react-redux";
-import { getTeamOrders } from "../order/orderSlice";
+import { getTeamOrders } from "slices/order/orderSlice";
 
 interface TeamExtraState {
     isLoading: boolean;
