@@ -326,3 +326,7 @@ PARTICIPANT_PACKAGE_LINK = "#"
 # Note this is in the form (chat_room_name, chat_room_link)
 # Chat room name is such as the following: Slack, Discord
 CHAT_ROOM = ("Slack", "https://slack.com")
+
+# Enable/Disable certain Features
+TEAMS = True
+RSVP = True
