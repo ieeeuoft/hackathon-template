@@ -26,6 +26,23 @@ jest.mock("api/api", () => ({
 const mockedPost = post as jest.MockedFunction<typeof post>;
 const mockedGet = get as jest.MockedFunction<typeof get>;
 
+const mockHardwareSignOutStartDate = jest.fn();
+const mockHardwareSignOutEndDate = jest.fn();
+jest.mock("constants.js", () => ({
+    get hardwareSignOutStartDate() {
+        return mockHardwareSignOutStartDate();
+    },
+    get hardwareSignOutEndDate() {
+        return mockHardwareSignOutEndDate();
+    },
+    get minTeamSize() {
+        return 2;
+    },
+    get maxTeamSize() {
+        return 4;
+    },
+}));
+
 describe("Cart Page", () => {
     test("Cart items from store and Cart Summary card appears", async () => {
         const store = makeStoreWithEntities({ hardware: mockHardware });

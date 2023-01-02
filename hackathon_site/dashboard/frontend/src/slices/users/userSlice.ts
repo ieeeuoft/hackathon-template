@@ -197,9 +197,9 @@ export const logout = createAsyncThunk<
     void,
     void,
     { state: RootState; rejectValue: RejectValue; dispatch: AppDispatch }
->(`${userReducerName}/logout`, async (arg, { dispatch, rejectWithValue }) => {
+>(`${userReducerName}/logout`, async (_, { dispatch, rejectWithValue }) => {
     try {
-        const response = await post("/api/auth/logout/", null);
+        const response = await post<void>("/api/auth/logout/", null);
         dispatch(push("/"));
         return response.data;
     } catch (e: any) {
