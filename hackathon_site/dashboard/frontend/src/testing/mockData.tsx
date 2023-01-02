@@ -18,6 +18,7 @@ import {
 } from "api/types";
 import { CartItem } from "api/types";
 import { adminGroup } from "constants.js";
+import { ReturnOrderResponse } from "slices/order/teamOrderSlice";
 
 // For DashCard on Dashboard
 export const cardItems = [
@@ -944,6 +945,40 @@ export const mockReturnedOrdersInTable: ReturnOrderInTable[] = [
                 time: `${timeForOrderItem11.toLocaleTimeString()} (${timeForOrderItem11.toDateString()})`,
             },
         ],
+    },
+];
+
+export const mockReturnedOrder: ReturnOrderResponse[] = [
+    {
+        order_id: 1,
+        team_code: "A48E5",
+        returned_items: [
+            {
+                hardware_id: 1,
+                quantity: 2,
+            },
+        ],
+        errors: [
+            {
+                hardware_id: 1,
+                message: "",
+            },
+        ],
+    },
+];
+
+export const status = [
+    {
+        status: "Pending",
+        numOrders: 2,
+    },
+    {
+        status: "Ready for Pick up",
+        numOrders: 4,
+    },
+    {
+        status: "Checked out",
+        numOrders: 4,
     },
 ];
 
