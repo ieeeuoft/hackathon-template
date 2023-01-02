@@ -46,4 +46,22 @@ describe("<TeamSearchBar />", () => {
             expect(get).toHaveBeenCalledWith(teamsUri, expectedFilters);
         });
     });
+
+    it("Submits search query when clicking Enter key", async () => {
+        const { getByLabelText } = render(<TeamSearchBar />);
+
+        const input = getByLabelText(/search teams/i);
+
+        fireEvent.change(input, { target: { value: "foobar" } });
+        fireEvent.submit(input);
+
+        const expectedFilters = {
+            search: "foobar",
+            limit: NUM_TEAM_LIMIT,
+        };
+
+        await waitFor(() => {
+            expect(get).toHaveBeenCalledWith(teamsUri, expectedFilters);
+        });
+    });
 });

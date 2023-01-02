@@ -22,8 +22,8 @@ import { Button, Divider } from "@material-ui/core";
 
 const Teams = () => {
     const dispatch = useDispatch();
-    const teamsList = useSelector(teamAdminSelectors.selectAll);
     const history = useHistory();
+    const teamsList = useSelector(teamAdminSelectors.selectAll);
     const currNumTeams = useSelector(teamAdminSelectors.selectTotal);
     const count = useSelector(teamCountSelector);
     const isLoading = useSelector(isLoadingSelector);
