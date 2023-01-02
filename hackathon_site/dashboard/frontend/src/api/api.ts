@@ -82,7 +82,7 @@ export const get = <T>(
     return axios.get<T>(`${SERVER_URL}/${uri}`, makeConfig());
 };
 
-export const post = <T>(uri: string, data?: any) => {
+export const post = <T>(uri: string, data?: any): Promise<AxiosResponse<T>> => {
     uri = cleanURI(uri);
     return axios.post(`${SERVER_URL}/${uri}`, data, makeConfig());
 };
