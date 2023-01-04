@@ -15,6 +15,7 @@ import {
     adminOrderSelectors,
     getOrdersWithFilters,
 } from "slices/order/adminOrderSlice";
+import { useHistory } from "react-router-dom";
 
 const Orders = () => {
     const dispatch = useDispatch();
@@ -22,12 +23,9 @@ const Orders = () => {
         dispatch(getOrdersWithFilters());
     }, [dispatch]);
     const [mobileOpen, setMobileOpen] = React.useState(false);
+    const history = useHistory();
     const toggleFilter = () => {
         setMobileOpen(!mobileOpen);
-    };
-    const handleClick = (orderId: number) => {
-        alert(`The order you clicked is: #${orderId}`);
-        console.log(orderId);
     };
     const allOrders = useSelector(adminOrderSelectors.selectAll);
 
@@ -93,7 +91,9 @@ const Orders = () => {
                                         sm={6}
                                         xs={12}
                                         key={idx}
-                                        onClick={() => handleClick(order.id)}
+                                        onClick={() =>
+                                            history.push(`/teams/${order.team_code}`)
+                                        }
                                     >
                                         <OrderCard
                                             teamCode={order.team_code}
