@@ -65,18 +65,19 @@ const setInitialValues = (
 };
 
 export const TeamCheckedOutOrderTable = () => {
+    const dispatch = useDispatch();
     const orders = useSelector(checkedOutOrdersSelector);
+    const hardware = useSelector(hardwareSelectors.selectEntities);
     const fetchOrdersError = useSelector(errorSelector);
     const returnIsLoading = useSelector(isReturnedLoadingSelector);
-    const hardware = useSelector(hardwareSelectors.selectEntities);
+
     const [visibility, setVisibility] = useState(true);
-    const toggleVisibility = () => {
-        setVisibility(!visibility);
-    };
-    const dispatch = useDispatch();
     const openProductOverviewPanel = (hardwareId: number) => {
         dispatch(getUpdatedHardwareDetails(hardwareId));
         dispatch(openProductOverview());
+    };
+    const toggleVisibility = () => {
+        setVisibility(!visibility);
     };
 
     const handleReturnOrder = (values: FormikValues, orderId: number) => {

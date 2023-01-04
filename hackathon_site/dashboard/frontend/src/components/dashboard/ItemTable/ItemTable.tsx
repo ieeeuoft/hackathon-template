@@ -160,10 +160,12 @@ export const CheckedOutTables = () =>
                                                                 color="inherit"
                                                                 aria-label="Info"
                                                                 data-testid="info-button"
-                                                                onClick={() =>
+                                                                onClick={() => {
                                                                     openProductOverviewPanel(
                                                                         row.id
                                                                     )
+                                                                    console.log("Hardware ID: " + row.id + " working")
+                                                                }
                                                                 }
                                                             >
                                                                 <Info />
