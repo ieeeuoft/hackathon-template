@@ -31,8 +31,8 @@ import {
     isReturnedLoadingSelector,
     returnItems,
 } from "slices/order/teamOrderSlice";
-import { hardwareSelectors } from "slices/hardware/hardwareSlice";
-import { displaySnackbar } from "slices/ui/uiSlice";
+import {getUpdatedHardwareDetails, hardwareSelectors} from "slices/hardware/hardwareSlice";
+import {displaySnackbar, openProductOverview} from "slices/ui/uiSlice";
 
 const createDropdownList = (number: number) => {
     let entry = [];
@@ -62,15 +62,21 @@ const setInitialValues = (
 };
 
 export const TeamCheckedOutOrderTable = () => {
+    const dispatch = useDispatch();
     const orders = useSelector(checkedOutOrdersSelector);
+    const hardware = useSelector(hardwareSelectors.selectEntities);
     const fetchOrdersError = useSelector(errorSelector);
     const returnIsLoading = useSelector(isReturnedLoadingSelector);
-    const hardware = useSelector(hardwareSelectors.selectEntities);
+
     const [visibility, setVisibility] = useState(true);
+    const openProductOverviewPanel = (hardwareId: number) => {
+            dispatch(getUpdatedHardwareDetails(hardwareId));
+            dispatch(openProductOverview());
+        };
     const toggleVisibility = () => {
         setVisibility(!visibility);
     };
-    const dispatch = useDispatch();
+
 
     const handleReturnOrder = (values: FormikValues, orderId: number) => {
         try {
@@ -217,35 +223,36 @@ export const TeamCheckedOutOrderTable = () => {
                                                                             styles.itemImg
                                                                         }
                                                                         src={
-                                                                            hardware[
-                                                                                row.id
-                                                                            ]
+                                                                            hardware[row.id]
                                                                                 ?.picture ??
-                                                                            hardware[
-                                                                                row.id
-                                                                            ]
+                                                                            hardware[row.id]
                                                                                 ?.image_url ??
                                                                             hardwareImagePlaceholder
                                                                         }
                                                                         alt={
-                                                                            hardware[
-                                                                                row.id
-                                                                            ]?.name
+                                                                            hardware[row.id]
+                                                                                ?.name
                                                                         }
                                                                     />
                                                                 </TableCell>
                                                                 <TableCell>
-                                                                    {
-                                                                        hardware[row.id]
-                                                                            ?.name
-                                                                    }
+                                                                    {hardware[row.id]?.name}
                                                                 </TableCell>
                                                                 <TableCell>
-                                                                    <IconButton
-                                                                        size={"small"}
-                                                                    >
-                                                                        <Info />
-                                                                    </IconButton>
+                                                                <IconButton
+                                                                color="inherit"
+                                                                aria-label="Info"
+                                                                data-testid="info-button"
+                                                                onClick={() => {
+                                                                    openProductOverviewPanel(
+                                                                        row.id
+                                                                    )
+                                                                    console.log("Hardware ID: " + row.id + " item test1")
+                                                                }
+                                                                }
+                                                            >
+                                                                <Info />
+                                                            </IconButton>
                                                                 </TableCell>
                                                                 {/* TODO: Add total quantity column */}
                                                                 {/*<TableCell>*/}
