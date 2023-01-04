@@ -27,6 +27,7 @@ import {
 import AlertBox from "components/general/AlertBox/AlertBox";
 import TeamCheckedOutOrderTable from "components/teamDetail/TeamCheckedOutOrderTable/TeamCheckedOutOrderTable";
 import { getHardwareWithFilters, setFilters } from "slices/hardware/hardwareSlice";
+import ProductOverview from "components/inventory/ProductOverview/ProductOverview";
 
 export interface PageParams {
     code: string;
@@ -62,6 +63,7 @@ const TeamDetail = ({ match }: RouteComponentProps<PageParams>) => {
     return (
         <>
             <Header />
+            <ProductOverview showAddToCartButton />
             {teamInfoError ? (
                 <AlertBox error={teamInfoError} />
             ) : (
