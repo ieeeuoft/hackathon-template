@@ -12,6 +12,7 @@ describe("<OrderCard />", () => {
             minute: "2-digit",
         });
         const id = mockPendingOrders[1].id;
+        const status = mockPendingOrders[1].status;
         const date = new Date(time);
         const month = date.toLocaleString("default", { month: "short" });
         const day = date.getDate();
@@ -22,6 +23,7 @@ describe("<OrderCard />", () => {
             { title: "Order Qty", value: orderQuantity },
             { title: "Time", value: `${month} ${day}, ${hoursAndMinutes}` },
             { title: "ID", value: id },
+            { title: "Status", value: status },
         ];
 
         const { getByText } = render(
@@ -30,6 +32,7 @@ describe("<OrderCard />", () => {
                 orderQuantity={orderQuantity}
                 time={time}
                 id={id}
+                status={status}
             />
         );
         orderDetails.forEach((item) => {
