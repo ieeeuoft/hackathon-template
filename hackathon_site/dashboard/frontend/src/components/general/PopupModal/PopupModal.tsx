@@ -2,7 +2,6 @@ import React from "react";
 import Modal from "@material-ui/core/Modal";
 import Button from "@material-ui/core/Button";
 import styles from "components/general/PopupModal/PopupModal.module.scss";
-import { Box } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 
 interface PopupModalProps {
@@ -38,7 +37,9 @@ const PopupModal = ({
                 </Grid>
                 <Grid item container justifyContent={"flex-end"}>
                     <Button onClick={cancelHandler}>{cancelText ?? "Cancel"}</Button>
-                    <Button onClick={submitHandler}>{submitText ?? "Submit"}</Button>
+                    <Button onClick={submitHandler} color="primary">
+                        {submitText ?? "Submit"}
+                    </Button>
                 </Grid>
             </Grid>
         </Modal>

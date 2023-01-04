@@ -6,6 +6,7 @@ import Header from "./Header";
 import { makeStore } from "slices/store";
 import { initialState, userReducerName } from "slices/users/userSlice";
 import { mockUser } from "testing/mockData";
+import { hackathonName } from "constants.js";
 
 describe("<Header />", () => {
     test("renders header with navbar", () => {
@@ -19,7 +20,7 @@ describe("<Header />", () => {
             },
         });
         const { getByText, getByTestId } = render(<Header />, { store });
-        expect(getByText(/Hackathon Name/i)).toBeInTheDocument();
+        expect(getByText(new RegExp(hackathonName, "i"))).toBeInTheDocument();
         expect(getByTestId("headerLogo")).toBeInTheDocument();
         expect(getByText("Dashboard")).toBeInTheDocument(); // Checking if navbar is in header
     });
@@ -28,7 +29,7 @@ describe("<Header />", () => {
         const { getByText, getByTestId, queryByText } = render(
             <Header showNavbar={false} />
         );
-        expect(getByText(/Hackathon Name/i)).toBeInTheDocument();
+        expect(getByText(new RegExp(hackathonName, "i"))).toBeInTheDocument();
         expect(getByTestId("headerLogo")).toBeInTheDocument();
         expect(queryByText("Dashboard")).not.toBeInTheDocument(); // Checking if navbar is not in header
     });
