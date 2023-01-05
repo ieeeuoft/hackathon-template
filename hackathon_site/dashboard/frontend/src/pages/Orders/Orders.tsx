@@ -15,7 +15,7 @@ import {
     adminOrderSelectors,
     getOrdersWithFilters,
 } from "slices/order/adminOrderSlice";
-import { mockPendingOrders } from "testing/mockData";
+import { useHistory } from "react-router-dom";
 
 const Orders = () => {
     const dispatch = useDispatch();
@@ -23,12 +23,9 @@ const Orders = () => {
         dispatch(getOrdersWithFilters());
     }, [dispatch]);
     const [mobileOpen, setMobileOpen] = React.useState(false);
+    const history = useHistory();
     const toggleFilter = () => {
         setMobileOpen(!mobileOpen);
-    };
-    const handleClick = (orderId: number) => {
-        alert(`The order you clicked is: #${orderId}`);
-        console.log(orderId);
     };
     const allOrders = useSelector(adminOrderSelectors.selectAll);
 
@@ -86,7 +83,7 @@ const Orders = () => {
                         </Grid>
                         <Grid item lg={12}>
                             <Grid container spacing={1} direction="row">
-                                {mockPendingOrders.map((order, idx) => (
+                                {allOrders.map((order, idx) => (
                                     <Grid
                                         item
                                         lg={3}
@@ -94,7 +91,9 @@ const Orders = () => {
                                         sm={6}
                                         xs={12}
                                         key={idx}
-                                        onClick={() => handleClick(order.id)}
+                                        onClick={() =>
+                                            history.push(`/teams/${order.team_code}`)
+                                        }
                                     >
                                         {(order.status === "Submitted" ||
                                             order.status === "Ready for Pickup") && (

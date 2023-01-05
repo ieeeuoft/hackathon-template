@@ -3,20 +3,35 @@ import {
     createEntityAdapter,
     createSelector,
     createSlice,
+    PayloadAction,
 } from "@reduxjs/toolkit";
-import { APIListResponse, Order } from "api/types";
+import { APIListResponse, Order, OrderFilters, OrderStatus } from "api/types";
 import { AppDispatch, RootState } from "slices/store";
 import { get } from "api/api";
 import { displaySnackbar } from "slices/ui/uiSlice";
 
+
+interface numStatuses {
+    Submitted?: number;
+    "Ready for Pickup"?: number;
+    "Picked Up"?: number;
+    Cancelled?: number;
+}
+
 interface adminOrderExtraState {
     isLoading: boolean;
     error: null | string;
+    filters: OrderFilters;
+    needNumStatuses: boolean;
+    numStatuses: numStatuses;
 }
 
 const extraState: adminOrderExtraState = {
     isLoading: false,
     error: null,
+    filters: {} as OrderFilters,
+    needNumStatuses: true,
+    numStatuses: {},
 };
 
 const adminOrderAdapter = createEntityAdapter<Order>();
@@ -36,9 +51,13 @@ export const getOrdersWithFilters = createAsyncThunk<
     { state: RootState; rejectValue: RejectValue; dispatch: AppDispatch }
 >(
     `${adminOrderReducerName}/getAdminTeamOrders`,
-    async (_, { rejectWithValue, dispatch }) => {
+    async (_, { rejectWithValue, getState, dispatch }) => {
         try {
-            const response = await get<APIListResponse<Order>>("/api/hardware/orders/");
+            const filters = adminOrderFiltersSelector(getState());
+            const response = await get<APIListResponse<Order>>(
+                "/api/hardware/orders/",
+                filters
+            );
             return response.data;
         } catch (e: any) {
             dispatch(
@@ -60,7 +79,27 @@ export const getOrdersWithFilters = createAsyncThunk<
 const adminOrderSlice = createSlice({
     name: adminOrderReducerName,
     initialState,
-    reducers: {},
+    reducers: {
+        setFilters: (
+            state: AdminOrderState,
+            { payload }: PayloadAction<OrderFilters>
+        ) => {
+            const { status, ordering } = {
+                ...state.filters,
+                ...payload,
+            };
+
+            // Remove values that are empty or falsy
+            state.filters = {
+                ...(status && { status }),
+                ...(ordering && { ordering }),
+            };
+        },
+
+        clearFilters: (state: AdminOrderState, { payload }: PayloadAction) => {
+            state.filters = {};
+        },
+    },
     extraReducers: (builder) => {
         builder.addCase(getOrdersWithFilters.pending, (state) => {
             state.isLoading = true;
@@ -69,9 +108,34 @@ const adminOrderSlice = createSlice({
         builder.addCase(getOrdersWithFilters.fulfilled, (state, { payload }) => {
             state.isLoading = false;
             state.error = null;
-            // const { pendingOrders, checkedOutOrders } = teamOrderListSerialization(
-            //     payload.results
-            // );
+
+            function numOrdersByStatus(status: OrderStatus, orders: Order[]) {
+                let count = 0;
+                orders.forEach((order) => {
+                    if (order.status === status) count++;
+                });
+                return count;
+            }
+
+            if (state.needNumStatuses) {
+                state.needNumStatuses = false;
+                state.numStatuses["Submitted"] = numOrdersByStatus(
+                    "Submitted",
+                    payload.results
+                );
+                state.numStatuses["Ready for Pickup"] = numOrdersByStatus(
+                    "Ready for Pickup",
+                    payload.results
+                );
+                state.numStatuses["Picked Up"] = numOrdersByStatus(
+                    "Picked Up",
+                    payload.results
+                );
+                state.numStatuses["Cancelled"] = numOrdersByStatus(
+                    "Cancelled",
+                    payload.results
+                );
+            }
             adminOrderAdapter.setAll(state, payload.results);
         });
         builder.addCase(getOrdersWithFilters.rejected, (state, { payload }) => {
@@ -102,3 +166,20 @@ export const errorSelector = createSelector(
     [adminOrderSliceSelector],
     (adminOrderSlice) => adminOrderSlice.error
 );
+
+export const adminOrderFiltersSelector = createSelector(
+    [adminOrderSliceSelector],
+    (adminOrderSlice) => adminOrderSlice.filters
+);
+
+export const adminOrderNeedNumStatusesSelector = createSelector(
+    [adminOrderSliceSelector],
+    (adminOrderSlice) => adminOrderSlice.needNumStatuses
+);
+
+export const adminOrderNumStatusesSelector = createSelector(
+    [adminOrderSliceSelector],
+    (adminOrderSlice) => adminOrderSlice.numStatuses
+);
+
+export const { setFilters, clearFilters } = actions;
