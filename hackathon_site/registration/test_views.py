@@ -1,3 +1,4 @@
+import unittest
 from datetime import date, datetime, timedelta
 from unittest.mock import patch
 
@@ -307,6 +308,7 @@ class LeaveTeamViewTestCase(SetupUserMixin, TestCase):
         )
 
 
+@unittest.skipIf(not settings.RSVP, "Not using RSVP")
 class RSVPViewTestCase(SetupUserMixin, TestCase):
     def setUp(self):
         super().setUp()
