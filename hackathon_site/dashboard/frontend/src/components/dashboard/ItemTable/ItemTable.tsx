@@ -277,6 +277,10 @@ export const PendingTables = () => {
                                     Cancel order
                                 </Button>
                                 <PopupModal
+                                    //Declaring a new parameter called "animation", and attempting to pass in the animation type "Fade"
+                                    //This is a implementation that can allow for animations of PopUpModal calls to be specified
+                                    //Implementation has not finished yet, so the line is commented it out
+                                    //animation={animation}
                                     description={
                                         "Are you sure you want to cancel this order? The team will be notified."
                                     }
