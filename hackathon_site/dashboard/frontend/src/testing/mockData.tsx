@@ -18,6 +18,7 @@ import {
 } from "api/types";
 import { CartItem } from "api/types";
 import { adminGroup } from "constants.js";
+import { ReturnOrderResponse } from "slices/order/teamOrderSlice";
 
 export const overviewTitles = [
     "123 items checked out",
@@ -37,6 +38,11 @@ export const cardItems = [
             {
                 name: "Hackathon main site",
                 url: "https://www.facebook.com",
+                icon: <OpenInNew />,
+            },
+            {
+                name: "Hardware Signout Site",
+                url: "https://hardware.newhacks.ca",
                 icon: <OpenInNew />,
             },
         ],
@@ -1031,6 +1037,25 @@ export const mockReturnedOrdersInTable: ReturnOrderInTable[] = [
                 part_returned_health: "Heavily Used",
                 quantity: 1,
                 time: `${timeForOrderItem11.toLocaleTimeString()} (${timeForOrderItem11.toDateString()})`,
+            },
+        ],
+    },
+];
+
+export const mockReturnedOrder: ReturnOrderResponse[] = [
+    {
+        order_id: 1,
+        team_code: "A48E5",
+        returned_items: [
+            {
+                hardware_id: 1,
+                quantity: 2,
+            },
+        ],
+        errors: [
+            {
+                hardware_id: 1,
+                message: "",
             },
         ],
     },
