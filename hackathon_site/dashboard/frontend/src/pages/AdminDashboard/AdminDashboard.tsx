@@ -3,15 +3,27 @@ import Typography from "@material-ui/core/Typography";
 import Header from "components/general/Header/Header";
 import { hackathonName } from "constants.js";
 import Grid from "@material-ui/core/Grid";
+import ImageList from "@material-ui/core/ImageList";
+import ImageListItem from "@material-ui/core/ImageListItem";
 import styles from "./AdminDashboard.module.scss";
-import DashCard from "components/dashboard/DashCard/DashCard";
 import { mockPendingOrders, overviewTitles } from "testing/mockData";
 import Paper from "@material-ui/core/Paper";
 import Card from "@material-ui/core/Card";
 import OrderCard from "components/orders/OrderCard/OrderCard";
+import Button from "@material-ui/core/Button";
+import { makeStyles } from "@material-ui/core/styles";
 
-const orderTitles = ["Team", "Order Qty", "Time ordered", "ID"];
 const AdminDashboard = () => {
+    const useStyles = makeStyles({
+        imageList: {
+            flexWrap: "nowrap",
+            transform: "translateZ(0)",
+        },
+        image: {
+            maxWidth: 200,
+        },
+    });
+    const classes = useStyles();
     return (
         <>
             <Header />
@@ -19,48 +31,40 @@ const AdminDashboard = () => {
             <Grid className={styles.dashboard}>
                 <div className={styles.section}>
                     <Typography className={styles.title}>Overview</Typography>
-                    <Grid
-                        container
-                        direction="row"
-                        justifyContent="center"
-                        alignItems="flex-start"
-                        spacing={3}
-                        className="overviewCardGrid"
+                    <ImageList
+                        className={classes.imageList}
+                        gap={8}
+                        cols={5}
+                        rowHeight={70}
                     >
                         {overviewTitles.map((title) => (
-                            <Grid
-                                item
-                                xs={2}
-                                className={styles.overViewCard}
-                                key={title}
-                            >
+                            <ImageListItem className={styles.overviewCard}>
                                 <Paper className={styles.overviewCard}>
-                                    <Card className={styles.overviewCard}>{title}</Card>
+                                    <Card className={styles.overviewCard}>
+                                        <Typography variant="body2">
+                                            &nbsp;&nbsp;&nbsp;{title}
+                                        </Typography>
+                                    </Card>
                                 </Paper>
-                            </Grid>
+                            </ImageListItem>
                         ))}
-                    </Grid>
+                    </ImageList>
                 </div>
                 <div className={styles.section}>
                     <Typography className={styles.title}>
-                        Pending Orders &emsp; &emsp; <a href="/orders">VIEW MORE</a>
+                        Pending Orders &emsp; &emsp;{" "}
+                        <Button color="primary" href="/orders">
+                            VIEW MORE
+                        </Button>
                     </Typography>
-                    <Grid
-                        container
-                        direction="row"
-                        justifyContent="center"
-                        alignItems="flex-start"
-                        spacing={3}
-                        className="orderCardGrid"
+                    <ImageList
+                        className={classes.imageList}
+                        gap={8}
+                        cols={5}
+                        rowHeight={164}
                     >
                         {mockPendingOrders.map((pendingOrder) => (
-                            <Grid
-                                item
-                                xs={2}
-                                className={styles.orderCard}
-                                style={{ width: "225px", height: "164px" }}
-                                key={pendingOrder.team_code}
-                            >
+                            <ImageListItem className={styles.overviewCard}>
                                 <OrderCard
                                     teamCode={pendingOrder.team_code}
                                     orderQuantity={pendingOrder.request.reduce(
@@ -71,9 +75,9 @@ const AdminDashboard = () => {
                                     time={pendingOrder.updated_at}
                                     id={pendingOrder.team_id}
                                 />
-                            </Grid>
+                            </ImageListItem>
                         ))}
-                    </Grid>
+                    </ImageList>
                 </div>
             </Grid>
         </>

@@ -23,6 +23,7 @@ export const overviewTitles = [
     "123 orders",
     "7 broken/lost items",
     "test item",
+    "another test item",
 ];
 
 // For DashCard on Dashboard
@@ -665,6 +666,90 @@ export const mockPendingOrders: Order[] = [
         request: [
             {
                 id: 10,
+                requested_quantity: 2,
+            },
+        ],
+    },
+    {
+        id: 7,
+        items: [
+            {
+                id: 13,
+                hardware_id: 21,
+                part_returned_health: null,
+            },
+        ],
+        team_id: 1,
+        team_code: "IEEE4",
+        status: "Cancelled",
+        created_at: "2021-10-17T18:28:44.691969-04:00",
+        updated_at: "2021-12-05T23:01:46.606892-05:00",
+        request: [
+            {
+                id: 14,
+                requested_quantity: 22,
+            },
+        ],
+    },
+    {
+        id: 8,
+        items: [
+            {
+                id: 19,
+                hardware_id: 10,
+                part_returned_health: null,
+            },
+        ],
+        team_id: 1,
+        team_code: "IEEE4",
+        status: "Cancelled",
+        created_at: "2021-10-17T18:28:44.691969-04:00",
+        updated_at: "2021-12-04T23:01:46.606892-05:00",
+        request: [
+            {
+                id: 20,
+                requested_quantity: 2,
+            },
+        ],
+    },
+    {
+        id: 9,
+        items: [
+            {
+                id: 22,
+                hardware_id: 10,
+                part_returned_health: null,
+            },
+        ],
+        team_id: 1,
+        team_code: "IEEE4",
+        status: "Cancelled",
+        created_at: "2021-10-17T18:28:44.691969-04:00",
+        updated_at: "2022-01-03T23:01:46.606892-05:00",
+        request: [
+            {
+                id: 31,
+                requested_quantity: 2,
+            },
+        ],
+    },
+    {
+        id: 10,
+        items: [
+            {
+                id: 34,
+                hardware_id: 10,
+                part_returned_health: null,
+            },
+        ],
+        team_id: 1,
+        team_code: "IEEE4",
+        status: "Cancelled",
+        created_at: "2022-10-17T18:28:44.691969-04:00",
+        updated_at: "2022-12-03T23:01:46.606892-05:00",
+        request: [
+            {
+                id: 40,
                 requested_quantity: 2,
             },
         ],

@@ -6,12 +6,15 @@
     @include flexPosition($jusCon: space-between, $dir: column);
     min-height: 100vh;
     width: 100%;
+
     &Padding {
         @include flexPosition($alIte: center, $dir: column);
         padding: 50px;
+
         @include responsive(md-down) {
             padding: 25px;
         }
+
         @include responsive(sm-down) {
             font-size: size(xs);
         }
