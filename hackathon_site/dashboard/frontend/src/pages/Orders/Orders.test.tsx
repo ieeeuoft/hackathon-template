@@ -22,7 +22,7 @@ describe("Orders Page", () => {
     });
 
     test("Display correct order cards", () => {
-        const { getByText, getByTestId } = render(<Orders />, { store });
+        const { getByTestId } = render(<Orders />, { store });
         mockPendingOrders.forEach((order) => {
             const orderStatus = order.status;
 
@@ -41,6 +41,7 @@ describe("Orders Page", () => {
                     orderDetails.getByText(`${month} ${day}, ${hoursAndMinutes}`)
                 ).toBeInTheDocument();
             }
+            // TODO: Add tests for Checkout Orders in the future
             // else {
             //     expect(
             //         orderDetails.getByText("Order Card Component")

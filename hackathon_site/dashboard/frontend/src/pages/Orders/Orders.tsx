@@ -19,15 +19,16 @@ import { useHistory } from "react-router-dom";
 
 const Orders = () => {
     const dispatch = useDispatch();
-    useEffect(() => {
-        dispatch(getOrdersWithFilters());
-    }, [dispatch]);
-    const [mobileOpen, setMobileOpen] = React.useState(false);
     const history = useHistory();
+    const allOrders = useSelector(adminOrderSelectors.selectAll);
+    const [mobileOpen, setMobileOpen] = React.useState(false);
     const toggleFilter = () => {
         setMobileOpen(!mobileOpen);
     };
-    const allOrders = useSelector(adminOrderSelectors.selectAll);
+
+    useEffect(() => {
+        dispatch(getOrdersWithFilters());
+    }, [dispatch]);
 
     return (
         <>
@@ -96,6 +97,8 @@ const Orders = () => {
                                         }
                                     >
                                         {(order.status === "Submitted" ||
+                                            order.status === "Picked Up" ||
+                                            order.status === "Cancelled" ||
                                             order.status === "Ready for Pickup") && (
                                             <OrderCard
                                                 teamCode={order.team_code}

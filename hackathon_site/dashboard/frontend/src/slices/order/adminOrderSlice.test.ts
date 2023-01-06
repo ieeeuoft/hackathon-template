@@ -1,7 +1,4 @@
-import thunk, { ThunkDispatch } from "redux-thunk";
-import store, { makeStore, RootState } from "slices/store";
-import { AnyAction } from "redux";
-import configureStore from "redux-mock-store";
+import store, { makeStore } from "slices/store";
 import {
     initialState,
     AdminOrderState,
@@ -12,7 +9,7 @@ import {
     getOrdersWithFilters,
     adminOrderSelectors,
 } from "slices/order/adminOrderSlice";
-import { get, patch } from "api/api";
+import { get } from "api/api";
 import { makeMockApiListResponse } from "testing/utils";
 import { mockPendingOrders } from "testing/mockData";
 import { waitFor } from "@testing-library/react";
@@ -20,14 +17,10 @@ import { waitFor } from "@testing-library/react";
 jest.mock("api/api", () => ({
     ...jest.requireActual("api/api"),
     get: jest.fn(),
-    patch: jest.fn(),
 }));
 
 const mockedGet = get as jest.MockedFunction<typeof get>;
-const mockedPatch = patch as jest.MockedFunction<typeof patch>;
 
-type DispatchExts = ThunkDispatch<RootState, void, AnyAction>;
-const mockStore = configureStore<RootState, DispatchExts>([thunk]);
 const mockStateWithAdminOrders = (adminOrderState?: Partial<AdminOrderState>) => ({
     ...store.getState(),
     [adminOrderReducerName]: {
@@ -69,7 +62,7 @@ describe("getOrdersWithFilters Thunk", () => {
         await store.dispatch(getOrdersWithFilters());
 
         await waitFor(() => {
-            expect(mockedGet).toHaveBeenCalledWith("/api/hardware/orders/");
+            expect(mockedGet).toHaveBeenCalledWith("/api/hardware/orders/", {});
             expect(adminOrderSelectors.selectAll(store.getState())).toEqual(
                 mockPendingOrders
             );

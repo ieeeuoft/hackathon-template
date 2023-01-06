@@ -22,7 +22,6 @@ const OrderCard = ({ teamCode, orderQuantity, time, id, status }: OrderProps) =>
         { title: "Order Qty", value: orderQuantity },
         { title: "Time", value: `${month} ${day}, ${hoursAndMinutes}` },
         { title: "ID", value: id },
-        { title: "Status", value: status },
     ];
 
     return (
