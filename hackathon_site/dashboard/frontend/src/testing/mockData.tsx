@@ -30,6 +30,11 @@ export const cardItems = [
                 url: "https://www.facebook.com",
                 icon: <OpenInNew />,
             },
+            {
+                name: "Hardware Signout Site",
+                url: "https://hardware.newhacks.ca",
+                icon: <OpenInNew />,
+            },
         ],
     },
     {
