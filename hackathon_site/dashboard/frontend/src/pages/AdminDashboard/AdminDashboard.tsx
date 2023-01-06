@@ -19,9 +19,6 @@ const AdminDashboard = () => {
             flexWrap: "nowrap",
             transform: "translateZ(0)",
         },
-        image: {
-            maxWidth: 200,
-        },
     });
     const classes = useStyles();
     return (
@@ -35,7 +32,7 @@ const AdminDashboard = () => {
                         className={classes.imageList}
                         gap={8}
                         cols={5}
-                        rowHeight={70}
+                        rowHeight={63}
                     >
                         {overviewTitles.map((title) => (
                             <ImageListItem className={styles.overviewCard} key={title}>
@@ -61,7 +58,7 @@ const AdminDashboard = () => {
                         className={classes.imageList}
                         gap={8}
                         cols={5}
-                        rowHeight={164}
+                        rowHeight={175}
                     >
                         {mockPendingOrders.map((pendingOrder) => (
                             <ImageListItem
@@ -77,6 +74,7 @@ const AdminDashboard = () => {
                                     )}
                                     time={pendingOrder.updated_at}
                                     id={pendingOrder.team_id}
+                                    status={pendingOrder.status}
                                 />
                             </ImageListItem>
                         ))}
