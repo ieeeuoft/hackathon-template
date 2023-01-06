@@ -10,7 +10,6 @@ import { AppDispatch, RootState } from "slices/store";
 import { get } from "api/api";
 import { displaySnackbar } from "slices/ui/uiSlice";
 
-
 interface numStatuses {
     Submitted?: number;
     "Ready for Pickup"?: number;
