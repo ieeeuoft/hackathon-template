@@ -38,7 +38,7 @@ const AdminDashboard = () => {
                         rowHeight={70}
                     >
                         {overviewTitles.map((title) => (
-                            <ImageListItem className={styles.overviewCard}>
+                            <ImageListItem className={styles.overviewCard} key={title}>
                                 <Paper className={styles.overviewCard}>
                                     <Card className={styles.overviewCard}>
                                         <Typography variant="body2">
@@ -64,7 +64,10 @@ const AdminDashboard = () => {
                         rowHeight={164}
                     >
                         {mockPendingOrders.map((pendingOrder) => (
-                            <ImageListItem className={styles.overviewCard}>
+                            <ImageListItem
+                                className={styles.overviewCard}
+                                key={pendingOrder.team_code}
+                            >
                                 <OrderCard
                                     teamCode={pendingOrder.team_code}
                                     orderQuantity={pendingOrder.request.reduce(
