@@ -78,3 +78,5 @@ jobs:
         run: yarn run tsc
       - name: Tests
         run: yarn test --watchAll=false
+      - name: Build frontend
+        run: yarn run build
