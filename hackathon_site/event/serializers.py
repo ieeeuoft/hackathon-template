@@ -25,6 +25,7 @@ class ProfileSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "id_provided",
+            "phone_number",
             "attended",
             "acknowledge_rules",
             "e_signature",
@@ -43,6 +44,7 @@ class ProfileInUserSerializer(serializers.ModelSerializer):
             "attended",
             "acknowledge_rules",
             "e_signature",
+            "phone_number",
             "user",
         )
 
@@ -58,6 +60,7 @@ class ProfileInTeamSerializer(serializers.ModelSerializer):
             "attended",
             "acknowledge_rules",
             "e_signature",
+            "phone_number",
             "user",
         )
 
@@ -72,6 +75,7 @@ class CurrentProfileSerializer(ProfileSerializer):
             "team",
             "id_provided",
             "attended",
+            "phone_number",
         )
 
     def update(self, instance: Profile, validated_data):
@@ -127,6 +131,7 @@ class CurrentProfileSerializer(ProfileSerializer):
             "id_provided": False,
             "acknowledge_rules": acknowledge_rules,
             "e_signature": e_signature,
+            "phone_number": Application.objects.get(user=current_user).phone_number,
         }
 
         profile = Profile.objects.create(**{**response_data, "user": current_user})

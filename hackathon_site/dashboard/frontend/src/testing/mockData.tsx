@@ -9,9 +9,12 @@ import {
     Order,
     OrderInTable,
     Profile,
+    ProfileRequestBody,
     ReturnOrderInTable,
     Team,
     User,
+    UserWithoutProfile,
+    UserWithReviewStatus,
 } from "api/types";
 import { CartItem } from "api/types";
 import { adminGroup } from "constants.js";
@@ -188,6 +191,7 @@ export const mockUser: User = {
         attended: false,
         acknowledge_rules: false,
         e_signature: null,
+        phone_number: "1234567890",
         user: {
             id: 1,
             first_name: "Foo",
@@ -218,14 +222,32 @@ export const mockAdminUser: User = {
     ],
 };
 
+export const mockUserWithoutProfile: UserWithoutProfile = {
+    id: 1,
+    first_name: "Foo",
+    last_name: "Bar",
+    email: "foo@bar.com",
+};
+
+export const mockUserWithReviewStatus: UserWithReviewStatus = {
+    ...mockUserWithoutProfile,
+    review_status: "Accepted",
+};
+
+export const mockProfileRequestBody: ProfileRequestBody = {
+    acknowledge_rules: true,
+    e_signature: "signature",
+};
+
 // Team Detail
 export const mockProfile: Profile = {
     id: 1,
     id_provided: false,
     attended: false,
     acknowledge_rules: true,
+    phone_number: "1234567890",
     e_signature: "mock profile",
-    team: 1,
+    team: "ABCDE",
 };
 
 export const mockTeam: Team = {
@@ -240,6 +262,7 @@ export const mockTeam: Team = {
             attended: false,
             acknowledge_rules: false,
             e_signature: null,
+            phone_number: "1234567890",
             user: {
                 id: 1,
                 first_name: "Foo",
@@ -328,6 +351,7 @@ export const mockValidTeam: Team = {
             attended: true,
             acknowledge_rules: true,
             e_signature: null,
+            phone_number: "1234567890",
             user: {
                 id: 2,
                 first_name: "Foothe",
@@ -341,6 +365,7 @@ export const mockValidTeam: Team = {
             attended: true,
             acknowledge_rules: true,
             e_signature: null,
+            phone_number: "1234567890",
             user: {
                 id: 3,
                 first_name: "Foothe",
@@ -364,6 +389,7 @@ export const mockLargeTeam: Team = {
             attended: true,
             acknowledge_rules: true,
             e_signature: null,
+            phone_number: "1234567890",
             user: {
                 id: 4,
                 first_name: "Foothe",
@@ -377,6 +403,7 @@ export const mockLargeTeam: Team = {
             attended: true,
             acknowledge_rules: true,
             e_signature: null,
+            phone_number: "1234567890",
             user: {
                 id: 5,
                 first_name: "Foothe",
@@ -390,6 +417,7 @@ export const mockLargeTeam: Team = {
             attended: true,
             acknowledge_rules: true,
             e_signature: null,
+            phone_number: "1234567890",
             user: {
                 id: 6,
                 first_name: "Foothe",
@@ -403,6 +431,7 @@ export const mockLargeTeam: Team = {
             attended: true,
             acknowledge_rules: true,
             e_signature: null,
+            phone_number: "1234567890",
             user: {
                 id: 7,
                 first_name: "Foothe",
@@ -416,6 +445,7 @@ export const mockLargeTeam: Team = {
             attended: true,
             acknowledge_rules: true,
             e_signature: null,
+            phone_number: "1234567890",
             user: {
                 id: 8,
                 first_name: "Foothe",
@@ -852,6 +882,42 @@ export const mockCheckedOutOrders: Order[] = [
 ];
 
 export const mockOrders: Order[] = mockCheckedOutOrders.concat(mockPendingOrders);
+
+export const mockSubmittedOrder: Order = {
+    id: 4,
+    items: [
+        {
+            id: 8,
+            hardware_id: 4,
+            part_returned_health: null,
+        },
+        {
+            id: 9,
+            hardware_id: 1,
+            part_returned_health: null,
+        },
+        {
+            id: 11,
+            hardware_id: 1,
+            part_returned_health: null,
+        },
+    ],
+    team_id: 2,
+    team_code: "IEEE",
+    status: "Submitted",
+    created_at: "2021-10-17T18:28:44.691969-04:00",
+    updated_at: "2021-12-03T23:01:46.606892-05:00",
+    request: [
+        {
+            id: 1,
+            requested_quantity: 2,
+        },
+        {
+            id: 4,
+            requested_quantity: 1,
+        },
+    ],
+};
 
 export const mockPendingOrdersInTable: OrderInTable[] = [
     {

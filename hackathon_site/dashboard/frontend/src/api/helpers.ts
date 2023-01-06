@@ -60,14 +60,16 @@ export const teamOrderListSerialization = (
                     id: order.id,
                     hardwareInOrder: returnedHardware,
                 });
-            (order.status === "Submitted" || order.status === "Ready for Pickup"
-                ? pendingOrders
-                : checkedOutOrders
-            ).push({
-                id: order.id,
-                status: order.status,
-                hardwareInTableRow: Object.values(hardwareItems),
-            });
+            const hardwareInTableRow = Object.values(hardwareItems);
+            if (hardwareInTableRow.length > 0)
+                (order.status === "Submitted" || order.status === "Ready for Pickup"
+                    ? pendingOrders
+                    : checkedOutOrders
+                ).push({
+                    id: order.id,
+                    status: order.status,
+                    hardwareInTableRow,
+                });
         }
     });
     return {

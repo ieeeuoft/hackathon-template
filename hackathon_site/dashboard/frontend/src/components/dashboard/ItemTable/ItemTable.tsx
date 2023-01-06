@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styles from "components/general/OrderTables/OrderTables.module.scss";
 import {
     Button,
@@ -11,6 +11,8 @@ import {
     TableContainer,
     TableHead,
     TableRow,
+    Fade,
+    Grow,
 } from "@material-ui/core";
 import Info from "@material-ui/icons/Info";
 import { useDispatch, useSelector } from "react-redux";
@@ -42,6 +44,7 @@ import {
     GeneralPendingTable,
     GeneralReturnTable,
 } from "components/general/OrderTables/OrderTables";
+import PopupModal from "components/general/PopupModal/PopupModal";
 
 export const CheckedOutTables = () =>
     // TODO: for incident reports
@@ -82,7 +85,10 @@ export const CheckedOutTables = () =>
                         </Paper>
                     ) : (
                         orders.map((checkedOutOrder) => (
-                            <div key={checkedOutOrder.id}>
+                            <div
+                                id={`order${checkedOutOrder.id}`}
+                                key={checkedOutOrder.id}
+                            >
                                 <GeneralOrderTableTitle orderId={checkedOutOrder.id} />
                                 <TableContainer
                                     component={Paper}
@@ -220,6 +226,16 @@ export const PendingTables = () => {
     const isCancelOrderLoading = useSelector(cancelOrderLoadingSelector);
     const toggleVisibility = () => dispatch(togglePendingTable());
     const cancelOrder = (orderId: number) => dispatch(cancelOrderThunk(orderId));
+    const [showCancelOrderModal, setShowCancelOrderModal] = useState(false);
+
+    const closeModal = () => {
+        setShowCancelOrderModal(false);
+    };
+
+    const submitModal = (cancelOrderId: number) => {
+        cancelOrder(cancelOrderId); // Perform Cancellation
+        setShowCancelOrderModal(false);
+    };
 
     return (
         <Container
@@ -241,26 +257,40 @@ export const PendingTables = () => {
                 orders.length > 0 &&
                 orders.map((pendingOrder) => (
                     <div
+                        id={`order${pendingOrder.id}`}
                         key={pendingOrder.id}
                         data-testid={`pending-order-table-${pendingOrder.id}`}
                     >
                         <GeneralPendingTable {...{ pendingOrder }} />
-                        <div
-                            style={{
-                                display: "flex",
-                                justifyContent: "flex-end",
-                                marginTop: "10px",
-                            }}
-                        >
-                            <Button
-                                onClick={() => cancelOrder(pendingOrder.id)}
-                                disabled={isCancelOrderLoading}
-                                color="secondary"
-                                data-testid="cancel-order-button"
+                        {pendingOrder.status !== "Ready for Pickup" && (
+                            <div
+                                style={{
+                                    display: "flex",
+                                    justifyContent: "flex-end",
+                                    marginTop: "10px",
+                                }}
                             >
-                                Cancel order
-                            </Button>
-                        </div>
+                                <Button
+                                    onClick={() => setShowCancelOrderModal(true)}
+                                    disabled={isCancelOrderLoading}
+                                    color="secondary"
+                                    data-testid="cancel-order-button"
+                                >
+                                    Cancel order
+                                </Button>
+                                <PopupModal
+                                    description={
+                                        "Are you sure you want to cancel this order? The team will be notified."
+                                    }
+                                    isVisible={showCancelOrderModal}
+                                    submitHandler={() => submitModal(pendingOrder.id)}
+                                    cancelText={"Go Back"}
+                                    submitText={"Delete Order"}
+                                    cancelHandler={closeModal}
+                                    title={"Careful!"}
+                                />
+                            </div>
+                        )}
                     </div>
                 ))}
         </Container>
