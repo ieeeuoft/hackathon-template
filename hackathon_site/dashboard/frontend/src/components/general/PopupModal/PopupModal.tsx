@@ -53,7 +53,7 @@ const PopupModal = ({
 
     return (
         //The implementation below does render the animation both sliding up and down.
-        //But because the ternary operation is rendered inside <Slide></Slide>, no matter what is being passed inside the ternary operation.../
+        //But the ternary operation is rendered inside <Slide></Slide>, no matter what is being passed inside the ternary operation.../
         //... it will always be inside <Slide></Slide>, and so will always have the sliding up and down animation
         //I tried moving <Slide></Slide> inside the ternary operation (see commented code below), but the modal renders to a white screen
         //So, I am still stuck on how to conditionally control when the Slide animation is being used.
