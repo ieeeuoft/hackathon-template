@@ -28,6 +28,7 @@ import AlertBox from "components/general/AlertBox/AlertBox";
 import TeamCheckedOutOrderTable from "components/teamDetail/TeamCheckedOutOrderTable/TeamCheckedOutOrderTable";
 import { getHardwareWithFilters, setFilters } from "slices/hardware/hardwareSlice";
 import ProductOverview from "components/inventory/ProductOverview/ProductOverview";
+import { userTypeSelector } from "../../slices/users/userSlice";
 
 export interface PageParams {
     code: string;
@@ -40,6 +41,7 @@ const TeamDetail = ({ match }: RouteComponentProps<PageParams>) => {
     const teamCode = match.params.code.toUpperCase();
     const teamInfoError = useSelector(teamInfoErrorSelector);
     const orderError = useSelector(errorSelector);
+    const userType = useSelector(userTypeSelector);
 
     const updateParticipantIdError = useSelector(updateParticipantIdErrorSelector);
     if (
@@ -63,7 +65,7 @@ const TeamDetail = ({ match }: RouteComponentProps<PageParams>) => {
     return (
         <>
             <Header />
-            <ProductOverview showAddToCartButton />
+            <ProductOverview showAddToCartButton={false} />
             {teamInfoError ? (
                 <AlertBox error={teamInfoError} />
             ) : (
