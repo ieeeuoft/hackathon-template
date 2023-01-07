@@ -282,6 +282,8 @@ export const PendingTables = () => {
                                     }
                                     isVisible={showCancelOrderModal}
                                     submitHandler={() => submitModal(pendingOrder.id)}
+                                    //NEW LINE BELOW
+                                    AnimationPresence={true}
                                     cancelText={"Go Back"}
                                     submitText={"Delete Order"}
                                     cancelHandler={closeModal}
