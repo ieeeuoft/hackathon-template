@@ -4,7 +4,7 @@ import Button from "@material-ui/core/Button";
 import styles from "components/general/PopupModal/PopupModal.module.scss";
 import Grid from "@material-ui/core/Grid";
 
-//New Imports for Animation
+//New Imports to implement Modal animation
 import Backdrop from "@material-ui/core/Backdrop";
 import Slide from "@material-ui/core/Slide";
 
@@ -42,7 +42,9 @@ const PopupModal = ({
                     <p className={styles.description}>{description}</p>
                 </Grid>
                 <Grid item container justifyContent={"flex-end"}>
-                    <Button onClick={cancelHandler}>{cancelText ?? "Cl"}</Button>
+                    {/*Changed default text display for cancel handler method from "Cl" to "Cancel"*/}
+                    {/*This change allows for the final modified test in file PopupModal.test.tsx to properly run*/}
+                    <Button onClick={cancelHandler}>{cancelText ?? "Cancel"}</Button>
                     <Button onClick={submitHandler} color="primary">
                         {submitText ?? "Submit"}
                     </Button>
@@ -52,11 +54,9 @@ const PopupModal = ({
     };
 
     return (
-        //The implementation below does render the animation both sliding up and down.
-        //But the ternary operation is rendered inside <Slide></Slide>, no matter what is being passed inside the ternary operation.../
-        //... it will always be inside <Slide></Slide>, and so will always have the sliding up and down animation
-        //I tried moving <Slide></Slide> inside the ternary operation (see commented code below), but the modal renders to a white screen
-        //So, I am still stuck on how to conditionally control when the Slide animation is being used.
+        //The implementation below does render a sliding animation when a PopUpModal is opened or closed
+        //Note: The <Slide> component must be passed directly in the return method, otherwise, a white screen will display when modal is closed
+        //Note 2: As a result of this implementation, all modals of type PopupModal will by defualt, have this sliding animation as well
         <Modal
             open={isVisible}
             className={styles.modal}
