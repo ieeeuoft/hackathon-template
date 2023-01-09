@@ -29,7 +29,7 @@ const mockStateWithAdminOrders = (adminOrderState?: Partial<AdminOrderState>) =>
     },
 });
 
-describe("Selectors", () => {
+describe("adminOrderSlice Selectors", () => {
     const mockState = mockStateWithAdminOrders();
 
     test("adminOrderSliceSelector returns correctly", () => {

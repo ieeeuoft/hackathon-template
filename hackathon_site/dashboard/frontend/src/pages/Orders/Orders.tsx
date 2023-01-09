@@ -16,6 +16,7 @@ import {
     getOrdersWithFilters,
 } from "slices/order/adminOrderSlice";
 import { useHistory } from "react-router-dom";
+import { OrderStatus } from "../../api/types";
 
 const Orders = () => {
     const dispatch = useDispatch();
@@ -96,10 +97,12 @@ const Orders = () => {
                                             history.push(`/teams/${order.team_code}`)
                                         }
                                     >
-                                        {(order.status === "Submitted" ||
-                                            order.status === "Picked Up" ||
-                                            order.status === "Cancelled" ||
-                                            order.status === "Ready for Pickup") && (
+                                        {[
+                                            "Submitted",
+                                            "Ready for Pickup",
+                                            "Picked Up",
+                                            "Cancelled",
+                                        ].includes(order.status) && (
                                             <OrderCard
                                                 teamCode={order.team_code}
                                                 orderQuantity={order.items.length}
