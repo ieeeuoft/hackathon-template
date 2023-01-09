@@ -16,7 +16,6 @@ import {
     getOrdersWithFilters,
 } from "slices/order/adminOrderSlice";
 import { useHistory } from "react-router-dom";
-import { OrderStatus } from "../../api/types";
 
 const Orders = () => {
     const dispatch = useDispatch();
