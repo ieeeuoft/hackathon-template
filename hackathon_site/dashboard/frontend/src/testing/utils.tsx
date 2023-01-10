@@ -10,7 +10,14 @@ import {
 import { makeStore, RootStore, RootState } from "slices/store";
 import { SnackbarProvider } from "notistack";
 import { AxiosResponse } from "axios";
-import { APIListResponse, CartItem, Category, Hardware, OrderInTable } from "api/types";
+import {
+    APIListResponse,
+    CartItem,
+    Category,
+    Hardware,
+    Order,
+    OrderInTable,
+} from "api/types";
 import {
     hardwareReducerName,
     HardwareState,
@@ -40,6 +47,11 @@ import {
     teamOrderReducerName,
     TeamOrderState,
 } from "slices/order/teamOrderSlice";
+import {
+    initialState as adminOrderInitialState,
+    adminOrderReducerName,
+    AdminOrderState,
+} from "slices/order/adminOrderSlice";
 
 export const withRouter = (component: React.ComponentElement<any, any>) => (
     <BrowserRouter>{component}</BrowserRouter>
@@ -131,6 +143,7 @@ export interface StoreEntities {
     pendingOrders?: OrderInTable[];
     teamDetailOrders?: OrderInTable[];
     teamDetailOrderState?: Partial<TeamOrderState>;
+    allOrders?: Order[];
 }
 
 export const makeStoreWithEntities = (entities: StoreEntities) => {
@@ -238,6 +251,22 @@ export const makeStoreWithEntities = (entities: StoreEntities) => {
         }
 
         preloadedState[teamOrderReducerName] = teamOrderState;
+    }
+
+    if (entities.allOrders) {
+        const allOrderState: AdminOrderState = {
+            ...adminOrderInitialState,
+            ...entities.allOrders,
+            ids: [],
+            entities: {},
+        };
+
+        for (const order of entities.allOrders) {
+            allOrderState.ids.push(order.id);
+            allOrderState.entities[order.id] = order;
+        }
+
+        preloadedState[adminOrderReducerName] = allOrderState;
     }
 
     return makeStore(preloadedState);
