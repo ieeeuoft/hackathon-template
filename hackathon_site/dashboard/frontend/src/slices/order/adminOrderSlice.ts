@@ -140,7 +140,7 @@ const adminOrderSlice = createSlice({
         builder.addCase(getOrdersWithFilters.rejected, (state, { payload }) => {
             state.isLoading = false;
             state.error =
-                payload?.message ?? "There was a problem retrieving the orders";
+                payload?.message ?? "There was a problem in retrieving all the orders";
         });
     },
 });
