@@ -19,15 +19,16 @@ import { useHistory } from "react-router-dom";
 
 const Orders = () => {
     const dispatch = useDispatch();
-    useEffect(() => {
-        dispatch(getOrdersWithFilters());
-    }, [dispatch]);
-    const [mobileOpen, setMobileOpen] = React.useState(false);
     const history = useHistory();
+    const allOrders = useSelector(adminOrderSelectors.selectAll);
+    const [mobileOpen, setMobileOpen] = React.useState(false);
     const toggleFilter = () => {
         setMobileOpen(!mobileOpen);
     };
-    const allOrders = useSelector(adminOrderSelectors.selectAll);
+
+    useEffect(() => {
+        dispatch(getOrdersWithFilters());
+    }, [dispatch]);
 
     return (
         <>
@@ -95,13 +96,21 @@ const Orders = () => {
                                             history.push(`/teams/${order.team_code}`)
                                         }
                                     >
-                                        <OrderCard
-                                            teamCode={order.team_code}
-                                            orderQuantity={order.items.length}
-                                            time={order.created_at}
-                                            id={order.id}
-                                            status={order.status}
-                                        />
+                                        {[
+                                            "Submitted",
+                                            "Ready for Pickup",
+                                            "Picked Up",
+                                            "Cancelled",
+                                        ].includes(order.status) && (
+                                            <OrderCard
+                                                teamCode={order.team_code}
+                                                orderQuantity={order.items.length}
+                                                time={order.created_at}
+                                                id={order.id}
+                                                status={order.status}
+                                                data-testid={`order-item-${order.id}`}
+                                            />
+                                        )}
                                     </Grid>
                                 ))}
                             </Grid>
