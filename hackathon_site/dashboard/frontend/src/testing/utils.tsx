@@ -15,8 +15,9 @@ import {
     CartItem,
     Category,
     Hardware,
-    OrderInTable,
     Team,
+    Order,
+    OrderInTable,
 } from "api/types";
 import {
     hardwareReducerName,
@@ -52,6 +53,11 @@ import {
     teamAdminReducerName,
     TeamAdminState,
 } from "slices/event/teamAdminSlice";
+import {
+    initialState as adminOrderInitialState,
+    adminOrderReducerName,
+    AdminOrderState,
+} from "slices/order/adminOrderSlice";
 
 export const withRouter = (component: React.ComponentElement<any, any>) => (
     <BrowserRouter>{component}</BrowserRouter>
@@ -144,6 +150,7 @@ export interface StoreEntities {
     pendingOrders?: OrderInTable[];
     teamDetailOrders?: OrderInTable[];
     teamDetailOrderState?: Partial<TeamOrderState>;
+    allOrders?: Order[];
 }
 
 export const makeStoreWithEntities = (entities: StoreEntities) => {
@@ -256,16 +263,32 @@ export const makeStoreWithEntities = (entities: StoreEntities) => {
     if (entities.teams) {
         const teamAdminState: TeamAdminState = {
             ...teamAdminInitialState,
+            ...entities.teams,
             ids: [],
             entities: {},
         };
 
-        for (const order of entities.teams) {
-            teamAdminState.ids.push(order.id);
-            teamAdminState.entities[order.id] = order;
+        for (const team of entities.teams) {
+            teamAdminState.ids.push(team.id);
+            teamAdminState.entities[team.id] = team;
         }
 
         preloadedState[teamAdminReducerName] = teamAdminState;
+    }
+    if (entities.allOrders) {
+        const allOrderState: AdminOrderState = {
+            ...adminOrderInitialState,
+            ...entities.allOrders,
+            ids: [],
+            entities: {},
+        };
+
+        for (const order of entities.allOrders) {
+            allOrderState.ids.push(order.id);
+            allOrderState.entities[order.id] = order;
+        }
+
+        preloadedState[adminOrderReducerName] = allOrderState;
     }
 
     return makeStore(preloadedState);
