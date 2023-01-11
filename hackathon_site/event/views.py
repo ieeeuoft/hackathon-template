@@ -47,9 +47,13 @@ class IndexView(TemplateView):
 
 
 class DashboardView(LoginRequiredMixin, FormView):
-    template_name = "event/dashboard_base.html"
     # Form submits should take the user back to the dashboard
     success_url = reverse_lazy("event:dashboard")
+
+    def get_template_names(self):
+        if self.request.user.is_staff:
+            return "event/dashboard_admin.html"
+        return "event/dashboard_base.html"
 
     def get_form(self, form_class=None):
         """
@@ -187,6 +191,38 @@ class DashboardView(LoginRequiredMixin, FormView):
         """
         return super().post(request, *args, **kwargs)
 
+class QRScannerView(LoginRequiredMixin, FormView):
+    # Form submits should take the user back to the dashboard
+    success_url = reverse_lazy("event:qr-scanner")
+
+    def get_template_names(self):
+        if self.request.user.is_staff:
+            return "event/admin_qr_scanner.html"
+        return Exception("You do not have permission to view this page.")
+
+    def get_form(self, form_class=None):
+        """
+        The dashboard can have different forms, but not at the same time:
+        - When no application has been submitted, no form.
+        - Once an application has been submitted and registration is open, the JoinTeamForm.
+        - Once the application has been reviewed and accepted, no form, but will show buttons
+            to RSVP Yes or RSVP No
+        - Once the application has been reviewed and rejected, no form.
+        """
+
+        if form_class is not None:
+            return form_class(**self.get_form_kwargs())
+
+        if not hasattr(self.request.user, "application"):
+            return None
+
+        if hasattr(self.request.user.application, "review"):
+            return None
+
+        if is_registration_open():
+            return JoinTeamForm(**self.get_form_kwargs())
+
+        return None
 
 class TeamListView(mixins.ListModelMixin, generics.GenericAPIView):
     queryset = EventTeam.objects.all()

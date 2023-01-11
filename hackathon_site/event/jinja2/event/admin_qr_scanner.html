@@ -1,0 +1,27 @@
+{% extends "event/base.html" %}
+
+{% block nav_links %}
+<li><a href="{{ url("event:dashboard") }}" class="active">Dashboard</a></li>
+<li><a href="{{ url("event:change_password") }}">Change Password</a></li>
+{% endblock %}
+
+{% block body %}
+<div class="backgroundColorDashboard">
+    <div class="container">
+        <div class="section">
+            <div class="borderTopDiv z-depth-3">
+                <h1 class="formH1">QR Scanner for Sign-In</h1>
+                <div id="scanner" style="width: 100%; max-height: 250px; margin: 10px auto"></div>
+                <div id="scanner-results"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ static("event/js/qr-scanner.umd.min.js") }}"></script>
+    <script type="text/javascript">
+
+    </script>
+{% endblock %}
