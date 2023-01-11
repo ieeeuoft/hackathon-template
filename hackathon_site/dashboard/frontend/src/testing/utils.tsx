@@ -49,6 +49,11 @@ import {
     TeamOrderState,
 } from "slices/order/teamOrderSlice";
 import {
+    initialState as userInitialState,
+    userReducerName,
+    UserState,
+} from "slices/users/userSlice";
+import {
     initialState as teamAdminInitialState,
     teamAdminReducerName,
     TeamAdminState,
@@ -150,6 +155,7 @@ export interface StoreEntities {
     pendingOrders?: OrderInTable[];
     teamDetailOrders?: OrderInTable[];
     teamDetailOrderState?: Partial<TeamOrderState>;
+    user?: Partial<UserState>;
     allOrders?: Order[];
 }
 
@@ -260,6 +266,13 @@ export const makeStoreWithEntities = (entities: StoreEntities) => {
         preloadedState[teamOrderReducerName] = teamOrderState;
     }
 
+    if (entities.user) {
+        preloadedState[userReducerName] = {
+            ...userInitialState,
+            ...entities.user,
+        };
+    }
+
     if (entities.teams) {
         const teamAdminState: TeamAdminState = {
             ...teamAdminInitialState,
@@ -275,6 +288,7 @@ export const makeStoreWithEntities = (entities: StoreEntities) => {
 
         preloadedState[teamAdminReducerName] = teamAdminState;
     }
+
     if (entities.allOrders) {
         const allOrderState: AdminOrderState = {
             ...adminOrderInitialState,

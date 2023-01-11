@@ -1,9 +1,15 @@
 import React from "react";
 import ProductOverview, {
-    AddToCartForm,
+    DetailInfoSection,
     EnhancedAddToCartForm,
 } from "./ProductOverview";
-import { mockCartItems, mockCategories, mockHardware } from "testing/mockData";
+import {
+    mockAdminUser,
+    mockCartItems,
+    mockCategories,
+    mockHardware,
+    mockUser,
+} from "testing/mockData";
 import {
     render,
     fireEvent,
@@ -66,6 +72,7 @@ describe("<ProductOverview />", () => {
                 },
             },
             hardware: mockHardware,
+            categories: mockCategories,
         });
 
         const { getByText } = render(<ProductOverview showAddToCartButton />, {
@@ -76,6 +83,29 @@ describe("<ProductOverview />", () => {
         expect(getByText("Category")).toBeInTheDocument();
         expect(getByText("Datasheet")).toBeInTheDocument();
         expect(getByText("Add to cart")).toBeInTheDocument();
+    });
+
+    test("Category label doesn't appear when there are no categories", async () => {
+        mockHardware[0].categories = [];
+        const store = makeStoreWithEntities({
+            hardwareState: {
+                isUpdateDetailsLoading: false,
+                hardwareIdInProductOverview: 1,
+            },
+            ui: {
+                inventory: {
+                    isProductOverviewVisible: true,
+                },
+            },
+            hardware: mockHardware,
+            categories: mockCategories,
+        });
+
+        const { queryByText } = render(<ProductOverview showAddToCartButton />, {
+            store,
+        });
+
+        expect(queryByText("Category")).not.toBeInTheDocument();
     });
 
     test("Displays a loader when loading", async () => {
@@ -127,6 +157,7 @@ describe("<ProductOverview />", () => {
                 },
             },
             hardware: mockHardware,
+            categories: mockCategories,
         });
 
         const { getByText, queryByText } = render(
@@ -302,6 +333,68 @@ describe("<ProductOverview />", () => {
             )
         ).toBeInTheDocument();
     });
+
+    it("Displays quantityAvailable if admin user", () => {
+        const store = makeStoreWithEntities({
+            hardwareState: {
+                isUpdateDetailsLoading: false,
+                hardwareIdInProductOverview: 1,
+            },
+            ui: {
+                inventory: {
+                    isProductOverviewVisible: true,
+                },
+            },
+            hardware: mockHardware,
+            user: {
+                userData: {
+                    user: mockAdminUser,
+                    isLoading: false,
+                    error: null,
+                },
+            },
+        });
+
+        const { getByText } = render(<ProductOverview showAddToCartButton />, {
+            store,
+        });
+
+        expect(
+            getByText(
+                `${mockHardware[0].quantity_remaining} OF ${mockHardware[0].quantity_available} IN STOCK`
+            )
+        ).toBeInTheDocument();
+    });
+
+    it("Displays only quantity remaining if participant user", () => {
+        const store = makeStoreWithEntities({
+            hardwareState: {
+                isUpdateDetailsLoading: false,
+                hardwareIdInProductOverview: 1,
+            },
+            ui: {
+                inventory: {
+                    isProductOverviewVisible: true,
+                },
+            },
+            hardware: mockHardware,
+            user: {
+                userData: {
+                    user: mockUser,
+                    isLoading: false,
+                    error: null,
+                },
+            },
+        });
+
+        const { getByText } = render(<ProductOverview showAddToCartButton />, {
+            store,
+        });
+
+        expect(
+            getByText(`${mockHardware[0].quantity_remaining} IN STOCK`)
+        ).toBeInTheDocument();
+    });
 });
 
 describe("<EnhancedAddToCartForm />", () => {
@@ -383,5 +476,19 @@ describe("<EnhancedAddToCartForm />", () => {
 
         const button = getByText("Add to cart").closest("button");
         expect(button).toBeDisabled();
+    });
+});
+
+describe("<DetailInfoSection />", () => {
+    test("constraints title doesn't appear when there are no constraints", () => {
+        const { queryByText } = render(
+            <DetailInfoSection
+                manufacturer="ABC Corp"
+                modelNumber="12345"
+                datasheet="datasheet"
+                constraints={[]}
+            />
+        );
+        expect(queryByText("Constraints")).not.toBeInTheDocument();
     });
 });
