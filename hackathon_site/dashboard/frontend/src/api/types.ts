@@ -116,6 +116,13 @@ export interface Order {
     updated_at: string;
 }
 
+export type OrderOrdering = "" | "created_at" | "-created_at";
+
+export interface OrderFilters {
+    ordering?: OrderOrdering;
+    status?: OrderStatus[];
+}
+
 /** Sanitized Orders */
 export interface OrderItemTableRow {
     id: number;

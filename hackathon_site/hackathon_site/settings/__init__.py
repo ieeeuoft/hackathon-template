@@ -356,4 +356,7 @@ CHAT_ROOM = ("Slack", "https://slack.com")
 
 # Enable/Disable certain Features
 TEAMS = True
-RSVP = False
+RSVP = True
+
+# HSS Testing
+TEST_USER_GROUP = "HSS Test Users"
