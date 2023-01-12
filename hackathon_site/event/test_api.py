@@ -653,7 +653,8 @@ class CreateProfileViewTestCase(SetupUserMixin, APITestCase):
         data = response.json()
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
-            data[0], f"User has not been accepted to participate in {settings.HACKATHON_NAME}"
+            data[0],
+            f"User has not been accepted to participate in {settings.HACKATHON_NAME}",
         )
 
 
