@@ -16,6 +16,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
     createProfileSelector,
     fetchUserAcceptanceStatus,
+    isTestUserSelector,
     userAcceptanceSelector,
     userSelector,
     userTypeSelector,
@@ -25,13 +26,13 @@ import {
     UserHasBeenGrantedAccessMessage,
 } from "components/acknowledgement/UserAcceptanceStatus/UserAcceptanceStatus";
 import AlertBox from "components/general/AlertBox/AlertBox";
-import { hardwareSignOutStartDate, hssTestUserGroup } from "constants.js";
+import { hardwareSignOutStartDate } from "constants.js";
 import { push } from "connected-react-router";
 
 const Acknowledgement = () => {
     const dispatch = useDispatch();
     const userType = useSelector(userTypeSelector);
-    const user = useSelector(userSelector);
+    const isTestUser = useSelector(isTestUserSelector);
     const {
         error: getAcceptanceError,
         isLoading,
@@ -44,8 +45,6 @@ const Acknowledgement = () => {
     } = useSelector(createProfileSelector);
     const userDoesNotHaveRole = userType === "none";
     const [showAcknowledgements, setShowAcknowledgements] = useState(false);
-
-    const isTestUser = user?.groups.find((group) => group.name === hssTestUserGroup);
 
     useEffect(() => {
         const today = new Date();

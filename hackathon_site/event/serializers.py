@@ -121,7 +121,7 @@ class CurrentProfileSerializer(ProfileSerializer):
                 ).status
                 if review_status != "Accepted":
                     raise serializers.ValidationError(
-                        "User has not been accepted to participate in hackathon"
+                        f"User has not been accepted to participate in {settings.HACKATHON_NAME}"
                     )
             except Review.DoesNotExist:
                 raise serializers.ValidationError(

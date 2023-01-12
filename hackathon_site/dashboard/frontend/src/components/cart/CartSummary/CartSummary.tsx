@@ -12,17 +12,16 @@ import {
 } from "slices/hardware/cartSlice";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { teamSizeSelector } from "slices/event/teamSlice";
-import { userSelector } from "slices/users/userSlice";
+import { isTestUserSelector } from "slices/users/userSlice";
 import {
     hardwareSignOutEndDate,
     hardwareSignOutStartDate,
     maxTeamSize,
     minTeamSize,
-    hssTestUserGroup,
 } from "constants.js";
 
 const CartSummary = () => {
-    const user = useSelector(userSelector);
+    const isTestUser = useSelector(isTestUserSelector);
     const cartQuantity = useSelector(cartTotalSelector);
     const cartOrderLoading = useSelector(isLoadingSelector);
     const teamSize = useSelector(teamSizeSelector);
@@ -37,7 +36,6 @@ const CartSummary = () => {
     const isOutsideSignOutPeriod =
         currentDateTime < hardwareSignOutStartDate ||
         currentDateTime > hardwareSignOutEndDate;
-    const isTestUser = user?.groups.find((group) => group.name === hssTestUserGroup);
 
     return (
         <TitledPaper title="Cart Summary">
