@@ -16,8 +16,12 @@ from rest_framework import generics, mixins
 from rest_framework.filters import SearchFilter
 
 
-from hackathon_site.utils import is_registration_open, is_hackathon_happening, NoEventOccurringException, \
-    get_curr_sign_in_time
+from hackathon_site.utils import (
+    is_registration_open,
+    is_hackathon_happening,
+    NoEventOccurringException,
+    get_curr_sign_in_time,
+)
 from registration.forms import JoinTeamForm, SignInForm
 from registration.models import Team as RegistrationTeam, User, Application
 
@@ -192,6 +196,7 @@ class DashboardView(LoginRequiredMixin, FormView):
         """
         return super().post(request, *args, **kwargs)
 
+
 class QRScannerView(LoginRequiredMixin, FormView):
     success_url = reverse_lazy("event:qr-scanner")
 
@@ -226,22 +231,26 @@ class QRScannerView(LoginRequiredMixin, FormView):
                 now = datetime.now().replace(tzinfo=settings.TZ_INFO)
 
                 try:
-                    user_activity = UserActivity.objects.get(application__exact=application)
+                    user_activity = UserActivity.objects.get(
+                        application__exact=application
+                    )
                     user_activity[sign_in_event] = now
                     user_activity.save()
                 except UserActivity.DoesNotExist:
                     UserActivity.objects.create(
-                        application=application,
-                        **{
-                            [sign_in_event]: now
-                        }
+                        application=application, **{[sign_in_event]: now}
                     )
 
-                messages.success(self.request, f'User {form.cleaned_data["email"]} successfully signed in')
+                messages.success(
+                    self.request,
+                    f'User {form.cleaned_data["email"]} successfully signed in',
+                )
             except NoEventOccurringException as e:
                 messages.success(self.request, str(e))
             except:
-                messages.error(self.request, f'User {form.cleaned_data["email"]} could not sign in')
+                messages.error(
+                    self.request, f'User {form.cleaned_data["email"]} could not sign in'
+                )
 
         return redirect(self.get_success_url())
 

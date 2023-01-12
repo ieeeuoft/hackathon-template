@@ -47,6 +47,7 @@ class Profile(models.Model):
     def __str__(self):
         return f"{self.id} | {self.user.first_name} {self.user.last_name}"
 
+
 class UserActivity(models.Model):
     application = models.OneToOneField(Application, on_delete=models.CASCADE)
     sign_in = models.DateTimeField(null=True)

@@ -38,7 +38,7 @@ def environment(**options):
             "chat_room_link": settings.CHAT_ROOM[1],
             "using_teams": settings.TEAMS,
             "using_rsvp": settings.RSVP,
-            'get_messages': messages.get_messages,
+            "get_messages": messages.get_messages,
         }
     )
     return env

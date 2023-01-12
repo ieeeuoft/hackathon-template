@@ -213,6 +213,7 @@ class JoinTeamForm(forms.Form):
 
         return team_code
 
+
 class SignInForm(forms.Form):
     email = forms.EmailField()
 
@@ -239,9 +240,15 @@ class SignInForm(forms.Form):
             review = Review.objects.get(application__exact=application)
             if review.status == "Accepted":
                 if settings.RSVP and application.rsvp is None:
-                    raise forms.ValidationError(_(f"User {email} has not RSVP'd to the hackathon"))
+                    raise forms.ValidationError(
+                        _(f"User {email} has not RSVP'd to the hackathon")
+                    )
             else:
-                raise forms.ValidationError(_(f"User {email} has not been Accepted to attend {settings.HACKATHON_NAME}"))
+                raise forms.ValidationError(
+                    _(
+                        f"User {email} has not been Accepted to attend {settings.HACKATHON_NAME}"
+                    )
+                )
         except User.DoesNotExist:
             raise forms.ValidationError(_(f"User {email} does not exist."))
 

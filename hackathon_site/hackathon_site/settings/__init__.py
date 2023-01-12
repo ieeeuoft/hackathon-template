@@ -147,7 +147,7 @@ LOGIN_URL = reverse_lazy("event:login")
 LOGIN_REDIRECT_URL = reverse_lazy("event:dashboard")
 LOGOUT_REDIRECT_URL = reverse_lazy("event:index")
 
-MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
+MESSAGE_STORAGE = "django.contrib.messages.storage.session.SessionStorage"
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
@@ -308,23 +308,23 @@ HARDWARE_SIGN_OUT_END_DATE = datetime(2023, 9, 30, tzinfo=TZ_INFO)
 SIGN_IN_TIMES = [
     {
         "name": "sign_in",
-        "time": datetime(2023, 10, 10, 11, 0, 0, tzinfo=TZ_INFO),   # Oct 10th @ 11am
+        "time": datetime(2023, 10, 10, 11, 0, 0, tzinfo=TZ_INFO),  # Oct 10th @ 11am
     },
     {
         "name": "lunch1",
-        "time": datetime(2023, 10, 10, 14, 0, 0, tzinfo=TZ_INFO),   # Oct 10th @ 2pm
+        "time": datetime(2023, 10, 10, 14, 0, 0, tzinfo=TZ_INFO),  # Oct 10th @ 2pm
     },
     {
         "name": "dinner1",
-        "time": datetime(2023, 10, 10, 18, 0, 0, tzinfo=TZ_INFO),   # Oct 10th @ 6pm
+        "time": datetime(2023, 10, 10, 18, 0, 0, tzinfo=TZ_INFO),  # Oct 10th @ 6pm
     },
     {
         "name": "breakfast2",
-        "time": datetime(2023, 10, 11, 9, 0, 0, tzinfo=TZ_INFO),    # Oct 11th @ 9am
+        "time": datetime(2023, 10, 11, 9, 0, 0, tzinfo=TZ_INFO),  # Oct 11th @ 9am
     },
     {
         "name": "lunch2",
-        "time": datetime(2023, 10, 11, 12, 0, 0, tzinfo=TZ_INFO),   # Oct 11th @ 12pm
+        "time": datetime(2023, 10, 11, 12, 0, 0, tzinfo=TZ_INFO),  # Oct 11th @ 12pm
     },
 ]
 
