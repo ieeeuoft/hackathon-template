@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.conf import settings
 from django.urls import reverse
@@ -37,6 +38,7 @@ def environment(**options):
             "chat_room_link": settings.CHAT_ROOM[1],
             "using_teams": settings.TEAMS,
             "using_rsvp": settings.RSVP,
+            'get_messages': messages.get_messages,
         }
     )
     return env

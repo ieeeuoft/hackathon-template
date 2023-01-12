@@ -4,7 +4,7 @@ from django.db.models import Count
 from import_export import resources
 from import_export.admin import ExportMixin
 
-from event.models import Profile, Team as EventTeam, User
+from event.models import Profile, Team as EventTeam, User, UserActivity
 from hardware.admin import OrderInline
 
 admin.site.unregister(User)
@@ -98,3 +98,4 @@ class EventTeamAdmin(admin.ModelAdmin):
 
 # Register your models here.
 admin.site.register(Profile)
+admin.site.register(UserActivity)

@@ -147,6 +147,7 @@ LOGIN_URL = reverse_lazy("event:login")
 LOGIN_REDIRECT_URL = reverse_lazy("event:dashboard")
 LOGOUT_REDIRECT_URL = reverse_lazy("event:index")
 
+MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
@@ -302,6 +303,31 @@ EVENT_END_DATE = datetime(2023, 10, 11, 17, 0, 0, tzinfo=TZ_INFO)
 HARDWARE_SIGN_OUT_START_DATE = datetime(2020, 9, 1, tzinfo=TZ_INFO)
 HARDWARE_SIGN_OUT_END_DATE = datetime(2023, 9, 30, tzinfo=TZ_INFO)
 
+# sign in times must be between EVENT_START_DATE and EVENT_END_DATE and in chronological order
+# the number of sign in times MUST MATCH the number of columns in UserActivityTable
+SIGN_IN_TIMES = [
+    {
+        "name": "sign_in",
+        "time": datetime(2023, 10, 10, 11, 0, 0, tzinfo=TZ_INFO),   # Oct 10th @ 11am
+    },
+    {
+        "name": "lunch1",
+        "time": datetime(2023, 10, 10, 14, 0, 0, tzinfo=TZ_INFO),   # Oct 10th @ 2pm
+    },
+    {
+        "name": "dinner1",
+        "time": datetime(2023, 10, 10, 18, 0, 0, tzinfo=TZ_INFO),   # Oct 10th @ 6pm
+    },
+    {
+        "name": "breakfast2",
+        "time": datetime(2023, 10, 11, 9, 0, 0, tzinfo=TZ_INFO),    # Oct 11th @ 9am
+    },
+    {
+        "name": "lunch2",
+        "time": datetime(2023, 10, 11, 12, 0, 0, tzinfo=TZ_INFO),   # Oct 11th @ 12pm
+    },
+]
+
 # Registration user requirements
 MINIMUM_AGE = 14
 
@@ -330,4 +356,4 @@ CHAT_ROOM = ("Slack", "https://slack.com")
 
 # Enable/Disable certain Features
 TEAMS = True
-RSVP = True
+RSVP = False
