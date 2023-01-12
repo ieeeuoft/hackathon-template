@@ -32,7 +32,7 @@ import { Category } from "api/types";
 import hardwareImagePlaceholder from "assets/images/placeholders/no-hardware-image.svg";
 import { hardwareSignOutEndDate, hardwareSignOutStartDate } from "constants.js";
 import { Tooltip } from "@material-ui/core";
-import { userTypeSelector } from "slices/users/userSlice";
+import { userTypeSelector, isTestUserSelector } from "slices/users/userSlice";
 
 export const ERROR_MESSAGES = {
     quantityMissing: "Quantity is required",
@@ -67,6 +67,7 @@ export const AddToCartForm = ({
     handleChange,
     values: { quantity },
 }: AddToCartFormProps) => {
+    const isTestUser = useSelector(isTestUserSelector);
     const dropdownNum =
         maxPerTeam !== null
             ? Math.min(quantityRemaining, maxPerTeam)
@@ -85,7 +86,7 @@ export const AddToCartForm = ({
             size="large"
             type="submit"
             onClick={handleSubmit}
-            disabled={dropdownNum === 0 || isOutsideSignOutPeriod}
+            disabled={dropdownNum === 0 || (!isTestUser && isOutsideSignOutPeriod)}
             disableElevation
         >
             Add to cart

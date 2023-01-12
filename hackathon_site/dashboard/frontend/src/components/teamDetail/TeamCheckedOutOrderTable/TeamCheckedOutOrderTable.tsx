@@ -376,7 +376,17 @@ export const TeamCheckedOutOrderTable = () => {
                                                     variant="contained"
                                                     type="submit"
                                                     disableElevation
-                                                    disabled={returnIsLoading}
+                                                    disabled={
+                                                        returnIsLoading ||
+                                                        Object.keys(props.values).find(
+                                                            (key) =>
+                                                                key.includes(
+                                                                    "checkbox"
+                                                                ) &&
+                                                                props.values[key] ===
+                                                                    true
+                                                        ) === undefined
+                                                    }
                                                     data-testid={`return-button-${checkedOutOrder.id}`}
                                                 >
                                                     Return Items
