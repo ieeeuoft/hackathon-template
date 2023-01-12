@@ -172,7 +172,7 @@ export const EnhancedOrderFilter = () => {
     };
 
     const handleReset = () => {
-        dispatch(clearFilters());
+        dispatch(clearFilters({ saveSearch: true }));
         dispatch(getOrdersWithFilters());
     };
 

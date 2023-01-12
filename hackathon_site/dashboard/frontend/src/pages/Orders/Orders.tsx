@@ -16,6 +16,7 @@ import {
     getOrdersWithFilters,
 } from "slices/order/adminOrderSlice";
 import { useHistory } from "react-router-dom";
+import { clearFilters } from "slices/hardware/hardwareSlice";
 
 const Orders = () => {
     const dispatch = useDispatch();
@@ -27,6 +28,7 @@ const Orders = () => {
     };
 
     useEffect(() => {
+        dispatch(clearFilters());
         dispatch(getOrdersWithFilters());
     }, [dispatch]);
 
