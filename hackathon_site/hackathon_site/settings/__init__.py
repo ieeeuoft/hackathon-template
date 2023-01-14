@@ -308,23 +308,28 @@ HARDWARE_SIGN_OUT_END_DATE = datetime(2023, 9, 30, tzinfo=TZ_INFO)
 SIGN_IN_TIMES = [
     {
         "name": "sign_in",
-        "time": datetime(2023, 10, 10, 11, 0, 0, tzinfo=TZ_INFO),  # Oct 10th @ 11am
+        "description": "Hackathon Sign In",
+        "time": datetime(2023, 1, 13, 17, 0, 0, tzinfo=TZ_INFO),  # Oct 10th @ 11am
     },
     {
         "name": "lunch1",
-        "time": datetime(2023, 10, 10, 14, 0, 0, tzinfo=TZ_INFO),  # Oct 10th @ 2pm
+        "description": "Lunch Day 1",
+        "time": datetime(2023, 1, 13, 22, 0, 0, tzinfo=TZ_INFO),  # Oct 10th @ 2pm
     },
     {
         "name": "dinner1",
-        "time": datetime(2023, 10, 10, 18, 0, 0, tzinfo=TZ_INFO),  # Oct 10th @ 6pm
+        "description": "Dinner Day 1",
+        "time": datetime(2023, 1, 14, 6, 0, 0, tzinfo=TZ_INFO),  # Oct 10th @ 6pm
     },
     {
         "name": "breakfast2",
-        "time": datetime(2023, 10, 11, 9, 0, 0, tzinfo=TZ_INFO),  # Oct 11th @ 9am
+        "description": "Breakfast Day 2",
+        "time": datetime(2023, 1, 14, 11, 0, 0, tzinfo=TZ_INFO),  # Oct 11th @ 9am
     },
     {
         "name": "lunch2",
-        "time": datetime(2023, 10, 11, 12, 0, 0, tzinfo=TZ_INFO),  # Oct 11th @ 12pm
+        "description": "Lunch Day 2",
+        "time": datetime(2023, 1, 14, 17, 0, 0, tzinfo=TZ_INFO),  # Oct 11th @ 12pm
     },
 ]
 

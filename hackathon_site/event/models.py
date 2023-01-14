@@ -2,8 +2,6 @@ from django.db import models
 from django.contrib.auth import get_user_model
 import uuid
 
-from registration.models import Application
-
 User = get_user_model()
 
 
@@ -49,7 +47,7 @@ class Profile(models.Model):
 
 
 class UserActivity(models.Model):
-    application = models.OneToOneField(Application, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     sign_in = models.DateTimeField(null=True)
     lunch1 = models.DateTimeField(null=True)
     dinner1 = models.DateTimeField(null=True)

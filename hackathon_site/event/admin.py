@@ -96,6 +96,28 @@ class EventTeamAdmin(admin.ModelAdmin):
         return obj.members_count
 
 
+@admin.register(UserActivity)
+class UserActivityAdmin(ExportMixin, admin.ModelAdmin):
+    list_display = (
+        "get_user_name",
+        "sign_in",
+        "lunch1",
+        "dinner1",
+        "breakfast2",
+        "lunch2",
+    )
+
+    def get_user_name(self, obj):
+        return f"{obj.user.first_name} {obj.user.last_name}"
+
+    get_user_name.short_description = "Name"
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related("user")
+
+    def get_export_queryset(self, request):
+        return super().get_queryset(request).select_related("user")
+
+
 # Register your models here.
 admin.site.register(Profile)
-admin.site.register(UserActivity)

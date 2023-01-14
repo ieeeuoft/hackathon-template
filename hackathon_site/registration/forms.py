@@ -235,8 +235,8 @@ class SignInForm(forms.Form):
         email = self.cleaned_data["email"]
 
         try:
-            user = User.objects.get(email=email)
-            application = Application.objects.get(user=user)
+            user = User.objects.get(email__exact=email)
+            application = Application.objects.get(user__exact=user)
             review = Review.objects.get(application__exact=application)
             if review.status == "Accepted":
                 if settings.RSVP and application.rsvp is None:
@@ -251,5 +251,11 @@ class SignInForm(forms.Form):
                 )
         except User.DoesNotExist:
             raise forms.ValidationError(_(f"User {email} does not exist."))
+        except Application.DoesNotExist:
+            raise forms.ValidationError(
+                _(f"User {email} has not applied to {settings.HACKATHON_NAME}")
+            )
+        except Exception as e:
+            raise e
 
         return email

@@ -543,6 +543,18 @@ strong {
         background-color: color(errorBackground);
         color: color(error);
     }
+
+    &info {
+        border: 1px solid color(info);
+        background-color: color(infoBackground);
+        color: color(info);
+    }
+
+    &warning {
+        border: 1px solid color(warning);
+        background-color: color(warningBackground);
+        color: color(warning);
+    }
 }
 
 // End of dashboard stuff

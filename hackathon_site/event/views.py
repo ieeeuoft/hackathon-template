@@ -225,31 +225,29 @@ class QRScannerView(LoginRequiredMixin, FormView):
     def form_valid(self, form):
         if isinstance(form, SignInForm):
             try:
-                user = User.objects.get(email=form.cleaned_data["email"])
-                application = Application.objects.get(user=user)
+                user = User.objects.get(email__exact=form.cleaned_data["email"])
                 sign_in_event = get_curr_sign_in_time()
                 now = datetime.now().replace(tzinfo=settings.TZ_INFO)
 
                 try:
-                    user_activity = UserActivity.objects.get(
-                        application__exact=application
-                    )
-                    user_activity[sign_in_event] = now
+                    user_activity = UserActivity.objects.get(user__exact=user)
+                    setattr(user_activity, sign_in_event, now)
                     user_activity.save()
                 except UserActivity.DoesNotExist:
-                    UserActivity.objects.create(
-                        application=application, **{[sign_in_event]: now}
-                    )
+                    sign_in_obj = {}
+                    sign_in_obj[sign_in_event] = now
+                    UserActivity.objects.create(user=user, **sign_in_obj)
 
                 messages.success(
                     self.request,
                     f'User {form.cleaned_data["email"]} successfully signed in',
                 )
             except NoEventOccurringException as e:
-                messages.success(self.request, str(e))
-            except:
+                messages.info(self.request, str(e))
+            except Exception as e:
                 messages.error(
-                    self.request, f'User {form.cleaned_data["email"]} could not sign in'
+                    self.request,
+                    f'User {form.cleaned_data["email"]} could not sign in due to: {str(e)}',
                 )
 
         return redirect(self.get_success_url())

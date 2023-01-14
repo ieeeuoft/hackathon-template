@@ -33,12 +33,25 @@ def is_hackathon_happening():
     return settings.EVENT_START_DATE <= now < settings.EVENT_END_DATE
 
 
-def get_curr_sign_in_time():
+def get_curr_sign_in_time(useDescription=False):
     now = datetime.now().replace(tzinfo=settings.TZ_INFO)
     for event in settings.SIGN_IN_TIMES:
-        start_interval = (event["time"] - relativedelta(hours=1)).date()
-        end_interval = (event["time"] + relativedelta(hours=1)).date()
+        start_interval = event["time"] - relativedelta(hours=1)
+        end_interval = event["time"] + relativedelta(hours=1)
         if start_interval <= now <= end_interval:
-            return event["name"]
+            return event["description"] if useDescription else event["name"]
 
+    if useDescription:
+        return None
     raise NoEventOccurringException()
+
+
+# assumes interval won't overlap between different months or years
+def get_sign_in_interval(time):
+    start_interval = time - relativedelta(hours=1)
+    end_interval = time + relativedelta(hours=1)
+
+    if start_interval.day == end_interval.day:
+        return f"{start_interval.strftime('%H:%M')} - {end_interval.strftime('%H:%M')}, {start_interval.strftime('%b %d')}"
+
+    return f"{start_interval.strftime('%H:%M, %b %d')} - {end_interval.strftime('%H:%M, %b %d')}"
