@@ -5,7 +5,7 @@ import { get, post } from "api/api";
 import { displaySnackbar } from "slices/ui/uiSlice";
 import { AppDispatch, RootState } from "slices/store";
 import { Profile, ProfileRequestBody, User, UserWithReviewStatus } from "api/types";
-import { adminGroup } from "constants.js";
+import { adminGroup, hssTestUserGroup } from "constants.js";
 
 interface LoginResponse {
     username?: string;
@@ -353,6 +353,10 @@ export const userTypeSelector = createSelector([userSelector], (user) =>
         : user?.groups.some((group) => group.name === adminGroup)
         ? "admin"
         : "none"
+);
+
+export const isTestUserSelector = createSelector([userSelector], (user) =>
+    user?.groups.find((group) => group.name === hssTestUserGroup)
 );
 
 export const loginSelector = createSelector(
