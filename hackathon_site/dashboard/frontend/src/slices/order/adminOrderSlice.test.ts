@@ -8,11 +8,13 @@ import {
     errorSelector,
     getOrdersWithFilters,
     adminOrderSelectors,
+    adminOrderTotalSelector,
 } from "slices/order/adminOrderSlice";
 import { get } from "api/api";
-import { makeMockApiListResponse } from "testing/utils";
+import { makeMockApiListResponse, makeStoreWithEntities } from "testing/utils";
 import { mockPendingOrders } from "testing/mockData";
 import { waitFor } from "@testing-library/react";
+import orders from "../../pages/Orders/Orders";
 
 jest.mock("api/api", () => ({
     ...jest.requireActual("api/api"),
@@ -51,8 +53,12 @@ describe("adminOrderSlice Selectors", () => {
         expect(errorSelector(errorExistsState)).toEqual("exists");
         expect(errorSelector(errorNullState)).toEqual(null);
     });
+    test("adminOrderTotalSelector", () => {
+        const store = makeStoreWithEntities({ allOrders: mockPendingOrders });
+        const total = adminOrderTotalSelector(store.getState());
+        expect(total).toEqual(mockPendingOrders.length);
+    });
 });
-
 describe("getOrdersWithFilters Thunk", () => {
     it("Updates the store on API success", async () => {
         const response = makeMockApiListResponse(mockPendingOrders);
