@@ -44,7 +44,6 @@ strong {
 
 // Colors
 .backgroundColor {
-
     // Change the background colors of each page here!
     &Landing {
         background-color: color(backgroundColor);
@@ -366,7 +365,7 @@ strong {
         opacity: 1 !important;
         height: 333px !important;
 
-        >img {
+        > img {
             width: auto !important;
             height: 100%;
             transform: translateX(-120px);
@@ -491,16 +490,15 @@ strong {
 }
 
 .input-field {
-
-    input:not([type]):focus:not([readonly])+label,
-    input[type="text"]:focus:not([readonly])+label,
-    input[type="password"]:focus:not([readonly])+label,
-    input[type="email"]:focus:not([readonly])+label,
-    input[type="date"]:focus:not([readonly])+label,
-    input[type="tel"]:focus:not([readonly])+label,
-    input[type="number"]:focus:not([readonly])+label,
-    input[type="search"]:focus:not([readonly])+label,
-    textarea.materialize-textarea:focus:not([readonly])+label {
+    input:not([type]):focus:not([readonly]) + label,
+    input[type="text"]:focus:not([readonly]) + label,
+    input[type="password"]:focus:not([readonly]) + label,
+    input[type="email"]:focus:not([readonly]) + label,
+    input[type="date"]:focus:not([readonly]) + label,
+    input[type="tel"]:focus:not([readonly]) + label,
+    input[type="number"]:focus:not([readonly]) + label,
+    input[type="search"]:focus:not([readonly]) + label,
+    textarea.materialize-textarea:focus:not([readonly]) + label {
         color: color(primary);
     }
 
