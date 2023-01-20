@@ -52,7 +52,7 @@ describe("Orders Page", () => {
 
     test("Display correct order count", () => {
         const store = makeStoreWithEntities({ allOrders: mockPendingOrders });
-        const { getByText, getByTestId } = render(<Orders />, { store });
+        const { getByText } = render(<Orders />, { store });
         const expectedCount = mockPendingOrders.reduce((accum) => accum + 1, 0);
         expect(getByText(expectedCount)).toBeInTheDocument();
     });
