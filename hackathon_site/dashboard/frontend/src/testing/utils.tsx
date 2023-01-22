@@ -15,6 +15,7 @@ import {
     CartItem,
     Category,
     Hardware,
+    Team,
     Order,
     OrderInTable,
 } from "api/types";
@@ -47,6 +48,16 @@ import {
     teamOrderReducerName,
     TeamOrderState,
 } from "slices/order/teamOrderSlice";
+import {
+    initialState as userInitialState,
+    userReducerName,
+    UserState,
+} from "slices/users/userSlice";
+import {
+    initialState as teamAdminInitialState,
+    teamAdminReducerName,
+    TeamAdminState,
+} from "slices/event/teamAdminSlice";
 import {
     initialState as adminOrderInitialState,
     adminOrderReducerName,
@@ -138,11 +149,13 @@ export interface StoreEntities {
     ui?: DeepPartial<UIState>;
     cartItems?: CartItem[];
     team?: DeepPartial<TeamState>;
+    teams?: Team[];
     cartState?: DeepPartial<CartState>;
     orderState?: Partial<OrderState>;
     pendingOrders?: OrderInTable[];
     teamDetailOrders?: OrderInTable[];
     teamDetailOrderState?: Partial<TeamOrderState>;
+    user?: Partial<UserState>;
     allOrders?: Order[];
 }
 
@@ -251,6 +264,29 @@ export const makeStoreWithEntities = (entities: StoreEntities) => {
         }
 
         preloadedState[teamOrderReducerName] = teamOrderState;
+    }
+
+    if (entities.user) {
+        preloadedState[userReducerName] = {
+            ...userInitialState,
+            ...entities.user,
+        };
+    }
+
+    if (entities.teams) {
+        const teamAdminState: TeamAdminState = {
+            ...teamAdminInitialState,
+            ...entities.teams,
+            ids: [],
+            entities: {},
+        };
+
+        for (const team of entities.teams) {
+            teamAdminState.ids.push(team.id);
+            teamAdminState.entities[team.id] = team;
+        }
+
+        preloadedState[teamAdminReducerName] = teamAdminState;
     }
 
     if (entities.allOrders) {

@@ -32,6 +32,7 @@ import { Category } from "api/types";
 import hardwareImagePlaceholder from "assets/images/placeholders/no-hardware-image.svg";
 import { hardwareSignOutEndDate, hardwareSignOutStartDate } from "constants.js";
 import { Tooltip } from "@material-ui/core";
+import { userTypeSelector, isTestUserSelector } from "slices/users/userSlice";
 
 export const ERROR_MESSAGES = {
     quantityMissing: "Quantity is required",
@@ -66,6 +67,7 @@ export const AddToCartForm = ({
     handleChange,
     values: { quantity },
 }: AddToCartFormProps) => {
+    const isTestUser = useSelector(isTestUserSelector);
     const dropdownNum =
         maxPerTeam !== null
             ? Math.min(quantityRemaining, maxPerTeam)
@@ -84,7 +86,7 @@ export const AddToCartForm = ({
             size="large"
             type="submit"
             onClick={handleSubmit}
-            disabled={dropdownNum === 0 || isOutsideSignOutPeriod}
+            disabled={dropdownNum === 0 || (!isTestUser && isOutsideSignOutPeriod)}
             disableElevation
         >
             Add to cart
@@ -201,7 +203,7 @@ interface DetailInfoSectionProps {
     notes?: string;
     constraints: string[];
 }
-const DetailInfoSection = ({
+export const DetailInfoSection = ({
     manufacturer,
     modelNumber,
     datasheet,
@@ -210,13 +212,20 @@ const DetailInfoSection = ({
 }: DetailInfoSectionProps) => {
     return (
         <>
-            <Typography variant="body2" color="secondary" className={styles.heading}>
-                Constraints
-            </Typography>
-            {constraints?.length > 0 &&
-                constraints.map((constraint, i) => (
-                    <Typography key={i}>- {constraint}</Typography>
-                ))}
+            {constraints?.length > 0 && (
+                <>
+                    <Typography
+                        variant="body2"
+                        color="secondary"
+                        className={styles.heading}
+                    >
+                        Constraints
+                    </Typography>
+                    {constraints.map((constraint, i) => (
+                        <Typography key={i}>- {constraint}</Typography>
+                    ))}
+                </>
+            )}
             <Typography variant="body2" className={styles.heading}>
                 Manufacturer
             </Typography>
@@ -264,9 +273,14 @@ const MainSection = ({
     categories,
     picture,
 }: MainSectionProps) => {
+    const userType = useSelector(userTypeSelector);
     const availability =
         quantityRemaining === 0 ? (
             <Typography color="secondary">OUT OF STOCK</Typography>
+        ) : userType === "participant" ? (
+            <Typography className={styles.quantityAvailable}>
+                {quantityRemaining} IN STOCK
+            </Typography>
         ) : (
             <Typography className={styles.quantityAvailable}>
                 {quantityRemaining} OF {quantityAvailable} IN STOCK
@@ -278,20 +292,23 @@ const MainSection = ({
             <div>
                 <Typography variant="h6">{name}</Typography>
                 {availability}
-                <Typography variant="body2" className={styles.heading}>
-                    Category
-                </Typography>
-                <div>
-                    {categories?.length > 0 &&
-                        categories.map((category, i) => (
-                            <Chip
-                                label={category}
-                                size="small"
-                                className={styles.categoryItem}
-                                key={i}
-                            />
-                        ))}
-                </div>
+                {categories.length > 0 && (
+                    <>
+                        <Typography variant="body2" className={styles.heading}>
+                            Category
+                        </Typography>
+                        <div>
+                            {categories.map((category, i) => (
+                                <Chip
+                                    label={category}
+                                    size="small"
+                                    className={styles.categoryItem}
+                                    key={i}
+                                />
+                            ))}
+                        </div>
+                    </>
+                )}
             </div>
             <img src={picture} alt={name} />
         </div>
@@ -322,15 +339,16 @@ export const ProductOverview = ({
     const categories = useSelector((state: RootState) =>
         selectCategoriesByIds(state, hardware?.categories || [])
     );
+
+    maxPerTeam = hardware?.max_per_team ?? null;
+    constraints = !!hardware?.max_per_team
+        ? [`Max ${hardware.max_per_team} of this item`]
+        : [];
+
     if (categories.length > 0) {
         categoryNames = categories
             .filter((category): category is Category => !!category)
             .map((category) => category.name);
-        constraints =
-            hardware?.max_per_team !== undefined
-                ? [`Max ${hardware.max_per_team} of this item`]
-                : [];
-        maxPerTeam = hardware?.max_per_team ?? null;
         for (const category of categories) {
             if (category?.max_per_team !== undefined) {
                 constraints.push(

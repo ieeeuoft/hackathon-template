@@ -16,6 +16,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
     createProfileSelector,
     fetchUserAcceptanceStatus,
+    isTestUserSelector,
     userAcceptanceSelector,
     userSelector,
     userTypeSelector,
@@ -31,6 +32,7 @@ import { push } from "connected-react-router";
 const Acknowledgement = () => {
     const dispatch = useDispatch();
     const userType = useSelector(userTypeSelector);
+    const isTestUser = useSelector(isTestUserSelector);
     const {
         error: getAcceptanceError,
         isLoading,
@@ -69,8 +71,10 @@ const Acknowledgement = () => {
                     ) : !showAcknowledgements ? (
                         <UserAcceptanceMessage
                             status={
-                                acceptanceUser?.review_status === "None" ||
-                                !acceptanceUser?.review_status
+                                isTestUser
+                                    ? "Accepted"
+                                    : acceptanceUser?.review_status === "None" ||
+                                      !acceptanceUser?.review_status
                                     ? "Incomplete"
                                     : acceptanceUser?.review_status
                             }
