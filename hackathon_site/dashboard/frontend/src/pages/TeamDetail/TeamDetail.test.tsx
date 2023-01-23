@@ -6,10 +6,10 @@ import {
     when,
     waitFor,
     makeMockApiResponse,
-    promiseResolveWithDelay,
+    fireEvent,
+    within,
 } from "testing/utils";
 import {
-    cardItems,
     mockCategories,
     mockCheckedOutOrders,
     mockHardware,
@@ -20,9 +20,7 @@ import {
 import TeamDetail, { PageParams } from "pages/TeamDetail/TeamDetail";
 import { RouteComponentProps } from "react-router-dom";
 import { Hardware, Order } from "api/types";
-import { get, patch } from "api/api";
-import Dashboard from "../Dashboard/Dashboard";
-import { fireEvent, within } from "../../testing/utils";
+import { get } from "api/api";
 
 jest.mock("api/api", () => ({
     ...jest.requireActual("api/api"),
@@ -41,25 +39,8 @@ const teamDetailProps = {
     },
 } as RouteComponentProps<PageParams>;
 
-const mockedPatch = patch as jest.MockedFunction<typeof patch>;
-
 const hardwareUri = "/api/hardware/hardware/";
 const categoriesUri = "/api/hardware/categories/";
-const teamUri = "/api/event/teams/team/";
-const ordersUri = "/api/event/teams/team/orders/";
-
-const mockOrderAPI = (orders?: Order[]) =>
-    when(mockedGet)
-        .calledWith(ordersUri)
-        .mockResolvedValue(makeMockApiListResponse<Order>(orders ?? mockOrders));
-const mockTeamAPI = (withDelay?: boolean) => {
-    const teamAPIResponse = makeMockApiResponse(mockTeam);
-    when(mockedGet)
-        .calledWith(teamUri)
-        .mockResolvedValue(
-            withDelay ? promiseResolveWithDelay(teamAPIResponse, 500) : teamAPIResponse
-        );
-};
 
 describe("<TeamDetail />", () => {
     test("renders loading component and then data without crashing", async () => {
@@ -81,10 +62,11 @@ describe("<TeamDetail />", () => {
                 1,
                 `/api/event/teams/${mockTeamMultiple.team_code}/`
             );
-            expect(mockedGet).toHaveBeenNthCalledWith(2, orderAPI, {
+            expect(mockedGet).toHaveBeenNthCalledWith(2, categoriesUri, {});
+            expect(mockedGet).toHaveBeenNthCalledWith(3, orderAPI, {
                 team_code: teamDetailProps.match.params.code,
             });
-            expect(mockedGet).toHaveBeenNthCalledWith(3, "/api/hardware/hardware/", {
+            expect(mockedGet).toHaveBeenNthCalledWith(4, "/api/hardware/hardware/", {
                 hardware_ids: [1, 2, 3, 4, 10],
             });
         });
@@ -119,7 +101,7 @@ describe("<TeamDetail />", () => {
     test("Opens Product Overview with the correct hardware information", async () => {
         const hardwareDetailUri = "/api/hardware/hardware/1/";
         const newHardwareData: Hardware = {
-            id: mockCheckedOutOrders[0].items[0].hardware_id,
+            ...mockHardware[0],
             name: "Random hardware",
             model_number: "90",
             manufacturer: "Tesla",
@@ -137,7 +119,15 @@ describe("<TeamDetail />", () => {
         const hardwareDetailApiResponse = makeMockApiResponse(newHardwareData);
         const hardware_ids = [1, 2, 3, 4, 10];
 
-        mockOrderAPI();
+        const teamOrderAPIResponse = makeMockApiListResponse<Order>(mockOrders);
+        const teamDetailAPIResponse = makeMockApiResponse(mockTeamMultiple);
+
+        when(mockedGet)
+            .calledWith(`/api/event/teams/${mockTeamMultiple.team_code}/`)
+            .mockResolvedValue(teamDetailAPIResponse);
+        when(mockedGet)
+            .calledWith(orderAPI, { team_code: teamDetailProps.match.params.code })
+            .mockResolvedValue(teamOrderAPIResponse);
         when(mockedGet)
             .calledWith(hardwareUri, { hardware_ids })
             .mockResolvedValue(hardwareApiResponse);
@@ -150,17 +140,31 @@ describe("<TeamDetail />", () => {
 
         const { getByTestId, getByText } = render(<TeamDetail {...teamDetailProps} />);
 
+        expect(screen.getByTestId("team-info-linear-progress")).toBeInTheDocument();
+
+        await waitFor(() => {
+            expect(mockedGet).toHaveBeenNthCalledWith(
+                1,
+                `/api/event/teams/${mockTeamMultiple.team_code}/`
+            );
+            expect(mockedGet).toHaveBeenNthCalledWith(2, categoriesUri, {});
+            expect(mockedGet).toHaveBeenNthCalledWith(3, orderAPI, {
+                team_code: teamDetailProps.match.params.code,
+            });
+            expect(mockedGet).toHaveBeenNthCalledWith(4, "/api/hardware/hardware/", {
+                hardware_ids: [1, 2, 3, 4, 10],
+            });
+        });
+
+        expect(
+            screen.getByText(`Team ${teamDetailProps.match.params.code} Overview`)
+        ).toBeInTheDocument();
+
         const category = mockCategories.find(
             ({ id }) => id === newHardwareData?.categories[0]
         );
 
         if (category) {
-            await waitFor(() => {
-                // expect(get).toHaveBeenNthCalledWith(1, teamUri);
-                // expect(get).toHaveBeenNthCalledWith(2, categoriesUri, {});
-                // expect(get).toHaveBeenNthCalledWith(3, ordersUri);
-                // expect(get).toHaveBeenNthCalledWith(4, hardwareUri, { hardware_ids });
-            });
             await waitFor(() => {
                 const infoButton = within(
                     getByTestId(
@@ -170,7 +174,7 @@ describe("<TeamDetail />", () => {
                 fireEvent.click(infoButton);
             });
             await waitFor(() => {
-                // expect(get).toHaveBeenNthCalledWith(5, hardwareDetailUri);
+                expect(mockedGet).toHaveBeenNthCalledWith(5, hardwareDetailUri);
                 expect(getByText("Product Overview")).toBeVisible();
                 expect(
                     getByText(`- Max ${newHardwareData.max_per_team} of this item`)
