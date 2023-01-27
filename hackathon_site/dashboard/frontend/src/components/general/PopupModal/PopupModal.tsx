@@ -2,8 +2,9 @@ import React from "react";
 import Modal from "@material-ui/core/Modal";
 import Button from "@material-ui/core/Button";
 import styles from "components/general/PopupModal/PopupModal.module.scss";
-import { Box } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
+import Backdrop from "@material-ui/core/Backdrop";
+import Slide from "@material-ui/core/Slide";
 
 interface PopupModalProps {
     title?: string;
@@ -24,8 +25,8 @@ const PopupModal = ({
     submitHandler,
     cancelHandler,
 }: PopupModalProps) => {
-    return (
-        <Modal open={isVisible} className={styles.modal}>
+    const PropInformation = () => {
+        return (
             <Grid
                 className={styles.modalGrid}
                 container
@@ -43,6 +44,22 @@ const PopupModal = ({
                     </Button>
                 </Grid>
             </Grid>
+        );
+    };
+
+    return (
+        <Modal
+            open={isVisible}
+            className={styles.modal}
+            closeAfterTransition
+            BackdropComponent={Backdrop}
+            BackdropProps={{ timeout: 500 }}
+        >
+            <Slide in={isVisible} direction="up">
+                <div>
+                    <PropInformation></PropInformation>
+                </div>
+            </Slide>
         </Modal>
     );
 };

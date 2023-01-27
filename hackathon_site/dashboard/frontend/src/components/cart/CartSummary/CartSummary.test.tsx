@@ -27,6 +27,40 @@ jest.mock("api/api", () => ({
 
 const mockedPost = post as jest.MockedFunction<typeof post>;
 
+const mockHardwareSignOutStartDate = jest.fn();
+const mockHardwareSignOutEndDate = jest.fn();
+jest.mock("constants.js", () => ({
+    get hardwareSignOutStartDate() {
+        return mockHardwareSignOutStartDate();
+    },
+    get hardwareSignOutEndDate() {
+        return mockHardwareSignOutEndDate();
+    },
+    get minTeamSize() {
+        return 2;
+    },
+    get maxTeamSize() {
+        return 4;
+    },
+}));
+
+export const mockHardwareSignOutDates = (
+    numDaysRelativeToStart?: number,
+    numDaysRelativeToEnd?: number
+): {
+    start: Date;
+    end: Date;
+} => {
+    const currentDate = new Date();
+    const start = new Date();
+    const end = new Date();
+    start.setDate(currentDate.getDate() + (numDaysRelativeToStart ?? -1));
+    end.setDate(currentDate.getDate() + (numDaysRelativeToEnd ?? 1));
+    mockHardwareSignOutStartDate.mockReturnValue(start);
+    mockHardwareSignOutEndDate.mockReturnValue(end);
+    return { start, end };
+};
+
 describe("Render cartQuantity", () => {
     it(`Renders correctly when it reads the number ${cartQuantity}`, async () => {
         const { getByText } = render(
@@ -39,6 +73,7 @@ describe("Render cartQuantity", () => {
         });
     });
     it("Renders loading icon and disables submit button on submission", async () => {
+        mockHardwareSignOutDates(-5, 5);
         when(mockedPost)
             .calledWith("/api/hardware/orders/")
             .mockReturnValue(
@@ -98,10 +133,24 @@ describe("Render cartQuantity", () => {
         });
     });
     it("Disables the submit button if team size is invalid", async () => {
+        mockHardwareSignOutDates(-5, 5);
         const store = makeStoreWithEntities({
             hardware: mockHardware,
             cartItems: mockCartItems,
             team: { team: mockTeam },
+        });
+
+        const { getByTestId } = render(<Cart />, { store });
+
+        const submitOrderBtn = getByTestId("submit-order-button");
+        expect(submitOrderBtn).toBeDisabled();
+    });
+    it("Disables the submit button if current date is not within HSS period", async () => {
+        mockHardwareSignOutDates(1, 5);
+        const store = makeStoreWithEntities({
+            hardware: mockHardware,
+            cartItems: mockCartItems,
+            team: { team: mockValidTeam },
         });
 
         const { getByTestId } = render(<Cart />, { store });

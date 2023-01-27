@@ -15,21 +15,20 @@ import {
     adminOrderSelectors,
     getOrdersWithFilters,
 } from "slices/order/adminOrderSlice";
+import { useHistory } from "react-router-dom";
 
 const Orders = () => {
     const dispatch = useDispatch();
-    useEffect(() => {
-        dispatch(getOrdersWithFilters());
-    }, [dispatch]);
+    const history = useHistory();
+    const allOrders = useSelector(adminOrderSelectors.selectAll);
     const [mobileOpen, setMobileOpen] = React.useState(false);
     const toggleFilter = () => {
         setMobileOpen(!mobileOpen);
     };
-    const handleClick = (orderId: number) => {
-        alert(`The order you clicked is: #${orderId}`);
-        console.log(orderId);
-    };
-    const allOrders = useSelector(adminOrderSelectors.selectAll);
+
+    useEffect(() => {
+        dispatch(getOrdersWithFilters());
+    }, [dispatch]);
 
     return (
         <>
@@ -93,15 +92,25 @@ const Orders = () => {
                                         sm={6}
                                         xs={12}
                                         key={idx}
-                                        onClick={() => handleClick(order.id)}
+                                        onClick={() =>
+                                            history.push(`/teams/${order.team_code}`)
+                                        }
                                     >
-                                        <OrderCard
-                                            teamCode={order.team_code}
-                                            orderQuantity={order.items.length}
-                                            time={order.created_at}
-                                            id={order.id}
-                                            status={order.status}
-                                        />
+                                        {[
+                                            "Submitted",
+                                            "Ready for Pickup",
+                                            "Picked Up",
+                                            "Cancelled",
+                                        ].includes(order.status) && (
+                                            <OrderCard
+                                                teamCode={order.team_code}
+                                                orderQuantity={order.items.length}
+                                                time={order.created_at}
+                                                id={order.id}
+                                                status={order.status}
+                                                data-testid={`order-item-${order.id}`}
+                                            />
+                                        )}
                                     </Grid>
                                 ))}
                             </Grid>

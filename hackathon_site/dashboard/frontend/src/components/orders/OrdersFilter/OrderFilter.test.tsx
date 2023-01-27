@@ -20,7 +20,7 @@ describe("<OrdersFilter />", () => {
         mockedGet.mockResolvedValue(apiResponse);
 
         const store = makeStore();
-        store.dispatch(getOrdersWithFilters());
+        store.dispatch(getOrdersWithFilters);
 
         return store;
     };

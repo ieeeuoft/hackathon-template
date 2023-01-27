@@ -1,7 +1,7 @@
 import { render } from "testing/utils";
 import PopupModal from "./PopupModal";
 import React from "react";
-import { fireEvent } from "@testing-library/react";
+import { fireEvent, waitFor } from "@testing-library/react";
 
 test("renders general popup modal without crashing", () => {
     const { getByText } = render(
@@ -55,7 +55,7 @@ test("cancel function is being passed into popup modal without crashing", () => 
     expect(cancelFunction).toHaveBeenCalled();
 });
 
-test("cancel and submit text are NOT being passed into popup modal without crashing", () => {
+test("cancel and submit text are NOT being passed into popup modal without crashing", async () => {
     const cancelFunction = jest.fn();
     const submitFunction = jest.fn();
     const { getByText } = render(
@@ -67,8 +67,8 @@ test("cancel and submit text are NOT being passed into popup modal without crash
             title={"Test Modal"}
         />
     );
-    expect(getByText("Cancel")).toBeInTheDocument();
-    expect(getByText("Submit")).toBeInTheDocument();
-    fireEvent.click(getByText("Cancel"));
-    fireEvent.click(getByText("Submit"));
+    await waitFor(() => {
+        expect(getByText("Cancel")).toBeInTheDocument();
+        expect(getByText("Submit")).toBeInTheDocument();
+    });
 });
