@@ -12,7 +12,6 @@ interface PopupModalProps {
     isVisible: boolean;
     submitText?: string;
     cancelText?: string;
-    AnimationPresence: boolean;
     submitHandler(): any;
     cancelHandler(): any;
 }
@@ -23,7 +22,6 @@ const PopupModal = ({
     isVisible,
     submitText,
     cancelText,
-    AnimationPresence,
     submitHandler,
     cancelHandler,
 }: PopupModalProps) => {
@@ -40,7 +38,7 @@ const PopupModal = ({
                     <p className={styles.description}>{description}</p>
                 </Grid>
                 <Grid item container justifyContent={"flex-end"}>
-                    <Button onClick={cancelHandler}>{cancelText ?? "Cl"}</Button>
+                    <Button onClick={cancelHandler}>{cancelText ?? "Cancel"}</Button>
                     <Button onClick={submitHandler} color="primary">
                         {submitText ?? "Submit"}
                     </Button>
@@ -59,11 +57,6 @@ const PopupModal = ({
         >
             <Slide in={isVisible} direction="up">
                 <div>
-                    {AnimationPresence ? (
-                        <PropInformation></PropInformation>
-                    ) : (
-                        <PropInformation></PropInformation>
-                    )}
                     <PropInformation></PropInformation>
                 </div>
             </Slide>
