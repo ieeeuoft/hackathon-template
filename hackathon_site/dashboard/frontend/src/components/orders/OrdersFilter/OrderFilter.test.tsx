@@ -20,27 +20,30 @@ describe("<OrdersFilter />", () => {
         mockedGet.mockResolvedValue(apiResponse);
 
         const store = makeStore();
-        store.dispatch(getOrdersWithFilters);
+        store.dispatch(getOrdersWithFilters());
 
         return store;
     };
 
     it("Submits selected filters", async () => {
         const store = prepopulateStore();
+        await waitFor(() => {
+            expect(mockedGet).toHaveBeenCalledWith(ordersUri, {});
+        });
         const { getByTestId, getByText } = render(<OrdersFilter />, {
             store,
         });
 
-        // sort
+        // sort buttons
         const orderByDefaultButton = getByText("Default");
         const timeOrderedAscButton = getByText("Time Ordered (ASC)");
         const timeOrderedDescButton = getByText("Time Ordered (DESC)");
 
         // status filters
         const submittedCheckbox = await getByTestId("Submitted");
-        const readyForPickupCheckbox = await getByTestId("Ready for Pickup");
-        const pickedUpCheckbox = await getByTestId("Picked Up");
-        const cancelledCheckbox = await getByTestId("Cancelled");
+        const readyForPickupCheckbox = getByTestId("Ready for Pickup");
+        const pickedUpCheckbox = getByTestId("Picked Up");
+        const cancelledCheckbox = getByTestId("Cancelled");
 
         const applyButton = getByTestId("apply-button");
 
@@ -55,7 +58,7 @@ describe("<OrdersFilter />", () => {
         };
 
         await waitFor(() => {
-            expect(store.getState()["adminOrder"]["filters"]).toEqual(expectedFilters);
+            expect(mockedGet).toHaveBeenNthCalledWith(2, ordersUri, expectedFilters);
         });
     });
 

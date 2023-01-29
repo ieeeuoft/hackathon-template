@@ -39,7 +39,13 @@ const orderByOptions: OrderByOptions = [
 ];
 
 const RadioOrderBy = ({ field, options }: FieldProps & { options: OrderByOptions }) => (
-    <RadioGroup {...field} name={field.name}>
+    <RadioGroup
+        {...field}
+        name={field.name}
+        onChange={(e, value) => {
+            console.log(`${value}`);
+        }}
+    >
         {options.map((item, i) => (
             <FormControlLabel
                 name={field.name}
@@ -64,6 +70,9 @@ const OrderFilter = ({ handleReset, handleSubmit }: FormikValues) => {
                 <div className={styles.filterCategory} key={i}>
                     <FormControlLabel
                         name={field.name}
+                        onChange={(e, value) => {
+                            console.log(`${value}`);
+                        }}
                         data-testid={item.status}
                         value={item.status}
                         control={<Checkbox color="primary" />}
