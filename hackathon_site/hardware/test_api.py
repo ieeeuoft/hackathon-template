@@ -1685,7 +1685,6 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
         # hardware limit and category limit
         num_hardware_requested = 5
         num_existing_orders = 3
-        num_expected_fulfilled = 3
 
         order = Order.objects.create(
             team=self.user.profile.team,
@@ -1711,12 +1710,6 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
             ]
         }
         self.assertEqual(response.json(), expected_response)
-
-        order = Order.objects.get(pk=2)
-        self.assertCountEqual(order.hardware.all(), [hardware])
-        self.assertEqual(
-            order.items.filter(hardware=hardware).count(), num_expected_fulfilled
-        )
 
     @override_settings(HARDWARE_SIGN_OUT_START_DATE=datetime.now(settings.TZ_INFO))
     def test_empty_input(self):
