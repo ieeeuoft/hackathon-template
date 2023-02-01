@@ -118,9 +118,7 @@ class CurrentProfileSerializer(ProfileSerializer):
                 )
 
             try:
-                review = Review.objects.get(
-                    application__user=current_user
-                )
+                review = Review.objects.get(application__user=current_user)
                 if review.status != "Accepted":
                     raise serializers.ValidationError(
                         f"User has not been accepted to participate in {settings.HACKATHON_NAME}"

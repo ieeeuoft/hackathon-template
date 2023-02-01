@@ -646,7 +646,8 @@ class CreateProfileViewTestCase(SetupUserMixin, APITestCase):
 
     def test_user_has_been_reviewed_but_not_sent(self):
         self._review(
-            application=self._apply_as_user(self.user, rsvp=True), decision_sent_date=None
+            application=self._apply_as_user(self.user, rsvp=True),
+            decision_sent_date=None,
         )
         self._login()
         response = self.client.post(self.view, self.request_body)
