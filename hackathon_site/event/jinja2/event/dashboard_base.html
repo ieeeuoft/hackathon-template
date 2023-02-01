@@ -38,12 +38,10 @@
                         {% if review.status == "Accepted" %}
                             {% if application.rsvp and using_rsvp %}
                                 <h4 class="formH2"><b>Thanks for RSVP'ing!</b> See you at {{ hackathon_name }}!</h4>
-                            {% elif application.rsvp is sameas false and using_rsvp %}
-                                <h4 class="formH2"><b>Thanks for letting us know.</b> Hope to see you next year
-                                    at {{ hackathon_name }}</h4>
+                            {% elif application.rsvp is sameas false %}
+                                <h4 class="formH2"><b>Thanks for letting us know.</b> Hope to see you next year at {{ hackathon_name }}</h4>
                             {% else %}
-                                <h4 class="formH2"><b>Congratulations!</b> You've been accepted
-                                    into {{ hackathon_name }}!</h4>
+                                <h4 class="formH2"><b>Congratulations!</b> You've been accepted into {{ hackathon_name }}!</h4>
                             {% endif %}
 
                             {% if using_rsvp %}
@@ -63,13 +61,10 @@
                                 <br>
                                 {% if not rsvp_passed %}
                                     {% if application.rsvp is none %}
-                                        <p>To confirm your attendance at {{ hackathon_name }}, please RSVP using the
-                                            accept or decline buttons below.</p> <br/>
-                                        <p>RSVP by <b>{{ rsvp_deadline }}</b>, otherwise your spot will be given to
-                                            other applicants.
-                                            Alternatively you can decline the offer. You can change your response at any
-                                            time before <b>{{ rsvp_deadline }}</b>.
-                                        </p> <br/>
+                                        <p>To confirm your attendance at {{ hackathon_name }}, please RSVP using the accept or decline buttons below.</p> <br />
+                                        <p>RSVP by <b>{{ rsvp_deadline }}</b>, otherwise your spot will be given to other applicants.
+                                            Alternatively you can decline the offer. You can change your response at any time before <b>{{ rsvp_deadline }}</b>.
+                                        </p> <br />
                                     {% else %}
                                         <p>You can change your response at any time before <b>{{ rsvp_deadline }}</b>.
                                         </p> <br/>
@@ -112,51 +107,36 @@
                                         {% endif %}
                                     </div>
 
-                                {% elif rsvp_passed and application.rsvp %}
-                                    <p><b>The RSVP deadline has passed. Thanks for confirming your position
-                                        at {{ hackathon_name }}! We look forward to seeing you there. Note that you
-                                        cannot change your RSVP at this time.</b></p>
-                                {% elif rsvp_passed and application.rsvp is sameas false %}
-                                    <p><b>The RSVP deadline has passed. We regret to see that you will not be joining us
-                                        this year at {{ hackathon_name }}. Unfortunately you cannot change your RSVP at
-                                        this time.</b></p>
-                                {% else %}
-                                    <p><b>It appears you haven't RSVPed. Unfortunately the RSVP deadline has passed and
-                                        you cannot change your RSVP at this time.</b></p>
-                                {% endif %}
+                                    {% elif rsvp_passed and application.rsvp %}
+                                        <p><b>The RSVP deadline has passed. Thanks for confirming your position at {{ hackathon_name }}! We look forward to seeing you there. Note that you cannot change your RSVP at this time.</b></p>
+                                    {% elif rsvp_passed and application.rsvp is sameas false %}
+                                        <p><b>The RSVP deadline has passed. We regret to see that you will not be joining us this year at {{ hackathon_name }}. Unfortunately you cannot change your RSVP at this time.</b></p>
+                                    {% else %}
+                                        <p><b>It appears you haven't RSVPed. Unfortunately the RSVP deadline has passed and you cannot change your RSVP at this time.</b></p>
+                                    {% endif %}
                             {% endif %}
 
-                        {% elif review.status == "Waitlisted" %}
+                            {% elif review.status == "Waitlisted" %}
                             <h4 class="formH2">You've been waitlisted for {{ hackathon_name }}</h4>
-                            <p>The {{ hackathon_name }} team has reviewed your application, and have decided not to
-                                grant you a guaranteed spot
-                                at {{ hackathon_name }} and to place you in our waitlist.
-                                On {{ waitlisted_acceptance_start_time.strftime("%B %-d, %Y, at %-I:%M %p") }}, we will
-                                begin allowing
-                                people from the waitlist into the event on a first-come, first-serve basis if there is
-                                still room. We offer no
-                                guarantee that you will be allowed into the event, regardless of how early you arrive.
-                                Please read our
-                                <a class="primaryText hoverLink" href="{{ participant_package_link }}" rel="noopener"
-                                   target="_blank">participant package</a> for all the info regarding the event if you
-                                plan on
+                            <p>The {{ hackathon_name }} team has reviewed your application, and have decided not to grant you a guaranteed spot
+                                at {{ hackathon_name }} and to place you in our waitlist. On {{ waitlisted_acceptance_start_time.strftime("%B %-d, %Y, at %-I:%M %p") }}, we will begin allowing
+                                people from the waitlist into the event on a first-come, first-serve basis if there is still room. We offer no
+                                guarantee that you will be allowed into the event, regardless of how early you arrive. Please read our 
+                                <a class="primaryText hoverLink" href="{{ participant_package_link }}" rel="noopener" target="_blank">participant package</a> for all the info regarding the event if you plan on 
                                 waiting to see if any spots become available.
-                            </p> <br/>
-                            <p>If you have questions, read the <a class="primaryText hoverLink" href="#faq">FAQ</a>, or
-                                feel free to contact us.</p> <br/>
-
+                            </p> <br />
+                            <p>If you have questions, read the <a class="primaryText hoverLink" href="#faq">FAQ</a>, or feel free to contact us.</p> <br />
+    
                             <p><strong>Status</strong>: {{ status }}</p>
+    
 
-                        {% elif review.status == "Rejected" %}
+                            {% elif review.status == "Rejected" %}
                             <h4 class="formH2">You've been rejected from {{ hackathon_name }}</h4>
-                            <p>Thank you for your interest in {{ hackathon_name }}. While we appreciate your time and
-                                energy,
-                                we are not able to offer you a spot in the event this year. We hope that this decision
-                                does not
-                                prevent you from applying next year! Every year we look to increase the number of
-                                attendees. If
+                            <p>Thank you for your interest in {{ hackathon_name }}. While we appreciate your time and energy,
+                                we are not able to offer you a spot in the event this year. We hope that this decision does not
+                                prevent you from applying next year! Every year we look to increase the number of attendees. If
                                 you have any questions or concerns, feel free to contact us!
-                            </p> <br/>
+                            </p> <br />
                             <p><strong>Status</strong>: {{ status }}</p>
                         {% endif %}
 
@@ -270,46 +250,30 @@
                         {% endif %}
                     </div>
                 {% endif %}
-
+                
                 <div class="borderTopDiv z-depth-3">
                     <h2 class="formH2" id="faq">Application FAQs</h2>
-
+    
                     <p class="faqQuestion">When can I expect to hear back?</p>
-                    <p class="faqAnswer">Decisions will be sent out in 2 rounds, tentatively scheduled for MONTH XX and
-                        XX.</p>
-
+                    <p class="faqAnswer">Decisions will be sent out in 2 rounds, tentatively scheduled for MONTH XX and XX.</p>
+    
                     <p class="faqQuestion">Can I compete with a different team than the one I applied with?</p>
-                    <p class="faqAnswer">Your team number is just for your application so we can review your team
-                        together. It is not deciding and not needed during the event. You have until the event to choose
-                        a team and must submit to Devpost with the final team.</p>
-
-                    {% if using_teams %}
-                        <p class="faqQuestion">I don’t have a team. What can I do?</p>
-                        <p class="faqAnswer">All teams competing must have 3 or 4 members, but you do not need a full
-                            team in order to apply. We have a channel on {{ chat_room_name }} dedicated to team
-                            formation as well as an event scheduled before hacking starts at the event.</p>
-
-                        <p class="faqQuestion">Are decisions unanimous for a team?</p>
-                        <p class="faqAnswer">Due to the large number of applicants and limited number of spots
-                            for {{ hackathon_name }}, decisions may not be unanimous. Each member should expect an email
-                            regarding their individual decisions.</p>
-                    {% endif %}
-
+                    <p class="faqAnswer">Your team number is just for your application so we can review your team together. It is not deciding and not needed during the event. You have until the event to choose a team and must submit to Devpost with the final team.</p>
+    
+                    <p class="faqQuestion">I don’t have a team. What can I do?</p>
+                    <p class="faqAnswer">All teams competing must have 3 or 4 members, but you do not need a full team in order to apply. We have a channel on {{ chat_room_name }} dedicated to team formation as well as an event scheduled before hacking starts at the event.</p>
+    
+                    <p class="faqQuestion">Are decisions unanimous for a team?</p>
+                    <p class="faqAnswer">Due to the large number of applicants and limited number of spots for {{ hackathon_name }}, decisions may not be unanimous. Each member should expect an email regarding their individual decisions.</p>
+    
                     <p class="faqQuestion">Who can I contact if I’ll be late?</p>
-                    <p class="faqAnswer">Please send an email to <a href="mailto:{{ contact_email }}"
-                                                                    class="primaryText hoverLink">{{ contact_email }}</a>
-                        with your name, email you used to apply, expected arrival time, and reason as to why you’re
-                        arriving late and we’ll save your spot for you.</p>
-
+                    <p class="faqAnswer">Please send an email to <a href="mailto:{{ contact_email }}" class="primaryText hoverLink">{{ contact_email }}</a> with your name, email you used to apply, expected arrival time, and reason as to why you’re arriving late and we’ll save your spot for you.</p>
+    
                     <p class="faqQuestion">How does the waitlist work the day of?</p>
-                    <p class="faqAnswer">The rank on the waitlist is first-come first serve, meaning the sooner you
-                        arrive at the event on {{ waitlisted_acceptance_start_time.strftime("%A") }}, the higher your
-                        placement on our waitlist. At {{ waitlisted_acceptance_start_time.strftime("%-I:%M %p") }}, if
-                        we have any spots remaining, we will be letting waitlisted people in.</p>
-
+                    <p class="faqAnswer">The rank on the waitlist is first-come first serve, meaning the sooner you arrive at the event on {{ waitlisted_acceptance_start_time.strftime("%A") }}, the higher your placement on our waitlist. At {{ waitlisted_acceptance_start_time.strftime("%-I:%M %p") }}, if we have any spots remaining, we will be letting waitlisted people in.</p>
+    
                     <p class="faqQuestion">Other questions?</p>
-                    <p class="faqAnswer">If you have any questions or concerns, feel free to contact us at <a
-                            href="mailto:{{ contact_email }}" class="primaryText hoverLink">{{ contact_email }}</a>.</p>
+                    <p class="faqAnswer">If you have any questions or concerns, feel free to contact us at <a href="mailto:{{ contact_email }}" class="primaryText hoverLink">{{ contact_email }}</a>.</p>
                 </div>
             </div>
         </div>
