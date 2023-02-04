@@ -26,8 +26,6 @@ export const overviewTitles = [
     "14 teams",
     "123 orders",
     "7 broken/lost items",
-    "test item",
-    "another test item",
 ];
 
 // For DashCard on Dashboard
