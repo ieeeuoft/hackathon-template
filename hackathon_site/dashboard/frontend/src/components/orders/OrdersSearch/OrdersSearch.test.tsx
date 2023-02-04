@@ -1,22 +1,20 @@
 import React from "react";
 import { DeepPartial } from "redux";
-import OrdersFilter from "./OrdersSearch";
 import OrdersSearch from "./OrdersSearch";
 import { render, fireEvent, waitFor } from "testing/utils";
 import { get } from "api/api";
 import { RootState } from "slices/store";
-import { Order, OrderFilters } from "../../../api/types";
+import { OrderFilters } from "api/types";
 import {
-    orderReducerName,
+    adminOrderReducerName,
     initialState,
-    OrderState,
-} from "../../../slices/order/orderSlice";
-import OrderFilter from "../OrdersFilter/OrderFilter";
+    AdminOrderState,
+} from "slices/order/adminOrderSlice";
 
 jest.mock("api/api");
 
-const makeState = (overrides: Partial<OrderState>): DeepPartial<RootState> => ({
-    [orderReducerName]: {
+const makeState = (overrides: Partial<AdminOrderState>): DeepPartial<RootState> => ({
+    [adminOrderReducerName]: {
         ...initialState,
         ...overrides,
     },
