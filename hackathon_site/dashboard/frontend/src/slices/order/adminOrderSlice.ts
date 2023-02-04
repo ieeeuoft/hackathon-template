@@ -46,7 +46,7 @@ interface RejectValue {
 
 export const getOrdersWithFilters = createAsyncThunk<
     APIListResponse<Order>,
-    { keepOld?: boolean } | undefined,
+    undefined,
     { state: RootState; rejectValue: RejectValue; dispatch: AppDispatch }
 >(
     `${adminOrderReducerName}/getAdminTeamOrders`,
@@ -145,11 +145,7 @@ const adminOrderSlice = createSlice({
                     payload.results
                 );
             }
-            if (meta.arg?.keepOld) {
-                adminOrderAdapter.setMany(state, payload.results);
-            } else {
-                adminOrderAdapter.setAll(state, payload.results);
-            }
+            adminOrderAdapter.setAll(state, payload.results);
         });
 
         builder.addCase(getOrdersWithFilters.rejected, (state, { payload }) => {
