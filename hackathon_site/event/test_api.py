@@ -644,6 +644,20 @@ class CreateProfileViewTestCase(SetupUserMixin, APITestCase):
             "User has not been reviewed yet, Hardware Signout Site cannot be accessed until reviewed",
         )
 
+    def test_user_has_been_reviewed_but_not_sent(self):
+        self._review(
+            application=self._apply_as_user(self.user, rsvp=True),
+            decision_sent_date=None,
+        )
+        self._login()
+        response = self.client.post(self.view, self.request_body)
+        data = response.json()
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            data[0],
+            "User has not been reviewed yet, Hardware Signout Site cannot be accessed until reviewed",
+        )
+
     def test_user_review_rejected(self):
         self._review(
             application=self._apply_as_user(self.user, rsvp=True), status="Rejected"
