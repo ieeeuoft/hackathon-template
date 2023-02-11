@@ -141,13 +141,31 @@ class OrderChangeSerializer(OrderListSerializer):
         "Submitted": ["Cancelled", "Ready for Pickup"],
         "Ready for Pickup": ["Picked Up"],
     }
+    hardware = OrderItemSerializer(many=True)
+
+    def update(self, instance, validated_data):
+        hardware = validated_data.get('hardware', [])
+        items_to_update = [item for item in hardware if item.get('id')]
+        items_to_create = [item for item in hardware if not item.get('id')]
+        items_to_delete = [item.get('id') for item in hardware if item.get('id') and not item.get('quantity')]
+
+        for item in items_to_update:
+            order_item = OrderItem.objects.get(id=item['id'])
+            order_item.quantity = item['quantity']
+            order_item.save()
+
+        for item in items_to_create:
+            OrderItem.objects.create(order=instance, hardware_id=item['hardware'], quantity=item['quantity'])
+
+        OrderItem.objects.filter(id__in=items_to_delete).delete()
+
+        return instance
 
     class Meta:
         model = Order
         fields = OrderListSerializer.Meta.fields
         read_only_fields = (
             "id",
-            "hardware",
             "team",
             "team_code",
             "created_at",

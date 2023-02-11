@@ -1,6 +1,6 @@
 from django.urls import path
 from hardware import views
-
+from hardware.views import OrderChangeAPIView
 
 app_name = "hardware"
 
@@ -21,5 +21,6 @@ urlpatterns = [
         name="hardware-detail",
     ),
     path("orders/<int:pk>/", views.OrderDetailView.as_view(), name="order-detail",),
+    path('orders/<int:pk>/change/', OrderChangeAPIView.as_view(), name='order_change'),
     path("order_items/", views.OrderItemListView.as_view(), name="order-item-list",),
 ]

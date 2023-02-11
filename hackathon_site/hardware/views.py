@@ -397,3 +397,9 @@ class OrderItemReturnView(generics.GenericAPIView):
             finally:
                 connection.close()
         return Response(create_response, status=status.HTTP_201_CREATED)
+
+class OrderChangeAPIView(generics.UpdateAPIView):
+    serializer_class = OrderChangeSerializer
+
+    def get_object(self):
+        return Order.objects.get(id=self.kwargs['pk'])
