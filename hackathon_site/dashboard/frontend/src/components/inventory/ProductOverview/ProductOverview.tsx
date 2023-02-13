@@ -230,32 +230,29 @@ export const DetailInfoSection = ({
                 Manufacturer
             </Typography>
             <Typography>{manufacturer}</Typography>
-            <Typography
-                variant="body2"
-                className={styles.heading}
-                style={{ display: modelNumber === "" ? "none" : "" }}
-            >
-                Model Number
-            </Typography>
-            <Typography style={{ display: modelNumber === "" ? "none" : "" }}>
-                {modelNumber}
-            </Typography>
-            <Typography
-                variant="body2"
-                className={styles.heading}
-                style={{ display: datasheet === "" ? "none" : "" }}
-            >
-                Datasheet
-            </Typography>
-            <Button
-                href={datasheet}
-                rel="noopener"
-                target="_blank"
-                startIcon={<LaunchIcon />}
-                style={{ display: datasheet === "" ? "none" : "" }}
-            >
-                Link
-            </Button>
+            {modelNumber && (
+                <>
+                    <Typography variant="body2" className={styles.heading}>
+                        Model Number
+                    </Typography>
+                    <Typography>{modelNumber}</Typography>
+                </>
+            )}
+            {datasheet && (
+                <>
+                    <Typography variant="body2" className={styles.heading}>
+                        Datasheet
+                    </Typography>
+                    <Button
+                        href={datasheet}
+                        rel="noopener"
+                        target="_blank"
+                        startIcon={<LaunchIcon />}
+                    >
+                        Link
+                    </Button>
+                </>
+            )}
             {notes && (
                 <>
                     <Typography variant="body2" className={styles.heading}>
