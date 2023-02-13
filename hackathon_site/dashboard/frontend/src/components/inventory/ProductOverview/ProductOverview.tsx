@@ -230,10 +230,16 @@ export const DetailInfoSection = ({
                 Manufacturer
             </Typography>
             <Typography>{manufacturer}</Typography>
-            <Typography variant="body2" className={styles.heading}>
+            <Typography
+                variant="body2"
+                className={styles.heading}
+                style={{ display: modelNumber === "" ? "none" : "" }}
+            >
                 Model Number
             </Typography>
-            <Typography>{modelNumber}</Typography>
+            <Typography style={{ display: modelNumber === "" ? "none" : "" }}>
+                {modelNumber}
+            </Typography>
             <Typography
                 variant="body2"
                 className={styles.heading}
