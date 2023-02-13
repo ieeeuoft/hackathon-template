@@ -234,7 +234,11 @@ export const DetailInfoSection = ({
                 Model Number
             </Typography>
             <Typography>{modelNumber}</Typography>
-            <Typography variant="body2" className={styles.heading}>
+            <Typography
+                variant="body2"
+                className={styles.heading}
+                style={{ display: datasheet === "" ? "none" : "" }}
+            >
                 Datasheet
             </Typography>
             <Button
@@ -242,6 +246,7 @@ export const DetailInfoSection = ({
                 rel="noopener"
                 target="_blank"
                 startIcon={<LaunchIcon />}
+                style={{ display: datasheet === "" ? "none" : "" }}
             >
                 Link
             </Button>
