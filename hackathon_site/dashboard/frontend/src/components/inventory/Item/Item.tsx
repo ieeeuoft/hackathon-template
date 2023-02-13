@@ -18,8 +18,8 @@ const Item = ({ image, title, total, currentStock }: ItemProps): ReactElement =>
     const stock = !currentStock
         ? "OUT OF STOCK"
         : userType === "participant"
-        ? currentStock + " IN STOCK"
-        : currentStock + " OF " + total + " IN STOCK";
+        ? Math.max(currentStock, 0) + " IN STOCK"
+        : Math.max(currentStock, 0) + " OF " + total + " IN STOCK";
     const stockStyle = !currentStock ? styles.outOfStock : styles.inStock;
     const coverStyle = !currentStock ? styles.itemBlack : styles.itemBox;
 

@@ -290,11 +290,11 @@ const MainSection = ({
             <Typography color="secondary">OUT OF STOCK</Typography>
         ) : userType === "participant" ? (
             <Typography className={styles.quantityAvailable}>
-                {quantityRemaining} IN STOCK
+                {Math.max(quantityRemaining, 0)} IN STOCK
             </Typography>
         ) : (
             <Typography className={styles.quantityAvailable}>
-                {quantityRemaining} OF {quantityAvailable} IN STOCK
+                {Math.max(quantityRemaining, 0)} OF {quantityAvailable} IN STOCK
             </Typography>
         );
 
