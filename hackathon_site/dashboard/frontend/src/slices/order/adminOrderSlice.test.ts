@@ -14,7 +14,6 @@ import { get } from "api/api";
 import { makeMockApiListResponse, makeStoreWithEntities } from "testing/utils";
 import { mockPendingOrders } from "testing/mockData";
 import { waitFor } from "@testing-library/react";
-import orders from "../../pages/Orders/Orders";
 
 jest.mock("api/api", () => ({
     ...jest.requireActual("api/api"),

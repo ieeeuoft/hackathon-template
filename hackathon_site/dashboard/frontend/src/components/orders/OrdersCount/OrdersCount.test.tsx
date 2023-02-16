@@ -1,8 +1,8 @@
 import React from "react";
 import { render } from "@testing-library/react";
+import { Provider } from "react-redux";
 import { makeStoreWithEntities } from "../../../testing/utils";
 import { mockHardware, mockPendingOrders } from "../../../testing/mockData";
-import { Provider } from "react-redux";
 import OrdersCount from "./OrdersCount";
 
 describe("<OrdersCount />", () => {

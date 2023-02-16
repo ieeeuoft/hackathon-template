@@ -1,10 +1,10 @@
 import React from "react";
 import { IconButton, Typography } from "@material-ui/core";
 import RefreshIcon from "@material-ui/icons/Refresh";
-import styles from "pages/Orders/Orders.module.scss";
-import { FormikValues } from "formik";
-import { adminOrderTotalSelector } from "../../../slices/order/adminOrderSlice";
 import { useSelector } from "react-redux";
+import { FormikValues } from "formik";
+import styles from "pages/Orders/Orders.module.scss";
+import { adminOrderTotalSelector } from "../../../slices/order/adminOrderSlice";
 
 const OrdersCount = ({ refreshOrders }: FormikValues) => {
     const orderQuantity = useSelector(adminOrderTotalSelector);
