@@ -1,5 +1,8 @@
+import datetime
+
 from django.contrib.auth.models import Group
 from django.core.exceptions import ObjectDoesNotExist
+from django.conf import settings
 from rest_framework import serializers
 
 from event.models import Profile, User, Team
@@ -96,27 +99,38 @@ class CurrentProfileSerializer(ProfileSerializer):
         if hasattr(current_user, "profile"):
             raise serializers.ValidationError("User already has profile")
 
-        try:
-            rsvp_status = Application.objects.get(user=current_user).rsvp
-            if not rsvp_status:
-                raise serializers.ValidationError(
-                    "User has not RSVP'd to the hackathon. Please RSVP to access the Hardware Signout Site"
-                )
-        except Application.DoesNotExist:
-            raise serializers.ValidationError(
-                "User has not completed their application to the hackathon. Please do so to access the Hardware Signout Site"
-            )
+        is_test_user = (
+            self.context["request"]
+            .user.groups.filter(name=settings.TEST_USER_GROUP)
+            .exists()
+        )
 
-        try:
-            review_status = Review.objects.get(application__user=current_user).status
-            if review_status != "Accepted":
+        if not is_test_user:
+            try:
+                rsvp_status = Application.objects.get(user=current_user).rsvp
+                if not rsvp_status and settings.RSVP:
+                    raise serializers.ValidationError(
+                        "User has not RSVP'd to the hackathon. Please RSVP to access the Hardware Signout Site"
+                    )
+            except Application.DoesNotExist:
                 raise serializers.ValidationError(
-                    "User has not been accepted to participate in hackathon"
+                    "User has not completed their application to the hackathon. Please do so to access the Hardware Signout Site"
                 )
-        except Review.DoesNotExist:
-            raise serializers.ValidationError(
-                "User has not been reviewed yet, Hardware Signout Site cannot be accessed until reviewed"
-            )
+
+            try:
+                review = Review.objects.get(application__user=current_user)
+                if review.status != "Accepted":
+                    raise serializers.ValidationError(
+                        f"User has not been accepted to participate in {settings.HACKATHON_NAME}"
+                    )
+                if review.decision_sent_date is None:
+                    raise serializers.ValidationError(
+                        "User has not been reviewed yet, Hardware Signout Site cannot be accessed until reviewed"
+                    )
+            except Review.DoesNotExist:
+                raise serializers.ValidationError(
+                    "User has not been reviewed yet, Hardware Signout Site cannot be accessed until reviewed"
+                )
 
         acknowledge_rules = validated_data.pop("acknowledge_rules", None)
         e_signature = validated_data.pop("e_signature", None)
@@ -131,7 +145,9 @@ class CurrentProfileSerializer(ProfileSerializer):
             "id_provided": False,
             "acknowledge_rules": acknowledge_rules,
             "e_signature": e_signature,
-            "phone_number": Application.objects.get(user=current_user).phone_number,
+            "phone_number": "6471437544"
+            if is_test_user
+            else Application.objects.get(user=current_user).phone_number,
         }
 
         profile = Profile.objects.create(**{**response_data, "user": current_user})
@@ -175,6 +191,7 @@ class UserReviewStatusSerializer(serializers.ModelSerializer):
     @staticmethod
     def get_review_status(user: User):
         try:
-            return Review.objects.get(application__user=user).status
+            review = Review.objects.get(application__user=user)
+            return review.status if review.decision_sent_date is not None else "None"
         except ObjectDoesNotExist:
             return "None"

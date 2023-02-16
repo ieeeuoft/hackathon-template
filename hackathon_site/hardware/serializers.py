@@ -198,11 +198,18 @@ class OrderCreateSerializer(serializers.Serializer):
 
     # check that the requests are within per-team constraints
     def validate(self, data):
-        # time restrictions
-        if datetime.now(settings.TZ_INFO) < settings.HARDWARE_SIGN_OUT_START_DATE:
-            raise serializers.ValidationError("Hardware sign out period has not begun")
-        if datetime.now(settings.TZ_INFO) > settings.HARDWARE_SIGN_OUT_END_DATE:
-            raise serializers.ValidationError("Hardware sign out period is over")
+        if (
+            not self.context["request"]
+            .user.groups.filter(name=settings.TEST_USER_GROUP)
+            .exists()
+        ):
+            # time restrictions
+            if datetime.now(settings.TZ_INFO) < settings.HARDWARE_SIGN_OUT_START_DATE:
+                raise serializers.ValidationError(
+                    "Hardware sign out period has not begun"
+                )
+            if datetime.now(settings.TZ_INFO) > settings.HARDWARE_SIGN_OUT_END_DATE:
+                raise serializers.ValidationError("Hardware sign out period is over")
 
         # permission restrictions
         try:
@@ -242,7 +249,11 @@ class OrderCreateSerializer(serializers.Serializer):
         for (hardware, requested_quantity) in requested_hardware.items():
             team_hardware = team_unreturned_orders.get(id=hardware.id)
             team_hardware_count = getattr(team_hardware, "past_order_count", 0)
-            if (team_hardware_count + requested_quantity) > hardware.max_per_team:
+            if hardware.quantity_remaining - requested_quantity < 0:
+                error_messages.append(
+                    f"Unable to order Hardware {hardware.name} because there are not enough items in stock"
+                )
+            elif (team_hardware_count + requested_quantity) > hardware.max_per_team:
                 error_messages.append(
                     "Maximum number of items for Hardware {} is reached (limit of {} per team)".format(
                         hardware.name, hardware.max_per_team
