@@ -49,14 +49,16 @@ class Hardware(models.Model):
         annotated_fields = ("quantity_checked_out", "quantity_remaining")
 
     name = models.CharField(max_length=255, null=False)
-    model_number = models.CharField(max_length=255, null=False)
-    manufacturer = models.CharField(max_length=255, null=False)
-    datasheet = models.URLField(null=False)
+    model_number = models.CharField(max_length=255, null=True, blank=True)
+    manufacturer = models.CharField(max_length=255, null=True, blank=True)
+    datasheet = models.URLField(null=True, blank=True)
     quantity_available = models.IntegerField(null=False)
-    notes = models.TextField(null=True)
+    notes = models.TextField(null=True, blank=True)
     max_per_team = models.IntegerField(null=True)
-    picture = models.ImageField(upload_to="uploads/hardware/pictures/", null=False)
-    image_url = models.CharField(max_length=500, null=True)
+    picture = models.ImageField(
+        upload_to="uploads/hardware/pictures/", null=True, blank=True
+    )
+    image_url = models.CharField(max_length=500, null=True, blank=True)
     categories = models.ManyToManyField(Category)
 
     created_at = models.DateTimeField(auto_now_add=True, null=False)
