@@ -995,3 +995,17 @@ class UserReviewStatusSerializerTestCase(SetupUserMixin, TestCase):
         }
 
         self.assertEqual(user_expected, user_serialized)
+
+    def test_serializer_review_but_not_sent(self):
+        self._review(application=self.application, decision_sent_date=None)
+        user_serialized = UserReviewStatusSerializer(self.user).data
+
+        user_expected = {
+            "id": self.user.id,
+            "first_name": self.user.first_name,
+            "last_name": self.user.last_name,
+            "email": self.user.email,
+            "review_status": "None",
+        }
+
+        self.assertEqual(user_expected, user_serialized)
