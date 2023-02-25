@@ -31,8 +31,11 @@ import {
     isReturnedLoadingSelector,
     returnItems,
 } from "slices/order/teamOrderSlice";
-import { hardwareSelectors } from "slices/hardware/hardwareSlice";
-import { displaySnackbar } from "slices/ui/uiSlice";
+import {
+    getUpdatedHardwareDetails,
+    hardwareSelectors,
+} from "slices/hardware/hardwareSlice";
+import { displaySnackbar, openProductOverview } from "slices/ui/uiSlice";
 
 const createDropdownList = (number: number) => {
     let entry = [];
@@ -71,6 +74,10 @@ export const TeamCheckedOutOrderTable = () => {
         setVisibility(!visibility);
     };
     const dispatch = useDispatch();
+    const openProductOverviewPanel = (hardwareId: number) => {
+        dispatch(getUpdatedHardwareDetails(hardwareId));
+        dispatch(openProductOverview());
+    };
 
     const handleReturnOrder = (values: FormikValues, orderId: number) => {
         try {
@@ -242,7 +249,14 @@ export const TeamCheckedOutOrderTable = () => {
                                                                 </TableCell>
                                                                 <TableCell>
                                                                     <IconButton
-                                                                        size={"small"}
+                                                                        color="inherit"
+                                                                        aria-label="Info"
+                                                                        data-testid="info-button"
+                                                                        onClick={() =>
+                                                                            openProductOverviewPanel(
+                                                                                row.id
+                                                                            )
+                                                                        }
                                                                     >
                                                                         <Info />
                                                                     </IconButton>
