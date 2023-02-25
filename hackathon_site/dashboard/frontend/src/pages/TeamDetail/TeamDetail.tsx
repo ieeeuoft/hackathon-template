@@ -27,8 +27,8 @@ import {
 import AlertBox from "components/general/AlertBox/AlertBox";
 import TeamCheckedOutOrderTable from "components/teamDetail/TeamCheckedOutOrderTable/TeamCheckedOutOrderTable";
 import { getHardwareWithFilters, setFilters } from "slices/hardware/hardwareSlice";
-import ProductOverview from "components/inventory/ProductOverview/ProductOverview";
 import { getCategories } from "slices/hardware/categorySlice";
+import ProductOverview from "components/inventory/ProductOverview/ProductOverview";
 
 export interface PageParams {
     code: string;
