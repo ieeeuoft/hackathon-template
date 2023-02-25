@@ -230,21 +230,29 @@ export const DetailInfoSection = ({
                 Manufacturer
             </Typography>
             <Typography>{manufacturer}</Typography>
-            <Typography variant="body2" className={styles.heading}>
-                Model Number
-            </Typography>
-            <Typography>{modelNumber}</Typography>
-            <Typography variant="body2" className={styles.heading}>
-                Datasheet
-            </Typography>
-            <Button
-                href={datasheet}
-                rel="noopener"
-                target="_blank"
-                startIcon={<LaunchIcon />}
-            >
-                Link
-            </Button>
+            {modelNumber && (
+                <>
+                    <Typography variant="body2" className={styles.heading}>
+                        Model Number
+                    </Typography>
+                    <Typography>{modelNumber}</Typography>
+                </>
+            )}
+            {datasheet && (
+                <>
+                    <Typography variant="body2" className={styles.heading}>
+                        Datasheet
+                    </Typography>
+                    <Button
+                        href={datasheet}
+                        rel="noopener"
+                        target="_blank"
+                        startIcon={<LaunchIcon />}
+                    >
+                        Link
+                    </Button>
+                </>
+            )}
             {notes && (
                 <>
                     <Typography variant="body2" className={styles.heading}>
@@ -279,11 +287,11 @@ const MainSection = ({
             <Typography color="secondary">OUT OF STOCK</Typography>
         ) : userType === "participant" ? (
             <Typography className={styles.quantityAvailable}>
-                {quantityRemaining} IN STOCK
+                {Math.max(quantityRemaining, 0)} IN STOCK
             </Typography>
         ) : (
             <Typography className={styles.quantityAvailable}>
-                {quantityRemaining} OF {quantityAvailable} IN STOCK
+                {Math.max(quantityRemaining, 0)} OF {quantityAvailable} IN STOCK
             </Typography>
         );
 
