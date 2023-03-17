@@ -8,6 +8,9 @@
     border-radius: 0px;
     @include flexPosition($dir: column);
 }
+.overviewCardPaper {
+    offset-position: 25% 0%;
+}
 
 .title {
     text-justify: left;

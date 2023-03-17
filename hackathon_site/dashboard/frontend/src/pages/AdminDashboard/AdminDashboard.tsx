@@ -36,7 +36,7 @@ const AdminDashboard = () => {
                     >
                         {overviewTitles.map((title) => (
                             <ImageListItem className={styles.overviewCard} key={title}>
-                                <Paper className={styles.overviewCard}>
+                                <Paper className={styles.overviewCard} elevation={2}>
                                     <Card className={styles.overviewCard}>
                                         <Typography variant="body2">
                                             &nbsp;&nbsp;&nbsp;{title}
