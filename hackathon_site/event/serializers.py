@@ -1,3 +1,5 @@
+import datetime
+
 from django.contrib.auth.models import Group
 from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings
@@ -116,12 +118,14 @@ class CurrentProfileSerializer(ProfileSerializer):
                 )
 
             try:
-                review_status = Review.objects.get(
-                    application__user=current_user
-                ).status
-                if review_status != "Accepted":
+                review = Review.objects.get(application__user=current_user)
+                if review.status != "Accepted":
                     raise serializers.ValidationError(
                         f"User has not been accepted to participate in {settings.HACKATHON_NAME}"
+                    )
+                if review.decision_sent_date is None:
+                    raise serializers.ValidationError(
+                        "User has not been reviewed yet, Hardware Signout Site cannot be accessed until reviewed"
                     )
             except Review.DoesNotExist:
                 raise serializers.ValidationError(
@@ -187,6 +191,7 @@ class UserReviewStatusSerializer(serializers.ModelSerializer):
     @staticmethod
     def get_review_status(user: User):
         try:
-            return Review.objects.get(application__user=user).status
+            review = Review.objects.get(application__user=user)
+            return review.status if review.decision_sent_date is not None else "None"
         except ObjectDoesNotExist:
             return "None"
