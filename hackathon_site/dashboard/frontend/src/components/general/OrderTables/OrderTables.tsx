@@ -81,10 +81,17 @@ export const GeneralOrderTitle = ({
 interface GeneralOrderTableTitleProps {
     orderId: number;
     orderStatus?: OrderStatus;
+    //Creating a new variable to store the created order time
+    createdTime?: string;
+    //Creating a new variable to store the updated order time
+    updatedTime?: string;
 }
+
 export const GeneralOrderTableTitle = ({
     orderId,
     orderStatus,
+    createdTime, //passing in createdTime as an argument to render the created time from the GeneralOrderTableTitleProps interface
+    updatedTime, //passing in createdTime as an argument to render the updated time from the GeneralOrderTableTitleProps interface
 }: GeneralOrderTableTitleProps) => (
     <Container className={styles.titleChip} maxWidth={false} disableGutters={true}>
         <Typography variant="h2" className={styles.titleChipText}>
@@ -100,8 +107,14 @@ export const GeneralOrderTableTitle = ({
                 <ChipStatus status={orderStatus} />
             </Container>
         )}
+        <Container>
+            <mark>{createdTime}</mark>
+        </Container>
+        <Container>
+            <mark>{updatedTime}</mark>
+        </Container>
     </Container>
-);
+); //Note: Placed the createdTime and updatedTime variables inside a Container as by default, the text merged into 1 line
 
 export const GeneralPendingTable = ({
     pendingOrder,
@@ -120,6 +133,8 @@ export const GeneralPendingTable = ({
             <GeneralOrderTableTitle
                 orderId={pendingOrder.id}
                 orderStatus={pendingOrder.status}
+                createdTime={pendingOrder.createdTime}
+                updatedTime={pendingOrder.updatedTime}
             />
             <TableContainer component={Paper} elevation={2} square={true}>
                 <Table className={styles.table} size="small" aria-label="pending table">

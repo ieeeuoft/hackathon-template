@@ -134,6 +134,10 @@ export interface OrderInTable {
     id: number;
     hardwareInTableRow: OrderItemTableRow[];
     status: OrderStatus;
+    //Creating new variable called createdTime with type string (matching the str time type from Incident interface)
+    createdTime: string;
+    //Creating new variable called updatedTime with type string (matching the str time type from Incident interface)
+    updatedTime: string;
 }
 
 export type ReturnedItem = ItemsInOrder & { quantity: number; time: string };

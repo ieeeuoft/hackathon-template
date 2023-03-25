@@ -87,7 +87,11 @@ export const CheckedOutTables = () =>
                                 id={`order${checkedOutOrder.id}`}
                                 key={checkedOutOrder.id}
                             >
-                                <GeneralOrderTableTitle orderId={checkedOutOrder.id} />
+                                <GeneralOrderTableTitle
+                                    orderId={checkedOutOrder.id}
+                                    createdTime={checkedOutOrder.createdTime}
+                                    updatedTime={checkedOutOrder.updatedTime}
+                                />
                                 <TableContainer
                                     component={Paper}
                                     elevation={2}

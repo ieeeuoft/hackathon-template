@@ -842,6 +842,8 @@ export const mockPendingOrdersInTable: OrderInTable[] = [
             },
         ],
         status: "Ready for Pickup",
+        createdTime: "2021-10-17T18:28:44.691969-04:00",
+        updatedTime: "2021-10-17T18:28:44.691969-04:00",
     },
     {
         id: 4,
@@ -858,6 +860,8 @@ export const mockPendingOrdersInTable: OrderInTable[] = [
             },
         ],
         status: "Submitted",
+        createdTime: "2022-10-17T18:28:44.691969-04:00",
+        updatedTime: "2021-10-17T18:28:44.691969-04:00",
     },
     {
         id: 3,
@@ -874,6 +878,8 @@ export const mockPendingOrdersInTable: OrderInTable[] = [
             },
         ],
         status: "Ready for Pickup",
+        createdTime: "2020-10-17T18:28:44.691969-06:00",
+        updatedTime: "2021-10-17T18:28:44.691969-04:00",
     },
 ];
 
@@ -888,6 +894,8 @@ export const mockCheckedOutOrdersInTable: OrderInTable[] = [
             },
         ],
         status: "Picked Up",
+        createdTime: "2023-10-17T18:26:44.691969-06:00",
+        updatedTime: "2021-10-17T18:28:44.691969-04:00",
     },
     {
         id: 2,
@@ -904,6 +912,8 @@ export const mockCheckedOutOrdersInTable: OrderInTable[] = [
             },
         ],
         status: "Picked Up",
+        createdTime: "2022-10-17T18:22:44.691969-07:00",
+        updatedTime: "2021-10-17T18:28:44.691969-04:00",
     },
     {
         id: 1,
@@ -915,6 +925,8 @@ export const mockCheckedOutOrdersInTable: OrderInTable[] = [
             },
         ],
         status: "Picked Up",
+        createdTime: "2022-10-17T18:22:44.691969-07:00",
+        updatedTime: "2021-10-17T18:28:44.691969-04:00",
     },
 ];
 
