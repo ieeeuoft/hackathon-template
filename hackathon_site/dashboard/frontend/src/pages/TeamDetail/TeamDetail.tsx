@@ -27,6 +27,8 @@ import {
 import AlertBox from "components/general/AlertBox/AlertBox";
 import TeamCheckedOutOrderTable from "components/teamDetail/TeamCheckedOutOrderTable/TeamCheckedOutOrderTable";
 import { getHardwareWithFilters, setFilters } from "slices/hardware/hardwareSlice";
+import { getCategories } from "slices/hardware/categorySlice";
+import ProductOverview from "components/inventory/ProductOverview/ProductOverview";
 
 export interface PageParams {
     code: string;
@@ -49,6 +51,7 @@ const TeamDetail = ({ match }: RouteComponentProps<PageParams>) => {
 
     useEffect(() => {
         dispatch(getTeamInfoData(teamCode));
+        dispatch(getCategories());
         dispatch(getAdminTeamOrders(teamCode));
     }, [dispatch, teamCode]);
 
@@ -62,6 +65,7 @@ const TeamDetail = ({ match }: RouteComponentProps<PageParams>) => {
     return (
         <>
             <Header />
+            <ProductOverview showAddToCartButton={false} />
             {teamInfoError ? (
                 <AlertBox error={teamInfoError} />
             ) : (
