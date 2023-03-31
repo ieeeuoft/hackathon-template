@@ -7,6 +7,10 @@ from registration.validators import UploadedFileValidator
 
 User = get_user_model()
 
+class File(models.Model):
+    file = models.FileField(upload_to='media/applications/resumes')
+    uploaded_by = models.ForeignKey(User, on_delete=models.CASCADE)
+
 
 def _generate_team_code():
     team_code = uuid.uuid4().hex[:5].upper()

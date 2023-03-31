@@ -1,6 +1,6 @@
 from django.contrib.auth import views as auth_views
 from django.urls import path, reverse_lazy
-from event.views import IndexView, DashboardView
+from event.views import IndexView, DashboardView, DetailView, PDFView
 from event.forms import (
     PasswordChangeForm,
     PasswordResetForm,
@@ -72,4 +72,9 @@ urlpatterns = [
         ),
         name="reset_password_complete",
     ),
+    path(
+        r'media/applications/resumes', 
+        PDFView.as_view(),
+        name="pdf_view"
+    )
 ]

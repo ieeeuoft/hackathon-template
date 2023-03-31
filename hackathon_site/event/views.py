@@ -7,9 +7,12 @@ from django.urls import reverse_lazy
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
 
+from django.http import FileResponse
 
 from django.conf import settings
 from django_filters import rest_framework as filters
+from django.views.generic import DetailView
+from django.views.generic.base import TemplateResponseMixin
 
 from rest_framework import generics, mixins
 from rest_framework.filters import SearchFilter
@@ -17,7 +20,8 @@ from rest_framework.filters import SearchFilter
 
 from hackathon_site.utils import is_registration_open
 from registration.forms import JoinTeamForm
-from registration.models import Team as RegistrationTeam
+from registration.models import Team, File as RegistrationTeam, File
+
 
 
 from event.models import Team as EventTeam
@@ -29,6 +33,16 @@ from event.permissions import FullDjangoModelPermissions
 def _now():
     return datetime.now().replace(tzinfo=settings.TZ_INFO)
 
+
+class PDFView(LoginRequiredMixin, TemplateView):
+    def download_file(request, file_id):
+        file = get_object_or_404(File, id=file_id)
+        if request.user == file.uploaded_by:
+            response = FileResponse(open(file.file.path, 'rb'), content_type='append')
+            response['Content-Disposition'] = 'attachment; filename=' + os.path.basename(file_id)
+            return response
+        else:
+            raise Http404
 
 class IndexView(TemplateView):
     template_name = "event/landing.html"
@@ -50,7 +64,7 @@ class DashboardView(LoginRequiredMixin, FormView):
     template_name = "event/dashboard_base.html"
     # Form submits should take the user back to the dashboard
     success_url = reverse_lazy("event:dashboard")
-
+    
     def get_form(self, form_class=None):
         """
         The dashboard can have different forms, but not at the same time:
