@@ -8,8 +8,13 @@
     border-radius: 0px;
     @include flexPosition($dir: column);
 }
-.overviewCardPaper {
-    offset-position: 25% 0%;
+
+.overviewCardTypography {
+    margin-left: 10px;
+}
+
+.titleButton {
+    margin-left: 45px;
 }
 
 .title {

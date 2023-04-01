@@ -36,10 +36,13 @@ const AdminDashboard = () => {
                     >
                         {overviewTitles.map((title) => (
                             <ImageListItem className={styles.overviewCard} key={title}>
-                                <Paper className={styles.overviewCard} elevation={2}>
+                                <Paper elevation={2}>
                                     <Card className={styles.overviewCard}>
-                                        <Typography variant="body2">
-                                            &nbsp;&nbsp;&nbsp;{title}
+                                        <Typography
+                                            className={styles.overviewCardTypography}
+                                            variant="body2"
+                                        >
+                                            {title}
                                         </Typography>
                                     </Card>
                                 </Paper>
@@ -49,8 +52,12 @@ const AdminDashboard = () => {
                 </div>
                 <div className={styles.section}>
                     <Typography className={styles.title}>
-                        Pending Orders &emsp; &emsp;{" "}
-                        <Button color="primary" href="/orders">
+                        Pending Orders
+                        <Button
+                            color="primary"
+                            href="/orders"
+                            className={styles.titleButton}
+                        >
                             VIEW MORE
                         </Button>
                     </Typography>
