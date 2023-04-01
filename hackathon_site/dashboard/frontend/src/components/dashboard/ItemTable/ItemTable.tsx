@@ -281,7 +281,7 @@ export const PendingTables = () => {
                                         "Are you sure you want to cancel this order? The team will be notified."
                                     }
                                     isVisible={showCancelOrderModal}
-                                    submitHandler={() => submitModal(pendingOrder.id)}
+                                    submitHandler={() => submitModal(pendingOrder.id)} // ids probably wrong when assigned?
                                     cancelText={"Go Back"}
                                     submitText={"Delete Order"}
                                     cancelHandler={closeModal}
