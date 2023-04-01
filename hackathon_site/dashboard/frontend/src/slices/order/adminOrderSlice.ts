@@ -151,7 +151,6 @@ export default reducer;
 // Selectors go here
 export const adminOrderSliceSelector = (state: RootState) =>
     state[adminOrderReducerName];
-
 export const adminOrderSelectors = adminOrderAdapter.getSelectors(
     adminOrderSliceSelector
 );
@@ -179,6 +178,11 @@ export const adminOrderNeedNumStatusesSelector = createSelector(
 export const adminOrderNumStatusesSelector = createSelector(
     [adminOrderSliceSelector],
     (adminOrderSlice) => adminOrderSlice.numStatuses
+);
+
+export const adminOrderTotalSelector = createSelector(
+    [adminOrderSelectors.selectAll],
+    (orderItems) => orderItems.reduce((accum) => accum + 1, 0)
 );
 
 export const { setFilters, clearFilters } = actions;
