@@ -1002,3 +1002,47 @@ class CurrentUserReviewStatusTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.json()
         self.assertEqual(self.get_expected_response("Accepted"), data)
+
+
+class UserReviewStatusTestCase(SetupUserMixin, APITestCase):
+    def setUp(self):
+        super().setUp()
+        self.user = User.objects.create_user(
+            username="foo2@bar.com",
+            password=self.password,
+            first_name="Test2",
+            last_name="Bar2",
+            email="foo2@bar.com",
+        )
+        self.view = reverse("api:event:user-review-status", kwargs={"email": self.user})
+
+    def test_user_has_no_application(self):
+        self._login()
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.json()
+        self.assertEqual("None", data['review_status'])
+
+    def test_user_has_no_review(self):
+        self._login()
+        self.application = self._apply_as_user(self.user)
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.json()
+        self.assertEqual("None", data['review_status'])
+
+    def test_user_has_review_and_application(self):
+        self._login()
+        self.application = self._apply_as_user(self.user)
+        self._review()
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.json()
+        self.assertEqual("Accepted", data['review_status'])
+    def test_user_has_review_and_rejected(self):
+        self._login()
+        self._review(application=self._apply_as_user(self.user), status="Rejected")
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.json()
+        self.assertEqual("Rejected", data['review_status'])
