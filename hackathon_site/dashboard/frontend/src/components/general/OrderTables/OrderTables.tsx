@@ -81,9 +81,9 @@ export const GeneralOrderTitle = ({
 interface GeneralOrderTableTitleProps {
     orderId: number;
     orderStatus?: OrderStatus;
-    //Creating a new variable to store the created order time
+    //Below, creating a new variable to store the created order time
     createdTime?: string;
-    //Creating a new variable to store the updated order time
+    //Below, creating a new variable to store the updated order time
     updatedTime?: string;
 }
 
@@ -108,10 +108,12 @@ export const GeneralOrderTableTitle = ({
             </Container>
         )}
         <Container>
-            <mark>{createdTime}</mark>
-        </Container>
-        <Container>
-            <mark>{updatedTime}</mark>
+            <mark>
+                <b>{createdTime}</b>
+            </mark>{" "}
+            <mark>
+                <b>{updatedTime}</b>
+            </mark>
         </Container>
     </Container>
 ); //Note: Placed the createdTime and updatedTime variables inside a Container as by default, the text merged into 1 line

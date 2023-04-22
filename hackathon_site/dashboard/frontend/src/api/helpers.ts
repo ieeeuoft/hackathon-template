@@ -75,14 +75,14 @@ export const teamOrderListSerialization = (
                         " " +
                         "at " +
                         order.created_at.slice(11, 16) +
-                        "\n",
+                        "\xa0\xa0\xa0\xa0\xa0",
+
                     updatedTime:
                         "Updated at: " +
                         order.updated_at.slice(0, 10) +
                         " " +
                         "at " +
-                        order.updated_at.slice(11, 16) +
-                        "\n",
+                        order.updated_at.slice(11, 16),
                 });
         }
     });
