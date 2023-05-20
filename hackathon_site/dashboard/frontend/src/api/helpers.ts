@@ -84,7 +84,7 @@ export const teamOrderListSerialization = (
 };
 
 /*
-OLD FORMATTING:
+OLD FORMATTING from prior version of branch
  if (hardwareInTableRow.length > 0)
                 (order.status === "Submitted" || order.status === "Ready for Pickup"
                     ? pendingOrders
