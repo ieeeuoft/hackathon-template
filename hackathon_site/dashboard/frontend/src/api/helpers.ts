@@ -69,6 +69,30 @@ export const teamOrderListSerialization = (
                     id: order.id,
                     status: order.status,
                     hardwareInTableRow,
+                    createdTime: order.created_at,
+
+                    updatedTime: order.updated_at,
+                });
+        }
+    });
+    return {
+        pendingOrders: [...pendingOrders].sort((a, b) => b.id - a.id),
+        checkedOutOrders: [...checkedOutOrders].sort((a, b) => b.id - a.id),
+        returnedOrders,
+        hardwareIdsToFetch: Object.values(hardwareIdsToFetch),
+    };
+};
+
+/*
+OLD FORMATTING:
+ if (hardwareInTableRow.length > 0)
+                (order.status === "Submitted" || order.status === "Ready for Pickup"
+                    ? pendingOrders
+                    : checkedOutOrders
+                ).push({
+                    id: order.id,
+                    status: order.status,
+                    hardwareInTableRow,
                     createdTime:
                         "Created at: " +
                         order.created_at.slice(0, 10) +
@@ -84,12 +108,8 @@ export const teamOrderListSerialization = (
                         "at " +
                         order.updated_at.slice(11, 16),
                 });
-        }
-    });
-    return {
-        pendingOrders: [...pendingOrders].sort((a, b) => b.id - a.id),
-        checkedOutOrders: [...checkedOutOrders].sort((a, b) => b.id - a.id),
-        returnedOrders,
-        hardwareIdsToFetch: Object.values(hardwareIdsToFetch),
-    };
-};
+
+
+
+
+ */
