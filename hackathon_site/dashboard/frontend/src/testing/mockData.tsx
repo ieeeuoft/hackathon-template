@@ -606,8 +606,8 @@ export const mockPendingOrders: Order[] = [
         team_id: 2,
         team_code: "IEEE",
         status: "Ready for Pickup",
-        created_at: "2021-10-17T18:28:44.691969-04:00",
-        updated_at: "2021-12-03T23:01:46.606892-05:00",
+        created_at: "2020-10-17T18:28:44.691969-06:00",
+        updated_at: "2021-12-03T23:01:46.606892-06:00",
         request: [
             {
                 id: 3,
@@ -642,7 +642,7 @@ export const mockPendingOrders: Order[] = [
         team_code: "IEEE",
         status: "Submitted",
         created_at: "2021-10-17T18:28:44.691969-04:00",
-        updated_at: "2021-12-03T23:01:46.606892-05:00",
+        updated_at: "2022-10-17T18:28:44.691969-04:00",
         request: [
             {
                 id: 1,
@@ -666,8 +666,8 @@ export const mockPendingOrders: Order[] = [
         team_id: 1,
         team_code: "IEEE",
         status: "Ready for Pickup",
-        created_at: "2021-10-17T18:28:44.691969-04:00",
-        updated_at: "2021-12-03T23:01:46.606892-05:00",
+        created_at: "2021-10-17T18:28:44.691969-03:00",
+        updated_at: "2021-10-17T18:28:44.691969-06:00",
         request: [
             {
                 id: 10,
@@ -687,8 +687,8 @@ export const mockPendingOrders: Order[] = [
         team_id: 1,
         team_code: "IEEE",
         status: "Cancelled",
-        created_at: "2021-10-17T18:28:44.691969-04:00",
-        updated_at: "2021-12-03T23:01:46.606892-05:00",
+        created_at: "2020-10-17T18:28:44.691969-04:00",
+        updated_at: "2020-12-03T23:01:46.606892-05:00",
         request: [
             {
                 id: 10,
@@ -716,8 +716,8 @@ export const mockCheckedOutOrders: Order[] = [
         team_id: 2,
         team_code: "IEEE",
         status: "Picked Up",
-        created_at: "2021-10-17T18:28:44.691969-04:00",
-        updated_at: "2021-12-03T23:01:46.606892-05:00",
+        created_at: "2021-10-17T18:28:44.691969-01:00",
+        updated_at: "2021-12-03T23:01:46.606892-02:00",
         request: [
             {
                 id: 1,
@@ -747,8 +747,8 @@ export const mockCheckedOutOrders: Order[] = [
         team_id: 2,
         team_code: "IEEE",
         status: "Picked Up",
-        created_at: "2021-10-17T18:28:44.691969-04:00",
-        updated_at: "2021-12-03T23:01:45.606892-05:00",
+        created_at: "2020-10-17T18:28:44.691969-03:00",
+        updated_at: "2020-12-03T23:01:45.606892-04:00",
         request: [
             {
                 id: 1,
@@ -782,8 +782,8 @@ export const mockCheckedOutOrders: Order[] = [
         team_id: 1,
         team_code: "IEEE",
         status: "Picked Up",
-        created_at: "2021-10-17T18:28:44.691969-04:00",
-        updated_at: "2021-12-03T23:01:46.606892-05:00",
+        created_at: "2022-10-17T18:28:44.691969-06:00",
+        updated_at: "2022-12-03T23:01:46.606892-09:00",
         request: [
             {
                 id: 10,
@@ -817,8 +817,8 @@ export const mockSubmittedOrder: Order = {
     team_id: 2,
     team_code: "IEEE",
     status: "Submitted",
-    created_at: "2021-10-17T18:28:44.691969-04:00",
-    updated_at: "2021-12-03T23:01:46.606892-05:00",
+    created_at: "2020-10-17T18:28:44.691969-01:00",
+    updated_at: "2020-12-03T23:01:46.606892-04:00",
     request: [
         {
             id: 1,
@@ -842,8 +842,8 @@ export const mockPendingOrdersInTable: OrderInTable[] = [
             },
         ],
         status: "Ready for Pickup",
-        createdTime: "2021-10-17T18:28:44.691969-04:00",
-        updatedTime: "2021-10-17T18:28:44.691969-04:00",
+        createdTime: "2021-10-17T18:28:44.691969-03:00",
+        updatedTime: "2021-10-17T18:28:44.691969-06:00",
     },
     {
         id: 4,
@@ -860,8 +860,8 @@ export const mockPendingOrdersInTable: OrderInTable[] = [
             },
         ],
         status: "Submitted",
-        createdTime: "2022-10-17T18:28:44.691969-04:00",
-        updatedTime: "2021-10-17T18:28:44.691969-04:00",
+        createdTime: "2021-10-17T18:28:44.691969-04:00",
+        updatedTime: "2022-10-17T18:28:44.691969-04:00",
     },
     {
         id: 3,
@@ -879,7 +879,7 @@ export const mockPendingOrdersInTable: OrderInTable[] = [
         ],
         status: "Ready for Pickup",
         createdTime: "2020-10-17T18:28:44.691969-06:00",
-        updatedTime: "2021-10-17T18:28:44.691969-04:00",
+        updatedTime: "2021-12-03T23:01:46.606892-06:00",
     },
 ];
 
@@ -894,8 +894,8 @@ export const mockCheckedOutOrdersInTable: OrderInTable[] = [
             },
         ],
         status: "Picked Up",
-        createdTime: "2023-10-17T18:26:44.691969-06:00",
-        updatedTime: "2021-10-17T18:28:44.691969-04:00",
+        createdTime: "2022-10-17T18:28:44.691969-06:00",
+        updatedTime: "2022-12-03T23:01:46.606892-09:00",
     },
     {
         id: 2,
@@ -912,8 +912,8 @@ export const mockCheckedOutOrdersInTable: OrderInTable[] = [
             },
         ],
         status: "Picked Up",
-        createdTime: "2022-10-17T18:22:44.691969-07:00",
-        updatedTime: "2021-10-17T18:28:44.691969-04:00",
+        createdTime: "2020-10-17T18:28:44.691969-03:00",
+        updatedTime: "2020-12-03T23:01:45.606892-04:00",
     },
     {
         id: 1,
@@ -925,8 +925,8 @@ export const mockCheckedOutOrdersInTable: OrderInTable[] = [
             },
         ],
         status: "Picked Up",
-        createdTime: "2022-10-17T18:22:44.691969-07:00",
-        updatedTime: "2021-10-17T18:28:44.691969-04:00",
+        createdTime: "2021-10-17T18:28:44.691969-01:00",
+        updatedTime: "2021-12-03T23:01:46.606892-02:00",
     },
 ];
 
