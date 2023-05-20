@@ -69,9 +69,21 @@ export const teamOrderListSerialization = (
                     id: order.id,
                     status: order.status,
                     hardwareInTableRow,
-                    createdTime: order.created_at,
+                    createdTime:
+                        "Created at: " +
+                        order.created_at.slice(0, 10) +
+                        " " +
+                        //"at " +
+                        order.created_at.slice(11, 16) +
+                        "\xa0\xa0\xa0\xa0\xa0",
+                    // Note: The"\xa0" characters are there to provide whitespace to seperate the createdTime and updatedTime
 
-                    updatedTime: order.updated_at,
+                    updatedTime:
+                        "Updated at: " +
+                        order.updated_at.slice(0, 10) +
+                        " " +
+                        //"at " +
+                        order.updated_at.slice(11, 16),
                 });
         }
     });

@@ -842,8 +842,8 @@ export const mockPendingOrdersInTable: OrderInTable[] = [
             },
         ],
         status: "Ready for Pickup",
-        createdTime: "2021-10-17T18:28:44.691969-03:00",
-        updatedTime: "2021-10-17T18:28:44.691969-06:00",
+        createdTime: "Created at: 2021-10-17 18:28" + "\xa0\xa0\xa0\xa0\xa0",
+        updatedTime: "Updated at: 2021-10-17 18:28",
     },
     {
         id: 4,
@@ -860,8 +860,8 @@ export const mockPendingOrdersInTable: OrderInTable[] = [
             },
         ],
         status: "Submitted",
-        createdTime: "2021-10-17T18:28:44.691969-04:00",
-        updatedTime: "2022-10-17T18:28:44.691969-04:00",
+        createdTime: "Created at: 2021-10-17 18:28" + "\xa0\xa0\xa0\xa0\xa0",
+        updatedTime: "Updated at: 2022-10-17 18:28",
     },
     {
         id: 3,
@@ -878,8 +878,8 @@ export const mockPendingOrdersInTable: OrderInTable[] = [
             },
         ],
         status: "Ready for Pickup",
-        createdTime: "2020-10-17T18:28:44.691969-06:00",
-        updatedTime: "2021-12-03T23:01:46.606892-06:00",
+        createdTime: "Created at: 2020-10-17 18:28" + "\xa0\xa0\xa0\xa0\xa0",
+        updatedTime: "Updated at: 2021-12-03 23:01",
     },
 ];
 
@@ -894,8 +894,8 @@ export const mockCheckedOutOrdersInTable: OrderInTable[] = [
             },
         ],
         status: "Picked Up",
-        createdTime: "2022-10-17T18:28:44.691969-06:00",
-        updatedTime: "2022-12-03T23:01:46.606892-09:00",
+        createdTime: "Created at: 2022-10-17 18:28" + "\xa0\xa0\xa0\xa0\xa0",
+        updatedTime: "Updated at: 2022-12-03 23:01",
     },
     {
         id: 2,
@@ -912,8 +912,8 @@ export const mockCheckedOutOrdersInTable: OrderInTable[] = [
             },
         ],
         status: "Picked Up",
-        createdTime: "2020-10-17T18:28:44.691969-03:00",
-        updatedTime: "2020-12-03T23:01:45.606892-04:00",
+        createdTime: "Created at: 2020-10-17 18:28" + "\xa0\xa0\xa0\xa0\xa0",
+        updatedTime: "Updated at: 2020-12-03 23:01",
     },
     {
         id: 1,
@@ -925,8 +925,8 @@ export const mockCheckedOutOrdersInTable: OrderInTable[] = [
             },
         ],
         status: "Picked Up",
-        createdTime: "2021-10-17T18:28:44.691969-01:00",
-        updatedTime: "2021-12-03T23:01:46.606892-02:00",
+        createdTime: "Created at: 2021-10-17 18:28" + "\xa0\xa0\xa0\xa0\xa0",
+        updatedTime: "Updated at: 2021-12-03 23:01",
     },
 ];
 
