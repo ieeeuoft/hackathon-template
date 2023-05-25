@@ -1,9 +1,9 @@
 import React from "react";
-import {render, within} from "testing/utils";
-import {mockHardware, mockPendingOrders} from "testing/mockData";
+import { render, within } from "testing/utils";
+import { mockHardware, mockPendingOrders } from "testing/mockData";
 import Orders from "./Orders";
-import {RootStore} from "slices/store";
-import {makeStoreWithEntities} from "testing/utils";
+import { RootStore } from "slices/store";
+import { makeStoreWithEntities } from "testing/utils";
 
 describe("Orders Page", () => {
     let store: RootStore;
@@ -15,14 +15,14 @@ describe("Orders Page", () => {
         });
     });
     test("Has necessary page elements", () => {
-        const {getByText, getByTestId} = render(<Orders/>, {store});
+        const { getByText, getByTestId } = render(<Orders />, { store });
 
         expect(getByText("Orders")).toBeInTheDocument();
         expect(getByTestId("ordersCountDivider")).toBeInTheDocument();
     });
 
     test("Display correct order cards", () => {
-        const {getByTestId} = render(<Orders/>, {store});
+        const { getByTestId } = render(<Orders />, { store });
         mockPendingOrders.forEach((order) => {
             const orderStatus = order.status;
 
@@ -30,7 +30,7 @@ describe("Orders Page", () => {
                 const orderItem = getByTestId(`order-item-${order.id}`);
                 const orderDetails = within(orderItem);
                 const date = new Date(order.created_at);
-                const month = date.toLocaleString("default", {month: "short"});
+                const month = date.toLocaleString("default", { month: "short" });
                 const day = date.getDate();
                 const hoursAndMinutes = date.getHours() + ":" + date.getMinutes();
 
@@ -50,10 +50,9 @@ describe("Orders Page", () => {
         });
     });
     test("Display correct amount of order results", () => {
-        const {getByText, getByTestId} = render(<Orders/>, {store});
+        const { getByText, getByTestId } = render(<Orders />, { store });
         const orderCount = mockPendingOrders.length;
         const resultText = getByText(`${orderCount} results`);
         expect(resultText).toBeInTheDocument();
     });
-
 });
