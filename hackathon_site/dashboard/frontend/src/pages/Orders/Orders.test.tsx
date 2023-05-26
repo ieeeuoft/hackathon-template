@@ -50,7 +50,7 @@ describe("Orders Page", () => {
         });
     });
     test("Display correct amount of order results", () => {
-        const { getByText, getByTestId } = render(<Orders />, { store });
+        const { getByText } = render(<Orders />, { store });
         const orderCount = mockPendingOrders.length;
         const resultText = getByText(`${orderCount} results`);
         expect(resultText).toBeInTheDocument();

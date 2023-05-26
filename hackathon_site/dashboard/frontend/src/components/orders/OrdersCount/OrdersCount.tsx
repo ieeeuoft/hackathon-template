@@ -6,7 +6,7 @@ import styles from "pages/Orders/Orders.module.scss";
 import {
     adminOrderTotalSelector,
     getOrdersWithFilters,
-} from "../../../slices/order/adminOrderSlice";
+} from "slices/order/adminOrderSlice";
 
 const OrdersCount = () => {
     const dispatch = useDispatch();
