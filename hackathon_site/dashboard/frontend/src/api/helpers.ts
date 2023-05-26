@@ -94,34 +94,3 @@ export const teamOrderListSerialization = (
         hardwareIdsToFetch: Object.values(hardwareIdsToFetch),
     };
 };
-
-/*
-OLD FORMATTING of the times from prior branch version
- if (hardwareInTableRow.length > 0)
-                (order.status === "Submitted" || order.status === "Ready for Pickup"
-                    ? pendingOrders
-                    : checkedOutOrders
-                ).push({
-                    id: order.id,
-                    status: order.status,
-                    hardwareInTableRow,
-                    createdTime:
-                        "Created at: " +
-                        order.created_at.slice(0, 10) +
-                        " " +
-                        "at " +
-                        order.created_at.slice(11, 16) +
-                        "\xa0\xa0\xa0\xa0\xa0",
-
-                    updatedTime:
-                        "Updated at: " +
-                        order.updated_at.slice(0, 10) +
-                        " " +
-                        "at " +
-                        order.updated_at.slice(11, 16),
-                });
-
-
-
-
- */
