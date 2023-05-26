@@ -29,6 +29,11 @@
     }
 }
 
+/*Added a new styling component to bold text*/
+.boldText {
+    font-weight: bold;
+}
+
 .itemImg {
     height: 80px;
     width: 80px;
@@ -53,6 +58,21 @@
         background-color: color(orangeLight);
         svg {
             color: color(orange);
+        }
+    }
+
+    /*Added 2 new styling colours below (light purple and light blue respectively)*/
+    &Purple {
+        background-color: color(purpleLight);
+        svg {
+            color: color(purple);
+        }
+    }
+
+    &Blue {
+        background-color: color(blueLight);
+        svg {
+            color: color(blue);
         }
     }
 }

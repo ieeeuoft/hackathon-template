@@ -8,6 +8,8 @@ import Chip from "@material-ui/core/Chip";
 import CheckCircle from "@material-ui/icons/CheckCircle";
 import WatchLater from "@material-ui/icons/WatchLater";
 import Error from "@material-ui/icons/Error";
+import EditIcon from "@material-ui/icons/Edit"; //New Icon Import
+import UpdateIcon from "@material-ui/icons/Update"; //New Icon Import
 import {
     Paper,
     Table,
@@ -108,12 +110,16 @@ export const GeneralOrderTableTitle = ({
             </Container>
         )}
         <Container>
-            <mark>
-                <b>{createdTime}</b>
-            </mark>{" "}
-            <mark>
-                <b>{updatedTime}</b>
-            </mark>
+            <Chip
+                label={createdTime}
+                icon={<EditIcon />}
+                className={`${styles.chipPurple} ${styles.chip} ${styles.boldText}`}
+            />{" "}
+            <Chip
+                label={updatedTime}
+                icon={<UpdateIcon />}
+                className={`${styles.chipBlue} ${styles.chip} ${styles.boldText}`}
+            />
         </Container>
     </Container>
 ); //Note: Placed the createdTime and updatedTime variables inside a Container as by default, the text merged into 1 line
