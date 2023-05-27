@@ -8,8 +8,8 @@ import Chip from "@material-ui/core/Chip";
 import CheckCircle from "@material-ui/icons/CheckCircle";
 import WatchLater from "@material-ui/icons/WatchLater";
 import Error from "@material-ui/icons/Error";
-import EditIcon from "@material-ui/icons/Edit"; //New Icon Import
-import UpdateIcon from "@material-ui/icons/Update"; //New Icon Import
+import EditIcon from "@material-ui/icons/Edit";
+import UpdateIcon from "@material-ui/icons/Update";
 import {
     Paper,
     Table,
@@ -83,17 +83,15 @@ export const GeneralOrderTitle = ({
 interface GeneralOrderTableTitleProps {
     orderId: number;
     orderStatus?: OrderStatus;
-    //Below, creating a new variable to store the created order time
     createdTime?: string;
-    //Below, creating a new variable to store the updated order time
     updatedTime?: string;
 }
 
 export const GeneralOrderTableTitle = ({
     orderId,
     orderStatus,
-    createdTime, //passing in createdTime as an argument to render the created time from the GeneralOrderTableTitleProps interface
-    updatedTime, //passing in createdTime as an argument to render the updated time from the GeneralOrderTableTitleProps interface
+    createdTime,
+    updatedTime,
 }: GeneralOrderTableTitleProps) => (
     <Container className={styles.titleChip} maxWidth={false} disableGutters={true}>
         <Typography variant="h2" className={styles.titleChipText}>
@@ -114,7 +112,8 @@ export const GeneralOrderTableTitle = ({
                 label={createdTime}
                 icon={<EditIcon />}
                 className={`${styles.chipPurple} ${styles.chip} ${styles.boldText}`}
-            />{" "}
+            />
+            {"    "}
             <Chip
                 label={updatedTime}
                 icon={<UpdateIcon />}
@@ -122,7 +121,7 @@ export const GeneralOrderTableTitle = ({
             />
         </Container>
     </Container>
-); //Note: Placed the createdTime and updatedTime variables inside a Container as by default, the text merged into 1 line
+);
 
 export const GeneralPendingTable = ({
     pendingOrder,

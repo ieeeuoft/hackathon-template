@@ -29,7 +29,6 @@
     }
 }
 
-/*Added a new styling component to bold text*/
 .boldText {
     font-weight: bold;
 }
@@ -60,8 +59,6 @@
             color: color(orange);
         }
     }
-
-    /*Added 2 new styling colours below (light purple and light blue respectively)*/
     &Purple {
         background-color: color(purpleLight);
         svg {

@@ -61,6 +61,12 @@ export const teamOrderListSerialization = (
                     hardwareInOrder: returnedHardware,
                 });
             const hardwareInTableRow = Object.values(hardwareItems);
+            const formattedCreatedDate = order.created_at.slice(0, 10);
+            const formattedCreatedTime = order.created_at.slice(11, 16);
+            const createdDateTime = `Created at: ${formattedCreatedDate} ${formattedCreatedTime}`;
+            const formattedUpdatedDate = order.updated_at.slice(0, 10);
+            const formattedUpdatedTime = order.updated_at.slice(11, 16);
+            const updateDateTime = `Updated at: ${formattedUpdatedDate} ${formattedUpdatedTime}`;
             if (hardwareInTableRow.length > 0)
                 (order.status === "Submitted" || order.status === "Ready for Pickup"
                     ? pendingOrders
@@ -69,21 +75,8 @@ export const teamOrderListSerialization = (
                     id: order.id,
                     status: order.status,
                     hardwareInTableRow,
-                    createdTime:
-                        "Created at: " +
-                        order.created_at.slice(0, 10) +
-                        " " +
-                        //"at " +
-                        order.created_at.slice(11, 16) +
-                        "\xa0\xa0\xa0\xa0\xa0",
-                    // Note: The"\xa0" characters are there to provide whitespace to seperate the createdTime and updatedTime
-
-                    updatedTime:
-                        "Updated at: " +
-                        order.updated_at.slice(0, 10) +
-                        " " +
-                        //"at " +
-                        order.updated_at.slice(11, 16),
+                    createdTime: createdDateTime,
+                    updatedTime: updateDateTime,
                 });
         }
     });
