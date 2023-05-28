@@ -92,7 +92,7 @@ const Orders = () => {
                                                 team={order.team_code}
                                                 orderQuantity={order.items.length}
                                                 timeOrdered={order.created_at}
-                                                //receivedIDs={order.}
+                                                receivedIDs={true}
                                                 id={order.id}
                                             />
                                         ) : (
