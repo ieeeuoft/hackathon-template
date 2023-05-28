@@ -842,8 +842,8 @@ export const mockPendingOrdersInTable: OrderInTable[] = [
             },
         ],
         status: "Ready for Pickup",
-        createdTime: "Created at: 2021-10-17 18:28",
-        updatedTime: "Updated at: 2021-10-17 18:28",
+        createdTime: "2021-10-17 18:28",
+        updatedTime: "2021-10-17 18:28",
     },
     {
         id: 4,
@@ -860,8 +860,8 @@ export const mockPendingOrdersInTable: OrderInTable[] = [
             },
         ],
         status: "Submitted",
-        createdTime: "Created at: 2021-10-17 18:28",
-        updatedTime: "Updated at: 2022-10-17 18:28",
+        createdTime: "2021-10-17 18:28",
+        updatedTime: "2022-10-17 18:28",
     },
     {
         id: 3,
@@ -878,8 +878,8 @@ export const mockPendingOrdersInTable: OrderInTable[] = [
             },
         ],
         status: "Ready for Pickup",
-        createdTime: "Created at: 2020-10-17 18:28",
-        updatedTime: "Updated at: 2021-12-03 23:01",
+        createdTime: "2020-10-17 18:28",
+        updatedTime: "2021-12-03 23:01",
     },
 ];
 
@@ -894,8 +894,8 @@ export const mockCheckedOutOrdersInTable: OrderInTable[] = [
             },
         ],
         status: "Picked Up",
-        createdTime: "Created at: 2022-10-17 18:28",
-        updatedTime: "Updated at: 2022-12-03 23:01",
+        createdTime: "2022-10-17 18:28",
+        updatedTime: "2022-12-03 23:01",
     },
     {
         id: 2,
@@ -912,8 +912,8 @@ export const mockCheckedOutOrdersInTable: OrderInTable[] = [
             },
         ],
         status: "Picked Up",
-        createdTime: "Created at: 2020-10-17 18:28",
-        updatedTime: "Updated at: 2020-12-03 23:01",
+        createdTime: "2020-10-17 18:28",
+        updatedTime: "2020-12-03 23:01",
     },
     {
         id: 1,
@@ -925,8 +925,8 @@ export const mockCheckedOutOrdersInTable: OrderInTable[] = [
             },
         ],
         status: "Picked Up",
-        createdTime: "Created at: 2021-10-17 18:28",
-        updatedTime: "Updated at: 2021-12-03 23:01",
+        createdTime: "2021-10-17 18:28",
+        updatedTime: "2021-12-03 23:01",
     },
 ];
 
