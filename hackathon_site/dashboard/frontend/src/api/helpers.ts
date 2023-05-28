@@ -75,8 +75,8 @@ export const teamOrderListSerialization = (
                 });
 
             const hardwareInTableRow = Object.values(hardwareItems);
-            const createdDateTime = formatDateTime(order.created_at);
-            const updatedDateTime = formatDateTime(order.updated_at);
+            //const createdDateTime = formatDateTime(order.created_at);
+            //const updatedDateTime = formatDateTime(order.updated_at);
             if (hardwareInTableRow.length > 0)
                 (order.status === "Submitted" || order.status === "Ready for Pickup"
                     ? pendingOrders
