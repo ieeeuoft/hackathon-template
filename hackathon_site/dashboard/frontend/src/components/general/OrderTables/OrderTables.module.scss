@@ -55,6 +55,24 @@
             color: color(orange);
         }
     }
+    &Purple {
+        background-color: color(purpleLight);
+        svg {
+            color: color(purple);
+        }
+    }
+
+    &Blue {
+        background-color: color(blueLight);
+        svg {
+            color: color(blue);
+        }
+    }
+}
+
+.chipPadding {
+    position: relative;
+    left: 630px;
 }
 
 .noWrap {

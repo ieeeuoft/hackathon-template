@@ -142,6 +142,8 @@ export const TeamCheckedOutOrderTable = () => {
                                         <GeneralOrderTableTitle
                                             orderId={checkedOutOrder.id}
                                             orderStatus={checkedOutOrder.status}
+                                            createdTime={checkedOutOrder.createdTime}
+                                            updatedTime={checkedOutOrder.updatedTime}
                                         />
                                         <TableContainer
                                             component={Paper}
