@@ -38,6 +38,7 @@ const OrderPending = ({
     const [pickedUp, setPickedUp] = useState(false);
 
     const alertEvent = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        // evokes window alert
         event.preventDefault();
         if (event.target === event.currentTarget) {
             alert("The order you clicked is: #" + id);
@@ -51,84 +52,87 @@ const OrderPending = ({
                     ReceivedIDsCheck: false,
                 }}
                 onSubmit={(values: FormikValues) => {
-                    console.log(values)
+                    console.log(values);
                     console.log("click picked up");
                     setPickedUp(true);
                 }}
             >
-            <Container className={styles.container} data-testid={`order-item-${id}`}>
-                {orderDetails.map((item, idx) => {
-                    return (
-                        <Container
-                            className={styles.contentContainer}
-                            key={idx}
-                            style={{ alignItems: "center" }}
-                        >
-                            <Typography variant="body2" className={styles.title}>
-                                {item.title}
-                            </Typography>
-                            {item.title === "Received IDs" ? (
-                                <Checkbox
-                                    name="ReceivedIDsCheck"
-                                    color="primary"
-                                    checked={
-                                        typeof item.value === "boolean"
-                                            ? item.value
-                                            : false
-                                    }
-                                    disabled={pickedUp}
-                                />
-                            ) : (
-                                <Typography
-                                    variant="body2"
-                                    style={{ textAlign: "end" }}
-                                >
-                                    {item.value}
-                                </Typography>
-                            )}
-                        </Container>
-                    );
-                })}
-                <div
-                    style={{
-                        display: "flex",
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        padding: "4px 12px",
-                    }}
+                <Container
+                    className={styles.container}
+                    data-testid={`order-item-${id}`}
                 >
-                    <Button
-                        type="submit"
-                        onClick={(event) => {
-                            event.stopPropagation();
-                            // console.log("click picked up");
-                            setPickedUp(true);
+                    {orderDetails.map((item, idx) => {
+                        return (
+                            <Container
+                                className={styles.contentContainer}
+                                key={idx}
+                                style={{ alignItems: "center" }}
+                            >
+                                <Typography variant="body2" className={styles.title}>
+                                    {item.title}
+                                </Typography>
+                                {item.title === "Received IDs" ? (
+                                    <Checkbox
+                                        name="ReceivedIDsCheck"
+                                        color="primary"
+                                        checked={
+                                            typeof item.value === "boolean"
+                                                ? item.value
+                                                : false
+                                        }
+                                        disabled={pickedUp}
+                                    />
+                                ) : (
+                                    <Typography
+                                        variant="body2"
+                                        style={{ textAlign: "end" }}
+                                    >
+                                        {item.value}
+                                    </Typography>
+                                )}
+                            </Container>
+                        );
+                    })}
+                    <div
+                        style={{
+                            display: "flex",
+                            flexDirection: "row",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            padding: "4px 12px",
                         }}
-                        color="primary"
-                        variant="contained"
-                        fullWidth={true}
-                        className={stylesButton.filterBtnsApply}
-                        disabled={pickedUp}
-                        disableElevation
-                        data-testid="apply-button"
-                        style={pickedUp ? { pointerEvents: "none" } : {}}
                     >
-                        Picked Up
-                    </Button>
-                    <Button
-                        // type="submit"
-                        color="primary"
-                        data-testid="clear-button"
-                        onClick={(event) => {
-                            event.stopPropagation();
-                            console.log("click view");
-                        }}
-                    >
-                        View
-                    </Button>
-                </div>
-            </Container>
+                        <Button
+                            type="submit"
+                            onClick={(event) => {
+                                event.stopPropagation();
+                                // console.log("click picked up");
+                                setPickedUp(true);
+                            }}
+                            color="primary"
+                            variant="contained"
+                            fullWidth={true}
+                            className={stylesButton.filterBtnsApply}
+                            disabled={pickedUp}
+                            disableElevation
+                            data-testid="apply-button"
+                            style={pickedUp ? { pointerEvents: "none" } : {}}
+                        >
+                            Picked Up
+                        </Button>
+                        <Button
+                            // type="submit"
+                            color="primary"
+                            data-testid="clear-button"
+                            onClick={(event) => {
+                                event.stopPropagation();
+                                console.log("click view");
+                            }}
+                        >
+                            View
+                        </Button>
+                    </div>
+                </Container>
             </Formik>
         </Card>
     );
