@@ -91,6 +91,7 @@ export const CheckedOutTables = () =>
                                     orderId={checkedOutOrder.id}
                                     createdTime={checkedOutOrder.createdTime}
                                     updatedTime={checkedOutOrder.updatedTime}
+                                    additionalChipFormatting={true}
                                 />
                                 <TableContainer
                                     component={Paper}

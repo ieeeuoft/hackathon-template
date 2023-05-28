@@ -22,19 +22,7 @@ import {
 import hardwareImagePlaceholder from "assets/images/placeholders/no-hardware-image.svg";
 import { useSelector } from "react-redux";
 import { hardwareSelectors } from "slices/hardware/hardwareSlice";
-
-function formatDateTime(dateTimeString: string): string {
-    const dateTime = new Date(dateTimeString);
-    const options: Intl.DateTimeFormatOptions = {
-        month: "long",
-        day: "numeric",
-        year: "numeric",
-        hour: "numeric",
-        minute: "numeric",
-        hour12: true,
-    };
-    return dateTime.toLocaleString("en-US", options);
-}
+import { formatDateTime } from "api/helpers";
 
 export const ChipStatus = ({ status }: { status: OrderStatus | "Error" }) => {
     switch (status) {
@@ -98,6 +86,7 @@ interface GeneralOrderTableTitleProps {
     orderStatus?: OrderStatus;
     createdTime?: string;
     updatedTime?: string;
+    additionalChipFormatting?: boolean; //Added an additional parameter to check if more formatting for <Chip> is needed
 }
 
 export const GeneralOrderTableTitle = ({
@@ -105,6 +94,7 @@ export const GeneralOrderTableTitle = ({
     orderStatus,
     createdTime,
     updatedTime,
+    additionalChipFormatting,
 }: GeneralOrderTableTitleProps) => (
     <Container className={styles.titleChip} maxWidth={false} disableGutters={true}>
         <Typography variant="h2" className={styles.titleChipText}>
@@ -126,13 +116,17 @@ export const GeneralOrderTableTitle = ({
                 <Chip
                     label={[<b>Created at: </b>, formatDateTime(createdTime)]}
                     icon={<EditIcon />}
-                    className={`${styles.chipPurple} ${styles.chip}`}
+                    className={`${styles.chipPurple} ${styles.chip} ${
+                        additionalChipFormatting ? styles.chipPaddingLeft : null
+                    }`}
                 />
                 {"    "}
                 <Chip
                     label={[<b>Updated at: </b>, formatDateTime(updatedTime)]}
                     icon={<UpdateIcon />}
-                    className={`${styles.chipBlue} ${styles.chip}`}
+                    className={`${styles.chipBlue} ${styles.chip} ${
+                        additionalChipFormatting ? styles.chipPaddingRight : null
+                    }`}
                 />
             </Container>
         ) : null}
