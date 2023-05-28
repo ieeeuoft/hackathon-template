@@ -15,11 +15,12 @@ interface ItemProps {
 
 const Item = ({ image, title, total, currentStock }: ItemProps): ReactElement => {
     const userType = useSelector(userTypeSelector);
-    const stock = !currentStock
-        ? "OUT OF STOCK"
-        : userType === "participant"
-        ? currentStock + " IN STOCK"
-        : currentStock + " OF " + total + " IN STOCK";
+    const stock =
+        currentStock < 1
+            ? "OUT OF STOCK"
+            : userType === "participant"
+            ? currentStock + " IN STOCK"
+            : currentStock + " OF " + total + " IN STOCK";
     const stockStyle = !currentStock ? styles.outOfStock : styles.inStock;
     const coverStyle = !currentStock ? styles.itemBlack : styles.itemBox;
 
