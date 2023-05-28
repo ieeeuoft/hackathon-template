@@ -8,6 +8,8 @@ import Chip from "@material-ui/core/Chip";
 import CheckCircle from "@material-ui/icons/CheckCircle";
 import WatchLater from "@material-ui/icons/WatchLater";
 import Error from "@material-ui/icons/Error";
+import EditIcon from "@material-ui/icons/Edit";
+import UpdateIcon from "@material-ui/icons/Update";
 import {
     Paper,
     Table,
@@ -20,6 +22,7 @@ import {
 import hardwareImagePlaceholder from "assets/images/placeholders/no-hardware-image.svg";
 import { useSelector } from "react-redux";
 import { hardwareSelectors } from "slices/hardware/hardwareSlice";
+import { formatDateTime } from "api/helpers";
 
 export const ChipStatus = ({ status }: { status: OrderStatus | "Error" }) => {
     switch (status) {
@@ -81,10 +84,17 @@ export const GeneralOrderTitle = ({
 interface GeneralOrderTableTitleProps {
     orderId: number;
     orderStatus?: OrderStatus;
+    createdTime?: string;
+    updatedTime?: string;
+    additionalChipFormatting?: boolean;
 }
+
 export const GeneralOrderTableTitle = ({
     orderId,
     orderStatus,
+    createdTime,
+    updatedTime,
+    additionalChipFormatting,
 }: GeneralOrderTableTitleProps) => (
     <Container className={styles.titleChip} maxWidth={false} disableGutters={true}>
         <Typography variant="h2" className={styles.titleChipText}>
@@ -100,6 +110,26 @@ export const GeneralOrderTableTitle = ({
                 <ChipStatus status={orderStatus} />
             </Container>
         )}
+
+        {createdTime && updatedTime ? (
+            <Container>
+                <Chip
+                    label={[<b>Created at: </b>, formatDateTime(createdTime)]}
+                    icon={<EditIcon />}
+                    className={`${styles.chipPurple} ${styles.chip} ${
+                        additionalChipFormatting ? styles.chipPadding : ""
+                    }`}
+                />
+                {"    "}
+                <Chip
+                    label={[<b>Updated at: </b>, formatDateTime(updatedTime)]}
+                    icon={<UpdateIcon />}
+                    className={`${styles.chipBlue} ${styles.chip} ${
+                        additionalChipFormatting ? styles.chipPadding : ""
+                    }`}
+                />
+            </Container>
+        ) : null}
     </Container>
 );
 
@@ -120,6 +150,8 @@ export const GeneralPendingTable = ({
             <GeneralOrderTableTitle
                 orderId={pendingOrder.id}
                 orderStatus={pendingOrder.status}
+                createdTime={pendingOrder.createdTime}
+                updatedTime={pendingOrder.updatedTime}
             />
             <TableContainer component={Paper} elevation={2} square={true}>
                 <Table className={styles.table} size="small" aria-label="pending table">
