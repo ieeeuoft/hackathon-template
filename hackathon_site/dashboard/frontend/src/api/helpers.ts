@@ -63,10 +63,10 @@ export const teamOrderListSerialization = (
             const hardwareInTableRow = Object.values(hardwareItems);
             const formattedCreatedDate = order.created_at.slice(0, 10);
             const formattedCreatedTime = order.created_at.slice(11, 16);
-            const createdDateTime = `Created at: ${formattedCreatedDate} ${formattedCreatedTime}`;
+            const createdDateTime = `${formattedCreatedDate} ${formattedCreatedTime}`;
             const formattedUpdatedDate = order.updated_at.slice(0, 10);
             const formattedUpdatedTime = order.updated_at.slice(11, 16);
-            const updateDateTime = `Updated at: ${formattedUpdatedDate} ${formattedUpdatedTime}`;
+            const updateDateTime = `${formattedUpdatedDate} ${formattedUpdatedTime}`;
             if (hardwareInTableRow.length > 0)
                 (order.status === "Submitted" || order.status === "Ready for Pickup"
                     ? pendingOrders

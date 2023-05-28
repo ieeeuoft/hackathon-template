@@ -107,19 +107,22 @@ export const GeneralOrderTableTitle = ({
                 <ChipStatus status={orderStatus} />
             </Container>
         )}
-        <Container>
-            <Chip
-                label={createdTime}
-                icon={<EditIcon />}
-                className={`${styles.chipPurple} ${styles.chip} ${styles.boldText}`}
-            />
-            {"    "}
-            <Chip
-                label={updatedTime}
-                icon={<UpdateIcon />}
-                className={`${styles.chipBlue} ${styles.chip} ${styles.boldText}`}
-            />
-        </Container>
+
+        {createdTime && updatedTime ? (
+            <Container>
+                <Chip
+                    label={[<b>Created at: </b>, createdTime]}
+                    icon={<EditIcon />}
+                    className={`${styles.chipPurple} ${styles.chip}`}
+                />
+                {"    "}
+                <Chip
+                    label={[<b>Updated at: </b>, updatedTime]}
+                    icon={<UpdateIcon />}
+                    className={`${styles.chipBlue} ${styles.chip}`}
+                />
+            </Container>
+        ) : null}
     </Container>
 );
 
