@@ -86,7 +86,7 @@ interface GeneralOrderTableTitleProps {
     orderStatus?: OrderStatus;
     createdTime?: string;
     updatedTime?: string;
-    additionalChipFormatting?: boolean; //Added an additional parameter to check if more formatting for <Chip> is needed
+    additionalChipFormatting?: boolean;
 }
 
 export const GeneralOrderTableTitle = ({
@@ -117,7 +117,7 @@ export const GeneralOrderTableTitle = ({
                     label={[<b>Created at: </b>, formatDateTime(createdTime)]}
                     icon={<EditIcon />}
                     className={`${styles.chipPurple} ${styles.chip} ${
-                        additionalChipFormatting ? styles.chipPaddingLeft : null
+                        additionalChipFormatting ? styles.chipPadding : ""
                     }`}
                 />
                 {"    "}
@@ -125,7 +125,7 @@ export const GeneralOrderTableTitle = ({
                     label={[<b>Updated at: </b>, formatDateTime(updatedTime)]}
                     icon={<UpdateIcon />}
                     className={`${styles.chipBlue} ${styles.chip} ${
-                        additionalChipFormatting ? styles.chipPaddingRight : null
+                        additionalChipFormatting ? styles.chipPadding : ""
                     }`}
                 />
             </Container>
