@@ -842,8 +842,8 @@ export const mockPendingOrdersInTable: OrderInTable[] = [
             },
         ],
         status: "Ready for Pickup",
-        createdTime: "2021-10-17 18:28",
-        updatedTime: "2021-10-17 18:28",
+        createdTime: "October 17, 2021, 5:28 PM",
+        updatedTime: "October 17, 2021, 8:28 PM",
     },
     {
         id: 4,
@@ -860,8 +860,8 @@ export const mockPendingOrdersInTable: OrderInTable[] = [
             },
         ],
         status: "Submitted",
-        createdTime: "2021-10-17 18:28",
-        updatedTime: "2022-10-17 18:28",
+        createdTime: "October 17, 2021, 6:28 PM",
+        updatedTime: "October 17, 2022, 6:28 PM",
     },
     {
         id: 3,
@@ -878,8 +878,8 @@ export const mockPendingOrdersInTable: OrderInTable[] = [
             },
         ],
         status: "Ready for Pickup",
-        createdTime: "2020-10-17 18:28",
-        updatedTime: "2021-12-03 23:01",
+        createdTime: "October 17, 2020, 8:28 PM",
+        updatedTime: "December 4, 2021, 12:01 AM",
     },
 ];
 
@@ -894,8 +894,8 @@ export const mockCheckedOutOrdersInTable: OrderInTable[] = [
             },
         ],
         status: "Picked Up",
-        createdTime: "2022-10-17 18:28",
-        updatedTime: "2022-12-03 23:01",
+        createdTime: "October 17, 2022, 8:28 PM",
+        updatedTime: "December 4, 2022, 3:01 AM",
     },
     {
         id: 2,
@@ -912,8 +912,8 @@ export const mockCheckedOutOrdersInTable: OrderInTable[] = [
             },
         ],
         status: "Picked Up",
-        createdTime: "2020-10-17 18:28",
-        updatedTime: "2020-12-03 23:01",
+        createdTime: "October 17, 2020, 5:28 PM",
+        updatedTime: "December 3, 2020, 10:01 PM",
     },
     {
         id: 1,
@@ -925,8 +925,8 @@ export const mockCheckedOutOrdersInTable: OrderInTable[] = [
             },
         ],
         status: "Picked Up",
-        createdTime: "2021-10-17 18:28",
-        updatedTime: "2021-12-03 23:01",
+        createdTime: "October 17, 2021, 3:28 PM",
+        updatedTime: "December 3, 2021, 8:01 PM",
     },
 ];
 

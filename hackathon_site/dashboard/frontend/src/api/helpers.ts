@@ -6,6 +6,19 @@ import {
     ReturnOrderInTable,
 } from "api/types";
 
+function formatDateTime(dateTimeString: string): string {
+    const dateTime = new Date(dateTimeString);
+    const options: Intl.DateTimeFormatOptions = {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+        hour12: true,
+    };
+    return dateTime.toLocaleString("en-US", options);
+}
+
 export const teamOrderListSerialization = (
     orders: Order[]
 ): {
@@ -60,13 +73,10 @@ export const teamOrderListSerialization = (
                     id: order.id,
                     hardwareInOrder: returnedHardware,
                 });
+
             const hardwareInTableRow = Object.values(hardwareItems);
-            const formattedCreatedDate = order.created_at.slice(0, 10);
-            const formattedCreatedTime = order.created_at.slice(11, 16);
-            const createdDateTime = `${formattedCreatedDate} ${formattedCreatedTime}`;
-            const formattedUpdatedDate = order.updated_at.slice(0, 10);
-            const formattedUpdatedTime = order.updated_at.slice(11, 16);
-            const updateDateTime = `${formattedUpdatedDate} ${formattedUpdatedTime}`;
+            const createdDateTime = formatDateTime(order.created_at);
+            const updatedDateTime = formatDateTime(order.updated_at);
             if (hardwareInTableRow.length > 0)
                 (order.status === "Submitted" || order.status === "Ready for Pickup"
                     ? pendingOrders
@@ -76,7 +86,7 @@ export const teamOrderListSerialization = (
                     status: order.status,
                     hardwareInTableRow,
                     createdTime: createdDateTime,
-                    updatedTime: updateDateTime,
+                    updatedTime: updatedDateTime,
                 });
         }
     });
