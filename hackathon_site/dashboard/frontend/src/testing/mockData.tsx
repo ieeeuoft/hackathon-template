@@ -842,8 +842,8 @@ export const mockPendingOrdersInTable: OrderInTable[] = [
             },
         ],
         status: "Ready for Pickup",
-        createdTime: "October 17, 2021, 5:28 PM",
-        updatedTime: "October 17, 2021, 8:28 PM",
+        createdTime: "2021-10-17T18:28:44.691969-03:00",
+        updatedTime: "2021-10-17T18:28:44.691969-06:00",
     },
     {
         id: 4,
@@ -860,8 +860,8 @@ export const mockPendingOrdersInTable: OrderInTable[] = [
             },
         ],
         status: "Submitted",
-        createdTime: "October 17, 2021, 6:28 PM",
-        updatedTime: "October 17, 2022, 6:28 PM",
+        createdTime: "2021-10-17T18:28:44.691969-04:00",
+        updatedTime: "2022-10-17T18:28:44.691969-04:00",
     },
     {
         id: 3,
@@ -878,8 +878,8 @@ export const mockPendingOrdersInTable: OrderInTable[] = [
             },
         ],
         status: "Ready for Pickup",
-        createdTime: "October 17, 2020, 8:28 PM",
-        updatedTime: "December 4, 2021, 12:01 AM",
+        createdTime: "2020-10-17T18:28:44.691969-06:00",
+        updatedTime: "2021-12-03T23:01:46.606892-06:00",
     },
 ];
 
@@ -894,8 +894,8 @@ export const mockCheckedOutOrdersInTable: OrderInTable[] = [
             },
         ],
         status: "Picked Up",
-        createdTime: "October 17, 2022, 8:28 PM",
-        updatedTime: "December 4, 2022, 3:01 AM",
+        createdTime: "2022-10-17T18:28:44.691969-06:00",
+        updatedTime: "2022-12-03T23:01:46.606892-09:00",
     },
     {
         id: 2,
@@ -912,8 +912,8 @@ export const mockCheckedOutOrdersInTable: OrderInTable[] = [
             },
         ],
         status: "Picked Up",
-        createdTime: "October 17, 2020, 5:28 PM",
-        updatedTime: "December 3, 2020, 10:01 PM",
+        createdTime: "2020-10-17T18:28:44.691969-03:00",
+        updatedTime: "2020-12-03T23:01:45.606892-04:00",
     },
     {
         id: 1,
@@ -925,8 +925,8 @@ export const mockCheckedOutOrdersInTable: OrderInTable[] = [
             },
         ],
         status: "Picked Up",
-        createdTime: "October 17, 2021, 3:28 PM",
-        updatedTime: "December 3, 2021, 8:01 PM",
+        createdTime: "2021-10-17T18:28:44.691969-01:00",
+        updatedTime: "2021-12-03T23:01:46.606892-02:00",
     },
 ];
 

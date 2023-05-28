@@ -85,8 +85,10 @@ export const teamOrderListSerialization = (
                     id: order.id,
                     status: order.status,
                     hardwareInTableRow,
-                    createdTime: createdDateTime,
-                    updatedTime: updatedDateTime,
+                    //createdTime: createdDateTime,
+                    createdTime: order.created_at,
+                    updatedTime: order.updated_at,
+                    //updatedTime: updatedDateTime,
                 });
         }
     });
