@@ -23,6 +23,19 @@ import hardwareImagePlaceholder from "assets/images/placeholders/no-hardware-ima
 import { useSelector } from "react-redux";
 import { hardwareSelectors } from "slices/hardware/hardwareSlice";
 
+function formatDateTime(dateTimeString: string): string {
+    const dateTime = new Date(dateTimeString);
+    const options: Intl.DateTimeFormatOptions = {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+        hour12: true,
+    };
+    return dateTime.toLocaleString("en-US", options);
+}
+
 export const ChipStatus = ({ status }: { status: OrderStatus | "Error" }) => {
     switch (status) {
         case "Ready for Pickup":
@@ -111,13 +124,13 @@ export const GeneralOrderTableTitle = ({
         {createdTime && updatedTime ? (
             <Container>
                 <Chip
-                    label={[<b>Created at: </b>, createdTime]}
+                    label={[<b>Created at: </b>, formatDateTime(createdTime)]}
                     icon={<EditIcon />}
                     className={`${styles.chipPurple} ${styles.chip}`}
                 />
                 {"    "}
                 <Chip
-                    label={[<b>Updated at: </b>, updatedTime]}
+                    label={[<b>Updated at: </b>, formatDateTime(updatedTime)]}
                     icon={<UpdateIcon />}
                     className={`${styles.chipBlue} ${styles.chip}`}
                 />
