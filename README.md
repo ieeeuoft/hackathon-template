@@ -20,6 +20,7 @@ A website template for hackathons run by [IEEE University of Toronto Student Bra
 - Daniel Qiu
 - Kenny Cui
 - Himanish Jindal
+- Abubukker Chaudhary
 
 ## Contents
 - [Requirements](#requirements)
