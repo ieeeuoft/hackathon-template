@@ -134,6 +134,8 @@ export interface OrderInTable {
     id: number;
     hardwareInTableRow: OrderItemTableRow[];
     status: OrderStatus;
+    createdTime: string;
+    updatedTime: string;
 }
 
 export type ReturnedItem = ItemsInOrder & { quantity: number; time: string };
