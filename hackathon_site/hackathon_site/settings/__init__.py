@@ -40,13 +40,15 @@ if DEBUG:
     CORS_ORIGIN_REGEX_WHITELIST = [
         r"^https?://localhost:?\d*$",
     ]
-    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+    EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
+    HSS_URL = "http://localhost:3000/"
 else:
     # NOTE: If you aren't ieee uoft, put your websites here
     ALLOWED_HOSTS = ["ieee.utoronto.ca"]
     CORS_ORIGIN_REGEX_WHITELIST = [
         r"^https://ieee\.utoronto.ca:?\d*$",
     ]
+    HSS_URL = "https://hardware.newhacks.ca/"
 
 CORS_ALLOW_CREDENTIALS = True
 
@@ -232,6 +234,11 @@ if DEBUG:
 
     if not os.path.isdir(MEDIA_ROOT):
         os.makedirs(MEDIA_ROOT)
+
+    EMAIL_FILE_PATH = os.path.join(BASE_DIR, "emails")
+
+    if not os.path.isdir(EMAIL_FILE_PATH):
+        os.makedirs(EMAIL_FILE_PATH)
 else:
     # You will almost certainly want to change this
     # Remember to create this folder on your server
@@ -285,6 +292,7 @@ LOGGING = {
 HACKATHON_NAME = "CoolHacks"
 DEFAULT_FROM_EMAIL = "webmaster@localhost"
 CONTACT_EMAIL = DEFAULT_FROM_EMAIL
+HSS_ADMIN_EMAIL = "hardware@newhacks.ca"
 
 REGISTRATION_OPEN_DATE = datetime(2020, 9, 1, tzinfo=TZ_INFO)
 REGISTRATION_CLOSE_DATE = datetime(2023, 9, 30, tzinfo=TZ_INFO)
@@ -318,3 +326,10 @@ PARTICIPANT_PACKAGE_LINK = "#"
 # Note this is in the form (chat_room_name, chat_room_link)
 # Chat room name is such as the following: Slack, Discord
 CHAT_ROOM = ("Slack", "https://slack.com")
+
+# Enable/Disable certain Features
+TEAMS = True
+RSVP = True
+
+# HSS Testing
+TEST_USER_GROUP = "HSS Test Users"

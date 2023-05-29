@@ -25,7 +25,8 @@ import NotFound from "pages/NotFound/NotFound";
 
 import SnackbarNotifier from "components/general/SnackbarNotifier/SnackbarNotifier";
 import withUserCheck from "components/HOCs/withUserCheck/withUserCheck";
-import TeamDetail from "./pages/TeamDetail/TeamDetail";
+import TeamDetail from "pages/TeamDetail/TeamDetail";
+import Acknowledgement from "pages/Acknowledgement/Acknowledgement";
 
 type Palette = {
     primary?: { main: string };
@@ -70,7 +71,7 @@ const UnconnectedApp = () => {
                     />
                     <Route
                         exact
-                        path="/teams/:id"
+                        path="/teams/:code"
                         component={withUserCheck("admin", TeamDetail)}
                     />
                     <Route
@@ -92,6 +93,11 @@ const UnconnectedApp = () => {
                         exact
                         path="/incident-form"
                         component={withUserCheck("both", IncidentForm)}
+                    />
+                    <Route
+                        exact
+                        path="/acknowledgement"
+                        component={withUserCheck("onboard", Acknowledgement)}
                     />
                     <Route exact path="/404" component={NotFound} />
                     <Redirect to="/404" />

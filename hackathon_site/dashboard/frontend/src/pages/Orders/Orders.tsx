@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Header from "components/general/Header/Header";
 import Typography from "@material-ui/core/Typography";
 import { Divider, Drawer, Grid, Hidden } from "@material-ui/core";
@@ -10,18 +10,28 @@ import CloseIcon from "@material-ui/icons/Close";
 import IconButton from "@material-ui/core/IconButton";
 import styles from "./Orders.module.scss";
 import { mockCheckedOutOrders, mockPendingOrders } from "testing/mockData";
-import OrderCard from "components/orders/OrderCard/OrderCard";
 import OrderCheckedOut from "components/orders/OrderCard/OrderCheckedOut";
+import OrderCard from "components/orders/OrderCard/OrderCard";
+import { useDispatch, useSelector } from "react-redux";
+import {
+    adminOrderSelectors,
+    getOrdersWithFilters,
+} from "slices/order/adminOrderSlice";
+import { useHistory } from "react-router-dom";
 
 const Orders = () => {
+    const dispatch = useDispatch();
+    const history = useHistory();
+    const allOrders = useSelector(adminOrderSelectors.selectAll);
     const [mobileOpen, setMobileOpen] = React.useState(false);
     const toggleFilter = () => {
         setMobileOpen(!mobileOpen);
     };
-    const handleClick = (orderId: number) => {
-        alert(`The order you clicked is: #${orderId}`);
-        console.log(orderId);
-    };
+
+    useEffect(() => {
+        dispatch(getOrdersWithFilters());
+    }, [dispatch]);
+
     return (
         <>
             <Header />
@@ -76,7 +86,7 @@ const Orders = () => {
                         </Grid>
                         <Grid item lg={12}>
                             <Grid container spacing={1} direction="row">
-                                {mockCheckedOutOrders.map((order, idx) => (
+                                {allOrders.map((order, idx) => (
                                     <Grid
                                         item
                                         lg={3}
@@ -84,65 +94,24 @@ const Orders = () => {
                                         sm={6}
                                         xs={12}
                                         key={idx}
-                                        onClick={() => handleClick(order.id)}
+                                        onClick={() =>
+                                            history.push(`/teams/${order.team_code}`)
+                                        }
                                     >
-                                        {order.status === "Picked Up" ||
-                                        order.status === "Ready for Pickup" ? (
-                                            <OrderCheckedOut
-                                                team={order.team_code}
-                                                orderQuantity={order.items.length}
-                                                timeOrdered={order.created_at}
-                                                receivedIDs={true}
-                                                id={order.id}
-                                            />
-                                        ) : (
-                                            <div
-                                                style={{
-                                                    border: "1px solid black",
-                                                    borderRadius: "5px",
-                                                    padding: "10px",
-                                                    textAlign: "center",
-                                                    backgroundColor: "lightblue",
-                                                    minHeight: "160px",
-                                                }}
-                                                data-testid={`order-item-${order.id}`}
-                                            >
-                                                {"Order Card Component"}
-                                            </div>
-                                        )}
-                                    </Grid>
-                                ))}
-                                {mockPendingOrders.map((order, idx) => (
-                                    <Grid
-                                        item
-                                        lg={3}
-                                        md={4}
-                                        sm={6}
-                                        xs={12}
-                                        key={idx}
-                                        onClick={() => handleClick(order.id)}
-                                    >
-                                        {order.status === "Submitted" ? (
+                                        {[
+                                            "Submitted",
+                                            "Ready for Pickup",
+                                            "Picked Up",
+                                            "Cancelled",
+                                        ].includes(order.status) && (
                                             <OrderCard
                                                 teamCode={order.team_code}
                                                 orderQuantity={order.items.length}
                                                 time={order.created_at}
                                                 id={order.id}
-                                            />
-                                        ) : (
-                                            <div
-                                                style={{
-                                                    border: "1px solid black",
-                                                    borderRadius: "5px",
-                                                    padding: "10px",
-                                                    textAlign: "center",
-                                                    backgroundColor: "lightblue",
-                                                    minHeight: "160px",
-                                                }}
+                                                status={order.status}
                                                 data-testid={`order-item-${order.id}`}
-                                            >
-                                                {"Order Card Component"}
-                                            </div>
+                                            />
                                         )}
                                     </Grid>
                                 ))}

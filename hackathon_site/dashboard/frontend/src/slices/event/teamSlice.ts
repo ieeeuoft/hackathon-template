@@ -6,17 +6,22 @@ import {
 } from "@reduxjs/toolkit";
 import { AppDispatch, RootState } from "slices/store";
 import { Team } from "api/types";
-import { get } from "api/api";
-import { displaySnackbar } from "slices/ui/uiSlice";
+import { get, post } from "api/api";
+import { closeTeamModalItem, displaySnackbar } from "slices/ui/uiSlice";
+import { getTeamOrders } from "slices/order/orderSlice";
 
 interface TeamExtraState {
     isLoading: boolean;
+    isLeaveTeamLoading: boolean;
+    isJoinTeamLoading: boolean;
     error: string | null;
     team: Team | null;
 }
 
 export const initialState: TeamExtraState = {
     isLoading: false,
+    isLeaveTeamLoading: false,
+    isJoinTeamLoading: false,
     error: null,
     team: null,
 };
@@ -52,6 +57,83 @@ export const getCurrentTeam = createAsyncThunk<
     }
 });
 
+export const leaveTeam = createAsyncThunk<
+    Team,
+    void,
+    { state: RootState; rejectValue: RejectValue; dispatch: AppDispatch }
+>(
+    `${teamReducerName}/leaveTeam`,
+    async (_, { dispatch, getState, rejectWithValue }) => {
+        const teamCode = teamCodeSelector(getState());
+
+        try {
+            const response = await post<Team>("/api/event/teams/leave_team/", {
+                team_code: teamCode,
+            });
+
+            dispatch(
+                displaySnackbar({
+                    message: `You have left the team.`,
+                    options: { variant: "success" },
+                })
+            );
+            dispatch(closeTeamModalItem());
+
+            return response.data;
+        } catch (e: any) {
+            // order reached quantity limits
+            const errorData = e.response?.data?.non_field_errors;
+
+            dispatch(
+                displaySnackbar({
+                    message: `Failed to leave the team: ${e.response.data.detail}`,
+                    options: { variant: "error" },
+                })
+            );
+            return rejectWithValue({
+                status: e.response.status,
+                message: errorData ?? e.response.message,
+            });
+        }
+    }
+);
+
+export const joinTeam = createAsyncThunk<
+    Team,
+    string,
+    { state: RootState; rejectValue: RejectValue; dispatch: AppDispatch }
+>(`${teamReducerName}/joinTeam`, async (teamCode, { dispatch, rejectWithValue }) => {
+    try {
+        const response = await post<Team>(`/api/event/teams/join/${teamCode}/`, {
+            team_code: teamCode,
+        });
+
+        dispatch(
+            displaySnackbar({
+                message: `You have joined the new team ${teamCode}.`,
+                options: { variant: "success" },
+            })
+        );
+        dispatch(closeTeamModalItem());
+        dispatch(getTeamOrders());
+
+        return response.data;
+    } catch (e: any) {
+        // order reached quantity limits
+        const errorData = e.response?.data?.non_field_errors;
+        dispatch(
+            displaySnackbar({
+                message: `Failed to join the team ${teamCode}: ${e.response.statusText}`,
+                options: { variant: "error" },
+            })
+        );
+        return rejectWithValue({
+            status: e.response.status,
+            message: errorData ?? e.response.message,
+        });
+    }
+});
+
 // Slice
 const teamSlice = createSlice({
     name: teamReducerName,
@@ -77,6 +159,44 @@ const teamSlice = createSlice({
         builder.addCase(getCurrentTeam.rejected, (state, { payload }) => {
             state.error = payload?.message || "Something went wrong";
         });
+
+        builder.addCase(leaveTeam.pending, (state) => {
+            state.isLeaveTeamLoading = true;
+            state.error = null;
+        });
+
+        builder.addCase(
+            leaveTeam.fulfilled,
+            (state, { payload }: PayloadAction<Team>) => {
+                state.isLeaveTeamLoading = false;
+                state.error = null;
+                state.team = payload;
+            }
+        );
+
+        builder.addCase(leaveTeam.rejected, (state, { payload }) => {
+            state.error = payload?.message || "Something went wrong";
+            state.isLeaveTeamLoading = false;
+        });
+
+        builder.addCase(joinTeam.pending, (state) => {
+            state.isJoinTeamLoading = true;
+            state.error = null;
+        });
+
+        builder.addCase(
+            joinTeam.fulfilled,
+            (state, { payload }: PayloadAction<Team>) => {
+                state.isJoinTeamLoading = false;
+                state.error = null;
+                state.team = payload;
+            }
+        );
+
+        builder.addCase(joinTeam.rejected, (state, { payload }) => {
+            state.error = payload?.message || "Something went wrong";
+            state.isJoinTeamLoading = false;
+        });
     },
 });
 
@@ -89,6 +209,16 @@ export const teamSliceSelector = (state: RootState) => state[teamReducerName];
 export const isLoadingSelector = createSelector(
     [teamSliceSelector],
     (teamSlice) => teamSlice.isLoading
+);
+
+export const isLeaveTeamLoadingSelector = createSelector(
+    [teamSliceSelector],
+    (teamSlice) => teamSlice.isLeaveTeamLoading
+);
+
+export const isJoinLoadingSelector = createSelector(
+    [teamSliceSelector],
+    (teamSlice) => teamSlice.isJoinTeamLoading
 );
 
 export const teamSelector = createSelector(

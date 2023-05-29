@@ -14,6 +14,7 @@ import {
     mockReturnedOrdersInTable,
 } from "testing/mockData";
 import { ReturnOrderInTable } from "api/types";
+import { getAllByText, queryAllByText } from "@testing-library/react";
 
 describe("<PendingTables />", () => {
     it("Shows pending items and status chip", () => {
@@ -76,6 +77,64 @@ describe("<PendingTables />", () => {
         fireEvent.click(button);
         expect(getByText(/show all/i)).toBeInTheDocument();
         expect(queryByText(/cancel order/i)).toBeNull();
+    });
+
+    it("cancel order modal shows when cancel order button is clicked", () => {
+        const store = makeStoreWithEntities({
+            pendingOrders: mockPendingOrdersInTable,
+        });
+        const { getByText, getAllByText } = render(<PendingTables />, {
+            store,
+        });
+        const button = getByText(/cancel order/i);
+        fireEvent.click(button);
+
+        const cancelOrderModalMessage = getAllByText(
+            /Are you sure you want to cancel this order/i
+        );
+        expect(cancelOrderModalMessage[0]).toBeInTheDocument();
+    });
+
+    it("cancel order modal disappears when modal is dismissed", () => {
+        const store = makeStoreWithEntities({
+            pendingOrders: mockPendingOrdersInTable,
+        });
+        const { getByText, getAllByText } = render(<PendingTables />, {
+            store,
+        });
+        const button = getByText(/cancel order/i);
+        fireEvent.click(button);
+
+        const cancelOrderModalMessage = getAllByText(
+            /Are you sure you want to cancel this order/i
+        );
+        expect(cancelOrderModalMessage[0]).toBeInTheDocument();
+
+        const dismiss_button = getByText(/Go Back/i);
+        fireEvent.click(dismiss_button);
+
+        expect(cancelOrderModalMessage[0]).not.toBeInTheDocument();
+    });
+
+    it("cancel order modal disappears when modal is submitted", () => {
+        const store = makeStoreWithEntities({
+            pendingOrders: mockPendingOrdersInTable,
+        });
+        const { getByText, getAllByText } = render(<PendingTables />, {
+            store,
+        });
+        const button = getByText(/cancel order/i);
+        fireEvent.click(button);
+
+        const cancelOrderModalMessage = getAllByText(
+            /Are you sure you want to cancel this order/i
+        );
+        expect(cancelOrderModalMessage[0]).toBeInTheDocument();
+
+        const submit_button = getByText(/Delete Order/i);
+        fireEvent.click(submit_button);
+
+        expect(cancelOrderModalMessage[0]).not.toBeInTheDocument();
     });
 });
 

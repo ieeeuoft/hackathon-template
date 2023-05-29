@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styles from "components/general/OrderTables/OrderTables.module.scss";
 import {
     Button,
@@ -39,7 +39,10 @@ import {
 import {
     GeneralOrderTitle,
     GeneralOrderTableTitle,
+    GeneralPendingTable,
+    GeneralReturnTable,
 } from "components/general/OrderTables/OrderTables";
+import PopupModal from "components/general/PopupModal/PopupModal";
 
 export const CheckedOutTables = () =>
     // TODO: for incident reports
@@ -80,8 +83,16 @@ export const CheckedOutTables = () =>
                         </Paper>
                     ) : (
                         orders.map((checkedOutOrder) => (
-                            <div key={checkedOutOrder.id}>
-                                <GeneralOrderTableTitle orderId={checkedOutOrder.id} />
+                            <div
+                                id={`order${checkedOutOrder.id}`}
+                                key={checkedOutOrder.id}
+                            >
+                                <GeneralOrderTableTitle
+                                    orderId={checkedOutOrder.id}
+                                    createdTime={checkedOutOrder.createdTime}
+                                    updatedTime={checkedOutOrder.updatedTime}
+                                    additionalChipFormatting={true}
+                                />
                                 <TableContainer
                                     component={Paper}
                                     elevation={2}
@@ -196,131 +207,38 @@ export const ReturnedTable = () => {
     const dispatch = useDispatch();
     const orders = useSelector(returnedOrdersSelector);
     const fetchOrdersError = useSelector(orderErrorSelector);
-    const hardware = useSelector(hardwareSelectors.selectEntities);
     const isVisible = useSelector(isReturnedTableVisibleSelector);
     const toggleVisibility = () => dispatch(toggleReturnedTable());
 
     return (
-        <Container
-            className={styles.tableContainer}
-            maxWidth={false}
-            disableGutters={true}
-        >
-            <GeneralOrderTitle
-                {...{
-                    title: "Returned items",
-                    isVisible,
-                    toggleVisibility,
-                }}
-            />
-
-            {isVisible &&
-                (!orders.length || fetchOrdersError ? (
-                    <Paper elevation={2} className={styles.empty} square={true}>
-                        {fetchOrdersError
-                            ? `Unable to view returned items.`
-                            : "Please bring items to the tech table and a tech team member will assist you."}
-                    </Paper>
-                ) : (
-                    orders.map((order) => (
-                        <div key={order.id}>
-                            <GeneralOrderTableTitle orderId={order.id} />
-                            <TableContainer
-                                component={Paper}
-                                elevation={2}
-                                square={true}
-                            >
-                                <Table
-                                    className={styles.table}
-                                    size="small"
-                                    aria-label="returned table"
-                                >
-                                    <TableHead>
-                                        <TableRow>
-                                            <TableCell className={styles.widthFixed} />
-                                            <TableCell
-                                                className={styles.width6}
-                                                align="left"
-                                            >
-                                                Name
-                                            </TableCell>
-                                            <TableCell
-                                                className={styles.widthFixed}
-                                                align="right"
-                                            >
-                                                Qty
-                                            </TableCell>
-                                            <TableCell
-                                                className={styles.width4}
-                                                align="right"
-                                            >
-                                                Time
-                                            </TableCell>
-                                            <TableCell
-                                                align="left"
-                                                className={styles.width2}
-                                            >
-                                                Condition
-                                            </TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {order.hardwareInOrder.map((row) => (
-                                            <TableRow key={row.id}>
-                                                <TableCell align="left">
-                                                    <img
-                                                        className={styles.itemImg}
-                                                        src={
-                                                            hardware[row.hardware_id]
-                                                                ?.picture ??
-                                                            hardware[row.hardware_id]
-                                                                ?.image_url ??
-                                                            hardwareImagePlaceholder
-                                                        }
-                                                        alt={
-                                                            hardware[row.hardware_id]
-                                                                ?.name
-                                                        }
-                                                    />
-                                                </TableCell>
-                                                <TableCell align="left">
-                                                    {hardware[row.hardware_id]?.name}
-                                                </TableCell>
-                                                <TableCell align="right">
-                                                    {row.quantity}
-                                                </TableCell>
-                                                <TableCell
-                                                    align="right"
-                                                    className={styles.noWrap}
-                                                >
-                                                    {row.time}
-                                                </TableCell>
-                                                <TableCell
-                                                    align="left"
-                                                    className={styles.noWrap}
-                                                >
-                                                    {row.part_returned_health}
-                                                </TableCell>
-                                            </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
-                            </TableContainer>
-                        </div>
-                    ))
-                ))}
-        </Container>
+        <GeneralReturnTable
+            {...{
+                orders,
+                fetchOrdersError,
+                isVisible,
+                toggleVisibility,
+            }}
+        />
     );
 };
 
 export const PendingTables = () => {
     const dispatch = useDispatch();
     const orders = useSelector(pendingOrderSelectors.selectAll);
-    const hardware = useSelector(hardwareSelectors.selectEntities);
     const isVisible = useSelector(isPendingTableVisibleSelector);
     const isCancelOrderLoading = useSelector(cancelOrderLoadingSelector);
     const toggleVisibility = () => dispatch(togglePendingTable());
     const cancelOrder = (orderId: number) => dispatch(cancelOrderThunk(orderId));
+    const [showCancelOrderModal, setShowCancelOrderModal] = useState(false);
+
+    const closeModal = () => {
+        setShowCancelOrderModal(false);
+    };
+
+    const submitModal = (cancelOrderId: number) => {
+        cancelOrder(cancelOrderId); // Perform Cancellation
+        setShowCancelOrderModal(false);
+    };
 
     return (
         <Container
@@ -342,88 +260,40 @@ export const PendingTables = () => {
                 orders.length > 0 &&
                 orders.map((pendingOrder) => (
                     <div
+                        id={`order${pendingOrder.id}`}
                         key={pendingOrder.id}
                         data-testid={`pending-order-table-${pendingOrder.id}`}
                     >
-                        <GeneralOrderTableTitle
-                            orderId={pendingOrder.id}
-                            orderStatus={pendingOrder.status}
-                        />
-                        <TableContainer component={Paper} elevation={2} square={true}>
-                            <Table
-                                className={styles.table}
-                                size="small"
-                                aria-label="pending table"
+                        <GeneralPendingTable {...{ pendingOrder }} />
+                        {pendingOrder.status !== "Ready for Pickup" && (
+                            <div
+                                style={{
+                                    display: "flex",
+                                    justifyContent: "flex-end",
+                                    marginTop: "10px",
+                                }}
                             >
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell className={styles.widthFixed} />
-                                        <TableCell
-                                            className={styles.width6}
-                                            align="left"
-                                        >
-                                            Name
-                                        </TableCell>
-                                        <TableCell
-                                            className={`${styles.width1} ${styles.noWrap}`}
-                                            align="right"
-                                        >
-                                            Requested Qty
-                                        </TableCell>
-                                        <TableCell
-                                            className={`${styles.width1} ${styles.noWrap}`}
-                                            align="right"
-                                        >
-                                            Granted Qty
-                                        </TableCell>
-                                        <TableCell className={styles.widthBuffer} />
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {pendingOrder.hardwareInTableRow.map((row) => (
-                                        <TableRow key={row.id}>
-                                            <TableCell align="left">
-                                                <img
-                                                    className={styles.itemImg}
-                                                    src={
-                                                        hardware[row.id]?.picture ??
-                                                        hardware[row.id]?.image_url ??
-                                                        hardwareImagePlaceholder
-                                                    }
-                                                    alt={hardware[row.id]?.name}
-                                                />
-                                            </TableCell>
-                                            <TableCell align="left">
-                                                {hardware[row.id]?.name}
-                                            </TableCell>
-                                            <TableCell align="right">
-                                                {row.quantityRequested}
-                                            </TableCell>
-                                            <TableCell align="right">
-                                                {row.quantityGranted}
-                                            </TableCell>
-                                            <TableCell className={styles.widthBuffer} />
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
-                        <div
-                            style={{
-                                display: "flex",
-                                justifyContent: "flex-end",
-                                marginTop: "10px",
-                            }}
-                        >
-                            <Button
-                                onClick={() => cancelOrder(pendingOrder.id)}
-                                disabled={isCancelOrderLoading}
-                                color="secondary"
-                                data-testid="cancel-order-button"
-                            >
-                                Cancel order
-                            </Button>
-                        </div>
+                                <Button
+                                    onClick={() => setShowCancelOrderModal(true)}
+                                    disabled={isCancelOrderLoading}
+                                    color="secondary"
+                                    data-testid="cancel-order-button"
+                                >
+                                    Cancel order
+                                </Button>
+                                <PopupModal
+                                    description={
+                                        "Are you sure you want to cancel this order? The team will be notified."
+                                    }
+                                    isVisible={showCancelOrderModal}
+                                    submitHandler={() => submitModal(pendingOrder.id)}
+                                    cancelText={"Go Back"}
+                                    submitText={"Delete Order"}
+                                    cancelHandler={closeModal}
+                                    title={"Careful!"}
+                                />
+                            </div>
+                        )}
                     </div>
                 ))}
         </Container>

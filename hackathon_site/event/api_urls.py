@@ -7,7 +7,7 @@ app_name = "event"
 urlpatterns = [
     path("users/user/", api_views.CurrentUserAPIView.as_view(), name="current-user"),
     path(
-        "users/user/review_status",
+        "users/user/review_status/",
         api_views.CurrentUserReviewStatusAPIView.as_view(),
         name="current-user-review-status",
     ),
@@ -39,7 +39,11 @@ urlpatterns = [
         api_views.CurrentTeamOrderListView.as_view(),
         name="team-orders",
     ),
-    path("teams/<int:pk>/", api_views.TeamDetailView.as_view(), name="team-detail"),
+    re_path(
+        "teams/(?P<team_code>[A-Z0-9]{5})/",
+        api_views.TeamDetailView.as_view(),
+        name="team-detail",
+    ),
     path(
         "teams/team/orders/<int:pk>/",
         api_views.TeamOrderDetailView.as_view(),

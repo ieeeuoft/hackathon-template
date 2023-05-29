@@ -7,6 +7,7 @@ import {
     fireEvent,
     act,
     waitFor,
+    makeStoreWithEntities,
 } from "testing/utils";
 import {
     mockCartItems,
@@ -14,31 +15,35 @@ import {
     mockPendingOrdersInTable,
 } from "testing/mockData";
 import TeamPendingOrderTable from "components/teamDetail/TeamPendingOrderTable/TeamPendingOrderTable";
+import { RootStore } from "slices/store";
 
 describe("team pending order table", () => {
+    let store: RootStore;
+
+    beforeEach(() => {
+        store = makeStoreWithEntities({
+            hardware: mockHardware,
+            teamDetailOrders: mockPendingOrdersInTable,
+        });
+    });
     test("renders team pending order table", () => {
-        const { getByTestId } = render(<TeamPendingOrderTable />);
+        const { getByTestId } = render(<TeamPendingOrderTable />, { store });
         expect(screen.getByText("Requested Items")).toBeInTheDocument();
 
-        //loop through all pending orders
         mockPendingOrdersInTable.forEach((currentOrder) => {
-            //loop through all the hardware in each order
             currentOrder.hardwareInTableRow.forEach((currentRow) => {
-                // renders all hardware names
                 expect(
                     within(
                         getByTestId(`table-${currentOrder.id}-${currentRow.id}`)
                     ).getByText(`${mockHardware[currentRow.id - 1].name}`)
                 ).toBeInTheDocument();
 
-                // renders all hardware model numbers
                 expect(
                     within(
                         getByTestId(`table-${currentOrder.id}-${currentRow.id}`)
                     ).getByText(`${mockHardware[currentRow.id - 1].model_number}`)
                 ).toBeInTheDocument();
 
-                // renders all hardware manufacturers
                 expect(
                     within(
                         getByTestId(`table-${currentOrder.id}-${currentRow.id}`)
@@ -49,7 +54,7 @@ describe("team pending order table", () => {
     });
 
     test("All button changes the dropdown to maximum value", () => {
-        const { getByTestId, getByRole } = render(<TeamPendingOrderTable />);
+        const { getByTestId, getByRole } = render(<TeamPendingOrderTable />, { store });
 
         mockPendingOrdersInTable.forEach((currentOrder) => {
             currentOrder.hardwareInTableRow.forEach((currentRow) => {
@@ -85,7 +90,7 @@ describe("team pending order table", () => {
         });
     });
     test("Check all button checks and unchecks every row", async () => {
-        const { getByTestId } = render(<TeamPendingOrderTable />);
+        const { getByTestId } = render(<TeamPendingOrderTable />, { store });
         const currentOrder = mockPendingOrdersInTable[0];
         const checkallBox = getByTestId(`checkall-${currentOrder.id}`).querySelector(
             'input[type="checkbox"]'

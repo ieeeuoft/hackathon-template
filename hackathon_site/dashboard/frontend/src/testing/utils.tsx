@@ -10,7 +10,15 @@ import {
 import { makeStore, RootStore, RootState } from "slices/store";
 import { SnackbarProvider } from "notistack";
 import { AxiosResponse } from "axios";
-import { APIListResponse, CartItem, Category, Hardware, OrderInTable } from "api/types";
+import {
+    APIListResponse,
+    CartItem,
+    Category,
+    Hardware,
+    Team,
+    Order,
+    OrderInTable,
+} from "api/types";
 import {
     hardwareReducerName,
     HardwareState,
@@ -40,6 +48,21 @@ import {
     teamOrderReducerName,
     TeamOrderState,
 } from "slices/order/teamOrderSlice";
+import {
+    initialState as userInitialState,
+    userReducerName,
+    UserState,
+} from "slices/users/userSlice";
+import {
+    initialState as teamAdminInitialState,
+    teamAdminReducerName,
+    TeamAdminState,
+} from "slices/event/teamAdminSlice";
+import {
+    initialState as adminOrderInitialState,
+    adminOrderReducerName,
+    AdminOrderState,
+} from "slices/order/adminOrderSlice";
 
 export const withRouter = (component: React.ComponentElement<any, any>) => (
     <BrowserRouter>{component}</BrowserRouter>
@@ -126,11 +149,14 @@ export interface StoreEntities {
     ui?: DeepPartial<UIState>;
     cartItems?: CartItem[];
     team?: DeepPartial<TeamState>;
+    teams?: Team[];
     cartState?: DeepPartial<CartState>;
     orderState?: Partial<OrderState>;
     pendingOrders?: OrderInTable[];
     teamDetailOrders?: OrderInTable[];
     teamDetailOrderState?: Partial<TeamOrderState>;
+    user?: Partial<UserState>;
+    allOrders?: Order[];
 }
 
 export const makeStoreWithEntities = (entities: StoreEntities) => {
@@ -238,6 +264,45 @@ export const makeStoreWithEntities = (entities: StoreEntities) => {
         }
 
         preloadedState[teamOrderReducerName] = teamOrderState;
+    }
+
+    if (entities.user) {
+        preloadedState[userReducerName] = {
+            ...userInitialState,
+            ...entities.user,
+        };
+    }
+
+    if (entities.teams) {
+        const teamAdminState: TeamAdminState = {
+            ...teamAdminInitialState,
+            ...entities.teams,
+            ids: [],
+            entities: {},
+        };
+
+        for (const team of entities.teams) {
+            teamAdminState.ids.push(team.id);
+            teamAdminState.entities[team.id] = team;
+        }
+
+        preloadedState[teamAdminReducerName] = teamAdminState;
+    }
+
+    if (entities.allOrders) {
+        const allOrderState: AdminOrderState = {
+            ...adminOrderInitialState,
+            ...entities.allOrders,
+            ids: [],
+            entities: {},
+        };
+
+        for (const order of entities.allOrders) {
+            allOrderState.ids.push(order.id);
+            allOrderState.entities[order.id] = order;
+        }
+
+        preloadedState[adminOrderReducerName] = allOrderState;
     }
 
     return makeStore(preloadedState);

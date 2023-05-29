@@ -23,6 +23,7 @@ def environment(**options):
             "is_registration_open": is_registration_open,
             # Variables
             "hackathon_name": settings.HACKATHON_NAME,
+            "hss_url": settings.HSS_URL,
             "registration_open_date": settings.REGISTRATION_OPEN_DATE,
             "registration_close_date": settings.REGISTRATION_CLOSE_DATE,
             "event_start_date": settings.EVENT_START_DATE,
@@ -34,6 +35,8 @@ def environment(**options):
             "participant_package_link": settings.PARTICIPANT_PACKAGE_LINK,
             "chat_room_name": settings.CHAT_ROOM[0],
             "chat_room_link": settings.CHAT_ROOM[1],
+            "using_teams": settings.TEAMS,
+            "using_rsvp": settings.RSVP,
         }
     )
     return env

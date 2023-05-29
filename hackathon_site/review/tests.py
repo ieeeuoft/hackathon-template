@@ -222,7 +222,8 @@ class MailerTestCase(SetupUserMixin, TestCase):
         ).strftime("%B %-d %Y")
 
         self.assertIn(link, mail.outbox[0].body)
-        self.assertIn(rsvp_deadline, mail.outbox[0].body)
+        if settings.RSVP:
+            self.assertIn(rsvp_deadline, mail.outbox[0].body)
         self.assertIn(settings.HACKATHON_NAME, mail.outbox[0].body)
         self.assertIn(settings.PARTICIPANT_PACKAGE_LINK, mail.outbox[0].body)
         self.assertIn(settings.CHAT_ROOM[0], mail.outbox[0].body)

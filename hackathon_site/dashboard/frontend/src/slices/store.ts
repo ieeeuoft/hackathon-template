@@ -20,9 +20,11 @@ import hardwareReducer, { hardwareReducerName } from "slices/hardware/hardwareSl
 import orderReducer, { orderReducerName } from "slices/order/orderSlice";
 import categoryReducer, { categoryReducerName } from "slices/hardware/categorySlice";
 import cartReducer, { cartReducerName } from "slices/hardware/cartSlice";
-import teamDetailReducer, { teamDetailReducerName } from "slices/event/teamDetailSlice";
 import teamReducer, { teamReducerName } from "slices/event/teamSlice";
+import teamAdminReducer, { teamAdminReducerName } from "slices/event/teamAdminSlice";
+import teamDetailReducer, { teamDetailReducerName } from "slices/event/teamDetailSlice";
 import teamOrderReducer, { teamOrderReducerName } from "slices/order/teamOrderSlice";
+import adminOrderReducer, { adminOrderReducerName } from "slices/order/adminOrderSlice";
 
 export const history = createBrowserHistory();
 
@@ -36,6 +38,8 @@ const reducers = {
     [orderReducerName]: orderReducer,
     [userReducerName]: userReducer,
     [uiReducerName]: uiReducer,
+    [teamAdminReducerName]: teamAdminReducer,
+    [adminOrderReducerName]: adminOrderReducer,
     router: connectRouter(history),
 };
 

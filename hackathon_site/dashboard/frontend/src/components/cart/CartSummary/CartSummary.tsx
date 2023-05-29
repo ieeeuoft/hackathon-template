@@ -12,6 +12,7 @@ import {
 } from "slices/hardware/cartSlice";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { teamSizeSelector } from "slices/event/teamSlice";
+import { isTestUserSelector } from "slices/users/userSlice";
 import {
     hardwareSignOutEndDate,
     hardwareSignOutStartDate,
@@ -20,6 +21,7 @@ import {
 } from "constants.js";
 
 const CartSummary = () => {
+    const isTestUser = useSelector(isTestUserSelector);
     const cartQuantity = useSelector(cartTotalSelector);
     const cartOrderLoading = useSelector(isLoadingSelector);
     const teamSize = useSelector(teamSizeSelector);
@@ -55,7 +57,7 @@ const CartSummary = () => {
                     cartQuantity === 0 ||
                     cartOrderLoading ||
                     !teamSizeValid ||
-                    isOutsideSignOutPeriod
+                    (!isTestUser && isOutsideSignOutPeriod)
                 }
                 onClick={onSubmit}
                 disableElevation

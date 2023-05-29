@@ -6,6 +6,18 @@ import {
     ReturnOrderInTable,
 } from "api/types";
 
+export const formatDateTime = (dateTimeString: string): string => {
+    const dateTime = new Date(dateTimeString);
+    const options: Intl.DateTimeFormatOptions = {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+        hour12: true,
+    };
+    return dateTime.toLocaleString("en-US", options);
+};
 export const teamOrderListSerialization = (
     orders: Order[]
 ): {
@@ -60,14 +72,19 @@ export const teamOrderListSerialization = (
                     id: order.id,
                     hardwareInOrder: returnedHardware,
                 });
-            (order.status === "Submitted" || order.status === "Ready for Pickup"
-                ? pendingOrders
-                : checkedOutOrders
-            ).push({
-                id: order.id,
-                status: order.status,
-                hardwareInTableRow: Object.values(hardwareItems),
-            });
+
+            const hardwareInTableRow = Object.values(hardwareItems);
+            if (hardwareInTableRow.length > 0)
+                (order.status === "Submitted" || order.status === "Ready for Pickup"
+                    ? pendingOrders
+                    : checkedOutOrders
+                ).push({
+                    id: order.id,
+                    status: order.status,
+                    hardwareInTableRow,
+                    createdTime: order.created_at,
+                    updatedTime: order.updated_at,
+                });
         }
     });
     return {

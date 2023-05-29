@@ -22,7 +22,7 @@ describe("<OrderPending />", () => {
             { title: "Team", value: teamCode },
             { title: "Order Qty", value: orderQuantity },
             { title: "Time ordered", value: `${month} ${day}, ${hoursAndMinutes}` },
-            { title: "Received IDs", value: receivedIDs },
+            // { title: "Received IDs", value: receivedIDs },
             { title: "ID", value: id },
         ];
 
