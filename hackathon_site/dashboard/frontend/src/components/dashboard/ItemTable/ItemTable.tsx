@@ -245,10 +245,10 @@ export const PendingTables = () => {
 
     const setModal = (pendingOrder: any) => {
         setShowCancelOrderModal(true);
-        //submitModal(pendingOrder.id) [This code was a part of an original fix to the bug, left for reference until final merge]
-        //submitModal(orderIdDraft) [This code was a part of an original fix to the bug, left for reference until final merge]
+        //submitModal(pendingOrder.id) [This code was a part of an original fix, left for reference until final merge]
+        //submitModal(orderIdDraft) [This code was a part of an original fix, left for reference until final merge]
 
-        //orderId = pendingOrder.id [This code was a part of an original fix to the bug, left for reference until final merge]
+        //orderId = pendingOrder.id [This code was a part of an original fix, left for reference until final merge]
         setorderId(pendingOrder.id);
     };
 
