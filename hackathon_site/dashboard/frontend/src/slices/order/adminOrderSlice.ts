@@ -15,6 +15,7 @@ interface numStatuses {
     "Ready for Pickup"?: number;
     "Picked Up"?: number;
     Cancelled?: number;
+    Returned?: number;
 }
 
 interface adminOrderExtraState {
@@ -132,6 +133,10 @@ const adminOrderSlice = createSlice({
                 );
                 state.numStatuses["Cancelled"] = numOrdersByStatus(
                     "Cancelled",
+                    payload.results
+                );
+                state.numStatuses["Returned"] = numOrdersByStatus(
+                    "Returned",
                     payload.results
                 );
             }
