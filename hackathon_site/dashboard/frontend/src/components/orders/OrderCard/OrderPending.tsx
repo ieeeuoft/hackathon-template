@@ -7,7 +7,7 @@ import Button from "@material-ui/core/Button";
 import stylesButton from "components/sharedStyles/Filter.module.scss";
 
 interface OrderPendingProps {
-    team: string;
+    team_code: string;
     orderQuantity: number;
     timeOrdered: string;
     receivedIDs: boolean;
@@ -15,7 +15,7 @@ interface OrderPendingProps {
 }
 
 const OrderPending = ({
-    team,
+    team_code,
     orderQuantity,
     timeOrdered,
     receivedIDs,
@@ -27,7 +27,7 @@ const OrderPending = ({
     const hoursAndMinutes = date.getHours() + ":" + date.getMinutes();
 
     const orderDetails = [
-        { title: "Team", value: team },
+        { title: "Team", value: team_code },
         { title: "Order Qty", value: orderQuantity },
         { title: "Time ordered", value: `${month} ${day}, ${hoursAndMinutes}` },
         { title: "Received IDs", value: receivedIDs },
@@ -51,8 +51,6 @@ const OrderPending = ({
                     ReceivedIDsCheck: false,
                 }}
                 onSubmit={(values: FormikValues) => {
-                    console.log(values);
-                    console.log("click picked up");
                     setPickedUp(true);
                 }}
             >
@@ -105,7 +103,6 @@ const OrderPending = ({
                             type="submit"
                             onClick={(event) => {
                                 event.stopPropagation();
-                                // console.log("click picked up");
                                 setPickedUp(true);
                             }}
                             color="primary"
@@ -120,12 +117,10 @@ const OrderPending = ({
                             Picked Up
                         </Button>
                         <Button
-                            // type="submit"
                             color="primary"
                             data-testid="clear-button"
                             onClick={(event) => {
                                 event.stopPropagation();
-                                console.log("click view");
                             }}
                         >
                             View

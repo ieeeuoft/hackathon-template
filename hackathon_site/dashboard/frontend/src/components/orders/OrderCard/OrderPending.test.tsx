@@ -22,13 +22,12 @@ describe("<OrderPending />", () => {
             { title: "Team", value: teamCode },
             { title: "Order Qty", value: orderQuantity },
             { title: "Time ordered", value: `${month} ${day}, ${hoursAndMinutes}` },
-            // { title: "Received IDs", value: receivedIDs },
             { title: "ID", value: id },
         ];
 
         const { getByText } = render(
             <OrderPending
-                team={teamCode}
+                team_code={teamCode}
                 orderQuantity={orderQuantity}
                 timeOrdered={time}
                 receivedIDs={receivedIDs}
