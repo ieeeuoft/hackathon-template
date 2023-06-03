@@ -2,15 +2,14 @@
 
 A website template for hackathons run by [IEEE University of Toronto Student Branch](https://ieee.utoronto.ca/).
 
-## IEEE Web Team 2022-2023
+## IEEE Web Team 2023-2024
 #### Directors
-- YuYing Liang
+- Luke Cheseldine
 - Leo Haocheng Li
 - Mustafa Abdulrahman (PM)
 
 #### Associates
 - Ethan Hugh
-- Luke Cheseldine
 - Karandeep Lubana
 - Terry Luan
 - Eric Ji
