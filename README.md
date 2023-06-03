@@ -9,14 +9,18 @@ A website template for hackathons run by [IEEE University of Toronto Student Bra
 - Mustafa Abdulrahman (PM)
 
 #### Associates
-- Dana Al Shekerchi
 - Ethan Hugh
 - Luke Cheseldine
 - Karandeep Lubana
-- Arsh Kadakia
 - Terry Luan
 - Eric Ji
-- Srinidhi Shankar
+- Dalia Mahidashti 
+- Carmen Chau
+- Samuel Liu
+- Daniel Qiu
+- Kenny Cui
+- Himanish Jindal
+- Abubukker Chaudhary
 
 ## Contents
 - [Requirements](#requirements)

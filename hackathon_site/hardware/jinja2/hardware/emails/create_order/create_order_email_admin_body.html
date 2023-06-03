@@ -1,0 +1,29 @@
+<p>Hello {{ recipient|striptags }},</p>
+
+<p>This is confirmation that {{ requester.first_name|striptags }} has placed an order for Team #{{ requester.profile.team.team_code }}.</p>
+
+<p>Here are the contents of that order:</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>Item ID</th>
+            <th>Quantity Granted</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in order.hardware %}
+            <tr>
+                <td> {{ item.hardware_id }} </td>
+                <td> {{ item.quantity_fulfilled }} </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<p> Click <a href="{{ hss_url }}teams/{{requester.profile.team.team_code}}#order{{order.order_id}}">here</a> to view more information about the order.</p>
+<p> Please start preparing the order as soon as possible. We will notify the team once their order is ready for pickup. </p>
+
+<p>Best,<br>
+The {{ hackathon_name }} Team
+</p>

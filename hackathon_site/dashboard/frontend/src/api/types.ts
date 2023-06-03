@@ -46,13 +46,19 @@ export interface Category {
 }
 
 /** Event API */
-export interface Profile {
+export interface ProfileRequestBody {
+    acknowledge_rules: boolean;
+    e_signature: string | null;
+}
+
+export interface Profile extends ProfileRequestBody {
     id: number;
     id_provided: boolean;
     attended: boolean;
+    team: string;
     acknowledge_rules: boolean;
     e_signature: string | null;
-    team: number;
+    phone_number: string;
 }
 
 type ProfileWithoutTeamNumber = Omit<Profile, "team">;
@@ -67,6 +73,10 @@ export interface UserWithoutProfile {
     first_name: string;
     last_name: string;
     email: string;
+}
+
+export interface UserWithReviewStatus extends UserWithoutProfile {
+    review_status: "Accepted" | "Waitlisted" | "Rejected" | "Incomplete" | "None";
 }
 
 export interface User extends UserWithoutProfile {
@@ -87,7 +97,12 @@ export interface ProfileWithUser extends ProfileWithoutTeamNumber {
 }
 
 /** Orders API */
-export type OrderStatus = "Submitted" | "Ready for Pickup" | "Picked Up" | "Cancelled";
+export type OrderStatus =
+    | "Submitted"
+    | "Ready for Pickup"
+    | "Picked Up"
+    | "Cancelled"
+    | "Returned";
 export type PartReturnedHealth = "Healthy" | "Heavily Used" | "Broken" | "Lost";
 
 export type ItemsInOrder = Omit<OrderItem, "order" | "time_occurred">;
@@ -106,6 +121,14 @@ export interface Order {
     updated_at: string;
 }
 
+export type OrderOrdering = "" | "created_at" | "-created_at";
+
+export interface OrderFilters {
+    ordering?: OrderOrdering;
+    status?: OrderStatus[];
+    search?: string;
+}
+
 /** Sanitized Orders */
 export interface OrderItemTableRow {
     id: number;
@@ -117,6 +140,8 @@ export interface OrderInTable {
     id: number;
     hardwareInTableRow: OrderItemTableRow[];
     status: OrderStatus;
+    createdTime: string;
+    updatedTime: string;
 }
 
 export type ReturnedItem = ItemsInOrder & { quantity: number; time: string };

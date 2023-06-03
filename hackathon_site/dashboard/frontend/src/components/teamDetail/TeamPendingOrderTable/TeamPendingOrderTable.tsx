@@ -11,7 +11,7 @@ import {
     TableHead,
     TableRow,
 } from "@material-ui/core";
-import { mockHardware, mockPendingOrdersInTable } from "testing/mockData";
+import { OrderInTable, OrderStatus, Hardware } from "api/types";
 import React, { useState } from "react";
 import Container from "@material-ui/core/Container";
 import styles from "components/general/OrderTables/OrderTables.module.scss";
@@ -23,6 +23,14 @@ import {
     GeneralOrderTitle,
 } from "components/general/OrderTables/OrderTables";
 import { Formik } from "formik";
+import { useDispatch, useSelector } from "react-redux";
+import {
+    isLoadingSelector,
+    pendingOrdersSelector,
+    UpdateOrderAttributes,
+    updateOrderStatus,
+} from "slices/order/teamOrderSlice";
+import { hardwareSelectors } from "slices/hardware/hardwareSlice";
 
 const createDropdownList = (number: number) => {
     let entry = [];
@@ -51,11 +59,20 @@ const setInitialValues = (
 };
 
 export const TeamPendingOrderTable = () => {
-    const orders = mockPendingOrdersInTable;
-    const hardware = mockHardware;
+    const dispatch = useDispatch();
+    const orders = useSelector(pendingOrdersSelector);
+    const hardware = useSelector(hardwareSelectors.selectEntities);
+    const isLoading = useSelector(isLoadingSelector);
     const [visibility, setVisibility] = useState(true);
     const toggleVisibility = () => {
         setVisibility(!visibility);
+    };
+    const updateOrder = (orderId: number, status: OrderStatus) => {
+        const updateOrderData: UpdateOrderAttributes = {
+            id: orderId,
+            status: status,
+        };
+        dispatch(updateOrderStatus(updateOrderData));
     };
 
     return (
@@ -79,7 +96,8 @@ export const TeamPendingOrderTable = () => {
                             pendingOrder.hardwareInTableRow
                         )}
                         onSubmit={(values) =>
-                            alert(JSON.stringify(values, undefined, 2))
+                            //TODO update the order when submitting the form
+                            console.log(JSON.stringify(values, undefined, 2))
                         }
                         key={pendingOrder.id}
                     >
@@ -160,33 +178,28 @@ export const TeamPendingOrderTable = () => {
                                                                         styles.itemImg
                                                                     }
                                                                     src={
-                                                                        hardware[
-                                                                            row.id - 1
-                                                                        ]?.picture ??
+                                                                        hardware[row.id]
+                                                                            ?.picture ??
                                                                         hardwareImagePlaceholder
                                                                     }
                                                                     alt={
-                                                                        hardware[
-                                                                            row.id - 1
-                                                                        ]?.name
+                                                                        hardware[row.id]
+                                                                            ?.name
                                                                     }
                                                                 />
                                                             </TableCell>
                                                             <TableCell>
-                                                                {
-                                                                    hardware[row.id - 1]
-                                                                        ?.name
-                                                                }
+                                                                {hardware[row.id]?.name}
                                                             </TableCell>
                                                             <TableCell>
                                                                 {
-                                                                    hardware[row.id - 1]
+                                                                    hardware[row.id]
                                                                         ?.model_number
                                                                 }
                                                             </TableCell>
                                                             <TableCell>
                                                                 {
-                                                                    hardware[row.id - 1]
+                                                                    hardware[row.id]
                                                                         ?.manufacturer
                                                                 }
                                                             </TableCell>
@@ -269,6 +282,13 @@ export const TeamPendingOrderTable = () => {
                                     >
                                         <Grid item>
                                             <Button
+                                                // onClick={() =>
+                                                //     updateOrder(
+                                                //         pendingOrder.id,
+                                                //         "Cancelled"
+                                                //     )
+                                                // }
+                                                disabled={isLoading}
                                                 color="secondary"
                                                 variant="text"
                                                 disableElevation
@@ -283,6 +303,17 @@ export const TeamPendingOrderTable = () => {
                                                 type="submit"
                                                 disableElevation
                                                 data-testid={`complete-button-${pendingOrder.id}`}
+                                                // onClick={() => {
+                                                //     updateOrder(
+                                                //         pendingOrder.id,
+                                                //         "Ready for Pickup"
+                                                //     );
+                                                // }}
+                                                disabled={
+                                                    isLoading ||
+                                                    pendingOrder.status ===
+                                                        "Ready for Pickup"
+                                                }
                                             >
                                                 Complete Order
                                             </Button>

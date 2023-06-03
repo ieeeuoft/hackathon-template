@@ -55,6 +55,24 @@
             color: color(orange);
         }
     }
+    &Purple {
+        background-color: color(purpleLight);
+        svg {
+            color: color(purple);
+        }
+    }
+
+    &Blue {
+        background-color: color(blueLight);
+        svg {
+            color: color(blue);
+        }
+    }
+}
+
+.chipPadding {
+    position: relative;
+    left: 630px;
 }
 
 .noWrap {
@@ -82,6 +100,10 @@
     &Buffer {
         padding-right: 300px !important;
     }
+    &Checkbox {
+        width: 300px;
+        padding-left: 250px;
+    }
     &Fixed {
         width: 80px;
     }
@@ -92,6 +114,10 @@
         &Buffer {
             width: 0px;
             padding: 0px !important;
+        }
+        &Checkbox {
+            width: 50px;
+            padding-left: 0px;
         }
     }
 }

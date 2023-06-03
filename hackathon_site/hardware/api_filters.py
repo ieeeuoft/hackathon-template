@@ -76,4 +76,8 @@ class OrderFilter(filters.FilterSet):
         help_text="Comma separated list of team IDs",
     )
     team_code = filters.CharFilter(field_name="team__team_code")
-    status = filters.CharFilter(field_name="status")
+    status = filters.BaseInFilter(
+        field_name="status",
+        label="Comma separated list of statuses",
+        help_text="Comma separated list of statuses",
+    )

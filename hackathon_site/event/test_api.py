@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth.models import Group
 from django.urls import reverse
 from rest_framework import status
@@ -147,7 +148,7 @@ class JoinTeamTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(old_team.pk, self.user.profile.team.pk)
 
-    def check_can_leave_cancelled(self):
+    def check_can_leave_cancelled_or_returned(self):
         old_team = self.profile.team
         sample_team = self._make_event_team(self_users=False, num_users=2)
         response = self.client.post(self._build_view(sample_team.team_code))
@@ -186,10 +187,13 @@ class JoinTeamTestCase(SetupUserMixin, APITestCase):
         for _, status_choice in Order.STATUS_CHOICES:
             order.status = status_choice
             order.save()
-            if status_choice != "Cancelled":
+            if status_choice not in ("Cancelled", "Returned"):
                 self.check_cannot_leave_active()
             else:
-                self.check_can_leave_cancelled()
+                self.check_can_leave_cancelled_or_returned()
+                # Since there are 2 cases where teams can change, reset foreign key
+                order.team = self.user.profile.team
+                order.save()
 
 
 class LeaveTeamTestCase(SetupUserMixin, APITestCase):
@@ -212,15 +216,23 @@ class LeaveTeamTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def check_leave_and_delete(self):
+        _email = self._get_random_email()
+        other_user = User.objects.create_user(
+            username=_email,
+            password=self.password,
+            first_name="other_user",
+            last_name="Bar",
+            email=_email,
+        )
+        Profile.objects.create(team=self.user.profile.team, user=other_user)
         old_team = self.profile.team
         response = self.client.post(self.view)
         self.user.refresh_from_db()
-
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data["id"], self.user.profile.team.pk)
         self.assertNotEqual(old_team.pk, self.user.profile.team.pk)
         self.assertEqual(
-            Team.objects.filter(team_code=old_team.team_code).exists(), False
+            Team.objects.filter(team_code=old_team.team_code).exists(), True
         )
 
     def check_cannot_leave(self):
@@ -265,7 +277,7 @@ class LeaveTeamTestCase(SetupUserMixin, APITestCase):
         for _, status_choice in Order.STATUS_CHOICES:
             order.status = status_choice
             order.save()
-            if status_choice != "Cancelled":
+            if status_choice not in ("Cancelled", "Returned"):
                 self.check_cannot_leave()
             else:
                 self.check_leave_and_delete()
@@ -403,6 +415,7 @@ class ProfileDetailViewTestCase(SetupUserMixin, APITestCase):
             "acknowledge_rules": False,
             "e_signature": None,
             "team": self.profile.team_id,
+            "phone_number": "1234567890",
         }
         self.view = reverse("api:event:profile-detail", kwargs={"pk": self.profile.id})
 
@@ -435,6 +448,7 @@ class ProfileDetailViewTestCase(SetupUserMixin, APITestCase):
             "acknowledge_rules": False,
             "e_signature": None,
             "team": self.profile.team_id,
+            "phone_number": "1234567890",
         }
 
         response = self.client.patch(self.view, request_body)
@@ -458,6 +472,7 @@ class CurrentProfileViewTestCase(SetupUserMixin, APITestCase):
             "acknowledge_rules": True,
             "e_signature": "user signature",
             "team": self.profile.team_id,
+            "phone_number": "1234567890",
         }
         self.view = reverse("api:event:current-profile")
 
@@ -514,6 +529,7 @@ class CurrentProfileViewTestCase(SetupUserMixin, APITestCase):
             "acknowledge_rules": True,
             "e_signature": None,
             "team": self.profile.team_id,
+            "phone_number": "1234567890",
         }
 
         response = self.client.patch(self.view, request_body)
@@ -534,6 +550,7 @@ class CreateProfileViewTestCase(SetupUserMixin, APITestCase):
             "id_provided": False,
             "acknowledge_rules": True,
             "e_signature": "user signature",
+            "phone_number": "1234567890",
         }
         self.view = reverse("api:event:current-profile")
 
@@ -570,7 +587,7 @@ class CreateProfileViewTestCase(SetupUserMixin, APITestCase):
         self._review(application=self._apply_as_user(self.user, rsvp=True))
         self._login()
         response = self.client.post(
-            self.view, {"e_signature": "user signature", "acknowledge_rules": False}
+            self.view, {"e_signature": "user signature", "acknowledge_rules": False,},
         )
         data = response.json()
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -582,7 +599,7 @@ class CreateProfileViewTestCase(SetupUserMixin, APITestCase):
         self._review(application=self._apply_as_user(self.user, rsvp=True))
         self._login()
         response = self.client.post(
-            self.view, {"e_signature": "", "acknowledge_rules": True}
+            self.view, {"e_signature": "", "acknowledge_rules": True,},
         )
         data = response.json()
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -630,6 +647,20 @@ class CreateProfileViewTestCase(SetupUserMixin, APITestCase):
             "User has not been reviewed yet, Hardware Signout Site cannot be accessed until reviewed",
         )
 
+    def test_user_has_been_reviewed_but_not_sent(self):
+        self._review(
+            application=self._apply_as_user(self.user, rsvp=True),
+            decision_sent_date=None,
+        )
+        self._login()
+        response = self.client.post(self.view, self.request_body)
+        data = response.json()
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            data[0],
+            "User has not been reviewed yet, Hardware Signout Site cannot be accessed until reviewed",
+        )
+
     def test_user_review_rejected(self):
         self._review(
             application=self._apply_as_user(self.user, rsvp=True), status="Rejected"
@@ -639,7 +670,8 @@ class CreateProfileViewTestCase(SetupUserMixin, APITestCase):
         data = response.json()
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
-            data[0], "User has not been accepted to participate in hackathon"
+            data[0],
+            f"User has not been accepted to participate in {settings.HACKATHON_NAME}",
         )
 
 
@@ -787,9 +819,6 @@ class TeamIncidentListViewPostTestCase(SetupUserMixin, APITestCase):
         Profile.objects.create(user=self.user, team=self.team)
 
         response = self.client.post(self.view, request_data)
-
-        print(response)
-        print(request_data)
 
         self.assertEqual(
             response.json(), {"detail": "Can only create incidents for your own team."}

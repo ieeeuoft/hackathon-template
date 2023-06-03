@@ -8,12 +8,17 @@ import {
     Hardware,
     Order,
     OrderInTable,
+    Profile,
+    ProfileRequestBody,
     ReturnOrderInTable,
     Team,
     User,
+    UserWithoutProfile,
+    UserWithReviewStatus,
 } from "api/types";
 import { CartItem } from "api/types";
 import { adminGroup } from "constants.js";
+import { ReturnOrderResponse } from "slices/order/teamOrderSlice";
 
 // For DashCard on Dashboard
 export const cardItems = [
@@ -23,6 +28,11 @@ export const cardItems = [
             {
                 name: "Hackathon main site",
                 url: "https://www.facebook.com",
+                icon: <OpenInNew />,
+            },
+            {
+                name: "Hardware Signout Site",
+                url: "https://hardware.newhacks.ca",
                 icon: <OpenInNew />,
             },
         ],
@@ -177,6 +187,7 @@ export const mockUser: User = {
         attended: false,
         acknowledge_rules: false,
         e_signature: null,
+        phone_number: "1234567890",
         user: {
             id: 1,
             first_name: "Foo",
@@ -207,7 +218,34 @@ export const mockAdminUser: User = {
     ],
 };
 
+export const mockUserWithoutProfile: UserWithoutProfile = {
+    id: 1,
+    first_name: "Foo",
+    last_name: "Bar",
+    email: "foo@bar.com",
+};
+
+export const mockUserWithReviewStatus: UserWithReviewStatus = {
+    ...mockUserWithoutProfile,
+    review_status: "Accepted",
+};
+
+export const mockProfileRequestBody: ProfileRequestBody = {
+    acknowledge_rules: true,
+    e_signature: "signature",
+};
+
 // Team Detail
+export const mockProfile: Profile = {
+    id: 1,
+    id_provided: false,
+    attended: false,
+    acknowledge_rules: true,
+    phone_number: "1234567890",
+    e_signature: "mock profile",
+    team: "ABCDE",
+};
+
 export const mockTeam: Team = {
     id: 1,
     team_code: "A48E5",
@@ -220,6 +258,7 @@ export const mockTeam: Team = {
             attended: false,
             acknowledge_rules: false,
             e_signature: null,
+            phone_number: "1234567890",
             user: {
                 id: 1,
                 first_name: "Foo",
@@ -308,6 +347,7 @@ export const mockValidTeam: Team = {
             attended: true,
             acknowledge_rules: true,
             e_signature: null,
+            phone_number: "1234567890",
             user: {
                 id: 2,
                 first_name: "Foothe",
@@ -321,6 +361,7 @@ export const mockValidTeam: Team = {
             attended: true,
             acknowledge_rules: true,
             e_signature: null,
+            phone_number: "1234567890",
             user: {
                 id: 3,
                 first_name: "Foothe",
@@ -344,6 +385,7 @@ export const mockLargeTeam: Team = {
             attended: true,
             acknowledge_rules: true,
             e_signature: null,
+            phone_number: "1234567890",
             user: {
                 id: 4,
                 first_name: "Foothe",
@@ -357,6 +399,7 @@ export const mockLargeTeam: Team = {
             attended: true,
             acknowledge_rules: true,
             e_signature: null,
+            phone_number: "1234567890",
             user: {
                 id: 5,
                 first_name: "Foothe",
@@ -370,6 +413,7 @@ export const mockLargeTeam: Team = {
             attended: true,
             acknowledge_rules: true,
             e_signature: null,
+            phone_number: "1234567890",
             user: {
                 id: 6,
                 first_name: "Foothe",
@@ -383,6 +427,7 @@ export const mockLargeTeam: Team = {
             attended: true,
             acknowledge_rules: true,
             e_signature: null,
+            phone_number: "1234567890",
             user: {
                 id: 7,
                 first_name: "Foothe",
@@ -396,6 +441,7 @@ export const mockLargeTeam: Team = {
             attended: true,
             acknowledge_rules: true,
             e_signature: null,
+            phone_number: "1234567890",
             user: {
                 id: 8,
                 first_name: "Foothe",
@@ -560,8 +606,8 @@ export const mockPendingOrders: Order[] = [
         team_id: 2,
         team_code: "IEEE",
         status: "Ready for Pickup",
-        created_at: "2021-10-17T18:28:44.691969-04:00",
-        updated_at: "2021-12-03T23:01:46.606892-05:00",
+        created_at: "2020-10-17T18:28:44.691969-06:00",
+        updated_at: "2021-12-03T23:01:46.606892-06:00",
         request: [
             {
                 id: 3,
@@ -596,7 +642,7 @@ export const mockPendingOrders: Order[] = [
         team_code: "IEEE",
         status: "Submitted",
         created_at: "2021-10-17T18:28:44.691969-04:00",
-        updated_at: "2021-12-03T23:01:46.606892-05:00",
+        updated_at: "2022-10-17T18:28:44.691969-04:00",
         request: [
             {
                 id: 1,
@@ -620,8 +666,8 @@ export const mockPendingOrders: Order[] = [
         team_id: 1,
         team_code: "IEEE",
         status: "Ready for Pickup",
-        created_at: "2021-10-17T18:28:44.691969-04:00",
-        updated_at: "2021-12-03T23:01:46.606892-05:00",
+        created_at: "2021-10-17T18:28:44.691969-03:00",
+        updated_at: "2021-10-17T18:28:44.691969-06:00",
         request: [
             {
                 id: 10,
@@ -641,8 +687,8 @@ export const mockPendingOrders: Order[] = [
         team_id: 1,
         team_code: "IEEE",
         status: "Cancelled",
-        created_at: "2021-10-17T18:28:44.691969-04:00",
-        updated_at: "2021-12-03T23:01:46.606892-05:00",
+        created_at: "2020-10-17T18:28:44.691969-04:00",
+        updated_at: "2020-12-03T23:01:46.606892-05:00",
         request: [
             {
                 id: 10,
@@ -670,8 +716,8 @@ export const mockCheckedOutOrders: Order[] = [
         team_id: 2,
         team_code: "IEEE",
         status: "Picked Up",
-        created_at: "2021-10-17T18:28:44.691969-04:00",
-        updated_at: "2021-12-03T23:01:46.606892-05:00",
+        created_at: "2021-10-17T18:28:44.691969-01:00",
+        updated_at: "2021-12-03T23:01:46.606892-02:00",
         request: [
             {
                 id: 1,
@@ -701,8 +747,8 @@ export const mockCheckedOutOrders: Order[] = [
         team_id: 2,
         team_code: "IEEE",
         status: "Picked Up",
-        created_at: "2021-10-17T18:28:44.691969-04:00",
-        updated_at: "2021-12-03T23:01:45.606892-05:00",
+        created_at: "2020-10-17T18:28:44.691969-03:00",
+        updated_at: "2020-12-03T23:01:45.606892-04:00",
         request: [
             {
                 id: 1,
@@ -736,8 +782,8 @@ export const mockCheckedOutOrders: Order[] = [
         team_id: 1,
         team_code: "IEEE",
         status: "Picked Up",
-        created_at: "2021-10-17T18:28:44.691969-04:00",
-        updated_at: "2021-12-03T23:01:46.606892-05:00",
+        created_at: "2022-10-17T18:28:44.691969-06:00",
+        updated_at: "2022-12-03T23:01:46.606892-09:00",
         request: [
             {
                 id: 10,
@@ -748,6 +794,42 @@ export const mockCheckedOutOrders: Order[] = [
 ];
 
 export const mockOrders: Order[] = mockCheckedOutOrders.concat(mockPendingOrders);
+
+export const mockSubmittedOrder: Order = {
+    id: 4,
+    items: [
+        {
+            id: 8,
+            hardware_id: 4,
+            part_returned_health: null,
+        },
+        {
+            id: 9,
+            hardware_id: 1,
+            part_returned_health: null,
+        },
+        {
+            id: 11,
+            hardware_id: 1,
+            part_returned_health: null,
+        },
+    ],
+    team_id: 2,
+    team_code: "IEEE",
+    status: "Submitted",
+    created_at: "2020-10-17T18:28:44.691969-01:00",
+    updated_at: "2020-12-03T23:01:46.606892-04:00",
+    request: [
+        {
+            id: 1,
+            requested_quantity: 2,
+        },
+        {
+            id: 4,
+            requested_quantity: 1,
+        },
+    ],
+};
 
 export const mockPendingOrdersInTable: OrderInTable[] = [
     {
@@ -760,6 +842,8 @@ export const mockPendingOrdersInTable: OrderInTable[] = [
             },
         ],
         status: "Ready for Pickup",
+        createdTime: "2021-10-17T18:28:44.691969-03:00",
+        updatedTime: "2021-10-17T18:28:44.691969-06:00",
     },
     {
         id: 4,
@@ -776,6 +860,8 @@ export const mockPendingOrdersInTable: OrderInTable[] = [
             },
         ],
         status: "Submitted",
+        createdTime: "2021-10-17T18:28:44.691969-04:00",
+        updatedTime: "2022-10-17T18:28:44.691969-04:00",
     },
     {
         id: 3,
@@ -792,6 +878,8 @@ export const mockPendingOrdersInTable: OrderInTable[] = [
             },
         ],
         status: "Ready for Pickup",
+        createdTime: "2020-10-17T18:28:44.691969-06:00",
+        updatedTime: "2021-12-03T23:01:46.606892-06:00",
     },
 ];
 
@@ -806,6 +894,8 @@ export const mockCheckedOutOrdersInTable: OrderInTable[] = [
             },
         ],
         status: "Picked Up",
+        createdTime: "2022-10-17T18:28:44.691969-06:00",
+        updatedTime: "2022-12-03T23:01:46.606892-09:00",
     },
     {
         id: 2,
@@ -822,6 +912,8 @@ export const mockCheckedOutOrdersInTable: OrderInTable[] = [
             },
         ],
         status: "Picked Up",
+        createdTime: "2020-10-17T18:28:44.691969-03:00",
+        updatedTime: "2020-12-03T23:01:45.606892-04:00",
     },
     {
         id: 1,
@@ -833,6 +925,8 @@ export const mockCheckedOutOrdersInTable: OrderInTable[] = [
             },
         ],
         status: "Picked Up",
+        createdTime: "2021-10-17T18:28:44.691969-01:00",
+        updatedTime: "2021-12-03T23:01:46.606892-02:00",
     },
 ];
 
@@ -861,6 +955,25 @@ export const mockReturnedOrdersInTable: ReturnOrderInTable[] = [
                 part_returned_health: "Heavily Used",
                 quantity: 1,
                 time: `${timeForOrderItem11.toLocaleTimeString()} (${timeForOrderItem11.toDateString()})`,
+            },
+        ],
+    },
+];
+
+export const mockReturnedOrder: ReturnOrderResponse[] = [
+    {
+        order_id: 1,
+        team_code: "A48E5",
+        returned_items: [
+            {
+                hardware_id: 1,
+                quantity: 2,
+            },
+        ],
+        errors: [
+            {
+                hardware_id: 1,
+                message: "",
             },
         ],
     },

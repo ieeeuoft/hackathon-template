@@ -1,7 +1,12 @@
+import logging
+
+from django.core import mail
+from django.core.mail import send_mail
 from django.db import transaction
 from django.db.models import Q
 from django.conf import settings
 from django.http import HttpResponseServerError
+from django.template.loader import render_to_string
 from drf_yasg.utils import swagger_auto_schema
 
 from rest_framework import generics, mixins, status, permissions
@@ -24,6 +29,14 @@ from hardware.serializers import (
 )
 from event.permissions import UserHasProfile, FullDjangoModelPermissions
 from hardware.models import OrderItem, Order, Incident
+
+logger = logging.getLogger(__name__)
+
+ORDER_STATUS_MSG = {"Cancelled": "was Cancelled"}
+
+ORDER_STATUS_CLOSING_MSG = {
+    "Cancelled": "Feel free to continue ordering hardware, and Happy Hacking!"
+}
 
 
 class CurrentUserAPIView(generics.GenericAPIView, mixins.RetrieveModelMixin):
@@ -103,9 +116,17 @@ class LeaveTeamView(generics.GenericAPIView):
         profile = request.user.profile
         team = profile.team
 
+        if Profile.objects.filter(team__exact=team).count() <= 1:
+            raise ValidationError(
+                {"detail": "Cannot leave a team with only 1 member"},
+                code=status.HTTP_400_BAD_REQUEST,
+            )
+
         # Raise 400 if team has active orders
         active_orders = OrderItem.objects.filter(
-            ~Q(order__status="Cancelled"), Q(order__team=team),
+            ~Q(order__status="Cancelled"),
+            ~Q(order__status="Returned"),
+            Q(order__team=team),
         )
         if active_orders.exists():
             raise ValidationError(
@@ -145,7 +166,9 @@ class JoinTeamView(generics.GenericAPIView, mixins.RetrieveModelMixin):
             raise ValidationError({"detail": "Team is full"})
 
         active_orders = OrderItem.objects.filter(
-            ~Q(order__status="Cancelled"), Q(order__team=current_team),
+            ~Q(order__status="Cancelled"),
+            ~Q(order__status="Returned"),
+            Q(order__team=current_team),
         )
         if active_orders.exists():
             raise ValidationError(
@@ -250,6 +273,16 @@ class TeamOrderDetailView(mixins.UpdateModelMixin, generics.GenericAPIView):
     serializer_class = TeamOrderChangeSerializer
     permission_classes = [UserHasProfile]
 
+    update_order_email_subject_template = (
+        "hardware/emails/order_status_change/order_status_change_email_subject.txt"
+    )
+    update_order_email_template_participant = (
+        "hardware/emails/order_status_change/order_status_change_email_body.html"
+    )
+    update_order_email_template_admin = (
+        "hardware/emails/order_status_change/order_status_change_email_admin_body.html"
+    )
+
     def check_object_permissions(self, request, obj: Order):
         order_team = obj.team
         user_team = request.user.profile.team
@@ -258,4 +291,63 @@ class TeamOrderDetailView(mixins.UpdateModelMixin, generics.GenericAPIView):
             raise PermissionDenied("Can only change the status of your orders.")
 
     def patch(self, request, *args, **kwargs):
-        return self.partial_update(request, *args, **kwargs)
+        response = self.partial_update(request, *args, **kwargs)
+
+        if "status" in request.data:
+            profiles = Profile.objects.filter(team__exact=response.data["team_id"])
+            connection = mail.get_connection(fail_silently=False)
+            connection.open()
+
+            try:
+                render_to_string_context = {
+                    "recipient": "Hardware Inventory Admins",
+                    "order": response.data,
+                    "order_status_message": f'{ORDER_STATUS_MSG[response.data["status"]]} by {request.user.first_name}',
+                }
+                send_mail(
+                    subject=render_to_string(
+                        self.update_order_email_subject_template,
+                        render_to_string_context,
+                    ),
+                    message=render_to_string(
+                        self.update_order_email_template_admin,
+                        render_to_string_context,
+                    ),
+                    html_message=render_to_string(
+                        self.update_order_email_template_admin,
+                        render_to_string_context,
+                    ),
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    connection=connection,
+                    recipient_list=[settings.HSS_ADMIN_EMAIL],
+                )
+                for profile in profiles:
+                    render_to_string_context = {
+                        **render_to_string_context,
+                        "recipient": profile.user,
+                        "order_status_closing_message": ORDER_STATUS_CLOSING_MSG[
+                            response.data["status"]
+                        ],
+                    }
+                    profile.user.email_user(
+                        subject=render_to_string(
+                            self.update_order_email_subject_template,
+                            render_to_string_context,
+                        ),
+                        message=render_to_string(
+                            self.update_order_email_template_participant,
+                            render_to_string_context,
+                        ),
+                        html_message=render_to_string(
+                            self.update_order_email_template_participant,
+                            render_to_string_context,
+                        ),
+                        from_email=settings.DEFAULT_FROM_EMAIL,
+                        connection=connection,
+                    )
+            except Exception as e:
+                logger.error(e)
+                raise e
+            finally:
+                connection.close()
+        return response
