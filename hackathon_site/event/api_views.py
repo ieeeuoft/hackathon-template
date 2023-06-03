@@ -142,7 +142,9 @@ class LeaveTeamView(generics.GenericAPIView):
 
         # Raise 400 if team has active orders
         active_orders = OrderItem.objects.filter(
-            ~Q(order__status="Cancelled"), Q(order__team=team),
+            ~Q(order__status="Cancelled"),
+            ~Q(order__status="Returned"),
+            Q(order__team=team),
         )
         if active_orders.exists():
             raise ValidationError(
@@ -182,7 +184,9 @@ class JoinTeamView(generics.GenericAPIView, mixins.RetrieveModelMixin):
             raise ValidationError({"detail": "Team is full"})
 
         active_orders = OrderItem.objects.filter(
-            ~Q(order__status="Cancelled"), Q(order__team=current_team),
+            ~Q(order__status="Cancelled"),
+            ~Q(order__status="Returned"),
+            Q(order__team=current_team),
         )
         if active_orders.exists():
             raise ValidationError(

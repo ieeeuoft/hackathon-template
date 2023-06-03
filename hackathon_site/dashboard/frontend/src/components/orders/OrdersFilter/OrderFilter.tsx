@@ -101,6 +101,10 @@ const OrderFilter = ({ handleReset, handleSubmit }: FormikValues) => {
             status: "Cancelled",
             numOrders: numStatuses["Cancelled"],
         },
+        {
+            status: "Returned",
+            numOrders: numStatuses["Returned"],
+        },
     ];
 
     return (
@@ -172,7 +176,7 @@ export const EnhancedOrderFilter = () => {
     };
 
     const handleReset = () => {
-        dispatch(clearFilters());
+        dispatch(clearFilters({ saveSearch: true }));
         dispatch(getOrdersWithFilters());
     };
 

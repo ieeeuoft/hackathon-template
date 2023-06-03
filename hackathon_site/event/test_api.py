@@ -148,7 +148,7 @@ class JoinTeamTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(old_team.pk, self.user.profile.team.pk)
 
-    def check_can_leave_cancelled(self):
+    def check_can_leave_cancelled_or_returned(self):
         old_team = self.profile.team
         sample_team = self._make_event_team(self_users=False, num_users=2)
         response = self.client.post(self._build_view(sample_team.team_code))
@@ -187,10 +187,13 @@ class JoinTeamTestCase(SetupUserMixin, APITestCase):
         for _, status_choice in Order.STATUS_CHOICES:
             order.status = status_choice
             order.save()
-            if status_choice != "Cancelled":
+            if status_choice not in ("Cancelled", "Returned"):
                 self.check_cannot_leave_active()
             else:
-                self.check_can_leave_cancelled()
+                self.check_can_leave_cancelled_or_returned()
+                # Since there are 2 cases where teams can change, reset foreign key
+                order.team = self.user.profile.team
+                order.save()
 
 
 class LeaveTeamTestCase(SetupUserMixin, APITestCase):
@@ -213,18 +216,18 @@ class LeaveTeamTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def check_leave_and_delete(self):
+        _email = self._get_random_email()
         other_user = User.objects.create_user(
-            username="other_user@bar.com",
+            username=_email,
             password=self.password,
             first_name="other_user",
             last_name="Bar",
-            email="other_user@bar.com",
+            email=_email,
         )
-        Profile.objects.create(team=self.profile.team, user=other_user)
+        Profile.objects.create(team=self.user.profile.team, user=other_user)
         old_team = self.profile.team
         response = self.client.post(self.view)
         self.user.refresh_from_db()
-
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data["id"], self.user.profile.team.pk)
         self.assertNotEqual(old_team.pk, self.user.profile.team.pk)
@@ -274,7 +277,7 @@ class LeaveTeamTestCase(SetupUserMixin, APITestCase):
         for _, status_choice in Order.STATUS_CHOICES:
             order.status = status_choice
             order.save()
-            if status_choice != "Cancelled":
+            if status_choice not in ("Cancelled", "Returned"):
                 self.check_cannot_leave()
             else:
                 self.check_leave_and_delete()
