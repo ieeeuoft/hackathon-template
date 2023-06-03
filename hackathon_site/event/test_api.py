@@ -1021,7 +1021,7 @@ class UserReviewStatusTestCase(SetupUserMixin, APITestCase):
         response = self.client.get(self.view)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.json()
-        self.assertEqual("None", data['review_status'])
+        self.assertEqual("None", data["review_status"])
 
     def test_user_has_no_review(self):
         self._login()
@@ -1029,7 +1029,7 @@ class UserReviewStatusTestCase(SetupUserMixin, APITestCase):
         response = self.client.get(self.view)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.json()
-        self.assertEqual("None", data['review_status'])
+        self.assertEqual("None", data["review_status"])
 
     def test_user_has_review_and_application(self):
         self._login()
@@ -1038,11 +1038,12 @@ class UserReviewStatusTestCase(SetupUserMixin, APITestCase):
         response = self.client.get(self.view)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.json()
-        self.assertEqual("Accepted", data['review_status'])
+        self.assertEqual("Accepted", data["review_status"])
+
     def test_user_has_review_and_rejected(self):
         self._login()
         self._review(application=self._apply_as_user(self.user), status="Rejected")
         response = self.client.get(self.view)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.json()
-        self.assertEqual("Rejected", data['review_status'])
+        self.assertEqual("Rejected", data["review_status"])
