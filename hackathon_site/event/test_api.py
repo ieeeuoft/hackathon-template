@@ -1016,6 +1016,15 @@ class UserReviewStatusTestCase(SetupUserMixin, APITestCase):
         )
         self.view = reverse("api:event:user-review-status", kwargs={"email": self.user})
 
+    def test_user_not_logged_in(self):
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_email_does_not_exist(self):
+        self._login()
+        response = self.client.get("fakeemail@gmail.com")
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
     def test_user_has_no_application(self):
         self._login()
         response = self.client.get(self.view)

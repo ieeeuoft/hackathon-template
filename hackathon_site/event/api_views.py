@@ -64,7 +64,7 @@ class CurrentUserAPIView(generics.GenericAPIView, mixins.RetrieveModelMixin):
 
 class UserReviewStatusAPIView(generics.GenericAPIView, mixins.RetrieveModelMixin):
     """
-    View to handle review status status of a user with a certain username
+    View to handle review status of a user with a certain username
     """
 
     queryset = User.objects.all()
