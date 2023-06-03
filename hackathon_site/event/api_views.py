@@ -271,14 +271,15 @@ class TeamDetailView(
 
     def delete(self, request, *args, **kwargs):
         team = self.get_object()
-        order_items = OrderItem.objects.filter(
-            part_returned_health__isnull=True, order__team=team,
+        active_orders = Order.objects.filter(
+            Q(team=team), ~Q(status="Cancelled"), ~Q(status="Returned"),
         )
-        if order_items.exists():
-            raise ValidationError(
-                {"detail": "Cannot delete a team with unreturned order items"},
-                code=status.HTTP_400_BAD_REQUEST,
-            )
+        if active_orders.exists():
+          raise ValidationError(
+              {"detail": "Cannot delete a team with unreturned order items"},
+              code=status.HTTP_400_BAD_REQUEST,
+          )
+        
         return self.destroy(request, *args, **kwargs)
 
 

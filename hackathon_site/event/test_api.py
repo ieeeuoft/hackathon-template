@@ -868,7 +868,7 @@ class EventTeamDetailViewTestCase(SetupUserMixin, APITestCase):
         )
 
         self.order_2 = Order.objects.create(
-            status="Submitted",
+            status="Returned",
             team=self.team3,
             request={"hardware": [{"id": 1, "quantity": 2}, {"id": 2, "quantity": 3}]},
         )
