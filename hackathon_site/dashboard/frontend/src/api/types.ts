@@ -97,7 +97,12 @@ export interface ProfileWithUser extends ProfileWithoutTeamNumber {
 }
 
 /** Orders API */
-export type OrderStatus = "Submitted" | "Ready for Pickup" | "Picked Up" | "Cancelled";
+export type OrderStatus =
+    | "Submitted"
+    | "Ready for Pickup"
+    | "Picked Up"
+    | "Cancelled"
+    | "Returned";
 export type PartReturnedHealth = "Healthy" | "Heavily Used" | "Broken" | "Lost";
 
 export type ItemsInOrder = Omit<OrderItem, "order" | "time_occurred">;

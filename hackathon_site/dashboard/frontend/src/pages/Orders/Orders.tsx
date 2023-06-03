@@ -103,6 +103,7 @@ const Orders = () => {
                                             "Ready for Pickup",
                                             "Picked Up",
                                             "Cancelled",
+                                            "Returned",
                                         ].includes(order.status) && (
                                             <OrderCard
                                                 teamCode={order.team_code}
