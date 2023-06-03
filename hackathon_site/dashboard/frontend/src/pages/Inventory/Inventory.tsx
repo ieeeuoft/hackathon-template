@@ -59,7 +59,7 @@ const Inventory = () => {
         dispatch(getHardwareWithFilters());
         dispatch(getCategories());
     }, [dispatch]);
-    
+
     return (
         <>
             <Header />
