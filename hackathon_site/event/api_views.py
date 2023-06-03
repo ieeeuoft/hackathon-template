@@ -275,11 +275,11 @@ class TeamDetailView(
             Q(team=team), ~Q(status="Cancelled"), ~Q(status="Returned"),
         )
         if active_orders.exists():
-          raise ValidationError(
-              {"detail": "Cannot delete a team with unreturned order items"},
-              code=status.HTTP_400_BAD_REQUEST,
-          )
-        
+            raise ValidationError(
+                {"detail": "Cannot delete a team with unreturned order items"},
+                code=status.HTTP_400_BAD_REQUEST,
+            )
+
         return self.destroy(request, *args, **kwargs)
 
 
