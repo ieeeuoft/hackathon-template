@@ -44,8 +44,6 @@ import {
 } from "components/general/OrderTables/OrderTables";
 import PopupModal from "components/general/PopupModal/PopupModal";
 
-//let orderId = 0 [This code was a part of an original fix to the bug, left for reference until final merge]
-
 export const CheckedOutTables = () =>
     // TODO: for incident reports
     // { push,
@@ -232,7 +230,6 @@ export const PendingTables = () => {
     const toggleVisibility = () => dispatch(togglePendingTable());
     const cancelOrder = (orderId: number) => dispatch(cancelOrderThunk(orderId));
     const [showCancelOrderModal, setShowCancelOrderModal] = useState(false);
-    const [orderId, setorderId] = useState(0); // Created a const variable called orderId to store the id of the order that is being deleted
 
     const closeModal = () => {
         setShowCancelOrderModal(false);
@@ -241,15 +238,6 @@ export const PendingTables = () => {
     const submitModal = (cancelOrderId: number) => {
         cancelOrder(cancelOrderId); // Perform Cancellation
         setShowCancelOrderModal(false);
-    };
-
-    const setModal = (pendingOrder: any) => {
-        setShowCancelOrderModal(true);
-        //submitModal(pendingOrder.id) [This code was a part of an original fix, left for reference until final merge]
-        //submitModal(orderIdDraft) [This code was a part of an original fix, left for reference until final merge]
-
-        //orderId = pendingOrder.id [This code was a part of an original fix, left for reference until final merge]
-        setorderId(pendingOrder.id);
     };
 
     return (
@@ -286,8 +274,7 @@ export const PendingTables = () => {
                                 }}
                             >
                                 <Button
-                                    //onClick={() => setShowCancelOrderModal(true)}
-                                    onClick={() => setModal(pendingOrder)}
+                                    onClick={() => setShowCancelOrderModal(true)}
                                     disabled={isCancelOrderLoading}
                                     color="secondary"
                                     data-testid="cancel-order-button"
@@ -299,8 +286,7 @@ export const PendingTables = () => {
                                         "Are you sure you want to cancel this order? The team will be notified."
                                     }
                                     isVisible={showCancelOrderModal}
-                                    //submitHandler={() => submitModal(pendingOrder.id)}
-                                    submitHandler={() => submitModal(orderId)}
+                                    submitHandler={() => submitModal(pendingOrder.id)}
                                     cancelText={"Go Back"}
                                     submitText={"Delete Order"}
                                     cancelHandler={closeModal}
