@@ -123,7 +123,7 @@ export const joinTeam = createAsyncThunk<
         const errorData = e.response?.data?.non_field_errors;
         dispatch(
             displaySnackbar({
-                message: `Failed to join the team ${teamCode}: ${e.response.statusText}`,
+                message: `Failed to join the team ${teamCode}`,
                 options: { variant: "error" },
             })
         );

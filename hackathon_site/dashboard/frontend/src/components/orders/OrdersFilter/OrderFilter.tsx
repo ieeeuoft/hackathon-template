@@ -101,6 +101,10 @@ const OrderFilter = ({ handleReset, handleSubmit }: FormikValues) => {
             status: "Cancelled",
             numOrders: numStatuses["Cancelled"],
         },
+        {
+            status: "Returned",
+            numOrders: numStatuses["Returned"],
+        },
     ];
 
     return (
