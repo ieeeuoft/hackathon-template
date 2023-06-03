@@ -140,6 +140,7 @@ class OrderChangeSerializer(OrderListSerializer):
     change_options = {
         "Submitted": ["Cancelled", "Ready for Pickup"],
         "Ready for Pickup": ["Picked Up"],
+        "Picked Up": ["Returned"],
     }
 
     class Meta:
