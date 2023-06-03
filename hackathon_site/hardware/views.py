@@ -101,7 +101,7 @@ class IncidentListView(
         return self.create(request, *args, **kwargs)
 
 
-class IncidentDetailView(mixins.RetrieveModelMixin, generics.GenericAPIView):
+class IncidentDetailView(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, generics.GenericAPIView):
     queryset = Incident.objects.all()
 
     serializer_class = IncidentSerializer
@@ -109,6 +109,9 @@ class IncidentDetailView(mixins.RetrieveModelMixin, generics.GenericAPIView):
 
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
+
+    def patch(self, request, *args, **kwargs):
+        return self.partial_update(request, *args, **kwargs)
 
 
 class OrderItemListView(mixins.ListModelMixin, generics.GenericAPIView):
