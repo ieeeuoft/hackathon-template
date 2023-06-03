@@ -106,6 +106,7 @@ class Order(models.Model):
         ("Ready for Pickup", "Ready for Pickup"),
         ("Picked Up", "Picked Up"),
         ("Cancelled", "Cancelled"),
+        ("Returned", "Returned"),
     ]
 
     hardware = models.ManyToManyField(Hardware, through=OrderItem)
