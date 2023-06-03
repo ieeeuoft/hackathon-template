@@ -101,7 +101,9 @@ class IncidentListView(
         return self.create(request, *args, **kwargs)
 
 
-class IncidentDetailView(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, generics.GenericAPIView):
+class IncidentDetailView(
+    mixins.RetrieveModelMixin, mixins.UpdateModelMixin, generics.GenericAPIView
+):
     queryset = Incident.objects.all()
 
     serializer_class = IncidentSerializer
@@ -135,7 +137,7 @@ class CategoryListView(mixins.ListModelMixin, generics.GenericAPIView):
 
 
 class OrderListView(generics.ListAPIView):
-    queryset = Order.objects.all().select_related("team").prefetch_related("items", )
+    queryset = Order.objects.all().select_related("team").prefetch_related("items",)
     serializer_method_classes = {
         "GET": OrderListSerializer,
         "POST": OrderCreateSerializer,
@@ -318,7 +320,7 @@ class OrderDetailView(generics.GenericAPIView, mixins.UpdateModelMixin):
 
 
 class OrderItemReturnView(generics.GenericAPIView):
-    queryset = Order.objects.all().prefetch_related("items", )
+    queryset = Order.objects.all().prefetch_related("items",)
     serializer_class = OrderItemReturnSerializer
     permission_classes = [UserIsAdmin]
 
