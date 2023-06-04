@@ -58,6 +58,10 @@ export const getOrdersWithFilters = createAsyncThunk<
                 "/api/hardware/orders/",
                 filters
             );
+            // Filter out orders that do not have a team_code (their teams were deleted)
+            response.data.results = response.data.results.filter(
+                (orders) => orders?.team_code
+            );
             return response.data;
         } catch (e: any) {
             dispatch(
