@@ -5,6 +5,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 from hackathon_site.tests import SetupUserMixin
 from django.contrib.auth.models import Permission
+from django.db.models import Q
 
 
 from event.models import Profile, User, Team
@@ -843,12 +844,41 @@ class TeamIncidentListViewPostTestCase(SetupUserMixin, APITestCase):
 
 class EventTeamDetailViewTestCase(SetupUserMixin, APITestCase):
     def setUp(self, **kwargs):
-
         self.team = Team.objects.create()
         self.team2 = Team.objects.create()
         self.team3 = Team.objects.create()
+        self.hardware = Hardware.objects.create(
+            name="name",
+            model_number="model",
+            manufacturer="manufacturer",
+            datasheet="/datasheet/location/",
+            notes="notes",
+            quantity_available=4,
+            max_per_team=1,
+            picture="/picture/location",
+        )
+
+        self.order = Order.objects.create(
+            status="Submitted",
+            team=self.team2,
+            request={"hardware": [{"id": 1, "quantity": 2}, {"id": 2, "quantity": 3}]},
+        )
+        self.order_item_1 = OrderItem.objects.create(
+            order=self.order, hardware=self.hardware,
+        )
+
+        self.order_2 = Order.objects.create(
+            status="Returned",
+            team=self.team3,
+            request={"hardware": [{"id": 1, "quantity": 2}, {"id": 2, "quantity": 3}]},
+        )
+        self.order_item_2 = OrderItem.objects.create(
+            order=self.order_2, hardware=self.hardware, part_returned_health="Healthy"
+        )
+
         self.permissions = Permission.objects.filter(
-            content_type__app_label="event", codename="view_team"
+            Q(content_type__app_label="event", codename="view_team")
+            | Q(content_type__app_label="event", codename="delete_team"),
         )
         super().setUp()
 
@@ -877,6 +907,30 @@ class EventTeamDetailViewTestCase(SetupUserMixin, APITestCase):
         data = response.json()
 
         self.assertEqual(expected_response[0], data)
+
+    def test_team_delete_not_login(self):
+        response = self.client.delete(self._build_view("56ABD"))
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_team_delete_no_permissions(self):
+        self._login()
+        response = self.client.delete(self._build_view("56ABD"))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_team_delete_has_permissions(self):
+        self._login(self.permissions)
+        response = self.client.delete(self._build_view(self.team.team_code))
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_team_delete_with_unreturned_orders(self):
+        self._login(self.permissions)
+        response = self.client.delete(self._build_view(self.team2.team_code))
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_team_delete_with_returned_orders(self):
+        self._login(self.permissions)
+        response = self.client.delete(self._build_view(self.team3.team_code))
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
 
 class TeamOrderDetailViewTestCase(SetupUserMixin, APITestCase):

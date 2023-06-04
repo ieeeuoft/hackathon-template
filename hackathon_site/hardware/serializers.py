@@ -69,7 +69,7 @@ class IncidentCreateSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def get_team_id(obj: Incident) -> int:
-        return obj.order_item.order.team.id
+        return obj.order_item.order.team.id if obj.order_item.order.team else None
 
 
 class IncidentSerializer(IncidentCreateSerializer):
@@ -107,7 +107,7 @@ class OrderItemListSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def get_team_code(obj: OrderItem):
-        return obj.order.team.team_code
+        return obj.order.team.team_code if obj.order.team else None
 
     @staticmethod
     def get_order_id(obj: OrderItem):
@@ -133,7 +133,7 @@ class OrderListSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def get_team_code(obj: Order):
-        return obj.team.team_code
+        return obj.team.team_code if obj.team else None
 
 
 class OrderChangeSerializer(OrderListSerializer):
