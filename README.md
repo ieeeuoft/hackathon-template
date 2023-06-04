@@ -17,6 +17,7 @@ A website template for hackathons run by [IEEE University of Toronto Student Bra
 - Kenny Cui
 - Himanish Jindal
 - Abubukker Chaudhary
+- test associate
 
 ## Contents
 - [Requirements](#requirements)
