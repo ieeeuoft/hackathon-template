@@ -47,7 +47,7 @@ interface RejectValue {
 
 export const getOrdersWithFilters = createAsyncThunk<
     APIListResponse<Order>,
-    void,
+    undefined,
     { state: RootState; rejectValue: RejectValue; dispatch: AppDispatch }
 >(
     `${adminOrderReducerName}/getAdminTeamOrders`,
@@ -88,7 +88,7 @@ const adminOrderSlice = createSlice({
             state: AdminOrderState,
             { payload }: PayloadAction<OrderFilters>
         ) => {
-            const { status, ordering } = {
+            const { status, ordering, search } = {
                 ...state.filters,
                 ...payload,
             };
@@ -97,11 +97,21 @@ const adminOrderSlice = createSlice({
             state.filters = {
                 ...(status && { status }),
                 ...(ordering && { ordering }),
+                ...(search && { search }),
             };
         },
 
-        clearFilters: (state: AdminOrderState, { payload }: PayloadAction) => {
+        clearFilters: (
+            state: AdminOrderState,
+            { payload }: PayloadAction<{ saveSearch?: boolean } | undefined>
+        ) => {
+            const { search } = state.filters;
+
             state.filters = {};
+
+            if (payload?.saveSearch && search) {
+                state.filters.search = search;
+            }
         },
     },
     extraReducers: (builder) => {
@@ -109,7 +119,7 @@ const adminOrderSlice = createSlice({
             state.isLoading = true;
             state.error = null;
         });
-        builder.addCase(getOrdersWithFilters.fulfilled, (state, { payload }) => {
+        builder.addCase(getOrdersWithFilters.fulfilled, (state, { payload, meta }) => {
             state.isLoading = false;
             state.error = null;
 
@@ -146,6 +156,7 @@ const adminOrderSlice = createSlice({
             }
             adminOrderAdapter.setAll(state, payload.results);
         });
+
         builder.addCase(getOrdersWithFilters.rejected, (state, { payload }) => {
             state.isLoading = false;
             state.error =
