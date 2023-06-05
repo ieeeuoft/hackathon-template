@@ -62,6 +62,24 @@ class CurrentUserAPIView(generics.GenericAPIView, mixins.RetrieveModelMixin):
         return self.retrieve(request, *args, **kwargs)
 
 
+class UserReviewStatusAPIView(generics.GenericAPIView, mixins.RetrieveModelMixin):
+    """
+    View to handle review status of a user with a certain username
+    """
+
+    queryset = User.objects.all()
+    permissions_classes = [FullDjangoModelPermissions]
+    serializer_class = UserReviewStatusSerializer
+    lookup_field = "email"
+
+    def get(self, request, *args, **kwargs):
+        """
+        Get the current user's review status and user details
+        Reads the review status status of the specified email/username
+        """
+        return self.retrieve(request, *args, **kwargs)
+
+
 class CurrentUserReviewStatusAPIView(
     generics.GenericAPIView, mixins.RetrieveModelMixin
 ):
