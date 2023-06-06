@@ -113,7 +113,17 @@ class IncidentDetailView(
         return self.retrieve(request, *args, **kwargs)
 
     def patch(self, request, *args, **kwargs):
-        return self.partial_update(request, *args, **kwargs)
+        try:
+            data = request.data
+            if not isinstance(data, dict):
+                raise ValueError("Invalid request data format")
+            valid_fields = {"state", "time_occurred", "description", "order_item"}
+            for field in data:
+                if field not in valid_fields:
+                    raise ValueError(f'"{field}" is not a valid field')
+            return self.partial_update(request, *args, **kwargs)
+        except ValueError as e:
+            return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
 
 
 class OrderItemListView(mixins.ListModelMixin, generics.GenericAPIView):
