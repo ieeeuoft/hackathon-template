@@ -1970,7 +1970,12 @@ class OrderListPatchTestCase(SetupUserMixin, APITestCase):
         )
         response = self.client.patch(self._build_view(order.id), request_data)
         self.assertEqual(
-            response.json(), {"status": ["Cannot change the status for this order."]},
+            response.json(),
+            {
+                "status": [
+                    "Cannot change the status of an order from Picked Up to Cancelled."
+                ]
+            },
         )
         self.assertFalse(request_data["status"] == Order.objects.get(id=self.pk).status)
 

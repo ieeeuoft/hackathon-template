@@ -5,6 +5,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 from hackathon_site.tests import SetupUserMixin
 from django.contrib.auth.models import Permission
+from django.db.models import Q
 
 
 from event.models import Profile, User, Team
@@ -148,7 +149,7 @@ class JoinTeamTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(old_team.pk, self.user.profile.team.pk)
 
-    def check_can_leave_cancelled(self):
+    def check_can_leave_cancelled_or_returned(self):
         old_team = self.profile.team
         sample_team = self._make_event_team(self_users=False, num_users=2)
         response = self.client.post(self._build_view(sample_team.team_code))
@@ -187,10 +188,13 @@ class JoinTeamTestCase(SetupUserMixin, APITestCase):
         for _, status_choice in Order.STATUS_CHOICES:
             order.status = status_choice
             order.save()
-            if status_choice != "Cancelled":
+            if status_choice not in ("Cancelled", "Returned"):
                 self.check_cannot_leave_active()
             else:
-                self.check_can_leave_cancelled()
+                self.check_can_leave_cancelled_or_returned()
+                # Since there are 2 cases where teams can change, reset foreign key
+                order.team = self.user.profile.team
+                order.save()
 
 
 class LeaveTeamTestCase(SetupUserMixin, APITestCase):
@@ -213,18 +217,18 @@ class LeaveTeamTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def check_leave_and_delete(self):
+        _email = self._get_random_email()
         other_user = User.objects.create_user(
-            username="other_user@bar.com",
+            username=_email,
             password=self.password,
             first_name="other_user",
             last_name="Bar",
-            email="other_user@bar.com",
+            email=_email,
         )
-        Profile.objects.create(team=self.profile.team, user=other_user)
+        Profile.objects.create(team=self.user.profile.team, user=other_user)
         old_team = self.profile.team
         response = self.client.post(self.view)
         self.user.refresh_from_db()
-
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data["id"], self.user.profile.team.pk)
         self.assertNotEqual(old_team.pk, self.user.profile.team.pk)
@@ -274,7 +278,7 @@ class LeaveTeamTestCase(SetupUserMixin, APITestCase):
         for _, status_choice in Order.STATUS_CHOICES:
             order.status = status_choice
             order.save()
-            if status_choice != "Cancelled":
+            if status_choice not in ("Cancelled", "Returned"):
                 self.check_cannot_leave()
             else:
                 self.check_leave_and_delete()
@@ -840,12 +844,41 @@ class TeamIncidentListViewPostTestCase(SetupUserMixin, APITestCase):
 
 class EventTeamDetailViewTestCase(SetupUserMixin, APITestCase):
     def setUp(self, **kwargs):
-
         self.team = Team.objects.create()
         self.team2 = Team.objects.create()
         self.team3 = Team.objects.create()
+        self.hardware = Hardware.objects.create(
+            name="name",
+            model_number="model",
+            manufacturer="manufacturer",
+            datasheet="/datasheet/location/",
+            notes="notes",
+            quantity_available=4,
+            max_per_team=1,
+            picture="/picture/location",
+        )
+
+        self.order = Order.objects.create(
+            status="Submitted",
+            team=self.team2,
+            request={"hardware": [{"id": 1, "quantity": 2}, {"id": 2, "quantity": 3}]},
+        )
+        self.order_item_1 = OrderItem.objects.create(
+            order=self.order, hardware=self.hardware,
+        )
+
+        self.order_2 = Order.objects.create(
+            status="Returned",
+            team=self.team3,
+            request={"hardware": [{"id": 1, "quantity": 2}, {"id": 2, "quantity": 3}]},
+        )
+        self.order_item_2 = OrderItem.objects.create(
+            order=self.order_2, hardware=self.hardware, part_returned_health="Healthy"
+        )
+
         self.permissions = Permission.objects.filter(
-            content_type__app_label="event", codename="view_team"
+            Q(content_type__app_label="event", codename="view_team")
+            | Q(content_type__app_label="event", codename="delete_team"),
         )
         super().setUp()
 
@@ -874,6 +907,30 @@ class EventTeamDetailViewTestCase(SetupUserMixin, APITestCase):
         data = response.json()
 
         self.assertEqual(expected_response[0], data)
+
+    def test_team_delete_not_login(self):
+        response = self.client.delete(self._build_view("56ABD"))
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_team_delete_no_permissions(self):
+        self._login()
+        response = self.client.delete(self._build_view("56ABD"))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_team_delete_has_permissions(self):
+        self._login(self.permissions)
+        response = self.client.delete(self._build_view(self.team.team_code))
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_team_delete_with_unreturned_orders(self):
+        self._login(self.permissions)
+        response = self.client.delete(self._build_view(self.team2.team_code))
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_team_delete_with_returned_orders(self):
+        self._login(self.permissions)
+        response = self.client.delete(self._build_view(self.team3.team_code))
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
 
 class TeamOrderDetailViewTestCase(SetupUserMixin, APITestCase):
@@ -1002,3 +1059,57 @@ class CurrentUserReviewStatusTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.json()
         self.assertEqual(self.get_expected_response("Accepted"), data)
+
+
+class UserReviewStatusTestCase(SetupUserMixin, APITestCase):
+    def setUp(self):
+        super().setUp()
+        self.user = User.objects.create_user(
+            username="foo2@bar.com",
+            password=self.password,
+            first_name="Test2",
+            last_name="Bar2",
+            email="foo2@bar.com",
+        )
+        self.view = reverse("api:event:user-review-status", kwargs={"email": self.user})
+
+    def test_user_not_logged_in(self):
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_email_does_not_exist(self):
+        self._login()
+        response = self.client.get("fakeemail@gmail.com")
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_user_has_no_application(self):
+        self._login()
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.json()
+        self.assertEqual("None", data["review_status"])
+
+    def test_user_has_no_review(self):
+        self._login()
+        self.application = self._apply_as_user(self.user)
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.json()
+        self.assertEqual("None", data["review_status"])
+
+    def test_user_has_review_and_application(self):
+        self._login()
+        self.application = self._apply_as_user(self.user)
+        self._review()
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.json()
+        self.assertEqual("Accepted", data["review_status"])
+
+    def test_user_has_review_and_rejected(self):
+        self._login()
+        self._review(application=self._apply_as_user(self.user), status="Rejected")
+        response = self.client.get(self.view)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.json()
+        self.assertEqual("Rejected", data["review_status"])

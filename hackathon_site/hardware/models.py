@@ -97,7 +97,7 @@ class OrderItem(models.Model):
     )
 
     def __str__(self):
-        return f"{self.id} | {self.hardware.name} | Team {self.order.team.team_code}"
+        return f"{self.id} | {self.hardware.name} | Team {self.order.team.team_code if self.order.team else None}"
 
 
 class Order(models.Model):
@@ -106,10 +106,11 @@ class Order(models.Model):
         ("Ready for Pickup", "Ready for Pickup"),
         ("Picked Up", "Picked Up"),
         ("Cancelled", "Cancelled"),
+        ("Returned", "Returned"),
     ]
 
     hardware = models.ManyToManyField(Hardware, through=OrderItem)
-    team = models.ForeignKey(TeamEvent, on_delete=models.CASCADE, null=False)
+    team = models.ForeignKey(TeamEvent, on_delete=models.SET_NULL, null=True)
     status = models.CharField(
         max_length=64, choices=STATUS_CHOICES, default="Submitted"
     )
