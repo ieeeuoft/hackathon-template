@@ -239,7 +239,7 @@ export const PendingTables = () => {
     };
 
     const stopPropagationEvent = new Event("stopPropagation");
-    /* For testing purposes, I created an event listener that will be called each time the user confirms
+    /* For testing purposes, I created an event listener that is called each time the user confirms
     to cancel an order through the popup modal. despite calling event.stopPropagation, the order cancellation still
      doesn't target the correct order */
     document.addEventListener("stopPropagation", (event) => {
