@@ -44,7 +44,7 @@ export const TeamInfoTable = () => {
     };
 
     return (
-        <Grid container direction="column" spacing={1} item md={6} xs={12}>
+        <Grid container direction="column" spacing={1} item md={8} xs={12}>
             <Grid item>
                 <Typography variant="h2">Team info</Typography>
             </Grid>

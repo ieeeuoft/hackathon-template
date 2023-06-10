@@ -103,7 +103,12 @@ export type OrderStatus =
     | "Picked Up"
     | "Cancelled"
     | "Returned";
-export type PartReturnedHealth = "Healthy" | "Heavily Used" | "Broken" | "Lost";
+export type PartReturnedHealth =
+    | "Healthy"
+    | "Heavily Used"
+    | "Broken"
+    | "Lost"
+    | "Rejected";
 
 export type ItemsInOrder = Omit<OrderItem, "order" | "time_occurred">;
 
@@ -134,6 +139,7 @@ export interface OrderItemTableRow {
     id: number;
     quantityRequested: number;
     quantityGranted: number;
+    quantityGrantedBySystem: number;
 }
 
 export interface OrderInTable {
