@@ -132,6 +132,7 @@ export interface OrderFilters {
     ordering?: OrderOrdering;
     status?: OrderStatus[];
     search?: string;
+    limit?: number;
 }
 
 /** Sanitized Orders */
