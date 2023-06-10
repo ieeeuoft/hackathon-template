@@ -43,12 +43,14 @@ ORDER_STATUS_MSG = {
     "Ready for Pickup": "is Ready for Pickup!",
     "Picked Up": "has been Picked Up!",
     "Cancelled": f"was Cancelled by a {settings.HACKATHON_NAME} Exec.",
+    "Returned": f"has been returned.",
 }
 
 ORDER_STATUS_CLOSING_MSG = {
     "Ready for Pickup": "Please go to the Tech Team Station to retrieve your order.",
     "Picked Up": "Take good care of your hardware and Happy Hacking! Remember to return the items when you are finished using them.",
     "Cancelled": f"A {settings.HACKATHON_NAME} exec will be in contact with you shortly. If you don't hear back from them soon, please go to the Tech Team Station for more information on why your order was cancelled.",
+    "Returned": f"Thank you for returning all hardware items!",
 }
 
 
