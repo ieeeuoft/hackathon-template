@@ -11,6 +11,11 @@ urlpatterns = [
         api_views.CurrentUserReviewStatusAPIView.as_view(),
         name="current-user-review-status",
     ),
+    path(
+        "users/<str:email>/review_status/",
+        api_views.UserReviewStatusAPIView.as_view(),
+        name="user-review-status",
+    ),
     path("teams/team/", api_views.CurrentTeamAPIView.as_view(), name="current-team"),
     re_path(
         "teams/join/(?P<team_code>[A-Z0-9]{5})/",

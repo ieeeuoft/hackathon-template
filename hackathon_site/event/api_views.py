@@ -62,6 +62,24 @@ class CurrentUserAPIView(generics.GenericAPIView, mixins.RetrieveModelMixin):
         return self.retrieve(request, *args, **kwargs)
 
 
+class UserReviewStatusAPIView(generics.GenericAPIView, mixins.RetrieveModelMixin):
+    """
+    View to handle review status of a user with a certain username
+    """
+
+    queryset = User.objects.all()
+    permissions_classes = [FullDjangoModelPermissions]
+    serializer_class = UserReviewStatusSerializer
+    lookup_field = "email"
+
+    def get(self, request, *args, **kwargs):
+        """
+        Get the current user's review status and user details
+        Reads the review status status of the specified email/username
+        """
+        return self.retrieve(request, *args, **kwargs)
+
+
 class CurrentUserReviewStatusAPIView(
     generics.GenericAPIView, mixins.RetrieveModelMixin
 ):
@@ -124,7 +142,9 @@ class LeaveTeamView(generics.GenericAPIView):
 
         # Raise 400 if team has active orders
         active_orders = OrderItem.objects.filter(
-            ~Q(order__status="Cancelled"), Q(order__team=team),
+            ~Q(order__status="Cancelled"),
+            ~Q(order__status="Returned"),
+            Q(order__team=team),
         )
         if active_orders.exists():
             raise ValidationError(
@@ -164,7 +184,9 @@ class JoinTeamView(generics.GenericAPIView, mixins.RetrieveModelMixin):
             raise ValidationError({"detail": "Team is full"})
 
         active_orders = OrderItem.objects.filter(
-            ~Q(order__status="Cancelled"), Q(order__team=current_team),
+            ~Q(order__status="Cancelled"),
+            ~Q(order__status="Returned"),
+            Q(order__team=current_team),
         )
         if active_orders.exists():
             raise ValidationError(
@@ -254,7 +276,9 @@ class CurrentTeamOrderListView(generics.ListAPIView):
         return self.list(request, *args, **kwargs)
 
 
-class TeamDetailView(mixins.RetrieveModelMixin, generics.GenericAPIView):
+class TeamDetailView(
+    mixins.RetrieveModelMixin, mixins.DestroyModelMixin, generics.GenericAPIView
+):
     serializer_class = TeamSerializer
     permission_classes = [FullDjangoModelPermissions]
     lookup_field = "team_code"
@@ -262,6 +286,19 @@ class TeamDetailView(mixins.RetrieveModelMixin, generics.GenericAPIView):
 
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        team = self.get_object()
+        active_orders = Order.objects.filter(
+            Q(team=team), ~Q(status="Cancelled"), ~Q(status="Returned"),
+        )
+        if active_orders.exists():
+            raise ValidationError(
+                {"detail": "Cannot delete a team with unreturned order items"},
+                code=status.HTTP_400_BAD_REQUEST,
+            )
+
+        return self.destroy(request, *args, **kwargs)
 
 
 class TeamOrderDetailView(mixins.UpdateModelMixin, generics.GenericAPIView):
