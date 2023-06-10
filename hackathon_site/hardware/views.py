@@ -117,7 +117,7 @@ class IncidentDetailView(
             data = request.data
             if not isinstance(data, dict):
                 raise ValueError("Invalid request data format")
-            valid_fields = {"state", "time_occurred", "description", "order_item"}
+            valid_fields = {"state", "time_occurred", "description"}
             for field in data:
                 if field not in valid_fields:
                     raise ValueError(f'"{field}" is not a valid field')
