@@ -17,6 +17,8 @@ import {
 } from "slices/order/adminOrderSlice";
 import { useHistory } from "react-router-dom";
 import { clearFilters } from "slices/hardware/hardwareSlice";
+import { OrdersTable } from "components/orders/OrdersTable/OrdersTable";
+import { mockPendingOrders } from "testing/mockData";
 
 const Orders = () => {
     const dispatch = useDispatch();
@@ -86,7 +88,8 @@ const Orders = () => {
                         </Grid>
                         <Grid item lg={12}>
                             <Grid container spacing={1} direction="row">
-                                {allOrders.map((order, idx) => (
+                                <OrdersTable ordersData={mockPendingOrders} />
+                                {/* {allOrders.map((order, idx) => (
                                     <Grid
                                         item
                                         lg={3}
@@ -115,7 +118,7 @@ const Orders = () => {
                                             />
                                         )}
                                     </Grid>
-                                ))}
+                                ))} */}
                             </Grid>
                         </Grid>
                     </Grid>
