@@ -25,11 +25,6 @@ const PopupModal = ({
     submitHandler,
     cancelHandler,
 }: PopupModalProps) => {
-    const submitHandlerWithPropagation = (event: any) => {
-        event.stopPropagation();
-        submitHandler();
-    };
-
     const PropInformation = () => {
         return (
             <Grid
@@ -44,11 +39,7 @@ const PopupModal = ({
                 </Grid>
                 <Grid item container justifyContent={"flex-end"}>
                     <Button onClick={cancelHandler}>{cancelText ?? "Cancel"}</Button>
-                    <Button
-                        id="submitButton"
-                        onClick={submitHandlerWithPropagation}
-                        color="primary"
-                    >
+                    <Button id="submitButton" onClick={submitHandler} color="primary">
                         {submitText ?? "Submit"}
                     </Button>
                 </Grid>
