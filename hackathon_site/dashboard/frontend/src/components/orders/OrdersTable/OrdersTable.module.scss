@@ -1,0 +1,19 @@
+@import "../../../assets/abstracts/mixins";
+@import "../../../assets/abstracts/variables";
+
+.container {
+    display: flex;
+    flex-direction: row;
+    align-content: center;
+    justify-content: start;
+
+    width: 100%;
+    padding: 4px;
+    border-radius: 50px;
+}
+
+.statusIcon {
+    width: 12px;
+    margin-left: 5px;
+    margin-right: 10px;
+}
