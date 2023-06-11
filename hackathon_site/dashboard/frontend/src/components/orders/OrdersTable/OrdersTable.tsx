@@ -16,6 +16,8 @@ import ReadyForPickupIcon from "../../../assets/images/icons/statusIcons/readyfo
 import PickedUpIcon from "../../../assets/images/icons/statusIcons/checkout-status.svg";
 import CancelledIcon from "../../../assets/images/icons/statusIcons/cancelled-status.svg";
 import ReturnedIcon from "../../../assets/images/icons/statusIcons/checkout-status.svg";
+import PendingIcon from "../../../assets/images/icons/statusIcons/pending-status.svg";
+import InProgressIcon from "../../../assets/images/icons/statusIcons/inprogress-status.svg";
 
 interface OrdersTableProps {
     ordersData: Order[];
@@ -26,14 +28,8 @@ interface OrderStateIcon {
 }
 
 const OrderStateIcon = ({ status }: OrderStateIcon) => {
-    // need to account for the following states
-    // | "Submitted"
-    // | "Ready for Pickup"
-    // | "Picked Up"
-    // | "Cancelled"
-    // | "Returned";
-
     const filterState = status.replace(/\s+/g, "");
+    console.log(filterState);
 
     return (
         <div className={styles.container}>
@@ -64,9 +60,21 @@ const OrderStateIcon = ({ status }: OrderStateIcon) => {
                         className={styles.statusIcon}
                         alt={`${status} icon`}
                     />
-                ) : (
+                ) : status === "Returned" ? (
                     <img
                         src={ReturnedIcon}
+                        className={styles.statusIcon}
+                        alt={`${status} icon`}
+                    />
+                ) : status === "Pending" ? (
+                    <img
+                        src={PendingIcon}
+                        className={styles.statusIcon}
+                        alt={`${status} icon`}
+                    />
+                ) : (
+                    <img
+                        src={InProgressIcon}
                         className={styles.statusIcon}
                         alt={`${status} icon`}
                     />
@@ -89,7 +97,7 @@ const OrdersTable = ({ ordersData }: OrdersTableProps) => {
     const columns: GridColDef[] = [
         { field: "id", headerName: "ID", width: 25, flex: 1 },
         {
-            field: "updated_at",
+            field: "created_at",
             headerName: "Time Ordered",
             flex: 1,
             valueFormatter: (params) => {
@@ -122,7 +130,7 @@ const OrdersTable = ({ ordersData }: OrdersTableProps) => {
             renderCell: (params) => <OrderStateIcon status={params.value} />,
         },
         { field: "team_id", headerName: "Team ID" },
-        { field: "created_at", headerName: "Created At" },
+        { field: "updated_at", headerName: "Updated At" },
         { field: "request", headerName: "Request" },
     ];
 
@@ -138,7 +146,7 @@ const OrdersTable = ({ ordersData }: OrdersTableProps) => {
                     columnVisibilityModel={{
                         // hide specific columns
                         team_id: false,
-                        created_at: false,
+                        updated_at: false,
                         request: false,
                     }}
                     initialState={{

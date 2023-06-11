@@ -696,6 +696,90 @@ export const mockPendingOrders: Order[] = [
             },
         ],
     },
+    {
+        id: 7,
+        items: [
+            {
+                id: 12,
+                hardware_id: 10,
+                part_returned_health: null,
+            },
+        ],
+        team_id: 1,
+        team_code: "IEEE",
+        status: "Picked Up",
+        created_at: "2020-10-17T18:28:44.691969-04:00",
+        updated_at: "2020-12-03T23:01:46.606892-05:00",
+        request: [
+            {
+                id: 10,
+                requested_quantity: 2,
+            },
+        ],
+    },
+    {
+        id: 8,
+        items: [
+            {
+                id: 12,
+                hardware_id: 10,
+                part_returned_health: null,
+            },
+        ],
+        team_id: 1,
+        team_code: "IEEE",
+        status: "Pending",
+        created_at: "2020-10-17T18:28:44.691969-04:00",
+        updated_at: "2020-12-03T23:01:46.606892-05:00",
+        request: [
+            {
+                id: 10,
+                requested_quantity: 2,
+            },
+        ],
+    },
+    {
+        id: 9,
+        items: [
+            {
+                id: 12,
+                hardware_id: 10,
+                part_returned_health: null,
+            },
+        ],
+        team_id: 1,
+        team_code: "IEEE",
+        status: "In Progress",
+        created_at: "2020-10-17T18:28:44.691969-04:00",
+        updated_at: "2020-12-03T23:01:46.606892-05:00",
+        request: [
+            {
+                id: 10,
+                requested_quantity: 2,
+            },
+        ],
+    },
+    {
+        id: 10,
+        items: [
+            {
+                id: 12,
+                hardware_id: 10,
+                part_returned_health: null,
+            },
+        ],
+        team_id: 1,
+        team_code: "IEEE",
+        status: "Returned",
+        created_at: "2020-10-17T18:28:44.691969-04:00",
+        updated_at: "2020-12-03T23:01:46.606892-05:00",
+        request: [
+            {
+                id: 10,
+                requested_quantity: 2,
+            },
+        ],
+    },
 ];
 
 export const mockCheckedOutOrders: Order[] = [
