@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('event', '0007_hss_test_users'),
+        ("event", "0007_hss_test_users"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='team',
-            name='project_description',
+            model_name="team",
+            name="project_description",
             field=models.CharField(max_length=500, null=True),
         ),
     ]
