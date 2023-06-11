@@ -1009,3 +1009,23 @@ class UserReviewStatusSerializerTestCase(SetupUserMixin, TestCase):
         }
 
         self.assertEqual(user_expected, user_serialized)
+
+
+class TeamModelTest(TestCase):
+    def test_project_description_char_limit(self):
+        team = EventTeam.objects.create(team_code='ABC')
+        project_description = 'a' * 500  # Create a string of 500 characters
+        team.project_description = project_description
+        team.save()
+
+        # Retrieve the team from the database and check if the project_description is saved correctly
+        updated_team = EventTeam.objects.get(team_code='ABC')
+        self.assertEqual(updated_team.project_description, project_description)
+
+    def test_project_description_default_null(self):
+        team = EventTeam.objects.create(team_code='XYZ')
+        self.assertIsNone(team.project_description)  # Check if the project_description is initially None
+
+    def test_project_description_field_exists(self):
+        team = EventTeam.objects.create(team_code='123')
+        self.assertTrue(hasattr(team, 'project_description'))  # Check if the project_description field exists
