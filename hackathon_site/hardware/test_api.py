@@ -985,14 +985,14 @@ class IncidentDetailViewPatchTestCase(SetupUserMixin, APITestCase):
         response = self.client.patch(self._build_view(self.pk), request_data)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_successful_state_change(self):
+    def test_successful_state_change_update_incident_state(self):
         self._login(self.permissions)
         request_data = {"state": "Broken"}
         response = self.client.patch(self._build_view(self.pk), request_data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(request_data["state"], Incident.objects.get(id=self.pk).state)
 
-    def test_unallowed_state_change(self):
+    def test_unallowed_state_change_does_not_update_incident_state(self):
         self._login(self.permissions)
         request_data = {"state": "abcdefg"}
         response = self.client.patch(self._build_view(self.pk), request_data)
@@ -1004,7 +1004,7 @@ class IncidentDetailViewPatchTestCase(SetupUserMixin, APITestCase):
             {"state": [f"\"{request_data['state']}\" is not a valid choice."]},
         )
 
-    def test_fail_change_read_only(self):
+    def test_fail_change_read_only_does_not_change_id(self):
         """
         Test to ensure that a read only field (id) can not be changed
         """
