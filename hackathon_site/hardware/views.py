@@ -110,12 +110,12 @@ class IncidentDetailView(
     queryset = Incident.objects.all()
 
     permission_classes = [FullDjangoModelPermissions]
+
     def get_serializer_class(self):
         if self.request.method == "GET":
             return IncidentSerializer
         elif self.request.method == "PATCH":
             return IncidentPatchSerializer
-
 
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
