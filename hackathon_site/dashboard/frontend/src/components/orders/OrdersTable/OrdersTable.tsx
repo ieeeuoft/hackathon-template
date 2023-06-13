@@ -1,23 +1,11 @@
 import React from "react";
-import {
-    DataGrid,
-    GridColDef,
-    GridRowsProp,
-    GridRenderCellParams,
-    GridEventListener,
-} from "@mui/x-data-grid";
+import { DataGrid, GridColDef, GridEventListener } from "@mui/x-data-grid";
 import { ItemsInOrder, Order } from "api/types";
 import { format, parseISO } from "date-fns"; // to parse date
+import { statusIconMap } from "api/orders";
 import styles from "./OrdersTable.module.scss";
 
 // status icons
-import SubmittedIcon from "../../../assets/images/icons/statusIcons/unfulfilled-status.svg";
-import ReadyForPickupIcon from "../../../assets/images/icons/statusIcons/readyforpickup-status.svg";
-import PickedUpIcon from "../../../assets/images/icons/statusIcons/checkout-status.svg";
-import CancelledIcon from "../../../assets/images/icons/statusIcons/cancelled-status.svg";
-import ReturnedIcon from "../../../assets/images/icons/statusIcons/checkout-status.svg";
-import PendingIcon from "../../../assets/images/icons/statusIcons/pending-status.svg";
-import InProgressIcon from "../../../assets/images/icons/statusIcons/inprogress-status.svg";
 
 interface OrdersTableProps {
     ordersData: Order[];
@@ -27,58 +15,23 @@ interface OrderStateIcon {
     status: string;
 }
 
+interface StatusIcon {
+    status: string;
+}
+
+const StatusIcon = ({ status }: StatusIcon) => {
+    const iconSrc = statusIconMap[status];
+    return <img src={iconSrc} className={styles.statusIcon} alt={`${status} icon`} />;
+};
+
 const OrderStateIcon = ({ status }: OrderStateIcon) => {
-    const filterState = status.replace(/\s+/g, "");
+    const filterState: string = status.replace(/\s+/g, "");
     console.log(filterState);
 
     return (
         <div className={styles.container}>
             <div className={`${styles.container} order-${filterState}-icon`}>
-                {/* <img src={filterState + "Icon"} />
-                <img src={`../../../assets/images/icons/statusIcons/${filterState}-status.svg`} /> */}
-                {status === "Submitted" ? (
-                    <img
-                        src={SubmittedIcon}
-                        className={styles.statusIcon}
-                        alt={`${status} icon`}
-                    />
-                ) : status === "Ready for Pickup" ? (
-                    <img
-                        src={ReadyForPickupIcon}
-                        className={styles.statusIcon}
-                        alt={`${status} icon`}
-                    />
-                ) : status === "Picked Up" ? (
-                    <img
-                        src={PickedUpIcon}
-                        className={styles.statusIcon}
-                        alt={`${status} icon`}
-                    />
-                ) : status === "Cancelled" ? (
-                    <img
-                        src={CancelledIcon}
-                        className={styles.statusIcon}
-                        alt={`${status} icon`}
-                    />
-                ) : status === "Returned" ? (
-                    <img
-                        src={ReturnedIcon}
-                        className={styles.statusIcon}
-                        alt={`${status} icon`}
-                    />
-                ) : status === "Pending" ? (
-                    <img
-                        src={PendingIcon}
-                        className={styles.statusIcon}
-                        alt={`${status} icon`}
-                    />
-                ) : (
-                    <img
-                        src={InProgressIcon}
-                        className={styles.statusIcon}
-                        alt={`${status} icon`}
-                    />
-                )}
+                <StatusIcon status={filterState} />
                 {status}
             </div>
         </div>
