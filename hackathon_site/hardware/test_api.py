@@ -1005,9 +1005,6 @@ class IncidentDetailViewPatchTestCase(SetupUserMixin, APITestCase):
         )
 
     def test_fail_change_read_only_does_not_change_id(self):
-        """
-        Test to ensure that a read only field (id) can not be changed
-        """
         self._login(self.permissions)
         request_data = {"id": -1}
         response = self.client.patch(self._build_view(self.pk), request_data)
