@@ -47,7 +47,7 @@ const AdminDashboard = () => {
                                             color: "black",
                                         }}
                                     >
-                                        123 item's checked out
+                                        122 item's checked out
                                     </Typography>
                                 </Box>
                             </Item>
