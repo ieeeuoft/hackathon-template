@@ -56,8 +56,7 @@ const UnconnectedApp = () => {
                     <Route
                         exact
                         path="/"
-                        //component={withUserCheck("both", Dashboard, AdminDashboard)}
-                        component={AdminDashboard}
+                        component={withUserCheck("both", Dashboard, AdminDashboard)}
                     />
                     <Route exact path="/login" component={Login} />
                     <Route
