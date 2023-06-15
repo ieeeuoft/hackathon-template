@@ -930,6 +930,94 @@ class IncidentDetailViewGetTestCase(SetupUserMixin, APITestCase):
         self.assertEqual(expected_response, data)
 
 
+class IncidentDetailViewPatchTestCase(SetupUserMixin, APITestCase):
+    def setUp(self):
+        super().setUp()
+        self.view_name = "api:hardware:incident-detail"
+        self.team = Team.objects.create()
+        self.permissions = Permission.objects.filter(
+            content_type__app_label="hardware", codename="change_incident"
+        )
+        self.order = Order.objects.create(
+            status="Cart",
+            team=self.team,
+            request={"hardware": [{"id": 1, "quantity": 1}]},
+        )
+        self.hardware = Hardware.objects.create(
+            name="name",
+            model_number="model",
+            manufacturer="manufacturer",
+            datasheet="/datasheet/location/",
+            notes="notes",
+            quantity_available=4,
+            max_per_team=1,
+            picture="/picture/location",
+        )
+
+        self.order_item = OrderItem.objects.create(
+            order=self.order, hardware=self.hardware,
+        )
+
+        self.incident = Incident.objects.create(
+            state="Broken",
+            description="Description",
+            order_item=self.order_item,
+            time_occurred=datetime(2022, 8, 8, tzinfo=settings.TZ_INFO),
+        )
+
+        self.view_permissions = Permission.objects.filter(
+            content_type__app_label="hardware", codename="view_incident"
+        )
+
+        self.pk = self.incident.id
+
+    def _build_view(self, pk):
+        return reverse(self.view_name, kwargs={"pk": pk})
+
+    def test_user_not_logged_in(self):
+        request_data = {"description": "New Description"}
+        response = self.client.patch(self._build_view(self.pk), request_data)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_user_lack_perms(self):
+        self._login()
+        request_data = {"description": "New Description"}
+        response = self.client.patch(self._build_view(self.pk), request_data)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_successful_state_change_update_incident_state(self):
+        self._login(self.permissions)
+        request_data = {"state": "Broken"}
+        response = self.client.patch(self._build_view(self.pk), request_data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(request_data["state"], Incident.objects.get(id=self.pk).state)
+
+    def test_unallowed_state_change_does_not_update_incident_state(self):
+        self._login(self.permissions)
+        request_data = {"state": "abcdefg"}
+        response = self.client.patch(self._build_view(self.pk), request_data)
+        self.assertNotEqual(
+            request_data["state"], Incident.objects.get(id=self.pk).state
+        )
+        self.assertEqual(
+            response.json(),
+            {"state": [f"\"{request_data['state']}\" is not a valid choice."]},
+        )
+
+    def test_fail_change_read_only_does_not_change_id(self):
+        self._login(self.permissions)
+        request_data = {"id": -1}
+        response = self.client.patch(self._build_view(self.pk), request_data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertNotEqual(request_data["id"], Incident.objects.get(id=self.pk).id)
+
+    def test_fail_change_non_existing_field(self):
+        self._login(self.permissions)
+        request_data = {"Non Existent field": "abcdefg"}
+        response = self.client.patch(self._build_view(self.pk), request_data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+
 class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
     def setUp(self):
         super().setUp()
