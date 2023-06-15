@@ -230,15 +230,17 @@ export const PendingTables = () => {
     const toggleVisibility = () => dispatch(togglePendingTable());
     const cancelOrder = (orderId: number) => dispatch(cancelOrderThunk(orderId));
     const [showCancelOrderModal, setShowCancelOrderModal] = useState(false);
-    const [orderId, setorderId] = useState(0);
+    const [orderId, setorderId] = useState(null);
 
     const closeModal = () => {
         setShowCancelOrderModal(false);
     };
 
-    const submitModal = (cancelOrderId: number) => {
-        cancelOrder(cancelOrderId); // Perform Cancellation
-        setShowCancelOrderModal(false);
+    const submitModal = (cancelOrderId: number | null) => {
+        if (cancelOrderId != null) {
+            cancelOrder(cancelOrderId); // Perform Cancellation
+            setShowCancelOrderModal(false);
+        }
     };
 
     const setModal = (pendingOrder: any) => {

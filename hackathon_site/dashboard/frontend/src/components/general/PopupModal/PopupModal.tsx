@@ -39,7 +39,7 @@ const PopupModal = ({
                 </Grid>
                 <Grid item container justifyContent={"flex-end"}>
                     <Button onClick={cancelHandler}>{cancelText ?? "Cancel"}</Button>
-                    <Button id="submitButton" onClick={submitHandler} color="primary">
+                    <Button onClick={submitHandler} color="primary">
                         {submitText ?? "Submit"}
                     </Button>
                 </Grid>
