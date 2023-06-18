@@ -180,6 +180,7 @@ class JoinTeamTestCase(SetupUserMixin, APITestCase):
             status="Cart",
             team=self.team,
             request={"hardware": [{"id": 1, "quantity": 2}]},
+            reason_for_order="Creating a Robot",
         )
 
         OrderItem.objects.create(order=order, hardware=hardware)
@@ -271,6 +272,7 @@ class LeaveTeamTestCase(SetupUserMixin, APITestCase):
             status="Cart",
             team=self.team,
             request={"hardware": [{"id": 1, "quantity": 2}]},
+            reason_for_order="Creating a Robot",
         )
         OrderItem.objects.create(order=order, hardware=hardware)
 
@@ -680,7 +682,10 @@ class CurrentTeamOrderListViewTestCase(SetupUserMixin, APITestCase):
         super().setUp()
         self.team = Team.objects.create()
         self.order = Order.objects.create(
-            status="Cart", team=self.team, request={"hardware": []}
+            status="Cart",
+            team=self.team,
+            request={"hardware": []},
+            reason_for_order="Creating a Robot",
         )
         self.hardware = Hardware.objects.create(
             name="name",
@@ -711,7 +716,10 @@ class CurrentTeamOrderListViewTestCase(SetupUserMixin, APITestCase):
         # making extra data to test if team data is being filtered
         self.team2 = Team.objects.create(team_code="ABCDE")
         self.order_2 = Order.objects.create(
-            status="Submitted", team=self.team2, request={"hardware": []}
+            status="Submitted",
+            team=self.team2,
+            request={"hardware": []},
+            reason_for_order="Creating a Robot",
         )
         OrderItem.objects.create(
             order=self.order_2, hardware=self.hardware,
@@ -754,6 +762,7 @@ class TeamIncidentListViewPostTestCase(SetupUserMixin, APITestCase):
             status="Cart",
             team=self.team,
             request={"hardware": [{"id": 1, "quantity": 2}]},
+            reason_for_order="Creating a Robot",
         )
 
         self.hardware = Hardware.objects.create(
@@ -803,6 +812,7 @@ class TeamIncidentListViewPostTestCase(SetupUserMixin, APITestCase):
             status="Cart",
             team=self.team2,
             request={"hardware": [{"id": 1, "quantity": 2}]},
+            reason_for_order="Creating a Robot",
         )
         self.order_item2 = OrderItem.objects.create(
             order=self.order2, hardware=self.other_hardware,
@@ -898,6 +908,7 @@ class TeamOrderDetailViewTestCase(SetupUserMixin, APITestCase):
             status="Submitted",
             team=self.team,
             request={"hardware": [{"id": 1, "quantity": 2}]},
+            reason_for_order="Creating a Robot",
         )
         OrderItem.objects.create(order=order, hardware=hardware)
         self.pk = order.id
@@ -938,6 +949,7 @@ class TeamOrderDetailViewTestCase(SetupUserMixin, APITestCase):
             status="Picked Up",
             team=self.team,
             request={"hardware": [{"id": 1, "quantity": 2}]},
+            reason_for_order="Creating a Robot",
         )
         response = self.client.patch(self._build_view(order.id), self.request_data)
         self.assertEqual(
@@ -954,6 +966,7 @@ class TeamOrderDetailViewTestCase(SetupUserMixin, APITestCase):
             status="Submitted",
             team=self.team2,
             request={"hardware": [{"id": 1, "quantity": 2}]},
+            reason_for_order="Creating a Robot",
         )
         response = self.client.patch(self._build_view(order.id), self.request_data)
         self.assertEqual(

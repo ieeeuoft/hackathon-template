@@ -1,5 +1,7 @@
 from django.test import TestCase
 from rest_framework import serializers
+from django.db.utils import IntegrityError
+from django.core.exceptions import ValidationError
 
 from hardware.models import Hardware, Category, Order, OrderItem, Incident
 from event.models import Team
@@ -56,6 +58,7 @@ class HardwareSerializerTestCase(TestCase):
             status="Cancelled",
             team=team,
             request={"hardware": [{"id": 1, "quantity": 2}, {"id": 2, "quantity": 3}]},
+            reason_for_order="Creating a Robot",
         )
         order_item_1 = OrderItem.objects.create(order=order, hardware=self.hardware,)
 
@@ -85,6 +88,7 @@ class HardwareSerializerTestCase(TestCase):
             status="Picked Up",
             team=team,
             request={"hardware": [{"id": 1, "quantity": 2}]},
+            reason_for_order="Creating a Robot",
         )
         order_item_1 = OrderItem.objects.create(
             order=order, hardware=self.hardware, part_returned_health="Healthy"
@@ -135,6 +139,7 @@ class HardwareQuantityRemainingTestCase(TestCase):
             status="Picked Up",
             team=team,
             request={"hardware": [{"id": 1, "quantity": 2}]},
+            reason_for_order="Creating a Robot",
         )
         order_item_1 = OrderItem.objects.create(order=order, hardware=self.hardware,)
         order_item_2 = OrderItem.objects.create(order=order, hardware=self.hardware,)
@@ -148,6 +153,7 @@ class HardwareQuantityRemainingTestCase(TestCase):
             status="Picked Up",
             team=team,
             request={"hardware": [{"id": 1, "quantity": 2}]},
+            reason_for_order="Creating a Robot",
         )
         order_item_1 = OrderItem.objects.create(
             order=order, hardware=self.hardware, part_returned_health="Healthy"
@@ -163,6 +169,7 @@ class HardwareQuantityRemainingTestCase(TestCase):
             status="Picked Up",
             team=team,
             request={"hardware": [{"id": 1, "quantity": 2}]},
+            reason_for_order="Creating a Robot",
         )
         OrderItem.objects.create(
             order=order, hardware=self.hardware, part_returned_health="Broken"
@@ -180,6 +187,7 @@ class HardwareQuantityRemainingTestCase(TestCase):
             status="Cancelled",
             team=team,
             request={"hardware": [{"id": 1, "quantity": 2}, {"id": 2, "quantity": 3}]},
+            reason_for_order="Creating a Robot",
         )
         order_item_1 = OrderItem.objects.create(order=order, hardware=self.hardware,)
         order_item_2 = OrderItem.objects.create(order=order, hardware=self.hardware,)
@@ -232,6 +240,7 @@ class IncidentSerializerTestCase(TestCase):
             status="Picked Up",
             team=self.team,
             request={"hardware": [{"id": 1, "quantity": 2}]},
+            reason_for_order="Creating a Robot",
         )
 
         self.category = Category.objects.create(name="category", max_per_team=4)
@@ -319,6 +328,7 @@ class OrderListSerializerTestCase(TestCase):
             status="Cart",
             team=self.team,
             request={"hardware": [{"id": 1, "quantity": 2}, {"id": 2, "quantity": 3}]},
+            reason_for_order="Creating a Robot",
         )
         order_serializer = OrderListSerializer(order).data
         expected_response = {
@@ -326,6 +336,7 @@ class OrderListSerializerTestCase(TestCase):
             "team_id": self.team.id,
             "team_code": self.team.team_code,
             "status": "Cart",
+            "reason_for_order": "Creating a Robot",
             "items": [],
             "created_at": serializers.DateTimeField().to_representation(
                 order.created_at
@@ -345,6 +356,7 @@ class OrderListSerializerTestCase(TestCase):
             status="Cart",
             team=self.team,
             request={"hardware": [{"id": 1, "quantity": 2}, {"id": 2, "quantity": 3}]},
+            reason_for_order="Creating a Robot",
         )
         item_1 = OrderItem.objects.create(
             order=order, hardware=self.hardware, part_returned_health="Healthy"
@@ -358,6 +370,7 @@ class OrderListSerializerTestCase(TestCase):
             "team_id": self.team.id,
             "team_code": self.team.team_code,
             "status": "Cart",
+            "reason_for_order": "Creating a Robot",
             "items": [
                 {
                     "id": item_1.id,
@@ -381,3 +394,27 @@ class OrderListSerializerTestCase(TestCase):
             },
         }
         self.assertEqual(order_serializer, expected_response)
+
+    def test_order_with_no_reason_for_order_field(self):
+        with self.assertRaises(IntegrityError):
+            Order.objects.create(
+                status="Cart",
+                team=self.team,
+                request={
+                    "hardware": [{"id": 1, "quantity": 2}, {"id": 2, "quantity": 3}]
+                },
+            )
+
+    def test_order_with_large_reason_for_order(self):
+        with self.assertRaises(ValidationError) as context:
+            Order.objects.create(
+                status="Cart",
+                team=self.team,
+                request={
+                    "hardware": [{"id": 1, "quantity": 2}, {"id": 2, "quantity": 3}]
+                },
+                reason_for_order="*" * 351,
+            )
+        # Formatted like this since ValidationError __str__ method returns in this format
+        expected_error_message = "['Reason for order must be 350 characters or less.']"
+        self.assertEqual(str(context.exception), expected_error_message)

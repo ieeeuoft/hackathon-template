@@ -126,6 +126,7 @@ class OrderListSerializer(serializers.ModelSerializer):
             "team_id",
             "team_code",
             "status",
+            "reason_for_order",
             "created_at",
             "updated_at",
             "request",
@@ -312,6 +313,7 @@ class OrderCreateSerializer(serializers.Serializer):
                     team=self.context["request"].user.profile.team,
                     status="Submitted",
                     request=serialized_requested_hardware,
+                    reason_for_order="Hackathon Project",
                 )
                 response_data["order_id"] = new_order.id
             order_items += [
