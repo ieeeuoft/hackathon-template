@@ -47,7 +47,7 @@ interface RejectValue {
 
 export const getOrdersWithFilters = createAsyncThunk<
     APIListResponse<Order>,
-    void,
+    undefined,
     { state: RootState; rejectValue: RejectValue; dispatch: AppDispatch }
 >(
     `${adminOrderReducerName}/getAdminTeamOrders`,
@@ -57,6 +57,10 @@ export const getOrdersWithFilters = createAsyncThunk<
             const response = await get<APIListResponse<Order>>(
                 "/api/hardware/orders/",
                 filters
+            );
+            // Filter out orders that do not have a team_code (their teams were deleted)
+            response.data.results = response.data.results.filter(
+                (orders) => orders?.team_code
             );
             return response.data;
         } catch (e: any) {
@@ -84,7 +88,7 @@ const adminOrderSlice = createSlice({
             state: AdminOrderState,
             { payload }: PayloadAction<OrderFilters>
         ) => {
-            const { status, ordering } = {
+            const { status, ordering, search } = {
                 ...state.filters,
                 ...payload,
             };
@@ -93,11 +97,21 @@ const adminOrderSlice = createSlice({
             state.filters = {
                 ...(status && { status }),
                 ...(ordering && { ordering }),
+                ...(search && { search }),
             };
         },
 
-        clearFilters: (state: AdminOrderState, { payload }: PayloadAction) => {
+        clearFilters: (
+            state: AdminOrderState,
+            { payload }: PayloadAction<{ saveSearch?: boolean } | undefined>
+        ) => {
+            const { search } = state.filters;
+
             state.filters = {};
+
+            if (payload?.saveSearch && search) {
+                state.filters.search = search;
+            }
         },
     },
     extraReducers: (builder) => {
@@ -105,7 +119,7 @@ const adminOrderSlice = createSlice({
             state.isLoading = true;
             state.error = null;
         });
-        builder.addCase(getOrdersWithFilters.fulfilled, (state, { payload }) => {
+        builder.addCase(getOrdersWithFilters.fulfilled, (state, { payload, meta }) => {
             state.isLoading = false;
             state.error = null;
 
@@ -142,6 +156,7 @@ const adminOrderSlice = createSlice({
             }
             adminOrderAdapter.setAll(state, payload.results);
         });
+
         builder.addCase(getOrdersWithFilters.rejected, (state, { payload }) => {
             state.isLoading = false;
             state.error =

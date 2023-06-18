@@ -283,7 +283,7 @@ class OrderAdmin(admin.ModelAdmin):
 
     @admin.display(description="Team Code")
     def get_team_code(self, obj: Order):
-        return obj.team.team_code
+        return obj.team.team_code if obj.team else None
 
 
 @admin.register(OrderItem)
@@ -312,4 +312,6 @@ class IncidentAdmin(admin.ModelAdmin):
 
     @admin.display(description="Team Code")
     def get_team_code(self, obj: Incident):
-        return obj.order_item.order.team.team_code
+        return (
+            obj.order_item.order.team.team_code if obj.order_item.order.team else None
+        )
