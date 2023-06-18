@@ -158,6 +158,13 @@ const IncidentForm = (url: string) => {
                                                     value={values.qty}
                                                     label="Qty"
                                                     onChange={handleChange}
+                                                    MenuProps={{
+                                                        anchorOrigin: {
+                                                            vertical: "bottom",
+                                                            horizontal: "left",
+                                                        },
+                                                        getContentAnchorEl: null,
+                                                    }}
                                                     autoWidth
                                                 >
                                                     {createQuantityList(8)}
