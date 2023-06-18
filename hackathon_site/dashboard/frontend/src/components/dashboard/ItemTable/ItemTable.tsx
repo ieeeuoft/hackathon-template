@@ -236,14 +236,14 @@ export const PendingTables = () => {
         setShowCancelOrderModal(false);
     };
 
-    const submitModal = (cancelOrderId: number | null) => {
+    const submitCancelOrderModal = (cancelOrderId: number | null) => {
         if (cancelOrderId != null) {
             cancelOrder(cancelOrderId); // Perform Cancellation
             setShowCancelOrderModal(false);
         }
     };
 
-    const setModal = (pendingOrder: any) => {
+    const setCancelOrderModal = (pendingOrder: any) => {
         setShowCancelOrderModal(true);
         setorderId(pendingOrder.id);
     };
@@ -282,7 +282,7 @@ export const PendingTables = () => {
                                 }}
                             >
                                 <Button
-                                    onClick={() => setModal(pendingOrder)}
+                                    onClick={() => setCancelOrderModal(pendingOrder)}
                                     disabled={isCancelOrderLoading}
                                     color="secondary"
                                     data-testid="cancel-order-button"
@@ -294,7 +294,9 @@ export const PendingTables = () => {
                                         "Are you sure you want to cancel this order? The team will be notified."
                                     }
                                     isVisible={showCancelOrderModal}
-                                    submitHandler={() => submitModal(orderId)}
+                                    submitHandler={() =>
+                                        submitCancelOrderModal(orderId)
+                                    }
                                     cancelText={"Go Back"}
                                     submitText={"Delete Order"}
                                     cancelHandler={closeModal}
