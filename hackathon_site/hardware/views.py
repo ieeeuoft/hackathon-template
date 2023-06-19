@@ -27,6 +27,7 @@ from hardware.serializers import (
     CategorySerializer,
     HardwareSerializer,
     IncidentSerializer,
+    IncidentPatchSerializer,
     IncidentCreateSerializer,
     OrderListSerializer,
     OrderCreateSerializer,
@@ -43,12 +44,14 @@ ORDER_STATUS_MSG = {
     "Ready for Pickup": "is Ready for Pickup!",
     "Picked Up": "has been Picked Up!",
     "Cancelled": f"was Cancelled by a {settings.HACKATHON_NAME} Exec.",
+    "Returned": f"has been returned.",
 }
 
 ORDER_STATUS_CLOSING_MSG = {
     "Ready for Pickup": "Please go to the Tech Team Station to retrieve your order.",
     "Picked Up": "Take good care of your hardware and Happy Hacking! Remember to return the items when you are finished using them.",
     "Cancelled": f"A {settings.HACKATHON_NAME} exec will be in contact with you shortly. If you don't hear back from them soon, please go to the Tech Team Station for more information on why your order was cancelled.",
+    "Returned": f"Thank you for returning all hardware items!",
 }
 
 
@@ -101,14 +104,34 @@ class IncidentListView(
         return self.create(request, *args, **kwargs)
 
 
-class IncidentDetailView(mixins.RetrieveModelMixin, generics.GenericAPIView):
+class IncidentDetailView(
+    mixins.RetrieveModelMixin, mixins.UpdateModelMixin, generics.GenericAPIView
+):
     queryset = Incident.objects.all()
 
-    serializer_class = IncidentSerializer
     permission_classes = [FullDjangoModelPermissions]
+
+    def get_serializer_class(self):
+        if self.request.method == "GET":
+            return IncidentSerializer
+        elif self.request.method == "PATCH":
+            return IncidentPatchSerializer
 
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
+
+    def patch(self, request, *args, **kwargs):
+        try:
+            data = request.data
+            if not isinstance(data, dict):
+                raise ValueError("Invalid request data format")
+            valid_fields = {"state", "time_occurred", "description"}
+            for field in data:
+                if field not in valid_fields:
+                    raise ValueError(f'"{field}" is not a valid field')
+            return self.partial_update(request, *args, **kwargs)
+        except ValueError as e:
+            return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
 
 
 class OrderItemListView(mixins.ListModelMixin, generics.GenericAPIView):

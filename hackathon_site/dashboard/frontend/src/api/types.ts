@@ -97,7 +97,12 @@ export interface ProfileWithUser extends ProfileWithoutTeamNumber {
 }
 
 /** Orders API */
-export type OrderStatus = "Submitted" | "Ready for Pickup" | "Picked Up" | "Cancelled";
+export type OrderStatus =
+    | "Submitted"
+    | "Ready for Pickup"
+    | "Picked Up"
+    | "Cancelled"
+    | "Returned";
 export type PartReturnedHealth = "Healthy" | "Heavily Used" | "Broken" | "Lost";
 
 export type ItemsInOrder = Omit<OrderItem, "order" | "time_occurred">;
@@ -121,6 +126,7 @@ export type OrderOrdering = "" | "created_at" | "-created_at";
 export interface OrderFilters {
     ordering?: OrderOrdering;
     status?: OrderStatus[];
+    search?: string;
 }
 
 /** Sanitized Orders */
@@ -134,6 +140,8 @@ export interface OrderInTable {
     id: number;
     hardwareInTableRow: OrderItemTableRow[];
     status: OrderStatus;
+    createdTime: string;
+    updatedTime: string;
 }
 
 export type ReturnedItem = ItemsInOrder & { quantity: number; time: string };
