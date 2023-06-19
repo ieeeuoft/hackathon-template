@@ -17,7 +17,7 @@ import {
     InputLabel,
     FormHelperText,
 } from "@material-ui/core";
-import { Route, Link } from "react-router-dom";
+import { Route, Link, useHistory } from "react-router-dom";
 import { Formik, Form, Field, ErrorMessage, FormikValues } from "formik";
 import * as Yup from "yup";
 
@@ -27,24 +27,7 @@ import ArrowLeft from "../../assets/images/icons/arrow-left-solid.svg";
 
 const IncidentForm = (url: string) => {
     const [goBack, setGoBack] = useState(false);
-    // const navigate = useNavigate();
-    // const goBack = () => {
-    //     // navigate back to previous page
-    //     navigate(-1);
-    // }
-
-    useEffect(() => {
-        const handlePopState = () => {
-            // Logic to handle going back to the previous page
-            window.history.back();
-        };
-        window.addEventListener("popstate", handlePopState);
-        return () => {
-            if (goBack) {
-                window.removeEventListener("popstate", handlePopState);
-            }
-        };
-    }, [goBack]);
+    let history = useHistory();
 
     // form schema stuff
     const validationSchema = Yup.object({
@@ -86,8 +69,8 @@ const IncidentForm = (url: string) => {
             <div className={styles.pageContent}>
                 <img
                     src={ArrowLeft}
-                    onClick={() => setGoBack(true)}
-                    alt="back"
+                    onClick={() => history.goBack()}
+                    alt="back arrow"
                     className={styles.arrowIcon}
                 />
                 <Card className={styles.card}>
@@ -149,9 +132,6 @@ const IncidentForm = (url: string) => {
                                                 variant="outlined"
                                                 className={styles.formControl}
                                             >
-                                                {/* Number of Grove temperature and humidity sensor pro affected */}
-                                                {/* <FormLabel>Number of Grove temperature and humidity sensor pro affected</FormLabel>
-                                <br></br> */}
                                                 <InputLabel id="qty">Qty</InputLabel>
                                                 <Select
                                                     name="qty"
