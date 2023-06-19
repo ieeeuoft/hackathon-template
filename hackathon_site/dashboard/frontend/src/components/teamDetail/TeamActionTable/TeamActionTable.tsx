@@ -7,13 +7,19 @@ import {
     ListItemText,
 } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
-import React from "react";
+import React, { useState } from "react";
 import NotificationImportantIcon from "@material-ui/icons/NotificationImportant";
 import CallSplitIcon from "@material-ui/icons/CallSplit";
 import MergeTypeIcon from "@material-ui/icons/MergeType";
 import DeleteIcon from "@material-ui/icons/Delete";
+import PopupModal from "components/general/PopupModal/PopupModal";
 
-const TeamActionTable = () => {
+interface TeamActionTableProps {
+    teamCode: string;
+}
+
+const TeamActionTable = ({ teamCode }: TeamActionTableProps) => {
+    const [visible, setVisible] = useState(false);
     const actionButtons = [
         {
             icon: <NotificationImportantIcon />,
@@ -34,7 +40,7 @@ const TeamActionTable = () => {
             icon: <DeleteIcon />,
             text: "Delete team",
             onClick: () => {
-                alert("Team successfully deleted");
+                setVisible(true);
             },
         },
     ];
@@ -68,6 +74,15 @@ const TeamActionTable = () => {
                     </ListItem>
                 ))}
             </List>
+            <PopupModal
+                title="Confirmation"
+                description={`Are you sure you want to delete this team (${teamCode})?`}
+                isVisible={visible}
+                submitText="Yes"
+                cancelText="No"
+                submitHandler={() => setVisible(false)}
+                cancelHandler={() => setVisible(false)}
+            />
         </Grid>
     );
 };
