@@ -6,5 +6,6 @@ import IncidentForm from "./IncidentForm";
 
 test("renders without crashing", () => {
     const { getByText } = render(<IncidentForm />);
-    expect(getByText("IEEEEEE")).toBeInTheDocument();
+
+    expect(getByText("Item Incident Form")).toBeInTheDocument();
 });
