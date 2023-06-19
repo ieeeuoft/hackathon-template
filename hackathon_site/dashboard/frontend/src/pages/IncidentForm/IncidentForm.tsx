@@ -87,41 +87,48 @@ const IncidentForm = (url: string) => {
                                 {({ errors, handleSubmit, handleChange, values }) => (
                                     <form onSubmit={handleSubmit}>
                                         <div className={styles.formContainer}>
-                                            <Field name="state">
-                                                {({ field }: { field: any }) => (
-                                                    <>
-                                                        <RadioGroup
-                                                            {...field}
-                                                            value={field.value}
-                                                            onChange={field.onChange}
-                                                            row
-                                                        >
-                                                            <FormControlLabel
-                                                                value="broken"
-                                                                control={
-                                                                    <Radio color="primary" />
+                                            <FormControl error={!!errors?.qty}>
+                                                <Field name="state">
+                                                    {({ field }: { field: any }) => (
+                                                        <>
+                                                            <RadioGroup
+                                                                {...field}
+                                                                value={field.value}
+                                                                onChange={
+                                                                    field.onChange
                                                                 }
-                                                                label="Broken"
-                                                            />
-                                                            <FormControlLabel
-                                                                value="lost"
-                                                                control={
-                                                                    <Radio color="primary" />
-                                                                }
-                                                                label="Lost"
-                                                            />
-                                                            <FormControlLabel
-                                                                value="other"
-                                                                control={
-                                                                    <Radio color="primary" />
-                                                                }
-                                                                label="Other"
-                                                            />
-                                                        </RadioGroup>
-                                                        {/* <ErrorMessage name="state" component="div" /> */}
-                                                    </>
-                                                )}
-                                            </Field>
+                                                                row
+                                                            >
+                                                                <FormControlLabel
+                                                                    value="broken"
+                                                                    control={
+                                                                        <Radio color="primary" />
+                                                                    }
+                                                                    label="Broken"
+                                                                />
+                                                                <FormControlLabel
+                                                                    value="lost"
+                                                                    control={
+                                                                        <Radio color="primary" />
+                                                                    }
+                                                                    label="Lost"
+                                                                />
+                                                                <FormControlLabel
+                                                                    value="other"
+                                                                    control={
+                                                                        <Radio color="primary" />
+                                                                    }
+                                                                    label="Other"
+                                                                />
+                                                            </RadioGroup>
+                                                        </>
+                                                    )}
+                                                </Field>
+                                                <FormHelperText>
+                                                    {errors?.qty}
+                                                </FormHelperText>
+                                            </FormControl>
+                                            {/* {errors.qty && <p>{errors.qty}</p>} */}
                                             <br></br>
                                             <Typography>
                                                 Number of Grove temperature and humidity
