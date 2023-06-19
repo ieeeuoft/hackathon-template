@@ -25,17 +25,25 @@ import Header from "components/general/Header/Header";
 
 import ArrowLeft from "../../assets/images/icons/arrow-left-solid.svg";
 
+export const INCIDENT_ERROR_MSG = {
+    state: "Please select an option",
+    qty: "Please indicate the quantity",
+    what: "Please indicate what happened to the hardware",
+    when: "Please indicate when this occurred",
+    where: "Please indicate where this occurred",
+};
+
 const IncidentForm = (url: string) => {
     const [goBack, setGoBack] = useState(false);
     let history = useHistory();
 
     // form schema stuff
     const validationSchema = Yup.object({
-        state: Yup.string().required("Please select an option"),
-        qty: Yup.string().required("Please indicate the quantity"),
-        what: Yup.string().required("Please indicate what happened to the hardware"),
-        when: Yup.string().required("Please indicate when this occurred"),
-        where: Yup.string().required("Please indicate where this occurred"),
+        state: Yup.string().required(INCIDENT_ERROR_MSG.state),
+        qty: Yup.string().required(INCIDENT_ERROR_MSG.qty),
+        what: Yup.string().required(INCIDENT_ERROR_MSG.what),
+        when: Yup.string().required(INCIDENT_ERROR_MSG.when),
+        where: Yup.string().required(INCIDENT_ERROR_MSG.where),
     });
 
     const initialValues = {
@@ -76,7 +84,7 @@ const IncidentForm = (url: string) => {
                 <Card className={styles.card}>
                     <CardContent>
                         <div className={styles.cardContent}>
-                            <div className={styles.header}>
+                            <div style={{ marginBottom: "20px" }}>
                                 <Typography variant="h1">Item Incident Form</Typography>
                             </div>
                             <Formik
@@ -85,9 +93,12 @@ const IncidentForm = (url: string) => {
                                 onSubmit={handleSubmit}
                             >
                                 {({ errors, handleSubmit, handleChange, values }) => (
-                                    <form onSubmit={handleSubmit}>
+                                    <form
+                                        onSubmit={handleSubmit}
+                                        className={styles.form}
+                                    >
                                         <div className={styles.formContainer}>
-                                            <FormControl error={!!errors?.qty}>
+                                            <FormControl error={!!errors?.state}>
                                                 <Field name="state">
                                                     {({ field }: { field: any }) => (
                                                         <>
@@ -125,19 +136,20 @@ const IncidentForm = (url: string) => {
                                                     )}
                                                 </Field>
                                                 <FormHelperText>
-                                                    {errors?.qty}
+                                                    {errors?.state}
                                                 </FormHelperText>
                                             </FormControl>
                                             {/* {errors.qty && <p>{errors.qty}</p>} */}
                                             <br></br>
                                             <Typography>
                                                 Number of Grove temperature and humidity
-                                                sensor pro affected
+                                                sensor pro affected.
                                             </Typography>
                                             <br></br>
                                             <FormControl
                                                 variant="outlined"
-                                                className={styles.formControl}
+                                                className={styles.dropdown}
+                                                error={!!errors?.qty}
                                             >
                                                 <InputLabel id="qty">Qty</InputLabel>
                                                 <Select
@@ -157,7 +169,7 @@ const IncidentForm = (url: string) => {
                                                     {createQuantityList(8)}
                                                 </Select>
                                                 <FormHelperText>
-                                                    {!!errors?.qty}
+                                                    {errors?.qty}
                                                 </FormHelperText>
                                             </FormControl>
 
@@ -201,7 +213,19 @@ const IncidentForm = (url: string) => {
                                                 multiline
                                             />
                                             <br></br>
-                                            <Button type="submit">Submit</Button>
+                                            <div
+                                                style={{
+                                                    alignSelf: "center",
+                                                    width: "fit-contents",
+                                                }}
+                                            >
+                                                <Button
+                                                    type="submit"
+                                                    variant="contained"
+                                                >
+                                                    Submit
+                                                </Button>
+                                            </div>
                                         </div>
                                     </form>
                                 )}
