@@ -1,11 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import styles from "./IncidentForm.module.scss";
 import {
     Typography,
-    Container,
     Card,
     CardContent,
-    FormLabel,
     RadioGroup,
     FormControlLabel,
     Radio,
@@ -17,8 +15,8 @@ import {
     InputLabel,
     FormHelperText,
 } from "@material-ui/core";
-import { Route, Link, useHistory } from "react-router-dom";
-import { Formik, Form, Field, ErrorMessage, FormikValues } from "formik";
+import { useHistory } from "react-router-dom";
+import { Formik, Field, FormikValues } from "formik";
 import * as Yup from "yup";
 
 import Header from "components/general/Header/Header";
@@ -34,7 +32,6 @@ export const INCIDENT_ERROR_MSG = {
 };
 
 const IncidentForm = (url: string) => {
-    const [goBack, setGoBack] = useState(false);
     let history = useHistory();
 
     // form schema stuff
