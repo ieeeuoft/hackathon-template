@@ -18,7 +18,7 @@ A website template for hackathons run by [IEEE University of Toronto Student Bra
 - Carmen Chau
 - Samuel Liu
 - Daniel Qiu
-
+- Ishika Mittal
 ## Contents
 - [Requirements](#requirements)
 - [Getting Started](#getting-started)
