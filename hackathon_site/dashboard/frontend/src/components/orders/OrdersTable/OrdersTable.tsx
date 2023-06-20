@@ -56,6 +56,7 @@ const OrdersTable = ({ ordersData }: OrdersTableProps) => {
                 return formattedTime;
             },
         },
+        { field: "team_id", headerName: "Team ID", flex: 1, minWidth: 100 },
         { field: "team_code", headerName: "Team", flex: 1 },
         {
             field: "items",
@@ -78,7 +79,6 @@ const OrdersTable = ({ ordersData }: OrdersTableProps) => {
             minWidth: 250,
             renderCell: (params) => <OrderStateIcon status={params.value} />,
         },
-        { field: "team_id", headerName: "Team ID" },
         { field: "updated_at", headerName: "Updated At" },
         { field: "request", headerName: "Request" },
     ];
@@ -94,7 +94,6 @@ const OrdersTable = ({ ordersData }: OrdersTableProps) => {
                     pageSizeOptions={[5, 10, 15]}
                     columnVisibilityModel={{
                         // hide specific columns
-                        team_id: false,
                         updated_at: false,
                         request: false,
                     }}
