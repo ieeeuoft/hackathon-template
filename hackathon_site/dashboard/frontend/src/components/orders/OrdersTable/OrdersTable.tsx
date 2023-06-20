@@ -2,7 +2,7 @@ import React from "react";
 import { DataGrid, GridColDef, GridEventListener } from "@mui/x-data-grid";
 import { ItemsInOrder, Order } from "api/types";
 import { format, parseISO } from "date-fns"; // to parse date
-import { statusIconMap } from "api/orders";
+import { statusIconMap, statusStylesMap } from "api/orders";
 import styles from "./OrdersTable.module.scss";
 
 // status icons
@@ -15,23 +15,19 @@ interface OrderStateIcon {
     status: string;
 }
 
-interface StatusIcon {
-    status: string;
-}
-
-const StatusIcon = ({ status }: StatusIcon) => {
-    const iconSrc = statusIconMap[status];
-    return <img src={iconSrc} className={styles.statusIcon} alt={`${status} icon`} />;
-};
-
 const OrderStateIcon = ({ status }: OrderStateIcon) => {
     const filterState: string = status.replace(/\s+/g, "");
-    console.log(filterState);
+    const styleIcon = statusStylesMap[filterState];
+    const iconSrc = statusIconMap[filterState];
 
     return (
         <div className={styles.container}>
-            <div className={`${styles.container} order-${filterState}-icon`}>
-                <StatusIcon status={filterState} />
+            <div className={`${styles.container} ${styleIcon}`}>
+                <img
+                    src={iconSrc}
+                    className={styles.statusIcon}
+                    alt={`${status} icon`}
+                />
                 {status}
             </div>
         </div>
