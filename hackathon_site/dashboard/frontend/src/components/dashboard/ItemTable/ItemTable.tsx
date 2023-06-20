@@ -230,14 +230,22 @@ export const PendingTables = () => {
     const toggleVisibility = () => dispatch(togglePendingTable());
     const cancelOrder = (orderId: number) => dispatch(cancelOrderThunk(orderId));
     const [showCancelOrderModal, setShowCancelOrderModal] = useState(false);
+    const [orderId, setorderId] = useState(null);
 
     const closeModal = () => {
         setShowCancelOrderModal(false);
     };
 
-    const submitModal = (cancelOrderId: number) => {
-        cancelOrder(cancelOrderId); // Perform Cancellation
-        setShowCancelOrderModal(false);
+    const submitCancelOrderModal = (cancelOrderId: number | null) => {
+        if (cancelOrderId != null) {
+            cancelOrder(cancelOrderId); // Perform Cancellation
+            setShowCancelOrderModal(false);
+        }
+    };
+
+    const setCancelOrderModal = (pendingOrder: any) => {
+        setShowCancelOrderModal(true);
+        setorderId(pendingOrder.id);
     };
 
     return (
@@ -274,7 +282,7 @@ export const PendingTables = () => {
                                 }}
                             >
                                 <Button
-                                    onClick={() => setShowCancelOrderModal(true)}
+                                    onClick={() => setCancelOrderModal(pendingOrder)}
                                     disabled={isCancelOrderLoading}
                                     color="secondary"
                                     data-testid="cancel-order-button"
@@ -286,7 +294,9 @@ export const PendingTables = () => {
                                         "Are you sure you want to cancel this order? The team will be notified."
                                     }
                                     isVisible={showCancelOrderModal}
-                                    submitHandler={() => submitModal(pendingOrder.id)}
+                                    submitHandler={() =>
+                                        submitCancelOrderModal(orderId)
+                                    }
                                     cancelText={"Go Back"}
                                     submitText={"Delete Order"}
                                     cancelHandler={closeModal}
