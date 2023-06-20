@@ -190,7 +190,7 @@ export const CheckedOutTables = () =>
                                                             {/*>*/}
                                                             {/*    Report broken/lost*/}
                                                             {/*</Button>*/}
-                                                            <Link to="/incident-page">
+                                                            <Link to="/incident-form">
                                                                 <Button
                                                                     color="secondary"
                                                                     size="small"
