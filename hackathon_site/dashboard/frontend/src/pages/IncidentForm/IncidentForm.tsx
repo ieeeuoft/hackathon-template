@@ -34,7 +34,6 @@ export const INCIDENT_ERROR_MSG = {
 const IncidentForm = (url: string) => {
     let history = useHistory();
 
-    // form schema stuff
     const validationSchema = Yup.object({
         state: Yup.string().required(INCIDENT_ERROR_MSG.state),
         qty: Yup.string().required(INCIDENT_ERROR_MSG.qty),
@@ -51,9 +50,11 @@ const IncidentForm = (url: string) => {
         where: "",
     };
 
-    const handleSubmit = async (values: FormikValues) => {
+    const handleSubmit = async (values: FormikValues, { resetForm }: any) => {
         console.log("submit");
         console.log(values);
+        // await submit function
+        resetForm();
     };
 
     const createQuantityList = (number: number) => {
