@@ -6,6 +6,7 @@ import {
     ListItemIcon,
     ListItemText,
 } from "@material-ui/core";
+import { useHistory } from "react-router-dom";
 import Typography from "@material-ui/core/Typography";
 import React, { useState } from "react";
 import NotificationImportantIcon from "@material-ui/icons/NotificationImportant";
@@ -13,6 +14,8 @@ import CallSplitIcon from "@material-ui/icons/CallSplit";
 import MergeTypeIcon from "@material-ui/icons/MergeType";
 import DeleteIcon from "@material-ui/icons/Delete";
 import PopupModal from "components/general/PopupModal/PopupModal";
+import { useDispatch } from "react-redux";
+import { deleteTeamThunk } from "slices/event/teamAdminSlice";
 
 interface TeamActionTableProps {
     teamCode: string;
@@ -44,6 +47,15 @@ const TeamActionTable = ({ teamCode }: TeamActionTableProps) => {
             },
         },
     ];
+    const dispatch = useDispatch();
+
+    const history = useHistory();
+
+    const deleteTeam = () => {
+        setVisible(false);
+        dispatch(deleteTeamThunk(teamCode));
+        history.push(`/teams`);
+    };
 
     return (
         <Grid container direction="column" spacing={1} item md={6} xs={12}>
@@ -80,7 +92,7 @@ const TeamActionTable = ({ teamCode }: TeamActionTableProps) => {
                 isVisible={visible}
                 submitText="Yes"
                 cancelText="No"
-                submitHandler={() => setVisible(false)}
+                submitHandler={deleteTeam}
                 cancelHandler={() => setVisible(false)}
             />
         </Grid>
