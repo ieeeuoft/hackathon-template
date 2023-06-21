@@ -30,6 +30,8 @@ import {
     errorSelector,
     isReturnedLoadingSelector,
     returnItems,
+    updateOrderStatus,
+    UpdateOrderAttributes,
 } from "slices/order/teamOrderSlice";
 import {
     getUpdatedHardwareDetails,
@@ -95,6 +97,14 @@ export const TeamCheckedOutOrderTable = () => {
                 }
             }
             dispatch(returnItems({ hardware, order: orderId }));
+            // If all order items have been returned, update order status to 'Returned'
+            if (hardware.length === keys.length / 3) {
+                const updateOrderData: UpdateOrderAttributes = {
+                    id: orderId,
+                    status: "Returned",
+                };
+                dispatch(updateOrderStatus(updateOrderData));
+            }
         } catch (e) {
             dispatch(
                 displaySnackbar({
@@ -142,6 +152,8 @@ export const TeamCheckedOutOrderTable = () => {
                                         <GeneralOrderTableTitle
                                             orderId={checkedOutOrder.id}
                                             orderStatus={checkedOutOrder.status}
+                                            createdTime={checkedOutOrder.createdTime}
+                                            updatedTime={checkedOutOrder.updatedTime}
                                         />
                                         <TableContainer
                                             component={Paper}
