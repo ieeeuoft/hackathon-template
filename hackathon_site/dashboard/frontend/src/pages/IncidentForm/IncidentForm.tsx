@@ -31,7 +31,7 @@ export const INCIDENT_ERROR_MSG = {
     where: "Please indicate where this occurred",
 };
 
-const IncidentForm = (url: string) => {
+const IncidentForm = () => {
     let history = useHistory();
 
     const validationSchema = Yup.object({
