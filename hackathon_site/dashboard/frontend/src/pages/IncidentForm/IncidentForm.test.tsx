@@ -1,9 +1,10 @@
 import React from "react";
-import { render } from "testing/utils";
+import { fireEvent, render, waitFor } from "testing/utils";
 import IncidentForm from "./IncidentForm";
+import { INCIDENT_ERROR_MSG } from "./IncidentForm";
 
-describe("<IncidentForm />", () => {
-    it("Renders without crashing", () => {
+describe("Incident Form", () => {
+    test("Renders without crashing", () => {
         const { getByText } = render(<IncidentForm />);
         expect(getByText("Item Incident Form")).toBeInTheDocument();
     });

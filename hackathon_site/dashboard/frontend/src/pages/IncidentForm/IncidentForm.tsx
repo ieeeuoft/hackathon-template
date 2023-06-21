@@ -106,6 +106,7 @@ const IncidentForm = (url: string) => {
                                                                 onChange={
                                                                     field.onChange
                                                                 }
+                                                                data-testid="radio-state"
                                                                 row
                                                             >
                                                                 <FormControlLabel
@@ -137,7 +138,6 @@ const IncidentForm = (url: string) => {
                                                     {errors?.state}
                                                 </FormHelperText>
                                             </FormControl>
-                                            {/* {errors.qty && <p>{errors.qty}</p>} */}
                                             <br></br>
                                             <Typography>
                                                 Number of Grove temperature and humidity
