@@ -190,7 +190,9 @@ export const CheckedOutTables = () =>
                                                             {/*>*/}
                                                             {/*    Report broken/lost*/}
                                                             {/*</Button>*/}
-                                                            <Link to="/incident-form">
+                                                            <Link
+                                                                to={`/incident-form?data=${row.quantityGranted}`}
+                                                            >
                                                                 <Button
                                                                     color="secondary"
                                                                     size="small"

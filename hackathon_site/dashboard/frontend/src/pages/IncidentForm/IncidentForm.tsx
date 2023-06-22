@@ -15,13 +15,13 @@ import {
     InputLabel,
     FormHelperText,
 } from "@material-ui/core";
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import { Formik, Field, FormikValues } from "formik";
 import * as Yup from "yup";
-
 import Header from "components/general/Header/Header";
-
 import ArrowLeft from "../../assets/images/icons/arrow-left-solid.svg";
+import { displaySnackbar } from "slices/ui/uiSlice";
+import { useDispatch } from "react-redux";
 
 export const INCIDENT_ERROR_MSG = {
     state: "Please select an option",
@@ -32,7 +32,11 @@ export const INCIDENT_ERROR_MSG = {
 };
 
 const IncidentForm = () => {
+    const dispatch = useDispatch();
     let history = useHistory();
+    let location = useLocation();
+    const searchParams = new URLSearchParams(location.search);
+    const data = searchParams.get("data");
 
     const validationSchema = Yup.object({
         state: Yup.string().required(INCIDENT_ERROR_MSG.state),
@@ -55,6 +59,18 @@ const IncidentForm = () => {
         console.log(values);
         // await submit function
         resetForm();
+
+        // display success snackbar
+        dispatch(
+            displaySnackbar({
+                message: `Successfully submitted incident form!`,
+                options: {
+                    variant: "success",
+                },
+            })
+        );
+        // navigate back to previous page
+        history.goBack();
     };
 
     const createQuantityList = (number: number) => {
@@ -164,7 +180,7 @@ const IncidentForm = () => {
                                                     }}
                                                     autoWidth
                                                 >
-                                                    {createQuantityList(8)}
+                                                    {createQuantityList(Number(data))}
                                                 </Select>
                                                 <FormHelperText>
                                                     {errors?.qty}
