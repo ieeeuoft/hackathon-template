@@ -18,6 +18,8 @@ class Team(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, null=False)
     updated_at = models.DateTimeField(auto_now=True, null=False)
 
+    project_description = models.CharField(max_length=500, null=True)
+
     def __str__(self):
         return self.team_code
 

@@ -277,7 +277,10 @@ class CurrentTeamOrderListView(generics.ListAPIView):
 
 
 class TeamDetailView(
-    mixins.RetrieveModelMixin, mixins.DestroyModelMixin, generics.GenericAPIView
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
+    generics.GenericAPIView,
 ):
     serializer_class = TeamSerializer
     permission_classes = [FullDjangoModelPermissions]
@@ -299,6 +302,21 @@ class TeamDetailView(
             )
 
         return self.destroy(request, *args, **kwargs)
+
+    def patch(self, request, *args, **kwargs):
+        try:
+            data = request.data
+            if not isinstance(data, dict):
+                raise ValueError("Invalid request data format")
+            valid_fields = {"project_description"}
+            for field in data:
+                if field not in valid_fields:
+                    raise ValueError(f'"{field}" is not a valid field for update')
+                if field == "project_description" and not isinstance(data[field], str):
+                    raise ValueError("project_description must be a string")
+            return self.partial_update(request, *args, **kwargs)
+        except ValueError as e:
+            return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
 
 
 class TeamOrderDetailView(mixins.UpdateModelMixin, generics.GenericAPIView):
