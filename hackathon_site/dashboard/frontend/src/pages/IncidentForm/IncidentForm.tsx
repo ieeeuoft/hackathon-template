@@ -22,6 +22,7 @@ import Header from "components/general/Header/Header";
 import ArrowLeft from "../../assets/images/icons/arrow-left-solid.svg";
 import { displaySnackbar } from "slices/ui/uiSlice";
 import { useDispatch } from "react-redux";
+import { FileWatcherEventKind } from "typescript";
 
 export const INCIDENT_ERROR_MSG = {
     state: "Please select an option",
@@ -30,6 +31,48 @@ export const INCIDENT_ERROR_MSG = {
     when: "Please indicate when this occurred",
     where: "Please indicate where this occurred",
 };
+
+const incidentFormComponents = [
+    {
+        type: "radio",
+        options: ["broken", "lost", "other"],
+    },
+    {
+        type: "select",
+        id: "qty",
+        name: "qty",
+        label: "Qty",
+        description: "Number of Grove temperature and humidity sensor pro affected.",
+        style: styles.dropdown,
+        // onChange:
+        // error
+        // helperText
+    },
+    {
+        type: "text",
+        id: "what",
+        name: "what",
+        label: "",
+        description: "",
+        placeholder: "What happened to the hardware?",
+    },
+    {
+        type: "text",
+        id: "when",
+        name: "when",
+        label: "",
+        description: "",
+        placeholder: "When did this occur?",
+    },
+    {
+        type: "where",
+        id: "where",
+        name: "where",
+        label: "",
+        description: "",
+        placeholder: "Where did this occur?",
+    },
+];
 
 const IncidentForm = () => {
     const dispatch = useDispatch();
@@ -101,6 +144,114 @@ const IncidentForm = () => {
                             <div style={{ marginBottom: "20px" }}>
                                 <Typography variant="h1">Item Incident Form</Typography>
                             </div>
+
+                            {/* NEW FORMIK */}
+                            <Formik
+                                initialValues={initialValues}
+                                validationSchema={validationSchema}
+                                onSubmit={handleSubmit}
+                            >
+                                {(formikProps) => (
+                                    <>
+                                        {incidentFormComponents.map((field, index) => {
+                                            if (field.description) {
+                                                return (
+                                                    <>
+                                                        <Typography>
+                                                            {" "}
+                                                            {field.description}
+                                                        </Typography>
+                                                    </>
+                                                );
+                                            }
+
+                                            if (field.type === "radio") {
+                                                return <>Radio Group....</>;
+                                            } else if (field.type === "select") {
+                                                return (
+                                                    <>
+                                                        <FormControl
+                                                            variant="outlined"
+                                                            className={styles.dropdown}
+                                                            error={
+                                                                !!formikProps.errors
+                                                                    ?.qty
+                                                            }
+                                                        >
+                                                            <InputLabel id={field.id}>
+                                                                {field.label}
+                                                            </InputLabel>
+                                                            <Select
+                                                                name="qty"
+                                                                value={
+                                                                    formikProps.values
+                                                                        .qty
+                                                                }
+                                                                label="Qty"
+                                                                onChange={
+                                                                    formikProps.handleChange
+                                                                }
+                                                                MenuProps={{
+                                                                    anchorOrigin: {
+                                                                        vertical:
+                                                                            "bottom",
+                                                                        horizontal:
+                                                                            "left",
+                                                                    },
+                                                                    getContentAnchorEl:
+                                                                        null,
+                                                                }}
+                                                                autoWidth
+                                                            >
+                                                                {createQuantityList(
+                                                                    Number(data)
+                                                                )}
+                                                            </Select>
+                                                            <FormHelperText>
+                                                                {
+                                                                    formikProps.errors
+                                                                        ?.qty
+                                                                }
+                                                            </FormHelperText>
+                                                        </FormControl>
+                                                    </>
+                                                );
+                                            } else if (field.type === "text") {
+                                                return (
+                                                    <>
+                                                        <TextField
+                                                            id={field.id}
+                                                            name={field.name}
+                                                            placeholder={
+                                                                field.placeholder
+                                                            }
+                                                            value={
+                                                                formikProps.values.what
+                                                            } // need to fix
+                                                            error={
+                                                                !!formikProps.errors
+                                                                    ?.what
+                                                            }
+                                                            helperText={
+                                                                formikProps.errors?.what
+                                                            }
+                                                            onChange={
+                                                                formikProps.handleChange
+                                                            }
+                                                            variant="outlined"
+                                                            type="text"
+                                                            multiline
+                                                        />
+                                                    </>
+                                                );
+                                            }
+                                            return <></>;
+                                        })}
+                                    </>
+                                )}
+                            </Formik>
+
+                            {/* OLD FORMIK */}
                             <Formik
                                 initialValues={initialValues}
                                 validationSchema={validationSchema}
