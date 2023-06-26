@@ -1,3 +1,6 @@
+@import "assets/abstracts/mixins.scss";
+@import "assets/abstracts/variables.scss";
+
 .arrowIcon {
     width: 50px;
     height: 50px;
@@ -21,7 +24,11 @@
 .formContainer {
     display: flex;
     flex-direction: column;
-    width: max(40vw, 620px);
+    width: max(40vw, 640px);
+
+    @include responsive(md-down) {
+        width: 100%;
+    }
 }
 
 .card {
@@ -41,4 +48,8 @@
 
 .dropdown {
     width: 200px;
+
+    @include responsive(md-down) {
+        width: 30%;
+    }
 }
