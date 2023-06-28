@@ -144,12 +144,30 @@ const CompleteOrderButton = ({ order }: { order: OrderInTable }) => {
 export const SimplePendingOrderFulfillmentTable = () => {
     const dispatch = useDispatch();
     const orders = useSelector(pendingOrdersSelector);
-    orders.sort((order1, order2) => {
+    let ready_orders = [];
+    let submitted_orders = [];
+    for (let order of orders) {
+        if (order.status === "Ready for Pickup") {
+            ready_orders.push(order);
+        } else {
+            submitted_orders.push(order);
+        }
+    }
+    ready_orders.sort((order1, order2) => {
         return (
             new Date(order1.updatedTime).valueOf() -
             new Date(order2.updatedTime).valueOf()
         );
     });
+
+    submitted_orders.sort((order1, order2) => {
+        return (
+            new Date(order1.updatedTime).valueOf() -
+            new Date(order2.updatedTime).valueOf()
+        );
+    });
+
+    orders.splice(0, orders.length, ...ready_orders, ...submitted_orders);
 
     const [isVisible, setVisibility] = useState(true);
     const toggleVisibility = () => setVisibility(!isVisible);
