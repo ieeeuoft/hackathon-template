@@ -67,7 +67,15 @@ const setInitialValues = (
 };
 
 export const TeamCheckedOutOrderTable = () => {
-    const orders = useSelector(checkedOutOrdersSelector);
+    const unsorted_orders = useSelector(checkedOutOrdersSelector);
+    const orders = unsorted_orders.slice();
+
+    orders.sort((order1, order2) => {
+        return (
+            new Date(order2.updatedTime).valueOf() -
+            new Date(order1.updatedTime).valueOf()
+        );
+    });
     const fetchOrdersError = useSelector(errorSelector);
     const returnIsLoading = useSelector(isReturnedLoadingSelector);
     const hardware = useSelector(hardwareSelectors.selectEntities);
