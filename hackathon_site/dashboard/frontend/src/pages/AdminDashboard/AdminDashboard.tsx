@@ -2,45 +2,69 @@ import React from "react";
 import Typography from "@material-ui/core/Typography";
 import Header from "components/general/Header/Header";
 import { hackathonName } from "constants.js";
-import orderCard from "components/orders/OrderCard/OrderCard";
+import OrderCard from "components/orders/OrderCard/OrderCard";
+import { useDispatch, useSelector } from "react-redux";
 import styles from "./AdminDashboard.module.scss";
 import Grid from "@material-ui/core/Grid";
-import ImageList from "@material-ui/core/ImageList";
-import ImageListItem from "@material-ui/core/ImageListItem";
-import Paper from "@material-ui/core/Paper";
-import Card from "@material-ui/core/Card";
 import Button from "@material-ui/core/Button";
-import { makeStyles } from "@material-ui/core/styles";
+import {
+    adminOrderSelectors,
+    getOrdersWithFilters,
+    setFilters,
+} from "../../slices/order/adminOrderSlice";
+import { OrderFilters } from "../../api/types";
 
 const AdminDashboard = () => {
+    const dispatch = useDispatch();
+    const orders = useSelector(adminOrderSelectors.selectAll);
+    const pendingFilter: OrderFilters = {
+        status: ["Submitted"],
+    };
+    dispatch(setFilters(pendingFilter));
+    dispatch(getOrdersWithFilters());
+    const ordersLength = orders.length < 7 ? orders.length : 6;
     return (
         <>
             <Header />
             <Typography variant="h1">{hackathonName} Admin Dashboard</Typography>
-            <div className={styles.section}>
-                <Typography className={styles.title}>
-                    Pending Orders
-                    <Button
-                        color="primary"
-                        href="/orders"
-                        className={styles.titleButton}
+            <Grid className={styles.dashboard}>
+                <div className={styles.section}>
+                    <Typography className={styles.title}>Overview</Typography>
+                </div>
+
+                <div className={styles.section}>
+                    <Typography className={styles.title}>
+                        Pending Orders
+                        <Button
+                            color="primary"
+                            href="/orders"
+                            className={styles.titleButton}
+                        >
+                            VIEW ALL
+                        </Button>
+                    </Typography>
+                    <Grid
+                        container
+                        spacing={2}
+                        direction="row"
+                        justifyContent="flex-start"
                     >
-                        View More
-                    </Button>
-                </Typography>
-                <ImageList gap={8} cols={6} rowHeight={164}>
-                    {itemData.map((item) => (
-                        <ImageListItem key={item.img}>
-                            <img
-                                src={`${item.img}?w=164&h=164&fit=crop&auto=format`}
-                                srcSet={`${item.img}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
-                                alt={item.title}
-                                loading="lazy"
-                            />
-                        </ImageListItem>
-                    ))}
-                </ImageList>
-            </div>
+                        {orders.slice(0, ordersLength).map((pendingOrder, idx) => (
+                            <Grid item lg={2} md={3} sm={4} xs={12} key={idx}>
+                                {["Submitted"].includes(pendingOrder.status) && (
+                                    <OrderCard
+                                        teamCode={pendingOrder.team_code}
+                                        orderQuantity={pendingOrder.items.length}
+                                        time={pendingOrder.updated_at}
+                                        id={pendingOrder.team_id}
+                                        status={pendingOrder.status}
+                                    />
+                                )}
+                            </Grid>
+                        ))}
+                    </Grid>
+                </div>
+            </Grid>
         </>
     );
 };
