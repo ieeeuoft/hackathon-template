@@ -1,18 +1,6 @@
 @import "./../../assets/abstracts/mixins";
 @import "./../../assets/abstracts/variables";
 
-.overviewCard {
-    text-align: left;
-    height: 52px;
-    justify-content: center;
-    border-radius: 0px;
-    @include flexPosition($dir: column);
-}
-
-.overviewCardTypography {
-    margin-left: 10px;
-}
-
 .titleButton {
     margin-left: 45px;
 }
@@ -33,23 +21,4 @@
 
 .section {
     margin-bottom: 1rem;
-}
-
-.orderCard {
-    width: 225px;
-    height: 164px;
-}
-
-.orderCardGrid {
-    width: 225px;
-    height: 164px;
-    overflow-x: scroll;
-}
-
-.overviewCardGrid {
-    margin-top: 40px;
-
-    @include responsive(sm-down) {
-        margin-top: 20px;
-    }
 }
