@@ -888,8 +888,10 @@ class EventTeamDetailViewTestCase(SetupUserMixin, APITestCase):
 
         self.permissions = Permission.objects.filter(
             Q(content_type__app_label="event", codename="view_team")
+            | Q(content_type__app_label="event", codename="change_team")
             | Q(content_type__app_label="event", codename="delete_team"),
         )
+
         super().setUp()
 
     def _build_view(self, team_code):
@@ -941,6 +943,58 @@ class EventTeamDetailViewTestCase(SetupUserMixin, APITestCase):
         self._login(self.permissions)
         response = self.client.delete(self._build_view(self.team3.team_code))
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_team_patch_not_login(self):
+        response = self.client.patch(
+            self._build_view("56ABD"), data={"project_description": "New description"}
+        )
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_team_patch_no_permissions(self):
+        self._login()
+        response = self.client.patch(
+            self._build_view("56ABD"), data={"project_description": "New description"}
+        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_team_patch_has_permissions(self):
+        self._login(self.permissions)
+        response = self.client.patch(
+            self._build_view(self.team.team_code),
+            data={"project_description": "New description"},
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        updated_team = Team.objects.get(team_code=self.team.team_code)
+        self.assertEqual(updated_team.project_description, "New description")
+
+    def test_team_patch_invalid_request_data_format(self):
+        self._login(self.permissions)
+        response = self.client.patch(
+            self._build_view(self.team.team_code), data={"Invalid data"}, format="json"
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data, "Invalid request data format")
+
+    def test_team_patch_invalid_field_for_update(self):
+        self._login(self.permissions)
+        response = self.client.patch(
+            self._build_view(self.team.team_code),
+            data={"invalid_field": "Invalid data"},
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            response.data, '"invalid_field" is not a valid field for update'
+        )
+
+    def test_team_patch_invalid_project_description(self):
+        self._login(self.permissions)
+        response = self.client.patch(
+            self._build_view(self.team.team_code),
+            data={"project_description": 12345},
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data, "project_description must be a string")
 
 
 class TeamOrderDetailViewTestCase(SetupUserMixin, APITestCase):
