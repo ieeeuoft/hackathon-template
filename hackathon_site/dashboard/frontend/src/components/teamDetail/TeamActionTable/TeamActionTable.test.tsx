@@ -5,7 +5,7 @@ import TeamActionTable from "components/teamDetail/TeamActionTable/TeamActionTab
 
 describe("Team action table", () => {
     test("Renders team action table", () => {
-        const { container } = render(<TeamActionTable />);
+        const { container } = render(<TeamActionTable teamCode={""} />);
 
         expect(
             screen.getByText("Notify team to come to table to resolve issue")

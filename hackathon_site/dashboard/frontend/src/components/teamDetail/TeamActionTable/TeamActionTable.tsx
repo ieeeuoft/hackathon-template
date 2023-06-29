@@ -51,10 +51,15 @@ const TeamActionTable = ({ teamCode }: TeamActionTableProps) => {
 
     const history = useHistory();
 
-    const deleteTeam = () => {
+    const deleteTeam = async () => {
         setVisible(false);
-        dispatch(deleteTeamThunk(teamCode));
-        history.push(`/teams`);
+        try {
+            await dispatch(deleteTeamThunk(teamCode));
+            history.push("/teams");
+        } catch (error) {
+            // Handle any errors that occur during deletion
+            console.error("Error deleting team:", error);
+        }
     };
 
     return (
