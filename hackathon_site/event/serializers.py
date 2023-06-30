@@ -174,6 +174,14 @@ class TeamSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
             "profiles",
+            "project_description",
+        )
+        read_only_fields = (
+            "id",
+            "team_code",
+            "created_at",
+            "updated_at",
+            "profiles",
         )
 
 
