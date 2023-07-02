@@ -32,6 +32,12 @@ export const INCIDENT_ERROR_MSG = {
     where: "Please indicate where this occurred",
 };
 
+const radioOptions = ["broken", "lost", "other"];
+
+const capitalizeFirstLetter = (str: string) => {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+};
+
 const incidentFormComponents = [
     {
         type: "radio",
@@ -100,9 +106,10 @@ const IncidentForm = () => {
     const handleSubmit = async (values: FormikValues, { resetForm }: any) => {
         console.log("submit");
         console.log(values);
-        // await submit function
-        resetForm();
 
+        // TODO: submit the form
+
+        resetForm();
         // display success snackbar
         dispatch(
             displaySnackbar({
@@ -276,27 +283,23 @@ const IncidentForm = () => {
                                                                 data-testid="radio-state"
                                                                 row
                                                             >
-                                                                <FormControlLabel
-                                                                    value="broken"
-                                                                    control={
-                                                                        <Radio color="primary" />
+                                                                {radioOptions.map(
+                                                                    (option) => {
+                                                                        return (
+                                                                            <FormControlLabel
+                                                                                value={
+                                                                                    option
+                                                                                }
+                                                                                control={
+                                                                                    <Radio color="primary" />
+                                                                                }
+                                                                                label={capitalizeFirstLetter(
+                                                                                    option
+                                                                                )}
+                                                                            />
+                                                                        );
                                                                     }
-                                                                    label="Broken"
-                                                                />
-                                                                <FormControlLabel
-                                                                    value="lost"
-                                                                    control={
-                                                                        <Radio color="primary" />
-                                                                    }
-                                                                    label="Lost"
-                                                                />
-                                                                <FormControlLabel
-                                                                    value="other"
-                                                                    control={
-                                                                        <Radio color="primary" />
-                                                                    }
-                                                                    label="Other"
-                                                                />
+                                                                )}
                                                             </RadioGroup>
                                                         </>
                                                     )}
