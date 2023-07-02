@@ -38,54 +38,12 @@ const capitalizeFirstLetter = (str: string) => {
     return str.charAt(0).toUpperCase() + str.slice(1);
 };
 
-const incidentFormComponents = [
-    {
-        type: "radio",
-        options: ["broken", "lost", "other"],
-    },
-    {
-        type: "select",
-        id: "qty",
-        name: "qty",
-        label: "Qty",
-        description: "Number of Grove temperature and humidity sensor pro affected.",
-        style: styles.dropdown,
-        // onChange:
-        // error
-        // helperText
-    },
-    {
-        type: "text",
-        id: "what",
-        name: "what",
-        label: "",
-        description: "",
-        placeholder: "What happened to the hardware?",
-    },
-    {
-        type: "text",
-        id: "when",
-        name: "when",
-        label: "",
-        description: "",
-        placeholder: "When did this occur?",
-    },
-    {
-        type: "where",
-        id: "where",
-        name: "where",
-        label: "",
-        description: "",
-        placeholder: "Where did this occur?",
-    },
-];
-
 const IncidentForm = () => {
     const dispatch = useDispatch();
     let history = useHistory();
     let location = useLocation();
     const searchParams = new URLSearchParams(location.search);
-    const data = searchParams.get("data");
+    const data = searchParams.get("data") ?? "0";
 
     const validationSchema = Yup.object({
         state: Yup.string().required(INCIDENT_ERROR_MSG.state),
@@ -153,7 +111,7 @@ const IncidentForm = () => {
                             </div>
 
                             {/* NEW FORMIK */}
-                            <Formik
+                            {/* <Formik
                                 initialValues={initialValues}
                                 validationSchema={validationSchema}
                                 onSubmit={handleSubmit}
@@ -256,7 +214,7 @@ const IncidentForm = () => {
                                         })}
                                     </>
                                 )}
-                            </Formik>
+                            </Formik> */}
 
                             {/* OLD FORMIK */}
                             <Formik
@@ -264,13 +222,259 @@ const IncidentForm = () => {
                                 validationSchema={validationSchema}
                                 onSubmit={handleSubmit}
                             >
-                                {({ errors, handleSubmit, handleChange, values }) => (
-                                    <form
-                                        onSubmit={handleSubmit}
-                                        className={styles.form}
-                                    >
-                                        <div className={styles.formContainer}>
-                                            <FormControl error={!!errors?.state}>
+                                {({ errors, handleSubmit, handleChange, values }) => {
+                                    const incidentFormComponents = [
+                                        {
+                                            type: "radio",
+                                            id: "state",
+                                            name: "state",
+                                            options: ["broken", "lost", "other"],
+                                            helperText: errors?.state,
+                                            testId: "radio-state",
+                                        },
+                                        {
+                                            type: "select",
+                                            id: "qty",
+                                            name: "qty",
+                                            label: "Qty",
+                                            description:
+                                                "Number of Grove temperature and humidity sensor pro affected.",
+                                            error: !!errors?.qty,
+                                            helperText: errors?.qty,
+                                        },
+                                        {
+                                            type: "text",
+                                            id: "what",
+                                            name: "what",
+                                            label: "",
+                                            description: "",
+                                            placeholder:
+                                                "What happened to the hardware?",
+                                            value: values.what,
+                                            error: !!errors?.what,
+                                            helperText: errors?.what,
+                                        },
+                                        {
+                                            type: "text",
+                                            id: "when",
+                                            name: "when",
+                                            label: "",
+                                            description: "",
+                                            placeholder: "When did this occur?",
+                                            value: values.when,
+                                            error: !!errors?.when,
+                                            helperText: errors?.when,
+                                        },
+                                        {
+                                            type: "text",
+                                            id: "where",
+                                            name: "where",
+                                            label: "",
+                                            description: "",
+                                            placeholder: "Where did this occur?",
+                                            value: values.where,
+                                            error: !!errors?.where,
+                                            helperText: errors?.where,
+                                        },
+                                    ];
+
+                                    return (
+                                        <form
+                                            onSubmit={handleSubmit}
+                                            className={styles.form}
+                                        >
+                                            <div className={styles.formContainer}>
+                                                {incidentFormComponents.map(
+                                                    (item, index) => {
+                                                        console.log(item);
+                                                        return (
+                                                            <div
+                                                                key={`${item.type}-${item.name}`}
+                                                                style={{
+                                                                    paddingBottom:
+                                                                        "10px",
+                                                                }}
+                                                            >
+                                                                {/* Used if the item has a description before the input form */}
+                                                                {item?.description ? (
+                                                                    <Typography>
+                                                                        {
+                                                                            item.description
+                                                                        }
+                                                                    </Typography>
+                                                                ) : (
+                                                                    <></>
+                                                                )}
+
+                                                                {item.type ===
+                                                                "radio" ? (
+                                                                    <>
+                                                                        <FormControl
+                                                                            error={
+                                                                                !!errors?.state
+                                                                            }
+                                                                        >
+                                                                            <Field
+                                                                                name={
+                                                                                    item.name
+                                                                                }
+                                                                            >
+                                                                                {({
+                                                                                    field,
+                                                                                }: {
+                                                                                    field: any;
+                                                                                }) => (
+                                                                                    <>
+                                                                                        <RadioGroup
+                                                                                            {...field}
+                                                                                            value={
+                                                                                                field.value
+                                                                                            }
+                                                                                            onChange={
+                                                                                                field.onChange
+                                                                                            }
+                                                                                            data-testid={
+                                                                                                item.testId
+                                                                                            }
+                                                                                            row
+                                                                                        >
+                                                                                            {item.options?.map(
+                                                                                                (
+                                                                                                    option: string,
+                                                                                                    index
+                                                                                                ) => {
+                                                                                                    return (
+                                                                                                        <React.Fragment
+                                                                                                            key={`${option}-${index}`}
+                                                                                                        >
+                                                                                                            <FormControlLabel
+                                                                                                                value={
+                                                                                                                    option
+                                                                                                                }
+                                                                                                                control={
+                                                                                                                    <Radio color="primary" />
+                                                                                                                }
+                                                                                                                label={capitalizeFirstLetter(
+                                                                                                                    option
+                                                                                                                )}
+                                                                                                            />
+                                                                                                        </React.Fragment>
+                                                                                                    );
+                                                                                                }
+                                                                                            )}
+                                                                                        </RadioGroup>
+                                                                                    </>
+                                                                                )}
+                                                                            </Field>
+                                                                            <FormHelperText>
+                                                                                {
+                                                                                    item.helperText
+                                                                                }
+                                                                                {/* {errors?.state} */}
+                                                                            </FormHelperText>
+                                                                        </FormControl>
+                                                                    </>
+                                                                ) : item.type ===
+                                                                  "select" ? (
+                                                                    <>
+                                                                        <FormControl
+                                                                            variant="outlined"
+                                                                            className={
+                                                                                styles.dropdown
+                                                                            }
+                                                                            error={
+                                                                                item.error
+                                                                            }
+                                                                        >
+                                                                            <InputLabel
+                                                                                id={
+                                                                                    item.id
+                                                                                }
+                                                                            >
+                                                                                {
+                                                                                    item.label
+                                                                                }
+                                                                            </InputLabel>
+                                                                            <Select
+                                                                                name={
+                                                                                    item.name
+                                                                                }
+                                                                                value={
+                                                                                    item.value
+                                                                                }
+                                                                                label={
+                                                                                    item.label
+                                                                                }
+                                                                                onChange={
+                                                                                    handleChange
+                                                                                }
+                                                                                MenuProps={{
+                                                                                    anchorOrigin:
+                                                                                        {
+                                                                                            vertical:
+                                                                                                "bottom",
+                                                                                            horizontal:
+                                                                                                "left",
+                                                                                        },
+                                                                                    getContentAnchorEl:
+                                                                                        null,
+                                                                                }}
+                                                                                autoWidth
+                                                                            >
+                                                                                {createQuantityList(
+                                                                                    Number(
+                                                                                        data
+                                                                                    )
+                                                                                )}
+                                                                            </Select>
+                                                                            <FormHelperText>
+                                                                                {
+                                                                                    item.helperText
+                                                                                }
+                                                                            </FormHelperText>
+                                                                        </FormControl>
+                                                                    </>
+                                                                ) : item.type ===
+                                                                  "text" ? (
+                                                                    <div
+                                                                        style={{
+                                                                            width: "100%",
+                                                                        }}
+                                                                    >
+                                                                        <TextField
+                                                                            id={item.id}
+                                                                            name={
+                                                                                item.name
+                                                                            }
+                                                                            placeholder={
+                                                                                item.placeholder
+                                                                            }
+                                                                            value={
+                                                                                item.value
+                                                                            }
+                                                                            error={
+                                                                                item.error
+                                                                            }
+                                                                            helperText={
+                                                                                item.helperText
+                                                                            }
+                                                                            onChange={
+                                                                                handleChange
+                                                                            }
+                                                                            variant="outlined"
+                                                                            type="text"
+                                                                            multiline
+                                                                        />
+                                                                    </div>
+                                                                ) : (
+                                                                    <></>
+                                                                )}
+                                                            </div>
+                                                        );
+                                                    }
+                                                )}
+
+                                                {/* <FormControl error={!!errors?.state}>
                                                 <Field name="state">
                                                     {({ field }: { field: any }) => (
                                                         <>
@@ -380,23 +584,24 @@ const IncidentForm = () => {
                                                 type="text"
                                                 multiline
                                             />
-                                            <br></br>
-                                            <div
-                                                style={{
-                                                    alignSelf: "center",
-                                                    width: "fit-contents",
-                                                }}
-                                            >
-                                                <Button
-                                                    type="submit"
-                                                    variant="contained"
+                                            <br></br> */}
+                                                <div
+                                                    style={{
+                                                        alignSelf: "center",
+                                                        width: "fit-contents",
+                                                    }}
                                                 >
-                                                    Submit
-                                                </Button>
+                                                    <Button
+                                                        type="submit"
+                                                        variant="contained"
+                                                    >
+                                                        Submit
+                                                    </Button>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </form>
-                                )}
+                                        </form>
+                                    );
+                                }}
                             </Formik>
                         </div>
                     </CardContent>
