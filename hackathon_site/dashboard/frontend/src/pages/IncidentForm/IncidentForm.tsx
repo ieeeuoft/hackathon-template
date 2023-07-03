@@ -22,7 +22,6 @@ import Header from "components/general/Header/Header";
 import ArrowLeft from "../../assets/images/icons/arrow-left-solid.svg";
 import { displaySnackbar } from "slices/ui/uiSlice";
 import { useDispatch } from "react-redux";
-import { FileWatcherEventKind } from "typescript";
 
 export const INCIDENT_ERROR_MSG = {
     state: "Please select an option",
@@ -31,8 +30,6 @@ export const INCIDENT_ERROR_MSG = {
     when: "Please indicate when this occurred",
     where: "Please indicate where this occurred",
 };
-
-const radioOptions = ["broken", "lost", "other"];
 
 const capitalizeFirstLetter = (str: string) => {
     return str.charAt(0).toUpperCase() + str.slice(1);
@@ -82,12 +79,20 @@ const IncidentForm = () => {
 
     const createQuantityList = (number: number) => {
         let entry = [];
-        for (let i = 1; i <= number; i++) {
+        if (number === 0) {
             entry.push(
-                <MenuItem key={i} role="quantity" value={i.toString()}>
-                    {i}
+                <MenuItem key={"0"} role="quantity" value={"0"}>
+                    {0}
                 </MenuItem>
             );
+        } else {
+            for (let i = 1; i <= number; i++) {
+                entry.push(
+                    <MenuItem key={i} role="quantity" value={i.toString()}>
+                        {i}
+                    </MenuItem>
+                );
+            }
         }
         return entry;
     };
@@ -112,6 +117,8 @@ const IncidentForm = () => {
                             <Formik
                                 initialValues={initialValues}
                                 validationSchema={validationSchema}
+                                validateOnChange={false}
+                                validateOnBlur={false}
                                 onSubmit={handleSubmit}
                             >
                                 {({ errors, handleSubmit, handleChange, values }) => {
@@ -131,6 +138,7 @@ const IncidentForm = () => {
                                             label: "Qty",
                                             description:
                                                 "Number of Grove temperature and humidity sensor pro affected.",
+                                            value: values.qty,
                                             error: !!errors?.qty,
                                             helperText: errors?.qty,
                                         },
