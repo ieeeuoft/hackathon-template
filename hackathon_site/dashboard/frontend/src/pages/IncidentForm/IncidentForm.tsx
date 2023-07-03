@@ -62,7 +62,6 @@ const IncidentForm = () => {
     };
 
     const handleSubmit = async (values: FormikValues, { resetForm }: any) => {
-        console.log("submit");
         console.log(values);
 
         // TODO: submit the form
@@ -110,113 +109,6 @@ const IncidentForm = () => {
                                 <Typography variant="h1">Item Incident Form</Typography>
                             </div>
 
-                            {/* NEW FORMIK */}
-                            {/* <Formik
-                                initialValues={initialValues}
-                                validationSchema={validationSchema}
-                                onSubmit={handleSubmit}
-                            >
-                                {(formikProps) => (
-                                    <>
-                                        {incidentFormComponents.map((field, index) => {
-                                            if (field.description) {
-                                                return (
-                                                    <>
-                                                        <Typography>
-                                                            {" "}
-                                                            {field.description}
-                                                        </Typography>
-                                                    </>
-                                                );
-                                            }
-
-                                            if (field.type === "radio") {
-                                                return <>Radio Group....</>;
-                                            } else if (field.type === "select") {
-                                                return (
-                                                    <>
-                                                        <FormControl
-                                                            variant="outlined"
-                                                            className={styles.dropdown}
-                                                            error={
-                                                                !!formikProps.errors
-                                                                    ?.qty
-                                                            }
-                                                        >
-                                                            <InputLabel id={field.id}>
-                                                                {field.label}
-                                                            </InputLabel>
-                                                            <Select
-                                                                name="qty"
-                                                                value={
-                                                                    formikProps.values
-                                                                        .qty
-                                                                }
-                                                                label="Qty"
-                                                                onChange={
-                                                                    formikProps.handleChange
-                                                                }
-                                                                MenuProps={{
-                                                                    anchorOrigin: {
-                                                                        vertical:
-                                                                            "bottom",
-                                                                        horizontal:
-                                                                            "left",
-                                                                    },
-                                                                    getContentAnchorEl:
-                                                                        null,
-                                                                }}
-                                                                autoWidth
-                                                            >
-                                                                {createQuantityList(
-                                                                    Number(data)
-                                                                )}
-                                                            </Select>
-                                                            <FormHelperText>
-                                                                {
-                                                                    formikProps.errors
-                                                                        ?.qty
-                                                                }
-                                                            </FormHelperText>
-                                                        </FormControl>
-                                                    </>
-                                                );
-                                            } else if (field.type === "text") {
-                                                return (
-                                                    <>
-                                                        <TextField
-                                                            id={field.id}
-                                                            name={field.name}
-                                                            placeholder={
-                                                                field.placeholder
-                                                            }
-                                                            value={
-                                                                formikProps.values.what
-                                                            } // need to fix
-                                                            error={
-                                                                !!formikProps.errors
-                                                                    ?.what
-                                                            }
-                                                            helperText={
-                                                                formikProps.errors?.what
-                                                            }
-                                                            onChange={
-                                                                formikProps.handleChange
-                                                            }
-                                                            variant="outlined"
-                                                            type="text"
-                                                            multiline
-                                                        />
-                                                    </>
-                                                );
-                                            }
-                                            return <></>;
-                                        })}
-                                    </>
-                                )}
-                            </Formik> */}
-
-                            {/* OLD FORMIK */}
                             <Formik
                                 initialValues={initialValues}
                                 validationSchema={validationSchema}
@@ -286,11 +178,11 @@ const IncidentForm = () => {
                                             <div className={styles.formContainer}>
                                                 {incidentFormComponents.map(
                                                     (item, index) => {
-                                                        console.log(item);
                                                         return (
                                                             <div
                                                                 key={`${item.type}-${item.name}`}
                                                                 style={{
+                                                                    all: "unset",
                                                                     paddingBottom:
                                                                         "10px",
                                                                 }}
@@ -464,6 +356,7 @@ const IncidentForm = () => {
                                                                             variant="outlined"
                                                                             type="text"
                                                                             multiline
+                                                                            fullWidth
                                                                         />
                                                                     </div>
                                                                 ) : (
@@ -473,122 +366,11 @@ const IncidentForm = () => {
                                                         );
                                                     }
                                                 )}
-
-                                                {/* <FormControl error={!!errors?.state}>
-                                                <Field name="state">
-                                                    {({ field }: { field: any }) => (
-                                                        <>
-                                                            <RadioGroup
-                                                                {...field}
-                                                                value={field.value}
-                                                                onChange={
-                                                                    field.onChange
-                                                                }
-                                                                data-testid="radio-state"
-                                                                row
-                                                            >
-                                                                {radioOptions.map(
-                                                                    (option) => {
-                                                                        return (
-                                                                            <FormControlLabel
-                                                                                value={
-                                                                                    option
-                                                                                }
-                                                                                control={
-                                                                                    <Radio color="primary" />
-                                                                                }
-                                                                                label={capitalizeFirstLetter(
-                                                                                    option
-                                                                                )}
-                                                                            />
-                                                                        );
-                                                                    }
-                                                                )}
-                                                            </RadioGroup>
-                                                        </>
-                                                    )}
-                                                </Field>
-                                                <FormHelperText>
-                                                    {errors?.state}
-                                                </FormHelperText>
-                                            </FormControl>
-                                            <br></br>
-                                            <Typography>
-                                                Number of Grove temperature and humidity
-                                                sensor pro affected.
-                                            </Typography>
-                                            <br></br>
-                                            <FormControl
-                                                variant="outlined"
-                                                className={styles.dropdown}
-                                                error={!!errors?.qty}
-                                            >
-                                                <InputLabel id="qty">Qty</InputLabel>
-                                                <Select
-                                                    name="qty"
-                                                    value={values.qty}
-                                                    label="Qty"
-                                                    onChange={handleChange}
-                                                    MenuProps={{
-                                                        anchorOrigin: {
-                                                            vertical: "bottom",
-                                                            horizontal: "left",
-                                                        },
-                                                        getContentAnchorEl: null,
-                                                    }}
-                                                    autoWidth
-                                                >
-                                                    {createQuantityList(Number(data))}
-                                                </Select>
-                                                <FormHelperText>
-                                                    {errors?.qty}
-                                                </FormHelperText>
-                                            </FormControl>
-
-                                            <br></br>
-                                            <TextField
-                                                id="what"
-                                                name="what"
-                                                placeholder="What happened to the hardware?"
-                                                value={values.what}
-                                                error={!!errors?.what}
-                                                helperText={errors?.what}
-                                                onChange={handleChange}
-                                                variant="outlined"
-                                                type="text"
-                                                multiline
-                                            />
-                                            <br></br>
-                                            <TextField
-                                                id="when"
-                                                name="when"
-                                                placeholder="When did this occur?"
-                                                value={values.when}
-                                                error={!!errors?.when}
-                                                helperText={errors?.when}
-                                                onChange={handleChange}
-                                                variant="outlined"
-                                                type="text"
-                                                multiline
-                                            />
-                                            <br></br>
-                                            <TextField
-                                                id="where"
-                                                name="where"
-                                                placeholder="Where did this occur?"
-                                                value={values.where}
-                                                error={!!errors?.where}
-                                                helperText={errors?.where}
-                                                onChange={handleChange}
-                                                variant="outlined"
-                                                type="text"
-                                                multiline
-                                            />
-                                            <br></br> */}
                                                 <div
                                                     style={{
                                                         alignSelf: "center",
                                                         width: "fit-contents",
+                                                        marginTop: "10px",
                                                     }}
                                                 >
                                                     <Button
