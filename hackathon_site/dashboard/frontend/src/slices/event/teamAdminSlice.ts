@@ -8,7 +8,7 @@ import { _delete, get, stripHostnameReturnFilters } from "api/api";
 import { APIListResponse, Team } from "api/types";
 import { AppDispatch, RootState } from "slices/store";
 import { displaySnackbar } from "slices/ui/uiSlice";
-import axios, { AxiosResponse } from "axios";
+
 interface TeamAdminExtraState {
     errorState: string | null;
     isMoreLoading: boolean;
