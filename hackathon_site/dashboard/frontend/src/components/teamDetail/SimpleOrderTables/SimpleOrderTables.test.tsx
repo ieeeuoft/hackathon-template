@@ -12,6 +12,7 @@ import {
 } from "./SimpleOrderTables";
 import { waitFor } from "@testing-library/react";
 import { RootStore } from "slices/store";
+import { PendingTables } from "../../dashboard/ItemTable/ItemTable";
 
 const mockOrdersInTable = mockPendingOrdersInTable.concat(mockCheckedOutOrdersInTable);
 
@@ -172,6 +173,28 @@ describe("<SimplePendingOrderFulfillmentTable />", () => {
             });
         }
     });
+
+    it("Displays pending orders from oldest to newest on the admin side", () => {
+        const { getAllByTestId } = render(<SimplePendingOrderFulfillmentTable />, {
+            store,
+        });
+        const orderElements = getAllByTestId(/admin-simple-pending-order-\d+/);
+        const orders = orderElements.map((element) => {
+            const updatedTime = element.getAttribute("data-updated-time");
+            return { updatedTime };
+        });
+        let isSorted = true;
+        for (let i = 0; i < orders.length - 1; i++) {
+            const currentDate = orders[i];
+            const previousDate = orders[i + 1];
+
+            if (currentDate > previousDate) {
+                isSorted = false;
+                break;
+            }
+        }
+        expect(isSorted).toBe(true);
+    });
 });
 
 describe("<AdminReturnedItemsTable />", () => {
@@ -200,5 +223,25 @@ describe("<AdminReturnedItemsTable />", () => {
         mockReturnedOrdersInTable.map(({ id }) => {
             expect(queryByText(`Order #${id}`)).toBeNull();
         });
+    });
+
+    it("Displays returned orders from newest to oldest on the admin side", () => {
+        const { getAllByTestId } = render(<AdminReturnedItemsTable />, { store });
+        const orderElements = getAllByTestId(/returned-order-table-\d+/);
+        const orders = orderElements.map((element) => {
+            const updatedTime = element.getAttribute("data-updated-time");
+            return { updatedTime };
+        });
+        let isSorted = true;
+        for (let i = 0; i < orders.length - 1; i++) {
+            const currentDate = orders[i];
+            const previousDate = orders[i + 1];
+
+            if (currentDate > previousDate) {
+                isSorted = false;
+                break;
+            }
+        }
+        expect(isSorted).toBe(true);
     });
 });

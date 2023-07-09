@@ -11,6 +11,7 @@ import {
 } from "testing/utils";
 import { mockHardware, mockCheckedOutOrdersInTable } from "testing/mockData";
 import TeamCheckedOutOrderTable from "components/teamDetail/TeamCheckedOutOrderTable/TeamCheckedOutOrderTable";
+import { CheckedOutTables } from "../../dashboard/ItemTable/ItemTable";
 
 const store = makeStoreWithEntities({
     teamDetailOrders: mockCheckedOutOrdersInTable,
@@ -90,5 +91,26 @@ describe("team pending order table", () => {
                 });
             });
         }
+    });
+    it("Displays checked out orders from most recent to oldest order", async () => {
+        const { getAllByTestId, container } = render(<TeamCheckedOutOrderTable />, {
+            store,
+        });
+        let orderElements = getAllByTestId(/table-\d+-\d+/);
+        const orders = orderElements.map((element) => {
+            const updatedTime = element.getAttribute("data-updated-time");
+            return { updatedTime };
+        });
+        let isSorted = true;
+        for (let i = 0; i < orders.length - 1; i++) {
+            const currentDate = orders[i];
+            const previousDate = orders[i + 1];
+
+            if (currentDate < previousDate) {
+                isSorted = false;
+                break;
+            }
+        }
+        expect(isSorted).toBe(true);
     });
 });

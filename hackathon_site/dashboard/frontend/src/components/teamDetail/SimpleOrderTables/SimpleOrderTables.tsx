@@ -167,7 +167,7 @@ export const SimplePendingOrderFulfillmentTable = () => {
         );
     });
 
-    orders.splice(0, orders.length, ...ready_orders, ...submitted_orders);
+    orders.splice(0, orders.length, ...submitted_orders, ...ready_orders);
 
     const [isVisible, setVisibility] = useState(true);
     const toggleVisibility = () => setVisibility(!isVisible);
@@ -211,6 +211,7 @@ export const SimplePendingOrderFulfillmentTable = () => {
                     >
                         <Form
                             data-testid={`admin-simple-pending-order-${pendingOrder.id}`}
+                            data-updated-time={`pending-order-time-${pendingOrder.updatedTime}`}
                         >
                             <GeneralPendingTable
                                 {...{
