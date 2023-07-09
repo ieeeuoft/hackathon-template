@@ -18,7 +18,6 @@ import {
     UpdateOrderAttributes,
     updateOrderStatus,
 } from "slices/order/teamOrderSlice";
-import { pendingOrderSelectors } from "../../../slices/order/orderSlice";
 
 interface SimpleOrderFormValues {
     itemIdsChecked: string[];
