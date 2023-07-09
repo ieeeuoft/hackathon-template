@@ -11,18 +11,20 @@ import {
     adminOrderSelectors,
     getOrdersWithFilters,
     setFilters,
-} from "../../slices/order/adminOrderSlice";
-import { OrderFilters } from "../../api/types";
+} from "slices/order/adminOrderSlice";
+import { OrderFilters } from "api/types";
 
 const AdminDashboard = () => {
     const dispatch = useDispatch();
     const orders = useSelector(adminOrderSelectors.selectAll);
     const pendingFilter: OrderFilters = {
-        status: ["Submitted"],
+        status: ["Submitted", "Ready for Pickup"],
     };
     dispatch(setFilters(pendingFilter));
     dispatch(getOrdersWithFilters());
-    const ordersLength = orders.length < 7 ? orders.length : 6;
+    const numOrdersOnPage = 6;
+    const ordersLength =
+        orders.length <= numOrdersOnPage ? orders.length : numOrdersOnPage;
     return (
         <>
             <Header />
@@ -51,7 +53,9 @@ const AdminDashboard = () => {
                     >
                         {orders.slice(0, ordersLength).map((pendingOrder, idx) => (
                             <Grid item lg={2} md={3} sm={4} xs={12} key={idx}>
-                                {["Submitted"].includes(pendingOrder.status) && (
+                                {["Submitted", "Ready for Pickup"].includes(
+                                    pendingOrder.status
+                                ) && (
                                     <OrderCard
                                         teamCode={pendingOrder.team_code}
                                         orderQuantity={pendingOrder.items.length}
