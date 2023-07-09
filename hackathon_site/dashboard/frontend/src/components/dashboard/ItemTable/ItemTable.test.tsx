@@ -280,111 +280,111 @@ describe("<CheckedOutTables />", () => {
     //     const numItems = itemsCheckedOut.length;
     //     expect(getAllByText(/report broken\/lost/i).length).toBe(numItems);
     // });
+});
 
-    describe("<ReturnedTable />", () => {
-        const makeStoreWithReturnedOrders = (
-            returnedOrders?: ReturnOrderInTable[],
-            isReturnedTableVisible: boolean = true
-        ) =>
-            makeStoreWithEntities({
-                hardware: mockHardware,
-                ui: {
-                    dashboard: {
-                        isReturnedTableVisible,
-                    },
+describe("<ReturnedTable />", () => {
+    const makeStoreWithReturnedOrders = (
+        returnedOrders?: ReturnOrderInTable[],
+        isReturnedTableVisible: boolean = true
+    ) =>
+        makeStoreWithEntities({
+            hardware: mockHardware,
+            ui: {
+                dashboard: {
+                    isReturnedTableVisible,
                 },
-                ...(returnedOrders && {
-                    orderState: {
-                        returnedOrders,
-                    },
-                }),
-            });
-
-        it("Shows a message when there's no returned items", () => {
-            const store = makeStoreWithReturnedOrders();
-            const { getByText } = render(<ReturnedTable />, { store });
-            expect(
-                getByText(
-                    "Please bring items to the tech table and a tech team member will assist you."
-                )
-            ).toBeInTheDocument();
-        });
-
-        it("Shows an error message when failed to fetch orders", () => {
-            const store = makeStoreWithEntities({
+            },
+            ...(returnedOrders && {
                 orderState: {
-                    returnedOrders: mockReturnedOrdersInTable,
-                    error: "Unable to display returned orders",
+                    returnedOrders,
                 },
-            });
-            const { getByText } = render(<ReturnedTable />, { store });
-            expect(getByText(/Unable to view returned items/i)).toBeInTheDocument();
+            }),
         });
 
-        it("Shows returned items", () => {
-            const store = makeStoreWithReturnedOrders(mockReturnedOrdersInTable);
-            const { getByText } = render(<ReturnedTable />, {
-                store,
-            });
-            expect(getByText(/returned items/i)).toBeInTheDocument();
-            mockReturnedOrdersInTable.map(({ id }) => {
-                expect(getByText(`Order #${id}`)).toBeInTheDocument();
+    it("Shows a message when there's no returned items", () => {
+        const store = makeStoreWithReturnedOrders();
+        const { getByText } = render(<ReturnedTable />, { store });
+        expect(
+            getByText(
+                "Please bring items to the tech table and a tech team member will assist you."
+            )
+        ).toBeInTheDocument();
+    });
+
+    it("Shows an error message when failed to fetch orders", () => {
+        const store = makeStoreWithEntities({
+            orderState: {
+                returnedOrders: mockReturnedOrdersInTable,
+                error: "Unable to display returned orders",
+            },
+        });
+        const { getByText } = render(<ReturnedTable />, { store });
+        expect(getByText(/Unable to view returned items/i)).toBeInTheDocument();
+    });
+
+    it("Shows returned items", () => {
+        const store = makeStoreWithReturnedOrders(mockReturnedOrdersInTable);
+        const { getByText } = render(<ReturnedTable />, {
+            store,
+        });
+        expect(getByText(/returned items/i)).toBeInTheDocument();
+        mockReturnedOrdersInTable.map(({ id }) => {
+            expect(getByText(`Order #${id}`)).toBeInTheDocument();
+        });
+    });
+
+    it("Hides the table when isVisible is false", () => {
+        const store = makeStoreWithReturnedOrders(mockReturnedOrdersInTable, false);
+        const { getByText, queryByText } = render(<ReturnedTable />, { store });
+        expect(getByText(/returned items/i)).toBeInTheDocument();
+        expect(getByText(/show all/i)).toBeInTheDocument();
+        mockReturnedOrdersInTable.map(({ id }) => {
+            expect(queryByText(`Order #${id}`)).toBeNull();
+        });
+    });
+
+    it("ReturnedTable dispatches an action to toggle visibility when button clicked", () => {
+        const store = makeStoreWithReturnedOrders(mockReturnedOrdersInTable);
+        const { getByText, queryByText } = render(<ReturnedTable />, {
+            store,
+        });
+        const button = getByText(/hide all/i);
+        mockReturnedOrdersInTable.map(({ id, hardwareInOrder }) => {
+            expect(getByText(`Order #${id}`)).toBeInTheDocument();
+            hardwareInOrder.forEach((hardwareItem) => {
+                expect(getByText(hardwareItem.time)).toBeInTheDocument();
             });
         });
-
-        it("Hides the table when isVisible is false", () => {
-            const store = makeStoreWithReturnedOrders(mockReturnedOrdersInTable, false);
-            const { getByText, queryByText } = render(<ReturnedTable />, { store });
-            expect(getByText(/returned items/i)).toBeInTheDocument();
-            expect(getByText(/show all/i)).toBeInTheDocument();
-            mockReturnedOrdersInTable.map(({ id }) => {
-                expect(queryByText(`Order #${id}`)).toBeNull();
-            });
+        fireEvent.click(button);
+        mockReturnedOrdersInTable.map(({ id }) => {
+            expect(queryByText(`Order #${id}`)).not.toBeInTheDocument();
         });
+    });
 
-        it("ReturnedTable dispatches an action to toggle visibility when button clicked", () => {
-            const store = makeStoreWithReturnedOrders(mockReturnedOrdersInTable);
-            const { getByText, queryByText } = render(<ReturnedTable />, {
-                store,
-            });
-            const button = getByText(/hide all/i);
-            mockReturnedOrdersInTable.map(({ id, hardwareInOrder }) => {
-                expect(getByText(`Order #${id}`)).toBeInTheDocument();
-                hardwareInOrder.forEach((hardwareItem) => {
-                    expect(getByText(hardwareItem.time)).toBeInTheDocument();
-                });
-            });
-            fireEvent.click(button);
-            mockReturnedOrdersInTable.map(({ id }) => {
-                expect(queryByText(`Order #${id}`)).not.toBeInTheDocument();
-            });
+    it("Displays the returned orders from newest to oldest", () => {
+        const store = makeStoreWithReturnedOrders(mockReturnedOrdersInTable, false);
+        const { container, getAllByTestId, getByText } = render(<ReturnedTable />, {
+            store,
         });
+        const button = getByText("Show all");
+        fireEvent.click(button);
+        console.log(container.innerHTML);
+        const orderElements = getAllByTestId(/returned-order-table-\d+/);
+        const orders = orderElements.map((element) => {
+            const updatedTime = element.getAttribute("data-updated-time");
+            return { updatedTime };
+        });
+        let isSorted = true;
+        for (let i = 0; i < orders.length - 1; i++) {
+            const currentDate = orders[i];
+            const previousDate = orders[i + 1];
 
-        it("Displays the returned orders from newest to oldest", () => {
-            const store = makeStoreWithReturnedOrders(mockReturnedOrdersInTable, false);
-            const { container, getAllByTestId, getByText } = render(<ReturnedTable />, {
-                store,
-            });
-            const button = getByText("Show all");
-            fireEvent.click(button);
-            console.log(container.innerHTML);
-            const orderElements = getAllByTestId(/returned-order-table-\d+/);
-            const orders = orderElements.map((element) => {
-                const updatedTime = element.getAttribute("data-updated-time");
-                return { updatedTime };
-            });
-            let isSorted = true;
-            for (let i = 0; i < orders.length - 1; i++) {
-                const currentDate = orders[i];
-                const previousDate = orders[i + 1];
-
-                if (currentDate < previousDate) {
-                    isSorted = false;
-                    break;
-                }
+            if (currentDate < previousDate) {
+                isSorted = false;
+                break;
             }
-            expect(isSorted).toBe(true);
-        });
+        }
+        expect(isSorted).toBe(true);
     });
 });
 
