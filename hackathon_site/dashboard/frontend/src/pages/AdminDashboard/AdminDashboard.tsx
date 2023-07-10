@@ -13,9 +13,11 @@ import {
     setFilters,
 } from "slices/order/adminOrderSlice";
 import { OrderFilters } from "api/types";
+import { useHistory } from "react-router-dom";
 
 const AdminDashboard = () => {
     const dispatch = useDispatch();
+    const history = useHistory();
     const allOrders = useSelector(adminOrderSelectors.selectAll);
     const pendingFilter: OrderFilters = {
         status: ["Submitted", "Ready for Pickup"],
@@ -52,7 +54,17 @@ const AdminDashboard = () => {
                         justifyContent="flex-start"
                     >
                         {allOrders.slice(0, ordersLength).map((order, idx) => (
-                            <Grid item lg={2} md={3} sm={4} xs={12} key={idx}>
+                            <Grid
+                                item
+                                lg={2}
+                                md={3}
+                                sm={4}
+                                xs={12}
+                                key={idx}
+                                onClick={() =>
+                                    history.push(`/teams/${order.team_code}`)
+                                }
+                            >
                                 {["Submitted", "Ready for Pickup"].includes(
                                     order.status
                                 ) && (
