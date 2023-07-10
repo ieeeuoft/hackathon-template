@@ -16,7 +16,7 @@ import { OrderFilters } from "api/types";
 
 const AdminDashboard = () => {
     const dispatch = useDispatch();
-    const orders = useSelector(adminOrderSelectors.selectAll);
+    const allOrders = useSelector(adminOrderSelectors.selectAll);
     const pendingFilter: OrderFilters = {
         status: ["Submitted", "Ready for Pickup"],
     };
@@ -24,7 +24,7 @@ const AdminDashboard = () => {
     dispatch(getOrdersWithFilters());
     const numOrdersOnPage = 6;
     const ordersLength =
-        orders.length <= numOrdersOnPage ? orders.length : numOrdersOnPage;
+        allOrders.length <= numOrdersOnPage ? allOrders.length : numOrdersOnPage;
     return (
         <>
             <Header />
@@ -51,17 +51,18 @@ const AdminDashboard = () => {
                         direction="row"
                         justifyContent="flex-start"
                     >
-                        {orders.slice(0, ordersLength).map((pendingOrder, idx) => (
+                        {allOrders.slice(0, ordersLength).map((order, idx) => (
                             <Grid item lg={2} md={3} sm={4} xs={12} key={idx}>
                                 {["Submitted", "Ready for Pickup"].includes(
-                                    pendingOrder.status
+                                    order.status
                                 ) && (
                                     <OrderCard
-                                        teamCode={pendingOrder.team_code}
-                                        orderQuantity={pendingOrder.items.length}
-                                        time={pendingOrder.updated_at}
-                                        id={pendingOrder.team_id}
-                                        status={pendingOrder.status}
+                                        teamCode={order.team_code}
+                                        orderQuantity={order.items.length}
+                                        time={order.updated_at}
+                                        id={order.id}
+                                        status={order.status}
+                                        data-testid={`order-item-${idx}`}
                                     />
                                 )}
                             </Grid>
