@@ -62,7 +62,7 @@ const AdminDashboard = () => {
                                         time={order.updated_at}
                                         id={order.id}
                                         status={order.status}
-                                        data-testid={`order-item-${idx}`}
+                                        data-testid={`order-item-${order.id}`}
                                     />
                                 )}
                             </Grid>
