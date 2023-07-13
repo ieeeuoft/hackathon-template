@@ -14,6 +14,7 @@ import {
     FormControl,
     InputLabel,
     FormHelperText,
+    makeStyles,
 } from "@material-ui/core";
 import { useHistory, useLocation } from "react-router-dom";
 import { Formik, Field, FormikValues } from "formik";
@@ -31,11 +32,19 @@ export const INCIDENT_ERROR_MSG = {
     where: "Please indicate where this occurred",
 };
 
+const useStyles = makeStyles({
+    typographyLabel: {
+        paddingBottom: "10px", // Adjust the value as per your requirement
+    },
+});
+
 const capitalizeFirstLetter = (str: string) => {
     return str.charAt(0).toUpperCase() + str.slice(1);
 };
 
 const IncidentForm = () => {
+    const muiClasses = useStyles();
+
     const dispatch = useDispatch();
     let history = useHistory();
     let location = useLocation();
@@ -193,12 +202,16 @@ const IncidentForm = () => {
                                                                 style={{
                                                                     all: "unset",
                                                                     paddingBottom:
-                                                                        "10px",
+                                                                        "20px",
                                                                 }}
                                                             >
                                                                 {/* Used if the item has a description before the input form */}
                                                                 {item?.description ? (
-                                                                    <Typography>
+                                                                    <Typography
+                                                                        className={
+                                                                            muiClasses.typographyLabel
+                                                                        }
+                                                                    >
                                                                         {
                                                                             item.description
                                                                         }
