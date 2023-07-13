@@ -48,8 +48,17 @@ const IncidentForm = () => {
     const dispatch = useDispatch();
     let history = useHistory();
     let location = useLocation();
+
+    // get info from url
     const searchParams = new URLSearchParams(location.search);
-    const data = searchParams.get("data") ?? "0";
+    let hardwareQuantity: number; // quantity used for dropdown
+    try {
+        const data = searchParams.get("data") ?? "";
+        const checkedOutOrder = JSON.parse(data); // parse string from url into an object
+        hardwareQuantity = checkedOutOrder?.quantityGranted; // set the hardware qty for dropdown
+    } catch {
+        hardwareQuantity = 0; // set the qty to 0 if there is no url
+    }
 
     const validationSchema = Yup.object({
         state: Yup.string().required(INCIDENT_ERROR_MSG.state),
@@ -68,8 +77,6 @@ const IncidentForm = () => {
     };
 
     const handleSubmit = async (values: FormikValues, { resetForm }: any) => {
-        console.log(values);
-
         // TODO: submit the form
 
         resetForm();
@@ -282,7 +289,6 @@ const IncidentForm = () => {
                                                                                 {
                                                                                     item.helperText
                                                                                 }
-                                                                                {/* {errors?.state} */}
                                                                             </FormHelperText>
                                                                         </FormControl>
                                                                     </>
@@ -338,7 +344,7 @@ const IncidentForm = () => {
                                                                             >
                                                                                 {createQuantityList(
                                                                                     Number(
-                                                                                        data
+                                                                                        hardwareQuantity
                                                                                     )
                                                                                 )}
                                                                             </Select>

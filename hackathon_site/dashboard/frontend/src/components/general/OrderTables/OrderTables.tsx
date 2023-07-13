@@ -108,17 +108,12 @@ export const GeneralOrderTableTitle = ({
                 <Chip
                     label={[<b>Created at: </b>, formatDateTime(createdTime)]}
                     icon={<EditIcon />}
-                    className={`${styles.chipPurple} ${styles.chip} ${
-                        additionalChipFormatting ? styles.chipPadding : ""
-                    }`}
+                    className={`${styles.chipPurple} ${styles.chip}`}
                 />
-                {/* {"    "} */}
                 <Chip
                     label={[<b>Updated at: </b>, formatDateTime(updatedTime)]}
                     icon={<UpdateIcon />}
-                    className={`${styles.chipBlue} ${styles.chip} ${
-                        additionalChipFormatting ? styles.chipPadding : ""
-                    }`}
+                    className={`${styles.chipBlue} ${styles.chip}`}
                 />
             </div>
         ) : null}

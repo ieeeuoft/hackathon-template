@@ -179,19 +179,10 @@ export const CheckedOutTables = () =>
                                                             {row.quantityGranted}
                                                         </TableCell>
                                                         <TableCell align="right">
-                                                            {/* TODO: Add back in when incident reports are being used*/}
-                                                            {/*<Button*/}
-                                                            {/*    color="secondary"*/}
-                                                            {/*    size="small"*/}
-                                                            {/*    onClick={() => {*/}
-                                                            {/*        reportIncident(row.id);*/}
-                                                            {/*        push("/incident-form");*/}
-                                                            {/*    }}*/}
-                                                            {/*>*/}
-                                                            {/*    Report broken/lost*/}
-                                                            {/*</Button>*/}
                                                             <Link
-                                                                to={`/incident-form?data=${row.quantityGranted}`}
+                                                                to={`/incident-form?data=${JSON.stringify(
+                                                                    row
+                                                                )}`}
                                                             >
                                                                 <Button
                                                                     color="secondary"
