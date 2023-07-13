@@ -141,6 +141,7 @@ const IncidentForm = () => {
                                             value: values.qty,
                                             error: !!errors?.qty,
                                             helperText: errors?.qty,
+                                            testId: "qty-dropdown",
                                         },
                                         {
                                             type: "text",
@@ -320,6 +321,9 @@ const IncidentForm = () => {
                                                                                         null,
                                                                                 }}
                                                                                 autoWidth
+                                                                                data-testid={
+                                                                                    item.testId
+                                                                                }
                                                                             >
                                                                                 {createQuantityList(
                                                                                     Number(
