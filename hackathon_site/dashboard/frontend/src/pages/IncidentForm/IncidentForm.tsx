@@ -119,7 +119,7 @@ const IncidentForm = () => {
                 <Card className={styles.card}>
                     <CardContent>
                         <div className={styles.cardContent}>
-                            <div style={{ marginBottom: "20px" }}>
+                            <div className={styles.titleMargin}>
                                 <Typography variant="h1">Item Incident Form</Typography>
                             </div>
 
@@ -199,11 +199,9 @@ const IncidentForm = () => {
                                                         return (
                                                             <div
                                                                 key={`${item.type}-${item.name}`}
-                                                                style={{
-                                                                    all: "unset",
-                                                                    paddingBottom:
-                                                                        "20px",
-                                                                }}
+                                                                className={
+                                                                    styles.formComponentContainer
+                                                                }
                                                             >
                                                                 {/* Used if the item has a description before the input form */}
                                                                 {item?.description ? (
@@ -354,9 +352,9 @@ const IncidentForm = () => {
                                                                 ) : item.type ===
                                                                   "text" ? (
                                                                     <div
-                                                                        style={{
-                                                                            width: "100%",
-                                                                        }}
+                                                                        className={
+                                                                            styles.textboxFill
+                                                                        }
                                                                     >
                                                                         <TextField
                                                                             id={item.id}
@@ -391,13 +389,7 @@ const IncidentForm = () => {
                                                         );
                                                     }
                                                 )}
-                                                <div
-                                                    style={{
-                                                        alignSelf: "center",
-                                                        width: "fit-contents",
-                                                        marginTop: "10px",
-                                                    }}
-                                                >
+                                                <div className={styles.submitButton}>
                                                     <Button
                                                         type="submit"
                                                         variant="contained"
