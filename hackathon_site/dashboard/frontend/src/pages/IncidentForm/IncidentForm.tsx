@@ -26,7 +26,8 @@ import { useDispatch } from "react-redux";
 
 export const INCIDENT_ERROR_MSG = {
     state: "Please select an option",
-    qty: "Please indicate the quantity",
+    qtyEmpty: "Please indicate the quantity",
+    qtyZero: "Cannot submit incident form for 0 items",
     what: "Please indicate what happened to the hardware",
     when: "Please indicate when this occurred",
     where: "Please indicate where this occurred",
@@ -62,7 +63,9 @@ const IncidentForm = () => {
 
     const validationSchema = Yup.object({
         state: Yup.string().required(INCIDENT_ERROR_MSG.state),
-        qty: Yup.string().required(INCIDENT_ERROR_MSG.qty),
+        qty: Yup.string()
+            .test("not-zero", INCIDENT_ERROR_MSG.qtyZero, (value) => value !== "0")
+            .required(INCIDENT_ERROR_MSG.qtyEmpty),
         what: Yup.string().required(INCIDENT_ERROR_MSG.what),
         when: Yup.string().required(INCIDENT_ERROR_MSG.when),
         where: Yup.string().required(INCIDENT_ERROR_MSG.where),
