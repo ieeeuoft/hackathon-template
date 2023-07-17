@@ -166,8 +166,6 @@ export const sortReturnedOrders = (
         const formattedDate2 = date2.toISOString();
 
         return new Date(formattedDate2).valueOf() - new Date(formattedDate).valueOf();
-    } else {
-        console.log("Invalid time format");
     }
     return 0;
 };
