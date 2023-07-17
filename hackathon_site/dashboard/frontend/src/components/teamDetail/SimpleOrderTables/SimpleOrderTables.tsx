@@ -18,7 +18,7 @@ import {
     UpdateOrderAttributes,
     updateOrderStatus,
 } from "slices/order/teamOrderSlice";
-import { sortPendingOrders, sortReturnedOrders } from "../../../api/helpers";
+import { sortPendingOrders, sortReturnedOrders } from "api/helpers";
 
 interface SimpleOrderFormValues {
     itemIdsChecked: string[];

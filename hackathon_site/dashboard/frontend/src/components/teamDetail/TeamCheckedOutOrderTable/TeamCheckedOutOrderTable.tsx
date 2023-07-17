@@ -38,7 +38,7 @@ import {
     hardwareSelectors,
 } from "slices/hardware/hardwareSlice";
 import { displaySnackbar, openProductOverview } from "slices/ui/uiSlice";
-import { sortCheckedOutOrders } from "../../../api/helpers";
+import { sortCheckedOutOrders } from "api/helpers";
 
 const createDropdownList = (number: number) => {
     let entry = [];

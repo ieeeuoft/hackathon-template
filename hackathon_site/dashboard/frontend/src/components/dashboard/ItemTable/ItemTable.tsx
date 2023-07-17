@@ -43,8 +43,8 @@ import {
     GeneralReturnTable,
 } from "components/general/OrderTables/OrderTables";
 import PopupModal from "components/general/PopupModal/PopupModal";
-import { sortPendingOrders, sortReturnedOrders } from "../../../api/helpers";
-import { sortCheckedOutOrders } from "../../../api/helpers";
+import { sortPendingOrders, sortReturnedOrders } from "api/helpers";
+import { sortCheckedOutOrders } from "api/helpers";
 
 export const CheckedOutTables = () =>
     // TODO: for incident reports

@@ -363,12 +363,11 @@ describe("<ReturnedTable />", () => {
 
     it("Displays the returned orders from newest to oldest", () => {
         const store = makeStoreWithReturnedOrders(mockReturnedOrdersInTable, false);
-        const { container, getAllByTestId, getByText } = render(<ReturnedTable />, {
+        const { getAllByTestId, getByText } = render(<ReturnedTable />, {
             store,
         });
         const button = getByText("Show all");
         fireEvent.click(button);
-        console.log(container.innerHTML);
         const orderElements = getAllByTestId(/returned-order-table-\d+/);
         const orders = orderElements.map((element) => {
             const updatedTime = element.getAttribute("data-updated-time");

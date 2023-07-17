@@ -11,7 +11,6 @@ import {
 } from "testing/utils";
 import { mockHardware, mockCheckedOutOrdersInTable } from "testing/mockData";
 import TeamCheckedOutOrderTable from "components/teamDetail/TeamCheckedOutOrderTable/TeamCheckedOutOrderTable";
-import { CheckedOutTables } from "../../dashboard/ItemTable/ItemTable";
 
 const store = makeStoreWithEntities({
     teamDetailOrders: mockCheckedOutOrdersInTable,
