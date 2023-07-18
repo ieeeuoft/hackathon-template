@@ -18,6 +18,7 @@ import {
     UpdateOrderAttributes,
     updateOrderStatus,
 } from "slices/order/teamOrderSlice";
+import { sortPendingOrders, sortReturnedOrders } from "api/helpers";
 
 interface SimpleOrderFormValues {
     itemIdsChecked: string[];
@@ -142,8 +143,8 @@ const CompleteOrderButton = ({ order }: { order: OrderInTable }) => {
 
 export const SimplePendingOrderFulfillmentTable = () => {
     const dispatch = useDispatch();
-    const orders = useSelector(pendingOrdersSelector);
-
+    const unsorted_orders = useSelector(pendingOrdersSelector);
+    const orders = sortPendingOrders(unsorted_orders);
     const [isVisible, setVisibility] = useState(true);
     const toggleVisibility = () => setVisibility(!isVisible);
 
@@ -186,6 +187,7 @@ export const SimplePendingOrderFulfillmentTable = () => {
                     >
                         <Form
                             data-testid={`admin-simple-pending-order-${pendingOrder.id}`}
+                            data-updated-time={`pending-order-time-${pendingOrder.updatedTime}`}
                         >
                             <GeneralPendingTable
                                 {...{
@@ -253,7 +255,8 @@ export const SimplePendingOrderFulfillmentTable = () => {
 };
 
 export const AdminReturnedItemsTable = () => {
-    const orders = useSelector(returnedOrdersSelector);
+    const unsorted_orders = useSelector(returnedOrdersSelector);
+    const orders = unsorted_orders.slice().sort(sortReturnedOrders);
 
     const [isVisible, setVisibility] = useState(true);
     const toggleVisibility = () => setVisibility(!isVisible);
