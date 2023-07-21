@@ -8,10 +8,11 @@ import {
     teamAdminSelectors,
     NUM_TEAM_LIMIT,
     getTeamNextPage,
+    deleteTeamThunk,
 } from "slices/event/teamAdminSlice";
 import { makeMockApiListResponse, makeStoreWithEntities, waitFor } from "testing/utils";
 import { mockTeam, mockTeams } from "testing/mockData";
-import { get, stripHostnameReturnFilters } from "api/api";
+import { _delete, get, stripHostnameReturnFilters } from "api/api";
 import { displaySnackbar } from "slices/ui/uiSlice";
 import thunk, { ThunkDispatch } from "redux-thunk";
 import { AnyAction } from "redux";
@@ -20,8 +21,11 @@ import configureStore from "redux-mock-store";
 jest.mock("api/api", () => ({
     ...jest.requireActual("api/api"),
     get: jest.fn(),
+    _delete: jest.fn(),
 }));
+
 const mockedGet = get as jest.MockedFunction<typeof get>;
+const mockedDelete = _delete as jest.MockedFunction<typeof _delete>;
 
 type DispatchExts = ThunkDispatch<RootState, void, AnyAction>;
 const mockStore = configureStore<RootState, DispatchExts>([thunk]);
@@ -165,5 +169,63 @@ describe("getTeamNextPage thunk", () => {
                 mockTeams.slice(0, limit).map(({ id }) => id)
             );
         });
+    });
+});
+
+// ... imports and setup ...
+
+describe("deleteTeamThunk thunk", () => {
+    const mockDeleteResponse = {
+        data: null,
+        status: 200,
+        statusText: "OK",
+        headers: {},
+        config: {},
+    };
+    const mockError = {
+        response: {
+            status: 404,
+            data: "Team not found",
+        },
+    };
+
+    beforeEach(() => {
+        jest.clearAllMocks();
+    });
+
+    it("Deletes a team and updates the store on API success", async () => {
+        const teamToDeleteCode = "TEAM001";
+        const deleteUrl = `/api/event/teams/${teamToDeleteCode}`;
+        mockedDelete.mockResolvedValueOnce(mockDeleteResponse);
+
+        const store = makeStoreWithEntities({
+            teams: mockTeams,
+        });
+
+        await store.dispatch(deleteTeamThunk(teamToDeleteCode));
+
+        expect(mockedDelete).toHaveBeenCalledWith(deleteUrl);
+        expect(
+            teamAdminSelectors.selectById(store.getState(), teamToDeleteCode)
+        ).toBeUndefined();
+    });
+
+    it("Dispatches a snackbar on API failure", async () => {
+        const teamToDeleteCode = "TEAM001";
+        const deleteUrl = `/api/event/teams/${teamToDeleteCode}`;
+        mockedDelete.mockRejectedValueOnce(mockError);
+
+        const store = mockStore(mockState);
+        try {
+            await store.dispatch(deleteTeamThunk(teamToDeleteCode));
+        } catch (error) {
+            const actions = store.getActions();
+            expect(actions).toContainEqual(
+                displaySnackbar({
+                    message: "Failed to fetch team data: Error 404",
+                    options: { variant: "error" },
+                })
+            );
+        }
     });
 });

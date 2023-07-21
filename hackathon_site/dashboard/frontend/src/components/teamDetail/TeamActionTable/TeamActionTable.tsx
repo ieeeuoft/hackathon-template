@@ -29,7 +29,7 @@ const TeamActionTable = ({ teamCode }: TeamActionTableProps) => {
     const profiles = useSelector(teamDetailAdapterSelector.selectAll);
 
     const hasMultipleTeamMembers = () => {
-        return profiles.length > 1;
+        return profiles.length >= 1;
     };
 
     const actionButtons = [
