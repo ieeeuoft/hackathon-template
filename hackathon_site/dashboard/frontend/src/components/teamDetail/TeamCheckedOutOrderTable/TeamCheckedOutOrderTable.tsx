@@ -38,6 +38,7 @@ import {
     hardwareSelectors,
 } from "slices/hardware/hardwareSlice";
 import { displaySnackbar, openProductOverview } from "slices/ui/uiSlice";
+import { sortCheckedOutOrders } from "api/helpers";
 
 const createDropdownList = (number: number) => {
     let entry = [];
@@ -67,7 +68,8 @@ const setInitialValues = (
 };
 
 export const TeamCheckedOutOrderTable = () => {
-    const orders = useSelector(checkedOutOrdersSelector);
+    const unsorted_orders = useSelector(checkedOutOrdersSelector);
+    const orders = unsorted_orders.slice().sort(sortCheckedOutOrders);
     const fetchOrdersError = useSelector(errorSelector);
     const returnIsLoading = useSelector(isReturnedLoadingSelector);
     const hardware = useSelector(hardwareSelectors.selectEntities);
