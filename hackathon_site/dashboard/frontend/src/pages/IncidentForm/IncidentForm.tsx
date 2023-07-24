@@ -88,14 +88,6 @@ const IncidentForm = () => {
 
     // get info from url
     const searchParams = new URLSearchParams(location.search);
-    let hardwareQuantity: number; // quantity used for dropdown
-    try {
-        const data = searchParams.get("data") ?? "";
-        const checkedOutOrder = JSON.parse(data); // parse string from url into an object
-        hardwareQuantity = checkedOutOrder?.quantityGranted; // set the hardware qty for dropdown
-    } catch {
-        hardwareQuantity = 0; // set the qty to 0 if there is no url
-    }
 
     useEffect(() => {
         if (searchParams.toString() === "") {
@@ -111,6 +103,15 @@ const IncidentForm = () => {
             history.push("/404"); // redirect to 404 page
         }
     });
+
+    let hardwareQuantity: number; // quantity used for dropdown
+    try {
+        const data = searchParams.get("data") ?? "";
+        const checkedOutOrder = JSON.parse(data); // parse string from url into an object
+        hardwareQuantity = checkedOutOrder?.quantityGranted; // set the hardware qty for dropdown
+    } catch {
+        hardwareQuantity = 0; // set the qty to 0 if there is an error parsing
+    }
 
     return (
         <>
