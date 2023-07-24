@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styles from "./IncidentForm.module.scss";
 import {
     Typography,
@@ -43,9 +43,45 @@ const capitalizeFirstLetter = (str: string) => {
     return str.charAt(0).toUpperCase() + str.slice(1);
 };
 
-const IncidentForm = () => {
-    const muiClasses = useStyles();
+const validationSchema = Yup.object({
+    state: Yup.string().required(INCIDENT_ERROR_MSG.state),
+    qty: Yup.string()
+        .test("not-zero", INCIDENT_ERROR_MSG.qtyZero, (value) => value !== "0")
+        .required(INCIDENT_ERROR_MSG.qtyEmpty),
+    what: Yup.string().required(INCIDENT_ERROR_MSG.what),
+    when: Yup.string().required(INCIDENT_ERROR_MSG.when),
+    where: Yup.string().required(INCIDENT_ERROR_MSG.where),
+});
 
+const initialValues = {
+    state: "",
+    qty: "",
+    what: "",
+    when: "",
+    where: "",
+};
+
+const createQuantityList = (number: number) => {
+    let entry = [];
+    if (number === 0) {
+        entry.push(
+            <MenuItem key={"0"} role="quantity" value={"0"}>
+                {0}
+            </MenuItem>
+        );
+    } else {
+        for (let i = 1; i <= number; i++) {
+            entry.push(
+                <MenuItem key={i} role="quantity" value={i.toString()}>
+                    {i}
+                </MenuItem>
+            );
+        }
+    }
+    return entry;
+};
+
+const IncidentForm = () => {
     const dispatch = useDispatch();
     let history = useHistory();
     let location = useLocation();
@@ -61,23 +97,37 @@ const IncidentForm = () => {
         hardwareQuantity = 0; // set the qty to 0 if there is no url
     }
 
-    const validationSchema = Yup.object({
-        state: Yup.string().required(INCIDENT_ERROR_MSG.state),
-        qty: Yup.string()
-            .test("not-zero", INCIDENT_ERROR_MSG.qtyZero, (value) => value !== "0")
-            .required(INCIDENT_ERROR_MSG.qtyEmpty),
-        what: Yup.string().required(INCIDENT_ERROR_MSG.what),
-        when: Yup.string().required(INCIDENT_ERROR_MSG.when),
-        where: Yup.string().required(INCIDENT_ERROR_MSG.where),
+    useEffect(() => {
+        if (searchParams.toString() === "") {
+            // check if there are empty query params
+            dispatch(
+                displaySnackbar({
+                    message: `You are not authorized to access this page.`,
+                    options: {
+                        variant: "error",
+                    },
+                })
+            );
+            history.push("/404"); // redirect to 404 page
+        }
     });
 
-    const initialValues = {
-        state: "",
-        qty: "",
-        what: "",
-        when: "",
-        where: "",
-    };
+    return (
+        <>
+            {searchParams.toString() === "" ? (
+                <></>
+            ) : (
+                <IncidentFormRender hardwareQuantity={hardwareQuantity} />
+            )}
+        </>
+    );
+};
+
+const IncidentFormRender = ({ hardwareQuantity }: { hardwareQuantity: number }) => {
+    const muiClasses = useStyles();
+
+    const dispatch = useDispatch();
+    let history = useHistory();
 
     const handleSubmit = async (values: FormikValues, { resetForm }: any) => {
         // TODO: submit the form
@@ -94,26 +144,6 @@ const IncidentForm = () => {
         );
         // navigate back to previous page
         history.goBack();
-    };
-
-    const createQuantityList = (number: number) => {
-        let entry = [];
-        if (number === 0) {
-            entry.push(
-                <MenuItem key={"0"} role="quantity" value={"0"}>
-                    {0}
-                </MenuItem>
-            );
-        } else {
-            for (let i = 1; i <= number; i++) {
-                entry.push(
-                    <MenuItem key={i} role="quantity" value={i.toString()}>
-                        {i}
-                    </MenuItem>
-                );
-            }
-        }
-        return entry;
     };
 
     return (
@@ -346,9 +376,7 @@ const IncidentForm = () => {
                                                                                 }
                                                                             >
                                                                                 {createQuantityList(
-                                                                                    Number(
-                                                                                        hardwareQuantity
-                                                                                    )
+                                                                                    hardwareQuantity
                                                                                 )}
                                                                             </Select>
                                                                             <FormHelperText>
