@@ -251,7 +251,11 @@ export const GeneralReturnTable = ({
                     </Paper>
                 ) : (
                     orders.map((order) => (
-                        <div key={order.id}>
+                        <div
+                            key={order.id}
+                            data-testid={`returned-order-table-${order.id}`}
+                            data-updated-time={`returned-order-time-${order.hardwareInOrder[0].time}`}
+                        >
                             <GeneralOrderTableTitle orderId={order.id} />
                             <TableContainer
                                 component={Paper}
