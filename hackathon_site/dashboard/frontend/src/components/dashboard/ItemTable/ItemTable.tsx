@@ -44,6 +44,8 @@ import {
 } from "components/general/OrderTables/OrderTables";
 import PopupModal from "components/general/PopupModal/PopupModal";
 import { Link } from "react-router-dom";
+import { sortPendingOrders, sortReturnedOrders } from "api/helpers";
+import { sortCheckedOutOrders } from "api/helpers";
 
 export const CheckedOutTables = () =>
     // TODO: for incident reports
@@ -51,7 +53,8 @@ export const CheckedOutTables = () =>
     // reportIncident, }
     {
         const dispatch = useDispatch();
-        const orders = useSelector(checkedOutOrdersSelector);
+        const unsorted_orders = useSelector(checkedOutOrdersSelector);
+        const orders = unsorted_orders.slice().sort(sortCheckedOutOrders);
         const hardware = useSelector(hardwareSelectors.selectEntities);
         const isVisible = useSelector(isCheckedOutTableVisibleSelector);
         const fetchOrdersError = useSelector(orderErrorSelector);
@@ -87,6 +90,8 @@ export const CheckedOutTables = () =>
                             <div
                                 id={`order${checkedOutOrder.id}`}
                                 key={checkedOutOrder.id}
+                                data-testid={`checked-out-order-table-${checkedOutOrder.id}`}
+                                data-updated-time={`checked-out-order-time-${checkedOutOrder.updatedTime}`}
                             >
                                 <GeneralOrderTableTitle
                                     orderId={checkedOutOrder.id}
@@ -213,7 +218,8 @@ export const CheckedOutTables = () =>
 
 export const ReturnedTable = () => {
     const dispatch = useDispatch();
-    const orders = useSelector(returnedOrdersSelector);
+    const unsorted_orders = useSelector(returnedOrdersSelector);
+    const orders = unsorted_orders.slice().sort(sortReturnedOrders);
     const fetchOrdersError = useSelector(orderErrorSelector);
     const isVisible = useSelector(isReturnedTableVisibleSelector);
     const toggleVisibility = () => dispatch(toggleReturnedTable());
@@ -232,7 +238,9 @@ export const ReturnedTable = () => {
 
 export const PendingTables = () => {
     const dispatch = useDispatch();
-    const orders = useSelector(pendingOrderSelectors.selectAll);
+    const unsorted_orders = useSelector(pendingOrderSelectors.selectAll);
+    const orders = sortPendingOrders(unsorted_orders);
+    orders.reverse();
     const isVisible = useSelector(isPendingTableVisibleSelector);
     const isCancelOrderLoading = useSelector(cancelOrderLoadingSelector);
     const toggleVisibility = () => dispatch(togglePendingTable());
@@ -279,6 +287,7 @@ export const PendingTables = () => {
                         id={`order${pendingOrder.id}`}
                         key={pendingOrder.id}
                         data-testid={`pending-order-table-${pendingOrder.id}`}
+                        data-updated-time={`pending-order-time-${pendingOrder.updatedTime}`}
                     >
                         <GeneralPendingTable {...{ pendingOrder }} />
                         {pendingOrder.status !== "Ready for Pickup" && (
