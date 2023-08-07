@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import styles from "./IncidentForm.module.scss";
 import {
     Typography,
@@ -81,6 +81,18 @@ const createQuantityList = (number: number) => {
     return entry;
 };
 
+// used to bypass eslint react-hooks/exhaustive-deps
+const useFirstRenderEffect = (callback: () => void) => {
+    const isFirstRender = useRef(true);
+
+    useEffect(() => {
+        if (isFirstRender.current) {
+            isFirstRender.current = false;
+            callback();
+        }
+    }, [callback]);
+};
+
 const IncidentForm = () => {
     const dispatch = useDispatch();
     const history = useHistory();
@@ -89,7 +101,7 @@ const IncidentForm = () => {
     // get info from url
     const searchParams = new URLSearchParams(location.search);
 
-    useEffect(() => {
+    useFirstRenderEffect(() => {
         if (searchParams.toString() === "") {
             // check if there are empty query params
             dispatch(
@@ -102,7 +114,7 @@ const IncidentForm = () => {
             );
             history.push("/404"); // redirect to 404 page
         }
-    }, []);
+    });
 
     let hardwareQuantity: number; // quantity used for dropdown
     try {
