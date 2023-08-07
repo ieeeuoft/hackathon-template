@@ -83,8 +83,8 @@ const createQuantityList = (number: number) => {
 
 const IncidentForm = () => {
     const dispatch = useDispatch();
-    let history = useHistory();
-    let location = useLocation();
+    const history = useHistory();
+    const location = useLocation();
 
     // get info from url
     const searchParams = new URLSearchParams(location.search);
@@ -128,7 +128,7 @@ const IncidentFormRender = ({ hardwareQuantity }: { hardwareQuantity: number }) 
     const muiClasses = useStyles();
 
     const dispatch = useDispatch();
-    let history = useHistory();
+    const history = useHistory();
 
     const handleSubmit = async (values: FormikValues, { resetForm }: any) => {
         // TODO: submit the form
