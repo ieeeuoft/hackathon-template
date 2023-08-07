@@ -56,7 +56,7 @@ describe("IncidentForm", () => {
     });
 
     it("renders IncidentFormRender when searchParams is not empty", () => {
-        const mockSearchParams = {
+        const mockSearchParams: any = {
             get: jest.fn(() =>
                 JSON.stringify({ id: 10, quantityRequested: 3, quantityGranted: 2 })
             ),
