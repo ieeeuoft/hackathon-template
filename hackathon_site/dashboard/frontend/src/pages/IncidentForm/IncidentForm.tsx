@@ -102,7 +102,7 @@ const IncidentForm = () => {
             );
             history.push("/404"); // redirect to 404 page
         }
-    });
+    }, []);
 
     let hardwareQuantity: number; // quantity used for dropdown
     try {
