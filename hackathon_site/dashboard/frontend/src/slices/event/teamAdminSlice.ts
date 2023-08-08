@@ -171,3 +171,14 @@ export const teamCountSelector = createSelector(
     [teamAdminSliceSelector],
     (teamAdminSlice) => teamAdminSlice.count
 );
+
+export const totalParticipantCountSelector = createSelector(
+    [teamAdminSelectors.selectAll],
+    (teamsList) => {
+        let count = 0;
+        for (let i = 0; i < teamsList.length; i++) {
+            count += teamsList[i].profiles.length;
+        }
+        return count;
+    }
+);

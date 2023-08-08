@@ -205,4 +205,34 @@ export const adminOrderTotalSelector = createSelector(
     (orderItems) => orderItems.reduce((accum) => accum + 1, 0)
 );
 
+export const adminOrderNewTotalSelector = createSelector(
+    [adminOrderSliceSelector],
+    (adminOrderSlice) => {
+        const { numStatuses } = adminOrderSlice;
+        const total = Object.values(numStatuses).reduce(
+            (acc, value) => acc + (value || 0),
+            0
+        );
+        return total;
+    }
+);
+
+// export const adminCheckedOutOrderTotalSelector = createSelector(
+//   [adminOrderSliceSelector],
+//   (adminOrderSlice) => adminOrderSlice.numStatuses["Picked Up"]
+// );
+
+export const adminCheckedOutOrderTotalSelector = createSelector(
+    [adminOrderSelectors.selectAll],
+    (ordersList) => {
+        let count = 0;
+        for (let i = 0; i < ordersList.length; i++) {
+            if (ordersList[i].status == "Picked Up") {
+                count += ordersList[i].items.length;
+            }
+        }
+        return count;
+    }
+);
+
 export const { setFilters, clearFilters } = actions;

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Typography from "@material-ui/core/Typography";
 import Header from "components/general/Header/Header";
 import { hackathonName } from "constants.js";
@@ -11,6 +11,18 @@ import PeopleIcon from "@material-ui/icons/People";
 import AccountBoxIcon from "@material-ui/icons/AccountBox";
 import LocalMallIcon from "@material-ui/icons/LocalMall";
 import BrokenImageIcon from "@material-ui/icons/BrokenImage";
+import { useDispatch, useSelector } from "react-redux";
+import {
+    teamCountSelector,
+    getTeamsWithSearchThunk,
+    totalParticipantCountSelector,
+} from "slices/event/teamAdminSlice";
+import { clearFilters } from "slices/hardware/hardwareSlice";
+import {
+    adminOrderNewTotalSelector,
+    getOrdersWithFilters,
+    adminCheckedOutOrderTotalSelector,
+} from "slices/order/adminOrderSlice";
 
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: "#fff",
@@ -21,6 +33,19 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 const AdminDashboard = () => {
+    const dispatch = useDispatch();
+    const orderQuantity = useSelector(adminOrderNewTotalSelector);
+    const count = useSelector(teamCountSelector);
+    const participants = useSelector(totalParticipantCountSelector);
+    const checkedOut = useSelector(adminCheckedOutOrderTotalSelector);
+
+    // TODO: Create selector for Broken/Lost Items
+
+    useEffect(() => {
+        dispatch(clearFilters());
+        dispatch(getOrdersWithFilters());
+        dispatch(getTeamsWithSearchThunk());
+    }, [dispatch]);
     return (
         <>
             <Header />
@@ -47,7 +72,7 @@ const AdminDashboard = () => {
                                             color: "black",
                                         }}
                                     >
-                                        122 item's checked out
+                                        {checkedOut} item's checked out
                                     </Typography>
                                 </Box>
                             </Item>
@@ -65,7 +90,7 @@ const AdminDashboard = () => {
                                             color: "black",
                                         }}
                                     >
-                                        200 participants
+                                        {participants} participants
                                     </Typography>
                                 </Box>
                             </Item>
@@ -83,7 +108,7 @@ const AdminDashboard = () => {
                                             color: "black",
                                         }}
                                     >
-                                        14 teams
+                                        {count} teams
                                     </Typography>
                                 </Box>
                             </Item>
@@ -101,7 +126,7 @@ const AdminDashboard = () => {
                                             color: "black",
                                         }}
                                     >
-                                        123 orders
+                                        {orderQuantity} orders
                                     </Typography>
                                 </Box>
                             </Item>
