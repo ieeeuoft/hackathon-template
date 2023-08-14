@@ -63,21 +63,15 @@ const initialValues = {
 
 const createQuantityList = (number: number) => {
     let entry = [];
-    if (number === 0) {
+
+    for (let i = 1; i <= number; i++) {
         entry.push(
-            <MenuItem key={"0"} role="quantity" value={"0"}>
-                {0}
+            <MenuItem key={i} role="quantity" value={i.toString()}>
+                {i}
             </MenuItem>
         );
-    } else {
-        for (let i = 1; i <= number; i++) {
-            entry.push(
-                <MenuItem key={i} role="quantity" value={i.toString()}>
-                    {i}
-                </MenuItem>
-            );
-        }
     }
+
     return entry;
 };
 
