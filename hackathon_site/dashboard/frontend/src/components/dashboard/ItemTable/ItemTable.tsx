@@ -43,6 +43,7 @@ import {
     GeneralReturnTable,
 } from "components/general/OrderTables/OrderTables";
 import PopupModal from "components/general/PopupModal/PopupModal";
+import { Link } from "react-router-dom";
 import { sortPendingOrders, sortReturnedOrders } from "api/helpers";
 import { sortCheckedOutOrders } from "api/helpers";
 
@@ -183,17 +184,24 @@ export const CheckedOutTables = () =>
                                                             {row.quantityGranted}
                                                         </TableCell>
                                                         <TableCell align="right">
-                                                            {/* TODO: Add back in when incident reports are being used*/}
-                                                            {/*<Button*/}
-                                                            {/*    color="secondary"*/}
-                                                            {/*    size="small"*/}
-                                                            {/*    onClick={() => {*/}
-                                                            {/*        reportIncident(row.id);*/}
-                                                            {/*        push("/incident-form");*/}
-                                                            {/*    }}*/}
-                                                            {/*>*/}
-                                                            {/*    Report broken/lost*/}
-                                                            {/*</Button>*/}
+                                                            <Link
+                                                                to={`/incident-form?data=${JSON.stringify(
+                                                                    row
+                                                                )}`}
+                                                            >
+                                                                <Button
+                                                                    color="secondary"
+                                                                    size="small"
+                                                                    onClick={() => {
+                                                                        console.log(
+                                                                            "reporting incident",
+                                                                            row.id
+                                                                        );
+                                                                    }}
+                                                                >
+                                                                    Report broken/lost
+                                                                </Button>
+                                                            </Link>
                                                         </TableCell>
                                                     </TableRow>
                                                 )
