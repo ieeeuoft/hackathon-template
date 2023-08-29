@@ -60,7 +60,7 @@ const AdminDashboard = () => {
         dispatch(clearFilters());
         dispatch(getOrdersWithFilters());
         dispatch(getTeamsWithSearchThunk());
-    }, [dispatch]);
+    }, [dispatch, pendingFilter]);
     return (
         <>
             <Header />
