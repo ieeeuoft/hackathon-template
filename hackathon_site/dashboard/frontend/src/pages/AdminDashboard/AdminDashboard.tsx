@@ -47,20 +47,21 @@ const AdminDashboard = () => {
     const count = useSelector(teamCountSelector);
     const participants = useSelector(totalParticipantCountSelector);
     const checkedOut = useSelector(adminCheckedOutOrderTotalSelector);
-    const pendingFilter: OrderFilters = {
-        status: ["Submitted", "Ready for Pickup"],
-    };
+
     const numOrdersOnPage = 6;
     const ordersLength =
         allOrders.length <= numOrdersOnPage ? allOrders.length : numOrdersOnPage;
-    // TODO: Create selector for Broken/Lost Items
+    // TODO: Create selector for Broken/Lost Item
 
     useEffect(() => {
+        const pendingFilter: OrderFilters = {
+            status: ["Submitted", "Ready for Pickup"],
+        };
         dispatch(setFilters(pendingFilter));
         dispatch(clearFilters());
         dispatch(getOrdersWithFilters());
         dispatch(getTeamsWithSearchThunk());
-    }, [dispatch, pendingFilter]);
+    }, [dispatch]);
     return (
         <>
             <Header />
