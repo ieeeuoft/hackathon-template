@@ -217,11 +217,6 @@ export const adminOrderNewTotalSelector = createSelector(
     }
 );
 
-// export const adminCheckedOutOrderTotalSelector = createSelector(
-//   [adminOrderSliceSelector],
-//   (adminOrderSlice) => adminOrderSlice.numStatuses["Picked Up"]
-// );
-
 export const adminCheckedOutOrderTotalSelector = createSelector(
     [adminOrderSelectors.selectAll],
     (ordersList) => {
