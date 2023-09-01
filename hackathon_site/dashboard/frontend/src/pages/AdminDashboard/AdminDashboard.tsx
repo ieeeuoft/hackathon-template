@@ -47,7 +47,6 @@ const AdminDashboard = () => {
     const count = useSelector(teamCountSelector);
     const participants = useSelector(totalParticipantCountSelector);
     const checkedOut = useSelector(adminCheckedOutOrderTotalSelector);
-
     const numOrdersOnPage = 6;
     const ordersLength =
         allOrders.length <= numOrdersOnPage ? allOrders.length : numOrdersOnPage;
@@ -67,8 +66,8 @@ const AdminDashboard = () => {
             <Header />
             <Typography variant="h1">{hackathonName} Admin Dashboard</Typography>
             <Grid className={styles.dashboard}>
-                <div style={{ width: "100%" }}>
-                    <Typography style={{ paddingBottom: "10px" }} variant="h2">
+                <div className={styles.dashboard}>
+                    <Typography className={styles.overviewTitle} variant="h2">
                         {" "}
                         Overview{" "}
                     </Typography>
@@ -80,12 +79,7 @@ const AdminDashboard = () => {
                                         <MemoryIcon />{" "}
                                         <Typography
                                             variant="inherit"
-                                            style={{
-                                                paddingLeft: "7px",
-                                                paddingBottom: "10px",
-                                                paddingTop: "10px",
-                                                color: "black",
-                                            }}
+                                            className={styles.itemContent}
                                         >
                                             {checkedOut} item's checked out
                                         </Typography>
@@ -98,12 +92,7 @@ const AdminDashboard = () => {
                                         <PeopleIcon />{" "}
                                         <Typography
                                             variant="inherit"
-                                            style={{
-                                                paddingLeft: "7px",
-                                                paddingBottom: "10px",
-                                                paddingTop: "10px",
-                                                color: "black",
-                                            }}
+                                            className={styles.itemContent}
                                         >
                                             {participants} participants
                                         </Typography>
@@ -116,12 +105,7 @@ const AdminDashboard = () => {
                                         <AccountBoxIcon />{" "}
                                         <Typography
                                             variant="inherit"
-                                            style={{
-                                                paddingLeft: "7px",
-                                                paddingBottom: "10px",
-                                                paddingTop: "10px",
-                                                color: "black",
-                                            }}
+                                            className={styles.itemContent}
                                         >
                                             {count} teams
                                         </Typography>
@@ -134,12 +118,7 @@ const AdminDashboard = () => {
                                         <LocalMallIcon />{" "}
                                         <Typography
                                             variant="inherit"
-                                            style={{
-                                                paddingLeft: "7px",
-                                                paddingBottom: "10px",
-                                                paddingTop: "10px",
-                                                color: "black",
-                                            }}
+                                            className={styles.itemContent}
                                         >
                                             {orderQuantity} orders
                                         </Typography>
@@ -152,12 +131,7 @@ const AdminDashboard = () => {
                                         <BrokenImageIcon />{" "}
                                         <Typography
                                             variant="inherit"
-                                            style={{
-                                                paddingLeft: "7px",
-                                                paddingBottom: "10px",
-                                                paddingTop: "10px",
-                                                color: "black",
-                                            }}
+                                            className={styles.itemContent}
                                         >
                                             7 broken/lost items
                                         </Typography>
