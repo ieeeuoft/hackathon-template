@@ -113,7 +113,7 @@ export const deleteTeamThunk = createAsyncThunk<
         } catch (e: any) {
             dispatch(
                 displaySnackbar({
-                    message: `Failed to fetch team data: Error ${e.response.status}`,
+                    message: `Failed to delete team: ${e.response.data.detail}`,
                     options: { variant: "error" },
                 })
             );
