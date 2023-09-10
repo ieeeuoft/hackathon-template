@@ -96,41 +96,28 @@ export const GeneralOrderTableTitle = ({
     updatedTime,
     additionalChipFormatting,
 }: GeneralOrderTableTitleProps) => (
-    <Container className={styles.titleChip} maxWidth={false} disableGutters={true}>
+    <div className={styles.titleChip}>
         <Typography variant="h2" className={styles.titleChipText}>
             Order #{orderId}
         </Typography>
 
-        {orderStatus && (
-            <Container
-                className={styles.titleChipSpace}
-                maxWidth={false}
-                disableGutters={true}
-            >
-                <ChipStatus status={orderStatus} />
-            </Container>
-        )}
+        {orderStatus && <ChipStatus status={orderStatus} />}
 
         {createdTime && updatedTime ? (
-            <Container>
+            <div style={{ alignSelf: "flex-end" }}>
                 <Chip
                     label={[<b>Created at: </b>, formatDateTime(createdTime)]}
                     icon={<EditIcon />}
-                    className={`${styles.chipPurple} ${styles.chip} ${
-                        additionalChipFormatting ? styles.chipPadding : ""
-                    }`}
+                    className={`${styles.chipPurple} ${styles.chip}`}
                 />
-                {"    "}
                 <Chip
                     label={[<b>Updated at: </b>, formatDateTime(updatedTime)]}
                     icon={<UpdateIcon />}
-                    className={`${styles.chipBlue} ${styles.chip} ${
-                        additionalChipFormatting ? styles.chipPadding : ""
-                    }`}
+                    className={`${styles.chipBlue} ${styles.chip}`}
                 />
-            </Container>
+            </div>
         ) : null}
-    </Container>
+    </div>
 );
 
 export const GeneralPendingTable = ({
@@ -251,7 +238,11 @@ export const GeneralReturnTable = ({
                     </Paper>
                 ) : (
                     orders.map((order) => (
-                        <div key={order.id}>
+                        <div
+                            key={order.id}
+                            data-testid={`returned-order-table-${order.id}`}
+                            data-updated-time={`returned-order-time-${order.hardwareInOrder[0].time}`}
+                        >
                             <GeneralOrderTableTitle orderId={order.id} />
                             <TableContainer
                                 component={Paper}
