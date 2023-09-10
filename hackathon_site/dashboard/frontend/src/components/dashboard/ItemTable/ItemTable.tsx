@@ -43,6 +43,9 @@ import {
     GeneralReturnTable,
 } from "components/general/OrderTables/OrderTables";
 import PopupModal from "components/general/PopupModal/PopupModal";
+import { Link } from "react-router-dom";
+import { sortPendingOrders, sortReturnedOrders } from "api/helpers";
+import { sortCheckedOutOrders } from "api/helpers";
 
 export const CheckedOutTables = () =>
     // TODO: for incident reports
@@ -50,7 +53,8 @@ export const CheckedOutTables = () =>
     // reportIncident, }
     {
         const dispatch = useDispatch();
-        const orders = useSelector(checkedOutOrdersSelector);
+        const unsorted_orders = useSelector(checkedOutOrdersSelector);
+        const orders = unsorted_orders.slice().sort(sortCheckedOutOrders);
         const hardware = useSelector(hardwareSelectors.selectEntities);
         const isVisible = useSelector(isCheckedOutTableVisibleSelector);
         const fetchOrdersError = useSelector(orderErrorSelector);
@@ -86,6 +90,8 @@ export const CheckedOutTables = () =>
                             <div
                                 id={`order${checkedOutOrder.id}`}
                                 key={checkedOutOrder.id}
+                                data-testid={`checked-out-order-table-${checkedOutOrder.id}`}
+                                data-updated-time={`checked-out-order-time-${checkedOutOrder.updatedTime}`}
                             >
                                 <GeneralOrderTableTitle
                                     orderId={checkedOutOrder.id}
@@ -178,17 +184,24 @@ export const CheckedOutTables = () =>
                                                             {row.quantityGranted}
                                                         </TableCell>
                                                         <TableCell align="right">
-                                                            {/* TODO: Add back in when incident reports are being used*/}
-                                                            {/*<Button*/}
-                                                            {/*    color="secondary"*/}
-                                                            {/*    size="small"*/}
-                                                            {/*    onClick={() => {*/}
-                                                            {/*        reportIncident(row.id);*/}
-                                                            {/*        push("/incident-form");*/}
-                                                            {/*    }}*/}
-                                                            {/*>*/}
-                                                            {/*    Report broken/lost*/}
-                                                            {/*</Button>*/}
+                                                            <Link
+                                                                to={`/incident-form?data=${JSON.stringify(
+                                                                    row
+                                                                )}`}
+                                                            >
+                                                                <Button
+                                                                    color="secondary"
+                                                                    size="small"
+                                                                    onClick={() => {
+                                                                        console.log(
+                                                                            "reporting incident",
+                                                                            row.id
+                                                                        );
+                                                                    }}
+                                                                >
+                                                                    Report broken/lost
+                                                                </Button>
+                                                            </Link>
                                                         </TableCell>
                                                     </TableRow>
                                                 )
@@ -205,7 +218,8 @@ export const CheckedOutTables = () =>
 
 export const ReturnedTable = () => {
     const dispatch = useDispatch();
-    const orders = useSelector(returnedOrdersSelector);
+    const unsorted_orders = useSelector(returnedOrdersSelector);
+    const orders = unsorted_orders.slice().sort(sortReturnedOrders);
     const fetchOrdersError = useSelector(orderErrorSelector);
     const isVisible = useSelector(isReturnedTableVisibleSelector);
     const toggleVisibility = () => dispatch(toggleReturnedTable());
@@ -224,20 +238,30 @@ export const ReturnedTable = () => {
 
 export const PendingTables = () => {
     const dispatch = useDispatch();
-    const orders = useSelector(pendingOrderSelectors.selectAll);
+    const unsorted_orders = useSelector(pendingOrderSelectors.selectAll);
+    const orders = sortPendingOrders(unsorted_orders);
+    orders.reverse();
     const isVisible = useSelector(isPendingTableVisibleSelector);
     const isCancelOrderLoading = useSelector(cancelOrderLoadingSelector);
     const toggleVisibility = () => dispatch(togglePendingTable());
     const cancelOrder = (orderId: number) => dispatch(cancelOrderThunk(orderId));
     const [showCancelOrderModal, setShowCancelOrderModal] = useState(false);
+    const [orderId, setorderId] = useState(null);
 
     const closeModal = () => {
         setShowCancelOrderModal(false);
     };
 
-    const submitModal = (cancelOrderId: number) => {
-        cancelOrder(cancelOrderId); // Perform Cancellation
-        setShowCancelOrderModal(false);
+    const submitCancelOrderModal = (cancelOrderId: number | null) => {
+        if (cancelOrderId != null) {
+            cancelOrder(cancelOrderId); // Perform Cancellation
+            setShowCancelOrderModal(false);
+        }
+    };
+
+    const setCancelOrderModal = (pendingOrder: any) => {
+        setShowCancelOrderModal(true);
+        setorderId(pendingOrder.id);
     };
 
     return (
@@ -263,6 +287,7 @@ export const PendingTables = () => {
                         id={`order${pendingOrder.id}`}
                         key={pendingOrder.id}
                         data-testid={`pending-order-table-${pendingOrder.id}`}
+                        data-updated-time={`pending-order-time-${pendingOrder.updatedTime}`}
                     >
                         <GeneralPendingTable {...{ pendingOrder }} />
                         {pendingOrder.status !== "Ready for Pickup" && (
@@ -274,7 +299,7 @@ export const PendingTables = () => {
                                 }}
                             >
                                 <Button
-                                    onClick={() => setShowCancelOrderModal(true)}
+                                    onClick={() => setCancelOrderModal(pendingOrder)}
                                     disabled={isCancelOrderLoading}
                                     color="secondary"
                                     data-testid="cancel-order-button"
@@ -286,7 +311,9 @@ export const PendingTables = () => {
                                         "Are you sure you want to cancel this order? The team will be notified."
                                     }
                                     isVisible={showCancelOrderModal}
-                                    submitHandler={() => submitModal(pendingOrder.id)}
+                                    submitHandler={() =>
+                                        submitCancelOrderModal(orderId)
+                                    }
                                     cancelText={"Go Back"}
                                     submitText={"Delete Order"}
                                     cancelHandler={closeModal}
