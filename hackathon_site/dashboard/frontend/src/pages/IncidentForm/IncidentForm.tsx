@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import styles from "./IncidentForm.module.scss";
 import {
     Typography,
@@ -43,41 +43,98 @@ const capitalizeFirstLetter = (str: string) => {
     return str.charAt(0).toUpperCase() + str.slice(1);
 };
 
-const IncidentForm = () => {
-    const muiClasses = useStyles();
+const validationSchema = Yup.object({
+    state: Yup.string().required(INCIDENT_ERROR_MSG.state),
+    qty: Yup.string()
+        .test("not-zero", INCIDENT_ERROR_MSG.qtyZero, (value) => value !== "0")
+        .required(INCIDENT_ERROR_MSG.qtyEmpty),
+    what: Yup.string().required(INCIDENT_ERROR_MSG.what),
+    when: Yup.string().required(INCIDENT_ERROR_MSG.when),
+    where: Yup.string().required(INCIDENT_ERROR_MSG.where),
+});
 
+const initialValues = {
+    state: "",
+    qty: "",
+    what: "",
+    when: "",
+    where: "",
+};
+
+const createQuantityList = (number: number) => {
+    let entry = [];
+
+    for (let i = 1; i <= number; i++) {
+        entry.push(
+            <MenuItem key={i} role="quantity" value={i.toString()}>
+                {i}
+            </MenuItem>
+        );
+    }
+
+    return entry;
+};
+
+// used to bypass eslint react-hooks/exhaustive-deps
+const useFirstRenderEffect = (callback: () => void) => {
+    const isFirstRender = useRef(true);
+
+    useEffect(() => {
+        if (isFirstRender.current) {
+            isFirstRender.current = false;
+            callback();
+        }
+    }, [callback]);
+};
+
+const IncidentForm = () => {
     const dispatch = useDispatch();
-    let history = useHistory();
-    let location = useLocation();
+    const history = useHistory();
+    const location = useLocation();
 
     // get info from url
     const searchParams = new URLSearchParams(location.search);
+
+    useFirstRenderEffect(() => {
+        if (searchParams.toString() === "") {
+            // check if there are empty query params
+            dispatch(
+                displaySnackbar({
+                    message: `You are not authorized to access this page.`,
+                    options: {
+                        variant: "error",
+                    },
+                })
+            );
+            history.push("/404"); // redirect to 404 page
+        }
+    });
+
     let hardwareQuantity: number; // quantity used for dropdown
     try {
         const data = searchParams.get("data") ?? "";
         const checkedOutOrder = JSON.parse(data); // parse string from url into an object
         hardwareQuantity = checkedOutOrder?.quantityGranted; // set the hardware qty for dropdown
     } catch {
-        hardwareQuantity = 0; // set the qty to 0 if there is no url
+        hardwareQuantity = 0; // set the qty to 0 if there is an error parsing
     }
 
-    const validationSchema = Yup.object({
-        state: Yup.string().required(INCIDENT_ERROR_MSG.state),
-        qty: Yup.string()
-            .test("not-zero", INCIDENT_ERROR_MSG.qtyZero, (value) => value !== "0")
-            .required(INCIDENT_ERROR_MSG.qtyEmpty),
-        what: Yup.string().required(INCIDENT_ERROR_MSG.what),
-        when: Yup.string().required(INCIDENT_ERROR_MSG.when),
-        where: Yup.string().required(INCIDENT_ERROR_MSG.where),
-    });
+    return (
+        <>
+            {searchParams.toString() === "" ? (
+                <></>
+            ) : (
+                <IncidentFormRender hardwareQuantity={hardwareQuantity} />
+            )}
+        </>
+    );
+};
 
-    const initialValues = {
-        state: "",
-        qty: "",
-        what: "",
-        when: "",
-        where: "",
-    };
+const IncidentFormRender = ({ hardwareQuantity }: { hardwareQuantity: number }) => {
+    const muiClasses = useStyles();
+
+    const dispatch = useDispatch();
+    const history = useHistory();
 
     const handleSubmit = async (values: FormikValues, { resetForm }: any) => {
         // TODO: submit the form
@@ -94,26 +151,6 @@ const IncidentForm = () => {
         );
         // navigate back to previous page
         history.goBack();
-    };
-
-    const createQuantityList = (number: number) => {
-        let entry = [];
-        if (number === 0) {
-            entry.push(
-                <MenuItem key={"0"} role="quantity" value={"0"}>
-                    {0}
-                </MenuItem>
-            );
-        } else {
-            for (let i = 1; i <= number; i++) {
-                entry.push(
-                    <MenuItem key={i} role="quantity" value={i.toString()}>
-                        {i}
-                    </MenuItem>
-                );
-            }
-        }
-        return entry;
     };
 
     return (
@@ -346,9 +383,7 @@ const IncidentForm = () => {
                                                                                 }
                                                                             >
                                                                                 {createQuantityList(
-                                                                                    Number(
-                                                                                        hardwareQuantity
-                                                                                    )
+                                                                                    hardwareQuantity
                                                                                 )}
                                                                             </Select>
                                                                             <FormHelperText>

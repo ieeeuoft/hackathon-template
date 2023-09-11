@@ -14,7 +14,7 @@ import {
     mockReturnedOrdersInTable,
 } from "testing/mockData";
 import { ReturnOrderInTable } from "api/types";
-import { getAllByText, queryAllByText } from "@testing-library/react";
+import { getAllByText } from "@testing-library/react";
 
 describe("<PendingTables />", () => {
     it("Shows pending items and status chip", () => {
@@ -136,6 +136,29 @@ describe("<PendingTables />", () => {
 
         expect(cancelOrderModalMessage[0]).not.toBeInTheDocument();
     });
+
+    it("Displays pending orders from oldest to newest", () => {
+        const store = makeStoreWithEntities({
+            pendingOrders: mockPendingOrdersInTable,
+        });
+        const { getAllByTestId } = render(<PendingTables />, { store });
+        const orderElements = getAllByTestId(/pending-order-table-\d+/);
+        const orders = orderElements.map((element) => {
+            const updatedTime = element.getAttribute("data-updated-time");
+            return { updatedTime };
+        });
+        let isSorted = true;
+        for (let i = 0; i < orders.length - 1; i++) {
+            const currentDate = orders[i];
+            const previousDate = orders[i + 1];
+
+            if (currentDate > previousDate) {
+                isSorted = false;
+                break;
+            }
+        }
+        expect(isSorted).toBe(true);
+    });
 });
 
 describe("<CheckedOutTables />", () => {
@@ -205,6 +228,31 @@ describe("<CheckedOutTables />", () => {
         mockCheckedOutOrders.map(({ id }) => {
             expect(queryByText(`Order #${id}`)).not.toBeInTheDocument();
         });
+    });
+
+    it("Displays checked out orders from most recent to oldest order", async () => {
+        const store = makeStoreWithEntities({
+            orderState: {
+                checkedOutOrders: mockCheckedOutOrdersInTable,
+            },
+        });
+        const { getAllByTestId } = render(<CheckedOutTables />, { store });
+        const orderElements = getAllByTestId(/checked-out-order-table-\d+/);
+        const orders = orderElements.map((element) => {
+            const updatedTime = element.getAttribute("data-updated-time");
+            return { updatedTime };
+        });
+        let isSorted = true;
+        for (let i = 0; i < orders.length - 1; i++) {
+            const currentDate = orders[i];
+            const previousDate = orders[i + 1];
+
+            if (currentDate < previousDate) {
+                isSorted = false;
+                break;
+            }
+        }
+        expect(isSorted).toBe(true);
     });
 
     // TODO: implement when incidents are ready
@@ -311,6 +359,31 @@ describe("<ReturnedTable />", () => {
         mockReturnedOrdersInTable.map(({ id }) => {
             expect(queryByText(`Order #${id}`)).not.toBeInTheDocument();
         });
+    });
+
+    it("Displays the returned orders from newest to oldest", () => {
+        const store = makeStoreWithReturnedOrders(mockReturnedOrdersInTable, false);
+        const { getAllByTestId, getByText } = render(<ReturnedTable />, {
+            store,
+        });
+        const button = getByText("Show all");
+        fireEvent.click(button);
+        const orderElements = getAllByTestId(/returned-order-table-\d+/);
+        const orders = orderElements.map((element) => {
+            const updatedTime = element.getAttribute("data-updated-time");
+            return { updatedTime };
+        });
+        let isSorted = true;
+        for (let i = 0; i < orders.length - 1; i++) {
+            const currentDate = orders[i];
+            const previousDate = orders[i + 1];
+
+            if (currentDate < previousDate) {
+                isSorted = false;
+                break;
+            }
+        }
+        expect(isSorted).toBe(true);
     });
 });
 
