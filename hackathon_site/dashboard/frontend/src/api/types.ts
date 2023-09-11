@@ -90,6 +90,7 @@ export interface Team {
     created_at: string;
     updated_at: string;
     profiles: ProfileWithUser[];
+    project_description: string;
 }
 
 export interface ProfileWithUser extends ProfileWithoutTeamNumber {
