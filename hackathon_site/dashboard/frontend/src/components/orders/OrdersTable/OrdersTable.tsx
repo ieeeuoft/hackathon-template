@@ -11,11 +11,11 @@ interface OrdersTableProps {
     ordersData: Order[];
 }
 
-interface OrderStateIcon {
+interface IOrderStateIcon {
     status: string;
 }
 
-const OrderStateIcon = ({ status }: OrderStateIcon) => {
+const OrderStateIcon = ({ status }: IOrderStateIcon) => {
     const filterState: string = status.replace(/\s+/g, "");
     const styleIcon = statusStylesMap[filterState];
     const iconSrc = statusIconMap[filterState];

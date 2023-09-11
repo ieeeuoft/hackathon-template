@@ -88,37 +88,7 @@ const Orders = () => {
                         </Grid>
                         <Grid item lg={12}>
                             <Grid container spacing={1} direction="row">
-                                <OrdersTable ordersData={mockPendingOrders} />
-                                {/* {allOrders.map((order, idx) => (
-                                    <Grid
-                                        item
-                                        lg={3}
-                                        md={4}
-                                        sm={6}
-                                        xs={12}
-                                        key={idx}
-                                        onClick={() =>
-                                            history.push(`/teams/${order.team_code}`)
-                                        }
-                                    >
-                                        {[
-                                            "Submitted",
-                                            "Ready for Pickup",
-                                            "Picked Up",
-                                            "Cancelled",
-                                            "Returned",
-                                        ].includes(order.status) && (
-                                            <OrderCard
-                                                teamCode={order.team_code}
-                                                orderQuantity={order.items.length}
-                                                time={order.created_at}
-                                                id={order.id}
-                                                status={order.status}
-                                                data-testid={`order-item-${order.id}`}
-                                            />
-                                        )}
-                                    </Grid>
-                                ))} */}
+                                <OrdersTable ordersData={allOrders} />
                             </Grid>
                         </Grid>
                     </Grid>
