@@ -1,14 +1,18 @@
 import React from "react";
 import {
     DataGrid,
+    GridCallbackDetails,
     GridColDef,
     GridEventListener,
+    GridRowParams,
     GridValueGetterParams,
+    MuiEvent,
 } from "@mui/x-data-grid";
 import { ItemsInOrder, Order } from "api/types";
 import { format, parseISO } from "date-fns"; // to parse date
 import { statusIconMap, statusStylesMap } from "api/orders";
 import styles from "./OrdersTable.module.scss";
+import { useHistory } from "react-router-dom";
 
 // magic numbers
 const pageSizeOptions = [5, 10, 25]; // items displayed per page
@@ -46,15 +50,31 @@ const OrderStateIcon = ({ status }: IOrderStateIcon) => {
     );
 };
 
-const handleEvent: GridEventListener<"rowClick"> = (
-    params, // GridRowParams
-    event, // MuiEvent<React.MouseEvent<HTMLElement>>
-    details // GridCallbackDetails
+const handleEvent = (
+    params: GridRowParams, // GridRowParams
+    event: MuiEvent<React.MouseEvent<HTMLElement>>, // MuiEvent<React.MouseEvent<HTMLElement>>
+    details: GridCallbackDetails,
+    navigateCallback: (path: string) => void
 ) => {
-    // TODO: handles double row click
+    // const history = useHistory();
+    const path = `/teams/${params.row.team_code}`;
+    navigateCallback(path);
+    // history.push(`/teams/${params.row.team_code}`)
 };
 
 const OrdersTable = ({ ordersData }: OrdersTableProps) => {
+    const history = useHistory();
+
+    const handleDoubleRowClick: GridEventListener<"rowClick"> = (
+        params: GridRowParams,
+        event: MuiEvent<React.MouseEvent<HTMLElement>>,
+        details: GridCallbackDetails
+    ) => {
+        handleEvent(params, event, details, (path) => {
+            history.push(path); // Call the navigateCallback
+        });
+    };
+
     const columns: GridColDef[] = [
         { field: "id", headerName: "ID", width: 25, flex: 1 },
         {
@@ -104,7 +124,7 @@ const OrdersTable = ({ ordersData }: OrdersTableProps) => {
                             paginationModel: paginationModel,
                         },
                     }}
-                    onRowDoubleClick={handleEvent}
+                    onRowDoubleClick={handleDoubleRowClick}
                 />
             </div>
         </>
