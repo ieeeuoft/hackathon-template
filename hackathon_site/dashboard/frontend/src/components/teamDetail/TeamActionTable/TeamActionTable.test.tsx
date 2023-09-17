@@ -1,7 +1,17 @@
 import React from "react";
-import { render, screen, fireEvent } from "testing/utils";
+
+import {
+    render,
+    screen,
+    fireEvent,
+    makeStoreWithEntities,
+    waitFor,
+} from "testing/utils";
 
 import TeamActionTable from "components/teamDetail/TeamActionTable/TeamActionTable";
+import TeamCheckedOutOrderTable from "../TeamCheckedOutOrderTable/TeamCheckedOutOrderTable";
+import { mockCheckedOutOrders, mockHardware } from "testing/mockData";
+import { RootStore } from "slices/store";
 
 describe("Team action table", () => {
     test("Renders team action table", () => {
@@ -27,6 +37,15 @@ jest.mock("slices/event/teamAdminSlice", () => ({
 }));
 
 describe("Team action table", () => {
+    let store: RootStore;
+
+    beforeEach(() => {
+        store = makeStoreWithEntities({
+            hardware: mockHardware,
+            allOrders: mockCheckedOutOrders,
+        });
+    });
+
     test("Renders team action table", () => {
         const { container } = render(<TeamActionTable teamCode={""} />);
 
@@ -66,5 +85,24 @@ describe("Team action table", () => {
         expect(deleteTeamThunk).toHaveBeenCalledWith("TEAM001");
 
         // You can also add more assertions based on the behavior after the 'deleteTeamThunk' action is dispatched
+    });
+
+    test("Displays the snackbar message when not able to delete team", async () => {
+        const { getByText } = render(<TeamActionTable teamCode="TEAM001" />);
+        const { container } = render(<TeamCheckedOutOrderTable />);
+
+        // Click the 'Delete team' button
+        fireEvent.click(getByText("Delete team"));
+
+        // Click the 'Yes' button on the confirmation modal
+        fireEvent.click(getByText("Yes"));
+
+        await waitFor(() => {
+            expect(
+                screen.getByText(
+                    "Failed to delete team: Cannot delete a team with unreturned order items"
+                )
+            ).toBeInTheDocument();
+        });
     });
 });

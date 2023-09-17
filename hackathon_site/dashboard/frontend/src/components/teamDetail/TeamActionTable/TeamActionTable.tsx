@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
     Grid,
-    Paper,
     List,
     ListItem,
     ListItemIcon,
     ListItemText,
+    Paper,
 } from "@material-ui/core";
 import { useHistory } from "react-router-dom";
 import Typography from "@material-ui/core/Typography";
@@ -15,7 +15,6 @@ import CallSplitIcon from "@material-ui/icons/CallSplit";
 import MergeTypeIcon from "@material-ui/icons/MergeType";
 import DeleteIcon from "@material-ui/icons/Delete";
 import PopupModal from "components/general/PopupModal/PopupModal";
-import { useDispatch } from "react-redux";
 import { deleteTeamThunk } from "slices/event/teamAdminSlice";
 import { teamDetailAdapterSelector } from "slices/event/teamDetailSlice";
 
@@ -65,22 +64,17 @@ const TeamActionTable = ({ teamCode }: TeamActionTableProps) => {
         if (hasMultipleTeamMembers()) {
             setWarningVisible(true);
         } else {
-            try {
-                await dispatch(deleteTeamThunk(teamCode));
-                history.push("/teams");
-            } catch (error) {
-                console.error("Error deleting team:", error);
-            }
+            await dispatch(deleteTeamThunk(teamCode));
+            history.push("/teams");
         }
     };
 
     const handleWarningSubmit = async () => {
         setWarningVisible(false);
-        try {
-            await dispatch(deleteTeamThunk(teamCode));
+        const result = await dispatch(deleteTeamThunk(teamCode));
+        // @ts-ignore
+        if (result.error === undefined || result.error.message !== "Rejected") {
             history.push("/teams");
-        } catch (error) {
-            console.error("Error deleting team:", error);
         }
     };
 
