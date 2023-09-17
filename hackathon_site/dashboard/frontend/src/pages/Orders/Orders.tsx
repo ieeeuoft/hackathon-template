@@ -9,19 +9,16 @@ import OrdersFilter from "components/orders/OrdersFilter/OrderFilter";
 import CloseIcon from "@material-ui/icons/Close";
 import IconButton from "@material-ui/core/IconButton";
 import styles from "./Orders.module.scss";
-// import OrderCard from "components/orders/OrderCard/OrderCard";
 import { useDispatch, useSelector } from "react-redux";
 import {
     adminOrderSelectors,
     getOrdersWithFilters,
 } from "slices/order/adminOrderSlice";
-// import { useHistory } from "react-router-dom";
 import { clearFilters } from "slices/hardware/hardwareSlice";
 import { OrdersTable } from "components/orders/OrdersTable/OrdersTable";
 
 const Orders = () => {
     const dispatch = useDispatch();
-    // const history = useHistory();
     const allOrders = useSelector(adminOrderSelectors.selectAll);
     const [mobileOpen, setMobileOpen] = React.useState(false);
     const toggleFilter = () => {

@@ -5,7 +5,9 @@ import { format, parseISO } from "date-fns"; // to parse date
 import { statusIconMap, statusStylesMap } from "api/orders";
 import styles from "./OrdersTable.module.scss";
 
-// status icons
+// magic numbers
+const pageSizeOptions = [5, 10, 25]; // items displayed per page
+const paginationModel = { pageSize: 25, page: 0 }; // defauly number of rows displayed per page
 
 interface OrdersTableProps {
     ordersData: Order[];
@@ -39,7 +41,7 @@ const handleEvent: GridEventListener<"rowClick"> = (
     event, // MuiEvent<React.MouseEvent<HTMLElement>>
     details // GridCallbackDetails
 ) => {
-    console.log("clicked", params.row);
+    // TODO: handles double row click
 };
 
 const OrdersTable = ({ ordersData }: OrdersTableProps) => {
@@ -63,14 +65,8 @@ const OrdersTable = ({ ordersData }: OrdersTableProps) => {
             headerName: "Order Qty",
             flex: 1,
             valueGetter: (params) => {
-                let orderQty: number = 0;
-                const items = params?.value as ItemsInOrder[];
-                try {
-                    orderQty = items.length;
-                } catch (err) {
-                    return 0;
-                }
-                return orderQty;
+                const items = params?.value as ItemsInOrder[] | undefined;
+                return Array.isArray(items) ? items.length : 0;
             },
         },
         {
@@ -89,9 +85,8 @@ const OrdersTable = ({ ordersData }: OrdersTableProps) => {
                 <DataGrid
                     rows={ordersData}
                     columns={columns}
-                    // pageSize={10} // not available in free version
                     autoPageSize={true} // adjusts page size to fit available area
-                    pageSizeOptions={[5, 10, 15]}
+                    pageSizeOptions={pageSizeOptions}
                     columnVisibilityModel={{
                         // hide specific columns
                         updated_at: false,
@@ -99,7 +94,7 @@ const OrdersTable = ({ ordersData }: OrdersTableProps) => {
                     }}
                     initialState={{
                         pagination: {
-                            paginationModel: { pageSize: 25, page: 0 },
+                            paginationModel: paginationModel,
                         },
                     }}
                     onRowDoubleClick={handleEvent}
