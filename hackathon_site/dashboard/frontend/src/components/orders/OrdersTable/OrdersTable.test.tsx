@@ -1,10 +1,12 @@
 import React from "react";
-import { fireEvent, render } from "testing/utils";
+import { fireEvent, render, waitFor } from "testing/utils";
 import { mockPendingOrders } from "testing/mockData";
 import { OrdersTable } from "./OrdersTable";
 import { format, parseISO } from "date-fns"; // to parse date
 import { orderQtyValueGetter } from "./OrdersTable";
 import { GridValueGetterParams } from "@mui/x-data-grid";
+import { createMemoryHistory } from "history";
+import { Router } from "react-router-dom";
 
 describe("Orders Table", () => {
     test("renders order table", () => {
@@ -78,11 +80,22 @@ describe("Orders Table", () => {
         expect(result).toBe(2);
     });
 
-    test("Handles double row click event", () => {
-        const { container } = render(<OrdersTable ordersData={mockPendingOrders} />);
+    test("Handles double row click event", async () => {
+        const history = createMemoryHistory();
+
+        const { container } = render(
+            <Router history={history}>
+                <OrdersTable ordersData={mockPendingOrders} />
+            </Router>
+        );
 
         const rows = container.querySelectorAll("div.MuiDataGrid-row");
 
         fireEvent.doubleClick(rows[0]);
+
+        await waitFor(() => {
+            // Assert that the URL has changed to the expected path
+            expect(history.location.pathname).toBe("/teams/IEEE"); // Replace with your expected URL
+        });
     });
 });
