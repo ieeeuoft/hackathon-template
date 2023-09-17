@@ -26,7 +26,7 @@ interface IOrderStateIcon {
     status: string;
 }
 
-export const orderQtyValueGetter = (params: GridValueGetterParams) => {
+export const orderQtyValueGetter = (params: any) => {
     const items = params?.value as ItemsInOrder[] | undefined;
     return Array.isArray(items) ? items.length : 0;
 };

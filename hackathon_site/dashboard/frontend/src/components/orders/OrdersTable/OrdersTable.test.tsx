@@ -61,7 +61,7 @@ describe("Orders Table", () => {
     });
 
     test("ValueGetter caluclates order quantity correctly", () => {
-        let params: GridValueGetterParams = {
+        let params = {
             value: [
                 {
                     id: 6,
