@@ -1,5 +1,10 @@
 import React from "react";
-import { DataGrid, GridColDef, GridEventListener } from "@mui/x-data-grid";
+import {
+    DataGrid,
+    GridColDef,
+    GridEventListener,
+    GridValueGetterParams,
+} from "@mui/x-data-grid";
 import { ItemsInOrder, Order } from "api/types";
 import { format, parseISO } from "date-fns"; // to parse date
 import { statusIconMap, statusStylesMap } from "api/orders";
@@ -16,6 +21,11 @@ interface OrdersTableProps {
 interface IOrderStateIcon {
     status: string;
 }
+
+export const orderQtyValueGetter = (params: GridValueGetterParams) => {
+    const items = params?.value as ItemsInOrder[] | undefined;
+    return Array.isArray(items) ? items.length : 0;
+};
 
 const OrderStateIcon = ({ status }: IOrderStateIcon) => {
     const filterState: string = status.replace(/\s+/g, "");
@@ -64,10 +74,7 @@ const OrdersTable = ({ ordersData }: OrdersTableProps) => {
             field: "items",
             headerName: "Order Qty",
             flex: 1,
-            valueGetter: (params) => {
-                const items = params?.value as ItemsInOrder[] | undefined;
-                return Array.isArray(items) ? items.length : 0;
-            },
+            valueGetter: orderQtyValueGetter,
         },
         {
             field: "status",
