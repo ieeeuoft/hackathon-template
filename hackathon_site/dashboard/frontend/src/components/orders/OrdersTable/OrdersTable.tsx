@@ -5,7 +5,6 @@ import {
     GridColDef,
     GridEventListener,
     GridRowParams,
-    GridValueGetterParams,
     MuiEvent,
 } from "@mui/x-data-grid";
 import { ItemsInOrder, Order } from "api/types";
