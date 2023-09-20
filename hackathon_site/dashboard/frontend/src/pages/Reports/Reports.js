@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import styles from "./Reports.module.scss";
 import Header from "components/general/Header/Header";
 import Typography from "@material-ui/core/Typography";
