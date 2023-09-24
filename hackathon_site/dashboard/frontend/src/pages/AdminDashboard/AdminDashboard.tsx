@@ -27,7 +27,7 @@ import {
     adminOrderSelectors,
     getOrdersWithFilters,
     setFilters,
-    adminOrderNewTotalSelector,
+    adminOrderTotalSelector,
     adminCheckedOutOrderTotalSelector,
 } from "slices/order/adminOrderSlice";
 
@@ -43,7 +43,7 @@ const AdminDashboard = () => {
     const dispatch = useDispatch();
     const history = useHistory();
     const allOrders = useSelector(adminOrderSelectors.selectAll);
-    const orderQuantity = useSelector(adminOrderNewTotalSelector);
+    const orderQuantity = useSelector(adminOrderTotalSelector);
     const count = useSelector(teamCountSelector);
     const participants = useSelector(totalParticipantCountSelector);
     const checkedOut = useSelector(adminCheckedOutOrderTotalSelector);

@@ -8,14 +8,17 @@ import {
     teamAdminSelectors,
     NUM_TEAM_LIMIT,
     getTeamNextPage,
+    teamCountSelector,
+    totalParticipantCountSelector,
 } from "slices/event/teamAdminSlice";
 import { makeMockApiListResponse, makeStoreWithEntities, waitFor } from "testing/utils";
-import { mockTeam, mockTeams } from "testing/mockData";
+import { mockTeam, mockTeamMultiple, mockTeams, mockValidTeam } from "testing/mockData";
 import { get, stripHostnameReturnFilters } from "api/api";
 import { displaySnackbar } from "slices/ui/uiSlice";
 import thunk, { ThunkDispatch } from "redux-thunk";
 import { AnyAction } from "redux";
 import configureStore from "redux-mock-store";
+import { teamReducerName, teamSizeSelector } from "./teamSlice";
 
 jest.mock("api/api", () => ({
     ...jest.requireActual("api/api"),
@@ -57,6 +60,18 @@ describe("Selectors", () => {
         expect(isLoadingSelector(loadingTrueState)).toEqual(true);
         expect(isLoadingSelector(loadingFalseState)).toEqual(false);
     });
+    test("totalParticipantCountSelector", () => {
+        const store = makeStoreWithEntities({ teams: mockTeams });
+        const totalTeams = totalParticipantCountSelector(store.getState());
+        const totalProfiles = mockTeams.reduce((sum, team) => {
+            if (team.profiles) {
+                return sum + team.profiles.length;
+            } else {
+                return sum;
+            }
+        }, 0);
+        expect(totalTeams).toEqual(totalProfiles);
+    });
 });
 
 describe("getTeamsWithSearch thunk", () => {
@@ -92,6 +107,7 @@ describe("getTeamsWithSearch thunk", () => {
                 limit: NUM_TEAM_LIMIT,
             });
             expect(teamAdminSelectors.selectAll(store.getState())).toEqual(mockTeams);
+            expect(teamCountSelector(store.getState())).toEqual(mockTeams.length);
         });
     });
 
