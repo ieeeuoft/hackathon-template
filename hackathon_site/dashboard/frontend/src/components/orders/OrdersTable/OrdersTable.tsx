@@ -55,10 +55,8 @@ const handleEvent = (
     details: GridCallbackDetails,
     navigateCallback: (path: string) => void
 ) => {
-    // const history = useHistory();
     const path = `/teams/${params.row.team_code}`;
     navigateCallback(path);
-    // history.push(`/teams/${params.row.team_code}`)
 };
 
 const OrdersTable = ({ ordersData }: OrdersTableProps) => {

@@ -39,8 +39,6 @@ describe("Orders Table", () => {
             // Query for the cells in each row
             const cells = row.querySelectorAll("div.MuiDataGrid-cell");
 
-            console.log(cells[0].textContent);
-
             expect(cells.length).toBe(6); // 6 fields are displayed in datagrid
 
             // Access and assert the cell data
