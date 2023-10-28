@@ -200,9 +200,24 @@ export const adminOrderNumStatusesSelector = createSelector(
     (adminOrderSlice) => adminOrderSlice.numStatuses
 );
 
-export const adminOrderTotalSelector = createSelector(
+export const adminOrderTotalWithFiltersSelector = createSelector(
     [adminOrderSelectors.selectAll],
     (orderItems) => orderItems.reduce((accum) => accum + 1, 0)
+);
+//Todo this selector is being affected by filters
+export const adminOrderTotalSelector = createSelector();
+
+export const adminCheckedOutOrderTotalSelector = createSelector(
+    [adminOrderSelectors.selectAll],
+    (ordersList) => {
+        let count = 0;
+        for (let i = 0; i < ordersList.length; i++) {
+            if (ordersList[i].status === "Picked Up") {
+                count += ordersList[i].items.length;
+            }
+        }
+        return count;
+    }
 );
 
 export const { setFilters, clearFilters } = actions;

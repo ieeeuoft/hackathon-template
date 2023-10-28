@@ -4,7 +4,7 @@ import RefreshIcon from "@material-ui/icons/Refresh";
 import { useDispatch, useSelector } from "react-redux";
 import styles from "pages/Orders/Orders.module.scss";
 import {
-    adminOrderTotalSelector,
+    adminOrderTotalWithFiltersSelector,
     getOrdersWithFilters,
 } from "slices/order/adminOrderSlice";
 
@@ -13,7 +13,7 @@ const OrdersCount = () => {
     const refreshOrders = () => {
         dispatch(getOrdersWithFilters());
     };
-    const orderQuantity = useSelector(adminOrderTotalSelector);
+    const orderQuantity = useSelector(adminOrderTotalWithFiltersSelector);
     return (
         <div className={styles.ordersBodyToolbarRefresh}>
             <Typography variant="body2">{orderQuantity} results</Typography>

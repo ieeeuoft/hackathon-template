@@ -8,11 +8,13 @@ import {
     errorSelector,
     getOrdersWithFilters,
     adminOrderSelectors,
+    adminOrderTotalWithFiltersSelector,
     adminOrderTotalSelector,
+    adminCheckedOutOrderTotalSelector,
 } from "slices/order/adminOrderSlice";
 import { get } from "api/api";
 import { makeMockApiListResponse, makeStoreWithEntities } from "testing/utils";
-import { mockPendingOrders } from "testing/mockData";
+import { mockCheckedOutOrders, mockOrders, mockPendingOrders } from "testing/mockData";
 import { waitFor } from "@testing-library/react";
 
 jest.mock("api/api", () => ({
@@ -52,10 +54,29 @@ describe("adminOrderSlice Selectors", () => {
         expect(errorSelector(errorExistsState)).toEqual("exists");
         expect(errorSelector(errorNullState)).toEqual(null);
     });
-    test("adminOrderTotalSelector", () => {
+    test("adminOrderTotalWithFiltersSelector", () => {
         const store = makeStoreWithEntities({ allOrders: mockPendingOrders });
-        const total = adminOrderTotalSelector(store.getState());
+        const total = adminOrderTotalWithFiltersSelector(store.getState());
         expect(total).toEqual(mockPendingOrders.length);
+    });
+    // todo not working, doesnt select all orders
+    test("adminOrderTotalSelector", () => {
+        const store = makeStoreWithEntities({ allOrders: mockOrders });
+        const total = adminOrderTotalSelector(store.getState());
+        expect(total).toEqual(mockOrders.length);
+    });
+    test("adminCheckedOutOrderTotalSelector", () => {
+        const store = makeStoreWithEntities({ allOrders: mockCheckedOutOrders });
+        const total = adminCheckedOutOrderTotalSelector(store.getState());
+        const totalRequestedQuantity = mockCheckedOutOrders.reduce((sum, order) => {
+            return (
+                sum +
+                order.request.reduce((orderSum, item) => {
+                    return orderSum + item.requested_quantity;
+                }, 0)
+            );
+        }, 0);
+        expect(total).toEqual(totalRequestedQuantity); // total number of orders in mockCheckedOutOrders
     });
 });
 describe("getOrdersWithFilters Thunk", () => {
