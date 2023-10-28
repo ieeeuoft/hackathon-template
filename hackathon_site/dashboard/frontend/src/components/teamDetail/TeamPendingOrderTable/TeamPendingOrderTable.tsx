@@ -10,8 +10,10 @@ import {
     TableContainer,
     TableHead,
     TableRow,
+    Tooltip,
+    Typography,
 } from "@material-ui/core";
-import { OrderInTable, OrderStatus, Hardware } from "api/types";
+import { OrderStatus } from "api/types";
 import React, { useState } from "react";
 import Container from "@material-ui/core/Container";
 import styles from "components/general/OrderTables/OrderTables.module.scss";
@@ -22,7 +24,7 @@ import {
     GeneralOrderTableTitle,
     GeneralOrderTitle,
 } from "components/general/OrderTables/OrderTables";
-import { Formik } from "formik";
+import { Formik, FormikValues } from "formik";
 import { useDispatch, useSelector } from "react-redux";
 import {
     isLoadingSelector,
@@ -67,11 +69,31 @@ export const TeamPendingOrderTable = () => {
     const toggleVisibility = () => {
         setVisibility(!visibility);
     };
-    const updateOrder = (orderId: number, status: OrderStatus) => {
+
+    const updateOrder = (
+        orderId: number,
+        status: OrderStatus,
+        values: FormikValues | null = null
+    ) => {
         const updateOrderData: UpdateOrderAttributes = {
             id: orderId,
-            status: status,
+            status,
+            request: [],
         };
+        if (values) {
+            const request = [];
+            const formikKeys = Object.keys(values);
+            for (let i = 0; i < formikKeys.length; i += 2) {
+                const hardwareId = parseInt(formikKeys[i].split("-")[0]);
+                request.push({
+                    id: hardwareId,
+                    requested_quantity: values[formikKeys[i + 1]]
+                        ? parseInt(values[formikKeys[i]])
+                        : 0,
+                });
+            }
+            updateOrderData.request = request;
+        }
         dispatch(updateOrderStatus(updateOrderData));
     };
 
@@ -89,15 +111,14 @@ export const TeamPendingOrderTable = () => {
                 />
             )}
             {visibility &&
-                orders.length &&
+                orders.length > 0 &&
                 orders.map((pendingOrder) => (
                     <Formik
                         initialValues={setInitialValues(
                             pendingOrder.hardwareInTableRow
                         )}
                         onSubmit={(values) =>
-                            //TODO update the order when submitting the form
-                            console.log(JSON.stringify(values, undefined, 2))
+                            updateOrder(pendingOrder.id, "Ready for Pickup", values)
                         }
                         key={pendingOrder.id}
                     >
@@ -140,6 +161,11 @@ export const TeamPendingOrderTable = () => {
                                                         Qty requested
                                                     </TableCell>
                                                     <TableCell
+                                                        className={`${styles.width1} ${styles.noWrap}`}
+                                                    >
+                                                        Qty granted by system
+                                                    </TableCell>
+                                                    <TableCell
                                                         className={`${styles.width6} ${styles.noWrap}`}
                                                     >
                                                         Qty granted
@@ -147,21 +173,24 @@ export const TeamPendingOrderTable = () => {
                                                     <TableCell
                                                         className={`${styles.width1} ${styles.noWrap}`}
                                                     >
-                                                        <Checkbox
-                                                            color="primary"
-                                                            data-testid={`checkall-${pendingOrder.id}`}
-                                                            onChange={(e) => {
-                                                                pendingOrder.hardwareInTableRow.forEach(
-                                                                    (row) => {
-                                                                        props.setFieldValue(
-                                                                            `${row.id}-checkbox`,
-                                                                            e.target
-                                                                                .checked
-                                                                        );
-                                                                    }
-                                                                );
-                                                            }}
-                                                        />
+                                                        {pendingOrder.status ===
+                                                            "Submitted" && (
+                                                            <Checkbox
+                                                                color="primary"
+                                                                data-testid={`checkall-${pendingOrder.id}`}
+                                                                onChange={(e) => {
+                                                                    pendingOrder.hardwareInTableRow.forEach(
+                                                                        (row) => {
+                                                                            props.setFieldValue(
+                                                                                `${row.id}-checkbox`,
+                                                                                e.target
+                                                                                    .checked
+                                                                            );
+                                                                        }
+                                                                    );
+                                                                }}
+                                                            />
+                                                        )}
                                                     </TableCell>
                                                 </TableRow>
                                             </TableHead>
@@ -180,6 +209,8 @@ export const TeamPendingOrderTable = () => {
                                                                     src={
                                                                         hardware[row.id]
                                                                             ?.picture ??
+                                                                        hardware[row.id]
+                                                                            ?.image_url ??
                                                                         hardwareImagePlaceholder
                                                                     }
                                                                     alt={
@@ -203,70 +234,111 @@ export const TeamPendingOrderTable = () => {
                                                                         ?.manufacturer
                                                                 }
                                                             </TableCell>
-                                                            <TableCell>
+                                                            <TableCell
+                                                                style={{
+                                                                    textAlign: "right",
+                                                                }}
+                                                            >
                                                                 {row.quantityRequested}
                                                             </TableCell>
+                                                            <TableCell
+                                                                style={{
+                                                                    textAlign: "right",
+                                                                }}
+                                                            >
+                                                                {
+                                                                    row.quantityGrantedBySystem
+                                                                }
+                                                            </TableCell>
                                                             <TableCell>
-                                                                <div
-                                                                    style={{
-                                                                        display: "flex",
-                                                                        alignItems:
-                                                                            "end",
-                                                                    }}
-                                                                >
-                                                                    <Link
-                                                                        underline="always"
-                                                                        color="textPrimary"
+                                                                {pendingOrder.status ===
+                                                                    "Submitted" && (
+                                                                    <div
                                                                         style={{
-                                                                            marginRight:
-                                                                                "15px",
-                                                                        }}
-                                                                        data-testid={`all-button`}
-                                                                        onClick={() => {
-                                                                            props.setFieldValue(
-                                                                                `${row.id}-quantity`,
-                                                                                row.quantityGranted
-                                                                            );
+                                                                            display:
+                                                                                "flex",
+                                                                            alignItems:
+                                                                                "end",
                                                                         }}
                                                                     >
-                                                                        All
-                                                                    </Link>
-                                                                    <Select
-                                                                        value={
+                                                                        <Link
+                                                                            underline="always"
+                                                                            color="textPrimary"
+                                                                            style={{
+                                                                                marginRight:
+                                                                                    "15px",
+                                                                            }}
+                                                                            data-testid={`all-button`}
+                                                                            onClick={() => {
+                                                                                props.setFieldValue(
+                                                                                    `${row.id}-quantity`,
+                                                                                    row.quantityGrantedBySystem
+                                                                                );
+                                                                            }}
+                                                                        >
+                                                                            All
+                                                                        </Link>
+                                                                        <Select
+                                                                            value={
+                                                                                props
+                                                                                    .values[
+                                                                                    `${row.id}-quantity`
+                                                                                ]
+                                                                            }
+                                                                            onChange={
+                                                                                props.handleChange
+                                                                            }
+                                                                            label="Qty"
+                                                                            labelId="qtyLabel"
+                                                                            name={`${row.id}-quantity`}
+                                                                            id={`${row.id}-quantity`}
+                                                                            data-testid={`select`}
+                                                                        >
+                                                                            {createDropdownList(
+                                                                                row.quantityGrantedBySystem
+                                                                            )}
+                                                                        </Select>
+                                                                    </div>
+                                                                )}
+                                                                {pendingOrder.status ===
+                                                                    "Ready for Pickup" && (
+                                                                    <p
+                                                                        style={{
+                                                                            textAlign:
+                                                                                "center",
+                                                                            ...(row.quantityGranted <
+                                                                                row.quantityGrantedBySystem && {
+                                                                                fontWeight:
+                                                                                    "bold",
+                                                                                backgroundColor:
+                                                                                    "#c1edc1",
+                                                                            }),
+                                                                        }}
+                                                                    >
+                                                                        {
+                                                                            row.quantityGranted
+                                                                        }
+                                                                    </p>
+                                                                )}
+                                                            </TableCell>
+                                                            <TableCell align="center">
+                                                                {pendingOrder.status ===
+                                                                    "Submitted" && (
+                                                                    <Checkbox
+                                                                        color="primary"
+                                                                        checked={
                                                                             props
                                                                                 .values[
-                                                                                `${row.id}-quantity`
-                                                                            ]
+                                                                                `${row.id}-checkbox`
+                                                                            ] === true
                                                                         }
+                                                                        name={`${row.id}-checkbox`}
                                                                         onChange={
                                                                             props.handleChange
                                                                         }
-                                                                        label="Qty"
-                                                                        labelId="qtyLabel"
-                                                                        name={`${row.id}-quantity`}
-                                                                        id={`${row.id}-quantity`}
-                                                                        data-testid={`select`}
-                                                                    >
-                                                                        {createDropdownList(
-                                                                            row.quantityGranted
-                                                                        )}
-                                                                    </Select>
-                                                                </div>
-                                                            </TableCell>
-                                                            <TableCell align="center">
-                                                                <Checkbox
-                                                                    color="primary"
-                                                                    checked={
-                                                                        props.values[
-                                                                            `${row.id}-checkbox`
-                                                                        ] === true
-                                                                    }
-                                                                    name={`${row.id}-checkbox`}
-                                                                    onChange={
-                                                                        props.handleChange
-                                                                    }
-                                                                    data-testid={`${row.id}-checkbox`}
-                                                                />
+                                                                        data-testid={`${row.id}-checkbox`}
+                                                                    />
+                                                                )}
                                                             </TableCell>
                                                         </TableRow>
                                                     )
@@ -280,44 +352,97 @@ export const TeamPendingOrderTable = () => {
                                         spacing={1}
                                         style={{ marginTop: "10px" }}
                                     >
-                                        <Grid item>
-                                            <Button
-                                                // onClick={() =>
-                                                //     updateOrder(
-                                                //         pendingOrder.id,
-                                                //         "Cancelled"
-                                                //     )
-                                                // }
-                                                disabled={isLoading}
-                                                color="secondary"
-                                                variant="text"
-                                                disableElevation
-                                            >
-                                                Reject Order
-                                            </Button>
+                                        <Grid item style={{ marginTop: "5px" }}>
+                                            <Typography variant="body2">
+                                                Note: participants will receive an email
+                                                every time you change the status of
+                                                their order.
+                                            </Typography>
                                         </Grid>
-                                        <Grid item>
-                                            <Button
-                                                color="primary"
-                                                variant="contained"
-                                                type="submit"
-                                                disableElevation
-                                                data-testid={`complete-button-${pendingOrder.id}`}
-                                                // onClick={() => {
-                                                //     updateOrder(
-                                                //         pendingOrder.id,
-                                                //         "Ready for Pickup"
-                                                //     );
-                                                // }}
-                                                disabled={
-                                                    isLoading ||
-                                                    pendingOrder.status ===
-                                                        "Ready for Pickup"
-                                                }
-                                            >
-                                                Complete Order
-                                            </Button>
-                                        </Grid>
+                                        {pendingOrder.status === "Submitted" && (
+                                            <Grid item>
+                                                <Button
+                                                    onClick={() =>
+                                                        updateOrder(
+                                                            pendingOrder.id,
+                                                            "Cancelled"
+                                                        )
+                                                    }
+                                                    disabled={isLoading}
+                                                    color="secondary"
+                                                    variant="text"
+                                                    disableElevation
+                                                >
+                                                    Reject Order
+                                                </Button>
+                                            </Grid>
+                                        )}
+                                        {pendingOrder.status === "Ready for Pickup" && (
+                                            <Grid item>
+                                                <Button
+                                                    onClick={() =>
+                                                        updateOrder(
+                                                            pendingOrder.id,
+                                                            "Submitted"
+                                                        )
+                                                    }
+                                                    disabled={isLoading}
+                                                    color="secondary"
+                                                    variant="text"
+                                                    disableElevation
+                                                >
+                                                    Edit Order
+                                                </Button>
+                                            </Grid>
+                                        )}
+                                        {pendingOrder.status === "Submitted" && (
+                                            <Grid item>
+                                                <Button
+                                                    color="primary"
+                                                    variant="contained"
+                                                    type="submit"
+                                                    disableElevation
+                                                    data-testid={`complete-button-${pendingOrder.id}`}
+                                                    disabled={
+                                                        isLoading ||
+                                                        Object.keys(
+                                                            props.values
+                                                        ).findIndex(
+                                                            (key) =>
+                                                                key.includes(
+                                                                    "checkbox"
+                                                                ) && props.values[key]
+                                                        ) === -1
+                                                    }
+                                                >
+                                                    Complete Order
+                                                </Button>
+                                            </Grid>
+                                        )}
+                                        {pendingOrder.status === "Ready for Pickup" && (
+                                            <Grid item>
+                                                <Tooltip
+                                                    title="Ensure that you've collected a piece of ID before the team picks up the order"
+                                                    placement="top"
+                                                >
+                                                    <span>
+                                                        <Button
+                                                            color="secondary"
+                                                            variant="contained"
+                                                            disableElevation
+                                                            onClick={() =>
+                                                                updateOrder(
+                                                                    pendingOrder.id,
+                                                                    "Picked Up"
+                                                                )
+                                                            }
+                                                        >
+                                                            Picked Up
+                                                        </Button>
+                                                    </span>
+                                                </Tooltip>
+                                            </Grid>
+                                        )}
                                     </Grid>
                                 </div>
                             </form>

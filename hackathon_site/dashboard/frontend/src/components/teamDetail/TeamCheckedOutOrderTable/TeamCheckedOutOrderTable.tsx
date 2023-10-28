@@ -11,6 +11,7 @@ import {
     TableContainer,
     TableHead,
     TableRow,
+    Typography,
 } from "@material-ui/core";
 import React, { useState } from "react";
 import Container from "@material-ui/core/Container";
@@ -398,6 +399,13 @@ export const TeamCheckedOutOrderTable = () => {
                                             spacing={1}
                                             style={{ marginTop: "10px" }}
                                         >
+                                            <Grid item style={{ marginTop: "5px" }}>
+                                                <Typography variant="body2">
+                                                    Note: participants will receive an
+                                                    email every time you change the
+                                                    status of their order.
+                                                </Typography>
+                                            </Grid>
                                             <Grid item>
                                                 <Button
                                                     color="primary"

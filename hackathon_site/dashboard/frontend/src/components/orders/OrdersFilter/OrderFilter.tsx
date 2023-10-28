@@ -167,9 +167,11 @@ export const EnhancedOrderFilter = () => {
     const dispatch = useDispatch();
 
     const handleSubmit = ({ ordering, status }: OrderFilters) => {
+        const limit = 1000;
         const filters: OrderFilters = {
             ordering,
             status,
+            limit,
         };
         dispatch(setFilters(filters));
         dispatch(getOrdersWithFilters());
@@ -185,6 +187,7 @@ export const EnhancedOrderFilter = () => {
             initialValues={{
                 ordering: "",
                 status: [],
+                limit: 1000,
             }}
             onSubmit={handleSubmit}
             onReset={handleReset}

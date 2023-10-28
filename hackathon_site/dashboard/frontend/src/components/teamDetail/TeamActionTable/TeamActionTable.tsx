@@ -40,7 +40,7 @@ const TeamActionTable = () => {
     ];
 
     return (
-        <Grid container direction="column" spacing={1} item md={6} xs={12}>
+        <Grid container direction="column" spacing={1} item md={4} xs={12}>
             <Grid item>
                 <Typography variant="h2">Actions</Typography>
             </Grid>

@@ -161,7 +161,7 @@ class OrderListSerializer(serializers.ModelSerializer):
 class OrderChangeSerializer(OrderListSerializer):
     change_options = {
         "Submitted": ["Cancelled", "Ready for Pickup"],
-        "Ready for Pickup": ["Picked Up"],
+        "Ready for Pickup": ["Picked Up", "Submitted"],
         "Picked Up": ["Returned"],
     }
 
@@ -190,6 +190,33 @@ class OrderChangeSerializer(OrderListSerializer):
                 f"Cannot change the status of an order from {current_status} to {data}."
             )
         return data
+
+    def update(self, instance: Order, validated_data):
+        status = validated_data.pop("status", None)
+        request = validated_data.pop("request", None)
+
+        if status is not None:
+            instance.status = status
+        if request is not None:
+            for item in request:
+                items_in_order = list(
+                    OrderItem.objects.filter(hardware=item["id"], order=instance.pk)
+                )
+                num_items_in_order = len(items_in_order)
+                requested_number = item["requested_quantity"]
+
+                if requested_number > num_items_in_order:
+                    raise serializers.ValidationError(
+                        f"Cannot increase the number of Hardware item number {items_in_order[0].hardware} to more than the originally ordered {requested_number} items."
+                    )
+                for idx in range(0, num_items_in_order):
+                    if idx < num_items_in_order - requested_number:
+                        items_in_order[idx].part_returned_health = "Rejected"
+                    else:
+                        items_in_order[idx].part_returned_health = None
+                    items_in_order[idx].save()
+
+        return serializers.ModelSerializer.update(self, instance, validated_data)
 
 
 class TeamOrderChangeSerializer(OrderChangeSerializer):

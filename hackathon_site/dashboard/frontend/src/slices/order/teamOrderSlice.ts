@@ -22,6 +22,10 @@ interface TeamOrderExtraState {
 export interface UpdateOrderAttributes {
     id: number;
     status: OrderStatus;
+    request?: {
+        id: number;
+        requested_quantity: number;
+    }[];
 }
 
 const extraState: TeamOrderExtraState = {
@@ -69,7 +73,8 @@ export const getAdminTeamOrders = createAsyncThunk<
             );
             return rejectWithValue({
                 status: e.response.status,
-                message: e.response.message ?? e.response.data,
+                message:
+                    e.response.message ?? e.response.data.status ?? e.response.data,
             });
         }
     }
@@ -228,12 +233,26 @@ const teamOrderSlice = createSlice({
         builder.addCase(updateOrderStatus.fulfilled, (state, { payload }) => {
             state.isLoading = false;
             state.error = null;
-            const updateObject = {
-                id: payload.id,
-                changes: {
-                    status: payload.status,
-                },
-            };
+            const { pendingOrders } = teamOrderListSerialization([payload]);
+            let updateObject;
+            if (pendingOrders.length > 0) {
+                const { hardwareInTableRow } = pendingOrders[0];
+
+                updateObject = {
+                    id: payload.id,
+                    changes: {
+                        status: payload.status,
+                        hardwareInTableRow,
+                    },
+                };
+            } else {
+                updateObject = {
+                    id: payload.id,
+                    changes: {
+                        status: payload.status,
+                    },
+                };
+            }
             teamOrders.updateOne(state, updateObject);
         });
         builder.addCase(updateOrderStatus.rejected, (state, { payload }) => {

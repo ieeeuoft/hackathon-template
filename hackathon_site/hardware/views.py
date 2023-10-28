@@ -283,6 +283,8 @@ class OrderDetailView(generics.GenericAPIView, mixins.UpdateModelMixin):
             connection.open()
 
             try:
+                if response.data["status"] == "Submitted":
+                    return response
                 render_to_string_context = {
                     "recipient": "Hardware Inventory Admins",
                     "order": response.data,

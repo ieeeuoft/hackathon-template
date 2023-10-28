@@ -28,6 +28,10 @@ class AnnotatedHardwareManager(models.Manager):
                     "order_items",
                     filter=(
                         ~Q(order_items__part_returned_health="Healthy")
+                        & ~(
+                            Q(order_items__part_returned_health="Rejected")
+                            & Q(order_items__order__status="Picked Up")
+                        )
                         & ~Q(order_items__order__status="Cancelled")
                     ),
                     distinct=True,
@@ -85,6 +89,7 @@ class OrderItem(models.Model):
         ("Heavily Used", "Heavily Used"),
         ("Broken", "Broken"),
         ("Lost", "Lost"),
+        ("Rejected", "Rejected"),
     ]
     order = models.ForeignKey(
         "Order", null=False, on_delete=models.CASCADE, related_name="items"

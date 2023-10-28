@@ -8,10 +8,7 @@ import { RouteComponentProps } from "react-router-dom";
 import Header from "components/general/Header/Header";
 import { Grid, Divider } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
-import {
-    AdminReturnedItemsTable,
-    SimplePendingOrderFulfillmentTable,
-} from "components/teamDetail/SimpleOrderTables/SimpleOrderTables";
+import { AdminReturnedItemsTable } from "components/teamDetail/SimpleOrderTables/SimpleOrderTables";
 import {
     errorSelector,
     getAdminTeamOrders,
@@ -29,6 +26,7 @@ import TeamCheckedOutOrderTable from "components/teamDetail/TeamCheckedOutOrderT
 import { getHardwareWithFilters, setFilters } from "slices/hardware/hardwareSlice";
 import { getCategories } from "slices/hardware/categorySlice";
 import ProductOverview from "components/inventory/ProductOverview/ProductOverview";
+import TeamPendingOrderTable from "components/teamDetail/TeamPendingOrderTable/TeamPendingOrderTable";
 
 export interface PageParams {
     code: string;
@@ -91,7 +89,8 @@ const TeamDetail = ({ match }: RouteComponentProps<PageParams>) => {
                             <AlertBox error={orderError} />
                         ) : (
                             <>
-                                <SimplePendingOrderFulfillmentTable />
+                                {/*<SimplePendingOrderFulfillmentTable />*/}
+                                <TeamPendingOrderTable />
                                 <Divider className={styles.dividerMargin} />
                                 <TeamCheckedOutOrderTable />
                                 <Divider className={styles.dividerMargin} />
