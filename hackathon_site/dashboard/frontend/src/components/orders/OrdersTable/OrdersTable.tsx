@@ -107,6 +107,7 @@ const OrdersTable = ({ ordersData }: OrdersTableProps) => {
         <>
             <div style={{ width: "100%", height: "700px" }}>
                 <DataGrid
+                    className={styles.gridContainer}
                     rows={ordersData}
                     columns={columns}
                     autoPageSize={true} // adjusts page size to fit available area
