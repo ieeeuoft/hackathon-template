@@ -9,18 +9,16 @@ import OrdersFilter from "components/orders/OrdersFilter/OrderFilter";
 import CloseIcon from "@material-ui/icons/Close";
 import IconButton from "@material-ui/core/IconButton";
 import styles from "./Orders.module.scss";
-import OrderCard from "components/orders/OrderCard/OrderCard";
 import { useDispatch, useSelector } from "react-redux";
 import {
     adminOrderSelectors,
     getOrdersWithFilters,
 } from "slices/order/adminOrderSlice";
-import { useHistory } from "react-router-dom";
 import { clearFilters } from "slices/hardware/hardwareSlice";
+import { OrdersTable } from "components/orders/OrdersTable/OrdersTable";
 
 const Orders = () => {
     const dispatch = useDispatch();
-    const history = useHistory();
     const allOrders = useSelector(adminOrderSelectors.selectAll);
     const [mobileOpen, setMobileOpen] = React.useState(false);
     const toggleFilter = () => {
@@ -86,36 +84,7 @@ const Orders = () => {
                         </Grid>
                         <Grid item lg={12}>
                             <Grid container spacing={1} direction="row">
-                                {allOrders.map((order, idx) => (
-                                    <Grid
-                                        item
-                                        lg={3}
-                                        md={4}
-                                        sm={6}
-                                        xs={12}
-                                        key={idx}
-                                        onClick={() =>
-                                            history.push(`/teams/${order.team_code}`)
-                                        }
-                                    >
-                                        {[
-                                            "Submitted",
-                                            "Ready for Pickup",
-                                            "Picked Up",
-                                            "Cancelled",
-                                            "Returned",
-                                        ].includes(order.status) && (
-                                            <OrderCard
-                                                teamCode={order.team_code}
-                                                orderQuantity={order.items.length}
-                                                time={order.created_at}
-                                                id={order.id}
-                                                status={order.status}
-                                                data-testid={`order-item-${order.id}`}
-                                            />
-                                        )}
-                                    </Grid>
-                                ))}
+                                <OrdersTable ordersData={allOrders} />
                             </Grid>
                         </Grid>
                     </Grid>

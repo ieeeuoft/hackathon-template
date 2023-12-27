@@ -29,6 +29,24 @@
     }
 }
 
+.titleChip {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin: 20px 0 5px 0;
+
+    @include responsive(sm-down) {
+        width: 100%;
+        flex-direction: column;
+        justify-content: flex-start;
+    }
+}
+
+.titleChipText {
+    margin-bottom: 4px;
+}
+
 .itemImg {
     height: 80px;
     width: 80px;
@@ -68,11 +86,6 @@
             color: color(blue);
         }
     }
-}
-
-.chipPadding {
-    position: relative;
-    left: 630px;
 }
 
 .noWrap {
