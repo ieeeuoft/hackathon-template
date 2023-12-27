@@ -91,3 +91,8 @@ export const patch = <T>(uri: string, data?: any): Promise<AxiosResponse<T>> => 
     uri = cleanURI(uri);
     return axios.patch(`${SERVER_URL}/${uri}`, data, makeConfig());
 };
+
+export const _delete = <T>(uri: string): Promise<AxiosResponse<T>> => {
+    uri = cleanURI(uri);
+    return axios.delete(`${SERVER_URL}/${uri}`, makeConfig());
+};

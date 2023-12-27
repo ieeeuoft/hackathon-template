@@ -4,7 +4,7 @@ import {
     createSelector,
     createSlice,
 } from "@reduxjs/toolkit";
-import { get, stripHostnameReturnFilters } from "api/api";
+import { _delete, get, stripHostnameReturnFilters } from "api/api";
 import { APIListResponse, Team } from "api/types";
 import { AppDispatch, RootState } from "slices/store";
 import { displaySnackbar } from "slices/ui/uiSlice";
@@ -100,6 +100,31 @@ export const getTeamNextPage = createAsyncThunk<
     }
 );
 
+export const deleteTeamThunk = createAsyncThunk<
+    void,
+    string,
+    { state: RootState; rejectValue: RejectValue; dispatch: AppDispatch }
+>(
+    `${teamAdminReducerName}/deleteTeamThunk`,
+    async (team_code, { dispatch, rejectWithValue }) => {
+        try {
+            const response = await _delete<void>(`/api/event/teams/${team_code}`);
+            return response.data;
+        } catch (e: any) {
+            dispatch(
+                displaySnackbar({
+                    message: `Failed to delete team: ${e.response.data.detail}`,
+                    options: { variant: "error" },
+                })
+            );
+            return rejectWithValue({
+                status: e.response.status,
+                message: e.response.data,
+            });
+        }
+    }
+);
+
 const teamAdminSlice = createSlice({
     name: teamAdminReducerName,
     initialState: initialState, // initialState is sufficient
@@ -140,6 +165,20 @@ const teamAdminSlice = createSlice({
 
         builder.addCase(getTeamNextPage.rejected, (state, { payload }) => {
             state.isMoreLoading = false;
+            state.errorState = payload?.message || "Something went wrong";
+        });
+        builder.addCase(deleteTeamThunk.pending, (state) => {
+            state.isLoading = true;
+            state.errorState = null;
+        });
+
+        builder.addCase(deleteTeamThunk.fulfilled, (state, { payload }) => {
+            state.isLoading = false;
+            state.errorState = null;
+        });
+
+        builder.addCase(deleteTeamThunk.rejected, (state, { payload }) => {
+            state.isLoading = false;
             state.errorState = payload?.message || "Something went wrong";
         });
     },
