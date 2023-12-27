@@ -1,0 +1,59 @@
+@import "../../../assets/abstracts/mixins";
+@import "../../../assets/abstracts/variables";
+
+.container {
+    display: flex;
+    flex-direction: row;
+    align-content: center;
+    justify-content: flex-start;
+
+    width: 100%;
+    padding: 4px;
+    border-radius: 50px;
+}
+
+.gridContainer {
+    background-color: #ffffff;
+}
+
+.statusIcon {
+    width: 12px;
+    margin-left: 5px;
+    margin-right: 10px;
+}
+
+// for OrdersTable
+.SubmittedIcon {
+    color: #b7941e;
+    background-color: #ffe899;
+}
+
+.ReadyforPickupIcon {
+    color: #43a047;
+    background-color: #c1edc1;
+}
+
+.PickedUpIcon {
+    color: #757575;
+    background-color: #d9d9d9;
+}
+
+.CancelledIcon {
+    color: #b00020;
+    background-color: #ebbcbc;
+}
+
+.ReturnedIcon {
+    color: #757575;
+    background-color: #d9d9d9;
+}
+
+.PendingIcon {
+    color: #2b7bbc;
+    background-color: #c3e1ef;
+}
+
+.InProgressIcon {
+    color: #ffa000;
+    background-color: #ffe3b4;
+}
