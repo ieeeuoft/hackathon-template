@@ -105,7 +105,7 @@ export type OrderStatus =
     | "Returned"
     | "Pending"
     | "In Progress"
-    | "Rejected"; //Added new type here
+    | "Rejected"; //TODO: Added "Rejected" here
 export type PartReturnedHealth = "Healthy" | "Heavily Used" | "Broken" | "Lost";
 
 export type ItemsInOrder = Omit<OrderItem, "order" | "time_occurred">;
