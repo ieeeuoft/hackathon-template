@@ -80,6 +80,13 @@
         }
     }
 
+    &Pink {
+        background-color: color(pinkLight);
+        svg {
+            color: color(pink);
+        }
+    }
+
     &Blue {
         background-color: color(blueLight);
         svg {
