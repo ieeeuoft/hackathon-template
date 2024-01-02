@@ -222,6 +222,8 @@ export const SimplePendingOrderFulfillmentTable = () => {
                                 {pendingOrder.status === "Submitted" && (
                                     <CompleteOrderButton order={pendingOrder} />
                                 )}
+                                {pendingOrder.status === "Pending"}
+                                {/*In above, probably will need to include a button that enables an "Pending" order to be switched status to "Ready for Pickup"*/}
                                 {pendingOrder.status === "Ready for Pickup" && (
                                     <Grid item>
                                         <Tooltip
