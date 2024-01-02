@@ -160,7 +160,7 @@ class OrderListSerializer(serializers.ModelSerializer):
 
 class OrderChangeSerializer(OrderListSerializer):
     change_options = {
-        "Submitted": ["Cancelled", "Ready for Pickup"],
+        "Submitted": ["Cancelled", "Ready for Pickup"], # TODO: Unsure about whether I need to add the status "Pending" and "Rejected" to the list
         "Ready for Pickup": ["Picked Up"],
         "Picked Up": ["Returned"],
     }

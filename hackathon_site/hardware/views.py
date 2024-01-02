@@ -40,6 +40,8 @@ from hardware.serializers import (
 
 logger = logging.getLogger(__name__)
 
+#TODO: Uncertain about whether I need to add the new statuses (and corresponding messages) in here?
+
 ORDER_STATUS_MSG = {
     "Ready for Pickup": "is Ready for Pickup!",
     "Picked Up": "has been Picked Up!",
