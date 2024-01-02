@@ -157,7 +157,8 @@ const adminOrderSlice = createSlice({
                     payload.results
                 );
 
-                //TODO: COMMENTED OUT MOCK DATA HERE FOR NOW, MAY NEED TO MODIFY SWAGGER ENDPOINT TO FETCH REAL VALUE
+                //TODO: COMMENTED OUT MOCK DATA HERE FOR NOW
+                // TODO: Is using payload.results essentially retrieving the "real data" from the (django?) backend?
                 // state.numStatuses["Pending"] = 3; //Not sure why the above line works fine... somehow feature was already implemented?
                 //state.numStatuses["Rejected"] = 21;
                 state.numStatuses["Pending"] = numOrdersByStatus(
