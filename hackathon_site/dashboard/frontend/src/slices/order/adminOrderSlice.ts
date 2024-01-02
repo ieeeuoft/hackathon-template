@@ -16,6 +16,9 @@ interface numStatuses {
     "Picked Up"?: number;
     Cancelled?: number;
     Returned?: number;
+    //TODO: New entries added
+    Pending?: number;
+    Rejected?: number;
 }
 
 interface adminOrderExtraState {
@@ -151,6 +154,18 @@ const adminOrderSlice = createSlice({
                 );
                 state.numStatuses["Returned"] = numOrdersByStatus(
                     "Returned",
+                    payload.results
+                );
+
+                //TODO: COMMENTED OUT MOCK DATA HERE FOR NOW, MAY NEED TO MODIFY SWAGGER ENDPOINT TO FETCH REAL VALUE
+                // state.numStatuses["Pending"] = 3; //Not sure why the above line works fine... somehow feature was already implemented?
+                //state.numStatuses["Rejected"] = 21;
+                state.numStatuses["Pending"] = numOrdersByStatus(
+                    "Pending",
+                    payload.results
+                );
+                state.numStatuses["Rejected"] = numOrdersByStatus(
+                    "Rejected",
                     payload.results
                 );
             }
