@@ -75,7 +75,9 @@ export const teamOrderListSerialization = (
 
             const hardwareInTableRow = Object.values(hardwareItems);
             if (hardwareInTableRow.length > 0)
-                (order.status === "Submitted" || order.status === "Ready for Pickup"
+                (order.status === "Submitted" ||
+                order.status === "Ready for Pickup" ||
+                order.status === "Pending" //TODO: Treating pending orders (aka orders in progress of packing) as "Pending Orders" per table in participant side
                     ? pendingOrders
                     : checkedOutOrders
                 ).push({
@@ -182,11 +184,14 @@ export const sortCheckedOutOrders = (
 export const sortPendingOrders = (orders: OrderInTable[]): OrderInTable[] => {
     let ready_orders = [];
     let submitted_orders = [];
+    let pending_orders = []; // Added new array to ensure sorting of pending orders accomodates for the orders with "pending" tag
     for (let order of orders) {
         if (order.status === "Ready for Pickup") {
             ready_orders.push(order);
-        } else {
+        } else if (order.status === "Submitted") {
             submitted_orders.push(order);
+        } else {
+            pending_orders.push(order);
         }
     }
     ready_orders.sort((order1, order2) => {
@@ -202,7 +207,20 @@ export const sortPendingOrders = (orders: OrderInTable[]): OrderInTable[] => {
             new Date(order2.updatedTime).valueOf()
         );
     });
+    // Sorting pending orders
+    pending_orders.sort((order1, order2) => {
+        return (
+            new Date(order1.updatedTime).valueOf() -
+            new Date(order2.updatedTime).valueOf()
+        );
+    });
 
-    orders.splice(0, orders.length, ...submitted_orders, ...ready_orders);
+    orders.splice(
+        0,
+        orders.length,
+        ...submitted_orders,
+        ...ready_orders,
+        ...pending_orders
+    );
     return orders;
 };
