@@ -95,9 +95,10 @@ export const CheckedOutTables = () =>
                             >
                                 <GeneralOrderTableTitle
                                     orderId={checkedOutOrder.id}
+                                    orderStatus={checkedOutOrder.status} // Added the orderStatus element to render UI tag
                                     createdTime={checkedOutOrder.createdTime}
                                     updatedTime={checkedOutOrder.updatedTime}
-                                    additionalChipFormatting={true}
+                                    //additionalChipFormatting={true} // Commented out this line, not used
                                 />
                                 <TableContainer
                                     component={Paper}
