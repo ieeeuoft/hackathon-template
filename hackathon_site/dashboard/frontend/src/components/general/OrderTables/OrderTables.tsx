@@ -10,6 +10,7 @@ import WatchLater from "@material-ui/icons/WatchLater";
 import Error from "@material-ui/icons/Error";
 import EditIcon from "@material-ui/icons/Edit";
 import UpdateIcon from "@material-ui/icons/Update";
+import HourglassEmptyIcon from "@material-ui/icons/HourglassEmpty";
 import {
     Paper,
     Table,
@@ -40,6 +41,15 @@ export const ChipStatus = ({ status }: { status: OrderStatus | "Error" }) => {
                     icon={<WatchLater />}
                     label="In progress"
                     className={`${styles.chipOrange} ${styles.chip}`}
+                />
+            );
+        //TODO: How is the following case going to be triggered?
+        case "Pending":
+            return (
+                <Chip
+                    icon={<HourglassEmptyIcon />}
+                    label="Packing order"
+                    className={`${styles.chipBlue} ${styles.chip}`} //Made the colour of this tag blue to match the admin order table colour for the Pending tag
                 />
             );
         case "Error":
@@ -86,7 +96,7 @@ interface GeneralOrderTableTitleProps {
     orderStatus?: OrderStatus;
     createdTime?: string;
     updatedTime?: string;
-    additionalChipFormatting?: boolean;
+    //additionalChipFormatting?: boolean; //TODO: Commented out since not used
 }
 
 export const GeneralOrderTableTitle = ({
@@ -94,8 +104,8 @@ export const GeneralOrderTableTitle = ({
     orderStatus,
     createdTime,
     updatedTime,
-    additionalChipFormatting,
-}: GeneralOrderTableTitleProps) => (
+}: //additionalChipFormatting, //TODO: Commented out since not used
+GeneralOrderTableTitleProps) => (
     <div className={styles.titleChip}>
         <Typography variant="h2" className={styles.titleChipText}>
             Order #{orderId}
@@ -113,7 +123,7 @@ export const GeneralOrderTableTitle = ({
                 <Chip
                     label={[<b>Updated at: </b>, formatDateTime(updatedTime)]}
                     icon={<UpdateIcon />}
-                    className={`${styles.chipBlue} ${styles.chip}`}
+                    className={`${styles.chipPink} ${styles.chip}`}
                 />
             </div>
         ) : null}
