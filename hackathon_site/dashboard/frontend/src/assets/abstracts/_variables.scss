@@ -19,6 +19,7 @@ $colors: (
     blueLight: #c3e1ef,
     purple: #800080,
     purpleLight: #cec4f2,
+    // added the pink colours. pink is now used to rep the "Updated at" UI tag. blue is now used to rep the "Pending" order tag (to mirror the order table on admin side created in prior merged PR [IEEE 269])
     pink: #ff007f,
     pinkLight: #ffc0cb,
 );
