@@ -184,7 +184,7 @@ export const sortCheckedOutOrders = (
 export const sortPendingOrders = (orders: OrderInTable[]): OrderInTable[] => {
     let ready_orders = [];
     let submitted_orders = [];
-    let pending_orders = []; // Added new array to ensure sorting of pending orders accomodates for the orders with "pending" tag
+    let pending_orders = []; // Added new array to ensure sorting of pending orders accomodates for the orders with "pending" tag. This likely helps with the order display on the admin + participant table
     for (let order of orders) {
         if (order.status === "Ready for Pickup") {
             ready_orders.push(order);
