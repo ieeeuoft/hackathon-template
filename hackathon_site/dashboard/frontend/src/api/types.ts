@@ -104,7 +104,8 @@ export type OrderStatus =
     | "Cancelled"
     | "Returned"
     | "Pending"
-    | "In Progress";
+    | "In Progress"
+    | "Packing";
 export type PartReturnedHealth = "Healthy" | "Heavily Used" | "Broken" | "Lost";
 
 export type ItemsInOrder = Omit<OrderItem, "order" | "time_occurred">;
