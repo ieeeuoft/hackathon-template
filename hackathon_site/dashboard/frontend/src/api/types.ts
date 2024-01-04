@@ -104,8 +104,7 @@ export type OrderStatus =
     | "Cancelled"
     | "Returned"
     | "Pending"
-    | "In Progress"
-    | "Rejected"; //TODO: Added "Rejected" here
+    | "In Progress";
 export type PartReturnedHealth = "Healthy" | "Heavily Used" | "Broken" | "Lost";
 
 export type ItemsInOrder = Omit<OrderItem, "order" | "time_occurred">;
