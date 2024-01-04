@@ -280,7 +280,7 @@ export const pendingOrdersSelector = createSelector(
             (order) =>
                 order.status === "Submitted" ||
                 order.status === "Ready for Pickup" ||
-                order.status === "Pending"
+                order.status === "Packing"
         )
 );
 

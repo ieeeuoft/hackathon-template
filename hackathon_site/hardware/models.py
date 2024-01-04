@@ -107,8 +107,7 @@ class Order(models.Model):
         ("Picked Up", "Picked Up"),
         ("Cancelled", "Cancelled"),
         ("Returned", "Returned"),
-        ("Pending", "Pending"), # TODO: ADDED NEW ENTRIES HERE. See this for ref: https://github.com/ieeeuoft/hackathon-template/pull/293/files#diff-b5fcbda10cee3497387c38bdc3a12e6281d696a490b4bbbbce23e0c052baad4d
-        ("Rejected", "Rejected")
+        ("Packing", "Packing"), # TODO: ADDED NEW ENTRIES HERE. See this for ref: https://github.com/ieeeuoft/hackathon-template/pull/293/files#diff-b5fcbda10cee3497387c38bdc3a12e6281d696a490b4bbbbce23e0c052baad4d
     ]
 
     hardware = models.ManyToManyField(Hardware, through=OrderItem)

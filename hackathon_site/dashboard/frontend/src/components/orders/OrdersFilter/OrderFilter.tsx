@@ -106,8 +106,8 @@ const OrderFilter = ({ handleReset, handleSubmit }: FormikValues) => {
             numOrders: numStatuses["Returned"],
         },
         {
-            status: "Pending", // TODO: Pending -> interpreted as "currently building". This alligns with table changes in IEEE 269
-            numOrders: numStatuses["Pending"],
+            status: "Packing", // TODO: Packing -> interpreted as "currently building". This alligns with table changes in IEEE 269
+            numOrders: numStatuses["Packing"],
         },
     ];
 

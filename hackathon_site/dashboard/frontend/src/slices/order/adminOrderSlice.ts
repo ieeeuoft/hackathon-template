@@ -17,7 +17,7 @@ interface numStatuses {
     Cancelled?: number;
     Returned?: number;
     //TODO: New entries added
-    Pending?: number;
+    Packing?: number;
 }
 
 interface adminOrderExtraState {
@@ -160,8 +160,8 @@ const adminOrderSlice = createSlice({
                 // TODO: Is using payload.results essentially retrieving the "real data" from the (django?) backend?
                 // state.numStatuses["Pending"] = 3; //Not sure why the above line works fine... somehow feature was already implemented?
                 //state.numStatuses["Rejected"] = 21;
-                state.numStatuses["Pending"] = numOrdersByStatus(
-                    "Pending",
+                state.numStatuses["Packing"] = numOrdersByStatus(
+                    "Packing",
                     payload.results
                 );
             }
