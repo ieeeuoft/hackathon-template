@@ -40,13 +40,14 @@ from hardware.serializers import (
 
 logger = logging.getLogger(__name__)
 
-#TODO: Uncertain about whether I need to add the new statuses (and corresponding messages) in here?
+# TODO: What is the difference between ORDER_STATUS_MSG and ORDER_STATUS_CLOSING_MSG
 
 ORDER_STATUS_MSG = {
     "Ready for Pickup": "is Ready for Pickup!",
     "Picked Up": "has been Picked Up!",
     "Cancelled": f"was Cancelled by a {settings.HACKATHON_NAME} Exec.",
     "Returned": f"has been returned.",
+    "Packing": f"is being packed!", #TODO: Have yet to test this change
 }
 
 ORDER_STATUS_CLOSING_MSG = {
@@ -54,6 +55,7 @@ ORDER_STATUS_CLOSING_MSG = {
     "Picked Up": "Take good care of your hardware and Happy Hacking! Remember to return the items when you are finished using them.",
     "Cancelled": f"A {settings.HACKATHON_NAME} exec will be in contact with you shortly. If you don't hear back from them soon, please go to the Tech Team Station for more information on why your order was cancelled.",
     "Returned": f"Thank you for returning all hardware items!",
+    "Packed": f"Your hardware order is being packed!",
 }
 
 
