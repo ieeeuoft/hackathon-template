@@ -44,11 +44,11 @@ export const ChipStatus = ({ status }: { status: OrderStatus | "Error" }) => {
                 />
             );
         //TODO: How is the following case going to be triggered?
-        case "Pending":
+        case "Packing":
             return (
                 <Chip
                     icon={<HourglassEmptyIcon />}
-                    label="Packing order"
+                    label="Packing"
                     className={`${styles.chipBlue} ${styles.chip}`} //Made the colour of this tag blue to match the admin order table colour for the Pending tag
                 />
             );
