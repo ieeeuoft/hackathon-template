@@ -18,7 +18,6 @@ interface numStatuses {
     Returned?: number;
     //TODO: New entries added
     Pending?: number;
-    Rejected?: number;
 }
 
 interface adminOrderExtraState {
@@ -163,10 +162,6 @@ const adminOrderSlice = createSlice({
                 //state.numStatuses["Rejected"] = 21;
                 state.numStatuses["Pending"] = numOrdersByStatus(
                     "Pending",
-                    payload.results
-                );
-                state.numStatuses["Rejected"] = numOrdersByStatus(
-                    "Rejected",
                     payload.results
                 );
             }
