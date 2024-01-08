@@ -190,7 +190,7 @@ export const sortPendingOrders = (orders: OrderInTable[]): OrderInTable[] => {
             ready_orders.push(order);
         } else if (order.status === "Submitted") {
             submitted_orders.push(order);
-        } else {
+        } else if (order.status === "Packing") {
             packing_orders.push(order);
         }
     }
