@@ -158,11 +158,12 @@ class OrderListSerializer(serializers.ModelSerializer):
         return obj.team.team_code if obj.team else None
 
 
-class OrderChangeSerializer(OrderListSerializer):
+class OrderChangeSerializer(OrderListSerializer): # TODO: Modified flow of serializers
     change_options = {
-        "Submitted": ["Cancelled", "Ready for Pickup", "Packing"], # TODO: Unsure about whether I need to add the status "Pending" and "Rejected" to the list
+        "Submitted": ["Cancelled", "Packing"], # TODO: Unsure about whether I need to add the status "Pending" and "Rejected" to the list
         "Ready for Pickup": ["Picked Up"],
         "Picked Up": ["Returned"],
+        "Packing": ["Ready for Pickup"]
     }
 
     class Meta:

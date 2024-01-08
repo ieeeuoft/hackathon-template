@@ -222,10 +222,55 @@ export const SimplePendingOrderFulfillmentTable = () => {
                                 )}
 
                                 {pendingOrder.status === "Submitted" && (
-                                    <CompleteOrderButton order={pendingOrder} />
+                                    <Grid item>
+                                        <Tooltip
+                                            title="Order is being packed"
+                                            placement="top"
+                                        >
+                                            <span>
+                                                <Button
+                                                    color="primary"
+                                                    variant="contained"
+                                                    disableElevation
+                                                    onClick={() =>
+                                                        updateOrder(
+                                                            pendingOrder.id,
+                                                            "Packing"
+                                                        )
+                                                    }
+                                                >
+                                                    Ready for packing
+                                                </Button>
+                                            </span>
+                                        </Tooltip>
+                                    </Grid>
                                 )}
+                                {/*/!*{pendingOrder.status === "Packing" && (*!/ Not needed*/}
+                                {/*    <CompleteOrderButton order={pendingOrder} />*/}
+                                {/*)}*/}
                                 {pendingOrder.status === "Packing" && (
-                                    <CompleteOrderButton order={pendingOrder} />
+                                    <Grid item>
+                                        <Tooltip
+                                            title="Order is being packed"
+                                            placement="top"
+                                        >
+                                            <span>
+                                                <Button
+                                                    color="primary"
+                                                    variant="contained"
+                                                    disableElevation
+                                                    onClick={() =>
+                                                        updateOrder(
+                                                            pendingOrder.id,
+                                                            "Ready for Pickup"
+                                                        )
+                                                    }
+                                                >
+                                                    Complete order
+                                                </Button>
+                                            </span>
+                                        </Tooltip>
+                                    </Grid>
                                 )}
                                 {/* TODO: In above, this adds the "Complete Order" button on the admin side for all orders with "Packing status". Intended to switch status to: "Ready for Pickup"*/}
                                 {pendingOrder.status === "Ready for Pickup" && (
