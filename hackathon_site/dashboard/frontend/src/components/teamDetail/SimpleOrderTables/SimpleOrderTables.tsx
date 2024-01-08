@@ -149,6 +149,7 @@ export const SimplePendingOrderFulfillmentTable = () => {
     const toggleVisibility = () => setVisibility(!isVisible);
 
     const updateOrder = (orderId: number, status: OrderStatus) => {
+        // TODO: For some reason after pressing the COMPLETE ORDER button for "Packing" orders, the website goes white. Is this an issue with the endpoint or this method?
         const updateOrderData: UpdateOrderAttributes = {
             id: orderId,
             status: status,
@@ -192,7 +193,7 @@ export const SimplePendingOrderFulfillmentTable = () => {
                             <GeneralPendingTable
                                 {...{
                                     pendingOrder,
-                                    ...(pendingOrder.status === "Submitted" &&
+                                    ...(pendingOrder.status === "Packing" && //TODO: This code defines the checkboxes that appear for pending orders. NOTE: changed from === "Submitted" to === "Packing"
                                         enableCheckboxColumn(pendingOrder)),
                                 }}
                             />
@@ -202,7 +203,7 @@ export const SimplePendingOrderFulfillmentTable = () => {
                                 spacing={1}
                                 style={{ marginTop: "10px" }}
                             >
-                                {pendingOrder.status === "Submitted" && (
+                                {pendingOrder.status === "Submitted" && ( //Will not need to add this to the packing orders, since there is no reason to reject an order that is already being packed.
                                     <Grid item>
                                         <Button
                                             color="secondary"
@@ -219,11 +220,14 @@ export const SimplePendingOrderFulfillmentTable = () => {
                                         </Button>
                                     </Grid>
                                 )}
+
                                 {pendingOrder.status === "Submitted" && (
                                     <CompleteOrderButton order={pendingOrder} />
                                 )}
-                                {pendingOrder.status === "Packing"}
-                                {/* TODO: In above, probably will need to include a button that enables an "Pending" order to be switched status to "Ready for Pickup"*/}
+                                {pendingOrder.status === "Packing" && (
+                                    <CompleteOrderButton order={pendingOrder} />
+                                )}
+                                {/* TODO: In above, this adds the "Complete Order" button on the admin side for all orders with "Packing status". Intended to switch status to: "Ready for Pickup"*/}
                                 {pendingOrder.status === "Ready for Pickup" && (
                                     <Grid item>
                                         <Tooltip
