@@ -47,7 +47,7 @@ ORDER_STATUS_MSG = {
     "Picked Up": "has been Picked Up!",
     "Cancelled": f"was Cancelled by a {settings.HACKATHON_NAME} Exec.",
     "Returned": f"has been returned.",
-    "Packing": f"is being packed!", #TODO: Have yet to test this change
+    "Packing": f"is being packed!",
 }
 
 ORDER_STATUS_CLOSING_MSG = {

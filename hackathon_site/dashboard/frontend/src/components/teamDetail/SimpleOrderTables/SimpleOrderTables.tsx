@@ -149,7 +149,6 @@ export const SimplePendingOrderFulfillmentTable = () => {
     const toggleVisibility = () => setVisibility(!isVisible);
 
     const updateOrder = (orderId: number, status: OrderStatus) => {
-        // TODO: For some reason after pressing the COMPLETE ORDER button for "Packing" orders, the website goes white. Is this an issue with the endpoint or this method?
         const updateOrderData: UpdateOrderAttributes = {
             id: orderId,
             status: status,
@@ -193,7 +192,7 @@ export const SimplePendingOrderFulfillmentTable = () => {
                             <GeneralPendingTable
                                 {...{
                                     pendingOrder,
-                                    ...(pendingOrder.status === "Packing" && //TODO: This code defines the checkboxes that appear for pending orders. NOTE: changed from === "Submitted" to === "Packing"
+                                    ...(pendingOrder.status === "Packing" && //This code defines the checkboxes that appear for pending orders. NOTE: changed from === "Submitted" to === "Packing"
                                         enableCheckboxColumn(pendingOrder)),
                                 }}
                             />
@@ -221,6 +220,7 @@ export const SimplePendingOrderFulfillmentTable = () => {
                                     </Grid>
                                 )}
 
+                                {/* On Admin side: The code below adds a button that changes "Submitted" status => "Packing"*/}
                                 {pendingOrder.status === "Submitted" && (
                                     <Grid item>
                                         <Tooltip
@@ -229,7 +229,7 @@ export const SimplePendingOrderFulfillmentTable = () => {
                                         >
                                             <span>
                                                 <Button
-                                                    color="primary"
+                                                    color="primary" //TODO: Keeping this button "navy blue" (ie: The colour flagged for "primary" tag) to differentiate from the red "Picked up" buttons
                                                     variant="contained"
                                                     disableElevation
                                                     onClick={() =>
@@ -245,9 +245,8 @@ export const SimplePendingOrderFulfillmentTable = () => {
                                         </Tooltip>
                                     </Grid>
                                 )}
-                                {/*/!*{pendingOrder.status === "Packing" && (*!/ Not needed*/}
-                                {/*    <CompleteOrderButton order={pendingOrder} />*/}
-                                {/*)}*/}
+
+                                {/* On Admin side: The code below adds a button that changes "Packing" status => "Ready for Pickup"*/}
                                 {pendingOrder.status === "Packing" && (
                                     <Grid item>
                                         <Tooltip
@@ -255,24 +254,27 @@ export const SimplePendingOrderFulfillmentTable = () => {
                                             placement="top"
                                         >
                                             <span>
-                                                <Button
-                                                    color="primary"
-                                                    variant="contained"
-                                                    disableElevation
-                                                    onClick={() =>
-                                                        updateOrder(
-                                                            pendingOrder.id,
-                                                            "Ready for Pickup"
-                                                        )
-                                                    }
-                                                >
-                                                    Complete order
-                                                </Button>
+                                                <CompleteOrderButton
+                                                    order={pendingOrder}
+                                                />
+                                                {/*Commented out the code below since it caused a bug where if someone doesn't select all orders prior to pressing button, order status changes... */}
+                                                {/*<Button*/}
+                                                {/*    color="primary" //TODO: Keeping this button "navy blue" (ie: The colour flagged for "primary" tag) to differentiate from the red "Picked up" buttons*/}
+                                                {/*    variant="contained"*/}
+                                                {/*    disableElevation*/}
+                                                {/*    onClick={() =>*/}
+                                                {/*        updateOrder(*/}
+                                                {/*            pendingOrder.id,*/}
+                                                {/*            "Ready for Pickup"*/}
+                                                {/*        )*/}
+                                                {/*    }*/}
+                                                {/*>*/}
+                                                {/*    Complete order*/}
+                                                {/*</Button>*/}
                                             </span>
                                         </Tooltip>
                                     </Grid>
                                 )}
-                                {/* TODO: In above, this adds the "Complete Order" button on the admin side for all orders with "Packing status". Intended to switch status to: "Ready for Pickup"*/}
                                 {pendingOrder.status === "Ready for Pickup" && (
                                     <Grid item>
                                         <Tooltip
