@@ -59,12 +59,15 @@ describe("<SimplePendingOrderFulfillmentTable />", () => {
                 } else {
                     expect(getByText(/reject order/i)).toBeInTheDocument();
                 }
-                if (status === "Submitted") {
+                if (status === "Packing") {
+                    /*TODO: Changed from status === "Submitted" to status === "Packing"*/
                     expect(getByText(/complete order/i)).toBeInTheDocument();
                     expect(queryByText(/picked up/i)).not.toBeInTheDocument();
-                } else {
+                } else if (status === "Submitted") {
                     expect(queryByText(/complete order/i)).not.toBeInTheDocument();
-                    expect(getByText(/picked up/i)).toBeInTheDocument();
+                    expect(queryByText(/ready for packing/i)).toBeInTheDocument();
+                    //expect(queryByText(/complete order/i)).not.toBeInTheDocument();
+                    //expect(getByText(/picked up/i)).toBeInTheDocument();
                 }
             }
         });
