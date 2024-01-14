@@ -79,6 +79,7 @@ class HardwareListViewTestCase(SetupUserMixin, APITestCase):
                     {"id": 3, "quantity": 2},
                 ]
             },
+            reason_for_order="Creating a Robot",
         )
 
     def _build_filter_url(self, **kwargs):
@@ -349,6 +350,7 @@ class IncidentListViewTestCase(SetupUserMixin, APITestCase):
             status="Cart",
             team=self.team,
             request={"hardware": [{"id": 1, "quantity": 2}, {"id": 2, "quantity": 3}]},
+            reason_for_order="Creating a Robot",
         )
         self.hardware = Hardware.objects.create(
             name="name",
@@ -471,6 +473,7 @@ class OrderListViewGetTestCase(SetupUserMixin, APITestCase):
             status="Cart",
             team=self.team,
             request={"hardware": [{"id": 1, "quantity": 2}, {"id": 2, "quantity": 3}]},
+            reason_for_order="Creating a Robot",
         )
         self.hardware = Hardware.objects.create(
             name="name",
@@ -501,6 +504,7 @@ class OrderListViewGetTestCase(SetupUserMixin, APITestCase):
             status="Submitted",
             team=self.team,
             request={"hardware": [{"id": 1, "quantity": 2}, {"id": 2, "quantity": 3}]},
+            reason_for_order="Creating a Robot",
         )
         OrderItem.objects.create(
             order=self.order_2, hardware=self.hardware,
@@ -512,6 +516,7 @@ class OrderListViewGetTestCase(SetupUserMixin, APITestCase):
             status="Cancelled",
             team=self.team2,
             request={"hardware": [{"id": 1, "quantity": 2}, {"id": 2, "quantity": 3}]},
+            reason_for_order="Creating a Robot",
         )
         OrderItem.objects.create(
             order=self.order_3, hardware=self.hardware,
@@ -520,6 +525,7 @@ class OrderListViewGetTestCase(SetupUserMixin, APITestCase):
             status="Submitted",
             team=self.team2,
             request={"hardware": [{"id": 1, "quantity": 2}, {"id": 2, "quantity": 3}]},
+            reason_for_order="Creating a Robot",
         )
         OrderItem.objects.create(
             order=self.order_4, hardware=self.hardware,
@@ -662,6 +668,7 @@ class OrderItemListViewGetTestCase(SetupUserMixin, APITestCase):
             status="Cart",
             team=self.team,
             request={"hardware": [{"id": 1, "quantity": 2}, {"id": 2, "quantity": 3}]},
+            reason_for_order="Creating a Robot",
         )
         self.hardware = Hardware.objects.create(
             name="name",
@@ -692,6 +699,7 @@ class OrderItemListViewGetTestCase(SetupUserMixin, APITestCase):
             status="Submitted",
             team=self.team,
             request={"hardware": [{"id": 1, "quantity": 2}, {"id": 2, "quantity": 3}]},
+            reason_for_order="Creating a Robot",
         )
         self.order_item_3 = OrderItem.objects.create(
             order=self.order_2, hardware=self.hardware,
@@ -703,6 +711,7 @@ class OrderItemListViewGetTestCase(SetupUserMixin, APITestCase):
             status="Cancelled",
             team=self.team2,
             request={"hardware": [{"id": 1, "quantity": 2}, {"id": 2, "quantity": 3}]},
+            reason_for_order="Creating a Robot",
         )
         self.order_item_5 = OrderItem.objects.create(
             order=self.order_3, hardware=self.hardware,
@@ -711,6 +720,7 @@ class OrderItemListViewGetTestCase(SetupUserMixin, APITestCase):
             status="Submitted",
             team=self.team2,
             request={"hardware": [{"id": 1, "quantity": 2}, {"id": 2, "quantity": 3}]},
+            reason_for_order="Creating a Robot",
         )
         self.order_item_6 = OrderItem.objects.create(
             order=self.order_4, hardware=self.hardware,
@@ -813,6 +823,7 @@ class IncidentListViewPostTestCase(SetupUserMixin, APITestCase):
             status="Cart",
             team=self.team,
             request={"hardware": [{"id": 1, "quantity": 2}]},
+            reason_for_order="Creating a Robot",
         )
         self.permissions = Permission.objects.filter(
             content_type__app_label="hardware", codename="add_incident"
@@ -875,6 +886,7 @@ class IncidentDetailViewGetTestCase(SetupUserMixin, APITestCase):
             status="Cart",
             team=self.team,
             request={"hardware": [{"id": 1, "quantity": 1}]},
+            reason_for_order="Creating a Robot",
         )
         self.hardware = Hardware.objects.create(
             name="name",
@@ -1084,6 +1096,7 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
             status="Cart",
             team=self.team,
             request={"hardware": [{"id": 1, "quantity": 2},]},
+            reason_for_order="Creating a Robot",
         )
 
         self.category1 = Category.objects.create(name="category1", max_per_team=4)
@@ -1269,6 +1282,7 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
             team=self.user.profile.team,
             status="Submitted",
             request={"hardware": [{"id": 1, "quantity": 2}]},
+            reason_for_order="Creating a Robot",
         )
         submitted_order_item = OrderItem.objects.create(
             order=submitted_order, hardware=hardware
@@ -1278,6 +1292,7 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
             team=self.user.profile.team,
             status="Ready for Pickup",
             request={"hardware": [{"id": 1, "quantity": 2}]},
+            reason_for_order="Creating a Robot",
         )
         ready_order_item = OrderItem.objects.create(
             order=ready_order, hardware=hardware
@@ -1287,6 +1302,7 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
             team=self.user.profile.team,
             status="Picked Up",
             request={"hardware": [{"id": 1, "quantity": 2}]},
+            reason_for_order="Creating a Robot",
         )
         picked_up_order_item = OrderItem.objects.create(
             order=picked_up_order, hardware=hardware
@@ -1327,6 +1343,7 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
             team=self.user.profile.team,
             status="Picked Up",
             request={"hardware": [{"id": 1, "quantity": 2}]},
+            reason_for_order="Creating a Robot",
         )
         healthy_order_item = OrderItem.objects.create(
             order=order, hardware=hardware, part_returned_health="Healthy"
@@ -1379,6 +1396,7 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
             team=self.user.profile.team,
             status="Cancelled",
             request={"hardware": [{"id": 1, "quantity": 2}]},
+            reason_for_order="Creating a Robot",
         )
         order_item = OrderItem.objects.create(order=order, hardware=hardware)
 
@@ -1451,6 +1469,7 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
             team=self.user.profile.team,
             status="Submitted",
             request={"hardware": [{"id": 1, "quantity": 2}]},
+            reason_for_order="Creating a Robot",
         )
         submitted_order_item = OrderItem.objects.create(
             order=submitted_order, hardware=hardware
@@ -1460,6 +1479,7 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
             team=self.user.profile.team,
             status="Ready for Pickup",
             request={"hardware": [{"id": 1, "quantity": 2}]},
+            reason_for_order="Creating a Robot",
         )
         ready_order_item = OrderItem.objects.create(
             order=ready_order, hardware=hardware
@@ -1469,6 +1489,7 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
             team=self.user.profile.team,
             status="Picked Up",
             request={"hardware": [{"id": 1, "quantity": 2}]},
+            reason_for_order="Creating a Robot",
         )
         picked_up_order_item = OrderItem.objects.create(
             order=picked_up_order, hardware=hardware
@@ -1509,6 +1530,7 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
             team=self.user.profile.team,
             status="Picked Up",
             request={"hardware": [{"id": 1, "quantity": 2}, {"id": 2, "quantity": 3}]},
+            reason_for_order="Creating a Robot",
         )
         healthy_order_item = OrderItem.objects.create(
             order=order, hardware=hardware, part_returned_health="Healthy"
@@ -1561,6 +1583,7 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
             team=self.user.profile.team,
             status="Cancelled",
             request={"hardware": [{"id": 1, "quantity": 2}]},
+            reason_for_order="Creating a Robot",
         )
         order_item = OrderItem.objects.create(order=order, hardware=hardware)
 
@@ -1778,6 +1801,7 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
             team=self.user.profile.team,
             status="Submitted",
             request={"hardware": [{"id": 1, "quantity": 2}]},
+            reason_for_order="Creating a Robot",
         )
         OrderItem.objects.bulk_create(
             [
@@ -1849,6 +1873,7 @@ class OrderListViewPostTestCase(SetupUserMixin, APITestCase):
             team=self.user.profile.team,
             status="Submitted",
             request={"hardware": [{"id": 1, "quantity": 2}]},
+            reason_for_order="Creating a Robot",
         )
         order_item = OrderItem.objects.create(order=order, hardware=hardware)
 
@@ -1915,6 +1940,7 @@ class OrderListPatchTestCase(SetupUserMixin, APITestCase):
             status="Submitted",
             team=self.team,
             request={"hardware": [{"id": 1, "quantity": 2}]},
+            reason_for_order="Creating a Robot",
         )
         OrderItem.objects.create(order=order, hardware=hardware)
         self.pk = order.id
@@ -1964,6 +1990,7 @@ class OrderListPatchTestCase(SetupUserMixin, APITestCase):
             status="Picked Up",
             team=self.team,
             request={"hardware": [{"id": 1, "quantity": 2}]},
+            reason_for_order="Creating a Robot",
         )
         response = self.client.patch(self._build_view(order.id), request_data)
         self.assertEqual(
@@ -1985,6 +2012,7 @@ class OrderItemReturnViewTestCase(SetupUserMixin, APITestCase):
             status="Cart",
             team=self.team,
             request={"hardware": [{"id": 1, "quantity": 2}]},
+            reason_for_order="Creating a Robot",
         )
         self.permissions = Permission.objects.filter(
             content_type__app_label="hardware", codename="change_order"

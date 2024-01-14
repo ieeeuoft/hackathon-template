@@ -1,5 +1,6 @@
 from django.db import models
 from django.db.models import Count, F, Q
+from django.core.exceptions import ValidationError
 
 from event.models import Team as TeamEvent
 
@@ -115,9 +116,26 @@ class Order(models.Model):
         max_length=64, choices=STATUS_CHOICES, default="Submitted"
     )
     request = models.JSONField(null=False)
+    reason_for_order = models.CharField(
+        max_length=350, null=False, blank=False, default=None
+    )
 
     created_at = models.DateTimeField(auto_now_add=True, null=False)
     updated_at = models.DateTimeField(auto_now=True, null=False)
+
+    def validate_reason_for_order_length(self):
+        # If field is none, DB will raise IntegrityError automatically
+        if self.reason_for_order is None:
+            return
+        max_length = self._meta.get_field("reason_for_order").max_length
+        if len(self.reason_for_order) > max_length:
+            raise ValidationError(
+                f"Reason for order must be {max_length} characters or less."
+            )
+
+    def save(self, *args, **kwargs):
+        self.validate_reason_for_order_length()
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.id}"

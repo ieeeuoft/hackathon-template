@@ -269,7 +269,7 @@ class OrderAdmin(admin.ModelAdmin):
         "id",
         "get_team_code",
     )
-    fields = ("team", "status")
+    fields = ("team", "status", "reason_for_order")
     search_fields = ("id", "team__team_code")
     inlines = (
         OrderItemInline,
