@@ -2,17 +2,29 @@
 
 from django.db import migrations, models
 
-
+# TODO: Between this, the 0013 and 0011 .py files, decide which to keep
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('hardware', '0011_alter_order_team'),
+        ("hardware", "0011_alter_order_team"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='order',
-            name='status',
-            field=models.CharField(choices=[('Submitted', 'Submitted'), ('Ready for Pickup', 'Ready for Pickup'), ('Picked Up', 'Picked Up'), ('Cancelled', 'Cancelled'), ('Returned', 'Returned'), ('Pending', 'Pending'), ('Rejected', 'Rejected')], default='Submitted', max_length=64),
+            model_name="order",
+            name="status",
+            field=models.CharField(
+                choices=[
+                    ("Submitted", "Submitted"),
+                    ("Ready for Pickup", "Ready for Pickup"),
+                    ("Picked Up", "Picked Up"),
+                    ("Cancelled", "Cancelled"),
+                    ("Returned", "Returned"),
+                    ("Pending", "Pending"),
+                    ("Rejected", "Rejected"),
+                ],
+                default="Submitted",
+                max_length=64,
+            ),
         ),
     ]
