@@ -846,6 +846,19 @@ export const mockPendingOrdersInTable: OrderInTable[] = [
         updatedTime: "2021-10-17T18:28:44.691969-06:00",
     },
     {
+        id: 11,
+        hardwareInTableRow: [
+            {
+                id: 10,
+                quantityRequested: 2,
+                quantityGranted: 1,
+            },
+        ],
+        status: "Packing",
+        createdTime: "2024-01-17T18:28:44.691969-03:00",
+        updatedTime: "2024-12-17T18:28:44.691969-06:00",
+    },
+    {
         id: 4,
         hardwareInTableRow: [
             {
