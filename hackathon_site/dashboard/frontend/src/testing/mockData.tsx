@@ -845,6 +845,8 @@ export const mockPendingOrdersInTable: OrderInTable[] = [
         createdTime: "2021-10-17T18:28:44.691969-03:00",
         updatedTime: "2021-10-17T18:28:44.691969-06:00",
     },
+
+    /*TODO NOTE: Removing this new mock order would mean all dashboard test pass. Currently this causes test issues where the cancel order button doesn't work*/
     {
         id: 11,
         hardwareInTableRow: [
