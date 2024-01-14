@@ -82,7 +82,8 @@ describe("<SimplePendingOrderFulfillmentTable />", () => {
             const { queryByDisplayValue, getByDisplayValue } = within(
                 getByTestId(`admin-simple-pending-order-${order.id}`)
             );
-            if (order.status == "Submitted") {
+            if (order.status === "Packing") {
+                /*TODO: Changed from status === "Submitted" to status === "Packing"*/
                 order.hardwareInTableRow.forEach(({ id }) => {
                     expect(getByDisplayValue(`hardware-${id}`)).toBeInTheDocument();
                 });
@@ -104,7 +105,9 @@ describe("<SimplePendingOrderFulfillmentTable />", () => {
         });
 
         mockPendingOrdersInTable
-            .filter(({ status }) => status === "Submitted")
+            .filter(
+                ({ status }) => status === "Packing"
+            ) /*TODO: Changed from status === "Submitted" to status === "Packing"*/
             .map(({ id }) => {
                 const { getByText } = within(
                     getByTestId(`admin-simple-pending-order-${id}`)
@@ -119,7 +122,9 @@ describe("<SimplePendingOrderFulfillmentTable />", () => {
         });
 
         const order = mockPendingOrdersInTable.find(
-            ({ status }) => status === "Submitted"
+            ({ status }) =>
+                status ===
+                "Packing" /*TODO: Changed from status === "Submitted" to status === "Packing"*/
         );
 
         if (order) {
@@ -150,7 +155,9 @@ describe("<SimplePendingOrderFulfillmentTable />", () => {
         });
 
         const order = mockPendingOrdersInTable.find(
-            ({ status }) => status === "Submitted"
+            ({ status }) =>
+                status ===
+                "Packing" /*TODO: Changed from status === "Submitted" to status === "Packing"*/
         );
 
         if (order) {
