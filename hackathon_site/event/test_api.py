@@ -188,11 +188,7 @@ class JoinTeamTestCase(SetupUserMixin, APITestCase):
         for _, status_choice in Order.STATUS_CHOICES:
             order.status = status_choice
             order.save()
-            if status_choice not in (
-                "Cancelled",
-                "Returned",
-                "Packing",
-            ):  # TODO: Added the "Packing" status here
+            if status_choice not in ("Cancelled", "Returned"):
                 self.check_cannot_leave_active()
             else:
                 self.check_can_leave_cancelled_or_returned()
