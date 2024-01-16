@@ -123,9 +123,7 @@ const Dashboard = () => {
                         {fetchOrderError && <AlertBox error={fetchOrderError} />}
                         {/* TODO: add back in when incident reports are completed on the frontend */}
                         {/* <BrokenTable items={itemsBroken} openReportAlert={openBrokenTable} /> */}
-                        <ProjectDescription
-                            teamCode={team_code == null ? "None" : team_code}
-                        />
+                        <ProjectDescription teamCode={team_code ?? "None"} />
                         <PendingTables />
                         <CheckedOutTables />
                         <ReturnedTable />

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import styles from "./ProjectDescription.module.scss";
 import { Formik, Form, Field, FormikValues } from "formik";
 import * as Yup from "yup";
 import { TextField, Button, Box, Grid } from "@material-ui/core";
@@ -20,17 +21,13 @@ const ProjectDescription = ({ teamCode }: ProjectDescriptionProps) => {
     });
 
     const handleSubmit = async (values: FormikValues, { setSubmitting }: any) => {
-        try {
-            await dispatch(
-                updateProjectDescription({
-                    teamCode: teamCode,
-                    projectDescription: values.projectDescription,
-                })
-            );
-        } catch (error) {
-        } finally {
-            setSubmitting(false);
-        }
+        await dispatch(
+            updateProjectDescription({
+                teamCode: teamCode,
+                projectDescription: values.projectDescription,
+            })
+        );
+        setSubmitting(false);
     };
 
     return (
@@ -50,7 +47,7 @@ const ProjectDescription = ({ teamCode }: ProjectDescriptionProps) => {
                             variant="outlined"
                             disabled={!isEditing}
                             rows={4}
-                            style={{ margin: "20px 5px 0 0" }}
+                            className={styles.formTextField}
                         />
                         <Box mt={2}>
                             <Grid container justifyContent="flex-end">
@@ -60,10 +57,7 @@ const ProjectDescription = ({ teamCode }: ProjectDescriptionProps) => {
                                             type="submit"
                                             variant="contained"
                                             disabled={!isValid || isSubmitting}
-                                            style={{
-                                                width: "120px",
-                                                marginRight: "10px",
-                                            }}
+                                            className={styles.submitBtn}
                                         >
                                             SUBMIT
                                         </Button>
@@ -71,7 +65,7 @@ const ProjectDescription = ({ teamCode }: ProjectDescriptionProps) => {
                                             type="button"
                                             variant="contained"
                                             color="secondary"
-                                            style={{ width: "120px" }}
+                                            className={styles.actionBtn}
                                             onClick={() => setIsEditing(false)}
                                         >
                                             CANCEL
@@ -82,7 +76,7 @@ const ProjectDescription = ({ teamCode }: ProjectDescriptionProps) => {
                                         type="button"
                                         variant="contained"
                                         color="primary"
-                                        style={{ width: "120px" }}
+                                        className={styles.actionBtn}
                                         onClick={() => setIsEditing(true)}
                                     >
                                         EDIT
