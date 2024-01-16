@@ -84,7 +84,7 @@ const TeamDetail = ({ match }: RouteComponentProps<PageParams>) => {
                         }}
                     >
                         <TeamInfoTable />
-                        <TeamActionTable />
+                        <TeamActionTable teamCode={teamCode} />
                     </Grid>
                     <Grid item container direction="column" spacing={2}>
                         {orderError ? (
