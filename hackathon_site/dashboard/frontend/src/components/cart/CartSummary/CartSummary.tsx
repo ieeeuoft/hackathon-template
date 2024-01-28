@@ -20,6 +20,7 @@ import {
     hardwareSignOutStartDate,
     maxTeamSize,
     minTeamSize,
+    minProjectDescriptionLength,
 } from "constants.js";
 
 const CartSummary = () => {
@@ -34,7 +35,7 @@ const CartSummary = () => {
         if (cartQuantity > 0) {
             if (
                 projectDescription &&
-                projectDescription.length < MIN_DESCRIPTION_LENGTH
+                projectDescription.length < minProjectDescriptionLength
             ) {
                 dispatch(
                     displaySnackbar({
@@ -53,8 +54,6 @@ const CartSummary = () => {
     const isOutsideSignOutPeriod =
         currentDateTime < hardwareSignOutStartDate ||
         currentDateTime > hardwareSignOutEndDate;
-
-    const MIN_DESCRIPTION_LENGTH = 50;
 
     return (
         <TitledPaper title="Cart Summary">
