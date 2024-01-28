@@ -113,7 +113,7 @@ describe("Dashboard Page", () => {
                 expect(get).toHaveBeenNthCalledWith(1, teamUri);
                 expect(get).toHaveBeenNthCalledWith(2, categoriesUri, {});
                 expect(get).toHaveBeenNthCalledWith(3, ordersUri);
-                expect(get).toHaveBeenNthCalledWith(4, hardwareUri, { hardware_ids });
+                expect(get).toHaveBeenNthCalledWith(5, hardwareUri, { hardware_ids });
             });
             await waitFor(() => {
                 const infoButton = within(
@@ -124,7 +124,7 @@ describe("Dashboard Page", () => {
                 fireEvent.click(infoButton);
             });
             await waitFor(() => {
-                expect(get).toHaveBeenNthCalledWith(5, hardwareDetailUri);
+                expect(get).toHaveBeenNthCalledWith(6, hardwareDetailUri);
                 expect(getByText("Product Overview")).toBeVisible();
                 expect(
                     getByText(`- Max ${newHardwareData.max_per_team} of this item`)

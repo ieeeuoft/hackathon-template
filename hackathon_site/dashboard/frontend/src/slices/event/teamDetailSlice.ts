@@ -147,7 +147,7 @@ export const updateProjectDescription = createAsyncThunk<
 
 export const fetchInitialProjectDescription = createAsyncThunk<
     string,
-    string, // Assuming you need to pass some parameter like teamCode to fetch the description
+    string, // teamCode parameter
     { state: RootState; rejectValue: RejectValue; dispatch: AppDispatch }
 >(
     `${teamDetailReducerName}/fetchInitialProjectDescription`,

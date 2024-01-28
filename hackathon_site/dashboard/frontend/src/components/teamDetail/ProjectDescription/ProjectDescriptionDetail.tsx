@@ -4,13 +4,10 @@ import {
     fetchInitialProjectDescription,
     projectDescriptionSelector,
     isTeamInfoLoadingSelector,
-    teamInfoErrorSelector,
 } from "slices/event/teamDetailSlice";
 import styles from "./ProjectDescription.module.scss";
 import { LinearProgress, Paper, Typography } from "@material-ui/core";
-interface ProjectDescriptionProps {
-    teamCode: string;
-}
+import { ProjectDescriptionProps } from "./ProjectDescription";
 
 const ProjectDescriptionDetail = ({ teamCode }: ProjectDescriptionProps) => {
     const dispatch = useDispatch();
@@ -25,7 +22,7 @@ const ProjectDescriptionDetail = ({ teamCode }: ProjectDescriptionProps) => {
     return (
         <div>
             {isTeamInfoLoading ? (
-                <LinearProgress data-testid="team-info-linear-progress" />
+                <LinearProgress data-testid="project-description-linear-progress" />
             ) : (
                 <>
                     <Typography variant="h2" gutterBottom>

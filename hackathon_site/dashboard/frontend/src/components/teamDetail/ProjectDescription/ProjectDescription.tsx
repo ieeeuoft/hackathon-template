@@ -8,24 +8,21 @@ import {
     updateProjectDescription,
     fetchInitialProjectDescription,
     projectDescriptionSelector,
-    isTeamInfoLoadingSelector,
     isProjectDescriptionLoadingSelector,
 } from "slices/event/teamDetailSlice";
-import CircularProgress from "@material-ui/core/CircularProgress";
+import { minProjectDescriptionLength } from "constants.js";
 
-interface ProjectDescriptionProps {
+export interface ProjectDescriptionProps {
     teamCode: string;
 }
 
 const ProjectDescription = ({ teamCode }: ProjectDescriptionProps) => {
     const dispatch = useDispatch();
-    const isTeamInfoLoading: boolean = useSelector(isTeamInfoLoadingSelector);
     const isProjectDescriptionLoading: boolean = useSelector(
         isProjectDescriptionLoadingSelector
     );
     const initialProjectDescription =
-        useSelector(projectDescriptionSelector) ||
-        "Write your project description here";
+        useSelector(projectDescriptionSelector) || "Project description is required";
     const [isEditing, setIsEditing] = useState(false);
     const projectDescriptionSchema = Yup.object().shape({
         projectDescription: Yup.string()
@@ -41,6 +38,7 @@ const ProjectDescription = ({ teamCode }: ProjectDescriptionProps) => {
             })
         );
         setSubmitting(false);
+        setIsEditing(false);
     };
 
     useEffect(() => {
@@ -65,7 +63,7 @@ const ProjectDescription = ({ teamCode }: ProjectDescriptionProps) => {
                         validationSchema={projectDescriptionSchema}
                         onSubmit={handleSubmit}
                     >
-                        {({ isSubmitting, isValid }) => (
+                        {({ isSubmitting, isValid, values }) => (
                             <Form>
                                 <Field
                                     as={TextField}
@@ -77,6 +75,20 @@ const ProjectDescription = ({ teamCode }: ProjectDescriptionProps) => {
                                     rows={4}
                                     className={styles.formTextField}
                                 />
+                                {minProjectDescriptionLength -
+                                    values.projectDescription.length >
+                                    0 && (
+                                    <Typography
+                                        variant="caption"
+                                        display="block"
+                                        gutterBottom
+                                    >
+                                        Minimum{" "}
+                                        {minProjectDescriptionLength -
+                                            values.projectDescription.length}{" "}
+                                        characters required
+                                    </Typography>
+                                )}
                                 <Box mt={2}>
                                     <Grid container justifyContent="flex-end">
                                         {isEditing ? (
@@ -86,7 +98,6 @@ const ProjectDescription = ({ teamCode }: ProjectDescriptionProps) => {
                                                     variant="contained"
                                                     disabled={!isValid || isSubmitting}
                                                     className={styles.submitBtn}
-                                                    onClick={() => setIsEditing(false)}
                                                 >
                                                     SUBMIT
                                                 </Button>
@@ -100,7 +111,8 @@ const ProjectDescription = ({ teamCode }: ProjectDescriptionProps) => {
                                                     CANCEL
                                                 </Button>
                                             </>
-                                        ) : (
+                                        ) : null}
+                                        {!isEditing && (
                                             <Button
                                                 type="button"
                                                 variant="contained"
