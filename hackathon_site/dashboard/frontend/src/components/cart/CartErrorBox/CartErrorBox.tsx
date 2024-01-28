@@ -7,6 +7,7 @@ import { maxTeamSize, minTeamSize } from "constants.js";
 import AlertBox from "components/general/AlertBox/AlertBox";
 import { Link } from "@material-ui/core";
 import DateRestrictionAlert from "components/general/DateRestrictionAlert/DateRestrictionAlert";
+import ProjectDescriptionAlert from "components/teamDetail/ProjectDescription/ProjectDescriptionAlert";
 
 const CartErrorBox = () => {
     const cartQuantity = useSelector(cartTotalSelector);
@@ -22,6 +23,7 @@ const CartErrorBox = () => {
             <Grid xs={12} sm={12} md={2} item />
             <Grid xs={12} sm={12} md={8} item>
                 <DateRestrictionAlert />
+                <ProjectDescriptionAlert />
                 {orderSubmissionError && cartQuantity > 0 && (
                     <AlertBox
                         error={orderSubmissionError}
