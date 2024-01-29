@@ -1,0 +1,132 @@
+[
+    {
+        "num_applied_to_date": 7,
+        "date": "2023-01-17",
+        "day_of_registration": 0
+    },
+    {
+        "num_applied_to_date": 18,
+        "date": "2023-01-18",
+        "day_of_registration": 1
+    },
+    {
+        "num_applied_to_date": 24,
+        "date": "2023-01-19",
+        "day_of_registration": 2
+    },
+    {
+        "num_applied_to_date": 30,
+        "date": "2023-01-20",
+        "day_of_registration": 3
+    },
+    {
+        "num_applied_to_date": 40,
+        "date": "2023-01-21",
+        "day_of_registration": 4
+    },
+    {
+        "num_applied_to_date": 56,
+        "date": "2023-01-22",
+        "day_of_registration": 5
+    },
+    {
+        "num_applied_to_date": 80,
+        "date": "2023-01-23",
+        "day_of_registration": 6
+    },
+    {
+        "num_applied_to_date": 91,
+        "date": "2023-01-24",
+        "day_of_registration": 7
+    },
+    {
+        "num_applied_to_date": 112,
+        "date": "2023-01-25",
+        "day_of_registration": 8
+    },
+    {
+        "num_applied_to_date": 133,
+        "date": "2023-01-26",
+        "day_of_registration": 9
+    },
+    {
+        "num_applied_to_date": 148,
+        "date": "2023-01-27",
+        "day_of_registration": 10
+    },
+    {
+        "num_applied_to_date": 158,
+        "date": "2023-01-28",
+        "day_of_registration": 11
+    },
+    {
+        "num_applied_to_date": 184,
+        "date": "2023-01-29",
+        "day_of_registration": 12
+    },
+    {
+        "num_applied_to_date": 207,
+        "date": "2023-01-30",
+        "day_of_registration": 13
+    },
+    {
+        "num_applied_to_date": 222,
+        "date": "2023-01-31",
+        "day_of_registration": 14
+    },
+    {
+        "num_applied_to_date": 235,
+        "date": "2023-02-01",
+        "day_of_registration": 15
+    },
+    {
+        "num_applied_to_date": 266,
+        "date": "2023-02-02",
+        "day_of_registration": 16
+    },
+    {
+        "num_applied_to_date": 301,
+        "date": "2023-02-03",
+        "day_of_registration": 17
+    },
+    {
+        "num_applied_to_date": 406,
+        "date": "2023-02-04",
+        "day_of_registration": 18
+    },
+    {
+        "num_applied_to_date": 415,
+        "date": "2023-02-05",
+        "day_of_registration": 19
+    },
+    {
+        "num_applied_to_date": 427,
+        "date": "2023-02-06",
+        "day_of_registration": 20
+    },
+    {
+        "num_applied_to_date": 437,
+        "date": "2023-02-07",
+        "day_of_registration": 21
+    },
+    {
+        "num_applied_to_date": 447,
+        "date": "2023-02-08",
+        "day_of_registration": 22
+    },
+    {
+        "num_applied_to_date": 457,
+        "date": "2023-02-09",
+        "day_of_registration": 23
+    },
+    {
+        "num_applied_to_date": 477,
+        "date": "2023-02-10",
+        "day_of_registration": 24
+    },
+    {
+        "num_applied_to_date": 530,
+        "date": "2023-02-11",
+        "day_of_registration": 25
+    }
+]

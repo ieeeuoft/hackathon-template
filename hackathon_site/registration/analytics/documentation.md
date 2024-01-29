@@ -25,6 +25,15 @@ Make sure the file name starts with `{hackathon name}_{year}_<...>.csv`.
 #### Dependencies
 Ensure you have `pandas` and `pandasql` installed in your local environment.
 
+### Additional Tasks
+1. Add the date that registration opened for the new event to the top of `data_manipulation.py` in the REGISTRATION_OPEN_DATES variable in the given format:
+`"{hackathon}_{year}": "YYYY-MM-DD"`
+
+2. Add hackathon year and line color to `hackathon_site/registration/static/registration/js/loadCharts.js` at the top of the file in the DATA_AVAILABLE variable in the given format: `{year}: "#{Color in HEX}"`
+
+3. Add the new hackathons to the dropdown options in `hackathon_site/registration/templates/application/change_list.html` in the select element in the given format: `<option value="{hackathon}-{year}">{Hackathon} {Year}</option>`
+
+
 ### Running the Code
 
 `python data_manipulation.py <type> <hackathon name> <year>`
