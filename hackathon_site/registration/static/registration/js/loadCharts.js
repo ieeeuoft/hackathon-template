@@ -1,9 +1,11 @@
 const DATA_AVAILABLE = {
     newhacks: {
         2021: "#9B59B6",
+        2023: "#FF6961",
     },
     makeuoft: {
         2022: "#F5B041",
+        2023: "#AEC6CF",
     },
 };
 const stringToColour = (str) => {

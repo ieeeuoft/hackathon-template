@@ -6,7 +6,12 @@ import sys
 from pandasql import sqldf
 import pandas as pd
 
-REGISTRATION_OPEN_DATES = {"newhacks_2021": "2021-09-03", "makeuoft_2022": "2022-01-03"}
+REGISTRATION_OPEN_DATES = {
+    "newhacks_2021": "2021-09-03",
+    "makeuoft_2022": "2022-01-03",
+    "makeuoft_2023": "2023-01-17",
+    "newhacks_2023": "2023-09-18",
+}
 
 parent_folder = pathlib.Path(__file__).parent.resolve()
 target_folder = f"{pathlib.Path(__file__).parents[1]}/static/registration/assets"
