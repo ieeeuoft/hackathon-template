@@ -1,23 +1,15 @@
-import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React from "react";
+import { useSelector } from "react-redux";
 import {
-    fetchInitialProjectDescription,
     projectDescriptionSelector,
     isTeamInfoLoadingSelector,
 } from "slices/event/teamDetailSlice";
 import styles from "./ProjectDescription.module.scss";
 import { LinearProgress, Paper, Typography } from "@material-ui/core";
-import { ProjectDescriptionProps } from "./ProjectDescription";
 
-const ProjectDescriptionDetail = ({ teamCode }: ProjectDescriptionProps) => {
-    const dispatch = useDispatch();
-
+const ProjectDescriptionDetail = () => {
     const projectDescription = useSelector(projectDescriptionSelector);
     const isTeamInfoLoading = useSelector(isTeamInfoLoadingSelector);
-
-    useEffect(() => {
-        dispatch(fetchInitialProjectDescription(teamCode));
-    }, [dispatch, teamCode]);
 
     return (
         <div>

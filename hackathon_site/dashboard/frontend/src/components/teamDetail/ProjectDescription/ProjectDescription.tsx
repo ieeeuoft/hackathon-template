@@ -1,16 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import styles from "./ProjectDescription.module.scss";
 import { Formik, Form, Field, FormikValues } from "formik";
 import * as Yup from "yup";
 import { TextField, Button, Box, Grid, Typography } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
-import {
-    updateProjectDescription,
-    fetchInitialProjectDescription,
-    projectDescriptionSelector,
-    isProjectDescriptionLoadingSelector,
-} from "slices/event/teamDetailSlice";
+import { updateProjectDescription } from "slices/event/teamDetailSlice";
 import { minProjectDescriptionLength } from "constants.js";
+import { teamSelector, isLoadingSelector } from "slices/event/teamSlice";
 
 export interface ProjectDescriptionProps {
     teamCode: string;
@@ -18,11 +14,10 @@ export interface ProjectDescriptionProps {
 
 const ProjectDescription = ({ teamCode }: ProjectDescriptionProps) => {
     const dispatch = useDispatch();
-    const isProjectDescriptionLoading: boolean = useSelector(
-        isProjectDescriptionLoadingSelector
-    );
+    const isProjectDescriptionLoading: boolean = useSelector(isLoadingSelector);
     const initialProjectDescription =
-        useSelector(projectDescriptionSelector) || "Project description is required";
+        useSelector(teamSelector)?.project_description ||
+        "Project description is required";
     const [isEditing, setIsEditing] = useState(false);
     const projectDescriptionSchema = Yup.object().shape({
         projectDescription: Yup.string()
@@ -40,12 +35,6 @@ const ProjectDescription = ({ teamCode }: ProjectDescriptionProps) => {
         setSubmitting(false);
         setIsEditing(false);
     };
-
-    useEffect(() => {
-        if (teamCode != "None") {
-            dispatch(fetchInitialProjectDescription(teamCode));
-        }
-    }, [dispatch, teamCode]);
 
     return (
         <>

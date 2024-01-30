@@ -92,7 +92,7 @@ const TeamDetail = ({ match }: RouteComponentProps<PageParams>) => {
                             <AlertBox error={orderError} />
                         ) : (
                             <>
-                                <ProjectDescriptionDetail teamCode={teamCode} />
+                                <ProjectDescriptionDetail />
                                 <SimplePendingOrderFulfillmentTable />
                                 <Divider className={styles.dividerMargin} />
                                 <TeamCheckedOutOrderTable />

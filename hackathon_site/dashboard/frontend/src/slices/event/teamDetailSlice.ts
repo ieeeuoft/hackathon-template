@@ -15,7 +15,6 @@ interface TeamDetailExtraState {
     teamInfoError: string | null;
     participantIdError: string | null;
     projectDescription: string | null;
-    isProjectDescriptionLoading: boolean;
 }
 
 const extraState: TeamDetailExtraState = {
@@ -24,7 +23,6 @@ const extraState: TeamDetailExtraState = {
     teamInfoError: null,
     participantIdError: null,
     projectDescription: null,
-    isProjectDescriptionLoading: false,
 };
 
 const teamDetailAdapter = createEntityAdapter<ProfileWithUser>();
@@ -145,38 +143,6 @@ export const updateProjectDescription = createAsyncThunk<
     }
 );
 
-export const fetchInitialProjectDescription = createAsyncThunk<
-    string,
-    string, // teamCode parameter
-    { state: RootState; rejectValue: RejectValue; dispatch: AppDispatch }
->(
-    `${teamDetailReducerName}/fetchInitialProjectDescription`,
-    async (teamCode, { rejectWithValue, dispatch }) => {
-        try {
-            const response = await get<Team>(`/api/event/teams/${teamCode}/`);
-            const initialProjectDescription = response.data.project_description;
-            return initialProjectDescription;
-        } catch (e: any) {
-            const message =
-                e.response.statusText === "Not Found"
-                    ? `Could not find project description: Error ${e.response.status}`
-                    : `Something went wrong: Error ${e.response.status}`;
-            dispatch(
-                displaySnackbar({
-                    message,
-                    options: {
-                        variant: "error",
-                    },
-                })
-            );
-            return rejectWithValue({
-                status: e.response.status,
-                message,
-            });
-        }
-    }
-);
-
 const teamDetailSlice = createSlice({
     name: teamDetailReducerName,
     initialState,
@@ -185,16 +151,18 @@ const teamDetailSlice = createSlice({
         builder.addCase(getTeamInfoData.pending, (state) => {
             state.isTeamInfoLoading = true;
             state.teamInfoError = null;
+            state.projectDescription = null;
         });
         builder.addCase(getTeamInfoData.fulfilled, (state, { payload }) => {
             state.isTeamInfoLoading = false;
             state.teamInfoError = null;
-
+            state.projectDescription = payload.project_description;
             teamDetailAdapter.setAll(state, payload.profiles);
         });
         builder.addCase(getTeamInfoData.rejected, (state, { payload }) => {
             state.isTeamInfoLoading = false;
             state.teamInfoError = payload?.message ?? "Something went wrong";
+            state.projectDescription = null;
         });
         builder.addCase(updateParticipantIdProvided.pending, (state) => {
             state.isParticipantIdLoading = true;
@@ -232,33 +200,6 @@ const teamDetailSlice = createSlice({
             state.teamInfoError = payload?.message ?? "Something went wrong";
             state.projectDescription = null;
         });
-
-        builder.addCase(fetchInitialProjectDescription.pending, (state) => {
-            state.isTeamInfoLoading = true;
-            state.teamInfoError = null;
-            state.projectDescription = null;
-            state.isProjectDescriptionLoading = true;
-        });
-
-        builder.addCase(
-            fetchInitialProjectDescription.fulfilled,
-            (state, { payload }) => {
-                state.isTeamInfoLoading = false;
-                state.isProjectDescriptionLoading = false;
-                state.teamInfoError = null;
-                state.projectDescription = payload; // Update the projectDescription state with the fetched value.
-            }
-        );
-
-        builder.addCase(
-            fetchInitialProjectDescription.rejected,
-            (state, { payload }) => {
-                state.isTeamInfoLoading = false;
-                state.isProjectDescriptionLoading = false;
-                state.teamInfoError = payload?.message ?? "Something went wrong";
-                state.projectDescription = null;
-            }
-        );
     },
 });
 
@@ -295,9 +236,4 @@ export const updateParticipantIdErrorSelector = createSelector(
 export const projectDescriptionSelector = createSelector(
     [teamDetailSliceSelector],
     (teamDetailSlice) => teamDetailSlice.projectDescription
-);
-
-export const isProjectDescriptionLoadingSelector = createSelector(
-    [teamDetailSliceSelector],
-    (teamDetailSlice) => teamDetailSlice.isProjectDescriptionLoading
 );
