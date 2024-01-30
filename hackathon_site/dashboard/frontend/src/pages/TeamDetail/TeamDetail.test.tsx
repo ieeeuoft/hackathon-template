@@ -65,11 +65,11 @@ describe("<TeamDetail />", () => {
                 1,
                 `/api/event/teams/${mockTeamMultiple.team_code}/`
             );
-            expect(mockedGet).toHaveBeenNthCalledWith(3, categoriesUri, {});
-            expect(mockedGet).toHaveBeenNthCalledWith(4, orderAPI, {
+            expect(mockedGet).toHaveBeenNthCalledWith(2, categoriesUri, {});
+            expect(mockedGet).toHaveBeenNthCalledWith(3, orderAPI, {
                 team_code: teamDetailProps.match.params.code,
             });
-            expect(mockedGet).toHaveBeenNthCalledWith(5, "/api/hardware/hardware/", {
+            expect(mockedGet).toHaveBeenNthCalledWith(4, "/api/hardware/hardware/", {
                 hardware_ids: [1, 2, 3, 4, 10],
             });
         });
@@ -153,11 +153,11 @@ describe("<TeamDetail />", () => {
                 1,
                 `/api/event/teams/${mockTeamMultiple.team_code}/`
             );
-            expect(mockedGet).toHaveBeenNthCalledWith(3, categoriesUri, {});
-            expect(mockedGet).toHaveBeenNthCalledWith(4, orderAPI, {
+            expect(mockedGet).toHaveBeenNthCalledWith(2, categoriesUri, {});
+            expect(mockedGet).toHaveBeenNthCalledWith(3, orderAPI, {
                 team_code: teamDetailProps.match.params.code,
             });
-            expect(mockedGet).toHaveBeenNthCalledWith(5, "/api/hardware/hardware/", {
+            expect(mockedGet).toHaveBeenNthCalledWith(4, "/api/hardware/hardware/", {
                 hardware_ids: [1, 2, 3, 4, 10],
             });
         });
@@ -180,7 +180,7 @@ describe("<TeamDetail />", () => {
                 fireEvent.click(infoButton);
             });
             await waitFor(() => {
-                expect(mockedGet).toHaveBeenNthCalledWith(6, hardwareDetailUri);
+                expect(mockedGet).toHaveBeenNthCalledWith(5, hardwareDetailUri);
                 expect(getByText("Product Overview")).toBeVisible();
                 expect(
                     getByText(`- Max ${newHardwareData.max_per_team} of this item`)
