@@ -3,8 +3,9 @@ import ReadyForPickupIcon from "assets/images/icons/statusIcons/readyforpickup-s
 import PickedUpIcon from "assets/images/icons/statusIcons/checkout-status.svg";
 import CancelledIcon from "assets/images/icons/statusIcons/cancelled-status.svg";
 import ReturnedIcon from "assets/images/icons/statusIcons/checkout-status.svg";
-import PendingIcon from "assets/images/icons/statusIcons/pending-status.svg";
-import InProgressIcon from "assets/images/icons/statusIcons/inprogress-status.svg";
+import PackingIcon from "assets/images/icons/statusIcons/pending-status.svg";
+//TODO: A low-priority task, but perhaps looking into changing the PackingIcon to be a more accurate fit
+//import InProgressIcon from "assets/images/icons/statusIcons/inprogress-status.svg";
 
 import styles from "components/orders/OrdersTable/OrdersTable.module.scss";
 
@@ -14,8 +15,8 @@ export const statusIconMap: { [key: string]: string } = {
     PickedUp: PickedUpIcon,
     Cancelled: CancelledIcon,
     Returned: ReturnedIcon,
-    Pending: PendingIcon,
-    InProgress: InProgressIcon,
+    Packing: PackingIcon,
+    //InProgress: InProgressIcon, //Commented out since we likely don't need this status anymore (Packing should mean the same thing as "In Progress?")
 };
 
 export const statusStylesMap: { [key: string]: string } = {
@@ -24,6 +25,6 @@ export const statusStylesMap: { [key: string]: string } = {
     PickedUp: styles.PickedUpIcon,
     Cancelled: styles.CancelledIcon,
     Returned: styles.ReturnedIcon,
-    Pending: styles.PendingIcon,
-    InProgress: styles.InProgressIcon,
+    Packing: styles.PackingIcon,
+    //InProgress: styles.InProgressIcon, //Commented out since we likely don't need this status anymore (Packing should mean the same thing as "In Progress?")
 };

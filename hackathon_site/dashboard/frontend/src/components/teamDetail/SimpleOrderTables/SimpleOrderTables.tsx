@@ -192,7 +192,7 @@ export const SimplePendingOrderFulfillmentTable = () => {
                             <GeneralPendingTable
                                 {...{
                                     pendingOrder,
-                                    ...(pendingOrder.status === "Submitted" &&
+                                    ...(pendingOrder.status === "Packing" && //This code defines the checkboxes that appear for pending orders. NOTE: changed from === "Submitted" to === "Packing"
                                         enableCheckboxColumn(pendingOrder)),
                                 }}
                             />
@@ -202,7 +202,7 @@ export const SimplePendingOrderFulfillmentTable = () => {
                                 spacing={1}
                                 style={{ marginTop: "10px" }}
                             >
-                                {pendingOrder.status === "Submitted" && (
+                                {pendingOrder.status === "Submitted" && ( //Will not need to add this to the packing orders, since there is no reason to reject an order that is already being packed.
                                     <Grid item>
                                         <Button
                                             color="secondary"
@@ -219,8 +219,61 @@ export const SimplePendingOrderFulfillmentTable = () => {
                                         </Button>
                                     </Grid>
                                 )}
+
+                                {/* On Admin side: The code below adds a button that changes "Submitted" status => "Packing"*/}
                                 {pendingOrder.status === "Submitted" && (
-                                    <CompleteOrderButton order={pendingOrder} />
+                                    <Grid item>
+                                        <Tooltip
+                                            title="Order is being packed"
+                                            placement="top"
+                                        >
+                                            <span>
+                                                <Button
+                                                    color="primary" //TODO: Keeping this button "navy blue" (ie: The colour flagged for "primary" tag) to differentiate from the red "Picked up" buttons
+                                                    variant="contained"
+                                                    disableElevation
+                                                    onClick={() =>
+                                                        updateOrder(
+                                                            pendingOrder.id,
+                                                            "Packing"
+                                                        )
+                                                    }
+                                                >
+                                                    Ready for packing
+                                                </Button>
+                                            </span>
+                                        </Tooltip>
+                                    </Grid>
+                                )}
+
+                                {/* On Admin side: The code below adds a button that changes "Packing" status => "Ready for Pickup"*/}
+                                {pendingOrder.status === "Packing" && (
+                                    <Grid item>
+                                        <Tooltip
+                                            title="Order is being packed"
+                                            placement="top"
+                                        >
+                                            <span>
+                                                <CompleteOrderButton
+                                                    order={pendingOrder}
+                                                />
+                                                {/*Commented out the code below since it caused a bug where if someone doesn't select all orders prior to pressing button, order status changes... */}
+                                                {/*<Button*/}
+                                                {/*    color="primary" //TODO: Keeping this button "navy blue" (ie: The colour flagged for "primary" tag) to differentiate from the red "Picked up" buttons*/}
+                                                {/*    variant="contained"*/}
+                                                {/*    disableElevation*/}
+                                                {/*    onClick={() =>*/}
+                                                {/*        updateOrder(*/}
+                                                {/*            pendingOrder.id,*/}
+                                                {/*            "Ready for Pickup"*/}
+                                                {/*        )*/}
+                                                {/*    }*/}
+                                                {/*>*/}
+                                                {/*    Complete order*/}
+                                                {/*</Button>*/}
+                                            </span>
+                                        </Tooltip>
+                                    </Grid>
                                 )}
                                 {pendingOrder.status === "Ready for Pickup" && (
                                     <Grid item>
