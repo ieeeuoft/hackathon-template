@@ -1,9 +1,11 @@
 const DATA_AVAILABLE = {
     newhacks: {
         2021: "#9B59B6",
+        2023: "#FF6961",
     },
     makeuoft: {
         2022: "#F5B041",
+        2023: "#AEC6CF",
     },
 };
 const stringToColour = (str) => {
@@ -52,11 +54,10 @@ django.jQuery(document).ready(async () => {
         }
     }
     const timelineData = await Promise.all(timelineDataUnresolved);
-    const maxDayOfRegistration = timelineData.reduce((prev, curr) =>
-        Math.max(
-            prev.data.at(-1).day_of_registration,
-            curr.data.at(-1).day_of_registration
-        )
+    const maxDayOfRegistration = timelineData.reduce(
+        (max, curr) =>
+            Math.max(max, curr.data[curr.data.length - 1].day_of_registration),
+        -Infinity
     );
 
     // -------------------------------- LINE CHART - Applications Timeline --------------------------------
