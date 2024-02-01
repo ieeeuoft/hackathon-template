@@ -29,6 +29,7 @@ import TeamCheckedOutOrderTable from "components/teamDetail/TeamCheckedOutOrderT
 import { getHardwareWithFilters, setFilters } from "slices/hardware/hardwareSlice";
 import { getCategories } from "slices/hardware/categorySlice";
 import ProductOverview from "components/inventory/ProductOverview/ProductOverview";
+import ProjectDescriptionDetail from "components/teamDetail/ProjectDescription/ProjectDescriptionDetail";
 
 export interface PageParams {
     code: string;
@@ -91,6 +92,7 @@ const TeamDetail = ({ match }: RouteComponentProps<PageParams>) => {
                             <AlertBox error={orderError} />
                         ) : (
                             <>
+                                <ProjectDescriptionDetail />
                                 <SimplePendingOrderFulfillmentTable />
                                 <Divider className={styles.dividerMargin} />
                                 <TeamCheckedOutOrderTable />

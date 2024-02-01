@@ -14,6 +14,7 @@ interface TeamDetailExtraState {
     isParticipantIdLoading: boolean;
     teamInfoError: string | null;
     participantIdError: string | null;
+    projectDescription: string | null;
 }
 
 const extraState: TeamDetailExtraState = {
@@ -21,6 +22,7 @@ const extraState: TeamDetailExtraState = {
     isParticipantIdLoading: false,
     teamInfoError: null,
     participantIdError: null,
+    projectDescription: null,
 };
 
 const teamDetailAdapter = createEntityAdapter<ProfileWithUser>();
@@ -37,6 +39,11 @@ interface RejectValue {
 interface idProvidedParameters {
     profileId: number;
     idProvided: boolean;
+}
+
+interface UpdateProjectDescriptionParams {
+    teamCode: string;
+    projectDescription: string;
 }
 
 export const updateParticipantIdProvided = createAsyncThunk<
@@ -103,6 +110,39 @@ export const getTeamInfoData = createAsyncThunk<
     }
 );
 
+export const updateProjectDescription = createAsyncThunk<
+    Team,
+    UpdateProjectDescriptionParams,
+    { state: RootState; rejectValue: RejectValue; dispatch: AppDispatch }
+>(
+    `${teamDetailReducerName}/updateProjectDescription`,
+    async ({ teamCode, projectDescription }, { rejectWithValue, dispatch }) => {
+        try {
+            const response = await patch<Team>(`/api/event/teams/${teamCode}`, {
+                project_description: projectDescription,
+            });
+            return response.data;
+        } catch (e: any) {
+            const message =
+                e.response.statusText === "Not Found"
+                    ? `Could not update project description: Error ${e.response.status}`
+                    : `Something went wrong: Error ${e.response.status}`;
+            dispatch(
+                displaySnackbar({
+                    message,
+                    options: {
+                        variant: "error",
+                    },
+                })
+            );
+            return rejectWithValue({
+                status: e.response.status,
+                message,
+            });
+        }
+    }
+);
+
 const teamDetailSlice = createSlice({
     name: teamDetailReducerName,
     initialState,
@@ -111,16 +151,18 @@ const teamDetailSlice = createSlice({
         builder.addCase(getTeamInfoData.pending, (state) => {
             state.isTeamInfoLoading = true;
             state.teamInfoError = null;
+            state.projectDescription = null;
         });
         builder.addCase(getTeamInfoData.fulfilled, (state, { payload }) => {
             state.isTeamInfoLoading = false;
             state.teamInfoError = null;
-
+            state.projectDescription = payload.project_description;
             teamDetailAdapter.setAll(state, payload.profiles);
         });
         builder.addCase(getTeamInfoData.rejected, (state, { payload }) => {
             state.isTeamInfoLoading = false;
             state.teamInfoError = payload?.message ?? "Something went wrong";
+            state.projectDescription = null;
         });
         builder.addCase(updateParticipantIdProvided.pending, (state) => {
             state.isParticipantIdLoading = true;
@@ -141,6 +183,22 @@ const teamDetailSlice = createSlice({
         builder.addCase(updateParticipantIdProvided.rejected, (state, { payload }) => {
             state.isParticipantIdLoading = false;
             state.participantIdError = payload?.message ?? "Something went wrong";
+        });
+
+        builder.addCase(updateProjectDescription.pending, (state) => {
+            state.isTeamInfoLoading = true;
+            state.teamInfoError = null;
+            state.projectDescription = null;
+        });
+        builder.addCase(updateProjectDescription.fulfilled, (state, { payload }) => {
+            state.isTeamInfoLoading = false;
+            state.teamInfoError = null;
+            state.projectDescription = payload.project_description;
+        });
+        builder.addCase(updateProjectDescription.rejected, (state, { payload }) => {
+            state.isTeamInfoLoading = false;
+            state.teamInfoError = payload?.message ?? "Something went wrong";
+            state.projectDescription = null;
         });
     },
 });
@@ -173,4 +231,9 @@ export const teamInfoErrorSelector = createSelector(
 export const updateParticipantIdErrorSelector = createSelector(
     [teamDetailSliceSelector],
     (teamDetailSlice) => teamDetailSlice.participantIdError
+);
+
+export const projectDescriptionSelector = createSelector(
+    [teamDetailSliceSelector],
+    (teamDetailSlice) => teamDetailSlice.projectDescription
 );

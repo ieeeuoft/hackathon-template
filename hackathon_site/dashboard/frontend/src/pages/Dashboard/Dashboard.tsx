@@ -34,6 +34,7 @@ import AlertBox from "components/general/AlertBox/AlertBox";
 import { openTeamModalItem } from "slices/ui/uiSlice";
 import EditTeam from "components/dashboard/EditTeam/EditTeam";
 import DateRestrictionAlert from "components/general/DateRestrictionAlert/DateRestrictionAlert";
+import ProjectDescription from "components/teamDetail/ProjectDescription/ProjectDescription";
 
 const Dashboard = () => {
     const dispatch = useDispatch();
@@ -122,6 +123,7 @@ const Dashboard = () => {
                         {fetchOrderError && <AlertBox error={fetchOrderError} />}
                         {/* TODO: add back in when incident reports are completed on the frontend */}
                         {/* <BrokenTable items={itemsBroken} openReportAlert={openBrokenTable} /> */}
+                        <ProjectDescription teamCode={team_code ?? "None"} />
                         <PendingTables />
                         <CheckedOutTables />
                         <ReturnedTable />

@@ -10,6 +10,7 @@ import {
     teamInfoErrorSelector,
     updateParticipantIdErrorSelector,
     updateParticipantIdProvided,
+    updateProjectDescription,
 } from "slices/event/teamDetailSlice";
 
 import { get, patch } from "api/api";
@@ -211,6 +212,61 @@ describe("updateParticipantIdProvided thunk", () => {
         expect(actions).toContainEqual(
             displaySnackbar({
                 message: "Could not update participant id status: Error 404",
+                options: { variant: "error" },
+            })
+        );
+    });
+});
+
+describe("updateProjectDescription thunk", () => {
+    it("Updates the store on API success", async () => {
+        const store = mockStore(); // Initialize mock store
+
+        // Define the parameters for the thunk
+        const params = {
+            teamCode: "A48E5",
+            projectDescription: "Updated project description",
+        };
+
+        const mockApiResponse = { ...mockTeam };
+        mockApiResponse.project_description = "Updated project description";
+        let mockResponse = makeMockApiResponse(mockApiResponse);
+        mockedPatch.mockResolvedValueOnce(mockResponse);
+
+        await store.dispatch(updateProjectDescription(params));
+
+        await waitFor(() => {
+            expect(mockedPatch).toHaveBeenCalledWith(
+                `/api/event/teams/${mockTeam.team_code}`,
+                {
+                    project_description: "Updated project description",
+                }
+            );
+        });
+    });
+    it("Dispatches snackbar on API failure", async () => {
+        const store = mockStore();
+
+        const params = {
+            teamCode: "A48E5",
+            projectDescription: "Updated project description",
+        };
+
+        mockedPatch.mockRejectedValueOnce(teamFailureResponse);
+        await store.dispatch(updateProjectDescription(params));
+
+        expect(mockedPatch).toHaveBeenCalledWith(
+            `/api/event/teams/${mockTeam.team_code}`,
+            {
+                project_description: "Updated project description",
+            }
+        );
+
+        const actions = store.getActions();
+
+        expect(actions).toContainEqual(
+            displaySnackbar({
+                message: "Could not update project description: Error 404",
                 options: { variant: "error" },
             })
         );

@@ -56,6 +56,9 @@ describe("<TeamDetail />", () => {
         render(<TeamDetail {...teamDetailProps} />);
 
         expect(screen.getByTestId("team-info-linear-progress")).toBeInTheDocument();
+        expect(
+            screen.getByTestId("project-description-linear-progress")
+        ).toBeInTheDocument();
 
         await waitFor(() => {
             expect(mockedGet).toHaveBeenNthCalledWith(
@@ -141,6 +144,9 @@ describe("<TeamDetail />", () => {
         const { getByTestId, getByText } = render(<TeamDetail {...teamDetailProps} />);
 
         expect(screen.getByTestId("team-info-linear-progress")).toBeInTheDocument();
+        expect(
+            screen.getByTestId("project-description-linear-progress")
+        ).toBeInTheDocument();
 
         await waitFor(() => {
             expect(mockedGet).toHaveBeenNthCalledWith(
