@@ -28,7 +28,7 @@ import {
     isLoadingSelector,
 } from "slices/hardware/hardwareSlice";
 import { getCategories } from "slices/hardware/categorySlice";
-import { Grid } from "@material-ui/core";
+import { Grid, ModalProps } from "@material-ui/core";
 import { userTypeSelector } from "slices/users/userSlice";
 import DateRestrictionAlert from "components/general/DateRestrictionAlert/DateRestrictionAlert";
 
@@ -69,6 +69,9 @@ const Inventory = () => {
                     className={styles.inventoryFilterDrawer}
                     open={mobileOpen}
                     onClose={toggleFilter}
+                    ModalProps={{
+                        keepMounted: true, // Prevent unmounting when closed
+                    }}
                 >
                     <div className={styles.inventoryFilterDrawerTop}>
                         <Typography variant="h2">Filters</Typography>
