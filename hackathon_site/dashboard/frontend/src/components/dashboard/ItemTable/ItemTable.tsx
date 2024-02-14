@@ -186,7 +186,11 @@ export const CheckedOutTables = () =>
                                                         <TableCell align="right">
                                                             <Link
                                                                 to={`/incident-form?data=${JSON.stringify(
-                                                                    row
+                                                                    {
+                                                                        ...row,
+                                                                        checkedOutOrderId:
+                                                                            checkedOutOrder.id,
+                                                                    }
                                                                 )}`}
                                                             >
                                                                 <Button
