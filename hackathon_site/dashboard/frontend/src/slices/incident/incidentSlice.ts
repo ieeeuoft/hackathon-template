@@ -12,14 +12,10 @@ import { displaySnackbar } from "slices/ui/uiSlice";
 import { IncidentState } from "api/types";
 
 export interface IncidentRequestBody {
-    id?: number;
     state: IncidentState;
     time_occurred: string; //($date-time)
     description: string;
     order_item: number;
-    team_id?: number;
-    created_at?: string;
-    updated_at?: string;
 }
 
 export interface IncidentResponse {

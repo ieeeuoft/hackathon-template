@@ -152,14 +152,10 @@ const IncidentFormRender = ({
 
     const handleSubmit = async (values: FormikValues, { resetForm }: any) => {
         const incident: IncidentRequestBody = {
-            id: checkedOutOrder?.checkedOutOrderId, // to check... id is order #
             state: values.state,
             time_occurred: new Date(values.when).toISOString(),
             description: `${values.what}\n${values.where}`,
             order_item: checkedOutOrder?.id ?? 0, // order item is id?
-            team_id: 0,
-            created_at: new Date().toISOString(),
-            updated_at: "",
         };
 
         dispatch(createIncident(incident));
