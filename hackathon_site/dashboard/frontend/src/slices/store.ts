@@ -25,6 +25,7 @@ import teamAdminReducer, { teamAdminReducerName } from "slices/event/teamAdminSl
 import teamDetailReducer, { teamDetailReducerName } from "slices/event/teamDetailSlice";
 import teamOrderReducer, { teamOrderReducerName } from "slices/order/teamOrderSlice";
 import adminOrderReducer, { adminOrderReducerName } from "slices/order/adminOrderSlice";
+import incidentReducer, { incidentReducerName } from "slices/incident/incidentSlice";
 
 export const history = createBrowserHistory();
 
@@ -40,6 +41,7 @@ const reducers = {
     [uiReducerName]: uiReducer,
     [teamAdminReducerName]: teamAdminReducer,
     [adminOrderReducerName]: adminOrderReducer,
+    [incidentReducerName]: incidentReducer,
     router: connectRouter(history),
 };
 

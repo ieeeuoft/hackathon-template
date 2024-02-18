@@ -23,6 +23,8 @@ import Header from "components/general/Header/Header";
 import ArrowLeft from "../../assets/images/icons/arrow-left-solid.svg";
 import { displaySnackbar } from "slices/ui/uiSlice";
 import { useDispatch } from "react-redux";
+import { OrderItemTableRow } from "api/types";
+import { IncidentRequestBody, createIncident } from "slices/incident/incidentSlice";
 
 export const INCIDENT_ERROR_MSG = {
     state: "Please select an option",
@@ -95,6 +97,11 @@ const IncidentForm = () => {
     // get info from url
     const searchParams = new URLSearchParams(location.search);
 
+    let checkedOutOrder:
+        | (OrderItemTableRow & { checkedOutOrderId: number })
+        | undefined = undefined;
+    let hardwareQuantity: number; // quantity used for dropdown
+
     useFirstRenderEffect(() => {
         if (searchParams.toString() === "") {
             // check if there are empty query params
@@ -110,47 +117,48 @@ const IncidentForm = () => {
         }
     });
 
-    let hardwareQuantity: number; // quantity used for dropdown
     try {
         const data = searchParams.get("data") ?? "";
-        const checkedOutOrder = JSON.parse(data); // parse string from url into an object
+        checkedOutOrder = JSON.parse(data) as OrderItemTableRow & {
+            checkedOutOrderId: number;
+        }; // parse string from url into an object
         hardwareQuantity = checkedOutOrder?.quantityGranted; // set the hardware qty for dropdown
+        console.log(checkedOutOrder, hardwareQuantity);
     } catch {
         hardwareQuantity = 0; // set the qty to 0 if there is an error parsing
     }
 
     return (
         <>
-            {searchParams.toString() === "" ? (
-                <></>
-            ) : (
-                <IncidentFormRender hardwareQuantity={hardwareQuantity} />
-            )}
+            <IncidentFormRender
+                checkedOutOrder={checkedOutOrder}
+                hardwareQuantity={hardwareQuantity}
+            />
         </>
     );
 };
 
-const IncidentFormRender = ({ hardwareQuantity }: { hardwareQuantity: number }) => {
+const IncidentFormRender = ({
+    hardwareQuantity,
+    checkedOutOrder,
+}: {
+    hardwareQuantity: number;
+    checkedOutOrder: (OrderItemTableRow & { checkedOutOrderId: number }) | undefined;
+}) => {
     const muiClasses = useStyles();
 
     const dispatch = useDispatch();
     const history = useHistory();
 
     const handleSubmit = async (values: FormikValues, { resetForm }: any) => {
-        // TODO: submit the form
+        const incident: IncidentRequestBody = {
+            state: values.state,
+            time_occurred: new Date(values.when).toISOString(),
+            description: `${values.what}\n${values.where}`,
+            order_item: checkedOutOrder?.id ?? 0, // order item is id?
+        };
 
-        resetForm();
-        // display success snackbar
-        dispatch(
-            displaySnackbar({
-                message: `Successfully submitted incident form!`,
-                options: {
-                    variant: "success",
-                },
-            })
-        );
-        // navigate back to previous page
-        history.goBack();
+        dispatch(createIncident(incident));
     };
 
     return (
@@ -183,7 +191,14 @@ const IncidentFormRender = ({ hardwareQuantity }: { hardwareQuantity: number }) 
                                             type: "radio",
                                             id: "state",
                                             name: "state",
-                                            options: ["broken", "lost", "other"],
+                                            options: [
+                                                "Heavily Used",
+                                                "Broken",
+                                                "Missing",
+                                                "Minor Repair Required",
+                                                "Major Repair Required",
+                                                "Not Sure If Works",
+                                            ],
                                             helperText: errors?.state,
                                             testId: "radio-state",
                                         },
@@ -212,11 +227,11 @@ const IncidentFormRender = ({ hardwareQuantity }: { hardwareQuantity: number }) 
                                             helperText: errors?.what,
                                         },
                                         {
-                                            type: "text",
+                                            type: "time",
                                             id: "when",
                                             name: "when",
                                             label: "",
-                                            description: "",
+                                            description: "When did this occur?",
                                             placeholder: "When did this occur?",
                                             value: values.when,
                                             error: !!errors?.when,
@@ -421,11 +436,41 @@ const IncidentFormRender = ({ hardwareQuantity }: { hardwareQuantity: number }) 
                                                                                 handleChange
                                                                             }
                                                                             variant="outlined"
-                                                                            type="text"
+                                                                            type={
+                                                                                item.name ===
+                                                                                "when"
+                                                                                    ? "time"
+                                                                                    : "text"
+                                                                            }
                                                                             multiline
                                                                             fullWidth
                                                                         />
                                                                     </div>
+                                                                ) : item.type ===
+                                                                  "time" ? (
+                                                                    <>
+                                                                        <TextField
+                                                                            id={item.id}
+                                                                            name={
+                                                                                item.name
+                                                                            }
+                                                                            type="datetime-local"
+                                                                            value={
+                                                                                item.value
+                                                                            }
+                                                                            onChange={
+                                                                                handleChange
+                                                                            }
+                                                                            error={
+                                                                                item.error
+                                                                            }
+                                                                            helperText={
+                                                                                item.helperText
+                                                                            }
+                                                                            variant="outlined"
+                                                                            fullWidth
+                                                                        />
+                                                                    </>
                                                                 ) : (
                                                                     <></>
                                                                 )}
