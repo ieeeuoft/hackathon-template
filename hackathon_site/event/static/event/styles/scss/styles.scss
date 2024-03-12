@@ -85,7 +85,7 @@ strong {
 }
 
 .colorBtn {
-    font-weight: bold !important;
+    font-weight: 600 !important;
     text-align: center;
     text-transform: uppercase;
     color: color(font) !important;
@@ -523,4 +523,38 @@ strong {
         margin: 5px 0 20px;
     }
 }
+
+.banner {
+    width: 100%;
+    padding: 10px;
+    text-align: center;
+    border-radius: 5px;
+    border: 2px;
+    margin: 10px 0;
+
+    &success {
+        border: 1px solid color(success);
+        background-color: color(successBackground);
+        color: color(success);
+    }
+
+    &error {
+        border: 1px solid color(error);
+        background-color: color(errorBackground);
+        color: color(error);
+    }
+
+    &info {
+        border: 1px solid color(info);
+        background-color: color(infoBackground);
+        color: color(info);
+    }
+
+    &warning {
+        border: 1px solid color(warning);
+        background-color: color(warningBackground);
+        color: color(warning);
+    }
+}
+
 // End of dashboard stuff

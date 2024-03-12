@@ -4,7 +4,7 @@ from django.db.models import Count
 from import_export import resources
 from import_export.admin import ExportMixin
 
-from event.models import Profile, Team as EventTeam, User
+from event.models import Profile, Team as EventTeam, User, UserActivity
 from hardware.admin import OrderInline
 
 admin.site.unregister(User)
@@ -94,6 +94,29 @@ class EventTeamAdmin(admin.ModelAdmin):
     @admin.display(description="Members", ordering="Members")
     def get_members_count(self, obj):
         return obj.members_count
+
+
+@admin.register(UserActivity)
+class UserActivityAdmin(ExportMixin, admin.ModelAdmin):
+    list_display = (
+        "get_user_name",
+        "sign_in",
+        "lunch1",
+        "dinner1",
+        "breakfast2",
+        "lunch2",
+    )
+
+    def get_user_name(self, obj):
+        return f"{obj.user.first_name} {obj.user.last_name}"
+
+    get_user_name.short_description = "Name"
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related("user")
+
+    def get_export_queryset(self, request):
+        return super().get_queryset(request).select_related("user")
 
 
 # Register your models here.

@@ -1,6 +1,6 @@
 from django.contrib.auth import views as auth_views
 from django.urls import path, reverse_lazy
-from event.views import IndexView, DashboardView
+from event.views import IndexView, DashboardView, QRScannerView
 from event.forms import (
     PasswordChangeForm,
     PasswordResetForm,
@@ -21,6 +21,7 @@ urlpatterns = [
     ),
     path("accounts/logout/", auth_views.LogoutView.as_view(), name="logout",),
     path("dashboard/", DashboardView.as_view(), name="dashboard"),
+    path("dashboard/qrscan/", QRScannerView.as_view(), name="qr-scanner"),
     path(
         "accounts/change_password/",
         auth_views.PasswordChangeView.as_view(

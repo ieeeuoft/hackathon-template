@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
 from django.shortcuts import redirect
@@ -15,12 +16,16 @@ from rest_framework import generics, mixins
 from rest_framework.filters import SearchFilter
 
 
-from hackathon_site.utils import is_registration_open
-from registration.forms import JoinTeamForm
-from registration.models import Team as RegistrationTeam
+from hackathon_site.utils import (
+    is_registration_open,
+    is_hackathon_happening,
+    NoEventOccurringException,
+    get_curr_sign_in_time,
+)
+from registration.forms import JoinTeamForm, SignInForm
+from registration.models import Team as RegistrationTeam, User, Application
 
-
-from event.models import Team as EventTeam
+from event.models import Team as EventTeam, UserActivity
 from event.serializers import TeamSerializer
 from event.api_filters import TeamFilter
 from event.permissions import FullDjangoModelPermissions
@@ -47,9 +52,13 @@ class IndexView(TemplateView):
 
 
 class DashboardView(LoginRequiredMixin, FormView):
-    template_name = "event/dashboard_base.html"
     # Form submits should take the user back to the dashboard
     success_url = reverse_lazy("event:dashboard")
+
+    def get_template_names(self):
+        if self.request.user.is_staff:
+            return "event/dashboard_admin.html"
+        return "event/dashboard_base.html"
 
     def get_form(self, form_class=None):
         """
@@ -185,6 +194,66 @@ class DashboardView(LoginRequiredMixin, FormView):
         impact performance if lots of post requests to the dashboard are made
         at once.
         """
+        return super().post(request, *args, **kwargs)
+
+
+class QRScannerView(LoginRequiredMixin, FormView):
+    success_url = reverse_lazy("event:qr-scanner")
+
+    def get_template_names(self):
+        if self.request.user.is_staff:
+            return "event/admin_qr_scanner.html"
+        return Exception("You do not have permission to view this page.")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        if isinstance(context["form"], SignInForm):
+            context["sign_in_form"] = context["form"]
+
+        return context
+
+    def get_form(self, form_class=None):
+        if form_class is not None:
+            return form_class(**self.get_form_kwargs())
+
+        if is_hackathon_happening():
+            return SignInForm(**self.get_form_kwargs())
+
+        return None
+
+    def form_valid(self, form):
+        if isinstance(form, SignInForm):
+            try:
+                user = User.objects.get(email__exact=form.cleaned_data["email"])
+                sign_in_event = get_curr_sign_in_time()
+                now = datetime.now().replace(tzinfo=settings.TZ_INFO)
+
+                try:
+                    user_activity = UserActivity.objects.get(user__exact=user)
+                    setattr(user_activity, sign_in_event, now)
+                    user_activity.save()
+                except UserActivity.DoesNotExist:
+                    sign_in_obj = {}
+                    sign_in_obj[sign_in_event] = now
+                    UserActivity.objects.create(user=user, **sign_in_obj)
+
+                messages.success(
+                    self.request,
+                    f'User {form.cleaned_data["email"]} successfully signed in',
+                )
+            except NoEventOccurringException as e:
+                messages.info(self.request, str(e))
+            except Exception as e:
+                messages.error(
+                    self.request,
+                    f'User {form.cleaned_data["email"]} could not sign in due to: {str(e)}',
+                )
+
+        return redirect(self.get_success_url())
+
+    @transaction.atomic
+    def post(self, request, *args, **kwargs):
         return super().post(request, *args, **kwargs)
 
 

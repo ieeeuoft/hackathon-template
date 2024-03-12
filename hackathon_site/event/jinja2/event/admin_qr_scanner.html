@@ -1,0 +1,127 @@
+{% extends "event/base.html" %}
+
+{% block nav_links %}
+<li><a href="{{ url("event:dashboard") }}" class="active">Dashboard</a></li>
+<li><a href="{{ url("event:change_password") }}">Change Password</a></li>
+{% endblock %}
+
+{% block body %}
+<div class="backgroundColorDashboard">
+    <div class="container">
+        <div class="section">
+            <div class="borderTopDiv z-depth-3">
+
+                {% if get_messages(request) %}
+                    {% for message in get_messages(request) %}
+                        <p id="submitMessage" class="banner banner{{ message.tags }}"> {{ message }} </p>
+                    {% endfor %}
+                {% endif %}
+
+                <h1 class="formH1">QR Scanner for Sign-In</h1>
+                {% if get_curr_sign_in_time(true) %}
+                    <p class="banner bannerinfo"> Current sign in event: <b>{{ get_curr_sign_in_time(true) }}</b> </p>
+                {% else %}
+                    <p class="banner bannerwarning"> There is currently no event to sign in </p>
+                {% endif %}
+
+                <video id="scanner" style="width: 100%; max-height: 250px; margin: 10px auto"></video>
+
+                <br/>
+
+                {% if not sign_in_form %}
+                    <h4 class="errorText" style="text-align: center"> {{ hackathon_name }} is not happening now </h4>
+                {% else %}
+                    <div id="studentInfo">
+                        <h2 class="formH1">Student Information</h2>
+                        <form method="post">
+                            <table>
+                                <tr>
+                                    <td>Name</td>
+                                    <td id="studentName"></td>
+                                </tr>
+                                <tr>
+                                    <td>Email</td>
+                                    <td>
+                                        {{ csrf_input }}
+                                        <div class="input-field">
+                                            {{ sign_in_form.email }}
+
+                                            {% if sign_in_form.email.errors %}
+                                                <span class="formFieldError">
+                                                {% for error in sign_in_form.email.errors %}
+                                                    {{ error }}
+                                                    <br />
+                                                {% endfor %}
+                                                </span>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                            <button class="btn-large waves-effect waves-light colorBtn" style="margin-top: 15px"
+                                    type="submit" id="signInButton">
+                                Sign-In
+                            </button>
+                        </form>
+                    </div>
+                {% endif %}
+
+                <br/>
+
+                <table>
+                    <tr>
+                        <th>Event</th>
+                        <th>Time</th>
+                        <th>Sign In Interval</th>
+                    </tr>
+                    {% for event in sign_in_times %}
+                        <tr>
+                            <td> {{ event.description }} </td>
+                            <td> {{ event.time.strftime("%H:%M, %b %d") }} </td>
+                            <td> {{ get_sign_in_interval(event.time) }} </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ static("event/js/qr-scanner.umd.min.js") }}"></script>
+    <script type="text/javascript">
+        const videoElem = document.getElementById("scanner");
+        let oldData = '';
+
+        $("#signInButton").click(() => {
+            console.log(oldData.split(';'))
+        });
+
+        const qrScanner = new QrScanner(
+            videoElem,
+            (result) => {
+                if (result) {
+                    if (result.data !== oldData) {
+                        data = result.data.split(";");
+                        $("#studentName").text(`${data[0]} ${data[1]}`);
+                        $("#id_email").val(data[2]);
+                        $("#studentInfo").show();
+                        $("#submitMessage").text('')
+                        oldData = result.data;
+                    }
+                } else {
+                    oldData = '';
+                    $("#studentInfo").hide();
+                }
+            },
+            {
+              onDecodeError: (error) => {},
+              highlightScanRegion: true,
+              highlightCodeOutline: true,
+            },
+        );
+        qrScanner.setInversionMode('both');
+        qrScanner.start();
+    </script>
+{% endblock %}

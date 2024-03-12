@@ -1,0 +1,66 @@
+{% extends "event/base.html" %}
+
+{% block nav_links %}
+<li><a href="{{ url("event:dashboard") }}" class="active">Dashboard</a></li>
+<li><a href="{{ url("event:change_password") }}">Change Password</a></li>
+{% endblock %}
+
+{% block body %}
+<div class="backgroundColorDashboard">
+    <div class="container">
+        <div class="section">
+            <div class="borderTopDiv z-depth-3">
+                <h1 class="formH1">Admin Dashboard</h1>
+
+                <h2 class="formH2">Administrative Actions</h2>
+                <div class="btn-group-sm">
+                    <a href="{{ url("event:qr-scanner") }}" class="btn-sm btn-small waves-effect waves-light colorBtn">
+                        Scan QR Code
+                    </a>
+                    <a href="" class="btn-sm btn-small waves-effect waves-light colorBtn">
+                        Review Applications
+                    </a>
+                    <a href="" class="btn-sm btn-small waves-effect waves-light colorBtn">
+                        View Applications
+                    </a>
+                </div>
+
+                <br/>
+
+                <h2 class="formH2">Export Data to Google Sheets</h2>
+                <p>Clicking any of the below buttons will export the respective data to google sheets in this folder. Files will not be replaced, a new file will be created any time new data is exported.</p>
+                <p>(Work In Progress)</p>
+                <br/>
+                <div class="btn-group-sm">
+                    <button disabled class="btn-sm btn-small waves-effect waves-light colorBtn"
+                            type="submit">User Data</button>
+                    <button disabled class="btn-sm btn-small waves-effect waves-light colorBtn"
+                            type="submit">Application Data</button>
+                    <button disabled class="btn-sm btn-small waves-effect waves-light colorBtn"
+                            type="submit">Review Data</button>
+                    <button disabled class="btn-sm btn-small waves-effect waves-light colorBtn"
+                            type="submit">Sign-In Data</button>
+                </div>
+            </div>
+
+            <div class="borderTopDiv z-depth-3">
+                <h1 class="formH1">Analytics</h1>
+                <table>
+                    <tr>
+                        <td>Total number of sign-ups:</td>
+                        <td>345</td>
+                    </tr>
+                    <tr>
+                        <td>Total number of completed applications:</td>
+                        <td>215</td>
+                    </tr>
+                    <tr>
+                        <td>Total number of completed reviews:</td>
+                        <td>0</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
