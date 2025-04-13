@@ -1,0 +1,58 @@
+name: Sync Template Changes to Forks
+
+on:
+  push:
+    branches:
+      - develop  # Trigger only when develop branch is updated
+
+jobs:
+  sync-forks:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Template Repo
+        uses: actions/checkout@v3
+
+      - name: Set up Git identity
+        run: |
+          git config --global user.name "IEEEAutomationBot"
+          git config --global user.email "webmaster@ieee.utoronto.ca"
+
+      - name: Install GitHub CLI
+        uses: cli/cli-action@v2
+
+      - name: Sync to Forked Repos
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+        run: |
+          TEMPLATE_REPO=https://github.com/ieeeuoft/hackathon-template.git
+          FORKS=(
+            "ieeeuoft/newhacks"
+            # Add other forked repos here, like:
+            # "ieeeuoft/hardware"
+            # "ieeeuoft/devday"
+          )
+
+          for FORK in "${FORKS[@]}"; do
+            REPO_NAME=$(basename $FORK)
+            BRANCH_NAME=sync-from-template-$(date +%s)
+
+            echo "🔁 Syncing to $REPO_NAME"
+
+            git clone https://x-access-token:${GH_TOKEN}@github.com/${FORK}.git
+            cd $REPO_NAME
+
+            git remote add upstream $TEMPLATE_REPO
+            git fetch upstream develop
+            git checkout -b $BRANCH_NAME
+            git merge upstream/develop --allow-unrelated-histories -m "🔄 Auto-sync from hackathon-template (develop)"
+            git push origin $BRANCH_NAME
+
+            gh pr create --repo $FORK \
+              --title "🔄 Sync from hackathon-template" \
+              --body "Automated sync from the template repo (develop branch)" \
+              --base develop \
+              --head $BRANCH_NAME || echo "⚠️ PR may already exist or failed"
+
+            cd ..
+          done
