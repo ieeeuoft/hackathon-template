@@ -1,0 +1,61 @@
+name: Propose Template Changes to Forks
+
+on:
+  push:
+    branches:
+      - develop  # When template's develop is updated
+
+jobs:
+  propose-sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Template Repo
+        uses: actions/checkout@v3
+
+      - name: Set up Git identity
+        run: |
+          git config --global user.name "IEEEAutomationBot"
+          git config --global user.email "webmaster@ieee.utoronto.ca"
+
+      - name: Install GitHub CLI
+        uses: cli/cli-action@v2
+
+      - name: Push develop branch to forks
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+        run: |
+          FORKS=(
+            "ieeeuoft/newhacks"
+            # "ieeeuoft/aws"
+            # "ieeeuoft/makeuoft"
+          )
+          for FORK in "${FORKS[@]}"; do
+            REPO_NAME=$(basename $FORK)
+            BRANCH_NAME=template-proposal-$(date +%s)
+
+            echo "📤 Pushing develop to fork: $REPO_NAME"
+
+            # Clone the fork
+            git clone https://x-access-token:${GH_TOKEN}@github.com/${FORK}.git
+            cd $REPO_NAME
+
+            # Create a new branch from local develop
+            git checkout -b $BRANCH_NAME
+            git remote add template https://github.com/ieeeuoft/hackathon-template.git
+            git fetch template develop
+
+            # Overwrite this branch with template's develop
+            git reset --hard template/develop
+
+            git push origin $BRANCH_NAME
+
+            # Create PR into fork's develop branch
+            gh pr create --repo $FORK \
+              --title "🔄 Sync from hackathon-template" \
+              --body "Auto-sync from template repo develop branch." \
+              --base develop \
+              --head $BRANCH_NAME || echo "⚠️ PR may already exist"
+
+            cd ..
+          done
