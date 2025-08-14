@@ -1,380 +1,360 @@
 # IEEE Hackathon Website Template
 
-A website template for hackathons run by [IEEE University of Toronto Student Branch](https://ieee.utoronto.ca/).
+A comprehensive, customizable website template for hackathons run by [IEEE University of Toronto Student Branch](https://ieee.utoronto.ca/). This template provides a complete solution for hackathon management, including registration, hardware sign-out systems, and administrative dashboards.
 
-## IEEE Web Team 2023-2024
+## IEEE Web Team 2025-2026
+
 #### Directors
-- Luke Cheseldine
-- Mustafa Abdulrahman (PM)
+
+- Aaron Gu
+- Ashwin Santhosh
+
+#### Advisors
+
+- Mustafa Abdulrahman
+- Carmen Chau
 
 #### Associates
-- Karandeep Lubana
-- Terry Luan
-- Dalia Mahidashti 
-- Carmen Chau
-- Samuel Liu
-- Daniel Qiu
-- Ishika Mittal
-- Kenny Cui
-- Himanish Jindal
-- Abubukker Chaudhary
-- Natalie Chan
 
-## Contents
-- [Requirements](#requirements)
-- [Getting Started](#getting-started)
-    * [Python Environment](#python-environment)
-    * [Environment Variables](#environment-variables)
-    * [Running the development server](#running-the-development-server)
-    * [Creating users locally](#creating-users-locally)
-    * [Tests](#tests)
-- [File Structure](#file-structure)
-- [Using this Template](#using-this-template)
-    * [Forking](#forking)
-    * [From the Template (Recommended)](#from-the-template)
-    * [Copy the Repository](#copy-the-repository)
+- Wahib Barqawi
+- Aidan Tran
+- Warrick Tsui
+
+## 🚀 Quick Start
+
+For a streamlined setup experience, see our [Onboard.md](Onboard.md) for a quick start guide.
+
+## 📋 Table of Contents
+
+- [Features](#features)
+- [Architecture](#architecture)
+- [Prerequisites](#prerequisites)
+- [Installation & Setup](#installation--setup)
+  - [Environment Setup](#environment-setup)
+  - [Database & Cache Services](#database--cache-services)
+  - [Running the Application](#running-the-application)
+- [Development](#development)
+  - [Creating Users](#creating-users)
+  - [Testing](#testing)
+  - [Static Files & Styling](#static-files--styling)
+- [Project Structure](#project-structure)
+- [Using This Template](#using-this-template)
+  - [Forking](#forking)
+  - [From Template (Recommended)](#from-template-recommended)
+  - [Copy Repository](#copy-repository)
 - [Customization](#customization)
-    * [Branding and Styling](#branding-and-styling)
+  - [Event Configuration](#event-configuration)
+  - [Branding & Styling](#branding--styling)
+- [Deployment](#deployment)
+- [Contributing](#contributing)
 
-## Requirements
-- Python 3.8 or higher
-- [Docker](https://docs.docker.com/get-docker/)
-- [Docker Compose](https://docs.docker.com/compose/install/)
+## ✨ Features
 
-## Getting Started
-### Python Environment
-For local development, create a Python virtual environment. 
+- **Public Landing Page**: Customizable event landing page with registration
+- **User Registration System**: Complete user management with email verification
+- **Hardware Sign-Out System (HSS)**: React-based inventory management dashboard
+- **Admin Dashboard**: Django admin interface for event management
+- **Email Integration**: Automated email notifications and confirmations
+- **File Upload System**: Secure handling of resumes and other documents
+- **Team Management**: Support for team-based hackathons
+- **Responsive Design**: Mobile-friendly interface using Material-UI
+- **API Integration**: RESTful API for frontend-backend communication
 
-#### Conda
-We recommend you use [Anaconda](https://www.anaconda.com/products/individual) (or [Miniconda](https://docs.conda.io/en/latest/miniconda.html)), as it makes managing virtual environments with different Python versions easier:
-```bash
-$ conda create -n hackathon_site python=3.8
-```
+## 🏗️ Architecture
 
-This will create a new conda environment named `hackathon_site` (you may choose a different name). Then, activate the environment:
-```bash
-$ conda activate hackathon_site
-```
+This project uses a modern full-stack architecture:
 
-#### venv
-Alternatively, you can use [venv](https://docs.python.org/3/library/venv.html) provided under the standard library, but note that you must already have Python 3.8 installed first:
-```bash
-$ python3.8 -m venv venv
-```
+- **Backend**: Django 3.2 with Django REST Framework
+- **Frontend**: React 16 with TypeScript and Material-UI
+- **Database**: PostgreSQL 12.2
+- **Cache**: Redis 6
+- **Templating**: Jinja2 (instead of Django templates)
+- **Styling**: SCSS with Materialize CSS framework
+- **Containerization**: Docker & Docker Compose for development
 
-How you activate the environment depends on your operating system, consult [the docs](https://docs.python.org/3/library/venv.html) for further information.
+## 📋 Prerequisites
 
-#### Installing Requirements
-Install the requirements in `hackathon_site/requirements.txt`. This should be done regularly as new requirements are added, not just the first time you set up.
-```bash
-$ cd hackathon_site
-$ pip install -r requirements.txt
-```
+Before setting up the project, ensure you have the following installed:
 
-### Environment Variables
-In order to run the django and react development servers locally (or run tests), the following environment variables are used. Those in **bold** are required.
+- **Python 3.9** (required - specified in environment.yml)
+- **Docker** & **Docker Compose** - [Installation Guide](https://docs.docker.com/get-docker/)
+- **Node.js v16** - Required for the React frontend
+- **Conda** (recommended) or **Miniconda** - [Installation Guide](https://docs.conda.io/en/latest/miniconda.html)
 
-| **Variable**   | **Required value**                | **Default**       | **Description**                                                                   |
-|----------------|-----------------------------------|-------------------|-----------------------------------------------------------------------------------|
-| **DEBUG**      | 1                                 | 0                 | Run Django in debug mode. Required to run locally.                                |
-| **SECRET_KEY** | Something secret, create your own | None              | Secret key for cryptographic signing. Must not be shared. Required.               |
-| DB_HOST        |                                   | 127.0.0.1         | Postgres database host.                                                           |
-| DB_USER        |                                   | postgres          | User on the postgres database. Must have permissions to create and modify tables. |
-| DB_PASSWORD    |                                   |                   | Password for the postgres user.                                                   |
-| DB_PORT        |                                   | 5432              | Port the postgres server is open on.                                              |
-| DB_NAME        |                                   | hackathon_site    | Postgres database name.                                                           |
-| REDIS_URI      |                                   | 172.17.0.1:6379/1 | Redis [URI](https://github.com/lettuce-io/lettuce-core/wiki/Redis-URI-and-connection-details#uri-syntax). `<host>:<port>/<database>`. |
-| **REACT_APP_DEV_SERVER_URL** | http://localhost:8000 |                 | Path to the django development server, used by React. Update the port if you aren't using the default 8000. |
-| RECAPTCHA_PUBLIC_KEY | Something | A recaptcha public key that will skip the challenge | Key info: https://www.google.com/recaptcha/ |
-| RECAPTCHA_PRIVATE_KEY | Something | A recaptcha private key that will skip the challenge | Key info: https://www.google.com/recaptcha/ |
+## 🛠️ Installation & Setup
 
-#### Testing
-Specifying `SECRET_KEY` is still required to run tests, because the settings file expects it to be set. `DEBUG` is forced to `False` by Django.
+### Environment Setup
 
-In the [GitHub action for Python tests](.github/workflows/pythonchecks.yml), `DEBUG` is set to be `1`. `SECRET_KEY` is taken from the `DJANGO_SECRET_KEY` repository secret. In order to run tests on a fork of this repo, you will need to [create this secret yourself](https://help.github.com/en/actions/configuring-and-managing-workflows/creating-and-storing-encrypted-secrets).
+1. **Clone the repository**:
 
-### Running the development server
-#### Database
-Before the development server can be ran, the database must be running. This project is configured to use [PostgreSQL](https://www.postgresql.org/). 
+   ```bash
+   git clone <repository-url>
+   cd hackathon-template
+   ```
 
-You may install Postgres on your machine if you wish, but we recommend running it locally using docker. A docker-compose service is available in [development/docker-compose.yml](/home/graham/ieee/hackathon-template/README.md). To run all the services, including the database:
-```bash
-$ docker-compose -f development/docker-compose.yml up -d
-```
+2. **Create and activate the conda environment**:
 
-To shut down the database and all other services:
-```bash
-$ docker-compose -f development/docker-compose.yml down
-```
+   ```bash
+   conda env create -f environment.yml
+   conda activate ieee-template
+   ```
 
-To run only the database service:
-```bash
-$ docker-compose -f development/docker-compose.yml up -d postgres
-```
+3. **Set required environment variables**:
 
-The postgres container uses a volume mounted to `development/.postgres-data/` for persistent data storage, so you can safely stop the service without losing any data in your local database.
+   ```bash
+   conda env config vars set SECRET_KEY=your-secret-key-here
+   conda env config vars set DEBUG=1
+   conda env config vars set REACT_APP_DEV_SERVER_URL=http://localhost:8000
+   ```
 
-A note about security: by default, the Postgres service is run with [trust authentication](https://www.postgresql.org/docs/current/auth-trust.html) for convenience, so no passwords are required even if they are set. You should not store any sensitive information in your local database, or broadcast your database host publicly with these settings.
+4. **Reactivate the environment**:
+   ```bash
+   conda deactivate
+   conda activate ieee-template
+   ```
 
-#### Database migrations
-[Migrations](https://docs.djangoproject.com/en/3.0/topics/migrations/) are Django's way of managing changes to the database structure. Before you run the development server, you should run any unapplied migrations; this should be done every time you pull an update to the codebase, not just the first time you set up:
-```bash
-$ cd hackathon_site
-$ python manage.py migrate
-```
+### Database & Cache Services
 
-#### Cache
-This application also relies on a cache, for which we use [Redis](https://redis.io/).
+The project uses PostgreSQL and Redis, which are managed via Docker:
 
-You may install Redis on your machine if you wish, but we recommend running it locally using docker. A Redis service is available in [development/docker-compose.yml](/home/graham/ieee/hackathon-template/README.md). To run all the services, including the database:
-```bash
-$ docker-compose -f development/docker-compose.yml up -d
-```
+1. **Start the services**:
 
-To run only the redis service:
-```bash
-$ docker-compose -f development/docker-compose.yml up -d redis
-```
+   ```bash
+   docker compose -f development/docker-compose.yml up -d
+   ```
 
-If you run multiple instances of this application in production using Redis through Docker (perhaps in Swarm mode), you should make sure that the Redis databases used between applications do not conflict. The easiest way to do this is to change the database id in the [Redis URI environment variable](#environment-variables), eg to `172.17.0.1:6379/2`.
+2. **Apply database migrations**:
 
-#### Run the development server
-Finally, you can run the development server, by default on port 8000. From above, you should already be in the top-level `hackathon_site` directory:
-```bash
-$ python manage.py runserver
-```
+   ```bash
+   cd hackathon_site
+   python manage.py migrate
+   ```
 
-If you would like to run on a port other than 8000, specify a port number after `runserver`.
+3. **Stop services** (when needed):
+   ```bash
+   docker compose -f development/docker-compose.yml down
+   ```
 
-### Creating users locally
-In order to access most of the functionality of the site (the React dashboard or otherwise), you will need to have user accounts to test with. 
+**Note**: The PostgreSQL container uses trust authentication for development convenience. Never store sensitive data in the local development database.
 
-To start, create an admin user. This will give you access to the admin site, and will bypass all Django permissions checks:
+### Running the Application
 
-```bash
-$ python manage.py createsuperuser 
-```
+1. **Compile SCSS assets**:
 
-Once a superuser is created (and the Django dev server is running), you can log in to the admin site at `http://localhost:8000/admin`. Note that creating a superuser does not give it a first or last name, so you should set those from the admin site otherwise some parts of the site may behave weird. Our regular sign up flow also assumes that username and email are the same, so we recommend creating your superuser accordingly.
+   ```bash
+   yarn run scss
+   ```
 
-#### Adding additional users
-The easiest way to add new users is via the admin site, through the "Users" link of the "Authentication and Authorization" panel. When adding a user, you will be prompted for only a username and a password. The react site uses email to log in, so *make sure* to click "Save and continue editing" and add a first name, last name, and email address.
+2. **Start the Django development server** (main site):
 
-#### Giving a user a profile
-Profiles are used by participants who have either been accepted or waitlisted. Some features of the React dashboard require the user to have a profile. This can be done through the "Profiles" link of the "Event" panel on the admin site. Click "Add profile", select a user from the dropdown, either add them to an existing team (if you have any) or click the green "+" to create a team, pick a status, fill out any other required fields, and click save.
+   ```bash
+   python manage.py runserver
+   ```
 
+3. **Start the Hardware Sign-Out System** (in a separate terminal):
 
-### Tests
-#### Django
-Django tests are run using [Django's test system](https://docs.djangoproject.com/en/3.0/topics/testing/overview/), based on the standard python `unittest` module.
+   ```bash
+   conda activate ieee-template
+   cd hackathon_site/dashboard/frontend
+   nvm use 16  # If using nvm
+   yarn run start
+   ```
 
-A custom settings settings module is available for testing, which tells Django to use an in-memory sqlite3 database instead of the postgresql database and to use an in-memory cache instead of Redis. To run the full test suite locally:
+4. **Access the applications**:
+   - Main site: http://localhost:8000
+   - HSS Dashboard: http://localhost:3000
+   - Admin interface: http://localhost:8000/admin
 
-```bash
-$ cd hackathon_site
-$ python manage.py test --settings=hackathon_site.settings.ci
-``` 
-##### Fixtures
-Django has fixtures which are hardcoded files (YAML/JSON) that provide initial data for models. They are placed in a fixtures folder under each app.
+## 💻 Development
 
-More information at [this link](https://docs.djangoproject.com/en/3.0/howto/initial-data/).
+### Creating Users
 
-To load fixtures into the database, use the command `python manage.py loaddata <fixturename>` where `<fixturename>` is the name of the fixture file you’ve created. Each time you run loaddata, the data will be read from the fixture and re-loaded into the database. Note this means that if you change one of the rows created by a fixture and then run loaddata again, you’ll wipe out any changes you’ve made.
+1. **Create a superuser**:
 
+   ```bash
+   python manage.py createsuperuser
+   ```
 
-#### React
-React tests are handled by [Jest](https://jestjs.io/). To run the full suite of React tests:
-```bash
-$ cd hackathon_site/dashboard/frontend
-$ yarn test
-```
-## File Structure
-The top level [hackathon_site](hackathon_site) folder contains the Django project that encapsulates this template.
+2. **Add additional users** via the admin interface at http://localhost:8000/admin
 
-The main project configs are in [hackathon_site/hackathon_site](hackathon_site/hackathon_site), including the main settings file [settings/\_\_init__.py](hackathon_site/hackathon_site/settings/__init__.py) and top-level URL config.
+3. **User profiles**: Create profiles for accepted/waitlisted participants through the admin interface
 
-The [dashboard](hackathon_site/dashboard) app contains the React project for the inventory management and hardware sign-out platform.
+### Testing
 
-The [event](hackathon_site/event) app contains the public-facing templates for the landing page.
-
-The [registration](hackathon_site/registration) app contains models, forms, and templates for user registration, including signup and application templates. Since these templates are similar to the landing page, they may extend templates and use static files from the `event` app. 
-
-### Templates and Static Files
-Templates served from Django can be placed in any app. We use [Jinja 2](https://jinja.palletsprojects.com/en/2.11.x/) as our templating engine, instead of the default Django Template Language. Within each app, Jinja 2 templates must be placed in a folder called `jinja2/<app_name>/` (i.e., the full path will be `hackathon_site/<app_name>/jinja2/<app_name>/`). Templates can then be referenced in views as `<app_name>/your_template.html`.
-
-Static files are placed within each app, in a folder named `static/<app_name>/` (same convention as templates). For example, SCSS files for the Event app may be in `hackathon_site/event/static/event/styles/scss/`. They can then be referenced in templates as `<app_name>/<path to static file>`, for example `event/styles/css/styles.css` (assuming the SCSS has been compiled to CSS).
-
-To compile the SCSS automatically when you save, run following task running while you work:
+#### Django Tests
 
 ```bash
-$ cd hackathon_site
-$ yarn run scss-watch
+cd hackathon_site
+python manage.py test --settings=hackathon_site.settings.ci
 ```
-To compile all SCSS files at once, run:
+
+#### React Tests
 
 ```bash
-$ yarn run scss
+cd hackathon_site/dashboard/frontend
+yarn test
 ```
 
-Django can serve static files automatically in development. In a production environment, static files must be collected:
+### Static Files & Styling
 
-```bash
-$ python manage.py collectstatic
+#### SCSS Compilation
+
+- **Compile once**: `yarn run scss`
+- **Watch for changes**: `yarn run scss-watch`
+
+#### Static File Management
+
+- **Development**: Django serves static files automatically
+- **Production**: Run `python manage.py collectstatic` to collect files
+
+## 📁 Project Structure
+
+```
+hackathon-template/
+├── hackathon_site/                 # Main Django project
+│   ├── dashboard/                  # React frontend app
+│   │   └── frontend/              # React application
+│   ├── event/                     # Public landing page templates
+│   ├── registration/              # User registration system
+│   ├── hardware/                  # Hardware management models
+│   ├── review/                    # Application review system
+│   └── hackathon_site/           # Project settings & config
+├── development/                   # Development Docker setup
+├── deployment/                    # Production deployment configs
+└── environment.yml               # Conda environment specification
 ```
 
-This will place static files in `hackathon_site/static/`. These must be served separately, for example using Nginx, as Django cannot serve static files in production. [Read more about how Django handles static files](https://docs.djangoproject.com/en/3.0/howto/static-files/).
+### Key Components
 
-## Using this Template
-This repository is setup as a template. To read more about how to use a template and what a template repository is, see [GitHub's doc page](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-repository-from-a-template).
+- **`dashboard/`**: React-based hardware sign-out system with Material-UI
+- **`event/`**: Public-facing templates using Jinja2 and Materialize CSS
+- **`registration/`**: User registration, application forms, and email templates
+- **`hardware/`**: Database models for inventory management
+- **`review/`**: Application review and decision management
 
-Before you begin, note that the [main workflow file](https://github.com/ieeeuoft/hackathon-template/blob/develop/.github/workflows/main.yml) uses the `pull_request_target` trigger. This means that pull requests from forks will run workflows in the base branch, **and will have access to repository secrets**. For the base template repo, this is not a security concern since the only secret used in tests is `DJANGO_SECRET_KEY`, and is meaningless in this repository. However, an instance of this repository will likely have other secrets set. **Unless you are absolutely sure that code run by workflows for pull requests, such as tests, does not have access to important secrets, you should change this trigger type back to `pull_request`**. This means that pull requests from forks (of your fork) will not run actions. Alternatively, if tests only need access to secret keys so they don't complain, use a different secret in the workflow files for running tests.
+## 🔧 Using This Template
 
-### Forking
-If you are interested in receiving updates to this template in your project, we recommend that you fork this repository into your own account or organization. This will give you the entire commit history of the project, and will allow you to make pull requests from this repository into your own to perform updates.
+This repository is configured as a GitHub template. Choose the method that best suits your needs:
 
-Unfortunately, GitHub does not allow you to fork your own repository. As a result, the forking option is not available to the owner account or organization. This means that IEEE UofT cannot use this template by forking it, and if you choose to fork your own generic copy of this template for instantiating, you will not be able to fork that fork.
+### Forking (Recommended for Updates)
 
-Note: `develop` is our default branch, but it should not be considered the most stable branch. If you want only the most stable releases, we recommend that you apply your customizations on top of the `master` branch.
+If you want to receive updates from the original template:
 
-### From the Template
-This is our recommended approach to instantiate this template, if forking is unavailable to you. In the end, this gives a similar result to [copying the repository](#copy-the-repository) (below), but maintains the "generated from ieeeuoft/hackathon-template" message on GitHub. If you don't care about that, then copying is simpler.
+1. Fork this repository to your account/organization
+2. Clone your fork locally
+3. Add the original as upstream:
+   ```bash
+   git remote add upstream git@github.com:ieeeuoft/hackathon-template.git
+   ```
 
-1. Create an instance of the template by clicking "Use this template". 
-![image](https://user-images.githubusercontent.com/26036279/90323566-e153a100-df30-11ea-82b5-11a5effb1fd7.png)
+**Note**: GitHub doesn't allow forking your own repository, so this option isn't available to the original owners.
 
-    Note: By default, using a template creates a new repository based off only the default branch, which for this repository is `develop`. We recommend that you apply your customizations on top of the more stable `master` branch. To do so, make sure you check "Include all branches".
+### From Template (Recommended for New Projects)
 
-    Creating a repository from a template flattens all commits into a single initial commit. If you never plan on merging updates from the upstream template, you may proceed in customizing your instance from here and ignore all of the following steps.
-    
-2. Clone your new instance locally via the method of your choosing.
+1. Click "Use this template" on GitHub
+2. Check "Include all branches" for complete history
+3. Clone your new repository
+4. Add upstream remote for future updates
 
-3. In order to pull history and updates, you will need to add the original template as a remote on the git repository. Note that this only happens on your cloned instance, changing remotes has no effect on the repository you created on GitHub.
+### Copy Repository
 
-    ```bash
-    $ git remote add upstream git@github.com:ieeeuoft/hackathon-template.git
-    ```
+1. Use GitHub's import feature at https://github.com/new/import
+2. Set source URL to: `https://github.com/ieeeuoft/hackathon-template.git`
+3. Clone and add upstream remote
 
-    If you do not have git configured to clone over SSH, you may use the HTTPS url instead: `https://github.com/ieeeuoft/hackathon-template.git`
-    
-4. Merge in whichever branch you would like to base your customizations off from upstream right away to get the history. For the rest of this example, we assume you are using `master`.
-    
-    ```bash
-    $ git fetch upstream
-    $ git merge upstream/master master --allow-unrelated-histories
-    $ git push origin master
-    ```
-5. Use the repository as you see fit, by creating feature branches off of `master`. We recommend a [Gitflow workflow](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow).
+## 🎨 Customization
 
-6. When you want to pull an update from the upstream template, we recommend merging it into a new branch so that you can review the changes, resolve any conflicts, and merge it into your base branch by a pull request for added visibility.
+### Event Configuration
 
-    ```bash
-    $ git checkout master
-    $ git checkout -b update-from-upstream-template    
-    $ git fetch upstream
-    $ git merge upstream/master update-from-upstream-template
-    $ git push -u origin update-from-upstream-template
-    ```
-   
-7. Make a PR on your repo to merge `update-from-upstream-template` into your base branch.
+Key settings are located in `hackathon_site/hackathon_site/settings/__init__.py`:
 
-### Copy the Repository
-This approach is very similar to using the template, but you lose the "generated from ..." text. You gain the added benefit of keeping the entire commit history of the repository, and not having to deal with fetching it upfront.
-
-1. Import a new repository at [https://github.com/new/import](https://github.com/new/import). Set the old repository's clone URL to `https://github.com/ieeeuoft/hackathon-template.git`.
-
-2. Clone your new instance locally via the method of your choosing.
-
-3. Add the original template as a remote on the git repository.
-
-    ```bash
-    $ git remote add upstream git@github.com:ieeeuoft/hackathon-template.git
-    ```
-
-    If you do not have git configured to clone over SSH, you may use the HTTPS url instead: `https://github.com/ieeeuoft/hackathon-template.git`
-    
-4. Use the repository as you see fit, by creating feature branches off of `master`. We recommend a [Gitflow workflow](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow).
-
-5. When you want to pull an update from the upstream template, we recommend merging it into a new branch so that you can review the changes, resolve any conflicts, and merge it into your base branch by a pull request for added visibility.
-
-    ```bash
-    $ git checkout master
-    $ git checkout -b update-from-upstream-template    
-    $ git fetch upstream
-    $ git merge upstream/master update-from-upstream-template
-    $ git push -u origin update-from-upstream-template
-    ```
-   
-6. Make a PR on your repo to merge `update-from-upstream-template` into your base branch.
-
-## Customization
-This project was designed to be generic and customizable. At minimum, you will want to update templates to include your event's name and logo, but you may customize them to whatever degree you wish. See [file structure](#file-structure) for more details about templates.
-
-Core event settings and constants, such as cutoff dates, are kept at the bottom of the [settings](hackathon_site/hackathon_site/settings/__init__.py) file. These settings can be imported and used in any view, form, or in general any other python file. See the [Django docs on settings](https://docs.djangoproject.com/en/3.1/topics/settings/#using-settings-in-python-code) to read more about how to use them.
-
-Some settings you will definitely want to change are:
-- `HACKATHON_NAME` - The name of your hackathon, for use in templates
-- `DEFAULT_FROM_EMAIL` - This can be used in templates, and it will also be used by [Django's email system](https://docs.djangoproject.com/en/3.1/topics/email/))
-- `CONTACT_EMAIL` - By default, the same as `DEFAULT_FROM_EMAIL`. The email users should contact you at, for use in templates
-- `REGISTRATION_OPEN_DATE` - When registration opens
-- `REGISTRATION_CLOSE_DATE` - When registration closes
-- `EVENT_START_DATE` - When the event starts
-- `EVENT_END_DATE` - When the event ends
-- `MEDIA_ROOT` - The path on the server where user-uploaded files will end up, including resumes
-
-You will also need to set the necessary settings for your email server, so that Django can send emails to users. [Read about those settings here](https://docs.djangoproject.com/en/3.1/topics/email/).
-
-Near the top of the settings file, you must also set `ALLOWED_HOSTS` and `CORS_ORIGIN_REGEX_WHITELIST` for your domain.
-
-For convenience, some constants have been passed into the context of all Jinja templates by default, so they can be used right away. See the [Jinja2 config file](hackathon_site/hackathon_site/jinja2.py) for full details.
-
-
-### Branding and Styling
-Both the Event App and Dashboard App are styled by seperate SCSS files found in their respective directories.
-#### Event App
-**Warning: Deleting items in `styles.css`, `_mixins.scss`, and `_variables.scss` will mess up styling throughout all template pages.** Please read the following carefully and make sure you know what you're doing when you're modifying the aforementioned files.
-
-[Materialize](https://materializecss.com/) is the CSS framework that the Event App uses. Review their documentation to get a further understanding of how the template is styled.
-
-In order to determine the original source of a class, class names in kebab notation are from Materialize and class names in camel case are found in `styles.scss`. We recommend you follow this convention when adding your own classes.
-
-[SCSS mixins](https://sass-lang.com/documentation/at-rules/mixin) are stored in `_mixin.scss`. Currently, there are 2 mixin functions: `@mixin flexPosition` to be used if you want to style a class with CSS Flexbox and `@mixin responsive` to be used in place of Media Queries. If you are not familiar with mixins, example usages of both mixins are in `styles.scss`.
-
-Color, font family, and font size variables are stored in `_variables.scss`. Edit the values in the map to customize for your hackathons branding. For further organization, the variables are stored into maps and called using [SCSS functions](https://sass-lang.com/documentation/at-rules/function). 
-
-For example:
-```
-$fonts: (
-    body: "Nunito",
-    header: "Roboto",
-); 
-
-@function font($fonts-name) {
-    @return map-get($fonts, $fonts-name); //(name of map, key)
-}
-```
-Instead of calling...
-```
-h1 { font-family: $header; }
-```
-...you should get the `$header` variable through the `font` function:
-```
-h1 { font-family: font(header); }
+```python
+# Essential settings to customize
+HACKATHON_NAME = "Your Hackathon Name"
+DEFAULT_FROM_EMAIL = "your-email@domain.com"
+CONTACT_EMAIL = "contact@domain.com"
+REGISTRATION_OPEN_DATE = datetime(2024, 1, 1)
+REGISTRATION_CLOSE_DATE = datetime(2024, 2, 1)
+EVENT_START_DATE = datetime(2024, 3, 1)
+EVENT_END_DATE = datetime(2024, 3, 3)
 ```
 
-## Deploying
-This template may be deployed however you wish, we recommend you read [Django's documentation on deploying](https://docs.djangoproject.com/en/3.1/howto/deployment/). 
+### Branding & Styling
 
-[Gunicorn](https://gunicorn.org/) is included in `requirements.txt` already, and deploying through gunicorn with a reverse proxy such as [Nginx](https://docs.nginx.com/nginx/admin-guide/web-server/reverse-proxy/) is our recommended approach. The template is fully configured to be deployed under a subdirectory of your website through a reverse proxy, provided that the `SCRIPT_NAME` header is set. You may also set the path prefix explicitly in the settings file with [`FORCE_SCRIPT_NAME`](https://docs.djangoproject.com/en/2.2/ref/settings/#force-script-name).
+#### Event App Styling
 
-### Serving static files
-Static files are configured to be served under the `static/` path, and are expected to be in a folder called `static` in the django project root (adjacent to `manage.py`). In production, you should run `python manage.py collectstatic` to move all static files into the `static` folder, and configure your web server to serve them directly. Read more about [managing static files in Django in the docs](https://docs.djangoproject.com/en/3.1/howto/static-files/).
+- **Framework**: Materialize CSS
+- **SCSS Files**: Located in `hackathon_site/event/static/event/styles/scss/`
+- **Key Files**:
+  - `styles.scss`: Main stylesheet
+  - `_variables.scss`: Colors, fonts, and sizes
+  - `_mixins.scss`: Reusable SCSS mixins
 
-### Serving user uploaded files
-User-uploaded files are handled differently in Django than static files. We recommend you read the pages on Django [file uploads](https://docs.djangoproject.com/en/3.1/topics/http/file-uploads/) and [the security of user-uploaded content](https://docs.djangoproject.com/en/3.1/topics/security/#user-uploaded-content-security) before proceeding.
+#### Dashboard App Styling
 
-This template is configured to expect user-uploaded content to be served at `media/`, per the `MEDIA_URL` setting (you are free to change this, for example to an off-domain URL). User-uploaded content will be put in the folder defined by `MEDIA_ROOT`, which defaults to `/var/www/media/` and should almost certainly be configured for your server. Whatever you set it to, make sure the folder exists and is accessible by Django.
+- **Framework**: Material-UI (MUI)
+- **Location**: `hackathon_site/dashboard/frontend/src/`
 
-Some user-uploaded content, such as resumes, should not be served to the general public. Others, such as pictures of hardware, should be. Hence, we recommend the following:
+#### Customization Guidelines
 
-- Upload all public-facing files with the prefix `uploads/`, so that they end up at `media/uploads/`. Configure your web server to serve this folder, e.g. `/var/www/media/uploads/`, to `media/uploads/` under your domain.
-- Upload all private files to another prefix, e.g. `resumes/`, so that they end up at e.g. `media/resumes/`. For any users that should be able to see these files (such as staff members in this case), have a view that validates the user's permission, then reads in the data from disk and returns it directly in the HTTP response. Keep in mind that there are performance downsides to this approach.
+- **Colors & Fonts**: Edit maps in `_variables.scss`
+- **Responsive Design**: Use the `@mixin responsive` mixin
+- **Flexbox Layouts**: Use the `@mixin flexPosition` mixin
+
+## 🚀 Deployment
+
+### Recommended Stack
+
+- **WSGI Server**: Gunicorn (included in requirements.txt)
+- **Reverse Proxy**: Nginx
+- **Database**: PostgreSQL
+- **Cache**: Redis
+
+### Production Checklist
+
+1. Set `DEBUG = False` in settings
+2. Configure `ALLOWED_HOSTS` and `CORS_ORIGIN_REGEX_WHITELIST`
+3. Set up email server configuration
+4. Configure `MEDIA_ROOT` for file uploads
+5. Run `python manage.py collectstatic`
+6. Set up proper SSL certificates
+
+### File Serving Strategy
+
+- **Public files**: Serve from `media/uploads/` via web server
+- **Private files**: Serve through Django views with permission checks
+- **Static files**: Serve from `static/` directory via web server
+
+## 🤝 Contributing
+
+We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+### Development Workflow
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Run tests: `python manage.py test` and `yarn test`
+5. Submit a pull request
+
+### Code Style
+
+- **Python**: Black formatter (included in environment)
+- **JavaScript/TypeScript**: Prettier (configured in package.json)
+- **SCSS**: Follow existing patterns in `_variables.scss` and `_mixins.scss`
+
+## 📚 Additional Resources
+
+- [Django Documentation](https://docs.djangoproject.com/)
+- [React Documentation](https://reactjs.org/docs/)
+- [Material-UI Documentation](https://mui.com/)
+- [Materialize CSS Documentation](https://materializecss.com/)
+- [Docker Documentation](https://docs.docker.com/)
+
+## 📄 License
+
+This project is licensed under the terms specified in [LICENSE.md](LICENSE.md).
+
+---
+
+For quick setup instructions, see [Onboard.md](Onboard.md).
