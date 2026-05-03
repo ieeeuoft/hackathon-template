@@ -378,3 +378,4 @@ Some user-uploaded content, such as resumes, should not be served to the general
 
 - Upload all public-facing files with the prefix `uploads/`, so that they end up at `media/uploads/`. Configure your web server to serve this folder, e.g. `/var/www/media/uploads/`, to `media/uploads/` under your domain.
 - Upload all private files to another prefix, e.g. `resumes/`, so that they end up at e.g. `media/resumes/`. For any users that should be able to see these files (such as staff members in this case), have a view that validates the user's permission, then reads in the data from disk and returns it directly in the HTTP response. Keep in mind that there are performance downsides to this approach.
+a
